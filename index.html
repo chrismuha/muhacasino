@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Yahtzee</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>Yahtzee</h1>
+        <div class="pill" id="roundPill">Round 1 / 13</div>
+    </header>
+
+    <div class="wrap">
+        <section class="panel">
+            <h2 class="panel-title">Dice</h2>
+            <div class="dice-row" id="diceRow"></div>
+            <div class="controls">
+                <button class="btn" id="rollBtn">Roll (3)</button>
+                <button class="btn secondary" id="resetHoldsBtn">Unhold All</button>
+                <span class="tag" id="statusTag">Click dice to hold</span>
+            </div>
+            <div class="end" id="endOfGame" style="display:none;">
+                <div class="end-title">Game over!</div>
+                <div>Total: <span id="finalTotal" class="final-total"></span></div>
+                <div class="end-actions">
+                    <button class="btn" id="newGameBtn">New Game</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2 class="panel-title">Scorecard</h2>
+            <div id="scoreRows"></div>
+            <div class="totals">
+                <div class="item"><span>Upper subtotal</span><strong id="upperSubtotal">0</strong></div>
+                <div class="item"><span>Upper bonus (+35 at 63)</span><strong id="upperBonus">0</strong></div>
+                <div class="item"><span>Lower total</span><strong id="lowerTotal">0</strong></div>
+                <div class="item highlight"><span>Grand total</span><strong id="grandTotal">0</strong></div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        Tips: Click dice to hold/unhold. Choose a category to lock in your score for this round. You get up to 3 rolls
+        per round.
+        Classic rules: Full House = 25, Small Straight = 30, Large Straight = 40, Yahtzee = 50. Upper bonus +35 at 63+.
+        (Bonus Yahtzees/Joker rules not included.)
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
