@@ -2,54 +2,73 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
     <title>Yahtzee</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <header>
-        <h1>Yahtzee</h1>
-        <div class="pill" id="roundPill">Round 1 / 13</div>
-    </header>
+    <h1>Yahtzee</h1>
 
-    <div class="wrap">
-        <section class="panel">
-            <h2 class="panel-title">Dice</h2>
-            <div class="dice-row" id="diceRow"></div>
-            <div class="controls">
-                <button class="btn" id="rollBtn">Roll (3)</button>
-                <button class="btn secondary" id="resetHoldsBtn">Unhold All</button>
-                <span class="tag" id="statusTag">Click dice to hold</span>
-            </div>
-            <div class="end" id="endOfGame" style="display:none;">
-                <div class="end-title">Game over!</div>
-                <div>Total: <span id="finalTotal" class="final-total"></span></div>
-                <div class="end-actions">
-                    <button class="btn" id="newGameBtn">New Game</button>
-                </div>
-            </div>
-        </section>
-
-        <section class="panel">
-            <h2 class="panel-title">Scorecard</h2>
-            <div id="scoreRows"></div>
-            <div class="totals">
-                <div class="item"><span>Upper subtotal</span><strong id="upperSubtotal">0</strong></div>
-                <div class="item"><span>Upper bonus (+35 at 63)</span><strong id="upperBonus">0</strong></div>
-                <div class="item"><span>Lower total</span><strong id="lowerTotal">0</strong></div>
-                <div class="item highlight"><span>Grand total</span><strong id="grandTotal">0</strong></div>
-            </div>
-        </section>
+    <!-- Controls -->
+    <div id="controls">
+        <button id="rollBtn">Roll</button>
+        <span>Rolls left: <span id="rollsLeft">3</span></span>
+        <span id="roundPill">Round 1 / 13</span>
+        <span id="statusTag"></span>
     </div>
 
-    <footer>
-        Tips: Click dice to hold/unhold. Choose a category to lock in your score for this round. You get up to 3 rolls
-        per round.
-        Classic rules: Full House = 25, Small Straight = 30, Large Straight = 40, Yahtzee = 50. Upper bonus +35 at 63+.
-        (Bonus Yahtzees/Joker rules not included.)
-    </footer>
+    <!-- Dice -->
+    <div id="dice">
+        <div class="die"></div>
+        <div class="die"></div>
+        <div class="die"></div>
+        <div class="die"></div>
+        <div class="die"></div>
+    </div>
+
+    <!-- Scorecard -->
+    <h2>Scorecard</h2>
+    <table id="score-table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows are inserted by app.js -->
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>Upper Subtotal</td>
+                <td id="upperSubtotal">0</td>
+            </tr>
+            <tr>
+                <td>Upper Bonus</td>
+                <td id="upperBonus">0</td>
+            </tr>
+            <tr>
+                <td>Upper Total</td>
+                <td id="upperTotal">0</td>
+            </tr>
+            <tr>
+                <td>Lower Total</td>
+                <td id="lowerTotal">0</td>
+            </tr>
+            <tr>
+                <td>Grand Total</td>
+                <td id="grandTotal">0</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- End of Game -->
+    <div id="endOfGame" style="display:none;">
+        <h2>Game Over</h2>
+        <p>Your final total: <span id="finalTotal">0</span></p>
+        <button id="newGameBtn">New Game</button>
+    </div>
 
     <script src="app.js"></script>
 </body>
