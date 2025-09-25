@@ -1,6 +1,3 @@
-// Yahtzee - Complete JS with "Upper Section" header and robust DOM init
-
-// ----- Categories -----
 const CATS = [
     { key: 'ones', label: 'Ones (1s)', section: 'upper' },
     { key: 'twos', label: 'Twos (2s)', section: 'upper' },
@@ -8,7 +5,7 @@ const CATS = [
     { key: 'fours', label: 'Fours (4s)', section: 'upper' },
     { key: 'fives', label: 'Fives (5s)', section: 'upper' },
     { key: 'sixes', label: 'Sixes (6s)', section: 'upper' },
-    { separator: true }, // <— insert Lower Section header here
+    { separator: true },
     { key: 'threeKind', label: 'Three of a Kind', section: 'lower' },
     { key: 'fourKind', label: 'Four of a Kind', section: 'lower' },
     { key: 'fullHouse', label: 'Full House (25)', section: 'lower' },
@@ -18,16 +15,14 @@ const CATS = [
     { key: 'chance', label: 'Chance', section: 'lower' },
 ];
 
-// ----- State -----
 const state = {
     dice: [1, 1, 1, 1, 1],
     held: [false, false, false, false, false],
     rollsLeft: 3,
     round: 1,
-    scored: {}, // {catKey: number}
+    scored: {},
 };
 
-// ----- Scoring helpers -----
 const rollDie = () => Math.floor(Math.random() * 6) + 1;
 const sum = arr => arr.reduce((a, b) => a + b, 0);
 const counts = arr => {
@@ -67,7 +62,6 @@ function scoreFor(cat, dice) {
     }
 }
 
-// ----- DOM wires (resolved at init) -----
 let diceEls, rollBtn, rollsLeftEl, roundPill, statusTag;
 let scoreTableBody;
 let upperSubtotalEl, upperBonusEl, upperTotalEl, lowerTotalEl, grandTotalEl;
@@ -81,7 +75,7 @@ function resolveDom() {
     rollBtn = qs('#rollBtn');
     rollsLeftEl = qs('#rollsLeft');
     roundPill = qs('#roundPill');
-    statusTag = qs('#statusTag'); // optional
+    statusTag = qs('#statusTag');
 
     const table = qs('#score-table');
     if (!table) throw new Error('Missing #score-table');
@@ -110,17 +104,28 @@ function resolveDom() {
     }
 }
 
-// ----- Rendering -----
+function ensurePips(el) {
+    if (el.querySelector('.pip')) return;
+    const frag = document.createDocumentFragment();
+    for (let i = 1; i <= 9; i++) {
+        const s = document.createElement('span');
+        s.className = 'pip p' + i;
+        frag.appendChild(s);
+    }
+    el.innerHTML = '';
+    el.appendChild(frag);
+}
+
 function renderDice() {
+    diceEls = qsa('#dice .die');
     diceEls.forEach((el, i) => {
         ensurePips(el);
-        el.dataset.value = state.dice[i];   // drives which pips are visible
+        el.dataset.value = state.dice[i];
         el.classList.toggle('held', state.held[i]);
     });
     rollsLeftEl.textContent = state.rollsLeft;
     roundPill.textContent = `Round ${state.round} / 13`;
 }
-
 
 function makeRow(html, className = '') {
     const tr = document.createElement('tr');
@@ -131,26 +136,15 @@ function makeRow(html, className = '') {
 
 function renderScoreRows() {
     scoreTableBody.innerHTML = '';
-
-    // --- Upper Section header right under table header
-    scoreTableBody.appendChild(
-        makeRow(`<td colspan="2">Upper Section</td>`, 'section-header')
-    );
-
-    // Upper rows
+    scoreTableBody.appendChild(makeRow(`<td colspan="2">Upper Section</td>`, 'section-header'));
     for (const item of CATS) {
         if (item.separator) {
-            // Insert Lower Section header when we hit the separator
-            scoreTableBody.appendChild(
-                makeRow(`<td colspan="2">Lower Section</td>`, 'section-header')
-            );
+            scoreTableBody.appendChild(makeRow(`<td colspan="2">Lower Section</td>`, 'section-header'));
             continue;
         }
-
         const taken = state.scored[item.key] != null;
         const preview = !taken && state.rollsLeft < 3 ? scoreFor(item.key, state.dice) : '';
         const shown = taken ? state.scored[item.key] : '—';
-
         const tr = makeRow(`
       <td class="cat">${item.label}</td>
       <td class="val">
@@ -158,13 +152,9 @@ function renderScoreRows() {
         <div class="score-preview">${preview !== '' ? preview : ''}</div>
       </td>
     `, taken ? 'taken' : 'clickable');
-
         if (!taken) {
             tr.addEventListener('click', () => {
-                if (state.rollsLeft === 3) {
-                    flash(statusTag, 'Roll first!', true);
-                    return;
-                }
+                if (state.rollsLeft === 3) { flash(statusTag, 'Roll first!', true); return; }
                 state.scored[item.key] = scoreFor(item.key, state.dice);
                 advanceRound();
                 renderAll();
@@ -172,18 +162,15 @@ function renderScoreRows() {
         }
         scoreTableBody.appendChild(tr);
     }
-
     updateTotals();
 }
 
 function updateTotals() {
-    // Upper
     const upperKeys = ['ones', 'twos', 'threes', 'fours', 'fives', 'sixes'];
     const upperSubtotal = upperKeys.reduce((t, k) => t + (state.scored[k] || 0), 0);
     const upperBonus = upperSubtotal >= 63 ? 35 : 0;
     const upperTotal = upperSubtotal + upperBonus;
 
-    // Lower
     const lowerKeys = ['threeKind', 'fourKind', 'fullHouse', 'smallStraight', 'largeStraight', 'yahtzee', 'chance'];
     const lowerTotal = lowerKeys.reduce((t, k) => t + (state.scored[k] || 0), 0);
 
@@ -194,14 +181,18 @@ function updateTotals() {
     grandTotalEl.textContent = upperTotal + lowerTotal;
 }
 
+function updateControls() {
+    if (rollBtn) rollBtn.disabled = state.rollsLeft <= 0;
+}
+
 function renderAll() {
     renderDice();
     renderScoreRows();
     updateTotals();
     updateControls();
+    enableDiceDnD();
 }
 
-// ----- Game flow -----
 function doRoll() {
     if (state.rollsLeft <= 0) return;
     state.dice = state.dice.map((v, i) => (state.held[i] ? v : rollDie()));
@@ -214,7 +205,6 @@ function advanceRound() {
         state.round++;
         state.rollsLeft = 3;
         state.held = [false, false, false, false, false];
-        // Auto-roll to avoid placeholder confusion
         doRoll();
     } else {
         endGame();
@@ -222,9 +212,7 @@ function advanceRound() {
 }
 
 function endGame() {
-    finalTotalEl.textContent = String(
-        Number(grandTotalEl.textContent || 0)
-    );
+    finalTotalEl.textContent = String(Number(grandTotalEl.textContent || 0));
     endWrap.style.display = 'block';
 }
 
@@ -235,14 +223,8 @@ function newGame() {
     state.round = 1;
     state.scored = {};
     endWrap.style.display = 'none';
-    // Start with an actual roll
     renderAll();
     setTimeout(doRoll, 250);
-}
-
-// ----- UI helpers -----
-function updateControls() {
-    if (rollBtn) rollBtn.disabled = state.rollsLeft <= 0;
 }
 
 function flash(el, msg, warn = false) {
@@ -257,39 +239,109 @@ function flash(el, msg, warn = false) {
     }, 900);
 }
 
-function ensurePips(el) {
-    if (el.querySelector('.pip')) return; // only build once
-    const frag = document.createDocumentFragment();
-    for (let i = 1; i <= 9; i++) {
-        const s = document.createElement('span');
-        s.className = 'pip p' + i;
-        frag.appendChild(s);
-    }
-    el.innerHTML = '';
-    el.appendChild(frag);
+function idxFromEl(el) {
+    return qsa('#dice .die').indexOf(el);
 }
 
+let dragSrc = null;
+let placeholder = null;
 
-// ----- Init -----
-function init() {
-    resolveDom();
+function syncStateToDomOrder() {
+    const domDice = qsa('#dice .die:not(.placeholder)');
+    state.dice = domDice.map(el => Number(el.dataset.value));
+    state.held = domDice.map(el => el.classList.contains('held'));
+    renderAll();
+}
 
-    // Dice click = hold/unhold (but only after first roll)
-    diceEls.forEach((el, i) => {
-        el.addEventListener('click', () => {
-            if (state.rollsLeft === 3) {
-                flash(statusTag, 'Roll first!', true);
-                return;
+function enableDiceDnD() {
+    const wrap = document.getElementById('dice');
+    if (!wrap) return;
+
+    if (!wrap.dataset.dndBound) {
+        wrap.dataset.dndBound = '1';
+
+        wrap.addEventListener('dragover', e => {
+            if (!dragSrc || !placeholder) return;
+            e.preventDefault();
+            const x = e.clientX, y = e.clientY;
+            const nodes = [...wrap.querySelectorAll('.die:not(.drag-ghost), .die.placeholder')];
+            let target = null, best = Infinity;
+            for (const n of nodes) {
+                const r = n.getBoundingClientRect();
+                const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+                const d2 = (cx - x) * (cx - x) + (cy - y) * (cy - y);
+                if (d2 < best) { best = d2; target = n; }
             }
+            if (target && target !== placeholder) {
+                const r = target.getBoundingClientRect();
+                const before = x < (r.left + r.width / 2);
+                wrap.insertBefore(placeholder, before ? target : target.nextSibling);
+            }
+        });
+
+        wrap.addEventListener('drop', e => {
+            e.preventDefault();
+            if (dragSrc && placeholder) wrap.insertBefore(dragSrc, placeholder);
+        });
+    }
+
+    qsa('#dice .die').forEach(el => {
+        if (el.dataset.dnd === '1') return;
+        el.dataset.dnd = '1';
+        el.setAttribute('draggable', 'true');
+
+        el.addEventListener('click', () => {
+            if (state.rollsLeft === 3) { flash(statusTag, 'Roll first!', true); return; }
+            const i = idxFromEl(el);
+            if (i < 0) return;
             state.held[i] = !state.held[i];
             el.classList.toggle('held', state.held[i]);
         });
+
+        el.addEventListener('dragstart', e => {
+            dragSrc = el;
+            el.classList.add('drag-ghost');
+            wrap.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', 'x');
+
+            placeholder = document.createElement('div');
+            placeholder.className = 'die placeholder';
+            const cs = getComputedStyle(el);
+            placeholder.style.width = cs.width;
+            placeholder.style.height = cs.height;
+            wrap.insertBefore(placeholder, el.nextSibling);
+        });
+
+        el.addEventListener('dragend', () => {
+            el.classList.remove('drag-ghost');
+            wrap.classList.remove('dragging');
+            if (placeholder) { placeholder.remove(); placeholder = null; }
+            const dropped = dragSrc; dragSrc = null;
+            if (dropped) syncStateToDomOrder();
+        });
+
+        el.addEventListener('dragover', e => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        });
+
+        el.addEventListener('drop', e => {
+            e.preventDefault();
+            if (!dragSrc || dragSrc === el) return;
+            const r = el.getBoundingClientRect();
+            const before = (e.clientX - r.left) < r.width / 2;
+            wrap.insertBefore(dragSrc, before ? el : el.nextSibling);
+        });
     });
+}
+
+function init() {
+    resolveDom();
 
     rollBtn.addEventListener('click', doRoll);
     newGameBtn.addEventListener('click', newGame);
 
-    // Initial render + auto-roll
     renderAll();
     setTimeout(doRoll, 250);
 }
