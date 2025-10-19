@@ -208,38 +208,63 @@ footer {
   position: relative;
 }
 
+/* styles.css — add/adjust these for the square board vibe */
 .track {
   position: relative;
   background:
-    radial-gradient(ellipse at center, #0c1426 0%, #0c1426 46%, transparent 47%)
-    /* inner table */
-    ,
+    radial-gradient(circle at center, #0c1426 0%, #0c1426 42%, transparent 43%),
     linear-gradient(#0b1020, #0b1020);
-  /* fallback fill */
-  ;
-  border-radius: 16px;
-  min-height: 620px;
-  display: block;
+  border-radius: 14px;
+  min-height: 640px;
   overflow: hidden;
 }
 
 .track .cell {
   position: absolute;
-  width: 44px;
-  height: 44px;
   border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background: var(--cell);
   color: #111;
   font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: 0 2px 3px rgba(0, 0, 0, .25);
 }
 
 .track .cell .idx {
   display: none;
 }
+
+/* hide debug numbers */
+.cell.slide.owner-p1 {
+  background: color-mix(in hsl, var(--p1) 25%, var(--cell));
+}
+
+.cell.slide.owner-p2 {
+  background: color-mix(in hsl, var(--p2) 25%, var(--cell));
+}
+
+/* Home lanes pointing inward from corners */
+.homecell {
+  position: absolute;
+  border-radius: 10px;
+  background: #f3f4f6;
+  outline: 3px solid rgba(255, 255, 255, .08);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, .25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.homecell.p1 {
+  background: color-mix(in hsl, var(--p1) 18%, #f3f4f6);
+}
+
+.homecell.p2 {
+  background: color-mix(in hsl, var(--p2) 18%, #f3f4f6);
+}
+
 
 /* hide numbers for a clean board */
 
