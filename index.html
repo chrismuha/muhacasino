@@ -1,70 +1,80 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Sorry! (Slides + Safety, 2 Players)</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sorry! (Slides + Safety, 2 Players)</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-<header>
-  <h1>Sorry! — Slides + Safety (2 Players, 4 pawns)</h1>
-  <div class="kpis">
-    <div class="box"><span class="muted">Turn</span><b id="turnLabel">P1</b></div>
-    <div class="box"><span class="muted">Deck</span><b id="deckLeft">–</b></div>
-  </div>
-</header>
-
-<div class="wrap">
-  <div class="panel">
-    <div class="deck-area">
-      <div>
-        <div class="card" id="cardFace">Draw a card</div>
-        <div class="hint" id="cardHint">You can leave Start on 1, 2, or SORRY!</div>
-      </div>
-      <button id="drawBtn" class="btn">Draw</button>
+  <header>
+    <h1>Sorry! — Slides + Safety (2 Players, 4 pawns)</h1>
+    <div class="kpis">
+      <div class="box"><span class="muted">Turn</span><b id="turnLabel">P1</b></div>
+      <div class="box"><span class="muted">Deck</span><b id="deckLeft">–</b></div>
     </div>
+  </header>
 
-    <div style="height:10px"></div>
-
-    <div class="panel" style="padding:10px;">
-      <div class="row">
-        <span class="chip p1">Player 1</span>
-        <span class="chip p2">Player 2</span>
-      </div>
-      <div class="actions" id="actions"></div>
-    </div>
-
-    <div style="height:10px"></div>
-
+  <div class="wrap">
     <div class="panel">
-      <div class="row" style="justify-content:space-between;">
-        <strong>Game Log</strong>
-        <span class="muted">Slides bump; last 5 cells are Safety (no opponent landings); exact to Home.</span>
+      <div class="deck-area">
+        <div>
+          <div class="card" id="cardFace">Draw a card</div>
+          <div class="hint" id="cardHint">You can leave Start on 1, 2, or SORRY!</div>
+        </div>
+        <button id="drawBtn" class="btn">Draw</button>
       </div>
-      <div class="log" id="log"></div>
+
+      <div style="height:10px"></div>
+
+      <div class="panel" style="padding:10px;">
+        <div class="row">
+          <span class="chip p1">Player 1</span>
+          <span class="chip p2">Player 2</span>
+        </div>
+        <div class="actions" id="actions"></div>
+      </div>
+
+      <div style="height:10px"></div>
+
+      <div class="panel">
+        <div class="row" style="justify-content:space-between;">
+          <strong>Game Log</strong>
+          <span class="muted">Slides bump; last 5 cells are Safety (no opponent landings); exact to Home.</span>
+        </div>
+        <div class="log" id="log"></div>
+      </div>
+    </div>
+
+    <div class="board">
+      <div class="zones">
+        <div class="zone">
+          <h3>Start / Status — Player 1</h3>
+          <div id="p1StartHome"></div>
+        </div>
+        <div class="zone">
+          <h3>Start / Status — Player 2</h3>
+          <div id="p2StartHome"></div>
+        </div>
+      </div>
+
+      <div class="track" id="track">
+        <div class="corner corner-p1-start">P1 Start</div>
+        <div class="corner corner-p1-home">P1 Home</div>
+        <div class="corner corner-p2-start">P2 Start</div>
+        <div class="corner corner-p2-home">P2 Home</div>
+      </div>
     </div>
   </div>
 
-  <div class="board">
-    <div class="zones">
-      <div class="zone">
-        <h3>Start / Status — Player 1</h3>
-        <div id="p1StartHome"></div>
-      </div>
-      <div class="zone">
-        <h3>Start / Status — Player 2</h3>
-        <div id="p2StartHome"></div>
-      </div>
-    </div>
-    <div class="grid" id="grid"></div>
-  </div>
-</div>
+  <footer>
+    House rules: 2 players • 4 pawns each • Slides (land on a non-own start to slide and bump along the path) • Shared
+    Safety zone is cells 55–59 (opponents cannot land there) • Exact count to Home.
+  </footer>
 
-<footer>
-  House rules: 2 players • 4 pawns each • Slides (land on a non-own start to slide and bump along the path) • Shared Safety zone is cells 55–59 (opponents cannot land there) • Exact count to Home.
-</footer>
-
-<script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
+
 </html>
