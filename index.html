@@ -4,10 +4,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
   <meta name="description"
     content="Sorry! Classic-style board game track for 2 players with cards, pawns, slides, and home lanes." />
   <title>Sorry! (Classic-style track, 2 Players)</title>
+
+  <!-- Preload CSS for faster rendering -->
+  <link rel="preload" href="styles.css" as="style">
   <link rel="stylesheet" href="styles.css">
+
+  <!-- JavaScript -->
   <script src="ui.js" defer></script>
   <script src="app.js" defer></script>
 </head>
@@ -59,7 +65,7 @@
           <div class="row between">
             <strong>Game Log</strong>
             <span class="muted">
-              Own-color Home lanes (5); exact to Home; can’t land on rivals inside their Home lane.
+              Own-color Home lanes (5); exact to Home; cannot land on rivals inside their Home lane.
             </span>
           </div>
           <div class="log" id="log" role="log" aria-live="polite" aria-relevant="additions text"></div>
@@ -80,7 +86,6 @@
           </section>
         </div>
 
-        <!-- The JS populates #track dynamically; decorative badges should be done via CSS or JS, not static HTML -->
         <div class="track" id="track"></div>
       </section>
     </div>

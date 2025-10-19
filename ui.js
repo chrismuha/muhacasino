@@ -5,20 +5,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const track = document.getElementById('track');
     if (!track) return;
 
-    // Prevent duplicate initialization (e.g. hot reload / reinserted script)
     if (track.dataset.uiInit) return;
     track.dataset.uiInit = '1';
 
-    // Ensure deterministic nth-child mapping
     track.innerHTML = '';
 
-    // Build once with a fragment
     const frag = document.createDocumentFragment();
 
     const TRACK_CELLS = 56;
-    // Cache cell stacks for fast access in render
-    const cellStacks = new Array(TRACK_CELLS);
+    const LANE_LEN = 5;
+    const LANE_BASE = [1100, 1200]; // [P1, P2]
 
+    // Cache stacks: perimeter cells (0..55)
+    const trackStacks = new Array(TRACK_CELLS);
+    // Cache stacks: home lanes keyed by encoded index (1100..1104, 1200..1204)
+    const homeStacks = new Map();
+
+    // Perimeter cells (56)
     for (let i = 0; i < TRACK_CELLS; i++) {
         const cell = document.createElement('div');
         cell.className = 'cell';
@@ -26,16 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
         stack.className = 'stack';
         cell.appendChild(stack);
         frag.appendChild(cell);
-        cellStacks[i] = stack;
+        trackStacks[i] = stack;
     }
 
-    // 4×5 home ladders (yellow, green, blue, red) in this exact sequence
+    // Home ladders (4×5) in this exact order to match CSS grid areas:
+    // yellow (top), green (right), blue (bottom), red (left)
     const colors = ['yellow', 'green', 'blue', 'red'];
-    // Map out home-lane stacks for P1 and P2 by logical lane index (0..4)
-    const laneStacks = { 0: new Array(5), 1: new Array(5) };
-    let laneColorIndex = 0;
-    colors.forEach(color => {
-        for (let i = 1; i <= 5; i++) {
+    colors.forEach((color, colorIdx) => {
+        for (let i = 1; i <= LANE_LEN; i++) {
             const hc = document.createElement('div');
             hc.className = `homecell ${color} l${i}`;
             const stack = document.createElement('div');
@@ -43,13 +44,84 @@ document.addEventListener('DOMContentLoaded', () => {
             hc.appendChild(stack);
             frag.appendChild(hc);
 
-            if (color === 'yellow' && i <= 5) laneStacks[0][i - 1] = stack;
-            if (color === 'green' && i <= 5) laneStacks[1][i - 1] = stack;
+            // Map to engine positions: P1 lane = 1100..1104, P2 lane = 1200..1204
+            // Engine uses 0=Player1, 1=Player2 for lanes. Colors are Y,G,B,R but only have two players.
+            if (color === 'yellow') {
+                const pos = LANE_BASE[0] + (i - 1);
+                homeStacks.set(pos, stack);
+            } else if (color === 'green') {
+                const pos = LANE_BASE[1] + (i - 1);
+                homeStacks.set(pos, stack);
+            }
         }
-        laneColorIndex++;
     });
 
     track.appendChild(frag);
+
+    // Ensure the start/home status boxes behave like stacks
+    const p1Status = document.getElementById('p1StartHome');
+    const p2Status = document.getElementById('p2StartHome');
+    if (p1Status && !p1Status.classList.contains('stack')) p1Status.classList.add('stack');
+    if (p2Status && !p2Status.classList.contains('stack')) p2Status.classList.add('stack');
+
+    function updateStackCounts() {
+        // Update data-count on every stack so CSS can choose the best layout
+        const stacks = track.querySelectorAll('.stack');
+        stacks.forEach(st => {
+            st.dataset.count = st.childElementCount;
+        });
+        if (p1Status) p1Status.dataset.count = p1Status.childElementCount;
+        if (p2Status) p2Status.dataset.count = p2Status.childElementCount;
+    }
+
+    function clearAllStacks() {
+        trackStacks.forEach(st => (st.innerHTML = ''));
+        homeStacks.forEach(st => (st.innerHTML = ''));
+        if (p1Status) p1Status.innerHTML = '';
+        if (p2Status) p2Status.innerHTML = '';
+    }
+
+    function placePawn(player, pos) {
+        const dot = document.createElement('div');
+        dot.className = 'pawn ' + (player === 0 ? 'p1' : 'p2');
+
+        // START / HOME go into side status stacks
+        if (pos === -1) {
+            if (player === 0 && p1Status) {
+                const d = dot.cloneNode(true);
+                d.classList.add('start');
+                p1Status.appendChild(d);
+            } else if (player === 1 && p2Status) {
+                const d = dot.cloneNode(true);
+                d.classList.add('start');
+                p2Status.appendChild(d);
+            }
+            return;
+        }
+        if (pos === 999) {
+            if (player === 0 && p1Status) {
+                const d = dot.cloneNode(true);
+                d.classList.add('home');
+                p1Status.appendChild(d);
+            } else if (player === 1 && p2Status) {
+                const d = dot.cloneNode(true);
+                d.classList.add('home');
+                p2Status.appendChild(d);
+            }
+            return;
+        }
+
+        // Home-lane positions (encoded 1100..1104, 1200..1204)
+        if (homeStacks.has(pos)) {
+            homeStacks.get(pos).appendChild(dot);
+            return;
+        }
+
+        // Main loop 0..55
+        if (Number.isInteger(pos) && pos >= 0 && pos < TRACK_CELLS) {
+            trackStacks[pos].appendChild(dot);
+        }
+    }
 
     // logic engine
     if (window.createSorryGame) {
@@ -63,57 +135,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const cardFace = document.getElementById('cardFace');
         const cardHint = document.getElementById('cardHint');
 
-        // Status zones for START/HOME badges
-        const p1Status = document.getElementById('p1StartHome');
-        const p2Status = document.getElementById('p2StartHome');
-
-        function clearStacks() {
-            for (let i = 0; i < cellStacks.length; i++) cellStacks[i].textContent = '';
-            // Clear home-lane stacks
-            for (let i = 0; i < 5; i++) {
-                if (laneStacks[0][i]) laneStacks[0][i].textContent = '';
-                if (laneStacks[1][i]) laneStacks[1][i].textContent = '';
-            }
-            if (p1Status) p1Status.textContent = '';
-            if (p2Status) p2Status.textContent = '';
-        }
-
-        function appendBadge(el, player, kind) {
-            if (!el) return;
-            const dot = document.createElement('div');
-            dot.className = `pawn ${player === 0 ? 'p1' : 'p2'} ${kind}`;
-            el.appendChild(dot);
-        }
-
-        function placePawn(player, pos, consts) {
-            if (pos === consts.START) {
-                appendBadge(player === 0 ? p1Status : p2Status, player, 'start');
-                return;
-            }
-            if (pos === consts.HOME) {
-                appendBadge(player === 0 ? p1Status : p2Status, player, 'home');
-                return;
-            }
-
-            // Home-lane positions: LANE_BASE[player] .. + LANE_LEN-1
-            const base = consts.LANE_BASE[player];
-            if (pos >= base && pos < base + consts.LANE_LEN) {
-                const laneIdx = pos - base; // 0..4
-                const target = laneStacks[player][laneIdx];
-                if (target) {
-                    const dot = document.createElement('div');
-                    dot.className = 'pawn ' + (player === 0 ? 'p1' : 'p2');
-                    target.appendChild(dot);
-                }
-                return;
-            }
-
-            // Main loop 0..55
-            if (Number.isInteger(pos) && pos >= 0 && pos < TRACK_CELLS) {
-                const dot = document.createElement('div');
-                dot.className = 'pawn ' + (player === 0 ? 'p1' : 'p2');
-                cellStacks[pos].appendChild(dot);
-            }
+        if (logEl) {
+            logEl.setAttribute('role', 'log');
+            logEl.setAttribute('aria-live', 'polite');
+            logEl.setAttribute('aria-relevant', 'additions');
         }
 
         function render() {
@@ -124,16 +149,21 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cardFace) cardFace.textContent = s.drawn ? `Card: ${s.drawn}` : 'Draw a card';
             if (cardHint) cardHint.textContent = s.drawn ? '' : 'You can leave Start on any number or SORRY!';
 
-            clearStacks();
+            clearAllStacks();
 
+            // Place all pawns
             for (let p = 0; p < 2; p++) {
-                for (let k = 0; k < s.pawns[p].length; k++) {
-                    placePawn(p, s.pawns[p][k], s.consts);
+                const arr = s.pawns[p];
+                for (let k = 0; k < arr.length; k++) {
+                    placePawn(p, arr[k]);
                 }
             }
 
+            updateStackCounts();
+
             if (!actionsEl) return;
             actionsEl.textContent = '';
+
             const acts = game.legalActions();
             if (!s.drawn) return;
 
@@ -156,12 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (drawBtn) {
             drawBtn.addEventListener('click', () => game.drawCard());
-        }
-
-        if (logEl) {
-            logEl.setAttribute('role', 'log');
-            logEl.setAttribute('aria-live', 'polite');
-            logEl.setAttribute('aria-relevant', 'additions');
         }
 
         game.on('log', msg => {
