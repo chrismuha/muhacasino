@@ -32,9 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
         trackStacks[i] = stack;
     }
 
-    // Home ladders (4×5) in this exact order to match CSS grid areas:
-    // yellow (top), green (right), blue (bottom), red (left)
-    const colors = ['yellow', 'green', 'blue', 'red'];
+    // Two-player Home lanes: RED (P1, left), BLUE (P2, bottom)
+    const colors = ['red', 'blue'];
     colors.forEach((color, colorIdx) => {
         for (let i = 1; i <= LANE_LEN; i++) {
             const hc = document.createElement('div');
@@ -44,19 +43,39 @@ document.addEventListener('DOMContentLoaded', () => {
             hc.appendChild(stack);
             frag.appendChild(hc);
 
-            // Map to engine positions: P1 lane = 1100..1104, P2 lane = 1200..1204
-            // Engine uses 0=Player1, 1=Player2 for lanes. Colors are Y,G,B,R but only have two players.
-            if (color === 'yellow') {
+            // Map to engine positions:
+            // P1 lane (red) = 1100..1104, P2 lane (blue) = 1200..1204
+            if (color === 'red') {
                 const pos = LANE_BASE[0] + (i - 1);
                 homeStacks.set(pos, stack);
-            } else if (color === 'green') {
+            } else if (color === 'blue') {
                 const pos = LANE_BASE[1] + (i - 1);
                 homeStacks.set(pos, stack);
             }
         }
     });
 
+    // Start circles and Home stars for Red/Blue
+    const startBlue = document.createElement('div');
+    startBlue.className = 'start-badge blue';
+    startBlue.textContent = 'START';
+
+    const startRed = document.createElement('div');
+    startRed.className = 'start-badge red';
+    startRed.textContent = 'START';
+
+    const homeBlue = document.createElement('div');
+    homeBlue.className = 'home-star blue';
+
+    const homeRed = document.createElement('div');
+    homeRed.className = 'home-star red';
+
+    // Append everything to the track
     track.appendChild(frag);
+    track.appendChild(startBlue);
+    track.appendChild(startRed);
+    track.appendChild(homeBlue);
+    track.appendChild(homeRed);
 
     // Ensure the start/home status boxes behave like stacks
     const p1Status = document.getElementById('p1StartHome');
@@ -65,11 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (p2Status && !p2Status.classList.contains('stack')) p2Status.classList.add('stack');
 
     function updateStackCounts() {
-        // Update data-count on every stack so CSS can choose the best layout
         const stacks = track.querySelectorAll('.stack');
-        stacks.forEach(st => {
-            st.dataset.count = st.childElementCount;
-        });
+        stacks.forEach(st => { st.dataset.count = st.childElementCount; });
         if (p1Status) p1Status.dataset.count = p1Status.childElementCount;
         if (p2Status) p2Status.dataset.count = p2Status.childElementCount;
     }
@@ -87,27 +103,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // START / HOME go into side status stacks
         if (pos === -1) {
-            if (player === 0 && p1Status) {
-                const d = dot.cloneNode(true);
-                d.classList.add('start');
-                p1Status.appendChild(d);
-            } else if (player === 1 && p2Status) {
-                const d = dot.cloneNode(true);
-                d.classList.add('start');
-                p2Status.appendChild(d);
-            }
+            const d = dot.cloneNode(true);
+            d.classList.add('start');
+            if (player === 0 && p1Status) p1Status.appendChild(d);
+            else if (player === 1 && p2Status) p2Status.appendChild(d);
             return;
         }
         if (pos === 999) {
-            if (player === 0 && p1Status) {
-                const d = dot.cloneNode(true);
-                d.classList.add('home');
-                p1Status.appendChild(d);
-            } else if (player === 1 && p2Status) {
-                const d = dot.cloneNode(true);
-                d.classList.add('home');
-                p2Status.appendChild(d);
-            }
+            const d = dot.cloneNode(true);
+            d.classList.add('home');
+            if (player === 0 && p1Status) p1Status.appendChild(d);
+            else if (player === 1 && p2Status) p2Status.appendChild(d);
             return;
         }
 

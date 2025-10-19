@@ -1,6 +1,4 @@
 :root {
-    --yellow: #f6d74b;
-    --green: #2ebd59;
     --blue: #3498db;
     --red: #e74c3c;
     --fg: #f7f9fc;
@@ -40,7 +38,6 @@ h1 {
     max-width: 1200px;
     margin: 0 auto;
     align-items: start;
-    /* keep board from stretching with sibling height */
 }
 
 .spacer {
@@ -170,11 +167,11 @@ footer {
     }
 }
 
-/* Board wrapper */
+/* ===== Board wrapper ===== */
 .board {
     background: var(--board);
     border-radius: 14px;
-    padding: 18px;
+    padding: 32px;
     display: grid;
     grid-template-rows: auto 1fr;
     gap: 14px;
@@ -210,9 +207,7 @@ footer {
     opacity: 0.6;
 }
 
-/* =========================
-   Square Track — 17x17 grid
-========================= */
+/* ===== Square Track — 17x17 grid ===== */
 .track {
     position: relative;
     width: 100%;
@@ -228,11 +223,11 @@ footer {
     gap: 8px;
     padding: 18px;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow: visible;
     contain: layout paint;
 }
 
-/* Perimeter cells built by JS (56 total) */
+/* Perimeter cells (56) */
 .cell {
     position: relative;
     background: var(--cell);
@@ -244,6 +239,7 @@ footer {
     color: #111;
     font-weight: 800;
     user-select: none;
+    z-index: 2;
 }
 
 .cell .idx {
@@ -257,9 +253,15 @@ footer {
     max-width: 40px;
 }
 
+.stack .pawn {
+    position: relative;
+    z-index: 3;
+}
+
+/* Pawns */
 .pawn {
     width: 18px;
-    height:18px;
+    height: 18px;
     margin: 1px;
     border-radius: 50%;
     border: 2px solid #111;
@@ -269,10 +271,10 @@ footer {
 }
 
 .pawn-stack {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .pawn.p1 {
@@ -283,13 +285,246 @@ footer {
     background: var(--blue);
 }
 
-/* Home lane tiles */
+/* HOME LANES */
 .homecell {
     background: #f3f4f6;
     border-radius: 8px;
     box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .15), 0 2px 4px rgba(0, 0, 0, .28);
 }
 
+/* Fallback solid tints */
+.homecell.red {
+    background: #f6c9c5;
+}
+
+.homecell.blue {
+    background: #cfe5f6;
+}
+
+/* Nicer blending */
+@supports (background: color-mix(in hsl, red 50%, white)) {
+    .homecell.red {
+        background: color-mix(in hsl, var(--red) 28%, var(--cell));
+    }
+
+    .homecell.blue {
+        background: color-mix(in hsl, var(--blue) 28%, var(--cell));
+    }
+}
+
+/* Blue lane */
+.homecell.blue.l1 {
+    grid-row: 15;
+    grid-column: 9;
+}
+
+.homecell.blue.l2 {
+    grid-row: 14;
+    grid-column: 9;
+}
+
+.homecell.blue.l3 {
+    grid-row: 13;
+    grid-column: 9;
+}
+
+.homecell.blue.l4 {
+    grid-row: 12;
+    grid-column: 9;
+}
+
+.homecell.blue.l5 {
+    grid-row: 11;
+    grid-column: 9;
+}
+
+/* Red lane */
+.homecell.red.l1 {
+    grid-row: 9;
+    grid-column: 3;
+}
+
+.homecell.red.l2 {
+    grid-row: 9;
+    grid-column: 4;
+}
+
+.homecell.red.l3 {
+    grid-row: 9;
+    grid-column: 5;
+}
+
+.homecell.red.l4 {
+    grid-row: 9;
+    grid-column: 6;
+}
+
+.homecell.red.l5 {
+    grid-row: 9;
+    grid-column: 7;
+}
+
+/* START circles & HOME stars */
+.start-badge,
+.home-star {
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Start circles */
+.start-badge {
+    border-radius: 50%;
+    box-shadow:
+        inset 0 0 0 6px rgba(255, 255, 255, .85),
+        inset 0 0 0 10px rgba(0, 0, 0, .12),
+        0 4px 10px rgba(0, 0, 0, .35);
+    color: #0a0a0a;
+}
+
+.start-badge.red {
+    background: var(--red);
+}
+
+.start-badge.blue {
+    background: var(--blue);
+}
+
+/* HOME stars */
+.home-star {
+    color: #0a0a0a;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    border-radius: 0;
+}
+
+.home-star.red {
+    background: var(--red);
+}
+
+.home-star.blue {
+    background: var(--blue);
+}
+
+/* Start badges */
+.start-badge.blue {
+    bottom: -20px;
+    left: -20px;
+}
+
+.start-badge.red {
+    bottom: -20px;
+    right: -20px;
+}
+
+/* HOME stars */
+.home-star.blue {
+    left: 50%;
+    bottom: -20px;
+    transform: translateX(-50%);
+}
+
+.home-star.red {
+    top: 50%;
+    left: -20px;
+    transform: translateY(-50%);
+}
+
+/* ===== Slides (visual background tints) — only Red & Blue ===== */
+/* Fallback for older browsers */
+.track .cell:nth-child(4),
+.track .cell:nth-child(12) {
+    /* P1 slides → Red */
+    background: #f6c9c5;
+}
+
+.track .cell:nth-child(32),
+.track .cell:nth-child(40) {
+    /* P2 slides → Blue */
+    background: #cfe5f6;
+}
+
+/* Prefer color-mix for nicer tint */
+@supports (background: color-mix(in hsl, red 50%, white)) {
+
+    .track .cell:nth-child(4),
+    .track .cell:nth-child(12) {
+        background: color-mix(in hsl, var(--red) var(--slide-tint), var(--cell));
+    }
+
+    .track .cell:nth-child(32),
+    .track .cell:nth-child(40) {
+        background: color-mix(in hsl, var(--blue) var(--slide-tint), var(--cell));
+    }
+}
+
+/* ===== Direction arrows for flow ===== */
+.track .cell::after {
+    content: "";
+    position: absolute;
+    bottom: 6px;
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 10px solid rgba(0, 0, 0, .72);
+    opacity: .8;
+    transform: rotate(0deg);
+    display: none;
+}
+
+.track .cell:nth-child(3n+1)::after {
+    display: block;
+}
+
+/* Top → */
+.track .cell:nth-child(-n+15)::after {
+    transform: rotate(0deg);
+}
+
+/* Right ↓ */
+.track .cell:nth-child(n+16):nth-child(-n+29)::after {
+    transform: rotate(90deg);
+}
+
+/* Bottom ← */
+.track .cell:nth-child(n+30):nth-child(-n+43)::after {
+    transform: rotate(180deg);
+}
+
+/* Left ↑ */
+.track .cell:nth-child(n+44):nth-child(-n+56)::after {
+    transform: rotate(-90deg);
+}
+
+/* Hide any old corner artifacts */
+.track .corner {
+    display: none;
+}
+
+/* Consistency */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+    .wrap {
+        grid-template-columns: 1fr;
+    }
+
+    .track {
+        min-height: 540px;
+    }
+}
+
+/* ===== Perimeter cell placement (unchanged) ===== */
 /* Top row (cells 1..15) */
 .track .cell:nth-child(1) {
     grid-row: 2;
@@ -572,392 +807,4 @@ footer {
 .track .cell:nth-child(56) {
     grid-row: 3;
     grid-column: 2;
-}
-
-/* Home lanes (Yellow – top, inward) */
-.homecell.yellow.l1 {
-    grid-row: 3;
-    grid-column: 9;
-}
-
-.homecell.yellow.l2 {
-    grid-row: 4;
-    grid-column: 9;
-}
-
-.homecell.yellow.l3 {
-    grid-row: 5;
-    grid-column: 9;
-}
-
-.homecell.yellow.l4 {
-    grid-row: 6;
-    grid-column: 9;
-}
-
-.homecell.yellow.l5 {
-    grid-row: 7;
-    grid-column: 9;
-}
-
-/* Green home lane (right side, inward) */
-.homecell.green.l1 {
-    grid-row: 9;
-    grid-column: 15;
-}
-
-.homecell.green.l2 {
-    grid-row: 9;
-    grid-column: 14;
-}
-
-.homecell.green.l3 {
-    grid-row: 9;
-    grid-column: 13;
-}
-
-.homecell.green.l4 {
-    grid-row: 9;
-    grid-column: 12;
-}
-
-.homecell.green.l5 {
-    grid-row: 9;
-    grid-column: 11;
-}
-
-/* Blue home lane (bottom, inward) */
-.homecell.blue.l1 {
-    grid-row: 15;
-    grid-column: 9;
-}
-
-.homecell.blue.l2 {
-    grid-row: 14;
-    grid-column: 9;
-}
-
-.homecell.blue.l3 {
-    grid-row: 13;
-    grid-column: 9;
-}
-
-.homecell.blue.l4 {
-    grid-row: 12;
-    grid-column: 9;
-}
-
-.homecell.blue.l5 {
-    grid-row: 11;
-    grid-column: 9;
-}
-
-/* Red home lane (left, inward) */
-.homecell.red.l1 {
-    grid-row: 9;
-    grid-column: 3;
-}
-
-.homecell.red.l2 {
-    grid-row: 9;
-    grid-column: 4;
-}
-
-.homecell.red.l3 {
-    grid-row: 9;
-    grid-column: 5;
-}
-
-.homecell.red.l4 {
-    grid-row: 9;
-    grid-column: 6;
-}
-
-.homecell.red.l5 {
-    grid-row: 9;
-    grid-column: 7;
-}
-
-/* ============== START circles & HOME stars ============== */
-.start-badge,
-.home-star {
-    position: absolute;
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    z-index: 2;
-}
-
-/* Color fills for Start circles */
-.start-badge.yellow {
-    background: var(--yellow);
-    color: #0a0a0a;
-}
-
-.start-badge.green {
-    background: var(--green);
-    color: #0a0a0a;
-}
-
-.start-badge.blue {
-    background: var(--blue);
-    color: #0a0a0a;
-}
-
-.start-badge.red {
-    background: var(--red);
-    color: #0a0a0a;
-}
-
-/* Raised ring around start circles */
-.start-badge {
-    box-shadow:
-        inset 0 0 0 6px rgba(255, 255, 255, .85),
-        inset 0 0 0 10px rgba(0, 0, 0, .12),
-        0 4px 10px rgba(0, 0, 0, .35);
-}
-
-/* Color fills for HOME stars */
-.home-star.yellow {
-    background: var(--yellow);
-    color: #0a0a0a;
-}
-
-.home-star.green {
-    background: var(--green);
-    color: #0a0a0a;
-}
-
-.home-star.blue {
-    background: var(--blue);
-    color: #0a0a0a;
-}
-
-.home-star.red {
-    background: var(--red);
-    color: #0a0a0a;
-}
-
-/* Positioning of Start circles (corners of board) */
-.start-badge.yellow {
-    top: 22px;
-    left: 22px;
-}
-
-.start-badge.green {
-    top: 22px;
-    right: 22px;
-}
-
-.start-badge.blue {
-    bottom: 22px;
-    left: 22px;
-}
-
-.start-badge.red {
-    bottom: 22px;
-    right: 22px;
-}
-
-/* HOME star positions (center of each side) */
-.home-star.yellow {
-    top: 22px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.home-star.green {
-    right: 22px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.home-star.blue {
-    bottom: 22px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.home-star.red {
-    left: 22px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-/* Create star shape */
-.home-star {
-    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%,
-            50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-    border-radius: 0;
-}
-
-/* Utility */
-.muted {
-    color: #9ca3af;
-}
-
-.row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    border-radius: 999px;
-    font-weight: 600;
-    background: #0b1020;
-    border: 1px solid rgba(255, 255, 255, .12);
-}
-
-/* Player indicators inside chip */
-.chip.p1::before,
-.chip.p2::before {
-    content: "";
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    display: inline-block;
-    border: 2px solid #111;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .3);
-}
-
-.chip.p1::before {
-    background: var(--red);
-}
-
-.chip.p2::before {
-    background: var(--blue);
-}
-
-/* ============== Slides (visual background tints) ============== */
-/* Fallback colors for older browsers */
-.track .cell:nth-child(4),
-.track .cell:nth-child(12) {
-    background: #f7e890;
-}
-
-/* Yellow slides */
-.track .cell:nth-child(19),
-.track .cell:nth-child(27) {
-    background: #c9f0d7;
-}
-
-/* Green slides */
-.track .cell:nth-child(32),
-.track .cell:nth-child(40) {
-    background: #cfe5f6;
-}
-
-/* Blue slides */
-.track .cell:nth-child(45),
-.track .cell:nth-child(53) {
-    background: #f6c9c5;
-}
-
-/* Red slides intentionally left for color-mix only */
-
-/* Use better color mixing when browser supports color-mix */
-@supports (background: color-mix(in hsl, red 50%, white)) {
-
-    .track .cell:nth-child(4),
-    .track .cell:nth-child(12) {
-        background: color-mix(in hsl, var(--yellow) var(--slide-tint), var(--cell));
-    }
-
-    .track .cell:nth-child(19),
-    .track .cell:nth-child(27) {
-        background: color-mix(in hsl, var(--green) var(--slide-tint), var(--cell));
-    }
-
-    .track .cell:nth-child(32),
-    .track .cell:nth-child(40) {
-        background: color-mix(in hsl, var(--blue) var(--slide-tint), var(--cell));
-    }
-
-    .track .cell:nth-child(45),
-    .track .cell:nth-child(53) {
-        background: color-mix(in hsl, var(--red) var(--slide-tint), var(--cell));
-    }
-}
-
-/* ============== Direction Arrows for Track Flow ============== */
-.track .cell::after {
-    content: "";
-    position: absolute;
-    bottom: 6px;
-    width: 0;
-    height: 0;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-top: 10px solid rgba(0, 0, 0, .72);
-    opacity: .8;
-    transform: rotate(0deg);
-    display: none;
-}
-
-/* Show arrows on every 3rd cell for less clutter */
-.track .cell:nth-child(3n+1)::after {
-    display: block;
-}
-
-/* Orientation depending on which side of board the cell is on */
-.track .cell:nth-child(-n+15)::after {
-    transform: rotate(0deg);
-}
-
-/* top → */
-.track .cell:nth-child(n+16):nth-child(-n+29)::after {
-    transform: rotate(90deg);
-}
-
-/* right ↓ */
-.track .cell:nth-child(n+30):nth-child(-n+43)::after {
-    transform: rotate(180deg);
-}
-
-/* bottom ← */
-.track .cell:nth-child(n+44):nth-child(-n+56)::after {
-    transform: rotate(-90deg);
-}
-
-/* left ↑ */
-
-/* Hide old corner artifacts if any exist */
-.track .corner {
-    display: none;
-}
-
-/* General Consistency */
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
-
-/* Responsive: Smaller Screens */
-@media (max-width: 900px) {
-    .wrap {
-        grid-template-columns: 1fr;
-    }
-
-    .track {
-        min-height: 540px;
-    }
-}
-
-/* ============== Accessibility: Reduce Motion ============== */
-@media (prefers-reduced-motion: reduce) {
-
-    .cell,
-    .pawn {
-        box-shadow: none;
-    }
 }
