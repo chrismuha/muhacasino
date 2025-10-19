@@ -4,78 +4,103 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description"
+    content="Sorry! Classic-style board game track for 2 players with cards, pawns, slides, and home lanes." />
   <title>Sorry! (Classic-style track, 2 Players)</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="ui.js" defer></script>
+  <script src="app.js" defer></script>
 </head>
 
 <body>
-  <header>
+  <!-- Header -->
+  <header role="banner">
     <h1>Sorry! — Classic Track (2 Players, 4 pawns)</h1>
     <div class="kpis">
-      <div class="box"><span class="muted">Turn</span><b id="turnLabel">P1</b></div>
-      <div class="box"><span class="muted">Deck</span><b id="deckLeft">–</b></div>
+      <div class="box">
+        <span class="muted">Turn</span>
+        <b id="turnLabel" aria-live="polite" aria-atomic="true">P1</b>
+      </div>
+      <div class="box">
+        <span class="muted">Deck</span>
+        <b id="deckLeft" aria-live="polite" aria-atomic="true">–</b>
+      </div>
     </div>
   </header>
 
-  <div class="wrap">
-    <div class="panel">
-      <div class="deck-area">
-        <div>
-          <div class="card" id="cardFace">Draw a card</div>
-          <div class="hint" id="cardHint">You can leave Start on any number or SORRY!</div>
+  <!-- Main Content -->
+  <main role="main">
+    <div class="wrap">
+
+      <!-- Left Panel (Cards & Actions) -->
+      <section class="panel" aria-label="Player controls and game actions">
+        <div class="deck-area">
+          <div>
+            <div class="card" id="cardFace" role="status" aria-live="polite" aria-atomic="true">Draw a card</div>
+            <div class="hint" id="cardHint">You can leave Start on any number or SORRY!</div>
+          </div>
+          <button id="drawBtn" class="btn" type="button" aria-label="Draw a card"
+            aria-controls="cardFace log">Draw</button>
         </div>
-        <button id="drawBtn" class="btn">Draw</button>
-      </div>
 
-      <div style="height:10px"></div>
+        <div class="spacer"></div>
 
-      <div class="panel" style="padding:10px;">
-        <div class="row">
-          <span class="chip p1">Player 1</span>
-          <span class="chip p2">Player 2</span>
+        <section class="panel" aria-label="Player selection">
+          <div class="row">
+            <span class="chip p1">Player 1</span>
+            <span class="chip p2">Player 2</span>
+          </div>
+          <div class="actions" id="actions"></div>
+        </section>
+
+        <div class="spacer"></div>
+
+        <section class="panel" aria-label="Game Log">
+          <div class="row between">
+            <strong>Game Log</strong>
+            <span class="muted">Own-color Home lanes (5); exact to Home; can’t land on rivals inside their Home
+              lane.</span>
+          </div>
+          <div class="log" id="log" role="log" aria-live="polite" aria-relevant="additions text"></div>
+        </section>
+      </section>
+
+      <!-- Game Board -->
+      <section class="board" aria-label="Game board">
+        <div class="zones">
+          <section class="zone" role="region" aria-labelledby="p1StatusLabel">
+            <h3 id="p1StatusLabel">Start / Status — Player 1</h3>
+            <div id="p1StartHome"></div>
+          </section>
+
+          <section class="zone" role="region" aria-labelledby="p2StatusLabel">
+            <h3 id="p2StatusLabel">Start / Status — Player 2</h3>
+            <div id="p2StartHome"></div>
+          </section>
         </div>
-        <div class="actions" id="actions"></div>
-      </div>
 
-      <div style="height:10px"></div>
+        <div class="track" id="track">
+          <div class="start-badge yellow">START</div>
+          <div class="home-star yellow">HOME</div>
 
-      <div class="panel">
-        <div class="row" style="justify-content:space-between;">
-          <strong>Game Log</strong>
-          <span class="muted">Own-color Home lanes (5); exact to Home; can’t land on rivals inside their Home
-            lane.</span>
+          <div class="start-badge green">START</div>
+          <div class="home-star green">HOME</div>
+
+          <div class="start-badge blue">START</div>
+          <div class="home-star blue">HOME</div>
+
+          <div class="start-badge red">START</div>
+          <div class="home-star red">HOME</div>
         </div>
-        <div class="log" id="log"></div>
-      </div>
+      </section>
     </div>
+  </main>
 
-    <div class="board">
-      <div class="zones">
-        <div class="zone">
-          <h3>Start / Status — Player 1</h3>
-          <div id="p1StartHome"></div>
-        </div>
-        <div class="zone">
-          <h3>Start / Status — Player 2</h3>
-          <div id="p2StartHome"></div>
-        </div>
-      </div>
-
-      <!-- Classic-style loop track with per-color Home lanes -->
-      <!-- Add inside the <div class="track" id="track"> -->
-      <div class="start-badge p1">START</div>
-      <div class="home-star p1">HOME</div>
-
-      <div class="start-badge p2">START</div>
-      <div class="home-star p2">HOME</div>
-
-      <footer>
-        2 players • 4 pawns each • Color-owned slides • Per-color Home lanes (5) • Exact count to Home • Enter from
-        Start on
-        1, 2, or SORRY.
-      </footer>
-
-      <script src="app.js"></script>
+  <!-- Footer -->
+  <footer role="contentinfo">
+    2 players • 4 pawns each • Color-owned slides • Per-color Home lanes (5) • Exact count to Home •
+    Enter from Start on <strong>any number or SORRY</strong>.
+  </footer>
 </body>
 
 </html>

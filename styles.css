@@ -1,16 +1,17 @@
 :root {
-  --p1: #e74c3c;
-  /* red */
-  --p2: #3498db;
-  /* blue */
+  --yellow: #f6d74b;
+  --green: #2ebd59;
+  --blue: #3498db;
+  --red: #e74c3c;
+  --fg: #f7f9fc;
   --board: #0e162b;
+  --table: #0c1426;
   --cell: #ecf0f1;
   --accent: #16a085;
-  --muted: #95a5a6;
-  --fg: #f7f9fc;
+  --slide-tint: .26;
 }
 
-/* ---------- Base UI chrome ---------- */
+/* App chrome (unchanged) */
 html,
 body {
   margin: 0;
@@ -30,7 +31,6 @@ header {
 h1 {
   margin: 0;
   font-size: 20px;
-  letter-spacing: .2px;
 }
 
 .wrap {
@@ -40,6 +40,10 @@ h1 {
   padding: 18px;
   max-width: 1200px;
   margin: 0 auto;
+}
+
+.spacer {
+  height: 10px;
 }
 
 .panel,
@@ -63,10 +67,9 @@ h1 {
 
 .btn {
   background: var(--accent);
-  color: white;
+  color: #fff;
   border: none;
   padding: 10px 14px;
-  font-weight: 600;
   border-radius: 10px;
   cursor: pointer;
 }
@@ -91,8 +94,8 @@ h1 {
 }
 
 .kpis .box b {
-  display: block;
   font-size: 20px;
+  display: block;
 }
 
 .actions {
@@ -115,11 +118,6 @@ h1 {
   background: var(--accent);
   color: #fff;
   border-color: transparent;
-}
-
-.muted {
-  color: #cbd5e1;
-  font-size: 12px;
 }
 
 .card {
@@ -148,35 +146,6 @@ h1 {
   color: #e5e7eb;
 }
 
-.log .turn {
-  color: #a5b4fc;
-}
-
-.row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.chip {
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-weight: 700;
-  font-size: 12px;
-  border: 1px solid rgba(255, 255, 255, .08);
-}
-
-.chip.p1 {
-  background: color-mix(in hsl, var(--p1) 28%, transparent);
-  color: #ffecec;
-}
-
-.chip.p2 {
-  background: color-mix(in hsl, var(--p2) 28%, transparent);
-  color: #e9f3ff;
-}
-
 footer {
   text-align: center;
   padding: 10px 0 20px;
@@ -190,7 +159,7 @@ footer {
   }
 }
 
-/* ---------- Board container ---------- */
+/* Board wrapper */
 .board {
   background: var(--board);
   border-radius: 14px;
@@ -198,7 +167,6 @@ footer {
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 14px;
-  position: relative;
 }
 
 .zones {
@@ -220,61 +188,47 @@ footer {
   font-size: 13px;
   color: #cbd5e1;
   font-weight: 700;
-  letter-spacing: .3px;
 }
 
-.pill {
-  display: inline-block;
-  padding: 6px 9px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, .08);
-  margin: 4px 6px 0 0;
-  font-size: 12px;
-}
-
-.pill.p1 {
-  background: color-mix(in hsl, var(--p1) 20%, transparent);
-  color: #ffd7d7;
-}
-
-.pill.p2 {
-  background: color-mix(in hsl, var(--p2) 20%, transparent);
-  color: #d7e9ff;
-}
-
-/* ---------- Square track area ---------- */
+/* =========================
+   Square Track — 17x17 grid
+========================= */
 .track {
   position: relative;
+  width: 100%;
   min-height: 640px;
+  aspect-ratio: 1 / 1;
+  /* keep board exactly square */
   border-radius: 14px;
-  overflow: hidden;
   background:
-    radial-gradient(circle at center, #0c1426 0%, #0c1426 42%, transparent 43%),
-    linear-gradient(#0b1020, #0b1020);
+    radial-gradient(circle at center, var(--table) 0%, var(--table) 42%, transparent 43%),
+    linear-gradient(#0b1320, #0b1320);
+  display: grid;
+  grid-template-columns: repeat(17, 1fr);
+  grid-template-rows: repeat(17, 1fr);
+  gap: 8px;
+  padding: 18px;
+  box-sizing: border-box;
 }
 
-/* Track cells (the 60 perimeter spots) */
-.track .cell {
-  position: absolute;
-  width: 44px;
-  height: 44px;
+/* Perimeter cells built by JS (56 total) */
+.cell {
+  position: relative;
   background: var(--cell);
   border-radius: 8px;
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .2), 0 2px 4px rgba(0, 0, 0, .28);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #111;
   font-weight: 800;
-  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .2), 0 2px 4px rgba(0, 0, 0, .28);
+  user-select: none;
 }
 
-.track .cell .idx {
+.cell .idx {
   display: none;
 }
 
-/* keep DOM clean */
-
-/* Pawn stacks */
 .stack {
   display: flex;
   gap: 4px;
@@ -286,172 +240,690 @@ footer {
   border-radius: 50%;
   border: 2px solid #111;
   box-shadow: 0 1px 2px rgba(0, 0, 0, .3);
+  user-select: none;
 }
 
 .pawn.p1 {
-  background: var(--p1);
+  background: var(--red);
 }
 
 .pawn.p2 {
-  background: var(--p2);
+  background: var(--blue);
 }
 
-/* ---------- Home lanes (5 cells each) ---------- */
+/* Home lane tiles */
 .homecell {
-  position: absolute;
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;
   background: #f3f4f6;
+  border-radius: 8px;
   box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .15), 0 2px 4px rgba(0, 0, 0, .28);
 }
 
-.homecell.p1 {
-  background: color-mix(in hsl, var(--p1) 20%, #ffffff);
+/* Top row (1..15) */
+.track .cell:nth-child(1) {
+  grid-row: 2;
+  grid-column: 2;
 }
 
-.homecell.p2 {
-  background: color-mix(in hsl, var(--p2) 20%, #ffffff);
+/* TL */
+.track .cell:nth-child(2) {
+  grid-row: 2;
+  grid-column: 3;
 }
 
-/* ---------- Start circles & Home stars (corner badges) ---------- */
-.badge {
+.track .cell:nth-child(3) {
+  grid-row: 2;
+  grid-column: 4;
+}
+
+.track .cell:nth-child(4) {
+  grid-row: 2;
+  grid-column: 5;
+}
+
+.track .cell:nth-child(5) {
+  grid-row: 2;
+  grid-column: 6;
+}
+
+.track .cell:nth-child(6) {
+  grid-row: 2;
+  grid-column: 7;
+}
+
+.track .cell:nth-child(7) {
+  grid-row: 2;
+  grid-column: 8;
+}
+
+.track .cell:nth-child(8) {
+  grid-row: 2;
+  grid-column: 9;
+}
+
+.track .cell:nth-child(9) {
+  grid-row: 2;
+  grid-column: 10;
+}
+
+.track .cell:nth-child(10) {
+  grid-row: 2;
+  grid-column: 11;
+}
+
+.track .cell:nth-child(11) {
+  grid-row: 2;
+  grid-column: 12;
+}
+
+.track .cell:nth-child(12) {
+  grid-row: 2;
+  grid-column: 13;
+}
+
+.track .cell:nth-child(13) {
+  grid-row: 2;
+  grid-column: 14;
+}
+
+.track .cell:nth-child(14) {
+  grid-row: 2;
+  grid-column: 15;
+}
+
+.track .cell:nth-child(15) {
+  grid-row: 2;
+  grid-column: 16;
+}
+
+/* TR */
+
+/* Right col (16..29, includes BR) */
+.track .cell:nth-child(16) {
+  grid-row: 3;
+  grid-column: 16;
+}
+
+.track .cell:nth-child(17) {
+  grid-row: 4;
+  grid-column: 16;
+}
+
+.track .cell:nth-child(18) {
+  grid-row: 5;
+  grid-column: 16;
+}
+
+.track .cell:nth-child(19) {
+  grid-row: 6;
+  grid-column: 16;
+}
+
+.track .cell:nth-child(20) {
+  grid-row: 7;
+  grid-column: 16;
+}
+
+.track .cell:nth-child(21) {
+  grid-row: 8;
+  grid-column: 16;
+}
+
+.track .cell:nth-child(22) {
+  grid-row: 9;
+  grid-column: 16;
+}
+
+.track .cell:nth-child(23) {
+  grid-row: 10;
+  grid-column: 16;
+}
+
+.track .cell:nth-child(24) {
+  grid-row: 11;
+  grid-column: 16;
+}
+
+.track .cell:nth-child(25) {
+  grid-row: 12;
+  grid-column: 16;
+}
+
+.track .cell:nth-child(26) {
+  grid-row: 13;
+  grid-column: 16;
+}
+
+.track .cell:nth-child(27) {
+  grid-row: 14;
+  grid-column: 16;
+}
+
+.track .cell:nth-child(28) {
+  grid-row: 15;
+  grid-column: 16;
+}
+
+.track .cell:nth-child(29) {
+  grid-row: 16;
+  grid-column: 16;
+}
+
+/* BR */
+
+/* Bottom row (30..43, excludes BR, includes BL) */
+.track .cell:nth-child(30) {
+  grid-row: 16;
+  grid-column: 15;
+}
+
+.track .cell:nth-child(31) {
+  grid-row: 16;
+  grid-column: 14;
+}
+
+.track .cell:nth-child(32) {
+  grid-row: 16;
+  grid-column: 13;
+}
+
+.track .cell:nth-child(33) {
+  grid-row: 16;
+  grid-column: 12;
+}
+
+.track .cell:nth-child(34) {
+  grid-row: 16;
+  grid-column: 11;
+}
+
+.track .cell:nth-child(35) {
+  grid-row: 16;
+  grid-column: 10;
+}
+
+.track .cell:nth-child(36) {
+  grid-row: 16;
+  grid-column: 9;
+}
+
+.track .cell:nth-child(37) {
+  grid-row: 16;
+  grid-column: 8;
+}
+
+.track .cell:nth-child(38) {
+  grid-row: 16;
+  grid-column: 7;
+}
+
+.track .cell:nth-child(39) {
+  grid-row: 16;
+  grid-column: 6;
+}
+
+.track .cell:nth-child(40) {
+  grid-row: 16;
+  grid-column: 5;
+}
+
+.track .cell:nth-child(41) {
+  grid-row: 16;
+  grid-column: 4;
+}
+
+.track .cell:nth-child(42) {
+  grid-row: 16;
+  grid-column: 3;
+}
+
+.track .cell:nth-child(43) {
+  grid-row: 16;
+  grid-column: 2;
+}
+
+/* BL */
+
+/* Left col (44..56, excludes BL & TL) */
+.track .cell:nth-child(44) {
+  grid-row: 15;
+  grid-column: 2;
+}
+
+.track .cell:nth-child(45) {
+  grid-row: 14;
+  grid-column: 2;
+}
+
+.track .cell:nth-child(46) {
+  grid-row: 13;
+  grid-column: 2;
+}
+
+.track .cell:nth-child(47) {
+  grid-row: 12;
+  grid-column: 2;
+}
+
+.track .cell:nth-child(48) {
+  grid-row: 11;
+  grid-column: 2;
+}
+
+.track .cell:nth-child(49) {
+  grid-row: 10;
+  grid-column: 2;
+}
+
+.track .cell:nth-child(50) {
+  grid-row: 9;
+  grid-column: 2;
+}
+
+.track .cell:nth-child(51) {
+  grid-row: 8;
+  grid-column: 2;
+}
+
+.track .cell:nth-child(52) {
+  grid-row: 7;
+  grid-column: 2;
+}
+
+.track .cell:nth-child(53) {
+  grid-row: 6;
+  grid-column: 2;
+}
+
+.track .cell:nth-child(54) {
+  grid-row: 5;
+  grid-column: 2;
+}
+
+.track .cell:nth-child(55) {
+  grid-row: 4;
+  grid-column: 2;
+}
+
+.track .cell:nth-child(56) {
+  grid-row: 3;
+  grid-column: 2;
+}
+
+/* Yellow ladder (top, inward) */
+.homecell.yellow.l1 {
+  grid-row: 3;
+  grid-column: 9;
+}
+
+.homecell.yellow.l2 {
+  grid-row: 4;
+  grid-column: 9;
+}
+
+.homecell.yellow.l3 {
+  grid-row: 5;
+  grid-column: 9;
+}
+
+.homecell.yellow.l4 {
+  grid-row: 6;
+  grid-column: 9;
+}
+
+.homecell.yellow.l5 {
+  grid-row: 7;
+  grid-column: 9;
+}
+
+/* Green ladder (right, inward) */
+.homecell.green.l1 {
+  grid-row: 9;
+  grid-column: 15;
+}
+
+.homecell.green.l2 {
+  grid-row: 9;
+  grid-column: 14;
+}
+
+.homecell.green.l3 {
+  grid-row: 9;
+  grid-column: 13;
+}
+
+.homecell.green.l4 {
+  grid-row: 9;
+  grid-column: 12;
+}
+
+.homecell.green.l5 {
+  grid-row: 9;
+  grid-column: 11;
+}
+
+/* Blue ladder (bottom, inward) */
+.homecell.blue.l1 {
+  grid-row: 15;
+  grid-column: 9;
+}
+
+.homecell.blue.l2 {
+  grid-row: 14;
+  grid-column: 9;
+}
+
+.homecell.blue.l3 {
+  grid-row: 13;
+  grid-column: 9;
+}
+
+.homecell.blue.l4 {
+  grid-row: 12;
+  grid-column: 9;
+}
+
+.homecell.blue.l5 {
+  grid-row: 11;
+  grid-column: 9;
+}
+
+/* Red ladder (left, inward) */
+.homecell.red.l1 {
+  grid-row: 9;
+  grid-column: 3;
+}
+
+.homecell.red.l2 {
+  grid-row: 9;
+  grid-column: 4;
+}
+
+.homecell.red.l3 {
+  grid-row: 9;
+  grid-column: 5;
+}
+
+.homecell.red.l4 {
+  grid-row: 9;
+  grid-column: 6;
+}
+
+.homecell.red.l5 {
+  grid-row: 9;
+  grid-column: 7;
+}
+
+/* ============== START circles & HOME stars ============== */
+.start-badge,
+.home-star {
   position: absolute;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 900;
-  letter-spacing: .5px;
-  color: #061016;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, .6);
-  z-index: 0;
+  z-index: 2;
 }
 
-/* Start circles */
+/* Color fills */
+.start-badge.yellow {
+  background: var(--yellow);
+  color: #0a0a0a;
+}
+
+.start-badge.green {
+  background: var(--green);
+  color: #0a0a0a;
+}
+
+.start-badge.blue {
+  background: var(--blue);
+  color: #0a0a0a;
+}
+
+.start-badge.red {
+  background: var(--red);
+  color: #0a0a0a;
+}
+
+/* Raised ring look */
 .start-badge {
-  width: 96px;
-  height: 96px;
-  border-radius: 999px;
-  background: #f1f5f9;
   box-shadow:
-    inset 0 0 0 6px rgba(255, 255, 255, .75),
+    inset 0 0 0 6px rgba(255, 255, 255, .85),
     inset 0 0 0 10px rgba(0, 0, 0, .12),
     0 4px 10px rgba(0, 0, 0, .35);
-  font-size: 14px;
-}
-
-.start-badge.p1 {
-  top: 18px;
-  left: 18px;
-}
-
-.start-badge.p2 {
-  bottom: 18px;
-  right: 18px;
 }
 
 /* HOME stars */
+.home-star.yellow {
+  background: var(--yellow);
+  color: #0a0a0a;
+}
+
+.home-star.green {
+  background: var(--green);
+  color: #0a0a0a;
+}
+
+.home-star.blue {
+  background: var(--blue);
+  color: #0a0a0a;
+}
+
+.home-star.red {
+  background: var(--red);
+  color: #0a0a0a;
+}
+
+/* Positions */
+.start-badge.yellow {
+  top: 22px;
+  left: 22px;
+}
+
+.start-badge.green {
+  top: 22px;
+  right: 22px;
+}
+
+.start-badge.blue {
+  bottom: 22px;
+  left: 22px;
+}
+
+.start-badge.red {
+  bottom: 22px;
+  right: 22px;
+}
+
+.home-star.yellow {
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.home-star.green {
+  top: 50%;
+  right: 22px;
+  transform: translateY(-50%);
+}
+
+.home-star.blue {
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.home-star.red {
+  top: 50%;
+  left: 22px;
+  transform: translateY(-50%);
+}
+
+/* star shape */
 .home-star {
-  width: 120px;
-  height: 120px;
-  background: #fffde7;
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%,
-      79% 91%, 50% 70%, 21% 91%, 32% 57%,
-      2% 35%, 39% 35%);
-  box-shadow:
-    inset 0 0 0 6px rgba(255, 255, 255, .75),
-    inset 0 0 0 10px rgba(0, 0, 0, .12),
-    0 6px 14px rgba(0, 0, 0, .38);
-  font-size: 14px;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  border-radius: 0;
 }
 
-.home-star.p1 {
-  top: 18px;
-  right: 18px;
+.muted {
+  color: #9ca3af;
 }
 
-.home-star.p2 {
-  bottom: 18px;
-  left: 18px;
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-/* ---------- Slide tints (CSS-only) ----------
-   These tint the *slide start* tiles if your DOM adds 60 .cell nodes
-   in index order (0..59). Adjust nth-child indices as needed if your
-   slide starts move. Current logic uses starts at:
-   P1: 3 and 11   → nth-child(4), nth-child(12)
-   P2: 33 and 41  → nth-child(34), nth-child(42)
-*/
-.track .cell:nth-child(4) {
-  background: color-mix(in hsl, var(--p1) 25%, var(--cell));
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  background: #0b1020;
+  border: 1px solid rgba(255, 255, 255, .12);
 }
 
+.chip.p1::before,
+.chip.p2::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #111;
+  display: inline-block;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .3);
+}
+
+.chip.p1::before {
+  background: var(--red);
+}
+
+.chip.p2::before {
+  background: var(--blue);
+}
+
+
+/* ============== Slides (visual) ============== */
+/* Fallback tints (for browsers without color-mix) */
+.track .cell:nth-child(4),
 .track .cell:nth-child(12) {
-  background: color-mix(in hsl, var(--p1) 25%, var(--cell));
+  background: #f7e890;
 }
 
-.track .cell:nth-child(34) {
-  background: color-mix(in hsl, var(--p2) 25%, var(--cell));
+/* yellow */
+.track .cell:nth-child(19),
+.track .cell:nth-child(27) {
+  background: #c9f0d7;
 }
 
-.track .cell:nth-child(42) {
-  background: color-mix(in hsl, var(--p2) 25%, var(--cell));
+/* green */
+.track .cell:nth-child(32),
+.track .cell:nth-child(40) {
+  background: #cfe5f6;
 }
 
-/* ---------- Direction arrows (CSS-only; no JS classes) ----------
-   - Show an arrow every 3rd cell.
-   - Rotate by side using nth-child ranges:
-     1–15 top, 16–30 right, 31–45 bottom, 46–60 left.
-*/
+/* blue */
+.track .cell:nth-child(45),
+.track .cell:nth-child(53) {
+  background: #f6c9c5;
+}
+
+/* red */
+
+/* Prefer dynamic mixing when supported */
+@supports (background: color-mix(in hsl, red 50%, white)) {
+
+  .track .cell:nth-child(4),
+  .track .cell:nth-child(12) {
+    background: color-mix(in hsl, var(--yellow) var(--slide-tint), var(--cell));
+  }
+
+  .track .cell:nth-child(19),
+  .track .cell:nth-child(27) {
+    background: color-mix(in hsl, var(--green) var(--slide-tint), var(--cell));
+  }
+
+  .track .cell:nth-child(32),
+  .track .cell:nth-child(40) {
+    background: color-mix(in hsl, var(--blue) var(--slide-tint), var(--cell));
+  }
+
+  .track .cell:nth-child(45),
+  .track .cell:nth-child(53) {
+    background: color-mix(in hsl, var(--red) var(--slide-tint), var(--cell));
+  }
+}
+
+/* ============== Direction arrows (CSS-only) ============== */
 .track .cell::after {
   content: "";
   position: absolute;
-  bottom: 3px;
+  bottom: 6px;
   width: 0;
   height: 0;
   border-left: 7px solid transparent;
   border-right: 7px solid transparent;
   border-top: 10px solid rgba(0, 0, 0, .72);
-  opacity: .75;
+  opacity: .8;
   transform: rotate(0deg);
   display: none;
-  /* hidden by default */
 }
 
+/* show every 3rd */
 .track .cell:nth-child(3n+1)::after {
   display: block;
 }
 
-/* Orientation by side (1-based child positions) */
+/* Orientation by side ranges (56 total) */
 .track .cell:nth-child(-n+15)::after {
   transform: rotate(0deg);
 }
 
 /* top → */
-.track .cell:nth-child(n+16):nth-child(-n+30)::after {
+.track .cell:nth-child(n+16):nth-child(-n+29)::after {
   transform: rotate(90deg);
 }
 
 /* right ↓ */
-.track .cell:nth-child(n+31):nth-child(-n+45)::after {
+.track .cell:nth-child(n+30):nth-child(-n+43)::after {
   transform: rotate(180deg);
 }
 
 /* bottom ← */
-.track .cell:nth-child(n+46):nth-child(-n+60)::after {
+.track .cell:nth-child(n+44):nth-child(-n+56)::after {
   transform: rotate(-90deg);
 }
 
 /* left ↑ */
 
-/* ---------- Optional: hide legacy corner boxes if present ---------- */
 .track .corner {
   display: none;
 }
 
-/* ---------- Responsive tweak ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* hide any legacy corner boxes */
+
 @media (max-width:900px) {
   .track {
     min-height: 540px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .cell,
+  .pawn {
+    box-shadow: none;
   }
 }

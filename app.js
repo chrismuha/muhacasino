@@ -5,18 +5,18 @@
 
 function createSorryGame() {
   /* ===== Constants ===== */
-  const BOARD_LEN = 60;                 // main loop cells 0..59 (15 per side)
+  const BOARD_LEN = 60; // main loop cells 0..59 (15 per side)
   const PAWNS_PER_PLAYER = 4;
   const START = -1;
   const HOME = 999;
 
   // Per-color Home lanes (5 cells each). Encoded as out-of-band indices.
   const LANE_LEN = 5;
-  const LANE_BASE = [1100, 1200];       // [P1, P2]
+  const LANE_BASE = [1100, 1200]; // [P1, P2]
 
   // Where you enter the loop from START, and where you turn into your Home lane.
-  const START_ENTRY = [0, 30];          // P1 at 0; P2 opposite at 30
-  const HOME_ENTRY = [59, 29];         // the “approach” just before your own start
+  const START_ENTRY = [0, 30];
+  const HOME_ENTRY = [59, 29];
 
   // Slides (owner-color: only opponents slide)
   const SLIDES = [
@@ -231,8 +231,8 @@ function createSorryGame() {
             const A = computeForwardDest(player, pos, a);
             const B = computeForwardDest(player, posB, b);
             if (!A.valid || !B.valid) continue;
-            if (A.to !== HOME && B.to !== HOME && A.to === B.to) continue;         // no same landing cell
-            if (A.to !== HOME && cellOccupiedBy(player, A.to) !== -1) continue;   // can’t land on own pawn
+            if (A.to !== HOME && B.to !== HOME && A.to === B.to) continue; // cannot land on same cell
+            if (A.to !== HOME && cellOccupiedBy(player, A.to) !== -1) continue;   // cannot land on own pawn
             if (B.to !== HOME && cellOccupiedBy(player, B.to) !== -1) continue;
             actions.push({
               type: 'SPLIT7', pawns: [i, k], steps: [a, b], dests: [A.to, B.to],
@@ -264,7 +264,7 @@ function createSorryGame() {
     const ln = laneOf(res.to);
     const occ = anyPawnAt(res.to);
     if (ln !== -1) {
-      // can’t land on rival in their lane
+      // cannot land on rival in their lane
       if (occ && occ.player !== player) return;
     }
     // Slides: only if landing on slide start on MAIN, and not your color
