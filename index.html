@@ -31,7 +31,6 @@
   <!-- Main Content -->
   <main role="main">
     <div class="wrap">
-
       <!-- Left Panel (Cards & Actions) -->
       <section class="panel" aria-label="Player controls and game actions">
         <div class="deck-area">
@@ -39,8 +38,9 @@
             <div class="card" id="cardFace" role="status" aria-live="polite" aria-atomic="true">Draw a card</div>
             <div class="hint" id="cardHint">You can leave Start on any number or SORRY!</div>
           </div>
-          <button id="drawBtn" class="btn" type="button" aria-label="Draw a card"
-            aria-controls="cardFace log">Draw</button>
+          <button id="drawBtn" class="btn" type="button" aria-label="Draw a card" aria-controls="cardFace log">
+            Draw
+          </button>
         </div>
 
         <div class="spacer"></div>
@@ -58,8 +58,9 @@
         <section class="panel" aria-label="Game Log">
           <div class="row between">
             <strong>Game Log</strong>
-            <span class="muted">Own-color Home lanes (5); exact to Home; can’t land on rivals inside their Home
-              lane.</span>
+            <span class="muted">
+              Own-color Home lanes (5); exact to Home; can’t land on rivals inside their Home lane.
+            </span>
           </div>
           <div class="log" id="log" role="log" aria-live="polite" aria-relevant="additions text"></div>
         </section>
@@ -79,19 +80,8 @@
           </section>
         </div>
 
-        <div class="track" id="track">
-          <div class="start-badge yellow">START</div>
-          <div class="home-star yellow">HOME</div>
-
-          <div class="start-badge green">START</div>
-          <div class="home-star green">HOME</div>
-
-          <div class="start-badge blue">START</div>
-          <div class="home-star blue">HOME</div>
-
-          <div class="start-badge red">START</div>
-          <div class="home-star red">HOME</div>
-        </div>
+        <!-- The JS populates #track dynamically; decorative badges should be done via CSS or JS, not static HTML -->
+        <div class="track" id="track"></div>
       </section>
     </div>
   </main>
@@ -101,6 +91,10 @@
     2 players • 4 pawns each • Color-owned slides • Per-color Home lanes (5) • Exact count to Home •
     Enter from Start on <strong>any number or SORRY</strong>.
   </footer>
+
+  <noscript>
+    This game requires JavaScript enabled.
+  </noscript>
 </body>
 
 </html>

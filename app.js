@@ -1,24 +1,16 @@
-/* ===============================
-   Sorry! — Pure Game Logic Engine
-   (no DOM / no styling)
-   =============================== */
-
 function createSorryGame() {
   /* ===== Constants ===== */
-  const BOARD_LEN = 60; // main loop cells 0..59 (15 per side)
+  const BOARD_LEN = 56; // main loop cells 0..55 (14 per side)
   const PAWNS_PER_PLAYER = 4;
   const START = -1;
   const HOME = 999;
 
-  // Per-color Home lanes (5 cells each). Encoded as out-of-band indices.
   const LANE_LEN = 5;
-  const LANE_BASE = [1100, 1200]; // [P1, P2]
+  const LANE_BASE = [1100, 1200]; // [P1, P2] (unchanged)
 
-  // Where you enter the loop from START, and where you turn into your Home lane.
-  const START_ENTRY = [0, 30];
-  const HOME_ENTRY = [59, 29];
+  const START_ENTRY = [0, 28]; // P1 at 0, P2 opposite at 28
+  const HOME_ENTRY = [27, 55]; // turn into lane just before each START
 
-  // Slides (owner-color: only opponents slide)
   const SLIDES = [
     // P1-owned
     { start: (START_ENTRY[0] + 3) % BOARD_LEN, len: 4, owner: 0 },
@@ -58,7 +50,7 @@ function createSorryGame() {
     return deck;
   }
 
-  /* ===== Helpers (pure) ===== */
+  /* ===== Helpers ===== */
   const opponent = (p) => 1 - p;
   const isMain = (pos) => pos >= 0 && pos < BOARD_LEN;
   const laneOf = (pos) =>
@@ -101,7 +93,7 @@ function createSorryGame() {
       if (idx < LANE_LEN - 1) return pos + 1;
       return HOME; // last lane cell -> HOME
     }
-    if (ln !== -1) return pos; // opponent lane shouldn't be entered by legal moves
+    if (ln !== -1) return pos; // opponent lane should not be entered by legal moves
     if (pos === HOME_ENTRY[player]) return LANE_BASE[player]; // turn into lane
     return (pos + 1) % BOARD_LEN;
   }
@@ -159,7 +151,8 @@ function createSorryGame() {
       for (let i = 0; i < PAWNS_PER_PLAYER; i++) {
         if (mine[i] === START) {
           const entry = START_ENTRY[player];
-          if (cellOccupiedBy(player, entry) === -1 && !anyPawnAt(entry)) {
+          // allow entry if entry is not occupied by own pawn (opponent there will be bumped)
+          if (cellOccupiedBy(player, entry) === -1) {
             actions.push({
               type: 'MOVE', pawn: i, from: START, to: entry, steps: 'enter',
               label: `Enter pawn ${i + 1} to ${entry}`
@@ -202,7 +195,6 @@ function createSorryGame() {
         continue;
       }
 
-      // 11: swap (main-to-main only) or forward 11
       if (n === 11) {
         if (isMain(pos)) {
           for (let j = 0; j < PAWNS_PER_PLAYER; j++) {
@@ -219,7 +211,6 @@ function createSorryGame() {
         continue;
       }
 
-      // 7: forward 7 or split (forward only; lanes allowed)
       if (n === 7) {
         addForward(actions, player, i, pos, 7);
         for (let k = 0; k < PAWNS_PER_PLAYER; k++) {
@@ -243,7 +234,6 @@ function createSorryGame() {
         continue;
       }
 
-      // normal forwards: 1,2,3,5,8,12
       if ([1, 2, 3, 5, 8, 12].includes(n)) {
         addForward(actions, player, i, pos, n);
       }
@@ -259,15 +249,12 @@ function createSorryGame() {
       actions.push({ type: 'HOME', pawn: pawnIdx, from: pos, label: `Pawn ${pawnIdx + 1} into Home (exact)` });
       return;
     }
-    // Landing checks
     if (cellOccupiedBy(player, res.to) !== -1) return;
     const ln = laneOf(res.to);
     const occ = anyPawnAt(res.to);
     if (ln !== -1) {
-      // cannot land on rival in their lane
       if (occ && occ.player !== player) return;
     }
-    // Slides: only if landing on slide start on MAIN, and not your color
     if (isMain(res.to)) {
       const sl = findSlideAt(res.to);
       if (sl && sl.owner !== player) {
@@ -298,6 +285,26 @@ function createSorryGame() {
       return true;
     });
   }
+
+  function maybeSlide(player, pos, pawnIdx) {
+    if (!isMain(pos)) return;
+    const sl = findSlideAt(pos);
+    if (sl && sl.owner !== player) {
+      const end = slideEndpoint(sl);
+      if (cellOccupiedBy(player, end) !== -1) return;
+      for (let cell = 0; cell < sl.len; cell++) {
+        const at = (sl.start + cell) % BOARD_LEN;
+        const occ = anyPawnAt(at);
+        if (occ && occ.player !== player) {
+          state.pawns[occ.player][occ.idx] = START;
+          emit('log', `Bumped P${occ.player + 1} pawn ${occ.idx + 1} off slide cell ${at}.`);
+        }
+      }
+      state.pawns[player][pawnIdx] = end;
+      emit('log', `P${player + 1}: slid to ${end}.`);
+    }
+  }
+
 
   /* ===== Apply actions (mutates state) ===== */
   function bumpIfNeeded(player, pos) {
@@ -344,12 +351,15 @@ function createSorryGame() {
         mine[aIdx] = bPos;
         opp[bIdx] = aPos;
         emit('log', `P${player + 1}: swapped pawn ${aIdx + 1} with opponent pawn ${bIdx + 1}.`);
+        maybeSlide(player, bPos, aIdx);
+        maybeSlide(opponent(player), aPos, bIdx);
       }
     } else if (action.type === 'SORRY') {
       const { srcPawn, targetPawn, targetPos } = action;
       mine[srcPawn] = targetPos;
       opp[targetPawn] = START;
       emit('log', `P${player + 1} SORRY!: placed pawn ${srcPawn + 1} on ${targetPos} and bumped opponent pawn ${targetPawn + 1} to Start.`);
+      maybeSlide(player, targetPos, srcPawn);
     } else if (action.type === 'SPLIT7') {
       const [i, k] = action.pawns;
       const [a, b] = action.steps;
@@ -428,7 +438,6 @@ function createSorryGame() {
 
   /* ===== Public API ===== */
   function snapshot() {
-    // return an immutable-ish shallow snapshot for UI
     return {
       turn: state.turn,
       pawns: state.pawns.map(a => a.slice()),

@@ -5,31 +5,49 @@ document.addEventListener('DOMContentLoaded', () => {
     const track = document.getElementById('track');
     if (!track) return;
 
-    // 1) 60 perimeter cells in order 0..59 (CSS grid places them)
-    for (let i = 0; i < 60; i++) {
+    // Prevent duplicate initialization (e.g. hot reload / reinserted script)
+    if (track.dataset.uiInit) return;
+    track.dataset.uiInit = '1';
+
+    // Ensure deterministic nth-child mapping
+    track.innerHTML = '';
+
+    // Build once with a fragment
+    const frag = document.createDocumentFragment();
+
+    const TRACK_CELLS = 56;
+    // Cache cell stacks for fast access in render
+    const cellStacks = new Array(TRACK_CELLS);
+
+    for (let i = 0; i < TRACK_CELLS; i++) {
         const cell = document.createElement('div');
         cell.className = 'cell';
         const stack = document.createElement('div');
         stack.className = 'stack';
         cell.appendChild(stack);
-        track.appendChild(cell);
+        frag.appendChild(cell);
+        cellStacks[i] = stack;
     }
 
-    // 2) 4×5 home ladders (yellow, green, blue, red) in this exact sequence
+    // 4×5 home ladders (yellow, green, blue, red) in this exact sequence
     const colors = ['yellow', 'green', 'blue', 'red'];
     colors.forEach(color => {
         for (let i = 1; i <= 5; i++) {
             const hc = document.createElement('div');
-            hc.className = `homecell ${color}`;
-            track.appendChild(hc);
+            hc.className = `homecell ${color} l${i}`;
+            const stack = document.createElement('div');
+            stack.className = 'stack';
+            hc.appendChild(stack);
+            frag.appendChild(hc);
         }
     });
 
-    // Hook up the logic engine if it exists (render pawns, actions, etc.)
+    track.appendChild(frag);
+
+    // Hook up logic engine if available
     if (window.createSorryGame) {
         const game = window.createSorryGame();
 
-        // Basic UI bindings already in your HTML
         const drawBtn = document.getElementById('drawBtn');
         const actionsEl = document.getElementById('actions');
         const logEl = document.getElementById('log');
@@ -39,73 +57,75 @@ document.addEventListener('DOMContentLoaded', () => {
         const cardHint = document.getElementById('cardHint');
 
         function clearStacks() {
-            document.querySelectorAll('#track .cell .stack, #track .homecell .stack').forEach(s => s.innerHTML = '');
+            for (let i = 0; i < cellStacks.length; i++) {
+                cellStacks[i].textContent = '';
+            }
         }
 
-        function placePawn(p, idx, pos, consts) {
-            const dot = document.createElement('div');
-            dot.className = 'pawn ' + (p === 0 ? 'p1' : 'p2');
-
-            // main loop 0..59 => nth-child is index+1
-            if (pos >= 0 && pos < consts.BOARD_LEN) {
-                const cell = track.querySelector(`.cell:nth-child(${pos + 1}) .stack`);
-                if (cell) cell.appendChild(dot);
-                return;
+        function placePawn(player, pos) {
+            if (Number.isInteger(pos) && pos >= 0 && pos < TRACK_CELLS) {
+                const dot = document.createElement('div');
+                dot.className = 'pawn ' + (player === 0 ? 'p1' : 'p2');
+                cellStacks[pos].appendChild(dot);
             }
-            // lanes (we only render two players visually on neutral lanes)
-            // You can extend this if you add 4-player logic later.
         }
 
         function render() {
             const s = game.snapshot();
-            turnLabel.textContent = s.turn === 0 ? 'P1' : 'P2';
-            deckLeft.textContent = `${s.deckCount} + ${s.discardCount}D`;
-            cardFace.textContent = s.drawn ? `Card: ${s.drawn}` : 'Draw a card';
-            cardHint.textContent = s.drawn ? '' : 'You can leave Start on any number or SORRY!';
+
+            if (turnLabel) turnLabel.textContent = s.turn === 0 ? 'P1' : 'P2';
+            if (deckLeft) deckLeft.textContent = `Deck: ${s.deckCount} (Discard: ${s.discardCount})`;
+            if (cardFace) cardFace.textContent = s.drawn ? `Card: ${s.drawn}` : 'Draw a card';
+            if (cardHint) cardHint.textContent = s.drawn ? '' : 'You can leave Start on any number or SORRY!';
 
             clearStacks();
+
             for (let p = 0; p < 2; p++) {
                 for (let k = 0; k < s.pawns[p].length; k++) {
-                    placePawn(p, k, s.pawns[p][k], s.consts);
+                    placePawn(p, s.pawns[p][k]);
                 }
             }
 
-            // Actions
-            actionsEl.innerHTML = '';
+            if (!actionsEl) return;
+            actionsEl.textContent = '';
             const acts = game.legalActions();
             if (!s.drawn) return;
+
             if (acts.length === 0) {
-                const end = document.createElement('button');
-                end.className = 'a-btn primary';
-                end.textContent = 'End Turn (no moves)';
-                end.onclick = () => {
-                    game.play({ __noop: true }); // consume & pass turn by playing nothing
-                };
-                actionsEl.appendChild(end);
+                const note = document.createElement('div');
+                note.className = 'a-note';
+                note.textContent = 'No legal moves.';
+                actionsEl.appendChild(note);
                 return;
             }
-            acts.forEach(a => {
+
+            for (const a of acts) {
                 const b = document.createElement('button');
                 b.className = 'a-btn';
                 b.textContent = a.label || 'Move';
-                b.onclick = () => { game.play(a); };
+                b.addEventListener('click', () => game.play(a), { once: true });
                 actionsEl.appendChild(b);
-            });
+            }
         }
 
-        drawBtn.addEventListener('click', () => {
-            game.drawCard();
-        });
+        if (drawBtn) {
+            drawBtn.addEventListener('click', () => game.drawCard());
+        }
 
-        // Logs
+        if (logEl) {
+            logEl.setAttribute('role', 'log');
+            logEl.setAttribute('aria-live', 'polite');
+            logEl.setAttribute('aria-relevant', 'additions'); // ✅ Improved accessibility
+        }
+
         game.on('log', msg => {
+            if (!logEl) return;
             const p = document.createElement('p');
             p.textContent = msg;
             logEl.appendChild(p);
             logEl.scrollTop = logEl.scrollHeight;
         });
 
-        // Re-render on any state change
         game.on('change', render);
         render();
     }
