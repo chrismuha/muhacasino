@@ -1,19 +1,28 @@
 /* ====== Core Game State ====== */
-const BOARD_LEN = 60;
-const SAFE_START = 55; // cells 55-59 are a shared "Safety zone" where opponents cannot land
+const BOARD_LEN = 60;        // main loop cells 0..59
 const PAWNS_PER_PLAYER = 4;
-const START = -1;  // off-board start
-const HOME = 999; // reached home
+const START = -1;
+const HOME = 999;
 
-// Simple slides: landing on start of a slide that is NOT your own color slides you forward and bumps along the way.
-// owner: 0 for P1 colored slide, 1 for P2 colored slide
+/* Per-color Home lanes (5 cells each). We encode them as numbers outside main track:
+   P1 lane: 1100..1104, P2 lane: 1200..1204  */
+const LANE_LEN = 5;
+const LANE_BASE = [1100, 1200]; // [P1, P2]
+
+/* Start entry (where you enter the loop when leaving START) and Home entry (where you turn into your Home lane) */
+const START_ENTRY = [0, 30];                  // P1 at top, P2 opposite
+const HOME_ENTRY = [(0 + BOARD_LEN - 1) % 60,     // one before your start, like the real board’s approach
+(30 + BOARD_LEN - 1) % 60];  // i.e., 59 for P1, 29 for P2
+
+/* Slides: two per color, lengths ~ classic (4 and 5). Owners: 0=P1, 1=P2.
+   Starts are positioned relative to each color’s quadrant. */
 const SLIDES = [
-  { start: 3, len: 4, owner: 0 },
-  { start: 10, len: 5, owner: 1 },
-  { start: 18, len: 4, owner: 0 },
-  { start: 27, len: 5, owner: 1 },
-  { start: 35, len: 4, owner: 0 },
-  { start: 44, len: 5, owner: 1 }
+  // P1-owned slides (red) -> rivals slide on these
+  { start: (START_ENTRY[0] + 3) % BOARD_LEN, len: 4, owner: 0 },
+  { start: (START_ENTRY[0] + 11) % BOARD_LEN, len: 5, owner: 0 },
+  // P2-owned slides (blue)
+  { start: (START_ENTRY[1] + 3) % BOARD_LEN, len: 4, owner: 1 },
+  { start: (START_ENTRY[1] + 11) % BOARD_LEN, len: 5, owner: 1 },
 ];
 
 const state = {
@@ -27,10 +36,7 @@ const state = {
   drawn: null, // current card
 };
 
-/* ====== Deck (counts approximate classic distribution) ======
-   Counts chosen for a nice game flow (not exact to Hasbro):
-   1x5, 2x4, 3x4, 4x4, 5x4, 7x4, 8x4, 10x4, 11x4, 12x4, SORRYx4
-*/
+/* ====== Deck (approx distribution) ====== */
 function buildDeck() {
   const make = (label, count) => Array.from({ length: count }, _ => label);
   const deck = [
@@ -39,7 +45,6 @@ function buildDeck() {
     ...make('10', 4), ...make('11', 4), ...make('12', 4),
     ...make('SORRY', 4),
   ];
-  // shuffle
   for (let i = deck.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [deck[i], deck[j]] = [deck[j], deck[i]];
@@ -64,8 +69,18 @@ function nextTurn() {
 
 /* ====== Helpers ====== */
 function opponent(p) { return 1 - p; }
+function isMain(pos) { return pos >= 0 && pos < BOARD_LEN; }
+function laneOf(pos) {
+  return pos >= LANE_BASE[0] && pos < LANE_BASE[0] + LANE_LEN ? 0
+    : pos >= LANE_BASE[1] && pos < LANE_BASE[1] + LANE_LEN ? 1
+      : -1;
+}
+function isHomeLane(pos) { return laneOf(pos) !== -1; }
 
-function canEnterStartOn(card) { return card === '1' || card === '2' || card === 'SORRY'; }
+function canEnterStartOn(card) {
+  // Allow entering from START on any numeric card or SORRY
+  return card === 'SORRY' || !Number.isNaN(Number(card));
+}
 
 function cellOccupiedBy(player, pos) {
   for (let i = 0; i < PAWNS_PER_PLAYER; i++) {
@@ -73,7 +88,6 @@ function cellOccupiedBy(player, pos) {
   }
   return -1;
 }
-
 function anyPawnAt(pos) {
   for (let p = 0; p < 2; p++) {
     for (let i = 0; i < PAWNS_PER_PLAYER; i++) {
@@ -83,33 +97,72 @@ function anyPawnAt(pos) {
   return null;
 }
 
-function isSafetyCell(pos) {
-  return pos >= SAFE_START && pos < BOARD_LEN;
-}
-
 function findSlideAt(pos) {
+  if (!isMain(pos)) return null;
   return SLIDES.find(s => s.start === pos) || null;
 }
-
 function slideEndpoint(slide) {
-  return slide.start + slide.len - 1;
+  return (slide.start + slide.len - 1) % BOARD_LEN;
 }
 
-// Produce legal actions for player+card
+/* ====== Movement rules (classic-ish) ======
+   - Forward counting is step-by-step so we can turn into your own Home lane at HOME_ENTRY[p].
+   - You cannot enter an opponent’s Home lane.
+   - Exact count required to reach HOME from the end of your lane.
+*/
+function stepForwardOnce(player, pos) {
+  if (pos === START) return START_ENTRY[player]; // shouldn’t be called directly; handled by enter
+  const lane = laneOf(pos);
+  if (lane === player) {
+    // progress along your lane
+    const idx = pos - LANE_BASE[player];
+    if (idx < LANE_LEN - 1) return pos + 1;
+    // from last lane cell, next is HOME
+    return HOME;
+  }
+  if (lane !== -1) {
+    // inside opponent lane — should never happen for legal moves
+    return pos;
+  }
+  // main track
+  if (pos === HOME_ENTRY[player]) {
+    // turn into lane
+    return LANE_BASE[player]; // first lane cell
+  }
+  return (pos + 1) % BOARD_LEN;
+}
+
+function computeForwardDestClassic(player, startPos, steps) {
+  let pos = startPos;
+  for (let s = 0; s < steps; s++) {
+    const next = stepForwardOnce(player, pos);
+    if (next === HOME) {
+      if (s === steps - 1) { return { valid: true, to: HOME }; }
+      // overshoot past Home
+      return { valid: false };
+    }
+    // forbid entering opponent lane
+    const ln = laneOf(next);
+    if (ln !== -1 && ln !== player) return { valid: false };
+    pos = next;
+  }
+  return { valid: true, to: pos };
+}
+
+/* ====== Legal actions ====== */
 function legalMovesForCard(player, card) {
   const actions = [];
   const mine = state.pawns[player];
   const their = state.pawns[opponent(player)];
 
-  // SORRY! from Start to any opponent-occupied main cell (not Safety)
+  // SORRY!: from START to any opponent on main track (not in their lane)
   if (card === 'SORRY') {
     const starters = mine.map((p, i) => ({ i, at: p })).filter(z => z.at === START);
-    const targets = their.map((p, i) => ({ i, at: p })).filter(z => z.at >= 0 && z.at < SAFE_START); // can't target Safety cells
+    const targets = their.map((p, i) => ({ i, at: p })).filter(z => isMain(z.at)); // only main-track targets
     if (starters.length && targets.length) {
       for (const s of starters) {
         for (const t of targets) {
-          // can't replace onto your own pawn; ours are at START so ok
-          actions.push({ type: 'SORRY', srcPawn: s.i, targetPawn: t.i, targetPos: t.at, label: `SORRY! P${player + 1} pawn ${s.i + 1} to cell ${t.at} (bump P${opponent(player) + 1} pawn ${t.i + 1})` });
+          actions.push({ type: 'SORRY', srcPawn: s.i, targetPawn: t.i, targetPos: t.at, label: `SORRY! place pawn ${s.i + 1} on ${t.at} (bump)` });
         }
       }
     }
@@ -122,8 +175,9 @@ function legalMovesForCard(player, card) {
   if (canEnterStartOn(card)) {
     for (let i = 0; i < PAWNS_PER_PLAYER; i++) {
       if (mine[i] === START) {
-        if (cellOccupiedBy(player, 0) === -1 && !anyPawnAt(0)) { // can't land on own or their pawn
-          actions.push({ type: 'MOVE', pawn: i, from: START, to: 0, steps: 'enter', label: `Enter pawn ${i + 1} to cell 0` });
+        const entry = START_ENTRY[player];
+        if (cellOccupiedBy(player, entry) === -1 && !anyPawnAt(entry)) {
+          actions.push({ type: 'MOVE', pawn: i, from: START, to: entry, steps: 'enter', label: `Enter pawn ${i + 1} to ${entry}` });
         }
       }
     }
@@ -133,11 +187,10 @@ function legalMovesForCard(player, card) {
     const pos = mine[i];
     if (pos === START || pos === HOME) continue;
 
-    // backward moves not allowed into/through Safety; they just subtract unless underflow
+    // 4 = backward four (main track only; can’t go backward in lanes)
     if (n === 4) {
-      const to = pos - 4;
-      if (to >= 0) {
-        // can't land on own pawn; can land on opponent unless it's Safety (but Safety is at end, so can't reach when going backward)
+      if (isMain(pos)) {
+        const to = (pos - 4 + BOARD_LEN) % BOARD_LEN;
         if (cellOccupiedBy(player, to) === -1) {
           actions.push({ type: 'MOVE', pawn: i, from: pos, to, steps: -4, label: `Pawn ${i + 1} back 4 to ${to}` });
         }
@@ -145,49 +198,48 @@ function legalMovesForCard(player, card) {
       continue;
     }
 
-    // 10: forward 10 or back 1
+    // 10: forward 10 or back 1 (back 1 only on main)
     if (n === 10) {
-      // back 1
-      if (pos - 1 >= 0 && cellOccupiedBy(player, pos - 1) === -1) {
-        actions.push({ type: 'MOVE', pawn: i, from: pos, to: pos - 1, steps: -1, label: `Pawn ${i + 1} back 1 to ${pos - 1}` });
-      }
-      // forward 10
-      addForwardActions(actions, player, i, pos, 10);
-      continue;
-    }
-
-    // 11: swap or forward 11
-    if (n === 11) {
-      // swap with any opponent pawn not in Safety
-      for (let j = 0; j < PAWNS_PER_PLAYER; j++) {
-        const oppPos = their[j];
-        if (oppPos >= 0 && oppPos < SAFE_START) {
-          actions.push({ type: 'SWAP', pawn: i, other: j, label: `Swap pawn ${i + 1} with opponent pawn ${j + 1}` });
+      if (isMain(pos)) {
+        const toBack = (pos - 1 + BOARD_LEN) % BOARD_LEN;
+        if (cellOccupiedBy(player, toBack) === -1) {
+          actions.push({ type: 'MOVE', pawn: i, from: pos, to: toBack, steps: -1, label: `Pawn ${i + 1} back 1 to ${toBack}` });
         }
       }
-      addForwardActions(actions, player, i, pos, 11);
+      addForwardActionsClassic(actions, player, i, pos, 10);
       continue;
     }
 
-    // 7: forward 7 or split
+    // 11: swap (main-to-main only) or forward 11
+    if (n === 11) {
+      if (isMain(pos)) {
+        for (let j = 0; j < PAWNS_PER_PLAYER; j++) {
+          const oppPos = their[j];
+          if (isMain(oppPos)) {
+            actions.push({ type: 'SWAP', pawn: i, other: j, label: `Swap pawn ${i + 1} with opponent pawn ${j + 1}` });
+          }
+        }
+      }
+      addForwardActionsClassic(actions, player, i, pos, 11);
+      continue;
+    }
+
+    // 7: forward 7 or split (forward only; lanes allowed)
     if (n === 7) {
-      addForwardActions(actions, player, i, pos, 7);
-      // split between two in-play pawns (forward only)
+      addForwardActionsClassic(actions, player, i, pos, 7);
       for (let k = 0; k < PAWNS_PER_PLAYER; k++) {
         if (k === i) continue;
         const posB = mine[k];
         if (posB === START || posB === HOME) continue;
         for (let a = 1; a < 7; a++) {
           const b = 7 - a;
-          const optA = computeForwardDest(player, pos, a);
-          const optB = computeForwardDest(player, posB, b);
-          if (!optA.valid || !optB.valid) continue;
-          // can't land on same main cell
-          if (optA.to !== HOME && optB.to !== HOME && optA.to === optB.to) continue;
-          // own-collision on landing
-          if (optA.to !== HOME && cellOccupiedBy(player, optA.to) !== -1) continue;
-          if (optB.to !== HOME && cellOccupiedBy(player, optB.to) !== -1) continue;
-          actions.push({ type: 'SPLIT7', pawns: [i, k], steps: [a, b], dests: [optA.to, optB.to], label: `Split 7: pawn ${i + 1}+${a}, pawn ${k + 1}+${b}` });
+          const A = computeForwardDestClassic(player, pos, a);
+          const B = computeForwardDestClassic(player, posB, b);
+          if (!A.valid || !B.valid) continue;
+          if (A.to !== HOME && B.to !== HOME && A.to === B.to) continue;         // no same landing cell
+          if (A.to !== HOME && cellOccupiedBy(player, A.to) !== -1) continue;   // can’t land on own pawn
+          if (B.to !== HOME && cellOccupiedBy(player, B.to) !== -1) continue;
+          actions.push({ type: 'SPLIT7', pawns: [i, k], steps: [a, b], dests: [A.to, B.to], label: `Split 7: ${i + 1}+${a}, ${k + 1}+${b}` });
         }
       }
       continue;
@@ -195,64 +247,47 @@ function legalMovesForCard(player, card) {
 
     // normal forwards: 1,2,3,5,8,12
     if ([1, 2, 3, 5, 8, 12].includes(n)) {
-      addForwardActions(actions, player, i, pos, n);
+      addForwardActionsClassic(actions, player, i, pos, n);
     }
   }
 
   return dedupeActions(actions);
 }
 
-// helper to compute forward destination with Safety and Home, plus slide handling preview
-function computeForwardDest(player, pos, steps) {
-  let to = pos + steps;
-  if (to < BOARD_LEN) {
-    // entering Safety region?
-    if (to >= SAFE_START) {
-      return { valid: true, to };
-    } else {
-      return { valid: true, to };
-    }
-  } else if (to === BOARD_LEN) {
-    return { valid: true, to: HOME };
-  } else {
-    // overshoot past Home is illegal
-    return { valid: false };
-  }
-}
-
-function addForwardActions(actions, player, pawnIdx, pos, steps) {
-  const res = computeForwardDest(player, pos, steps);
+function addForwardActionsClassic(actions, player, pawnIdx, pos, steps) {
+  const res = computeForwardDestClassic(player, pos, steps);
   if (!res.valid) return;
-  if (res.to !== HOME) {
-    // can't land on own pawn
-    if (cellOccupiedBy(player, res.to) !== -1) return;
-    // opponents cannot land in Safety if occupied by any opponent
-    const occ = anyPawnAt(res.to);
-    if (occ && occ.player === opponent(player) && isSafetyCell(res.to)) {
-      // can't land on opponent in Safety
+  if (res.to === HOME) {
+    actions.push({ type: 'HOME', pawn: pawnIdx, from: pos, label: `Pawn ${pawnIdx + 1} into Home (exact)` });
+    return;
+  }
+  // Landing checks
+  if (cellOccupiedBy(player, res.to) !== -1) return;
+  // Opponent’s Home lane is protected
+  const ln = laneOf(res.to);
+  const occ = anyPawnAt(res.to);
+  if (ln !== -1) {
+    // can’t land on rival in their lane
+    if (occ && occ.player !== player) return;
+  }
+  // Slides: only if landing on a slide start on MAIN, and not your color
+  if (isMain(res.to)) {
+    const sl = findSlideAt(res.to);
+    if (sl && sl.owner !== player) {
+      const path = [];
+      for (let k = 0; k < sl.len; k++) {
+        path.push((sl.start + k) % BOARD_LEN);
+      }
+      const finalTo = slideEndpoint(sl);
+      if (cellOccupiedBy(player, finalTo) !== -1) return;
+      actions.push({ type: 'MOVE_SLIDE', pawn: pawnIdx, from: pos, to: finalTo, slide: { start: sl.start, end: finalTo, path }, steps: +steps, label: `Pawn ${pawnIdx + 1} to ${res.to} — slide to ${finalTo}` });
       return;
     }
-    // slides: only when landing on slide start on MAIN (not in Safety), and not your color
-    const sl = !isSafetyCell(res.to) ? findSlideAt(res.to) : null;
-    if (sl && sl.owner !== player) {
-      // compute slide path
-      const path = [];
-      for (let x = sl.start; x <= slideEndpoint(sl); x++) {
-        path.push(x);
-      }
-      // final landing cell is end of slide
-      const finalTo = slideEndpoint(sl);
-      // can't end slide on your own pawn
-      if (cellOccupiedBy(player, finalTo) !== -1) return;
-      actions.push({ type: 'MOVE_SLIDE', pawn: pawnIdx, from: pos, to: finalTo, slide: { start: sl.start, end: finalTo, path }, steps: steps, label: `Pawn ${pawnIdx + 1} forward ${steps} to ${res.to} — slide to ${finalTo}` });
-    } else {
-      actions.push({ type: 'MOVE', pawn: pawnIdx, from: pos, to: res.to, steps: +steps, label: `Pawn ${pawnIdx + 1} forward ${steps} to ${res.to}` });
-    }
-  } else {
-    actions.push({ type: 'HOME', pawn: pawnIdx, from: pos, label: `Pawn ${pawnIdx + 1} into Home (exact)` });
   }
+  actions.push({ type: 'MOVE', pawn: pawnIdx, from: pos, to: res.to, steps: +steps, label: `Pawn ${pawnIdx + 1} to ${res.to}` });
 }
 
+/* ====== Apply actions ====== */
 function dedupeActions(list) {
   const seen = new Set();
   return list.filter(a => {
@@ -263,7 +298,6 @@ function dedupeActions(list) {
   });
 }
 
-/* ====== Applying Actions ====== */
 function applyAction(player, action, cardLabel) {
   const mine = state.pawns[player];
   const opp = state.pawns[opponent(player)];
@@ -278,19 +312,19 @@ function applyAction(player, action, cardLabel) {
 
   if (action.type === 'MOVE') {
     const { pawn, to } = action;
-    if (action.from === START && to === 0) {
-      mine[pawn] = 0;
-      uiLog(`P${player + 1} ${cardLabel}: entered pawn ${pawn + 1} to cell 0.`);
+    if (action.from === START && to === START_ENTRY[player]) {
+      mine[pawn] = to;
+      uiLog(`P${player + 1} ${cardLabel}: entered pawn ${pawn + 1} to ${to}.`);
     } else {
       mine[pawn] = to;
-      uiLog(`P${player + 1} ${cardLabel}: moved pawn ${pawn + 1} to ${to}.`);
-      bumpIfNeeded(to);
+      uiLog(`P${player + 1} ${cardLabel}: moved pawn ${pawn + 1} to ${formatPos(to)}.`);
+      // bump only on main or rival main; not inside any lane
+      if (isMain(to)) bumpIfNeeded(to);
     }
   } else if (action.type === 'MOVE_SLIDE') {
     const { pawn, to, slide } = action;
     mine[pawn] = slide.start;
     uiLog(`P${player + 1} ${cardLabel}: landed on slide start ${slide.start}.`);
-    // bump along the slide path (including end)
     for (const cell of slide.path) {
       const occ = anyPawnAt(cell);
       if (occ && occ.player !== player) {
@@ -308,10 +342,12 @@ function applyAction(player, action, cardLabel) {
     const bIdx = action.other;
     const aPos = mine[aIdx];
     const bPos = opp[bIdx];
-    // cannot swap with opponent in Safety (guarded in legal)
-    mine[aIdx] = bPos;
-    opp[bIdx] = aPos;
-    uiLog(`P${player + 1} ${cardLabel}: swapped pawn ${aIdx + 1} with opponent pawn ${bIdx + 1}.`);
+    // swap main-to-main only
+    if (isMain(aPos) && isMain(bPos)) {
+      mine[aIdx] = bPos;
+      opp[bIdx] = aPos;
+      uiLog(`P${player + 1} ${cardLabel}: swapped pawn ${aIdx + 1} with opponent pawn ${bIdx + 1}.`);
+    }
   } else if (action.type === 'SORRY') {
     const { srcPawn, targetPawn, targetPos } = action;
     mine[srcPawn] = targetPos;
@@ -321,12 +357,10 @@ function applyAction(player, action, cardLabel) {
     const [i, k] = action.pawns;
     const [a, b] = action.steps;
     const [toA, toB] = action.dests;
-    // apply A
     if (toA === HOME) { state.pawns[player][i] = HOME; uiLog(`P${player + 1} 7-split: pawn ${i + 1} reached HOME!`); }
-    else { state.pawns[player][i] = toA; bumpIfNeeded(toA); }
-    // apply B
+    else { state.pawns[player][i] = toA; if (isMain(toA)) bumpIfNeeded(toA); }
     if (toB === HOME) { state.pawns[player][k] = HOME; uiLog(`P${player + 1} 7-split: pawn ${k + 1} reached HOME!`); }
-    else { state.pawns[player][k] = toB; bumpIfNeeded(toB); }
+    else { state.pawns[player][k] = toB; if (isMain(toB)) bumpIfNeeded(toB); }
     uiLog(`P${player + 1} used split 7: +${a} and +${b}.`);
   }
 
@@ -348,7 +382,6 @@ function checkWin() {
 }
 
 /* ====== UI ====== */
-const gridEl = document.getElementById('track'); // updated to the new track container
 const logEl = document.getElementById('log');
 const actionsEl = document.getElementById('actions');
 const deckLeftEl = document.getElementById('deckLeft');
@@ -363,37 +396,55 @@ function uiLog(msg, cls = '') {
   logEl.scrollTop = logEl.scrollHeight;
 }
 
+function formatPos(pos) {
+  const ln = laneOf(pos);
+  if (pos === START) return 'Start';
+  if (pos === HOME) return 'Home';
+  if (ln !== -1) {
+    return `Home ${ln === 0 ? 'P1' : 'P2'} ${pos - LANE_BASE[ln] + 1}/${LANE_LEN}`;
+  }
+  return `Cell ${pos}`;
+}
+
 function renderBoard() {
-  // Use the new #track container instead of the old rectangular grid
   const trackEl = document.getElementById('track');
-  // clear old cells
-  trackEl.querySelectorAll('.cell').forEach(n => n.remove());
+  // clear old
+  trackEl.querySelectorAll('.cell, .homecell').forEach(n => n.remove());
 
-  // Ring geometry
+  // ellipse geometry
   const rect = trackEl.getBoundingClientRect();
-  const W = rect.width || 800;
-  const H = rect.height || 560;
+  const W = rect.width || 900;
+  const H = rect.height || 620;
   const cx = W / 2, cy = H / 2;
-  const a = Math.min(W, H) * 0.40; // horizontal radius
-  const b = Math.min(W, H) * 0.30; // vertical radius
+  const a = Math.min(W, H) * 0.42; // main horizontal radius
+  const b = Math.min(W, H) * 0.32; // main vertical radius
 
-  // Map track index -> position on an oval path
-  // index 0 at top, advance clockwise
-  function posFor(i) {
+  function mainPos(i) {
     const t = (i / BOARD_LEN) * Math.PI * 2;
-    const angle = -Math.PI / 2 + t; // start at top
+    const angle = -Math.PI / 2 + t;
     const x = cx + a * Math.cos(angle);
     const y = cy + b * Math.sin(angle);
     return { x, y };
   }
 
-  // render the 60 cells around the loop
+  // home lane anchors near corners (aimed toward center)
+  const anchors = [
+    { // P1 lane near top-right
+      startX: cx + a * 0.88, startY: cy - b * 0.88,
+      dx: -34, dy: +10
+    },
+    { // P2 lane near bottom-left
+      startX: cx - a * 0.88, startY: cy + b * 0.88,
+      dx: +34, dy: -10
+    }
+  ];
+
+  // render main loop cells
   for (let i = 0; i < BOARD_LEN; i++) {
     const cell = document.createElement('div');
     cell.className = 'cell';
 
-    // slide tinting by owner on slide-start cells
-    const sl = SLIDES.find(s => s.start === i);
+    const sl = findSlideAt(i);
     if (sl) {
       cell.classList.add('slide');
       cell.classList.add(sl.owner === 0 ? 'owner-p1' : 'owner-p2');
@@ -401,10 +452,10 @@ function renderBoard() {
 
     const idx = document.createElement('div');
     idx.className = 'idx';
-    idx.textContent = i; // hidden via CSS, handy for debugging
+    idx.textContent = i;
     cell.appendChild(idx);
 
-    // stack pawns here
+    // pawns
     const stack = document.createElement('div');
     stack.className = 'stack';
     for (let p = 0; p < 2; p++) {
@@ -419,16 +470,45 @@ function renderBoard() {
     }
     cell.appendChild(stack);
 
-    // absolute positioning
-    const { x, y } = posFor(i);
+    const { x, y } = mainPos(i);
     const size = 44;
     cell.style.left = (x - size / 2) + 'px';
     cell.style.top = (y - size / 2) + 'px';
-
     trackEl.appendChild(cell);
   }
 
-  // Start/Status zones
+  // render home lanes (5 cells each)
+  for (let p = 0; p < 2; p++) {
+    const base = LANE_BASE[p];
+    const { startX, startY, dx, dy } = anchors[p];
+    for (let i = 0; i < LANE_LEN; i++) {
+      const hc = document.createElement('div');
+      hc.className = 'homecell ' + (p === 0 ? 'p1' : 'p2');
+
+      // show pawns in that lane cell
+      const stack = document.createElement('div');
+      stack.className = 'stack';
+      for (let k = 0; k < PAWNS_PER_PLAYER; k++) {
+        if (state.pawns[p][k] === (base + i)) {
+          const dot = document.createElement('div');
+          dot.className = 'pawn ' + (p === 0 ? 'p1' : 'p2');
+          dot.title = `P${p + 1} pawn ${k + 1}`;
+          stack.appendChild(dot);
+        }
+      }
+      hc.appendChild(stack);
+
+      const x = startX + dx * i;
+      const y = startY + dy * i;
+      const size = 44;
+      hc.style.left = (x - size / 2) + 'px';
+      hc.style.top = (y - size / 2) + 'px';
+
+      trackEl.appendChild(hc);
+    }
+  }
+
+  // Start/Status panels
   const p1Zone = document.getElementById('p1StartHome');
   const p2Zone = document.getElementById('p2StartHome');
   p1Zone.innerHTML = '';
@@ -437,23 +517,16 @@ function renderBoard() {
     const pos = state.pawns[0][k];
     const span = document.createElement('span');
     span.className = 'pill p1';
-    span.textContent = describePos(pos);
+    span.textContent = formatPos(pos);
     p1Zone.appendChild(span);
   }
   for (let k = 0; k < PAWNS_PER_PLAYER; k++) {
     const pos = state.pawns[1][k];
     const span = document.createElement('span');
     span.className = 'pill p2';
-    span.textContent = describePos(pos);
+    span.textContent = formatPos(pos);
     p2Zone.appendChild(span);
   }
-}
-
-function describePos(pos) {
-  if (pos === START) return 'Start';
-  if (pos === HOME) return 'Home';
-  if (isSafetyCell(pos)) return `Safety ${pos - SAFE_START + 1}/5`;
-  return `Cell ${pos}`;
 }
 
 function renderActions() {
@@ -488,7 +561,6 @@ function renderActions() {
     btn.textContent = a.label || `Option ${idx + 1}`;
     btn.onclick = () => {
       applyAction(player, a, `(${state.drawn})`);
-      // consume card and pass the turn
       state.discard.push(state.drawn);
       state.drawn = null;
       if (!checkWin()) {
@@ -506,16 +578,17 @@ function renderDeck() {
 
 function renderCardFace() {
   cardFaceEl.textContent = state.drawn ? `Card: ${state.drawn}` : 'Draw a card';
-  cardHintEl.textContent = state.drawn ? hintFor(state.drawn) : 'You can leave Start on 1, 2, or SORRY!';
+  // app.js — update the default hint text inside renderCardFace()
+  cardHintEl.textContent = state.drawn ? hintFor(state.drawn) : 'You can leave Start on any number or SORRY!';
 }
 
 function hintFor(card) {
-  if (card === 'SORRY') return 'SORRY!: From Start, replace an opponent pawn (not in Safety) and bump them to Start.';
+  if (card === 'SORRY') return 'SORRY!: From Start, replace an opponent pawn on the main track and bump them.';
   const n = Number(card);
-  if (n === 4) return 'Move backward 4.';
+  if (n === 4) return 'Move backward 4 (main track only).';
   if (n === 7) return 'Move 7 or split 7 between two pawns.';
-  if (n === 10) return 'Forward 10 or back 1.';
-  if (n === 11) return 'Swap with opponent (not in Safety) or move forward 11.';
+  if (n === 10) return 'Forward 10 or back 1 (back only on main track).';
+  if (n === 11) return 'Swap with opponent (main only) or move forward 11.';
   return `Move forward ${n}.`;
 }
 
@@ -530,10 +603,8 @@ function renderAll() {
 /* ====== Controls ====== */
 document.getElementById('drawBtn').addEventListener('click', () => {
   if (!state.deck.length) {
-    // reshuffle discard into deck
     state.deck = state.discard;
     state.discard = [];
-    // shuffle
     for (let i = state.deck.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [state.deck[i], state.deck[j]] = [state.deck[j], state.deck[i]];

@@ -4,13 +4,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sorry! (Slides + Safety, 2 Players)</title>
+  <title>Sorry! (Classic-style track, 2 Players)</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
   <header>
-    <h1>Sorry! — Slides + Safety (2 Players, 4 pawns)</h1>
+    <h1>Sorry! — Classic Track (2 Players, 4 pawns)</h1>
     <div class="kpis">
       <div class="box"><span class="muted">Turn</span><b id="turnLabel">P1</b></div>
       <div class="box"><span class="muted">Deck</span><b id="deckLeft">–</b></div>
@@ -22,7 +22,7 @@
       <div class="deck-area">
         <div>
           <div class="card" id="cardFace">Draw a card</div>
-          <div class="hint" id="cardHint">You can leave Start on 1, 2, or SORRY!</div>
+          <div class="hint" id="cardHint">You can leave Start on any number or SORRY!</div>
         </div>
         <button id="drawBtn" class="btn">Draw</button>
       </div>
@@ -42,7 +42,8 @@
       <div class="panel">
         <div class="row" style="justify-content:space-between;">
           <strong>Game Log</strong>
-          <span class="muted">Slides bump; last 5 cells are Safety (no opponent landings); exact to Home.</span>
+          <span class="muted">Own-color Home lanes (5); exact to Home; can’t land on rivals inside their Home
+            lane.</span>
         </div>
         <div class="log" id="log"></div>
       </div>
@@ -60,18 +61,21 @@
         </div>
       </div>
 
+      <!-- Classic-style loop track with per-color Home lanes -->
       <div class="track" id="track">
+        <!-- Corner décor (for vibe) -->
         <div class="corner corner-p1-start">P1 Start</div>
         <div class="corner corner-p1-home">P1 Home</div>
         <div class="corner corner-p2-start">P2 Start</div>
         <div class="corner corner-p2-home">P2 Home</div>
+        <!-- Cells injected by renderBoard() -->
       </div>
     </div>
   </div>
 
   <footer>
-    House rules: 2 players • 4 pawns each • Slides (land on a non-own start to slide and bump along the path) • Shared
-    Safety zone is cells 55–59 (opponents cannot land there) • Exact count to Home.
+    2 players • 4 pawns each • Color-owned slides • Per-color Home lanes (5) • Exact count to Home • Enter from Start on
+    1, 2, or SORRY.
   </footer>
 
   <script src="app.js"></script>
