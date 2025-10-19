@@ -7,30 +7,30 @@
   --cell: #ecf0f1;
   --accent: #16a085;
   --muted: #95a5a6;
-  --slide: #f6e58d;
+  --fg: #f7f9fc;
 }
 
+/* ---------- Base UI chrome ---------- */
 html,
 body {
   margin: 0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   background: #0b1320;
-  color: #f7f9fc;
+  color: var(--fg);
 }
 
 header {
   padding: 16px 20px;
   display: flex;
-  gap: 16px;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgba(255, 255, 255, .06);
 }
 
 h1 {
-  font-size: 20px;
   margin: 0;
-  letter-spacing: .3px;
+  font-size: 20px;
+  letter-spacing: .2px;
 }
 
 .wrap {
@@ -76,36 +76,6 @@ h1 {
   cursor: not-allowed;
 }
 
-.muted {
-  color: #cbd5e1;
-  font-size: 12px;
-}
-
-.row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.chip {
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-weight: 700;
-  font-size: 12px;
-  border: 1px solid rgba(255, 255, 255, .08);
-}
-
-.chip.p1 {
-  background: color-mix(in hsl, var(--p1) 25%, transparent);
-  color: #ffecec;
-}
-
-.chip.p2 {
-  background: color-mix(in hsl, var(--p2) 25%, transparent);
-  color: #e9f3ff;
-}
-
 .kpis {
   display: flex;
   gap: 10px;
@@ -117,9 +87,10 @@ h1 {
   border-radius: 10px;
   padding: 10px 12px;
   min-width: 96px;
+  text-align: center;
 }
 
-.box b {
+.kpis .box b {
   display: block;
   font-size: 20px;
 }
@@ -140,14 +111,28 @@ h1 {
   cursor: pointer;
 }
 
-.a-btn:hover {
-  border-color: #4b5563;
-}
-
 .a-btn.primary {
   background: var(--accent);
   color: #fff;
   border-color: transparent;
+}
+
+.muted {
+  color: #cbd5e1;
+  font-size: 12px;
+}
+
+.card {
+  background: #0b1020;
+  border: 1px solid rgba(255, 255, 255, .12);
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 800;
+}
+
+.hint {
+  font-size: 12px;
+  color: #9ca3af;
 }
 
 .log {
@@ -167,6 +152,45 @@ h1 {
   color: #a5b4fc;
 }
 
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12px;
+  border: 1px solid rgba(255, 255, 255, .08);
+}
+
+.chip.p1 {
+  background: color-mix(in hsl, var(--p1) 28%, transparent);
+  color: #ffecec;
+}
+
+.chip.p2 {
+  background: color-mix(in hsl, var(--p2) 28%, transparent);
+  color: #e9f3ff;
+}
+
+footer {
+  text-align: center;
+  padding: 10px 0 20px;
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+@media (max-width:900px) {
+  .wrap {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Board container ---------- */
 .board {
   background: var(--board);
   border-radius: 14px;
@@ -174,110 +198,88 @@ h1 {
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 14px;
-}
-
-.card {
-  background: #0b1020;
-  border: 1px solid rgba(255, 255, 255, .12);
-  padding: 10px 12px;
-  border-radius: 10px;
-  font-weight: 800;
-  color: #fff;
-}
-
-.hint {
-  font-size: 12px;
-  color: #9ca3af;
-}
-
-footer {
-  text-align: center;
-  padding: 10px 0 20px 0;
-  color: #9ca3af;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .wrap {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ===== Classic loop track ===== */
-.board {
   position: relative;
 }
 
-/* styles.css — add/adjust these for the square board vibe */
+.zones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.zone {
+  background: #0b1020;
+  border: 1px dashed rgba(255, 255, 255, .12);
+  border-radius: 12px;
+  padding: 10px;
+  min-height: 72px;
+}
+
+.zone h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #cbd5e1;
+  font-weight: 700;
+  letter-spacing: .3px;
+}
+
+.pill {
+  display: inline-block;
+  padding: 6px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .08);
+  margin: 4px 6px 0 0;
+  font-size: 12px;
+}
+
+.pill.p1 {
+  background: color-mix(in hsl, var(--p1) 20%, transparent);
+  color: #ffd7d7;
+}
+
+.pill.p2 {
+  background: color-mix(in hsl, var(--p2) 20%, transparent);
+  color: #d7e9ff;
+}
+
+/* ---------- Square track area ---------- */
 .track {
   position: relative;
+  min-height: 640px;
+  border-radius: 14px;
+  overflow: hidden;
   background:
     radial-gradient(circle at center, #0c1426 0%, #0c1426 42%, transparent 43%),
     linear-gradient(#0b1020, #0b1020);
-  border-radius: 14px;
-  min-height: 640px;
-  overflow: hidden;
 }
 
+/* Track cells (the 60 perimeter spots) */
 .track .cell {
   position: absolute;
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
   background: var(--cell);
-  color: #111;
-  font-weight: 800;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, .25);
+  color: #111;
+  font-weight: 800;
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .2), 0 2px 4px rgba(0, 0, 0, .28);
 }
 
 .track .cell .idx {
   display: none;
 }
 
-/* hide debug numbers */
-.cell.slide.owner-p1 {
-  background: color-mix(in hsl, var(--p1) 25%, var(--cell));
-}
+/* keep DOM clean */
 
-.cell.slide.owner-p2 {
-  background: color-mix(in hsl, var(--p2) 25%, var(--cell));
-}
-
-/* Home lanes pointing inward from corners */
-.homecell {
-  position: absolute;
-  border-radius: 10px;
-  background: #f3f4f6;
-  outline: 3px solid rgba(255, 255, 255, .08);
-  box-shadow: 0 2px 3px rgba(0, 0, 0, .25);
+/* Pawn stacks */
+.stack {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
+  gap: 4px;
 }
 
-.homecell.p1 {
-  background: color-mix(in hsl, var(--p1) 18%, #f3f4f6);
-}
-
-.homecell.p2 {
-  background: color-mix(in hsl, var(--p2) 18%, #f3f4f6);
-}
-
-
-/* hide numbers for a clean board */
-
-/* Main-track slides: tinted by slide owner */
-.cell.slide.owner-p1 {
-  background: color-mix(in hsl, var(--p1) 25%, var(--cell));
-}
-
-.cell.slide.owner-p2 {
-  background: color-mix(in hsl, var(--p2) 25%, var(--cell));
-}
-
-/* Pawn dots */
 .pawn {
   width: 20px;
   height: 20px;
@@ -294,81 +296,162 @@ footer {
   background: var(--p2);
 }
 
-.stack {
-  display: flex;
-  gap: 4px;
-}
-
-/* Corner décor zones */
-.corner {
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  border-radius: 18px;
-  border: 2px dashed rgba(255, 255, 255, .12);
-  color: #cbd5e1;
-  font-size: 12px;
-  font-weight: 900;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background: #0b1020;
-  z-index: 0;
-}
-
-.corner-p1-start {
-  top: 18px;
-  left: 18px;
-  box-shadow: inset 0 0 0 3px color-mix(in hsl, var(--p1) 40%, transparent);
-}
-
-.corner-p1-home {
-  top: 18px;
-  right: 18px;
-  box-shadow: inset 0 0 0 3px color-mix(in hsl, var(--p1) 40%, transparent);
-}
-
-.corner-p2-start {
-  bottom: 18px;
-  right: 18px;
-  box-shadow: inset 0 0 0 3px color-mix(in hsl, var(--p2) 40%, transparent);
-}
-
-.corner-p2-home {
-  bottom: 18px;
-  left: 18px;
-  box-shadow: inset 0 0 0 3px color-mix(in hsl, var(--p2) 40%, transparent);
-}
-
-/* Home lanes (5 cells each), per color */
+/* ---------- Home lanes (5 cells each) ---------- */
 .homecell {
   position: absolute;
   width: 44px;
   height: 44px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 8px;
   background: #f3f4f6;
-  color: #111;
-  font-weight: 800;
-  outline: 3px solid rgba(255, 255, 255, .08);
-  box-shadow: 0 2px 3px rgba(0, 0, 0, .25);
-  z-index: 1;
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .15), 0 2px 4px rgba(0, 0, 0, .28);
 }
 
 .homecell.p1 {
-  background: color-mix(in hsl, var(--p1) 18%, #f3f4f6);
+  background: color-mix(in hsl, var(--p1) 20%, #ffffff);
 }
 
 .homecell.p2 {
-  background: color-mix(in hsl, var(--p2) 18%, #f3f4f6);
+  background: color-mix(in hsl, var(--p2) 20%, #ffffff);
 }
 
-/* responsive tweak */
-@media (max-width: 900px) {
+/* ---------- Start circles & Home stars (corner badges) ---------- */
+.badge {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  letter-spacing: .5px;
+  color: #061016;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .6);
+  z-index: 0;
+}
+
+/* Start circles */
+.start-badge {
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  box-shadow:
+    inset 0 0 0 6px rgba(255, 255, 255, .75),
+    inset 0 0 0 10px rgba(0, 0, 0, .12),
+    0 4px 10px rgba(0, 0, 0, .35);
+  font-size: 14px;
+}
+
+.start-badge.p1 {
+  top: 18px;
+  left: 18px;
+}
+
+.start-badge.p2 {
+  bottom: 18px;
+  right: 18px;
+}
+
+/* HOME stars */
+.home-star {
+  width: 120px;
+  height: 120px;
+  background: #fffde7;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%,
+      79% 91%, 50% 70%, 21% 91%, 32% 57%,
+      2% 35%, 39% 35%);
+  box-shadow:
+    inset 0 0 0 6px rgba(255, 255, 255, .75),
+    inset 0 0 0 10px rgba(0, 0, 0, .12),
+    0 6px 14px rgba(0, 0, 0, .38);
+  font-size: 14px;
+}
+
+.home-star.p1 {
+  top: 18px;
+  right: 18px;
+}
+
+.home-star.p2 {
+  bottom: 18px;
+  left: 18px;
+}
+
+/* ---------- Slide tints (CSS-only) ----------
+   These tint the *slide start* tiles if your DOM adds 60 .cell nodes
+   in index order (0..59). Adjust nth-child indices as needed if your
+   slide starts move. Current logic uses starts at:
+   P1: 3 and 11   → nth-child(4), nth-child(12)
+   P2: 33 and 41  → nth-child(34), nth-child(42)
+*/
+.track .cell:nth-child(4) {
+  background: color-mix(in hsl, var(--p1) 25%, var(--cell));
+}
+
+.track .cell:nth-child(12) {
+  background: color-mix(in hsl, var(--p1) 25%, var(--cell));
+}
+
+.track .cell:nth-child(34) {
+  background: color-mix(in hsl, var(--p2) 25%, var(--cell));
+}
+
+.track .cell:nth-child(42) {
+  background: color-mix(in hsl, var(--p2) 25%, var(--cell));
+}
+
+/* ---------- Direction arrows (CSS-only; no JS classes) ----------
+   - Show an arrow every 3rd cell.
+   - Rotate by side using nth-child ranges:
+     1–15 top, 16–30 right, 31–45 bottom, 46–60 left.
+*/
+.track .cell::after {
+  content: "";
+  position: absolute;
+  bottom: 3px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 10px solid rgba(0, 0, 0, .72);
+  opacity: .75;
+  transform: rotate(0deg);
+  display: none;
+  /* hidden by default */
+}
+
+.track .cell:nth-child(3n+1)::after {
+  display: block;
+}
+
+/* Orientation by side (1-based child positions) */
+.track .cell:nth-child(-n+15)::after {
+  transform: rotate(0deg);
+}
+
+/* top → */
+.track .cell:nth-child(n+16):nth-child(-n+30)::after {
+  transform: rotate(90deg);
+}
+
+/* right ↓ */
+.track .cell:nth-child(n+31):nth-child(-n+45)::after {
+  transform: rotate(180deg);
+}
+
+/* bottom ← */
+.track .cell:nth-child(n+46):nth-child(-n+60)::after {
+  transform: rotate(-90deg);
+}
+
+/* left ↑ */
+
+/* ---------- Optional: hide legacy corner boxes if present ---------- */
+.track .corner {
+  display: none;
+}
+
+/* ---------- Responsive tweak ---------- */
+@media (max-width:900px) {
   .track {
-    min-height: 560px;
+    min-height: 540px;
   }
 }
