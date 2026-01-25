@@ -31,14 +31,14 @@ body {
 
 h1 {
     margin: 0 0 12px;
-    font-size: 22px;
+    font-size: 16.5pt;
     font-weight: 800;
     color: var(--text);
 }
 
 h2 {
     margin: 16px 0 8px;
-    font-size: 16px;
+    font-size: 12pt;
     font-weight: 700;
     color: var(--text);
 }
@@ -250,7 +250,7 @@ h2 {
     background: linear-gradient(180deg, var(--chip), var(--panel));
     padding: 10px 12px;
     font-weight: 800;
-    font-size: 13px;
+    font-size: 9.75pt;
     border-bottom: 1px solid rgba(124, 155, 255, .14);
 }
 
@@ -266,7 +266,7 @@ h2 {
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: .04em;
-    font-size: 12px;
+    font-size: 9pt;
     padding: 8px 12px;
     border-top: 1px solid rgba(124, 155, 255, .14);
     border-bottom: 1px solid rgba(124, 155, 255, .12);
@@ -308,7 +308,7 @@ h2 {
 }
 
 .score-preview {
-    font-size: 12px;
+    font-size: 9pt;
     color: var(--muted);
 }
 
@@ -321,7 +321,7 @@ h2 {
 
 #score-table tfoot tr:last-child td {
     font-weight: 900;
-    font-size: 16px;
+    font-size: 12pt;
 }
 
 #endOfGame {
