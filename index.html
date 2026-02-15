@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Yahtzee</title>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -29,39 +30,41 @@
 
     <!-- Scorecard -->
     <h2>Scorecard</h2>
-    <table id="score-table">
-        <thead>
-            <tr>
-                <th>Category</th>
-                <th>Score</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Rows are inserted by app.js -->
-        </tbody>
-        <tfoot>
-            <tr>
-                <td>Upper Subtotal</td>
-                <td id="upperSubtotal">0</td>
-            </tr>
-            <tr>
-                <td>Upper Bonus</td>
-                <td id="upperBonus">0</td>
-            </tr>
-            <tr>
-                <td>Upper Total</td>
-                <td id="upperTotal">0</td>
-            </tr>
-            <tr>
-                <td>Lower Total</td>
-                <td id="lowerTotal">0</td>
-            </tr>
-            <tr>
-                <td>Grand Total</td>
-                <td id="grandTotal">0</td>
-            </tr>
-        </tfoot>
-    </table>
+    <div class="score-scroll">
+        <table id="score-table">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows are inserted by app.js -->
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>Upper Subtotal</td>
+                    <td id="upperSubtotal">0</td>
+                </tr>
+                <tr>
+                    <td>Upper Bonus</td>
+                    <td id="upperBonus">0</td>
+                </tr>
+                <tr>
+                    <td>Upper Total</td>
+                    <td id="upperTotal">0</td>
+                </tr>
+                <tr>
+                    <td>Lower Total</td>
+                    <td id="lowerTotal">0</td>
+                </tr>
+                <tr>
+                    <td>Grand Total</td>
+                    <td id="grandTotal">0</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
 
     <!-- End of Game -->
     <div id="endOfGame" style="display:none;">
