@@ -1,4 +1,4 @@
-// ui.js — creates the structural nodes so the CSS can style the board.
+// ui/main.js — creates the structural nodes so the CSS can style the board.
 // No layout or design logic here—just DOM elements in the right order.
 
 document.addEventListener('DOMContentLoaded', () => {
