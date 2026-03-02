@@ -56,7 +56,6 @@ function createSorryGame() {
   const laneOf = (pos) =>
     pos >= LANE_BASE[0] && pos < LANE_BASE[0] + LANE_LEN ? 0 :
       pos >= LANE_BASE[1] && pos < LANE_BASE[1] + LANE_LEN ? 1 : -1;
-  const isHomeLane = (pos) => laneOf(pos) !== -1;
 
   function anyPawnAt(pos) {
     for (let p = 0; p < 2; p++) {
