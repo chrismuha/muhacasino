@@ -6,7 +6,7 @@
   "scripts": {
     "test": "find . -name '*.js' -not -path './node_modules/*' -exec node --check {} \\;"
   },
+  "private": true,
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": ""
 }
