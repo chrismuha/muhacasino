@@ -2,9 +2,7 @@
   "name": "yahtzee",
   "version": "1.0.0",
   "main": "main.js",
-  "scripts": {
-    "test": "find . -name '*.js' -not -path './node_modules/*' -exec node --check {} \\;"
-  },
+  "scripts": {},
   "private": true,
   "keywords": [],
   "author": "",
