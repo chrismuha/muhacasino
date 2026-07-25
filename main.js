@@ -1,6 +1,8 @@
 // Config
 const WILD_SYMBOL = "🃏";
+const BONUS_SYMBOL = "🎁";
 const SYMBOLS = [WILD_SYMBOL, "💎", "🍀", "⭐", "🔔", "🍋", "🍒"];
+const JACKPOT_TEASER_RATE = 0.06;
 
 // Weights (higher = more common)
 const WEIGHTS = {
@@ -461,7 +463,7 @@ function updateFeatureRules() {
     const freeRate = getFeatureRate(freeSpinsOddsEl, 0.03);
     const bonusRate = getFeatureRate(bonusGameOddsEl, 0.01);
     const prizes = getBonusPrizeMultipliers().map((value) => `${value}x`).join(", ");
-    featureOddsRulesEl.textContent = `With the current settings, each paid spin independently has a ${(freeRate * 100).toFixed(0)}% win / ${((1 - freeRate) * 100).toFixed(0)}% loss chance to award ${getFreeSpinsAward()} free spins, and a ${(bonusRate * 100).toFixed(0)}% win / ${((1 - bonusRate) * 100).toFixed(0)}% loss chance to open Bonus Plays. The three shuffled prizes are ${prizes} the triggering bet.`;
+    featureOddsRulesEl.textContent = `With the current settings, each paid spin independently has a ${(freeRate * 100).toFixed(0)}% win / ${((1 - freeRate) * 100).toFixed(0)}% loss chance to award ${getFreeSpinsAward()} free spins, and a ${(bonusRate * 100).toFixed(0)}% win / ${((1 - bonusRate) * 100).toFixed(0)}% loss chance to land 3, 4, or 5 Bonus chips from the left on an active payline and open Bonus Plays. The three shuffled prizes are ${prizes} the triggering bet.`;
 }
 
 function setupFeatureUI() {
@@ -539,14 +541,30 @@ function createCell(symbol, isWinning = false) {
     const cell = document.createElement("div");
     cell.className = "cell";
     if (isWinning) cell.classList.add("win");
+    if (symbol === BONUS_SYMBOL) {
+        const chip = document.createElement("span");
+        chip.className = "jackpot-chip bonus-chip";
+        chip.innerHTML = "<strong>Bonus</strong><span>Play</span>";
+        chip.setAttribute("aria-hidden", "true");
+        cell.appendChild(chip);
+        cell.classList.add("jackpot-win", "bonus-win");
+        cell.setAttribute("aria-label", "Bonus chip");
+        return cell;
+    }
     if (typeof symbol === "object") {
         const chip = document.createElement("span");
         chip.className = `jackpot-chip jackpot-${symbol.jackpot.toLowerCase()}`;
+        if (symbol.teaser) chip.classList.add("jackpot-teaser");
         chip.innerHTML = `<strong>${symbol.jackpot}</strong><span>${fmtUSD(symbol.value)}</span>`;
         chip.setAttribute("aria-hidden", "true");
         cell.appendChild(chip);
-        cell.classList.add("jackpot-win");
-        cell.setAttribute("aria-label", `${symbol.jackpot} jackpot, won ${fmtUSD(symbol.value)}`);
+        if (symbol.teaser) {
+            cell.classList.add("jackpot-teaser-cell");
+            cell.setAttribute("aria-label", `${symbol.jackpot} jackpot symbol, no jackpot won`);
+        } else {
+            cell.classList.add("jackpot-win");
+            cell.setAttribute("aria-label", `${symbol.jackpot} jackpot, won ${fmtUSD(symbol.value)}`);
+        }
         return cell;
     }
     cell.innerHTML = `<span class="icon-container" aria-hidden="true">${symbol}</span>`;
@@ -567,8 +585,16 @@ function resolveJackpotWins() {
         .map(({ tier }) => tier);
 }
 
-function renderOutcomeGrid(grid, winningPositions, jackpotWins) {
-    if (jackpotWins.length === 0) {
+function resolveJackpotTeasers(jackpotWins) {
+    if (jackpotWins.length > 0 || Math.random() >= JACKPOT_TEASER_RATE) return [];
+    const teaserCount = Math.random() < 0.1 ? 2 : 1;
+    const shuffledTiers = [...JACKPOT_TIERS].sort(() => Math.random() - 0.5);
+    return shuffledTiers.slice(0, teaserCount).map((tier) => ({ ...tier, teaser: true }));
+}
+
+function renderOutcomeGrid(grid, winningPositions, jackpotWins, jackpotTeasers = []) {
+    const jackpotSymbols = jackpotWins.concat(jackpotTeasers);
+    if (jackpotSymbols.length === 0) {
         renderGrid(grid, winningPositions);
         return;
     }
@@ -579,12 +605,18 @@ function renderOutcomeGrid(grid, winningPositions, jackpotWins) {
     }
     const displayPositions = new Set(winningPositions);
     const jackpotPositions = new Set();
-    for (const jackpotWin of jackpotWins) {
-        const position = preferredPositions.find(([r, c]) => !displayPositions.has(`${r},${c}`))
+    for (const jackpotWin of jackpotSymbols) {
+        const position = preferredPositions.find(([r, c]) =>
+            !displayPositions.has(`${r},${c}`) && !jackpotPositions.has(`${r},${c}`)
+        )
             || preferredPositions.find(([r, c]) => !jackpotPositions.has(`${r},${c}`));
         const [row, col] = position;
-        displayGrid[row][col] = { jackpot: jackpotWin.name, value: jackpotWin.amountUSD };
-        displayPositions.add(`${row},${col}`);
+        displayGrid[row][col] = {
+            jackpot: jackpotWin.name,
+            value: jackpotWin.amountUSD,
+            teaser: Boolean(jackpotWin.teaser)
+        };
+        if (!jackpotWin.teaser) displayPositions.add(`${row},${col}`);
         jackpotPositions.add(`${row},${col}`);
     }
     renderGrid(displayGrid, displayPositions);
@@ -603,6 +635,23 @@ function renderGrid(grid, winningPositions = new Set()) {
 
 function spinOnce() {
     return createGrid(() => choiceWeighted(WEIGHTS));
+}
+
+function addBonusChipWin(grid, linesActive) {
+    const bonusGrid = grid.map((row) => [...row]);
+    const activeLineCount = Math.min(PAYLINES.length, Math.max(1, linesActive));
+    const lineIndex = Math.floor(Math.random() * activeLineCount);
+    const path = PAYLINES[lineIndex];
+    const count = 3 + Math.floor(Math.random() * 3);
+    const winningPositions = new Set();
+
+    for (let col = 0; col < count; col++) {
+        const row = path[col];
+        bonusGrid[row][col] = BONUS_SYMBOL;
+        winningPositions.add(`${row},${col}`);
+    }
+
+    return { grid: bonusGrid, lineIndex: lineIndex + 1, count, winningPositions };
 }
 
 function getLineMatchResult(path, grid) {
@@ -1448,11 +1497,17 @@ async function doSpin(options = {}) {
 
     // Final outcome
     const shouldWin = Math.random() < getTargetSpinWinRate();
-    const grid = resolveSpinGrid(shouldWin);
-    const { totalWinUSD: regularWinUSD, lineWins, winningPositions } = evaluateGrid(grid, wagerConfig);
-    const jackpotWins = resolveJackpotWins();
-    const jackpotWinUSD = jackpotWins.reduce((sum, jackpot) => sum + jackpot.amountUSD, 0);
+    let grid = resolveSpinGrid(shouldWin);
     const bonusTriggered = !isFreeSpin && Math.random() < getFeatureRate(bonusGameOddsEl, 0.01);
+    const bonusResult = bonusTriggered ? addBonusChipWin(grid, wagerConfig.linesActive) : null;
+    if (bonusResult) grid = bonusResult.grid;
+    const { totalWinUSD: regularWinUSD, lineWins, winningPositions } = evaluateGrid(grid, wagerConfig);
+    const displayWinningPositions = new Set(winningPositions);
+    bonusResult?.winningPositions.forEach((position) => displayWinningPositions.add(position));
+    const jackpotWins = resolveJackpotWins();
+    const jackpotTeasers = resolveJackpotTeasers(jackpotWins);
+    const jackpotWinUSD = jackpotWins.reduce((sum, jackpot) => sum + jackpot.amountUSD, 0);
+    renderOutcomeGrid(grid, displayWinningPositions, jackpotWins, jackpotTeasers);
     const bonusWinUSD = bonusTriggered ? await playBonusGame(totalBetUSD) : 0;
     const freeSpinsTriggered = !isFreeSpin && Math.random() < getFeatureRate(freeSpinsOddsEl, 0.03);
     const freeSpinsAwarded = getFreeSpinsAward();
@@ -1463,7 +1518,6 @@ async function doSpin(options = {}) {
     }
     const totalWinUSD = roundUSD(regularWinUSD + jackpotWinUSD + bonusWinUSD);
     const lossComponentUSD = isFreeSpin ? 0 : Math.max(totalBetUSD - totalWinUSD, 0);
-    renderOutcomeGrid(grid, winningPositions, jackpotWins);
     addSessionLosses(lossComponentUSD);
     addNetSessionLosses(lossComponentUSD);
     subtractNetSessionWinnings(lossComponentUSD);
@@ -1480,7 +1534,7 @@ async function doSpin(options = {}) {
         const linesText = lineWins
             .map(w => `Line ${w.lineIndex}: ${w.symbol} × ${w.count} → ${fmtUSD(w.winUSD)}`)
             .concat(jackpotWins.map((jackpot) => `${jackpot.name.toUpperCase()} JACKPOT → ${fmtUSD(jackpot.amountUSD)}`))
-            .concat(bonusWinUSD ? [`BONUS PLAYS → ${fmtUSD(bonusWinUSD)}`] : [])
+            .concat(bonusWinUSD ? [`Line ${bonusResult.lineIndex}: BONUS × ${bonusResult.count} → ${fmtUSD(bonusWinUSD)}`] : [])
             .concat(freeSpinsTriggered ? [`${freeSpinsAwarded} FREE SPINS AWARDED`] : [])
             .join(" • ");
         setMessage(`WIN ${fmtUSD(totalWinUSD)} — ${linesText}`);

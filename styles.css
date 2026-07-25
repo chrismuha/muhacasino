@@ -1611,6 +1611,23 @@ body.overlay-open {
   background: radial-gradient(circle at 35% 28%, #fffbe0, #ffd23f 62%, #a76300);
 }
 
+.jackpot-chip.bonus-chip {
+  --jackpot-color: #ff8cf7;
+  background: radial-gradient(circle at 35% 28%, #fff4ff, #ff6ff2 62%, #7d176f);
+}
+
+.jackpot-chip.jackpot-teaser {
+  filter: saturate(.58) brightness(.72);
+  opacity: .78;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .22), 0 0 5px color-mix(in srgb, var(--jackpot-color) 45%, transparent);
+  animation: none;
+}
+
+.reels .cell.jackpot-teaser-cell {
+  padding: clamp(8px, 1vw, 12px);
+  overflow: hidden;
+}
+
 .jackpot-chip strong {
   font-size: .72em;
   line-height: 1;
