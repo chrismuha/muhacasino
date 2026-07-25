@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Compiled and packaged output
+dist/
+dist-electron/
+out/
+release/
+.vite/
+
+# Logs and local settings
+logs/
+*.log
+.env
+.env.*
+!.env.example
+*.local
+
+# Generated packaging metadata
+build/*.source.sha256
+build/icon.iconset/
+
+# Operating system and editor files
+.DS_Store
+**/.DS_Store
+**/._*
+.idea/
