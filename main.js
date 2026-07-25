@@ -1,10 +1,8 @@
 // Config
-const WILD_SYMBOL = "🃏";
-const SYMBOLS = [WILD_SYMBOL, "💎", "🍀", "⭐", "🔔", "🍋", "🍒"];
+const SYMBOLS = ["💎", "🍀", "⭐", "🔔", "🍋", "🍒"];
 
 // Weights (higher = more common)
 const WEIGHTS = {
-    [WILD_SYMBOL]: 1,
     "💎": 1,
     "🍀": 3,
     "⭐": 4,
@@ -15,7 +13,6 @@ const WEIGHTS = {
 
 // Paytable (multipliers) for 3/4/5 in a row from the left
 const PAYTABLE = {
-    [WILD_SYMBOL]: { 3: 120, 4: 600, 5: 3000 },
     "💎": { 3: 60, 4: 240, 5: 1200 },
     "🍀": { 3: 30, 4: 120, 5: 600 },
     "⭐": { 3: 18, 4: 72, 5: 360 },
@@ -638,11 +635,11 @@ function spinOnce() {
 
 function getLineMatchResult(path, grid) {
     const lineSymbols = path.map((row, col) => grid[row][col]);
-    const baseSymbol = lineSymbols.find((symbol) => symbol !== WILD_SYMBOL) || WILD_SYMBOL;
+    const baseSymbol = lineSymbols[0];
 
     let count = 0;
     for (const symbol of lineSymbols) {
-        if (symbol === baseSymbol || symbol === WILD_SYMBOL) {
+        if (symbol === baseSymbol) {
             count += 1;
             continue;
         }
@@ -771,8 +768,7 @@ function updateGameOddsDisplay() {
 
     winLossOddsTextEl.textContent =
         `Current ${linesActive}-line paytable model: per-line win ${fmtPercent(lineWinProb)} (${fmtOneIn(lineWinProb)}), ` +
-        `per-line loss ${fmtPercent(lineLossProb)}, model RTP ${fmtPercent(returnToPlayer)} / house edge ${fmtPercent(casinoAdvantage)}. ` +
-        `Wild substitution increases actual hit frequency beyond this rough model.`;
+        `per-line loss ${fmtPercent(lineLossProb)}, model RTP ${fmtPercent(returnToPlayer)} / house edge ${fmtPercent(casinoAdvantage)}.`;
 }
 
 
