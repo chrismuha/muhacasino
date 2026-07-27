@@ -105,8 +105,49 @@ function createScreenWindow(screen) {
   win.on('closed', () => auxiliaryWindows.delete(screen));
 }
 
+function createPlayerWindow(playerNumber) {
+  const player = Math.max(1, Math.min(500, Number(playerNumber) || 1));
+  const windowKey = `player-${player}`;
+  const existing = auxiliaryWindows.get(windowKey);
+  if (existing && !existing.isDestroyed()) {
+    existing.focus();
+    return;
+  }
+
+  const win = new BrowserWindow({
+    width: 1250,
+    height: 900,
+    minWidth: 980,
+    minHeight: 720,
+    title: `Bingo Player ${String(player).padStart(3, '0')}`,
+    backgroundColor: '#f2f5f9',
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false
+    }
+  });
+
+  auxiliaryWindows.set(windowKey, win);
+  if (process.env.VITE_DEV_SERVER_URL) {
+    win.loadURL(`${process.env.VITE_DEV_SERVER_URL}?screen=floor&player=${player}`);
+  } else {
+    win.loadFile(path.join(__dirname, '../dist/index.html'), {
+      query: { screen: 'floor', player: String(player) }
+    });
+  }
+  win.webContents.once('did-finish-load', () => {
+    if (sharedGameState) win.webContents.send('bingo:state-sync', sharedGameState);
+  });
+  win.on('closed', () => auxiliaryWindows.delete(windowKey));
+}
+
 ipcMain.on('bingo:open-screen', (_event, screen) => {
   if (screen === 'dealer' || screen === 'audience') createScreenWindow(screen);
+});
+
+ipcMain.on('bingo:open-player', (_event, playerNumber) => {
+  createPlayerWindow(playerNumber);
 });
 
 ipcMain.on('bingo:state-update', (event, state) => {

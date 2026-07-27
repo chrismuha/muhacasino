@@ -10,7 +10,19 @@ const startingCredits = ref(500);
 const cardCost = ref(10);
 const winnerPrize = ref(100);
 const requestedScreen = new URLSearchParams(window.location.search).get('screen');
-const currentScreen = ref(['dealer', 'audience'].includes(requestedScreen) ? requestedScreen : 'floor');
+const requestedPlayer = Number(new URLSearchParams(window.location.search).get('player')) || null;
+const isDedicatedWindow = Boolean(requestedScreen || requestedPlayer);
+const currentScreen = ref(['dealer', 'audience', 'design'].includes(requestedScreen) ? requestedScreen : 'floor');
+const theme = ref('light');
+const preDaubColor = ref('#e9424a');
+const actualDaubColor = ref('#1769e0');
+const cardBackgroundColor = ref('#ffffff');
+const cardHeaderColor = ref('#132039');
+const cardTextColor = ref('#132039');
+const freeSpaceColor = ref('#fff8e8');
+const cardFont = ref('Inter, ui-sans-serif, system-ui, sans-serif');
+const freeSpaceSymbol = ref('★');
+const designReturnScreen = ref('floor');
 const dealerSection = ref('game');
 const setupEditing = ref(true);
 const advancedOpen = ref(false);
@@ -43,6 +55,7 @@ const paidPrizeCredits = ref(0);
 const dealerCorrectionCount = ref(0);
 const targetCardId = ref(1);
 const dealerNotice = ref('Dealer console ready.');
+const verificationCardId = ref(null);
 let autoTimer = null;
 
 const currentCall = computed(() => calledNumbers.value.at(-1) ?? null);
@@ -68,9 +81,21 @@ const primaryDealerLabel = computed(() => {
   if (isAutoCalling.value) return 'Pause number calling';
   return calledNumbers.value.length ? 'Resume number calling' : 'Start number calling';
 });
-const prizePool = computed(() => maximumWinners.value * winnerPrize.value);
+const prizePool = computed({
+  get: () => maximumWinners.value * winnerPrize.value,
+  set: (value) => {
+    const budget = Math.max(0, Number(value) || 0);
+    winnerPrize.value = Math.round(budget / Math.max(1, maximumWinners.value));
+  }
+});
+const playerWindowCards = computed(() => {
+  if (!requestedPlayer) return null;
+  const start = (requestedPlayer - 1) * cardsPerPlayer.value;
+  return cards.value.slice(start, start + cardsPerPlayer.value);
+});
 const visibleCards = computed(() =>
-  cards.value.slice(cardPageStart.value, cardPageStart.value + visibleCardCount.value)
+  playerWindowCards.value
+    ?? cards.value.slice(cardPageStart.value, cardPageStart.value + visibleCardCount.value)
 );
 const cardGridColumns = computed(() => {
   if (visibleCards.value.length === 4) return 2;
@@ -126,6 +151,75 @@ const availableNumbers = computed(() =>
 );
 const recentCalls = computed(() => calledNumbers.value.slice(-6).reverse());
 const gameProgress = computed(() => Math.round((calledNumbers.value.length / 75) * 100));
+const verificationCard = computed(() => {
+  const cardId = pendingWinnerIds.value.includes(verificationCardId.value)
+    ? verificationCardId.value
+    : pendingWinnerIds.value[0];
+  return cards.value.find((card) => card.id === cardId) ?? null;
+});
+const verificationPosition = computed(() =>
+  verificationCard.value ? pendingWinnerIds.value.indexOf(verificationCard.value.id) : -1
+);
+const appearanceStyle = computed(() => ({
+  '--pre-daub': preDaubColor.value,
+  '--actual-daub': actualDaubColor.value,
+  '--card-background': cardBackgroundColor.value,
+  '--card-header': cardHeaderColor.value,
+  '--card-text': cardTextColor.value,
+  '--free-space': freeSpaceColor.value,
+  '--card-font': cardFont.value
+}));
+
+function toggleTheme() {
+  theme.value = theme.value === 'light' ? 'dark' : 'light';
+}
+
+function openCardDesign() {
+  if (currentScreen.value !== 'design') designReturnScreen.value = currentScreen.value;
+  currentScreen.value = 'design';
+}
+
+function resetCardDesign() {
+  preDaubColor.value = '#e9424a';
+  actualDaubColor.value = '#1769e0';
+  cardBackgroundColor.value = '#ffffff';
+  cardHeaderColor.value = '#132039';
+  cardTextColor.value = '#132039';
+  freeSpaceColor.value = '#fff8e8';
+  cardFont.value = 'Inter, ui-sans-serif, system-ui, sans-serif';
+  freeSpaceSymbol.value = '★';
+}
+
+function loadAppearance() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('lucky-hall-appearance') || '{}');
+    theme.value = saved.theme === 'dark' ? 'dark' : 'light';
+    preDaubColor.value = saved.preDaubColor || preDaubColor.value;
+    actualDaubColor.value = saved.actualDaubColor || actualDaubColor.value;
+    cardBackgroundColor.value = saved.cardBackgroundColor || cardBackgroundColor.value;
+    cardHeaderColor.value = saved.cardHeaderColor || cardHeaderColor.value;
+    cardTextColor.value = saved.cardTextColor || cardTextColor.value;
+    freeSpaceColor.value = saved.freeSpaceColor || freeSpaceColor.value;
+    cardFont.value = saved.cardFont || cardFont.value;
+    freeSpaceSymbol.value = saved.freeSpaceSymbol || freeSpaceSymbol.value;
+  } catch {
+    // Keep the safe defaults when stored preferences cannot be read.
+  }
+}
+
+function saveAppearance() {
+  localStorage.setItem('lucky-hall-appearance', JSON.stringify({
+    theme: theme.value,
+    preDaubColor: preDaubColor.value,
+    actualDaubColor: actualDaubColor.value,
+    cardBackgroundColor: cardBackgroundColor.value,
+    cardHeaderColor: cardHeaderColor.value,
+    cardTextColor: cardTextColor.value,
+    freeSpaceColor: freeSpaceColor.value,
+    cardFont: cardFont.value,
+    freeSpaceSymbol: freeSpaceSymbol.value
+  }));
+}
 
 function getBallLabel(number) {
   if (!number) return '—';
@@ -504,7 +598,7 @@ function checkForWinner() {
   if (newWinners.length) {
     stopAutoCall();
     dealerSection.value = 'game';
-    if (currentScreen.value !== 'audience') currentScreen.value = 'dealer';
+    if (!requestedPlayer && currentScreen.value !== 'audience') currentScreen.value = 'dealer';
     dealerNotice.value = `${newWinners.length} Bingo claim${newWinners.length === 1 ? '' : 's'} require verification. Calling is paused.`;
   }
 }
@@ -613,6 +707,18 @@ function openSeparateScreen(screen) {
   window.bingoApi?.openScreen?.(screen);
 }
 
+function openPlayerWindow(playerNumber = getPlayerIndex(Number(targetCardId.value)) + 1) {
+  const normalizedPlayer = Math.max(1, Math.min(playerCount.value, Number(playerNumber) || 1));
+  window.bingoApi?.openPlayer?.(normalizedPlayer);
+}
+
+function showVerificationCard(offset) {
+  if (!pendingWinnerIds.value.length) return;
+  const currentIndex = Math.max(0, verificationPosition.value);
+  const nextIndex = (currentIndex + offset + pendingWinnerIds.value.length) % pendingWinnerIds.value.length;
+  verificationCardId.value = pendingWinnerIds.value[nextIndex];
+}
+
 function serializableGameState() {
   return JSON.parse(JSON.stringify({
     playerCount: playerCount.value,
@@ -677,6 +783,7 @@ function handleKeyboardShortcut(event) {
   } else if (event.key.toLowerCase() === 'v') {
     currentScreen.value = 'dealer';
     dealerSection.value = 'game';
+    verificationCardId.value = pendingWinnerIds.value[0] ?? null;
   } else if (event.key.toLowerCase() === 'a') {
     currentScreen.value = 'audience';
   }
@@ -762,6 +869,7 @@ function isPatternSquare(index) {
 }
 
 onMounted(() => {
+  loadAppearance();
   stopStateListener = window.bingoApi?.onState?.(applySharedState) ?? null;
   if (requestedScreen) {
     window.bingoApi?.requestState?.();
@@ -771,6 +879,14 @@ onMounted(() => {
   window.addEventListener('keydown', handleKeyboardShortcut);
   window.bingoApi?.appReady?.();
 });
+
+watch(pendingWinnerIds, (claims) => {
+  if (!claims.length) {
+    verificationCardId.value = null;
+  } else if (!claims.includes(verificationCardId.value)) {
+    verificationCardId.value = claims[0];
+  }
+}, { deep: true, immediate: true });
 
 onBeforeUnmount(() => {
   stopAutoCall();
@@ -790,19 +906,27 @@ watch(
   },
   { deep: true }
 );
+
+watch(
+  [
+    theme, preDaubColor, actualDaubColor, cardBackgroundColor, cardHeaderColor,
+    cardTextColor, freeSpaceColor, cardFont, freeSpaceSymbol
+  ],
+  saveAppearance
+);
 </script>
 
 <template>
-  <div class="app-shell">
+  <div class="app-shell" :class="`theme-${theme}`" :style="appearanceStyle">
     <header class="topbar">
       <div class="brand-lockup">
         <img class="brand-mark" :src="appIcon" alt="" aria-hidden="true">
         <div>
-          <h1>Lucky Hall Bingo</h1>
-          <p>Classic 75-ball game</p>
+          <h1>{{ requestedPlayer ? `Player ${String(requestedPlayer).padStart(3, '0')}` : 'Lucky Hall Bingo' }}</h1>
+          <p>{{ requestedPlayer ? 'Personal Bingo cards' : 'Classic 75-ball game' }}</p>
         </div>
       </div>
-      <nav class="screen-switcher" aria-label="Application screen">
+      <nav v-if="!isDedicatedWindow" class="screen-switcher" aria-label="Application screen">
         <button
           type="button"
           :class="{ active: currentScreen === 'floor' }"
@@ -820,6 +944,13 @@ watch(
         >Audience Display</button>
       </nav>
       <div class="header-actions">
+        <button class="btn appearance-btn" type="button" :aria-label="`Use ${theme === 'light' ? 'dark' : 'light'} mode`" @click="toggleTheme">
+          <span aria-hidden="true">{{ theme === 'light' ? '☾' : '☀' }}</span>
+          {{ theme === 'light' ? 'Dark' : 'Light' }}
+        </button>
+        <button v-if="!requestedPlayer" class="btn appearance-btn" type="button" :class="{ active: currentScreen === 'design' }" @click="openCardDesign">
+          <span aria-hidden="true">✦</span> Card design
+        </button>
         <div class="status-pill" :class="{ urgent: pendingWinnerIds.length, complete: roundComplete }">
           <span class="status-dot"></span>
           {{
@@ -902,7 +1033,7 @@ watch(
             <div class="eyebrow">Player cards</div>
             <h2>Casino floor cards</h2>
           </div>
-          <div class="card-view-tools">
+          <div v-if="!requestedPlayer" class="card-view-tools">
             <div class="card-pager">
               <button class="btn" type="button" :disabled="cardPageStart === 0" @click="showPreviousCards">‹</button>
               <strong>{{ visibleCardRange }}</strong>
@@ -984,7 +1115,7 @@ watch(
                 :aria-pressed="cell.marked || isCalled(cell.number)"
                 @click="toggleCell(card, cell)"
               >
-                <span v-if="cell.isFree" class="free-star">★</span>
+                <span v-if="cell.isFree" class="free-star">{{ freeSpaceSymbol }}</span>
                 <strong>{{ cell.isFree ? 'FREE' : cell.number }}</strong>
               </button>
             </div>
@@ -1013,6 +1144,7 @@ watch(
         </div>
         <button class="btn popout-btn" type="button" @click="openSeparateScreen('dealer')">↗ Dealer window</button>
         <button class="btn popout-btn" type="button" @click="openSeparateScreen('audience')">↗ Audience window</button>
+        <button class="btn popout-btn" type="button" @click="openPlayerWindow()">↗ Player {{ getPlayerIndex(Number(targetCardId)) + 1 }} window</button>
         <div class="dealer-search">
           <input v-model="cardSearch" type="search" placeholder="Find card #">
           <button type="button" @click="searchForCard">Find</button>
@@ -1029,20 +1161,6 @@ watch(
           <div><strong>{{ calledNumbers.length }}</strong><span>balls called</span></div>
           <div><strong>{{ winningCardIds.length }}</strong><span>winners</span></div>
           <div><strong>{{ 75 - calledNumbers.length }}</strong><span>remaining</span></div>
-        </div>
-      </section>
-
-      <section v-if="pendingWinnerIds.length" class="verification-alert" role="alert">
-        <div class="alert-symbol">!</div>
-        <div>
-          <span>Bingo claim — action required</span>
-          <strong>
-            {{ pendingWinnerIds.length === 1 ? 'A player is waiting for verification' : `${pendingWinnerIds.length} players are waiting for verification` }}
-          </strong>
-          <p>Number calling is paused until every claim below is approved or rejected.</p>
-        </div>
-        <div class="alert-card-numbers">
-          <i v-for="cardId in pendingWinnerIds" :key="cardId">Card {{ String(cardId).padStart(3, '0') }}</i>
         </div>
       </section>
 
@@ -1084,7 +1202,7 @@ watch(
       <div class="fixed-dealer-status" :class="{ warning: pendingWinnerIds.length, complete: roundComplete }">
         <strong>{{ gameStage }}</strong>
         <span>{{ dealerNotice }}</span>
-        <small>Space: call · P: play/pause · U: undo · V: verification · A: audience</small>
+        <small><kbd>Space</kbd> Call number <kbd>P</kbd> Play/pause <kbd>U</kbd> Undo <kbd>V</kbd> Verify claim <kbd>A</kbd> Audience</small>
       </div>
 
       <section v-if="searchedCard" class="dealer-search-result">
@@ -1105,6 +1223,7 @@ watch(
           <strong>{{ playerBalances[getPlayerIndex(searchedCard.id)] }} credits</strong>
         </div>
         <button class="btn" type="button" @click="targetCardId = searchedCard.id; viewTargetCard()">View card</button>
+        <button class="btn" type="button" @click="openPlayerWindow(getPlayerIndex(searchedCard.id) + 1)">Open player window</button>
       </section>
 
       <div class="dealer-grid">
@@ -1122,12 +1241,13 @@ watch(
             </div>
           </div>
           <div class="setup-fields">
-            <label><span>Players</span><input v-model.number="playerCount" class="form-control" type="number" min="1" max="500"></label>
-            <label><span>Cards per player</span><input v-model.number="cardsPerPlayer" class="form-control" type="number" min="1" max="6"></label>
-            <label><span>Maximum winners</span><input v-model.number="maximumWinners" class="form-control" type="number" min="1"></label>
-            <label v-show="advancedOpen"><span>Starting credits</span><input v-model.number="startingCredits" class="form-control" type="number" min="0"></label>
-            <label v-show="advancedOpen"><span>Card cost</span><input v-model.number="cardCost" class="form-control" type="number" min="0"></label>
-            <label v-show="advancedOpen"><span>Prize per winner</span><input v-model.number="winnerPrize" class="form-control" type="number" min="0"></label>
+            <label><span>Players</span><input v-model.number="playerCount" class="form-control" type="number" min="1" max="500" step="1"></label>
+            <label><span>Cards per player</span><input v-model.number="cardsPerPlayer" class="form-control" type="number" min="1" max="6" step="1"></label>
+            <label><span>Maximum winners</span><input v-model.number="maximumWinners" class="form-control" type="number" min="1" step="1"></label>
+            <label><span>Prize budget</span><input v-model.number="prizePool" class="form-control" type="number" min="0" step="1"></label>
+            <label v-show="advancedOpen"><span>Starting credits</span><input v-model.number="startingCredits" class="form-control" type="number" min="0" step="1"></label>
+            <label v-show="advancedOpen"><span>Card cost</span><input v-model.number="cardCost" class="form-control" type="number" min="0" step="1"></label>
+            <label v-show="advancedOpen"><span>Prize per winner</span><input v-model.number="winnerPrize" class="form-control" type="number" min="0" step="1"></label>
           </div>
           <div class="credit-summary">
             <div><span>Total cards</span><strong>{{ totalPlayerCards }}</strong></div>
@@ -1199,6 +1319,9 @@ watch(
           <button class="btn view-target-btn" type="button" @click="viewTargetCard">
             View this player card
           </button>
+          <button class="btn view-target-btn" type="button" @click="openPlayerWindow()">
+            Open this player's window
+          </button>
           <button class="btn view-target-btn" type="button" @click="printVisibleCards">
             Print current card view
           </button>
@@ -1253,42 +1376,6 @@ watch(
               <span>{{ pattern.name }}</span>
               <small>{{ pattern.detail }}</small>
             </button>
-          </div>
-        </section>
-
-        <section v-show="dealerSection === 'game'" id="verification-queue" class="dealer-card verification-panel">
-          <div class="dealer-section-title">
-            <div>
-              <div class="eyebrow">Dealer approval</div>
-              <h3>Bingo verification queue</h3>
-            </div>
-            <span>{{ pendingWinnerIds.length }} awaiting review</span>
-          </div>
-          <div v-if="pendingWinnerIds.length" class="verification-list">
-            <article v-for="cardId in pendingWinnerIds" :key="cardId">
-              <div>
-                <span>Claimed Bingo</span>
-                <strong>Card #{{ String(cardId).padStart(3, '0') }}</strong>
-                <small>{{ getPlayerName(cardId) }} · {{ activePattern.name }}</small>
-              </div>
-              <div class="verification-card-preview" aria-label="Claimed card preview">
-                <span
-                  v-for="(cell, index) in cards.find((card) => card.id === cardId).cells"
-                  :key="cell.key"
-                  :class="{
-                    called: cell.isFree || isCalled(cell.number),
-                    pattern: getMatchedWinningSet(cards.find((card) => card.id === cardId)).includes(index)
-                  }"
-                >{{ cell.isFree ? '★' : cell.number }}</span>
-              </div>
-              <button type="button" class="verify-view" @click="targetCardId = cardId; viewTargetCard()">View card</button>
-              <button type="button" class="verify-reject" @click="rejectWinner(cardId)">Reject</button>
-              <button type="button" class="verify-approve" @click="approveWinner(cardId)">Approve + {{ winnerPrize }}</button>
-            </article>
-          </div>
-          <div v-else class="dealer-empty-state">
-            <span>✓</span>
-            <p>No Bingo claims are waiting for dealer approval.</p>
           </div>
         </section>
 
@@ -1366,6 +1453,69 @@ watch(
       </div>
     </main>
 
+    <main v-else-if="currentScreen === 'design'" class="design-screen">
+      <section class="design-copy">
+        <div class="eyebrow">Player preferences</div>
+        <h2>Make your card your own</h2>
+        <p>Choose your daub colors, card palette, typeface, and free-space symbol. Your choices are saved on this device.</p>
+
+        <div class="design-group">
+          <div>
+            <h3>Daub colors</h3>
+            <p>Pre-daub is a square you mark before it is called. Actual daub is a called number.</p>
+          </div>
+          <label class="color-field"><input v-model="preDaubColor" type="color"><span>Pre-daub</span><code>{{ preDaubColor }}</code></label>
+          <label class="color-field"><input v-model="actualDaubColor" type="color"><span>Actual daub</span><code>{{ actualDaubColor }}</code></label>
+        </div>
+
+        <div class="design-group">
+          <div><h3>Card colors</h3><p>Adjust the paper, BINGO header, number text, and free space.</p></div>
+          <label class="color-field"><input v-model="cardBackgroundColor" type="color"><span>Card</span></label>
+          <label class="color-field"><input v-model="cardHeaderColor" type="color"><span>Header</span></label>
+          <label class="color-field"><input v-model="cardTextColor" type="color"><span>Numbers</span></label>
+          <label class="color-field"><input v-model="freeSpaceColor" type="color"><span>Free space</span></label>
+        </div>
+
+        <div class="design-group design-options">
+          <div><h3>Type &amp; symbol</h3><p>Pick the card font and the icon in the center free space.</p></div>
+          <label>Card font
+            <select v-model="cardFont" class="form-select">
+              <option value="Inter, ui-sans-serif, system-ui, sans-serif">Clean Sans</option>
+              <option value="Georgia, 'Times New Roman', serif">Classic Serif</option>
+              <option value="'Trebuchet MS', sans-serif">Friendly Rounded</option>
+              <option value="'Courier New', monospace">Lucky Typewriter</option>
+            </select>
+          </label>
+          <fieldset>
+            <legend>Free-space symbol</legend>
+            <div class="symbol-picker">
+              <button v-for="symbol in ['★', '♥', '♦', '♣', '☘', '☺']" :key="symbol" type="button" :class="{ active: freeSpaceSymbol === symbol }" @click="freeSpaceSymbol = symbol">{{ symbol }}</button>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="design-actions">
+          <button class="btn reset-design-btn" type="button" @click="resetCardDesign">Reset defaults</button>
+          <button class="btn save-design-btn" type="button" @click="currentScreen = designReturnScreen">Done</button>
+        </div>
+      </section>
+
+      <aside class="design-preview">
+        <span>Live preview</span>
+        <article class="bingo-card preview-card">
+          <div class="card-top"><div><span>Your lucky card</span><strong>Card 01</strong></div><div class="card-id">#7077</div></div>
+          <div class="bingo-letters"><span v-for="letter in letters" :key="letter">{{ letter }}</span></div>
+          <div class="number-grid">
+            <div v-for="(number, index) in [7,19,33,50,68,12,27,39,54,72,3,21,null,58,65,10,25,42,47,75,14,29,36,60,63]" :key="index" class="number-cell" :class="{ marked: index === 6, called: index === 18, free: number === null }">
+              <span v-if="number === null" class="free-star">{{ freeSpaceSymbol }}</span>
+              <strong>{{ number === null ? 'FREE' : number }}</strong>
+            </div>
+          </div>
+          <p class="card-hint">Pre-daub · Called · Free</p>
+        </article>
+      </aside>
+    </main>
+
     <main v-else class="audience-screen">
       <header class="audience-header">
         <div>
@@ -1427,6 +1577,57 @@ watch(
       <span><i class="legend-dot free-dot"></i> Free space</span>
       <small>Good luck &amp; have fun!</small>
     </footer>
+
+    <div v-if="currentScreen === 'dealer' && verificationCard" class="verification-overlay" role="presentation">
+      <section class="verification-dialog" role="alertdialog" aria-modal="true" aria-labelledby="verification-title">
+        <header>
+          <div>
+            <span>Player win verification</span>
+            <h2 id="verification-title">Review Card #{{ String(verificationCard.id).padStart(3, '0') }}</h2>
+            <p>{{ getPlayerName(verificationCard.id) }} · {{ activePattern.name }}</p>
+          </div>
+          <strong>{{ verificationPosition + 1 }} of {{ pendingWinnerIds.length }}</strong>
+        </header>
+
+        <div class="verification-overlay-body">
+          <button class="verification-nav" type="button" :disabled="pendingWinnerIds.length < 2" aria-label="Previous winning card" @click="showVerificationCard(-1)">‹</button>
+          <article class="bingo-card verification-full-card">
+            <div class="card-top">
+              <div><span>{{ getPlayerName(verificationCard.id) }}</span><strong>Card {{ String(verificationCard.id).padStart(3, '0') }}</strong></div>
+              <div class="review-badge">Verify</div>
+            </div>
+            <div class="bingo-letters"><span v-for="letter in letters" :key="letter">{{ letter }}</span></div>
+            <div class="number-grid">
+              <div
+                v-for="(cell, index) in verificationCard.cells"
+                :key="cell.key"
+                class="number-cell verification-cell"
+                :class="{
+                  called: cell.isFree || isCalled(cell.number),
+                  free: cell.isFree,
+                  'winning-square': getMatchedWinningSet(verificationCard).includes(index)
+                }"
+              >
+                <span v-if="cell.isFree" class="free-star">{{ freeSpaceSymbol }}</span>
+                <strong>{{ cell.isFree ? 'FREE' : cell.number }}</strong>
+              </div>
+            </div>
+          </article>
+          <button class="verification-nav" type="button" :disabled="pendingWinnerIds.length < 2" aria-label="Next winning card" @click="showVerificationCard(1)">›</button>
+        </div>
+
+        <div class="verification-explanation">
+          <span><i class="verification-key called-key"></i> Called number</span>
+          <span><i class="verification-key winning-key"></i> Winning pattern</span>
+          <strong>Calling is paused until all claims are reviewed.</strong>
+        </div>
+
+        <footer>
+          <button class="verify-reject" type="button" @click="rejectWinner(verificationCard.id)">Reject claim</button>
+          <button class="verify-approve" type="button" @click="approveWinner(verificationCard.id)">Approve winner · Pay {{ winnerPrize }} credits</button>
+        </footer>
+      </section>
+    </div>
 
     <div v-if="appPrompt.open" class="app-prompt-backdrop" role="presentation" @click.self="closeAppPrompt(false)">
       <section
