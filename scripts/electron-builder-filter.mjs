@@ -22,14 +22,18 @@ function sanitizeMacMetadata() {
   if (process.platform !== "darwin") return;
 
   const root = process.cwd();
-  const targets = ["build", "dist", "electron", "index.html", "main.js", "release"]
+  const targets = ["build", "dist", "electron", "index.html", "main.js"]
     .map((target) => path.resolve(root, target))
     .filter((target) => fs.existsSync(target));
 
-  try {
-    execFileSync("find", [root, "-name", "._*", "-delete"], { stdio: "ignore" });
-  } catch {
-    // Keep build moving.
+  for (const target of targets) {
+    try {
+      if (fs.statSync(target).isDirectory()) {
+        execFileSync("find", [target, "-name", "._*", "-delete"], { stdio: "ignore" });
+      }
+    } catch {
+      // Keep build moving.
+    }
   }
 
   if (targets.length === 0) return;
@@ -71,7 +75,9 @@ if (ignoredArgs.length > 0) {
 
 const hasCustomOutput = userArgs.some((arg) => arg.startsWith("--config.directories.output="));
 const builderArgs = [...userArgs];
-const requestedArch = userArgs.includes("--universal")
+const requestedArch = userArgs.includes("--x64") && userArgs.includes("--arm64")
+  ? "combined"
+  : userArgs.includes("--universal")
   ? "universal"
   : userArgs.includes("--arm64")
     ? "arm64"
@@ -82,6 +88,10 @@ const requestedArch = userArgs.includes("--universal")
 function shouldCopyArtifact(entryName) {
   if (!requestedArch) return true;
   if (entryName === "builder-debug.yml" || entryName === "latest-mac.yml") return true;
+
+  if (requestedArch === "combined") {
+    return entryName.endsWith(".exe") || entryName.endsWith(".exe.blockmap") || entryName === "latest.yml";
+  }
 
   if (requestedArch === "universal") {
     return entryName.includes("universal") || entryName === "mac-universal";
