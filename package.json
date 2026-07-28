@@ -1,0 +1,12 @@
+{
+  "name": "treasure-pots",
+  "version": "1.0.0",
+  "description": "Treasure Pots is a play-money slot game with fill-and-pop pots and linked value chips. NO REAL MONEY",
+  "main": "main.js",
+  "scripts": {
+    "build": "node --check main.js"
+  },
+  "private": true,
+  "keywords": [],
+  "author": ""
+}
