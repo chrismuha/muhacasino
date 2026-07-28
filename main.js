@@ -1,38 +1,48 @@
 // Config
-const WILD_SYMBOL = "🃏";
-const BONUS_SYMBOL = "🎁";
+const WILD_SYMBOL = "penny";
+const BONUS_SYMBOL = "bonus";
 const LINK_SYMBOL = "LINK";
-const SYMBOLS = [WILD_SYMBOL, "💎", "🍀", "⭐", "🔔", "🍋", "🍒"];
+const SYMBOLS = [WILD_SYMBOL, "piggy", "purse", "bow", "daisy", "cupcake", "strawberry"];
+const SYMBOL_LABELS = {
+    penny: "Pretty Penny wild",
+    piggy: "Piggy bank",
+    purse: "Coin purse",
+    bow: "Coral bow",
+    daisy: "Daisy",
+    cupcake: "Cupcake",
+    strawberry: "Strawberry",
+};
 const JACKPOT_TEASER_RATE = 0.06;
 
 // Weights (higher = more common)
 const WEIGHTS = {
     [WILD_SYMBOL]: 1,
-    "💎": 1,
-    "🍀": 3,
-    "⭐": 4,
-    "🔔": 6,
-    "🍋": 7,
-    "🍒": 8,
+    piggy: 1,
+    purse: 3,
+    bow: 4,
+    daisy: 6,
+    cupcake: 7,
+    strawberry: 8,
 };
 
 // Paytable (multipliers) for 3/4/5 in a row from the left
 const PAYTABLE = {
     [WILD_SYMBOL]: { 3: 120, 4: 600, 5: 3000 },
-    "💎": { 3: 60, 4: 240, 5: 1200 },
-    "🍀": { 3: 30, 4: 120, 5: 600 },
-    "⭐": { 3: 18, 4: 72, 5: 360 },
-    "🔔": { 3: 12, 4: 48, 5: 240 },
-    "🍋": { 3: 8, 4: 30, 5: 150 },
-    "🍒": { 3: 5, 4: 20, 5: 100 },
+    piggy: { 3: 60, 4: 240, 5: 1200 },
+    purse: { 3: 30, 4: 120, 5: 600 },
+    bow: { 3: 18, 4: 72, 5: 360 },
+    daisy: { 3: 12, 4: 48, 5: 240 },
+    cupcake: { 3: 8, 4: 30, 5: 150 },
+    strawberry: { 3: 5, 4: 20, 5: 100 },
 };
 
 const JACKPOT_TIERS = [
-    { name: "Mini", oddsElementId: "miniJackpotOdds", customId: "miniJackpotCustomOdds", winInputId: "miniJackpotWinPercent", lossInputId: "miniJackpotLossPercent", defaultRate: 0.001, amountUSD: 10 },
-    { name: "Minor", oddsElementId: "minorJackpotOdds", customId: "minorJackpotCustomOdds", winInputId: "minorJackpotWinPercent", lossInputId: "minorJackpotLossPercent", defaultRate: 0.0002, amountUSD: 100 },
-    { name: "Major", oddsElementId: "majorJackpotOdds", customId: "majorJackpotCustomOdds", winInputId: "majorJackpotWinPercent", lossInputId: "majorJackpotLossPercent", defaultRate: 0.00005, amountUSD: 1000 },
-    { name: "Grand", oddsElementId: "grandJackpotOdds", customId: "grandJackpotCustomOdds", winInputId: "grandJackpotWinPercent", lossInputId: "grandJackpotLossPercent", defaultRate: 0.00001, amountUSD: 10000 },
+    { name: "Mini", oddsElementId: "miniJackpotOdds", customId: "miniJackpotCustomOdds", winInputId: "miniJackpotWinPercent", lossInputId: "miniJackpotLossPercent", defaultRate: 0.001, amountUSD: 250 },
+    { name: "Minor", oddsElementId: "minorJackpotOdds", customId: "minorJackpotCustomOdds", winInputId: "minorJackpotWinPercent", lossInputId: "minorJackpotLossPercent", defaultRate: 0.0002, amountUSD: 1000 },
+    { name: "Major", oddsElementId: "majorJackpotOdds", customId: "majorJackpotCustomOdds", winInputId: "majorJackpotWinPercent", lossInputId: "majorJackpotLossPercent", defaultRate: 0.00005, amountUSD: 5000 },
+    { name: "Grand", oddsElementId: "grandJackpotOdds", customId: "grandJackpotCustomOdds", winInputId: "grandJackpotWinPercent", lossInputId: "grandJackpotLossPercent", defaultRate: 0.00001, amountUSD: 25000 },
 ];
+const JACKPOT_BASE_WAGER_USD = 0.50;
 
 const ROWS = 5;
 const COLS = 5;
@@ -80,9 +90,9 @@ const winOddsEl = document.getElementById("winOdds");
 const freeSpinsOddsEl = document.getElementById("freeSpinsOdds");
 const freeSpinsAwardEl = document.getElementById("freeSpinsAward");
 const bonusGameOddsEl = document.getElementById("bonusGameOdds");
+const linkWinOddsEl = document.getElementById("linkWinOdds");
+const linkTeaserOddsEl = document.getElementById("linkTeaserOdds");
 const featureOddsRulesEl = document.getElementById("featureOddsRules");
-const bonusPrizeSelectEls = [1, 2, 3].map((number) => document.getElementById(`bonusPrize${number}`));
-const bonusPrizeCustomEls = [1, 2, 3].map((number) => document.getElementById(`bonusPrize${number}Custom`));
 const maxBetUsesAvailableCreditsEl = document.getElementById("maxBetUsesAvailableCredits");
 const skipWinAnimationDelayEl = document.getElementById("skipWinAnimationDelay");
 const creditStepEl = document.getElementById("creditStep");
@@ -158,7 +168,21 @@ let settingsPageIndex = 0;
 let settingsItems = [];
 let settingsPins = {};
 const SETTINGS_PIN_STORAGE_KEY = "treasurePots.settingsPins.v1";
-const POT_MULTIPLIERS = { 1: 5, 2: 15, 3: 50 };
+const SAVINGS_BANKS = [
+    { name: "Pin Money", amountUSD: 5 },
+    { name: "Nest Egg", amountUSD: 25 },
+    { name: "Rainy Day", amountUSD: 100 },
+];
+const BONUS_WHEEL_SEGMENTS = [
+    { kind: "coin", name: "Copper Penny", mark: "1×", multiplier: 1, weight: 0.35, start: 0, end: 0.35 },
+    { kind: "coin", name: "Lucky Nickel", mark: "2×", multiplier: 2, weight: 0.25, start: 0.35, end: 0.60 },
+    { kind: "coin", name: "Shiny Dime", mark: "5×", multiplier: 5, weight: 0.18, start: 0.60, end: 0.78 },
+    { kind: "coin", name: "Golden Quarter", mark: "10×", multiplier: 10, weight: 0.12, start: 0.78, end: 0.90 },
+    { kind: "jackpot", tier: "Mini", weight: 0.07, start: 0.90, end: 0.97 },
+    { kind: "jackpot", tier: "Minor", weight: 0.02, start: 0.97, end: 0.99 },
+    { kind: "jackpot", tier: "Major", weight: 0.008, start: 0.99, end: 0.998 },
+    { kind: "jackpot", tier: "Grand", weight: 0.002, start: 0.998, end: 1 },
+];
 
 // Session Winnings State
 let sessionWinningsUSD = 0;
@@ -405,12 +429,27 @@ function getHighestBetOptionValue() {
 function updateTotals() {
     const totalBet = getActiveTotalBetUSD();
     totalBetEl.textContent = fmtUSD(totalBet);
+    updateJackpotDisplay(totalBet);
+    updateFeatureRules();
     balanceEl.textContent = fmtUSD(balance);
     const canSpinNow = freeSpinsRemaining > 0 || balance >= totalBet;
     const canUseLastChance = balance > 0 && balance < totalBet;
     spinBtn.disabled = autoSpinRunning ? false : (!(canSpinNow || canUseLastChance) || isSpinning);
     maxBtn.disabled = isSpinning || autoSpinRunning;
     if (resetSessionBtn) resetSessionBtn.disabled = isSpinning || autoSpinRunning;
+}
+
+function getScaledJackpotAmount(tier, totalBetUSD = getActiveTotalBetUSD()) {
+    const wager = Math.max(0.01, Number(totalBetUSD) || JACKPOT_BASE_WAGER_USD);
+    const scale = Math.max(1, wager / JACKPOT_BASE_WAGER_USD);
+    return roundUSD(tier.amountUSD * scale);
+}
+
+function updateJackpotDisplay(totalBetUSD = getActiveTotalBetUSD()) {
+    JACKPOT_TIERS.forEach((tier) => {
+        const amountEl = document.getElementById(`jackpot${tier.name}`);
+        if (amountEl) amountEl.textContent = fmtUSD(getScaledJackpotAmount(tier, totalBetUSD));
+    });
 }
 
 function clearMessage() {
@@ -428,9 +467,9 @@ function updateFeatureStatus() {
     if (freeSpinsRemaining > 0) {
         featureStatusEl.textContent = `FREE SPINS: ${freeSpinsRemaining}`;
     } else if (freeSpinsActive && bonusActive) {
-        featureStatusEl.textContent = "Free Spins & Bonus Plays active";
+        featureStatusEl.textContent = "Free Spins & Reserve Wheel active";
     } else {
-        featureStatusEl.textContent = `Free Spins ${freeSpinsActive ? "active" : "not active"} • Bonus Plays ${bonusActive ? "active" : "not active"}`;
+        featureStatusEl.textContent = `Free Spins ${freeSpinsActive ? "active" : "not active"} • Reserve Wheel ${bonusActive ? "active" : "not active"}`;
     }
     featureStatusEl.classList.toggle("feature-active", freeSpinsRemaining > 0 || freeSpinsActive || bonusActive);
 }
@@ -445,30 +484,15 @@ function getFreeSpinsAward() {
     return Number.isFinite(value) && value > 0 ? value : 8;
 }
 
-function getBonusPrizeMultiplier(index) {
-    const select = bonusPrizeSelectEls[index];
-    const source = select?.value === "custom" ? bonusPrizeCustomEls[index]?.value : select?.value;
-    const value = Number.parseFloat(source);
-    return Number.isFinite(value) && value > 0 ? value : [2, 5, 10][index];
-}
-
-function getBonusPrizeMultipliers() {
-    return [0, 1, 2].map(getBonusPrizeMultiplier);
-}
-
-function syncBonusPrizeCustomInput(index) {
-    const customInput = bonusPrizeCustomEls[index];
-    const customLabel = customInput?.closest(".bonus-custom-label");
-    if (!customLabel) return;
-    customLabel.hidden = bonusPrizeSelectEls[index]?.value !== "custom";
-}
-
 function updateFeatureRules() {
     if (!featureOddsRulesEl) return;
     const freeRate = getFeatureRate(freeSpinsOddsEl, 0.03);
     const bonusRate = getFeatureRate(bonusGameOddsEl, 0.01);
-    const prizes = getBonusPrizeMultipliers().map((value) => `${value}x`).join(", ");
-    featureOddsRulesEl.textContent = `With the current settings, each paid spin independently has a ${(freeRate * 100).toFixed(0)}% win / ${((1 - freeRate) * 100).toFixed(0)}% loss chance to award ${getFreeSpinsAward()} free spins, and a ${(bonusRate * 100).toFixed(0)}% win / ${((1 - bonusRate) * 100).toFixed(0)}% loss chance to land 3, 4, or 5 Bonus chips from the left on an active payline and open Bonus Plays. The three shuffled prizes are ${prizes} the triggering bet.`;
+    const linkWinRate = getFeatureRate(linkWinOddsEl, 0.28);
+    const linkTeaserRate = getFeatureRate(linkTeaserOddsEl, 0.09);
+    const wager = getActiveTotalBetUSD();
+    const jackpotAwards = JACKPOT_TIERS.map((tier) => `${tier.name} ${fmtUSD(getScaledJackpotAmount(tier, wager))}`).join(", ");
+    featureOddsRulesEl.textContent = `With the current settings, each paid spin independently has a ${(freeRate * 100).toFixed(0)}% win / ${((1 - freeRate) * 100).toFixed(0)}% loss chance to award ${getFreeSpinsAward()} free spins, and a ${(bonusRate * 100).toFixed(0)}% win / ${((1 - bonusRate) * 100).toFixed(0)}% loss chance to land 3, 4, or 5 Reserve Wheel chips from the left on an active payline and open the Pretty Penny wheel. Eligible winning spins have a ${(linkWinRate * 100).toFixed(0)}% winning-LINK chance; spins without one have a ${(linkTeaserRate * 100).toFixed(0)}% chance to display a non-paying Not Connected chain. Regular wheel prizes are Copper Penny 1× bet (35%), Lucky Nickel 2× (25%), Shiny Dime 5× (18%), and Golden Quarter 10× (12%). Jackpot outcomes are ${jackpotAwards}, with odds Mini 7%, Minor 2%, Major 0.8%, and Grand 0.2%. Reel Jackpot Odds settings do not change the wheel.`;
 }
 
 function setupFeatureUI() {
@@ -480,37 +504,93 @@ function setupFeatureUI() {
     bonusOverlayEl = document.createElement("div");
     bonusOverlayEl.className = "feature-overlay";
     bonusOverlayEl.hidden = true;
-    bonusOverlayEl.innerHTML = `<div class="feature-dialog" role="dialog" aria-modal="true" aria-labelledby="bonusTitle"><h2 id="bonusTitle">Pick a Treasure Chest!</h2><p>Pick one chest to reveal a configured prize.</p><div class="bonus-choices"><button type="button">🧰</button><button type="button">🧰</button><button type="button">🧰</button></div></div>`;
+    bonusOverlayEl.innerHTML = `
+        <div class="feature-dialog wheel-dialog" role="dialog" aria-modal="true" aria-labelledby="bonusTitle">
+            <span class="wheel-kicker">Pretty Penny Bonus</span>
+            <h2 id="bonusTitle">Spin the Pretty Penny Wheel</h2>
+            <p>Most spins win a coin prize. Penny Reserve jackpots are rare.</p>
+            <div class="bonus-wheel-wrap">
+                <span class="wheel-pointer" aria-hidden="true"></span>
+                <div class="bonus-wheel" aria-label="Jackpot wheel">
+                    <span class="wheel-center">¢</span>
+                </div>
+            </div>
+            <div class="wheel-odds" aria-label="Wheel odds">
+                <span><i class="coin-mark coin-copper">1×</i><b>Copper Penny</b>35%</span>
+                <span><i class="coin-mark coin-nickel">2×</i><b>Lucky Nickel</b>25%</span>
+                <span><i class="coin-mark coin-dime">5×</i><b>Shiny Dime</b>18%</span>
+                <span><i class="coin-mark coin-quarter">10×</i><b>Golden Quarter</b>12%</span>
+                <span><b>Mini Jackpot</b>7%</span><span><b>Minor Jackpot</b>2%</span>
+                <span><b>Major Jackpot</b>0.8%</span><span><b>Grand Jackpot</b>0.2%</span>
+            </div>
+            <div class="wheel-award-chip" aria-live="polite" hidden></div>
+            <p class="wheel-result" aria-live="polite">Ready to spin!</p>
+            <button type="button" class="wheel-spin">Spin the Wheel</button>
+        </div>`;
     bonusOverlayEl.addEventListener("keydown", (event) => {
         if (event.code !== "Space") return;
         event.preventDefault();
         event.stopPropagation();
+        if (event.target?.classList.contains("wheel-spin") && !event.target.disabled) {
+            event.target.click();
+        }
     });
     document.body.appendChild(bonusOverlayEl);
     updateFeatureStatus();
 }
 
+function chooseBonusWheelSegment() {
+    const roll = Math.random();
+    return BONUS_WHEEL_SEGMENTS.find((segment) => roll < segment.end) || BONUS_WHEEL_SEGMENTS[0];
+}
+
 function playBonusGame(totalBetUSD) {
     if (!bonusOverlayEl) return Promise.resolve(0);
     bonusOverlayEl.hidden = false;
-    const buttons = Array.from(bonusOverlayEl.querySelectorAll(".bonus-choices button"));
-    const prizes = getBonusPrizeMultipliers().sort(() => Math.random() - 0.5);
+    const wheel = bonusOverlayEl.querySelector(".bonus-wheel");
+    const spinButton = bonusOverlayEl.querySelector(".wheel-spin");
+    const resultEl = bonusOverlayEl.querySelector(".wheel-result");
+    const awardChipEl = bonusOverlayEl.querySelector(".wheel-award-chip");
+    wheel.style.transition = "none";
+    wheel.style.transform = "rotate(0deg)";
+    resultEl.textContent = "Ready to spin!";
+    awardChipEl.hidden = true;
+    awardChipEl.className = "wheel-award-chip";
+    awardChipEl.replaceChildren();
+    spinButton.disabled = false;
     return new Promise((resolve) => {
-        buttons.forEach((button, index) => {
-            button.disabled = false;
-            button.textContent = "🧰";
-            button.onclick = () => {
-                const multiplier = prizes[index];
-                const winUSD = roundUSD(totalBetUSD * multiplier);
-                buttons.forEach((choice) => { choice.disabled = true; });
-                button.textContent = `${multiplier}×`;
+        spinButton.onclick = () => {
+            spinButton.disabled = true;
+            resultEl.textContent = "Round and round…";
+            const segment = chooseBonusWheelSegment();
+            const targetPosition = (segment.start + segment.end) / 2;
+            const targetDegrees = 360 - (targetPosition * 360);
+            const finalRotation = (6 * 360) + targetDegrees;
+            requestAnimationFrame(() => {
+                wheel.style.transition = "transform 3.8s cubic-bezier(.12,.72,.12,1)";
+                wheel.style.transform = `rotate(${finalRotation}deg)`;
+            });
+            setTimeout(() => {
+                const tier = segment.kind === "jackpot"
+                    ? JACKPOT_TIERS.find((item) => item.name === segment.tier)
+                    : null;
+                const winUSD = tier
+                    ? getScaledJackpotAmount(tier, totalBetUSD)
+                    : roundUSD(Math.max(0.01, totalBetUSD * segment.multiplier));
+                const label = tier ? `${tier.name.toUpperCase()} JACKPOT` : `${segment.name.toUpperCase()} ${segment.mark}`;
+                resultEl.textContent = `${label} — ${fmtUSD(winUSD)}`;
+                if (tier) {
+                    awardChipEl.className = `wheel-award-chip jackpot-${tier.name.toLowerCase()}`;
+                    awardChipEl.innerHTML = `<strong>${tier.name}</strong><span>${fmtUSD(winUSD)}</span>`;
+                    awardChipEl.hidden = false;
+                }
                 setTimeout(() => {
                     bonusOverlayEl.hidden = true;
-                    resolve(winUSD);
-                }, 900);
-            };
-        });
-        buttons[0]?.focus();
+                    resolve({ winUSD, label });
+                }, 1400);
+            }, 3900);
+        };
+        spinButton.focus();
     });
 }
 
@@ -549,19 +629,19 @@ function createCell(symbol, isWinning = false) {
     if (symbol === BONUS_SYMBOL) {
         const chip = document.createElement("span");
         chip.className = "jackpot-chip bonus-chip";
-        chip.innerHTML = "<strong>Bonus</strong><span>Play</span>";
+        chip.innerHTML = "<strong>Reserve</strong><span>Spin Wheel</span>";
         chip.setAttribute("aria-hidden", "true");
         cell.appendChild(chip);
         cell.classList.add("jackpot-win", "bonus-win");
-        cell.setAttribute("aria-label", "Bonus chip");
+        cell.setAttribute("aria-label", "Reserve Wheel trigger chip");
         return cell;
     }
     if (symbol?.kind === "link") {
         const chip = document.createElement("span");
         chip.className = `link-chip ${symbol.anchor ? "link-anchor" : "link-value"} ${symbol.orphan ? "link-orphan" : ""}`;
         chip.innerHTML = symbol.anchor
-            ? `<strong>LINK</strong><span>${symbol.orphan ? "NEEDS REEL 1" : "START"}</span>`
-            : `<strong>${fmtUSD(symbol.value)}</strong><span>LINK VALUE</span>`;
+            ? `<strong>LINK</strong><span>${symbol.orphan ? "NOT CONNECTED" : "START"}</span>`
+            : `<strong>${fmtUSD(symbol.value)}</strong><span>${symbol.orphan ? "NOT CONNECTED" : "LINK VALUE"}</span>`;
         cell.appendChild(chip);
         cell.classList.add(symbol.orphan ? "link-teaser-cell" : "link-win-cell");
         cell.setAttribute("aria-label", symbol.anchor ? "Link chip" : `Linked value ${fmtUSD(symbol.value)}`);
@@ -583,13 +663,14 @@ function createCell(symbol, isWinning = false) {
         }
         return cell;
     }
-    cell.innerHTML = `<span class="icon-container" aria-hidden="true">${symbol}</span>`;
+    const label = SYMBOL_LABELS[symbol] || String(symbol);
+    cell.innerHTML = `<span class="icon-container" aria-hidden="true"><span class="symbol-art symbol-${symbol}"></span></span>`;
     cell.setAttribute("role", "img");
-    cell.setAttribute("aria-label", `Symbol ${symbol}`);
+    cell.setAttribute("aria-label", `Symbol ${label}`);
     return cell;
 }
 
-function resolveJackpotWins() {
+function resolveJackpotWins(totalBetUSD) {
     const jackpotTiers = JACKPOT_TIERS.map((tier) => ({
         tier,
         rate: getTargetJackpotRate(tier)
@@ -598,14 +679,18 @@ function resolveJackpotWins() {
     if (Math.random() >= jackpotRate) return [];
     return jackpotTiers
         .filter(({ rate }) => Math.random() < rate / jackpotRate)
-        .map(({ tier }) => tier);
+        .map(({ tier }) => ({ ...tier, amountUSD: getScaledJackpotAmount(tier, totalBetUSD) }));
 }
 
-function resolveJackpotTeasers(jackpotWins) {
+function resolveJackpotTeasers(jackpotWins, totalBetUSD) {
     if (jackpotWins.length > 0 || Math.random() >= JACKPOT_TEASER_RATE) return [];
     const teaserCount = Math.random() < 0.1 ? 2 : 1;
     const shuffledTiers = [...JACKPOT_TIERS].sort(() => Math.random() - 0.5);
-    return shuffledTiers.slice(0, teaserCount).map((tier) => ({ ...tier, teaser: true }));
+    return shuffledTiers.slice(0, teaserCount).map((tier) => ({
+        ...tier,
+        amountUSD: getScaledJackpotAmount(tier, totalBetUSD),
+        teaser: true,
+    }));
 }
 
 function renderOutcomeGrid(grid, winningPositions, jackpotWins, jackpotTeasers = []) {
@@ -656,8 +741,8 @@ function spinOnce() {
 function addLinkChips(grid, winningSpin, wagerConfig) {
     const displayGrid = grid.map((row) => [...row]);
     const winningPositions = new Set();
-    const activeChain = winningSpin && Math.random() < 0.28;
-    const showOrphan = !activeChain && Math.random() < 0.09;
+    const activeChain = winningSpin && Math.random() < getFeatureRate(linkWinOddsEl, 0.28);
+    const showOrphan = !activeChain && Math.random() < getFeatureRate(linkTeaserOddsEl, 0.09);
     if (!activeChain && !showOrphan) return { grid: displayGrid, winUSD: 0, winningPositions, count: 0 };
 
     const row = Math.floor(Math.random() * ROWS);
@@ -684,29 +769,28 @@ function updatePotDisplay() {
     potProgress.forEach((value, index) => {
         const shown = Math.min(100, Math.round(value));
         if (potFillEls[index]) potFillEls[index].style.height = `${shown}%`;
-        if (potValueEls[index]) potValueEls[index].textContent = `${shown}%`;
+        if (potValueEls[index]) potValueEls[index].textContent = `${fmtUSD(SAVINGS_BANKS[index].amountUSD)} • ${shown}%`;
     });
 }
 
-function advanceTreasurePots(isPaidSpin) {
-    if (!isPaidSpin) return { winMultiplier: 0, popped: [] };
-    potProgress = potProgress.map((value) => {
-        if (Math.random() >= 0.68) return value;
-        return Math.min(100, value + 7 + Math.floor(Math.random() * 18));
+function advanceTreasurePots(hasPaidLinkWin) {
+    if (!hasPaidLinkWin) return { winUSD: 0, popped: [] };
+    const progressRates = [0.72, 0.48, 0.28];
+    potProgress = potProgress.map((value, index) => {
+        if (Math.random() >= progressRates[index]) return value;
+        return Math.min(100, value + 2 + Math.floor(Math.random() * 5));
     });
     const full = potProgress.map((value, index) => value >= 100 ? index : -1).filter((index) => index >= 0);
     if (full.length === 0) {
         updatePotDisplay();
-        return { winMultiplier: 0, popped: [] };
+        return { winUSD: 0, popped: [] };
     }
 
-    const roll = Math.random();
-    const popCount = roll < 0.06 ? 3 : roll < 0.30 ? 2 : 1;
-    const prioritized = [...full, ...[0, 1, 2].filter((index) => !full.includes(index))];
-    const popped = prioritized.slice(0, popCount);
+    const popped = full;
     popped.forEach((index) => { potProgress[index] = 0; });
     updatePotDisplay();
-    return { winMultiplier: POT_MULTIPLIERS[popCount], popped };
+    const winUSD = popped.reduce((sum, index) => sum + SAVINGS_BANKS[index].amountUSD, 0);
+    return { winUSD, popped };
 }
 
 async function animatePotPop(popped) {
@@ -1081,8 +1165,9 @@ function getSettingsDefinitions() {
         })),
         { key: "freeSpinsOdds", title: "Free Spins Odds", element: freeSpinsOddsEl?.closest(".select") },
         { key: "freeSpinsAward", title: "Free Spins Award", element: freeSpinsAwardEl?.closest(".select") },
-        { key: "bonusGameOdds", title: "Bonus Plays Odds", element: bonusGameOddsEl?.closest(".select") },
-        ...bonusPrizeSelectEls.map((select, index) => ({ key: `bonusPrize${index + 1}`, title: `Bonus Plays Prize ${index + 1}`, element: select?.closest(".select") })),
+        { key: "bonusGameOdds", title: "Reserve Wheel Trigger Odds", element: bonusGameOddsEl?.closest(".select") },
+        { key: "linkWinOdds", title: "Winning LINK Chain Odds", element: linkWinOddsEl?.closest(".select") },
+        { key: "linkTeaserOdds", title: "Not Connected LINK Display Odds", element: linkTeaserOddsEl?.closest(".select") },
     ].filter((setting) => setting.element);
 }
 
@@ -1588,13 +1673,14 @@ async function doSpin(options = {}) {
     const displayWinningPositions = new Set(winningPositions);
     linkResult.winningPositions.forEach((position) => displayWinningPositions.add(position));
     bonusResult?.winningPositions.forEach((position) => displayWinningPositions.add(position));
-    const jackpotWins = resolveJackpotWins();
-    const jackpotTeasers = resolveJackpotTeasers(jackpotWins);
+    const jackpotWins = resolveJackpotWins(totalBetUSD);
+    const jackpotTeasers = resolveJackpotTeasers(jackpotWins, totalBetUSD);
     const jackpotWinUSD = jackpotWins.reduce((sum, jackpot) => sum + jackpot.amountUSD, 0);
     renderOutcomeGrid(grid, displayWinningPositions, jackpotWins, jackpotTeasers);
-    const bonusWinUSD = bonusTriggered ? await playBonusGame(totalBetUSD) : 0;
-    const potResult = advanceTreasurePots(!isFreeSpin);
-    const potWinUSD = roundUSD(totalBetUSD * potResult.winMultiplier);
+    const bonusOutcome = bonusTriggered ? await playBonusGame(totalBetUSD) : null;
+    const bonusWinUSD = bonusOutcome?.winUSD || 0;
+    const potResult = advanceTreasurePots(!isFreeSpin && linkResult.winUSD > 0);
+    const potWinUSD = potResult.winUSD;
     await animatePotPop(potResult.popped);
     const freeSpinsTriggered = !isFreeSpin && Math.random() < getFeatureRate(freeSpinsOddsEl, 0.03);
     const freeSpinsAwarded = getFreeSpinsAward();
@@ -1619,11 +1705,11 @@ async function doSpin(options = {}) {
         adjustActualSessionNet(totalWinUSD);
 
         const linesText = lineWins
-            .map(w => `Line ${w.lineIndex}: ${w.symbol} × ${w.count} → ${fmtUSD(w.winUSD)}`)
+            .map(w => `Line ${w.lineIndex}: ${SYMBOL_LABELS[w.symbol] || w.symbol} × ${w.count} → ${fmtUSD(w.winUSD)}`)
             .concat(jackpotWins.map((jackpot) => `${jackpot.name.toUpperCase()} JACKPOT → ${fmtUSD(jackpot.amountUSD)}`))
-            .concat(bonusWinUSD ? [`Line ${bonusResult.lineIndex}: BONUS × ${bonusResult.count} → ${fmtUSD(bonusWinUSD)}`] : [])
+            .concat(bonusWinUSD ? [`RESERVE WHEEL ${bonusOutcome.label} → ${fmtUSD(bonusWinUSD)}`] : [])
             .concat(linkResult.winUSD ? [`LINK × ${linkResult.count} VALUES → ${fmtUSD(linkResult.winUSD)}`] : [])
-            .concat(potWinUSD ? [`${potResult.popped.length} TREASURE POT${potResult.popped.length > 1 ? "S" : ""} POPPED × ${potResult.winMultiplier} → ${fmtUSD(potWinUSD)}`] : [])
+            .concat(potWinUSD ? [`${potResult.popped.map((index) => SAVINGS_BANKS[index].name).join(" + ")} OPENED → ${fmtUSD(potWinUSD)}`] : [])
             .concat(freeSpinsTriggered ? [`${freeSpinsAwarded} FREE SPINS AWARDED`] : [])
             .join(" • ");
         setMessage(`WIN ${fmtUSD(totalWinUSD)} — ${linesText}`);
@@ -1861,16 +1947,10 @@ document.addEventListener("keyup", (e) => {
     setupSettingsOverlay();
     setupFeatureUI();
     updatePotDisplay();
-    [freeSpinsOddsEl, freeSpinsAwardEl, bonusGameOddsEl].forEach((select) => select?.addEventListener("change", () => {
+    [freeSpinsOddsEl, freeSpinsAwardEl, bonusGameOddsEl, linkWinOddsEl, linkTeaserOddsEl].forEach((select) => select?.addEventListener("change", () => {
         updateFeatureRules();
         updateFeatureStatus();
     }));
-    bonusPrizeSelectEls.forEach((select, index) => select?.addEventListener("change", () => {
-        syncBonusPrizeCustomInput(index);
-        updateFeatureRules();
-    }));
-    bonusPrizeCustomEls.forEach((input) => input?.addEventListener("input", updateFeatureRules));
-    bonusPrizeSelectEls.forEach((select, index) => syncBonusPrizeCustomInput(index));
     updateFeatureRules();
     if (skipWinAnimationDelayEl) skipWinAnimationDelayEl.checked = true;
     const grid = createGrid(() => randomSymbol());

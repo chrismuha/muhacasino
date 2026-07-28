@@ -1612,8 +1612,8 @@ body.overlay-open {
 }
 
 .jackpot-chip.bonus-chip {
-  --jackpot-color: #ff8cf7;
-  background: radial-gradient(circle at 35% 28%, #fff4ff, #ff6ff2 62%, #7d176f);
+  --jackpot-color: #d87850;
+  background: radial-gradient(circle at 35% 28%, #fff8df, #d99862 62%, #8b4932);
 }
 
 .jackpot-chip.jackpot-teaser {
@@ -1710,7 +1710,7 @@ body.overlay-open {
   .jackpot-chip { animation: none; }
 }
 
-/* Treasure Pots: warm carved-wood casino cabinet, intentionally non-neon. */
+/* Legacy cabinet layout retained underneath the Pretty Penny visual layer. */
 :root {
   --bg: #24170f;
   --card: #3b2416;
@@ -1993,3 +1993,1029 @@ button:hover { filter: brightness(1.12); }
 .bonus-choices button { min-width: 88px; min-height: 88px; font-size: 2rem; border-radius: 16px; }
 
 @keyframes feature-pulse { to { transform: scale(1.04); filter: brightness(1.25); } }
+
+/* Pretty Penny — a bright mid-century savings-club identity. */
+:root {
+  --bg: #183f3b;
+  --card: #f6edda;
+  --accent: #bd623f;
+  --accent2: #26756c;
+  --text: #173f3b;
+  --muted: #6e7770;
+  --win: #ffd56a;
+  --danger: #a93f42;
+  --shadow: 0 18px 46px rgba(15, 49, 46, .28), inset 0 0 0 1px rgba(255, 255, 255, .7);
+  --radius: 20px;
+}
+
+body {
+  background-color: #b9ddd0;
+  background-image:
+    radial-gradient(circle at 10px 10px, rgba(255,255,255,.7) 0 2px, transparent 2.5px),
+    linear-gradient(135deg, transparent 48%, rgba(30,103,94,.08) 49% 51%, transparent 52%);
+  background-size: 20px 20px, 80px 80px;
+  color: var(--text);
+  font-family: "Avenir Next", Avenir, "Trebuchet MS", system-ui, sans-serif;
+}
+
+.card {
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(37,112,104,.06) 1px, transparent 1px) 0 0 / 24px 100%,
+    #fff9ec;
+  border: 0;
+  border-top: 12px solid #ef8a70;
+  border-bottom: 12px solid #26756c;
+  border-radius: 0;
+  box-shadow: var(--shadow);
+}
+
+.title {
+  gap: 12px;
+  justify-content: center;
+  margin: 2px 0 12px;
+  color: #1d655e;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(28px, 4vw, 48px);
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: -.025em;
+  text-transform: none;
+  text-shadow: 2px 2px 0 #f7c9ae;
+}
+
+.title-mark {
+  display: inline-grid;
+  width: 1.1em;
+  height: 1.1em;
+  place-items: center;
+  border: 3px double #fff4cf;
+  border-radius: 50%;
+  color: #fff8e5;
+  background: #bd623f;
+  box-shadow: 0 3px 0 #83402a;
+  font-family: Georgia, serif;
+  font-size: .8em;
+  font-style: normal;
+  line-height: 1;
+}
+
+.info-btn {
+  border: 2px solid #26756c;
+  color: #26756c;
+  background: #fff9ec;
+  box-shadow: none;
+}
+
+.info-btn:hover {
+  color: #fff;
+  background: #26756c;
+}
+
+.jackpot-board {
+  padding: 12px;
+  border: 2px solid #1d655e;
+  border-radius: 18px;
+  background: #dcefe6;
+  box-shadow: 5px 5px 0 #8cbdb1;
+}
+
+.jackpot-board h3 {
+  color: #1d655e;
+  font-family: Georgia, serif;
+  font-style: italic;
+  letter-spacing: .03em;
+  text-shadow: none;
+}
+
+.jackpot-pills { gap: 8px; }
+.jackpot-pill {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #dcb27a;
+  border-radius: 6px;
+  color: #72472f;
+  background: #fff9e9;
+  box-shadow: 0 3px 0 #dcb27a;
+}
+.jackpot-pill::before {
+  content: "¢";
+  margin-right: 5px;
+  color: #bd623f;
+  font-family: Georgia, serif;
+  font-weight: 900;
+}
+.jackpot-pill b { color: #173f3b; }
+.jackpot-mini, .jackpot-minor, .jackpot-major, .jackpot-grand {
+  --jackpot-color: #bd623f;
+  color: #72472f;
+}
+
+.pot-feature {
+  grid-template-columns: minmax(200px, .8fr) minmax(360px, 1.7fr);
+  gap: 10px 20px;
+  margin: 14px 0;
+  padding: 14px 16px;
+  border: 2px dashed #bd623f;
+  border-radius: 24px 8px 24px 8px;
+  color: #173f3b;
+  background: #f9d9c7;
+  box-shadow: 5px 5px 0 #bd623f;
+}
+
+.pot-copy strong {
+  color: #73402f;
+  font-family: Georgia, serif;
+  font-size: 16px;
+  font-style: italic;
+}
+
+.eyebrow {
+  color: #1d655e;
+  font-family: "Avenir Next", system-ui, sans-serif;
+  letter-spacing: .18em;
+}
+
+.pot {
+  grid-template-columns: 52px 1fr;
+  min-height: 66px;
+  padding: 8px 10px;
+  border: 2px solid #27766c;
+  border-radius: 50% 50% 12px 12px / 18px 18px 12px 12px;
+  color: #173f3b;
+  background: #fff9e9;
+  box-shadow: inset 0 -7px #dcefe6, 3px 3px 0 #79aa9e;
+}
+
+.pot::after {
+  content: "¢";
+  position: absolute;
+  right: 9px;
+  top: 5px;
+  color: rgba(189,98,63,.24);
+  font: 900 22px/1 Georgia, serif;
+}
+
+.pot-meter {
+  width: 40px;
+  height: 40px;
+  border: 3px double #fff4cf;
+  border-radius: 50%;
+  background: #d9c49d;
+  box-shadow: 0 2px 0 #7f6540;
+}
+
+.pot-meter span {
+  background: linear-gradient(90deg, #d87850, #f7b67b);
+}
+
+.pot b { color: #1d655e; font-family: Georgia, serif; font-size: 13px; }
+.pot small { color: #9b4d35; }
+.pot-rule { color: #704231; font-weight: 800; letter-spacing: .02em; }
+
+.reels-wrap {
+  padding: 8px;
+  border: 3px solid #1d655e;
+  border-radius: 22px;
+  background: #fff9ec;
+  box-shadow: 6px 6px 0 #ef8a70;
+}
+
+.reels {
+  gap: 7px;
+  padding: 7px;
+  border-radius: 14px;
+  background: #174f4a;
+}
+
+.reels .cell { border-radius: 10px; }
+.reels .icon-container {
+  border: 1px solid #dccda8;
+  border-radius: 10px;
+  color: #173f3b;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(255,255,255,.9), transparent 42%),
+    #fff8e7;
+  box-shadow: inset 0 -5px #f0e2c4;
+}
+
+.reels .cell.win .icon-container,
+.cell.win {
+  background: #ffd56a;
+  box-shadow: inset 0 0 0 3px #bd623f, 0 0 0 4px #fff8df;
+}
+
+button {
+  border: 2px solid #1d655e;
+  border-radius: 999px;
+  color: #173f3b;
+  background: #dcefe6;
+  box-shadow: 0 3px 0 #79aa9e;
+  animation: none !important;
+}
+button:hover { filter: saturate(1.12) brightness(1.03); }
+button:not(.info-btn)::before { display: none; }
+#spin {
+  border-color: #8d3f2e;
+  color: #fff9e9;
+  background: #d86f51;
+  box-shadow: 0 4px 0 #8d3f2e;
+}
+
+.stat, .select, .checkbox-setting {
+  border-color: #9fc9bc;
+  color: #173f3b;
+  background: rgba(255,255,255,.72);
+}
+
+select, input[type=number], input[type=text] {
+  border-color: #79aa9e;
+  color: #173f3b;
+  background: #fffdf6;
+}
+
+.link-chip, .jackpot-chip {
+  border: 3px double #fff2c9;
+  border-radius: 50%;
+  color: #fff8e4;
+  background: radial-gradient(circle at 35% 28%, #ef9b73, #aa5338 70%);
+  box-shadow: inset 0 0 0 2px #7f3a2c, 0 3px 0 #663023;
+  font-family: "Avenir Next", system-ui, sans-serif;
+}
+.link-value { color: #64351f; background: radial-gradient(circle at 35% 28%, #ffe6a1, #dca959 70%); }
+.feature-status {
+  border-color: #bd623f;
+  color: #71402f;
+  background: #fff3d9;
+}
+.feature-dialog, .overlay-panel {
+  border-color: #26756c;
+  color: #173f3b;
+  background: #fff9ec;
+  box-shadow: 8px 8px 0 #ef8a70;
+}
+.feature-overlay, .overlay { background: rgba(20, 66, 62, .84); }
+.bonus-choices button { border-radius: 50%; background: #f9d9c7; }
+.settings-page-title { color: #1d655e; }
+
+@media (max-width: 700px) {
+  .card { border-inline: 0; }
+  .pot-feature { grid-template-columns: 1fr; }
+  .pot { grid-template-columns: 38px 1fr; }
+  .pot-meter { width: 32px; height: 32px; }
+  .pot-rule { grid-column: 1; }
+}
+
+/* Responsive composition: this intentionally wins over the inherited slot layout. */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+  background-color: #123e3a;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(239, 184, 148, .16), transparent 28rem),
+    radial-gradient(circle at 88% 22%, rgba(164, 205, 191, .16), transparent 30rem),
+    linear-gradient(155deg, #194f49, #0d302d 70%);
+}
+
+.game {
+  width: min(1180px, 100%);
+  min-width: 0;
+  margin-inline: auto;
+}
+
+.card {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: auto;
+  padding: clamp(8px, 1.7vw, 20px);
+  overflow: visible;
+  background:
+    linear-gradient(rgba(255,255,255,.6), rgba(255,255,255,.6)),
+    repeating-linear-gradient(0deg, transparent 0 27px, rgba(28,91,84,.045) 27px 28px),
+    #f7efdd;
+}
+
+.card > *,
+.jackpot-board,
+.jackpot-pills,
+.jackpot-pill,
+.pot-feature,
+.pot-copy,
+.pots,
+.pot,
+.reels-wrap,
+.reels,
+.hud,
+.left,
+.right {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.title {
+  flex-wrap: nowrap;
+  min-height: 44px;
+  margin-bottom: clamp(7px, 1.2vw, 12px);
+  font-size: clamp(25px, 3.6vw, 44px);
+}
+
+.title .info-btn {
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  min-height: 30px;
+  margin-left: 2px;
+}
+
+.jackpot-board {
+  box-shadow: 0 4px 0 #8cbdb1;
+}
+
+.jackpot-pills {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.jackpot-pill {
+  justify-content: center;
+  padding-inline: clamp(5px, 1vw, 10px);
+  white-space: normal;
+}
+
+.pot-feature {
+  grid-template-columns: minmax(165px, .7fr) minmax(0, 1.8fr);
+  box-shadow: 0 4px 0 #bd623f;
+}
+
+.pots {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.pot {
+  grid-template-columns: 46px minmax(0, 1fr);
+}
+
+.pot b {
+  overflow-wrap: anywhere;
+}
+
+.reels-wrap {
+  box-shadow: 0 5px 0 #d76f56;
+}
+
+.reels {
+  --reel-row-h: clamp(34px, 5.1vw, 58px);
+  --reel-row-gap: clamp(3px, .55vw, 7px);
+  width: 100%;
+  min-height: 0;
+  gap: var(--reel-row-gap);
+  padding: clamp(4px, .65vw, 7px);
+}
+
+.cell {
+  font-size: clamp(18px, 3.3vw, 37px);
+}
+
+.reels .icon-container {
+  min-width: 0;
+}
+
+.symbol-art {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  filter: drop-shadow(0 2px 1px rgba(68, 47, 28, .18));
+}
+
+.symbol-penny { background-image: url("assets/symbols/penny.png?v=2"); }
+.symbol-piggy { background-image: url("assets/symbols/piggy.png?v=2"); }
+.symbol-purse { background-image: url("assets/symbols/purse.png?v=2"); }
+.symbol-bow { background-image: url("assets/symbols/bow.png?v=2"); }
+.symbol-daisy { background-image: url("assets/symbols/daisy.png?v=2"); }
+.symbol-cupcake { background-image: url("assets/symbols/cupcake.png?v=2"); }
+.symbol-strawberry { background-image: url("assets/symbols/strawberry.png?v=2"); }
+
+.overlay-paytable .symbol-art {
+  width: 40px;
+  height: 40px;
+  background-size: contain;
+}
+
+.link-chip.link-orphan {
+  opacity: 1;
+  filter: none;
+  border-style: dashed;
+  color: #4f3023;
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,.22) 0 7px, transparent 7px 14px),
+    radial-gradient(circle at 35% 28%, #efb776, #ca7852 72%);
+  box-shadow: inset 0 0 0 2px #fff1cb, 0 3px 0 #8d5037;
+}
+
+.link-chip.link-orphan span {
+  padding: 2px 4px;
+  border-radius: 999px;
+  color: #fff9e9;
+  background: #8d5037;
+  font-weight: 900;
+}
+
+.link-chip.link-value:not(.link-orphan) {
+  color: #3f2b1e;
+  background: radial-gradient(circle at 35% 28%, #fff0a9, #d99b43 72%);
+}
+
+.wheel-dialog {
+  width: min(580px, 100%);
+  padding: clamp(18px, 4vw, 32px);
+}
+
+.wheel-kicker {
+  color: #bd623f;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.wheel-dialog h2 {
+  margin: 6px 0;
+  color: #1d655e;
+  font-family: Georgia, serif;
+  font-style: italic;
+}
+
+.bonus-wheel-wrap {
+  position: relative;
+  width: min(310px, 70vw);
+  aspect-ratio: 1;
+  margin: 22px auto 14px;
+}
+
+.bonus-wheel {
+  position: absolute;
+  inset: 0;
+  border: 10px solid #fff8e7;
+  border-radius: 50%;
+  background:
+    conic-gradient(
+      #c8754f 0 35%,
+      #9fb5ad 35% 60%,
+      #d9a75f 60% 78%,
+      #f0cf68 78% 90%,
+      #ef9a68 90% 97%,
+      #6fb5a3 97% 99%,
+      #d8675a 99% 99.8%,
+      #f6df72 99.8% 100%
+    );
+  box-shadow:
+    0 0 0 4px #1d655e,
+    0 0 0 10px #d9a058,
+    0 12px 28px rgba(26,73,67,.28);
+}
+
+.bonus-wheel::after {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border: 2px dashed rgba(255,255,255,.72);
+  border-radius: 50%;
+}
+
+.wheel-center {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: 2;
+  display: grid;
+  width: 28%;
+  aspect-ratio: 1;
+  place-items: center;
+  translate: -50% -50%;
+  border: 5px double #fff4cf;
+  border-radius: 50%;
+  color: #fff8e5;
+  background: #1d655e;
+  box-shadow: 0 3px 0 #0d433e;
+  font: 900 clamp(32px, 7vw, 54px)/1 Georgia, serif;
+}
+
+.wheel-pointer {
+  position: absolute;
+  z-index: 3;
+  top: -18px;
+  left: 50%;
+  width: 0;
+  height: 0;
+  translate: -50% 0;
+  border-left: 17px solid transparent;
+  border-right: 17px solid transparent;
+  border-top: 36px solid #a84936;
+  filter: drop-shadow(0 3px 0 #6d2d23);
+}
+
+.wheel-odds {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.wheel-odds span {
+  position: relative;
+  padding: 7px 4px;
+  border: 1px solid #9fc9bc;
+  border-radius: 8px;
+  background: #f5ecd7;
+  font-size: 11px;
+}
+
+.wheel-odds b {
+  display: block;
+  color: #1d655e;
+}
+
+.coin-mark {
+  display: grid;
+  width: 27px;
+  height: 27px;
+  margin: 0 auto 3px;
+  place-items: center;
+  border: 2px solid rgba(255,255,255,.72);
+  border-radius: 50%;
+  color: #402b1d;
+  box-shadow: 0 2px 0 rgba(68,47,28,.3);
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 950;
+}
+
+.coin-copper { background: #c8754f; }
+.coin-nickel { background: #b6c5bf; }
+.coin-dime { background: #dfb66f; }
+.coin-quarter { background: #f0cf68; }
+
+.wheel-result {
+  min-height: 28px;
+  margin: 13px 0 8px;
+  color: #8d3f2e;
+  font-weight: 900;
+}
+
+.wheel-award-chip {
+  --jackpot-color: #d76f56;
+  display: grid;
+  width: min(280px, 86%);
+  min-height: 76px;
+  margin: 14px auto 4px;
+  padding: 9px 14px;
+  place-content: center;
+  border: 4px double #fff8df;
+  border-radius: 999px;
+  color: #123e3a;
+  background: radial-gradient(circle at 35% 25%, #fff8df, var(--jackpot-color) 72%);
+  box-shadow: 0 0 0 3px #1d655e, 0 8px 22px color-mix(in srgb, var(--jackpot-color) 55%, transparent);
+  text-align: center;
+  animation: reserve-chip-arrive .55s cubic-bezier(.2,.85,.25,1) both;
+}
+
+.wheel-award-chip[hidden] {
+  display: none;
+}
+
+.wheel-award-chip.jackpot-mini { --jackpot-color: #68c8d2; }
+.wheel-award-chip.jackpot-minor { --jackpot-color: #83c98d; }
+.wheel-award-chip.jackpot-major { --jackpot-color: #e985b8; }
+.wheel-award-chip.jackpot-grand { --jackpot-color: #f1cf5e; }
+
+.wheel-award-chip strong,
+.wheel-award-chip span {
+  display: block;
+  padding: 2px 12px;
+  border-radius: 7px;
+  background: rgba(255,249,236,.94);
+  font-weight: 950;
+  line-height: 1.05;
+}
+
+.wheel-award-chip strong {
+  font-family: Georgia, serif;
+  font-size: 18px;
+  font-style: italic;
+  text-transform: uppercase;
+}
+
+.wheel-award-chip span {
+  margin-top: 3px;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes reserve-chip-arrive {
+  from { opacity: 0; transform: translateY(10px) scale(.72) rotate(-3deg); }
+  to { opacity: 1; transform: none; }
+}
+
+.wheel-spin {
+  min-width: min(260px, 100%);
+  color: #fff9e9;
+  background: #d86f51;
+}
+
+.hud {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-auto-flow: row;
+  grid-auto-rows: max-content;
+  flex-wrap: nowrap;
+  align-items: start;
+  width: 100%;
+  height: auto;
+}
+
+.left {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-column: 1;
+  grid-row: 2;
+  order: 2;
+  width: 100%;
+}
+
+.right {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(130px, 1fr));
+  grid-column: 1;
+  grid-row: 1;
+  order: 1;
+  width: 100%;
+  max-width: 100%;
+  align-items: stretch;
+}
+
+.right #spin,
+.right #max,
+.right #resetSession,
+.right #settingsButton {
+  width: 100%;
+  min-width: 0;
+}
+
+.right .auto-spin-hint,
+.right .message {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  justify-content: center;
+  text-align: center;
+}
+
+.stat,
+.select,
+.checkbox-setting,
+.credit-controls {
+  width: 100%;
+  min-width: 0;
+}
+
+select,
+input[type=number],
+input[type=text] {
+  width: 100%;
+  min-width: 0;
+}
+
+.message,
+.table,
+.overlay-section,
+.overlay-note,
+.feature-status {
+  color: #315b56;
+}
+
+.table div,
+.message {
+  border-color: #9fc9bc;
+  background: rgba(255, 253, 246, .82);
+}
+
+.muted,
+label {
+  color: #65746e;
+}
+
+.stat b,
+.message strong {
+  color: #1d655e;
+}
+
+@media (max-width: 900px) {
+  .pot-feature {
+    grid-template-columns: 1fr;
+  }
+
+  .pot-copy {
+    text-align: center;
+  }
+
+  .pot-rule {
+    grid-column: 1;
+  }
+
+  .right {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .right > button {
+    min-width: 0;
+  }
+
+  .left {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .card {
+    border-top-width: 7px;
+    border-bottom-width: 7px;
+  }
+
+  .title {
+    gap: 7px;
+    font-size: clamp(23px, 8.2vw, 34px);
+  }
+
+  .title-mark {
+    flex: 0 0 1.1em;
+  }
+
+  .jackpot-board {
+    padding: 8px;
+    border-radius: 12px;
+  }
+
+  .jackpot-board h3 {
+    margin-block: 0 6px;
+    font-size: 13px;
+  }
+
+  .jackpot-pills {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .jackpot-pill {
+    min-height: 38px;
+    font-size: 11px;
+  }
+
+  .pot-feature {
+    gap: 8px;
+    margin: 9px 0;
+    padding: 9px;
+    border-radius: 16px 6px;
+  }
+
+  .pot-copy strong {
+    font-size: 13px;
+  }
+
+  .pots {
+    gap: 5px;
+  }
+
+  .pot {
+    display: flex;
+    min-height: 76px;
+    padding: 6px 4px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    text-align: center;
+    border-radius: 32px 32px 9px 9px;
+  }
+
+  .pot::after {
+    display: none;
+  }
+
+  .pot-meter {
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .pot b {
+    font-size: 10px;
+    line-height: 1.05;
+  }
+
+  .pot small {
+    font-size: 9px;
+  }
+
+  .pot-rule {
+    font-size: 9px;
+  }
+
+  .reels-wrap {
+    padding: 5px;
+    border-width: 2px;
+    border-radius: 14px;
+  }
+
+  .reels {
+    --reel-row-h: clamp(31px, 10vw, 46px);
+    --reel-row-gap: 3px;
+    padding: 3px;
+    border-radius: 9px;
+  }
+
+  .cell {
+    font-size: clamp(17px, 7vw, 29px);
+  }
+
+  .reels .icon-container {
+    border-radius: 7px;
+  }
+
+  .left {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 350px) {
+  .card { padding-inline: 5px; }
+  .jackpot-pill::before { display: none; }
+  .pot-copy strong { display: none; }
+  .reels { --reel-row-h: 29px; }
+  .cell { font-size: 16px; }
+}
+
+@media (max-width: 430px) {
+  .right {
+    gap: 5px;
+  }
+
+  .right button {
+    min-height: 38px;
+    padding-inline: 5px;
+    font-size: 10px;
+  }
+
+  .left {
+    gap: 5px;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 760px) {
+  .card {
+    padding-block: 7px;
+  }
+
+  .title {
+    min-height: 34px;
+    margin-bottom: 5px;
+    font-size: 27px;
+  }
+
+  .jackpot-board {
+    padding: 6px 10px;
+  }
+
+  .jackpot-board h3 {
+    margin-block: 0 4px;
+    font-size: 12px;
+  }
+
+  .jackpot-pill {
+    min-height: 31px;
+    padding-block: 4px;
+  }
+
+  .pot-feature {
+    margin: 7px 0;
+    padding-block: 7px;
+  }
+
+  .pot {
+    min-height: 48px;
+  }
+
+  .pot-meter {
+    width: 32px;
+    height: 32px;
+  }
+
+  .reels {
+    --reel-row-h: clamp(30px, 4.3vw, 42px);
+  }
+}
+
+/* Keep every reel chip fully visible; teaser chips stay bright without win glow. */
+.reels .cell.jackpot-teaser-cell,
+.reels .cell.jackpot-win,
+.reels .cell.link-teaser-cell,
+.reels .cell.link-win-cell,
+.reels .cell.bonus-win {
+  padding: 2px;
+  overflow: hidden;
+}
+
+.reels .jackpot-chip,
+.reels .link-chip {
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
+  max-width: none;
+  max-height: none;
+  min-width: 0;
+  min-height: 0;
+  margin: 2px;
+  padding: 2px 5px;
+  border-width: 2px;
+  border-radius: 999px;
+  box-sizing: border-box;
+  animation: none;
+  transform: none;
+}
+
+.reels .jackpot-chip.jackpot-teaser {
+  opacity: 1;
+  filter: none;
+  animation: none;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.45), 0 2px 0 rgba(45,56,48,.28);
+}
+
+.reels .cell.jackpot-teaser-cell {
+  background: #fff8e7;
+  box-shadow: inset 0 -5px #f0e2c4;
+}
+
+.reels .jackpot-chip strong,
+.reels .link-chip strong {
+  font-size: clamp(8px, 1.05vw, 13px);
+  line-height: .95;
+}
+
+.reels .jackpot-chip span,
+.reels .link-chip span {
+  margin-top: 1px;
+  font-size: clamp(6px, .72vw, 9px);
+  line-height: .95;
+}
+
+.reels .link-win-cell {
+  animation: none;
+}
+
+.hud .message,
+.hud .auto-spin-hint,
+.hud .stat,
+.hud .stat .muted,
+.hud .credit-controls label,
+.hud .credit-controls .overlay-note,
+.hud .select label,
+.hud .select select,
+.hud #creditStep {
+  font-weight: 600;
+}
+
+.reels .jackpot-chip strong,
+.reels .jackpot-chip span {
+  display: block;
+  width: min(92%, 9rem);
+  padding: 1px 5px;
+  overflow: hidden;
+  color: #123e3a !important;
+  background: rgba(255, 249, 236, .94);
+  font-family: "Avenir Next", Avenir, system-ui, sans-serif;
+  font-weight: 950;
+  letter-spacing: .02em;
+  line-height: 1.05;
+  text-align: center;
+  text-overflow: ellipsis;
+  text-shadow: none;
+  white-space: nowrap;
+}
+
+.reels .jackpot-chip strong {
+  border-radius: 5px 5px 2px 2px;
+}
+
+.reels .jackpot-chip span {
+  margin-top: 1px;
+  border-radius: 2px 2px 5px 5px;
+  font-variant-numeric: tabular-nums;
+}
