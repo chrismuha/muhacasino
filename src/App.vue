@@ -57,6 +57,56 @@ const targetCardId = ref(1);
 const dealerNotice = ref('Dealer console ready.');
 const verificationCardId = ref(null);
 let autoTimer = null;
+const playStartedAt = Date.now();
+const elapsedPlayTime = ref('00:00:00');
+const currentZonedTime = ref('—');
+const selectedTimeZone = ref('');
+let playTimeTimer = null;
+const fallbackTimeZones = [
+  'UTC',
+  'America/New_York',
+  'America/Chicago',
+  'America/Denver',
+  'America/Phoenix',
+  'America/Los_Angeles',
+  'America/Anchorage',
+  'Pacific/Honolulu'
+];
+const availableTimeZones = (() => {
+  try {
+    const zones = Intl.supportedValuesOf('timeZone');
+    return zones.includes('UTC') ? zones : ['UTC', ...zones];
+  } catch {
+    return fallbackTimeZones;
+  }
+})();
+
+function formatTimeZoneLabel(zone) {
+  return zone.replaceAll('_', ' ').replaceAll('/', ' / ');
+}
+
+function updatePlayTime() {
+  const now = new Date();
+  const totalSeconds = Math.max(0, Math.floor((now.getTime() - playStartedAt) / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  elapsedPlayTime.value = [hours, minutes, seconds]
+    .map((part) => String(part).padStart(2, '0'))
+    .join(':');
+  const options = { hour: 'numeric', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
+  if (selectedTimeZone.value) options.timeZone = selectedTimeZone.value;
+  currentZonedTime.value = new Intl.DateTimeFormat(undefined, options).format(now);
+}
+
+function saveTimeZone() {
+  try {
+    localStorage.setItem('muhaGames.timeZone.v1', selectedTimeZone.value);
+  } catch {
+    // Keep the selected zone for this session if storage is unavailable.
+  }
+  updatePlayTime();
+}
 
 const currentCall = computed(() => calledNumbers.value.at(-1) ?? null);
 const totalPlayerCards = computed(() => playerCount.value * cardsPerPlayer.value);
@@ -870,6 +920,14 @@ function isPatternSquare(index) {
 
 onMounted(() => {
   loadAppearance();
+  try {
+    const savedTimeZone = localStorage.getItem('muhaGames.timeZone.v1') || '';
+    if (!savedTimeZone || availableTimeZones.includes(savedTimeZone)) selectedTimeZone.value = savedTimeZone;
+  } catch {
+    // Use the device time zone when storage is unavailable.
+  }
+  updatePlayTime();
+  playTimeTimer = window.setInterval(updatePlayTime, 1000);
   stopStateListener = window.bingoApi?.onState?.(applySharedState) ?? null;
   if (requestedScreen) {
     window.bingoApi?.requestState?.();
@@ -890,6 +948,7 @@ watch(pendingWinnerIds, (claims) => {
 
 onBeforeUnmount(() => {
   stopAutoCall();
+  window.clearInterval(playTimeTimer);
   window.removeEventListener('keydown', handleKeyboardShortcut);
   stopStateListener?.();
 });
@@ -944,6 +1003,23 @@ watch(
         >Audience Display</button>
       </nav>
       <div class="header-actions">
+        <section class="play-time-panel" aria-label="Play session time">
+          <div>
+            <span>Time elapsed</span>
+            <strong>{{ elapsedPlayTime }}</strong>
+          </div>
+          <div>
+            <span>Current time</span>
+            <strong>{{ currentZonedTime }}</strong>
+          </div>
+          <label>
+            <span>Time zone</span>
+            <select v-model="selectedTimeZone" aria-label="Time zone" @change="saveTimeZone">
+              <option value="">Device time zone</option>
+              <option v-for="zone in availableTimeZones" :key="zone" :value="zone">{{ formatTimeZoneLabel(zone) }}</option>
+            </select>
+          </label>
+        </section>
         <button class="btn appearance-btn" type="button" :aria-label="`Use ${theme === 'light' ? 'dark' : 'light'} mode`" @click="toggleTheme">
           <span aria-hidden="true">{{ theme === 'light' ? '☾' : '☀' }}</span>
           {{ theme === 'light' ? 'Dark' : 'Light' }}
