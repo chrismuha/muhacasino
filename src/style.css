@@ -646,6 +646,29 @@ select {
   gap: 12px;
 }
 
+.sort-control {
+  display: grid;
+  grid-template-columns: auto 205px;
+  gap: 7px;
+  align-items: center;
+  margin: 0;
+}
+
+.sort-control span {
+  color: #7a8494;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.sort-control select {
+  min-height: 36px;
+  border-color: #d9e0e8;
+  color: var(--navy);
+  background-color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+}
+
 .card-pager {
   gap: 5px;
   padding: 3px;
@@ -1008,6 +1031,43 @@ select {
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.card-distance {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 6px 8px;
+  border: 1px solid #dbe4ef;
+  border-radius: 8px;
+  color: #526176;
+  background: #f5f8fc;
+  font-size: clamp(8px, 0.65vw, 10px);
+}
+
+.card-distance span {
+  overflow: hidden;
+  color: #8490a1;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-distance strong {
+  color: var(--blue);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.card-distance.ready {
+  border-color: #e8bc4f;
+  background: #fff5d5;
+}
+
+.card-distance.ready strong {
+  color: #8a6200;
 }
 
 .winner-banner {
