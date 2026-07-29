@@ -1,0 +1,12 @@
+{
+  "name": "muhaslots",
+  "version": "1.0.0",
+  "description": "Muha Slots is an online casino experience, with never before seen slots games. NO REAL MONEY",
+  "main": "main.js",
+  "scripts": {
+    "build": "node --check main.js"
+  },
+  "private": true,
+  "keywords": [],
+  "author": ""
+}

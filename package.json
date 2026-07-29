@@ -1,0 +1,10 @@
+{
+  "name": "muha-slots",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Muha Slots — Big Money Deluxe, Neon Slots, and Pretty Penny in one arcade.",
+  "scripts": {
+    "start": "npx --yes serve .",
+    "check": "node --check launcher.js && node --check games/big-money-deluxe/main.js && node --check games/neon-slots/main.js && node --check games/pretty-penny/main.js"
+  }
+}

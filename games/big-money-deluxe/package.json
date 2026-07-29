@@ -1,0 +1,12 @@
+{
+  "name": "bigmoneydeluxe",
+  "version": "1.0.0",
+  "description": "Big Money Deluxe is a simulated money-themed slot game. No real money.",
+  "main": "main.js",
+  "scripts": {
+    "build": "node --check main.js"
+  },
+  "private": true,
+  "keywords": [],
+  "author": ""
+}

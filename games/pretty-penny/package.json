@@ -1,0 +1,12 @@
+{
+  "name": "pretty-penny",
+  "version": "1.0.0",
+  "description": "Pretty Penny is a play-money slot game with fixed-value savings banks, linked penny-value chips, and a weighted jackpot wheel. NO REAL MONEY",
+  "main": "main.js",
+  "scripts": {
+    "build": "node --check main.js"
+  },
+  "private": true,
+  "keywords": [],
+  "author": ""
+}

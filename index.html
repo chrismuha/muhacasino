@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070811">
+  <meta name="description" content="Muha Slots — three original slot games in one arcade.">
+  <title>Muha Slots</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="launcher">
+    <nav class="topbar" aria-label="Main navigation">
+      <a class="brand" href="#" aria-label="Muha Slots home">
+        <span class="brand-mark" aria-hidden="true">M</span>
+        <span>MUHA <b>SLOTS</b></span>
+      </a>
+      <div class="nav-links">
+        <a href="#featured">Featured</a>
+        <a href="#games">Games</a>
+        <a href="#categories">Categories</a>
+      </div>
+      <button class="browse-button" type="button" data-scroll-to="games">Browse games</button>
+    </nav>
+
+    <section id="featured" class="hero" aria-label="Featured games">
+      <div id="heroTrack" class="hero-track">
+        <article class="hero-slide money-slide" data-hero-game="big-money-deluxe">
+          <div class="hero-glow"></div>
+          <div class="hero-content">
+            <p class="eyebrow">Featured game</p>
+            <h1>Big Money<br><em>Deluxe</em></h1>
+            <p>Chase four jackpots in a high-energy cash classic built for big spins.</p>
+            <div class="hero-actions">
+              <button class="primary-button" type="button" data-game="big-money-deluxe">▶ Play now</button>
+              <a class="secondary-button" href="#games">View all games</a>
+            </div>
+          </div>
+          <div class="hero-art money-art" aria-hidden="true">
+            <span class="coin coin-one">$</span><span class="coin coin-two">$</span>
+            <div class="cabinet"><span>777</span><b>JACKPOT</b></div>
+          </div>
+        </article>
+
+        <article class="hero-slide neon-slide" data-hero-game="neon-slots">
+          <div class="hero-glow"></div>
+          <div class="hero-content">
+            <p class="eyebrow">Electric favorite</p>
+            <h1>Neon<br><em>Slots</em></h1>
+            <p>Turn up the glow and light up the reels in this colorful casino-floor favorite.</p>
+            <div class="hero-actions">
+              <button class="primary-button" type="button" data-game="neon-slots">▶ Play now</button>
+              <a class="secondary-button" href="#games">View all games</a>
+            </div>
+          </div>
+          <div class="hero-art neon-art" aria-hidden="true">
+            <span class="bolt">ϟ</span>
+            <div class="cabinet"><span>BAR</span><b>NEON WIN</b></div>
+          </div>
+        </article>
+
+        <article class="hero-slide penny-slide" data-hero-game="pretty-penny">
+          <div class="hero-glow"></div>
+          <div class="hero-content">
+            <p class="eyebrow">Save &amp; Splurge</p>
+            <h1>Pretty<br><em>Penny</em></h1>
+            <p>Fill all three banks, build your reserve, and discover a sweeter kind of jackpot.</p>
+            <div class="hero-actions">
+              <button class="primary-button" type="button" data-game="pretty-penny">▶ Play now</button>
+              <a class="secondary-button" href="#games">View all games</a>
+            </div>
+          </div>
+          <div class="hero-art penny-art" aria-hidden="true">
+            <span class="penny-symbol">¢</span>
+            <div class="cabinet"><span>¢ ¢ ¢</span><b>PRETTY WIN</b></div>
+          </div>
+        </article>
+      </div>
+
+      <button id="heroPrevious" class="hero-arrow previous" type="button" aria-label="Previous featured game">‹</button>
+      <button id="heroNext" class="hero-arrow next" type="button" aria-label="Next featured game">›</button>
+      <div id="heroDots" class="hero-dots" aria-label="Choose featured game"></div>
+    </section>
+
+    <section id="games" class="content-section">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Pick your game</p>
+          <h2>All games</h2>
+        </div>
+        <div class="rail-controls">
+          <button type="button" data-rail="allGames" data-direction="-1" aria-label="Scroll games left">←</button>
+          <button type="button" data-rail="allGames" data-direction="1" aria-label="Scroll games right">→</button>
+        </div>
+      </div>
+      <div id="allGames" class="game-rail">
+        <button class="game-card card-money" type="button" data-game="big-money-deluxe">
+          <span class="card-visual"><span class="mini-reels">7 $ 7</span><i>💰</i></span>
+          <span class="card-details"><strong>Big Money Deluxe</strong><small>Classic Cash</small></span>
+          <span class="card-play">▶</span>
+        </button>
+        <button class="game-card card-neon" type="button" data-game="neon-slots">
+          <span class="card-visual"><span class="mini-reels">⚡ BAR ⚡</span><i>ϟ</i></span>
+          <span class="card-details"><strong>Neon Slots</strong><small>Electric Casino</small></span>
+          <span class="card-play">▶</span>
+        </button>
+        <button class="game-card card-penny" type="button" data-game="pretty-penny">
+          <span class="card-visual"><span class="mini-reels">¢ ¢ ¢</span><i>¢</i></span>
+          <span class="card-details"><strong>Pretty Penny</strong><small>Feature Game</small></span>
+          <span class="card-play">▶</span>
+        </button>
+      </div>
+    </section>
+
+    <section id="categories" class="content-section categories-section">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Find your style</p>
+          <h2>Browse categories</h2>
+        </div>
+      </div>
+      <div class="category-grid">
+        <button class="category-card category-classics" type="button" data-category="classic">
+          <span class="category-icon">♠</span><strong>Casino Classics</strong><small>2 games</small>
+        </button>
+        <button class="category-card category-features" type="button" data-category="feature">
+          <span class="category-icon">✦</span><strong>Feature Games</strong><small>1 game</small>
+        </button>
+        <button class="category-card category-jackpots" type="button" data-category="jackpot">
+          <span class="category-icon">♛</span><strong>Jackpot Chase</strong><small>3 games</small>
+        </button>
+      </div>
+    </section>
+
+    <section id="categoryResults" class="content-section category-results" hidden>
+      <div class="section-heading">
+        <div><p class="section-kicker">Selected category</p><h2 id="categoryTitle"></h2></div>
+        <button id="closeCategory" class="text-button" type="button">Show all categories ×</button>
+      </div>
+      <div id="categoryRail" class="game-rail"></div>
+    </section>
+
+    <footer>
+      <a class="brand footer-brand" href="#"><span class="brand-mark">M</span><span>MUHA <b>SLOTS</b></span></a>
+      <p>For entertainment only. No real money or prizes.</p>
+    </footer>
+  </main>
+
+  <section id="gameView" class="game-view" hidden>
+    <div class="game-toolbar">
+      <button id="backButton" class="back-button" type="button">← Game library</button>
+      <strong id="currentGame"></strong>
+    </div>
+    <iframe id="gameFrame" title="Selected slot game" allow="fullscreen"></iframe>
+  </section>
+
+  <script src="launcher.js"></script>
+</body>
+</html>
