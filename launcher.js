@@ -26,12 +26,22 @@ const games = {
     icon: "¢",
     categories: ["feature", "jackpot"],
   },
+  bingo: {
+    title: "Lucky Hall Bingo",
+    subtitle: "75-Ball Bingo",
+    path: "games/bingo/index.html",
+    className: "card-bingo",
+    reels: "B I N G O",
+    icon: "●",
+    categories: ["hall", "feature"],
+  },
 };
 
 const categoryNames = {
   classic: "Casino Classics",
   feature: "Feature Games",
   jackpot: "Jackpot Chase",
+  hall: "Casino Hall",
 };
 
 const launcher = document.querySelector("#launcher");
@@ -87,7 +97,7 @@ function showLauncher() {
   gameFrame.src = "about:blank";
   gameView.hidden = true;
   launcher.hidden = false;
-  document.title = "Muha Slots";
+  document.title = "Muha Casino";
   history.replaceState(null, "", window.location.pathname);
   restartSlider();
 }
@@ -102,7 +112,7 @@ function launchGame(gameId, updateHistory = true) {
   gameFrame.src = game.path;
   launcher.hidden = true;
   gameView.hidden = false;
-  document.title = `${game.title} | Muha Slots`;
+  document.title = `${game.title} | Muha Casino`;
 
   if (updateHistory) history.pushState({ gameId }, "", `#${gameId}`);
 }

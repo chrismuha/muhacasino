@@ -88,6 +88,7 @@ a { color: inherit; text-decoration: none; }
 .money-slide { background: radial-gradient(circle at 76% 42%, #775514 0, #243517 31%, #10150f 68%); }
 .neon-slide { background: radial-gradient(circle at 75% 42%, #a3128d 0, #351359 33%, #100b22 70%); }
 .penny-slide { background: radial-gradient(circle at 76% 42%, #d17283 0, #651b49 34%, #1d0b1b 72%); }
+.bingo-slide { background: radial-gradient(circle at 76% 42%, #1769e0 0, #173866 34%, #090f1d 72%); }
 
 .hero-slide::after {
   content: "";
@@ -110,6 +111,7 @@ a { color: inherit; text-decoration: none; }
 
 .hero h1 em { color: transparent; background: linear-gradient(120deg, #fff, var(--cyan)); background-clip: text; -webkit-background-clip: text; font-style: normal; }
 .penny-slide h1 em { background-image: linear-gradient(120deg, #fff, #ffcbd7); }
+.bingo-slide h1 em { background-image: linear-gradient(120deg, #fff, #65b8ff); }
 .hero-content > p:not(.eyebrow) { max-width: 540px; margin: 30px 0; color: #d4d5df; font-size: 1.1rem; line-height: 1.6; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .primary-button { padding: 15px 24px; background: white; color: #0b0c14; box-shadow: 0 10px 30px rgba(0,0,0,.28); }
@@ -146,6 +148,10 @@ a { color: inherit; text-decoration: none; }
 .neon-art .cabinet span { border-color: #ab26c0; background: #19112b; color: #62f4ff; text-shadow: 0 0 14px #33e9ff; }
 .penny-art .cabinet { border-color: #ffb4c9; box-shadow: 0 0 0 7px #7c3158, 0 0 40px rgba(255,148,193,.5), 0 30px 80px rgba(0,0,0,.6); }
 .penny-art .cabinet span { border-color: #b8507a; background: #fff0f5; color: #ad3e6c; }
+.bingo-art .cabinet { border-color: #62b0ff; box-shadow: 0 0 0 7px #173e72, 0 0 48px rgba(49,145,255,.55), 0 30px 80px rgba(0,0,0,.6); }
+.bingo-art .cabinet span { border-color: #2f76c5; background: #f4f9ff; color: #1769e0; font-size: clamp(1.2rem, 2.8vw, 2.4rem); }
+.bingo-ball-art { position: absolute; z-index: 2; top: 0; left: 5%; display: grid; width: 130px; height: 130px; place-items: center; border: 8px solid #dceeff; border-radius: 50%; color: #fff; background: #1769e0; box-shadow: 0 0 40px rgba(73,164,255,.8); font-size: 2rem; font-weight: 1000; line-height: .75; text-align: center; transform: rotate(-10deg); }
+.bingo-ball-art b { font-size: 3rem; }
 
 .coin, .bolt, .penny-symbol { position: absolute; z-index: 2; display: grid; place-items: center; font-weight: 1000; }
 .coin { width: 82px; height: 82px; border: 8px double #705118; border-radius: 50%; background: #ffd74a; color: #705118; box-shadow: 0 10px 30px #0008; }
@@ -218,17 +224,19 @@ a { color: inherit; text-decoration: none; }
 .card-money .card-visual { background: radial-gradient(circle at 50% 35%, #9d721b, #162815 68%); }
 .card-neon .card-visual { background: radial-gradient(circle at 50% 35%, #d21db3, #28114e 68%); }
 .card-penny .card-visual { background: radial-gradient(circle at 50% 35%, #e88ba0, #6f1b4b 68%); }
+.card-bingo .card-visual { background: radial-gradient(circle at 50% 35%, #2a8cff, #11294d 68%); }
 .card-visual i { position: absolute; right: -10px; bottom: -40px; color: rgba(255,255,255,.12); font-size: 12rem; font-style: normal; font-weight: 1000; transform: rotate(-10deg); }
 .mini-reels { z-index: 1; padding: 22px 24px; border: 6px solid rgba(255,255,255,.5); border-radius: 17px; background: #fff8de; color: #171717; box-shadow: 0 20px 50px rgba(0,0,0,.38); font-size: 1.8rem; font-weight: 1000; letter-spacing: .08em; transform: rotate(-3deg); }
 .card-neon .mini-reels { border-color: #fe55e9; background: #171027; color: #63edff; box-shadow: 0 0 28px #e92ad7; }
 .card-penny .mini-reels { border-color: #ffd0df; background: #fff3f7; color: #b74271; }
+.card-bingo .mini-reels { border-color: #b9dcff; background: #f4f9ff; color: #1769e0; letter-spacing: .16em; }
 .card-details { display: block; padding: 19px 66px 20px 21px; }
 .card-details strong { display: block; margin-bottom: 6px; font-size: 1.18rem; }
 .card-details small { color: #8d91a6; font-weight: 650; }
 .card-play { position: absolute; right: 18px; bottom: 24px; display: grid; width: 38px; height: 38px; place-items: center; border-radius: 50%; background: white; color: #111; font-size: .75rem; }
 
 .categories-section { padding-bottom: 50px; }
-.category-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.category-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 .category-card { position: relative; min-height: 190px; padding: 25px; overflow: hidden; border: 1px solid rgba(255,255,255,.11); border-radius: 22px; text-align: left; cursor: pointer; transition: transform .2s; }
 .category-card:hover { transform: translateY(-5px); }
 .category-card strong, .category-card small { position: relative; z-index: 2; display: block; }
@@ -238,6 +246,7 @@ a { color: inherit; text-decoration: none; }
 .category-classics { background: linear-gradient(140deg, #122c20, #326b35); }
 .category-features { background: linear-gradient(140deg, #3d164a, #8c367f); }
 .category-jackpots { background: linear-gradient(140deg, #4b3211, #a26812); }
+.category-hall { background: linear-gradient(140deg, #102b51, #1769e0); }
 
 .category-results { padding-top: 35px; padding-bottom: 60px; }
 .text-button { padding: 10px 15px; border-radius: 999px; color: #c9ccda; }
