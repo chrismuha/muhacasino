@@ -4,16 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#070811">
-  <meta name="description" content="Muha Slots — three original slot games in one arcade.">
-  <title>Muha Slots</title>
+  <meta name="description" content="Muha Casino — slots and classic Bingo in one game library.">
+  <title>Muha Casino</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <main id="launcher">
     <nav class="topbar" aria-label="Main navigation">
-      <a class="brand" href="#" aria-label="Muha Slots home">
+      <a class="brand" href="#" aria-label="Muha Casino home">
         <span class="brand-mark" aria-hidden="true">M</span>
-        <span>MUHA <b>SLOTS</b></span>
+        <span>MUHA <b>CASINO</b></span>
       </a>
       <div class="nav-links">
         <a href="#featured">Featured</a>
@@ -75,6 +75,23 @@
             <div class="cabinet"><span>¢ ¢ ¢</span><b>PRETTY WIN</b></div>
           </div>
         </article>
+
+        <article class="hero-slide bingo-slide" data-hero-game="bingo">
+          <div class="hero-glow"></div>
+          <div class="hero-content">
+            <p class="eyebrow">Classic hall favorite</p>
+            <h1>Lucky Hall<br><em>Bingo</em></h1>
+            <p>Play 75-ball Bingo with automatic card ranking, dozens of winning patterns, and live calling controls.</p>
+            <div class="hero-actions">
+              <button class="primary-button" type="button" data-game="bingo">▶ Play now</button>
+              <a class="secondary-button" href="#games">View all games</a>
+            </div>
+          </div>
+          <div class="hero-art bingo-art" aria-hidden="true">
+            <span class="bingo-ball-art">B<br><b>12</b></span>
+            <div class="cabinet"><span>BINGO</span><b>LUCKY HALL</b></div>
+          </div>
+        </article>
       </div>
 
       <button id="heroPrevious" class="hero-arrow previous" type="button" aria-label="Previous featured game">‹</button>
@@ -109,6 +126,11 @@
           <span class="card-details"><strong>Pretty Penny</strong><small>Feature Game</small></span>
           <span class="card-play">▶</span>
         </button>
+        <button class="game-card card-bingo" type="button" data-game="bingo">
+          <span class="card-visual"><span class="mini-reels">B I N G O</span><i>●</i></span>
+          <span class="card-details"><strong>Lucky Hall Bingo</strong><small>75-Ball Bingo</small></span>
+          <span class="card-play">▶</span>
+        </button>
       </div>
     </section>
 
@@ -124,10 +146,13 @@
           <span class="category-icon">♠</span><strong>Casino Classics</strong><small>2 games</small>
         </button>
         <button class="category-card category-features" type="button" data-category="feature">
-          <span class="category-icon">✦</span><strong>Feature Games</strong><small>1 game</small>
+          <span class="category-icon">✦</span><strong>Feature Games</strong><small>2 games</small>
         </button>
         <button class="category-card category-jackpots" type="button" data-category="jackpot">
           <span class="category-icon">♛</span><strong>Jackpot Chase</strong><small>3 games</small>
+        </button>
+        <button class="category-card category-hall" type="button" data-category="hall">
+          <span class="category-icon">●</span><strong>Casino Hall</strong><small>1 game</small>
         </button>
       </div>
     </section>
@@ -141,7 +166,7 @@
     </section>
 
     <footer>
-      <a class="brand footer-brand" href="#"><span class="brand-mark">M</span><span>MUHA <b>SLOTS</b></span></a>
+      <a class="brand footer-brand" href="#"><span class="brand-mark">M</span><span>MUHA <b>CASINO</b></span></a>
       <p>For entertainment only. No real money or prizes.</p>
     </footer>
   </main>
