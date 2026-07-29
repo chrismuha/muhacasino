@@ -39,6 +39,7 @@ let stopStateListener = null;
 let applyingRemoteState = false;
 const visibleCardCount = ref(2);
 const cardPageStart = ref(0);
+const cardSortMode = ref('auto');
 const cards = ref([]);
 const calledNumbers = ref([]);
 const isAutoCalling = ref(false);
@@ -138,14 +139,22 @@ const prizePool = computed({
     winnerPrize.value = Math.round(budget / Math.max(1, maximumWinners.value));
   }
 });
-const playerWindowCards = computed(() => {
+const playerCards = computed(() => {
   if (!requestedPlayer) return null;
   const start = (requestedPlayer - 1) * cardsPerPlayer.value;
   return cards.value.slice(start, start + cardsPerPlayer.value);
 });
+const sortedCards = computed(() => {
+  const source = playerCards.value ?? cards.value;
+  if (cardSortMode.value === 'manual') return source;
+  return [...source].sort((left, right) =>
+    getCardDistance(left) - getCardDistance(right) || left.id - right.id
+  );
+});
 const visibleCards = computed(() =>
-  playerWindowCards.value
-    ?? cards.value.slice(cardPageStart.value, cardPageStart.value + visibleCardCount.value)
+  requestedPlayer
+    ? sortedCards.value
+    : sortedCards.value.slice(cardPageStart.value, cardPageStart.value + visibleCardCount.value)
 );
 const cardGridColumns = computed(() => {
   if (visibleCards.value.length === 4) return 2;
@@ -183,7 +192,8 @@ const patterns = [
   { id: 'inside-frame', name: 'Inside Frame', detail: 'Cover the border of the inner 3 × 3 square' },
   { id: 'railroad-tracks', name: 'Railroad Tracks', detail: 'Complete two parallel rows or columns' },
   { id: 'sputnik', name: 'Sputnik', detail: 'Center cross with all four corners' },
-  { id: 'american-flag', name: 'American Flag', detail: 'Striped flag pattern with a filled upper field' },
+  { id: 'american-flag', name: 'Flag', detail: 'American flag with a filled upper field and alternating stripes' },
+  { id: 'indian-x', name: 'Indian X', detail: 'Both diagonals crossed by the full center column' },
   { id: 'picture-frame', name: 'Picture Frame', detail: 'Every square around the outside' },
   { id: 'blackout', name: 'Blackout', detail: 'Cover every number on the card' }
 ];
@@ -578,6 +588,8 @@ function getWinningSets(patternId) {
       return [[...new Set([0, 4, 20, 24, ...rows[2], ...columns[2]])]];
     case 'american-flag':
       return [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 15, 16, 18, 20, 22, 24]];
+    case 'indian-x':
+      return [[...new Set([...diagonals[0], ...diagonals[1], ...columns[2]])]];
     case 'picture-frame':
       return [frame];
     case 'blackout':
@@ -585,6 +597,44 @@ function getWinningSets(patternId) {
     default:
       return [...rows, ...columns, ...diagonals];
   }
+}
+
+function combineSets(sets, count, start = 0, selected = [], combinations = []) {
+  if (selected.length === count) {
+    combinations.push([...new Set(selected.flat())]);
+    return combinations;
+  }
+  for (let index = start; index <= sets.length - (count - selected.length); index += 1) {
+    combineSets(sets, count, index + 1, [...selected, sets[index]], combinations);
+  }
+  return combinations;
+}
+
+function getPatternCandidates(patternId) {
+  const standardLines = getWinningSets('regular');
+  if (patternId === 'double-bingo') return combineSets(standardLines, 2);
+  if (patternId === 'triple-bingo') return combineSets(standardLines, 3);
+  if (patternId === 'railroad-tracks') {
+    return [
+      ...combineSets(standardLines.slice(0, 5), 2),
+      ...combineSets(standardLines.slice(5, 10), 2)
+    ];
+  }
+  return getWinningSets(patternId);
+}
+
+function getCardDistance(card) {
+  if (!card) return 0;
+  const covered = card.cells.map((cell) => cell.isFree || isCalled(cell.number));
+  return Math.min(...getPatternCandidates(selectedPattern.value).map((set) =>
+    set.reduce((missing, index) => missing + (covered[index] ? 0 : 1), 0)
+  ));
+}
+
+function cardDistanceLabel(card) {
+  const remaining = getCardDistance(card);
+  if (remaining === 0) return 'Bingo!';
+  return `${remaining} left until Bingo`;
 }
 
 function cardMatchesPattern(card, nextNumber = null) {
@@ -910,7 +960,7 @@ function viewTargetCard() {
     return;
   }
   visibleCardCount.value = 1;
-  cardPageStart.value = targetCard.value.id - 1;
+  cardPageStart.value = Math.max(0, sortedCards.value.findIndex((card) => card.id === targetCard.value.id));
   currentScreen.value = 'floor';
 }
 
@@ -1110,6 +1160,13 @@ watch(
             <h2>Casino floor cards</h2>
           </div>
           <div v-if="!requestedPlayer" class="card-view-tools">
+            <label class="sort-control">
+              <span>Sort cards</span>
+              <select v-model="cardSortMode" class="form-select form-select-sm" @change="cardPageStart = 0">
+                <option value="auto">Automatic · Closest to Bingo</option>
+                <option value="manual">Manual · Card number</option>
+              </select>
+            </label>
             <div class="card-pager">
               <button class="btn" type="button" :disabled="cardPageStart === 0" @click="showPreviousCards">‹</button>
               <strong>{{ visibleCardRange }}</strong>
@@ -1194,6 +1251,10 @@ watch(
                 <span v-if="cell.isFree" class="free-star">{{ freeSpaceSymbol }}</span>
                 <strong>{{ cell.isFree ? 'FREE' : cell.number }}</strong>
               </button>
+            </div>
+            <div class="card-distance" :class="{ ready: getCardDistance(card) === 0 }">
+              <span>{{ activePattern.name }}</span>
+              <strong>{{ cardDistanceLabel(card) }}</strong>
             </div>
             <p class="card-hint">Called numbers mark automatically · Click any square to mark it</p>
           </article>
