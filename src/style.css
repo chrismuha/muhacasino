@@ -119,6 +119,51 @@ select {
   gap: 12px;
 }
 
+.play-time-panel {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 7px 10px;
+  border: 1px solid #dce3ec;
+  border-radius: 11px;
+  background: #f4f7fa;
+}
+
+.play-time-panel div,
+.play-time-panel label {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+}
+
+.play-time-panel span {
+  color: #748096;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.play-time-panel strong {
+  color: var(--navy);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.play-time-panel select {
+  width: 145px;
+  min-height: 26px;
+  padding: 2px 24px 2px 6px;
+  border: 1px solid #cfd8e5;
+  border-radius: 7px;
+  color: var(--navy);
+  background: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .screen-switcher {
   display: flex;
   gap: 3px;
@@ -2976,6 +3021,21 @@ select {
 .theme-dark .screen-switcher {
   border-color: #394458;
   background: #151c28;
+}
+
+.theme-dark .play-time-panel {
+  border-color: #394458;
+  background: #151c28;
+}
+
+.theme-dark .play-time-panel strong {
+  color: #f6f8fc;
+}
+
+.theme-dark .play-time-panel select {
+  color: #f6f8fc;
+  border-color: #465570;
+  background: #101827;
 }
 
 .theme-dark .design-copy > p,
