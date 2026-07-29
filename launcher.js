@@ -35,6 +35,24 @@ const games = {
     icon: "●",
     categories: ["hall", "feature"],
   },
+  sorry: {
+    title: "Sorry!",
+    subtitle: "Classic Board Game",
+    path: "games/sorry/index.html",
+    className: "card-sorry",
+    reels: "1 2 3 4",
+    icon: "♟",
+    categories: ["table", "classic"],
+  },
+  yahtzee: {
+    title: "Yahtzee",
+    subtitle: "Classic Dice Game",
+    path: "games/yahtzee/index.html",
+    className: "card-yahtzee",
+    reels: "⚄ ⚅ ⚄",
+    icon: "⚂",
+    categories: ["table", "classic"],
+  },
 };
 
 const categoryNames = {
@@ -42,6 +60,7 @@ const categoryNames = {
   feature: "Feature Games",
   jackpot: "Jackpot Chase",
   hall: "Casino Hall",
+  table: "Tabletop Games",
 };
 
 const launcher = document.querySelector("#launcher");

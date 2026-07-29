@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Yahtzee</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>Yahtzee</h1>
+
+    <!-- Controls -->
+    <div id="controls">
+        <button id="rollBtn">Roll</button>
+        <span>Rolls left: <span id="rollsLeft">3</span></span>
+        <span id="roundPill">Round 1 / 13</span>
+        <span id="statusTag"></span>
+    </div>
+
+    <!-- Dice -->
+    <div id="dice">
+        <div class="die"></div>
+        <div class="die"></div>
+        <div class="die"></div>
+        <div class="die"></div>
+        <div class="die"></div>
+    </div>
+
+    <!-- Scorecard -->
+    <h2>Scorecard</h2>
+    <div class="score-scroll">
+        <table id="score-table">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows are inserted by main.js -->
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>Upper Subtotal</td>
+                    <td id="upperSubtotal">0</td>
+                </tr>
+                <tr>
+                    <td>Upper Bonus</td>
+                    <td id="upperBonus">0</td>
+                </tr>
+                <tr>
+                    <td>Upper Total</td>
+                    <td id="upperTotal">0</td>
+                </tr>
+                <tr>
+                    <td>Lower Total</td>
+                    <td id="lowerTotal">0</td>
+                </tr>
+                <tr>
+                    <td>Grand Total</td>
+                    <td id="grandTotal">0</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- End of Game -->
+    <div id="endOfGame" style="display:none;">
+        <h2>Game Over</h2>
+        <p>Your final total: <span id="finalTotal">0</span></p>
+        <button id="newGameBtn">New Game</button>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>

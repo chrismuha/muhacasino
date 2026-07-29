@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="description"
+    content="Sorry! Classic-style board game track for 2 players with cards, pawns, slides, and home lanes." />
+  <title>Sorry! (Classic-style track, 2 Players)</title>
+
+  <!-- Preload CSS for faster rendering -->
+  <link rel="preload" href="styles.css" as="style">
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- JavaScript -->
+  <script src="ui/main.js" defer></script>
+  <script src="main.js" defer></script>
+</head>
+
+<body>
+  <!-- Header -->
+  <header role="banner">
+    <h1>Sorry! — Classic Track (2 Players, 4 pawns)</h1>
+    <div class="kpis">
+      <div class="box">
+        <span class="muted">Turn</span>
+        <b id="turnLabel" aria-live="polite" aria-atomic="true">P1</b>
+      </div>
+      <div class="box">
+        <span class="muted">Deck</span>
+        <b id="deckLeft" aria-live="polite" aria-atomic="true">–</b>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main role="main">
+    <div class="wrap">
+      <!-- Left Panel (Cards & Actions) -->
+      <section class="panel" aria-label="Player controls and game actions">
+        <div class="deck-area">
+          <div>
+            <div class="card" id="cardFace" role="status" aria-live="polite" aria-atomic="true">Draw a card</div>
+            <div class="hint" id="cardHint">You can leave Start on any number or SORRY!</div>
+          </div>
+          <button id="drawBtn" class="btn" type="button" aria-label="Draw a card" aria-controls="cardFace log">
+            Draw
+          </button>
+        </div>
+
+        <div class="spacer"></div>
+
+        <section class="panel" aria-label="Player selection">
+          <div class="row">
+            <span class="chip p1">Player 1</span>
+            <span class="chip p2">Player 2</span>
+          </div>
+          <div class="actions" id="actions"></div>
+        </section>
+
+        <div class="spacer"></div>
+
+        <section class="panel" aria-label="Game Log">
+          <div class="row between">
+            <strong>Game Log</strong>
+            <span class="muted">
+              Own-color Home lanes (5); exact to Home; cannot land on rivals inside their Home lane.
+            </span>
+          </div>
+          <div class="log" id="log" role="log" aria-live="polite" aria-relevant="additions text"></div>
+        </section>
+      </section>
+
+      <!-- Game Board -->
+      <section class="board" aria-label="Game board">
+        <div class="zones">
+          <section class="zone" role="region" aria-labelledby="p1StatusLabel">
+            <h3 id="p1StatusLabel">Start / Status — Player 1</h3>
+            <div id="p1StartHome"></div>
+          </section>
+
+          <section class="zone" role="region" aria-labelledby="p2StatusLabel">
+            <h3 id="p2StatusLabel">Start / Status — Player 2</h3>
+            <div id="p2StartHome"></div>
+          </section>
+        </div>
+
+        <div class="track" id="track"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer role="contentinfo">
+    2 players • 4 pawns each • Color-owned slides • Per-color Home lanes (5) • Exact count to Home •
+    Enter from Start on <strong>any number or SORRY</strong>.
+  </footer>
+
+  <noscript>
+    This game requires JavaScript enabled.
+  </noscript>
+</body>
+
+</html>
