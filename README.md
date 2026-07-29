@@ -5,7 +5,7 @@ A polished, category-based game library for:
 - Big Money Deluxe
 - Neon Slots
 - Pretty Penny
-- Lucky Hall Bingo
+- Muha Bingo
 - Sorry!
 - Yahtzee
 

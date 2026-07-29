@@ -27,7 +27,7 @@ const games = {
     categories: ["feature", "jackpot"],
   },
   bingo: {
-    title: "Lucky Hall Bingo",
+    title: "Muha Bingo",
     subtitle: "75-Ball Bingo",
     path: "games/bingo/index.html",
     className: "card-bingo",
