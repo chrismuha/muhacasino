@@ -93,6 +93,7 @@ const maxBtn = document.getElementById("max");
 const resetSessionBtn = document.getElementById("resetSession");
 const settingsButtonEl = document.getElementById("settingsButton");
 const autoSpinHintEl = document.getElementById("autoSpinHint");
+const autoSpinElapsedEl = document.getElementById("autoSpinElapsed");
 const payInfoBtn = document.getElementById("payInfo");
 const previewOverlayEl = document.getElementById("previewOverlay");
 const previewOverlayCloseBtn = document.getElementById("previewOverlayClose");
@@ -146,6 +147,8 @@ let overlayPageIndex = 0;
 let autoSpinRunning = false;
 let autoSpinStopRequested = false;
 let autoSpinRemaining = 0;
+let autoSpinStartedAt = 0;
+let autoSpinElapsedTimer = 0;
 let spinHoldTimer = 0;
 let spaceSpinHoldTimer = 0;
 let suppressSpinClick = false;
@@ -1390,6 +1393,14 @@ function updateAutoSpinControls() {
     spinBtn.textContent = autoSpinRunning ? "Cancel" : "Spin";
 }
 
+function updateAutoSpinElapsed() {
+    if (!autoSpinElapsedEl) return;
+    const totalSeconds = autoSpinStartedAt ? Math.floor((Date.now() - autoSpinStartedAt) / 1000) : 0;
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    autoSpinElapsedEl.textContent = `Time elapsed: ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
 function updateAutoSpinHint() {
     if (!autoSpinHintEl) return;
     if (autoSpinRunning) {
@@ -1416,6 +1427,10 @@ async function runAutoSpin() {
     autoSpinRunning = true;
     autoSpinStopRequested = false;
     autoSpinRemaining = 0;
+    autoSpinStartedAt = Date.now();
+    window.clearInterval(autoSpinElapsedTimer);
+    updateAutoSpinElapsed();
+    autoSpinElapsedTimer = window.setInterval(updateAutoSpinElapsed, 1000);
     updateAutoSpinControls();
     updateAutoSpinHint();
     updateTotals();
@@ -1443,6 +1458,9 @@ async function runAutoSpin() {
     }
 
     const wasStopped = autoSpinStopRequested;
+    window.clearInterval(autoSpinElapsedTimer);
+    autoSpinElapsedTimer = 0;
+    updateAutoSpinElapsed();
     autoSpinRunning = false;
     autoSpinStopRequested = false;
     autoSpinRemaining = 0;
