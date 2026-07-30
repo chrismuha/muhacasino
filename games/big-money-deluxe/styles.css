@@ -8,6 +8,10 @@
     --muted: #8d98b3;
     --win: #ffe66d;
     --danger: #ff7d7d;
+    --game-bg: var(--bg);
+    --game-text: var(--text);
+    --game-surface: var(--card);
+    --game-muted: var(--muted);
     --shadow: 0 10px 30px rgba(0, 0, 0, .5), inset 0 0 0 1px rgba(255, 255, 255, .05);
     --radius: 14px;
     --reel-row-h: 62px;
@@ -45,8 +49,8 @@ body {
 }
 
 body {
-    background: radial-gradient(1200px 700px at 70% -10%, #16223a 0%, #0b0f17 60%) fixed;
-    color: var(--text);
+    background: radial-gradient(1200px 700px at 70% -10%, #16223a 0%, var(--game-bg) 60%) fixed;
+    color: var(--game-text);
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
     display: block;
     min-height: 100vh;
@@ -321,7 +325,7 @@ select,
 .jackpot-board h3 {
     margin: 0 0 6px;
     color: #fff4b0;
-    font-size: .82rem;
+    font-size: 9.84pt;
     letter-spacing: .18em;
     text-transform: uppercase;
 }
@@ -342,7 +346,7 @@ select,
     border: 1px solid currentColor;
     border-radius: 999px;
     background: rgba(255, 255, 255, .055);
-    font-size: clamp(.64rem, 1.4vw, .86rem);
+    font-size: clamp(7.68pt, 1.4vw, 10.32pt);
     text-transform: uppercase;
     box-shadow: inset 0 0 12px rgba(255, 255, 255, .05), 0 0 9px currentColor;
 }
@@ -401,7 +405,7 @@ select,
     border-radius: 999px;
     background: radial-gradient(circle at 35% 28%, #fff9b0, #e4a900 68%, #8b5400);
     color: #171004;
-    font-size: clamp(.65rem, 1.5vw, 1rem);
+    font-size: clamp(7.8pt, 1.5vw, 12pt);
     font-weight: 900;
     line-height: 1;
     white-space: nowrap;
@@ -435,14 +439,14 @@ select,
 }
 
 .jackpot-chip strong {
-    font-size: .72em;
+    font-size: 8.64pt;
     line-height: 1;
     letter-spacing: .08em;
     text-transform: uppercase;
 }
 
 .jackpot-chip span {
-    font-size: .68em;
+    font-size: 8.16pt;
     line-height: 1;
 }
 
@@ -495,7 +499,7 @@ select,
 }
 
 .info-btn .bi {
-    font-size: 21px;
+    font-size: 15.75pt;
     line-height: 1;
     display: inline-flex;
     align-items: center;
@@ -510,7 +514,7 @@ select,
     font-style: normal;
     font-weight: 400;
     line-height: 1;
-    font-size: 1em;
+    font-size: 12pt;
     display: block;
     transform: translateY(-0.5px);
 }
@@ -679,7 +683,7 @@ select,
   min-width: min(86%, 7.5rem);
   min-height: clamp(46px, 6vw, 68px);
   padding: .5em .72em;
-  font-size: clamp(.82rem, 1.65vw, 1.35rem);
+  font-size: clamp(9.84pt, 1.65vw, 16.2pt);
   line-height: 1.05;
   overflow: visible;
   white-space: nowrap;
@@ -696,7 +700,7 @@ select,
 .jackpot-chip strong {
   display: block;
   width: 100%;
-  font-size: clamp(.68rem, 1.35vw, 1rem);
+  font-size: clamp(8.16pt, 1.35vw, 12pt);
   line-height: 1.05;
   overflow: visible;
   white-space: nowrap;
@@ -705,7 +709,7 @@ select,
 .jackpot-chip span {
   display: block;
   width: 100%;
-  font-size: clamp(.7rem, 1.45vw, 1.08rem);
+  font-size: clamp(8.4pt, 1.45vw, 12.96pt);
   line-height: 1.05;
   overflow: visible;
   white-space: nowrap;
@@ -720,7 +724,7 @@ select,
   .money-chip {
     min-width: 0;
     padding-inline: .35em;
-    font-size: clamp(.62rem, 3.2vw, .9rem);
+    font-size: clamp(7.44pt, 3.2vw, 10.8pt);
   }
 
   .money-chip.jackpot-chip {
@@ -728,8 +732,8 @@ select,
     padding-inline: .24em;
   }
 
-  .jackpot-chip strong { font-size: clamp(.58rem, 2.6vw, .76rem); }
-  .jackpot-chip span { font-size: clamp(.58rem, 2.7vw, .8rem); }
+  .jackpot-chip strong { font-size: clamp(6.96pt, 2.6vw, 9.12pt); }
+  .jackpot-chip span { font-size: clamp(6.96pt, 2.7vw, 9.6pt); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1857,7 +1861,7 @@ body {
   justify-content: center;
   color: #f6d778;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1.35rem, 3vw, 2.15rem);
+  font-size: clamp(16.2pt, 3vw, 25.8pt);
   letter-spacing: .12em;
   text-transform: uppercase;
   animation: none;
@@ -2084,7 +2088,7 @@ button:focus-visible,
 }
 
 .bonus-choices { display: flex; gap: 14px; justify-content: center; margin-top: 22px; }
-.bonus-choices button { min-width: 88px; min-height: 88px; font-size: 2rem; border-radius: 16px; }
+.bonus-choices button { min-width: 88px; min-height: 88px; font-size: 24pt; border-radius: 16px; }
 
 @keyframes feature-pulse { to { transform: scale(1.04); filter: brightness(1.25); } }
 

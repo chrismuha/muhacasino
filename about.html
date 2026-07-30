@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#070811">
   <meta name="description" content="Muha Casino version history and game release notes.">
   <title>About & Version History | Muha Casino</title>
-  <link rel="stylesheet" href="about.css?build=1.1.2">
+  <link rel="stylesheet" href="about.css?build=20260731-casino-point-type">
 </head>
 <body>
   <header class="about-topbar">
@@ -45,6 +45,7 @@
         <li>Added active-spin elapsed timing and improved result messaging across every slot.</li>
         <li>Improved responsive game artwork, oversized featured titles, scrolling, and cache refresh behavior.</li>
         <li>Kept game preferences and release information consistent across the casino.</li>
+        <li>Standardized explicit typography in point units and isolated readable root palettes across the casino shell and every game.</li>
         <li>Re-audited all 334 commits and restored the meaningful development history from every original game repository.</li>
       </ul>
     </section>
@@ -57,6 +58,8 @@
           <li>Refined the full-screen featured carousel, oversized game titles, artwork clearance, and responsive layout.</li>
           <li>Added visible release metadata without the old version flash during page loading.</li>
           <li>Organized Bingo, slots, and tabletop titles into accurate game categories.</li>
+          <li>Applied point-based typography and game-specific semantic color roots across the casino shell, slots, Bingo, Sorry!, and Yahtzee.</li>
+          <li>Corrected the root launcher cache reference and removed its service-worker reload loop so the casino opens reliably from Live Server.</li>
         </ul><small>Milestones reconstructed from commits f4c94ab through a55f757.</small></section>
         <section><h3>v1.1.0 · Unified casino</h3><ul>
           <li>Created the shared game library and merged the separate slot, Bingo, Sorry!, and Yahtzee repositories without discarding their histories.</li>
@@ -145,6 +148,10 @@
           <li>Made the Dealer window open with Bingo from the casino launch action and focus automatically again when Start, Dealer, or Controls is pressed.</li>
           <li>Added live browser synchronization for Bingo settings, cards, calls, winners, and corrections across the Player Hall and Dealer window.</li>
           <li>Separated all three Bingo interfaces into independent color-variable roots, corrected themed control contrast, and converted every Bingo font size to equivalent point units.</li>
+          <li>Removed the stale in-page Dealer takeover, forced a fresh Bingo cache generation, and kept the dedicated Dealer tab on its actual console screen.</li>
+          <li>Corrected low-contrast Dealer controls, expanded the Flashboard into a near-full-screen display, and added two confirmation steps before approving a Bingo claim.</li>
+          <li>Replaced the remaining legacy Bingo branding with a custom, CSS-rendered Muha Bingo logo throughout the Hall and connected screens.</li>
+          <li>Corrected Classic light-mode contrast in the Dealer window and kept its theme control visibly available in every pop-out state.</li>
         </ul><small>Major Hall release: a55f757 and the current v1.1.2 follow-up.</small></section>
         <section><h3>v1.1.0 · Hall operations</h3><ul>
           <li>Expanded the original Bingo application with player-floor, dealer-console, audience-display, and card-design screens.</li>

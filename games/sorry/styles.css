@@ -7,14 +7,18 @@
     --cell: #ecf0f1;
     --accent: #16a085;
     --slide-tint: 26%;
+    --game-bg: var(--table);
+    --game-text: var(--fg);
+    --game-surface: var(--board);
+    --game-muted: #aeb8ca;
 }
 
 html,
 body {
     margin: 0;
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    background: #0b1320;
-    color: var(--fg);
+    background: var(--game-bg);
+    color: var(--game-text);
 }
 
 header {

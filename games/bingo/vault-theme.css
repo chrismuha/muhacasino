@@ -442,6 +442,139 @@ html.bingo-popout-window[data-bingo-theme="planet"] #app {
   display: block !important;
 }
 
+html.bingo-popout-window #app .dealer-layout {
+  --navy: #132039;
+  --line: #c8d4e2;
+  --cream: #fff8e8;
+  color: #132039;
+}
+
+html.bingo-popout-window #app .dealer-layout :is(
+  .dealer-card,
+  .dealer-tabs,
+  .dealer-stats,
+  .stage-toolbar,
+  .fixed-dealer-status,
+  .game-setup-panel,
+  .ball-board-panel,
+  .winner-log-panel,
+  .dealer-pattern-panel
+) {
+  color: #132039;
+}
+
+html.bingo-popout-window #app .dealer-layout :is(input, select) {
+  color: #132039;
+}
+
+html.bingo-popout-window #app .dealer-layout :is(
+  .popout-btn,
+  .view-target-btn,
+  .dealer-undo,
+  .advanced-settings-btn,
+  .dealer-new-round,
+  .verify-view
+) {
+  color: #243247;
+}
+
+html.bingo-popout-window #app .dealer-layout :is(
+  .btn-call,
+  .btn-auto,
+  .target-call-btn,
+  .setup-round-btn,
+  .verify-approve
+) {
+  color: #ffffff;
+}
+
+html.bingo-popout-window #app .dealer-layout :is(input, select)::placeholder {
+  color: #58667a;
+  opacity: 1;
+}
+
+html.bingo-popout-window #app .dealer-layout button:disabled,
+html.bingo-popout-window #app .dealer-layout :is(input, select):disabled {
+  color: #64748b;
+  opacity: .72;
+}
+
+html.bingo-popout-window .bingo-theme-switcher {
+  top: auto;
+  right: auto;
+  bottom: 20px;
+  left: 20px;
+}
+
+html.bingo-popout-window .bingo-theme-menu {
+  top: auto;
+  right: auto;
+  bottom: calc(100% + 8px);
+  left: 0;
+}
+
+html.bingo-popout-window[data-bingo-theme="current"],
+html.bingo-popout-window[data-bingo-theme="current"] body,
+html.bingo-popout-window[data-bingo-theme="current"] #app,
+html.bingo-popout-window[data-bingo-theme="current"] #app .app-shell,
+html.bingo-popout-window[data-bingo-theme="current"] #app .dealer-layout {
+  color: #18243a !important;
+  background: #eef3f9 !important;
+}
+
+html.bingo-popout-window[data-bingo-theme="current"] #app .topbar {
+  border-bottom-color: #9fb2ce !important;
+  color: #18243a !important;
+  background: #ffffff !important;
+}
+
+html.bingo-popout-window[data-bingo-theme="current"] #app :is(
+  h1, h2, h3, h4, strong, label, legend, p, small, span
+) {
+  color: inherit;
+}
+
+html.bingo-popout-window[data-bingo-theme="current"] #app .dealer-layout > :is(
+  header, section, nav, aside, div
+) {
+  border-color: #c4d0e1;
+}
+
+html.bingo-popout-window[data-bingo-theme="current"] #app .dealer-layout :is(
+  .dealer-card,
+  .dealer-tabs,
+  .dealer-stats,
+  .stage-toolbar,
+  .fixed-dealer-status,
+  .game-setup-panel,
+  .ball-board-panel,
+  .winner-log-panel,
+  .dealer-pattern-panel
+) {
+  color: #18243a !important;
+  background-color: #ffffff !important;
+}
+
+html.bingo-popout-window .universal-view-button {
+  position: fixed;
+  z-index: 1400;
+  right: 20px;
+  bottom: 20px;
+  display: inline-flex;
+  min-width: 140px;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 2px solid #a886ff;
+  border-radius: 10px;
+  color: #ffffff;
+  background: linear-gradient(#9252e8, #5f27b7);
+  box-shadow: 0 8px 24px rgba(0,0,0,.38);
+  font-size: 11.25pt;
+  font-weight: 900;
+}
+
 :is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app {
   display: block !important;
   position: static !important;
@@ -491,24 +624,59 @@ html.bingo-popout-window[data-bingo-theme="planet"] #app {
   font-size: 7.5pt;
 }
 
-.planet-logo {
+.muha-bingo-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px 5px 6px;
+  border: 2px solid rgba(255,255,255,.72);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(6,15,36,.94), rgba(20,4,34,.9));
+  box-shadow: inset 0 0 0 2px rgba(72,220,255,.22), 0 4px 10px rgba(0,0,0,.42);
+  color: #fff;
+  line-height: 1;
+  transform: skew(-5deg);
+}
+
+.muha-bingo-mark {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 24%, #fff 0 7%, transparent 8%),
+    conic-gradient(from 205deg, #39d5ff, #7b5cff, #ff4f8b, #ffcf36, #39d5ff);
+  box-shadow: inset 0 0 0 3px rgba(4,12,30,.45), 0 0 10px rgba(60,210,255,.7);
+  color: #fff;
+  font-size: 18pt;
+  font-weight: 950;
+  letter-spacing: -.1em;
+  text-shadow: 0 2px 2px #121226;
+}
+
+.muha-bingo-words {
   display: flex;
   align-items: baseline;
-  gap: 4px;
-  color: #fff;
+  gap: 5px;
+  white-space: nowrap;
   text-shadow: 0 3px 2px #000, 0 0 8px #1f75ff;
-  transform: skew(-8deg);
 }
 
-.planet-logo b {
-  font-size: 22.5pt;
-  letter-spacing: -.08em;
-}
-
-.planet-logo span {
-  color: #ffd537;
-  font-size: 13.5pt;
+.muha-bingo-words b {
+  font-size: 20pt;
   font-weight: 950;
+  letter-spacing: -.055em;
+}
+
+.muha-bingo-words > span {
+  background: linear-gradient(90deg, #56e7ff, #d68cff 48%, #ffd537);
+  background-clip: text;
+  color: transparent;
+  font-size: 12.5pt;
+  font-weight: 950;
+  letter-spacing: .02em;
 }
 
 .planet-play-surface {
@@ -824,7 +992,7 @@ html.bingo-popout-window[data-bingo-theme="planet"] #app {
   }
 }
 
-/* Planet Hall: modeled after the photographed red Planet Bingo terminals. */
+/* Planet Hall: modeled after the photographed red hall terminals. */
 [data-bingo-theme="classic"] body,
 [data-bingo-theme="classic"] .app-shell {
   color: #f4f7fb;
@@ -1379,128 +1547,6 @@ html.hall-controls-collapsed[data-bingo-theme="current"] .universal-setup-button
   box-shadow: 0 5px 18px rgba(0, 0, 0, .35);
 }
 
-.hall-native-controls-close {
-  position: fixed;
-  z-index: 20050;
-  top: clamp(82px, calc(7vh + 10px), 116px);
-  right: clamp(30px, calc(5vw + 12px), 108px);
-  display: inline-flex;
-  min-height: 56px;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 16px;
-  border: 2px solid var(--hall-return-border);
-  border-radius: 9px;
-  color: #fff;
-  background: linear-gradient(var(--hall-return-start), var(--hall-return-end));
-  box-shadow: 0 5px 18px rgba(0, 0, 0, .5);
-  font-weight: 950;
-}
-
-.hall-native-controls-close[hidden] {
-  display: none;
-}
-
-.hall-dealer-window-header[hidden] {
-  display: none;
-}
-
-.hall-dealer-window-header {
-  position: fixed;
-  z-index: 20040;
-  top: clamp(72px, 7vh, 106px);
-  right: clamp(18px, 5vw, 90px);
-  left: clamp(18px, 5vw, 90px);
-  display: flex;
-  height: 66px;
-  align-items: center;
-  gap: 14px;
-  padding: 9px 290px 9px 20px;
-  border: 3px solid var(--hall-window-border);
-  border-bottom: 0;
-  border-radius: 14px 14px 0 0;
-  color: var(--hall-window-text);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.16), transparent 30%, rgba(0,0,0,.2)),
-    linear-gradient(90deg, var(--hall-window-start), var(--hall-window-middle) 52%, var(--hall-window-end));
-  box-shadow: 0 -8px 35px rgba(0,0,0,.42);
-}
-
-.hall-dealer-window-header > .bi {
-  font-family: "bootstrap-icons" !important;
-  font-size: 25.5pt;
-}
-
-.hall-dealer-window-header span,
-.hall-dealer-window-header strong {
-  display: block;
-}
-
-.hall-dealer-window-header span {
-  opacity: .72;
-  font-size: 7.5pt;
-  letter-spacing: .15em;
-}
-
-.hall-dealer-window-header strong {
-  margin-top: 2px;
-  font-size: 15.75pt;
-  letter-spacing: .035em;
-}
-
-.hall-dealer-window-header small {
-  margin-left: auto;
-  opacity: .75;
-  font-weight: 850;
-  letter-spacing: .08em;
-}
-
-html.hall-native-controls-open body::before {
-  content: "";
-  position: fixed;
-  z-index: 19980;
-  inset: 0;
-  background: var(--hall-overlay-shade);
-  backdrop-filter: blur(5px);
-}
-
-.hall-overlay-background {
-  position: fixed !important;
-  z-index: 19970 !important;
-  inset: 0 !important;
-  display: block !important;
-  width: 100% !important;
-  height: 100% !important;
-  overflow: hidden !important;
-  pointer-events: none !important;
-  opacity: .72;
-}
-
-html.hall-native-controls-open #app {
-  display: block !important;
-  position: fixed;
-  z-index: 20000;
-  inset: calc(clamp(72px, 7vh, 106px) + 63px) clamp(18px, 5vw, 90px) clamp(20px, 5vh, 72px);
-  width: auto;
-  height: auto;
-  visibility: visible;
-  pointer-events: auto;
-  overflow: auto;
-  background: var(--hall-window-surface);
-  border: 3px solid var(--hall-window-border);
-  border-radius: 0 0 14px 14px;
-  box-shadow:
-    0 30px 90px rgba(0,0,0,.78),
-    inset 0 0 0 2px rgba(255,255,255,.12);
-}
-
-html.hall-native-controls-open[data-bingo-theme="planet"] .planet-footer-controls,
-html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls,
-html.hall-native-controls-open[data-bingo-theme="current"] :is(.universal-view-button, .universal-start-button, .universal-setup-button),
-html.hall-native-controls-open .hall-controls-toggle {
-  display: none;
-}
-
 .bingo-view-overlay[hidden],
 .view-choice-panel[hidden],
 .view-flashboard-panel[hidden] {
@@ -1527,6 +1573,14 @@ html.hall-native-controls-open .hall-controls-toggle {
   border: 2px solid #3c578f;
   background: #101217;
   box-shadow: 0 25px 80px rgba(0,0,0,.75);
+}
+
+.view-flashboard-panel {
+  width: min(1500px, 98vw);
+  height: min(980px, 96vh);
+  max-height: 96vh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
 }
 
 .view-choice-panel > header,
@@ -1594,18 +1648,20 @@ html.hall-native-controls-open .hall-controls-toggle {
 .view-flashboard-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 5px;
-  padding: 16px;
+  grid-template-rows: repeat(15, minmax(0, 1fr));
+  gap: 7px;
+  min-height: 0;
+  padding: 18px;
 }
 
 .view-flashboard-grid span {
   display: grid;
-  min-height: 44px;
+  min-height: 0;
   place-items: center;
   border: 1px solid #3b4d6d;
   color: #7786a0;
   background: #090b10;
-  font-size: 15pt;
+  font-size: clamp(12pt, 1.5vw, 20pt);
   font-weight: 900;
 }
 

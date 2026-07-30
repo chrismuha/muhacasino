@@ -82,7 +82,10 @@
     shell.className = "planet-hall-shell";
     shell.innerHTML = `
       <header class="planet-terminal-header">
-        <div class="planet-logo"><b>PLANET</b><span>BINGO</span></div>
+        <div class="muha-bingo-logo" role="img" aria-label="Muha Bingo">
+          <span class="muha-bingo-mark" aria-hidden="true">M</span>
+          <span class="muha-bingo-words"><b>MUHA</b><span>BINGO</span></span>
+        </div>
         <small>AMERICAN SESSION BINGO</small>
       </header>
       <section class="planet-play-surface">

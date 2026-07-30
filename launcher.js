@@ -64,7 +64,8 @@ const categoryNames = {
 };
 
 const SITE_VERSION = "1.1.2";
-const SITE_BUILD = "20260730-browser-dealer";
+const SITE_BUILD = "20260731-bingo-light-theme";
+const SITE_CACHE = `muha-casino-${SITE_VERSION}-${SITE_BUILD}`;
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
@@ -81,6 +82,19 @@ const appVersion = document.querySelector("#appVersion");
 let activeSlide = 0;
 let sliderTimer;
 let bingoDealerWindow = null;
+
+function clearOutdatedCasinoCaches() {
+  if (!("caches" in window)) return;
+  window.caches.keys()
+    .then((names) => Promise.all(
+      names
+        .filter((name) => name.startsWith("muha-casino-") && name !== SITE_CACHE)
+        .map((name) => window.caches.delete(name))
+    ))
+    .catch(() => {
+      // Online play remains available when browser cache storage is restricted.
+    });
+}
 
 function openBingoDealerWindow() {
   try {
@@ -275,18 +289,12 @@ window.addEventListener("popstate", () => {
 
 showSlide(0);
 restartSlider();
+clearOutdatedCasinoCaches();
 
 const requestedGame = window.location.hash.slice(1);
 if (games[requestedGame]) launchGame(requestedGame, false);
 
 if ("serviceWorker" in navigator) {
-  let refreshingForUpdate = false;
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
-    if (refreshingForUpdate) return;
-    refreshingForUpdate = true;
-    window.location.reload();
-  });
-
   window.addEventListener("load", () => {
     navigator.serviceWorker
       .register(`sw.js?build=${encodeURIComponent(SITE_BUILD)}`, { updateViaCache: "none" })

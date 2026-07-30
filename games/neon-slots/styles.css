@@ -8,6 +8,10 @@
     --muted: #8d98b3;
     --win: #ffe66d;
     --danger: #ff7d7d;
+    --game-bg: var(--bg);
+    --game-text: var(--text);
+    --game-surface: var(--card);
+    --game-muted: var(--muted);
     --shadow: 0 10px 30px rgba(0, 0, 0, .5), inset 0 0 0 1px rgba(255, 255, 255, .05);
     --radius: 14px;
     --reel-row-h: 62px;
@@ -45,8 +49,8 @@ body {
 }
 
 body {
-    background: radial-gradient(1200px 700px at 70% -10%, #16223a 0%, #0b0f17 60%) fixed;
-    color: var(--text);
+    background: radial-gradient(1200px 700px at 70% -10%, #16223a 0%, var(--game-bg) 60%) fixed;
+    color: var(--game-text);
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
     display: block;
     min-height: 100vh;
@@ -393,7 +397,7 @@ select,
 }
 
 .info-btn .bi {
-    font-size: 21px;
+    font-size: 15.75pt;
     line-height: 1;
     display: inline-flex;
     align-items: center;
@@ -408,7 +412,7 @@ select,
     font-style: normal;
     font-weight: 400;
     line-height: 1;
-    font-size: 1em;
+    font-size: 12pt;
     display: block;
     transform: translateY(-0.5px);
 }
@@ -1545,7 +1549,7 @@ body.overlay-open {
 .jackpot-board h3 {
   margin: 0 0 6px;
   color: #fff;
-  font-size: .78rem;
+  font-size: 9.36pt;
   letter-spacing: .18em;
   text-transform: uppercase;
   text-shadow: 0 0 8px #7df9ff;
@@ -1566,7 +1570,7 @@ body.overlay-open {
   border: 1px solid currentColor;
   border-radius: 999px;
   background: rgba(255,255,255,.035);
-  font-size: clamp(.62rem, 1.35vw, .82rem);
+  font-size: clamp(7.44pt, 1.35vw, 9.84pt);
   text-transform: uppercase;
   box-shadow: 0 0 11px currentColor, inset 0 0 9px currentColor;
 }
@@ -1588,7 +1592,7 @@ body.overlay-open {
   border: 2px solid var(--jackpot-color);
   border-radius: 999px;
   color: #080b10;
-  font-size: clamp(.65rem, 1.5vw, 1rem);
+  font-size: clamp(7.8pt, 1.5vw, 12pt);
   font-weight: 900;
   line-height: 1;
   box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .4), 0 0 16px var(--jackpot-color);
@@ -1629,7 +1633,7 @@ body.overlay-open {
 }
 
 .jackpot-chip strong {
-  font-size: .72em;
+  font-size: 8.64pt;
   line-height: 1;
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -1638,7 +1642,7 @@ body.overlay-open {
 .jackpot-chip span {
   margin-top: .12em;
   color: #080b10;
-  font-size: .68em;
+  font-size: 8.16pt;
   line-height: 1;
   font-weight: 900;
 }
@@ -1799,7 +1803,7 @@ body.overlay-open {
 }
 
 .bonus-choices { display: flex; gap: 14px; justify-content: center; margin-top: 22px; }
-.bonus-choices button { min-width: 88px; min-height: 88px; font-size: 2rem; border-radius: 16px; }
+.bonus-choices button { min-width: 88px; min-height: 88px; font-size: 24pt; border-radius: 16px; }
 
 @keyframes feature-pulse { to { transform: scale(1.04); filter: brightness(1.25); } }
 

@@ -38,10 +38,16 @@
     const url = new URL(window.location.href);
     url.search = "";
     Object.entries(parameters).forEach(([key, value]) => url.searchParams.set(key, value));
-    url.searchParams.set("build", "20260730-browser-dealer");
+    url.searchParams.set("build", "20260731-bingo-light-theme");
     const popup = window.open("", name);
-    if (popup && (popup.location.href === "about:blank" || popup.location.href === "")) {
-      popup.location.href = url.href;
+    if (popup) {
+      const current = popup.location.href === "about:blank" || popup.location.href === ""
+        ? null
+        : new URL(popup.location.href);
+      const wrongScreen = Object.entries(parameters).some(
+        ([key, value]) => current?.searchParams.get(key) !== String(value)
+      );
+      if (!current || current.pathname !== url.pathname || wrongScreen) popup.location.href = url.href;
     }
     popup?.focus();
     return popup;

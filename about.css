@@ -62,8 +62,8 @@ a { color: inherit; text-decoration: none; }
 main { width: min(1280px, calc(100% - 48px)); margin: 0 auto; padding: 82px 0 70px; }
 .about-hero { position: relative; max-width: 950px; padding-bottom: 44px; }
 .eyebrow { margin: 0 0 14px; color: var(--cyan); font-weight: 900; letter-spacing: .18em; text-transform: uppercase; }
-h1 { margin: 0; font-size: clamp(3.6rem, 9vw, 8.3rem); letter-spacing: -.075em; line-height: .86; }
-.about-hero > p:last-of-type { max-width: 790px; margin: 30px 0 0; color: #c7cada; font-size: 1.15rem; line-height: 1.7; }
+h1 { margin: 0; font-size: clamp(43.2pt, 9vw, 99.6pt); letter-spacing: -.075em; line-height: .86; }
+.about-hero > p:last-of-type { max-width: 790px; margin: 30px 0 0; color: #c7cada; font-size: 13.8pt; line-height: 1.7; }
 .release-badge {
   display: inline-grid;
   grid-template-columns: auto auto;
@@ -75,7 +75,7 @@ h1 { margin: 0; font-size: clamp(3.6rem, 9vw, 8.3rem); letter-spacing: -.075em; 
   background: linear-gradient(135deg, #171b2a, #222941);
 }
 .release-badge span, .release-badge small { color: var(--muted); }
-.release-badge strong { grid-row: 1 / 3; grid-column: 2; align-self: center; color: var(--cyan); font-size: 2rem; }
+.release-badge strong { grid-row: 1 / 3; grid-column: 2; align-self: center; color: var(--cyan); font-size: 24pt; }
 
 .history-nav {
   position: sticky;
@@ -104,8 +104,8 @@ h1 { margin: 0; font-size: clamp(3.6rem, 9vw, 8.3rem); letter-spacing: -.075em; 
   border-radius: 24px;
   background: linear-gradient(135deg, rgba(87,228,242,.1), rgba(147,103,255,.11));
 }
-.suite-summary span { color: var(--cyan); font-size: 2.2rem; font-weight: 1000; }
-.suite-summary h2 { margin: 8px 0 0; font-size: 1.65rem; }
+.suite-summary span { color: var(--cyan); font-size: 26.4pt; font-weight: 1000; }
+.suite-summary h2 { margin: 8px 0 0; font-size: 19.8pt; }
 .suite-summary ul { margin: 0; padding-left: 22px; color: #d3d6e4; line-height: 1.7; }
 
 .history-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
@@ -126,9 +126,9 @@ h1 { margin: 0; font-size: clamp(3.6rem, 9vw, 8.3rem); letter-spacing: -.075em; 
   padding: 22px;
   border-bottom: 1px solid var(--line);
 }
-.history-card header p { margin: 0 0 4px; color: var(--muted); font-size: .72rem; font-weight: 900; letter-spacing: .13em; text-transform: uppercase; }
-.history-card header h2 { margin: 0; font-size: 1.25rem; }
-.history-card header > b { color: var(--cyan); font-size: 1.15rem; }
+.history-card header p { margin: 0 0 4px; color: var(--muted); font-size: 8.64pt; font-weight: 900; letter-spacing: .13em; text-transform: uppercase; }
+.history-card header h2 { margin: 0; font-size: 15pt; }
+.history-card header > b { color: var(--cyan); font-size: 13.8pt; }
 .game-icon {
   display: grid;
   width: 52px;
@@ -137,7 +137,7 @@ h1 { margin: 0; font-size: clamp(3.6rem, 9vw, 8.3rem); letter-spacing: -.075em; 
   border-radius: 15px;
   color: #061014;
   background: linear-gradient(145deg, var(--cyan), var(--purple));
-  font-size: 1.5rem;
+  font-size: 18pt;
   font-weight: 1000;
 }
 .game-icon.money { background: linear-gradient(145deg, #ffe267, #a46d0b); }
@@ -148,7 +148,7 @@ h1 { margin: 0; font-size: clamp(3.6rem, 9vw, 8.3rem); letter-spacing: -.075em; 
 .game-icon.yahtzee { color: #fff; background: linear-gradient(145deg, #48c77d, #17623c); }
 .history-card > section { padding: 22px; }
 .history-card > section + section { border-top: 1px solid var(--line); background: rgba(4,6,13,.22); }
-.history-card h3 { margin: 0 0 13px; font-size: 1rem; }
+.history-card h3 { margin: 0 0 13px; font-size: 12pt; }
 .history-card p, .history-card li { color: #c7cbda; line-height: 1.6; }
 .history-card ul { margin: 0; padding-left: 20px; }
 .history-card small { display: block; margin-top: 14px; color: #767e98; line-height: 1.45; }
@@ -161,7 +161,7 @@ body > footer {
   padding: 30px 0;
   border-top: 1px solid var(--line);
   color: #8d94aa;
-  font-size: .8rem;
+  font-size: 9.6pt;
   font-weight: 800;
 }
 body > footer a { color: var(--cyan); }
@@ -174,7 +174,7 @@ body > footer a { color: var(--cyan); }
 }
 
 @media (max-width: 520px) {
-  h1 { font-size: clamp(3.2rem, 20vw, 5.2rem); }
+  h1 { font-size: clamp(38.4pt, 20vw, 62.4pt); }
   .about-brand strong { display: none; }
   .history-card > header { grid-template-columns: auto 1fr; }
   .history-card header > b { grid-column: 2; }

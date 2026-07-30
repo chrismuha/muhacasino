@@ -8,6 +8,10 @@
     --muted: #8d98b3;
     --win: #ffe66d;
     --danger: #ff7d7d;
+    --game-bg: var(--bg);
+    --game-text: var(--text);
+    --game-surface: var(--card);
+    --game-muted: var(--muted);
     --shadow: 0 10px 30px rgba(0, 0, 0, .5), inset 0 0 0 1px rgba(255, 255, 255, .05);
     --radius: 14px;
     --reel-row-h: 62px;
@@ -45,8 +49,8 @@ body {
 }
 
 body {
-    background: radial-gradient(1200px 700px at 70% -10%, #16223a 0%, #0b0f17 60%) fixed;
-    color: var(--text);
+    background: radial-gradient(1200px 700px at 70% -10%, #16223a 0%, var(--game-bg) 60%) fixed;
+    color: var(--game-text);
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
     display: block;
     min-height: 100vh;
@@ -393,7 +397,7 @@ select,
 }
 
 .info-btn .bi {
-    font-size: 21px;
+    font-size: 15.75pt;
     line-height: 1;
     display: inline-flex;
     align-items: center;
@@ -408,7 +412,7 @@ select,
     font-style: normal;
     font-weight: 400;
     line-height: 1;
-    font-size: 1em;
+    font-size: 12pt;
     display: block;
     transform: translateY(-0.5px);
 }
@@ -1545,7 +1549,7 @@ body.overlay-open {
 .jackpot-board h3 {
   margin: 0 0 6px;
   color: #fff;
-  font-size: .78rem;
+  font-size: 9.36pt;
   letter-spacing: .18em;
   text-transform: uppercase;
   text-shadow: 0 0 8px #7df9ff;
@@ -1566,7 +1570,7 @@ body.overlay-open {
   border: 1px solid currentColor;
   border-radius: 999px;
   background: rgba(255,255,255,.035);
-  font-size: clamp(.62rem, 1.35vw, .82rem);
+  font-size: clamp(7.44pt, 1.35vw, 9.84pt);
   text-transform: uppercase;
   box-shadow: 0 0 11px currentColor, inset 0 0 9px currentColor;
 }
@@ -1588,7 +1592,7 @@ body.overlay-open {
   border: 2px solid var(--jackpot-color);
   border-radius: 999px;
   color: #080b10;
-  font-size: clamp(.65rem, 1.5vw, 1rem);
+  font-size: clamp(7.8pt, 1.5vw, 12pt);
   font-weight: 900;
   line-height: 1;
   box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .4), 0 0 16px var(--jackpot-color);
@@ -1629,7 +1633,7 @@ body.overlay-open {
 }
 
 .jackpot-chip strong {
-  font-size: .72em;
+  font-size: 8.64pt;
   line-height: 1;
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -1638,7 +1642,7 @@ body.overlay-open {
 .jackpot-chip span {
   margin-top: .12em;
   color: #080b10;
-  font-size: .68em;
+  font-size: 8.16pt;
   line-height: 1;
   font-weight: 900;
 }
@@ -1742,7 +1746,7 @@ body {
 .title {
   justify-content: center;
   color: #fff0bd;
-  font-size: clamp(22px, 3vw, 38px);
+  font-size: clamp(16.5pt, 3vw, 28.5pt);
   letter-spacing: .08em;
   text-transform: uppercase;
   animation: none;
@@ -1794,7 +1798,7 @@ body {
 
 .pot-copy { display: grid; gap: 4px; }
 .pot-copy strong { line-height: 1.2; }
-.eyebrow { color: #e2b75e; font: 700 10px/1 system-ui, sans-serif; letter-spacing: .16em; text-transform: uppercase; }
+.eyebrow { color: #e2b75e; font: 700 7.5pt/1 system-ui, sans-serif; letter-spacing: .16em; text-transform: uppercase; }
 .pots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .pot {
   position: relative;
@@ -1826,9 +1830,9 @@ body {
   background: linear-gradient(#ffe39a, #cf781d);
   transition: height .55s cubic-bezier(.2,.75,.25,1);
 }
-.pot b { align-self: end; font-size: 13px; }
+.pot b { align-self: end; font-size: 9.75pt; }
 .pot small { align-self: start; color: #f2ce83; font-family: system-ui, sans-serif; }
-.pot-rule { grid-column: 1 / -1; margin: 0; text-align: center; color: #e9c77d; font-size: 12px; }
+.pot-rule { grid-column: 1 / -1; margin: 0; text-align: center; color: #e9c77d; font-size: 9pt; }
 .pot.popping { animation: pot-pop .85s ease both; }
 @keyframes pot-pop {
   0% { transform: scale(1); }
@@ -1879,8 +1883,8 @@ button:hover { filter: brightness(1.12); }
   box-shadow: inset 0 0 0 2px #241006, 0 3px 8px rgba(0,0,0,.45);
   font-family: system-ui, sans-serif;
 }
-.link-chip strong { font-size: clamp(10px, 1.4vw, 16px); line-height: 1; }
-.link-chip span { margin-top: 3px; font-size: clamp(6px, .65vw, 9px); letter-spacing: .05em; }
+.link-chip strong { font-size: clamp(7.5pt, 1.4vw, 12pt); line-height: 1; }
+.link-chip span { margin-top: 3px; font-size: clamp(4.5pt, .65vw, 6.75pt); letter-spacing: .05em; }
 .link-value { background: radial-gradient(circle at 38% 30%, #dbb154, #704116 68%); color: #2d170b; }
 .link-orphan { opacity: .55; filter: grayscale(.35); }
 .link-win-cell { animation: link-award .7s ease-in-out infinite alternate; }
@@ -1898,7 +1902,7 @@ button:hover { filter: brightness(1.12); }
   .pots { gap: 5px; }
   .pot { grid-template-columns: 34px 1fr; min-height: 48px; padding: 5px; }
   .pot-meter { width: 27px; height: 36px; }
-  .pot-rule { grid-column: 1; font-size: 10px; }
+  .pot-rule { grid-column: 1; font-size: 7.5pt; }
 }
 
 .custom-odds-row {
@@ -1990,7 +1994,7 @@ button:hover { filter: brightness(1.12); }
 }
 
 .bonus-choices { display: flex; gap: 14px; justify-content: center; margin-top: 22px; }
-.bonus-choices button { min-width: 88px; min-height: 88px; font-size: 2rem; border-radius: 16px; }
+.bonus-choices button { min-width: 88px; min-height: 88px; font-size: 24pt; border-radius: 16px; }
 
 @keyframes feature-pulse { to { transform: scale(1.04); filter: brightness(1.25); } }
 
@@ -2036,7 +2040,7 @@ body {
   margin: 2px 0 12px;
   color: #1d655e;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(28px, 4vw, 48px);
+  font-size: clamp(21pt, 4vw, 36pt);
   font-style: italic;
   font-weight: 800;
   letter-spacing: -.025em;
@@ -2055,7 +2059,7 @@ body {
   background: #bd623f;
   box-shadow: 0 3px 0 #83402a;
   font-family: Georgia, serif;
-  font-size: .8em;
+  font-size: 9.6pt;
   font-style: normal;
   line-height: 1;
 }
@@ -2126,7 +2130,7 @@ body {
 .pot-copy strong {
   color: #73402f;
   font-family: Georgia, serif;
-  font-size: 16px;
+  font-size: 12pt;
   font-style: italic;
 }
 
@@ -2153,7 +2157,7 @@ body {
   right: 9px;
   top: 5px;
   color: rgba(189,98,63,.24);
-  font: 900 22px/1 Georgia, serif;
+  font: 900 16.5pt/1 Georgia, serif;
 }
 
 .pot-meter {
@@ -2169,7 +2173,7 @@ body {
   background: linear-gradient(90deg, #d87850, #f7b67b);
 }
 
-.pot b { color: #1d655e; font-family: Georgia, serif; font-size: 13px; }
+.pot b { color: #1d655e; font-family: Georgia, serif; font-size: 9.75pt; }
 .pot small { color: #9b4d35; }
 .pot-rule { color: #704231; font-weight: 800; letter-spacing: .02em; }
 
@@ -2322,7 +2326,7 @@ body {
   flex-wrap: nowrap;
   min-height: 44px;
   margin-bottom: clamp(7px, 1.2vw, 12px);
-  font-size: clamp(25px, 3.6vw, 44px);
+  font-size: clamp(18.75pt, 3.6vw, 33pt);
 }
 
 .title .info-btn {
@@ -2379,7 +2383,7 @@ body {
 }
 
 .cell {
-  font-size: clamp(18px, 3.3vw, 37px);
+  font-size: clamp(13.5pt, 3.3vw, 27.75pt);
 }
 
 .reels .icon-container {
@@ -2443,7 +2447,7 @@ body {
 
 .wheel-kicker {
   color: #bd623f;
-  font-size: 11px;
+  font-size: 8.25pt;
   font-weight: 900;
   letter-spacing: .18em;
   text-transform: uppercase;
@@ -2507,7 +2511,7 @@ body {
   color: #fff8e5;
   background: #1d655e;
   box-shadow: 0 3px 0 #0d433e;
-  font: 900 clamp(32px, 7vw, 54px)/1 Georgia, serif;
+  font: 900 clamp(24pt, 7vw, 40.5pt)/1 Georgia, serif;
 }
 
 .wheel-pointer {
@@ -2536,7 +2540,7 @@ body {
   border: 1px solid #9fc9bc;
   border-radius: 8px;
   background: #f5ecd7;
-  font-size: 11px;
+  font-size: 8.25pt;
 }
 
 .wheel-odds b {
@@ -2554,7 +2558,7 @@ body {
   border-radius: 50%;
   color: #402b1d;
   box-shadow: 0 2px 0 rgba(68,47,28,.3);
-  font-size: 9px;
+  font-size: 6.75pt;
   font-style: normal;
   font-weight: 950;
 }
@@ -2609,14 +2613,14 @@ body {
 
 .wheel-award-chip strong {
   font-family: Georgia, serif;
-  font-size: 18px;
+  font-size: 13.5pt;
   font-style: italic;
   text-transform: uppercase;
 }
 
 .wheel-award-chip span {
   margin-top: 3px;
-  font-size: 16px;
+  font-size: 12pt;
   font-variant-numeric: tabular-nums;
 }
 
@@ -2661,13 +2665,13 @@ body {
 
   .wheel-dialog h2 {
     margin-block: 3px;
-    font-size: clamp(25px, 7.5vw, 36px);
+    font-size: clamp(18.75pt, 7.5vw, 27pt);
     line-height: 1.02;
   }
 
   .wheel-dialog > p:not(.wheel-result) {
     margin: 8px auto;
-    font-size: 14px;
+    font-size: 10.5pt;
     line-height: 1.3;
   }
 
@@ -2690,7 +2694,7 @@ body {
   .wheel-odds span {
     min-width: 0;
     padding: 5px 2px;
-    font-size: 9px;
+    font-size: 6.75pt;
     line-height: 1.15;
   }
 
@@ -2698,13 +2702,13 @@ body {
     width: 23px;
     height: 23px;
     margin-bottom: 2px;
-    font-size: 8px;
+    font-size: 6pt;
   }
 
   .wheel-result {
     min-height: 22px;
     margin: 8px 0 5px;
-    font-size: 14px;
+    font-size: 10.5pt;
   }
 
   .wheel-spin {
@@ -2839,7 +2843,7 @@ label {
 
   .title {
     gap: 7px;
-    font-size: clamp(23px, 8.2vw, 34px);
+    font-size: clamp(17.25pt, 8.2vw, 25.5pt);
   }
 
   .title-mark {
@@ -2853,7 +2857,7 @@ label {
 
   .jackpot-board h3 {
     margin-block: 0 6px;
-    font-size: 13px;
+    font-size: 9.75pt;
   }
 
   .jackpot-pills {
@@ -2863,7 +2867,7 @@ label {
 
   .jackpot-pill {
     min-height: 38px;
-    font-size: 11px;
+    font-size: 8.25pt;
   }
 
   .pot-feature {
@@ -2874,7 +2878,7 @@ label {
   }
 
   .pot-copy strong {
-    font-size: 13px;
+    font-size: 9.75pt;
   }
 
   .pots {
@@ -2903,16 +2907,16 @@ label {
   }
 
   .pot b {
-    font-size: 10px;
+    font-size: 7.5pt;
     line-height: 1.05;
   }
 
   .pot small {
-    font-size: 9px;
+    font-size: 6.75pt;
   }
 
   .pot-rule {
-    font-size: 9px;
+    font-size: 6.75pt;
   }
 
   .reels-wrap {
@@ -2929,7 +2933,7 @@ label {
   }
 
   .cell {
-    font-size: clamp(17px, 7vw, 29px);
+    font-size: clamp(12.75pt, 7vw, 21.75pt);
   }
 
   .reels .icon-container {
@@ -2946,7 +2950,7 @@ label {
   .jackpot-pill::before { display: none; }
   .pot-copy strong { display: none; }
   .reels { --reel-row-h: 29px; }
-  .cell { font-size: 16px; }
+  .cell { font-size: 12pt; }
 }
 
 @media (max-width: 430px) {
@@ -2957,7 +2961,7 @@ label {
   .right button {
     min-height: 38px;
     padding-inline: 5px;
-    font-size: 10px;
+    font-size: 7.5pt;
   }
 
   .left {
@@ -2973,7 +2977,7 @@ label {
   .title {
     min-height: 34px;
     margin-bottom: 5px;
-    font-size: 27px;
+    font-size: 20.25pt;
   }
 
   .jackpot-board {
@@ -2982,7 +2986,7 @@ label {
 
   .jackpot-board h3 {
     margin-block: 0 4px;
-    font-size: 12px;
+    font-size: 9pt;
   }
 
   .jackpot-pill {
@@ -3050,14 +3054,14 @@ label {
 
 .reels .jackpot-chip strong,
 .reels .link-chip strong {
-  font-size: clamp(8px, 1.05vw, 13px);
+  font-size: clamp(6pt, 1.05vw, 9.75pt);
   line-height: .95;
 }
 
 .reels .jackpot-chip span,
 .reels .link-chip span {
   margin-top: 1px;
-  font-size: clamp(6px, .72vw, 9px);
+  font-size: clamp(4.5pt, .72vw, 6.75pt);
   line-height: .95;
 }
 

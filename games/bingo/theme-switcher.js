@@ -181,7 +181,8 @@
     });
 
     document.body.append(switcher);
-    if (window.parent !== window) switcher.hidden = true;
+    if (window.parent !== window && !isPopout) switcher.hidden = true;
+    if (isPopout) switcher.hidden = false;
     mountPlayerHallControls();
     applyTheme(savedTheme());
     return true;
@@ -542,11 +543,14 @@
     if (!board) return;
     const called = calledNumbers();
     board.replaceChildren();
-    for (let number = 1; number <= 75; number += 1) {
-      const cell = document.createElement("span");
-      cell.textContent = String(number);
-      cell.classList.toggle("called", called.has(number));
-      board.append(cell);
+    for (let row = 1; row <= 15; row += 1) {
+      for (let column = 0; column < 5; column += 1) {
+        const number = row + column * 15;
+        const cell = document.createElement("span");
+        cell.textContent = String(number);
+        cell.classList.toggle("called", called.has(number));
+        board.append(cell);
+      }
     }
   }
 
@@ -860,6 +864,7 @@
     document.addEventListener("DOMContentLoaded", () => {
       if (isPopout) {
         applyTheme(savedTheme());
+        mountViewOverlay();
         restoreSavedPreferences();
         return;
       }
@@ -872,6 +877,7 @@
   } else {
     if (isPopout) {
       applyTheme(savedTheme());
+      mountViewOverlay();
       restoreSavedPreferences();
       return;
     }
