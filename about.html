@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070811">
+  <meta name="description" content="Muha Casino version history and game release notes.">
+  <title>About & Version History | Muha Casino</title>
+  <link rel="stylesheet" href="about.css?build=1.1.2">
+</head>
+<body>
+  <header class="about-topbar">
+    <a class="about-brand" href="index.html">
+      <span aria-hidden="true">M</span>
+      <strong>MUHA <b>CASINO</b></strong>
+    </a>
+    <a class="back-link" href="index.html">← Game library</a>
+  </header>
+
+  <main>
+    <section class="about-hero">
+      <p class="eyebrow">About this release</p>
+      <h1>Version history</h1>
+      <p>Major features and meaningful releases are recorded here. Small spacing, color, clipping, and maintenance fixes are grouped into the release they improve instead of receiving a new version number.</p>
+      <div class="release-badge"><span>Current casino release</span><strong>v1.1.2</strong><small>July 29, 2026</small></div>
+    </section>
+
+    <nav class="history-nav" aria-label="Choose version history">
+      <a href="#casino">Casino Home</a>
+      <a href="#big-money">Big Money</a>
+      <a href="#neon">Neon Slots</a>
+      <a href="#pretty-penny">Pretty Penny</a>
+      <a href="#bingo">Bingo</a>
+      <a href="#sorry">Sorry!</a>
+      <a href="#yahtzee">Yahtzee</a>
+    </nav>
+
+    <section class="suite-summary">
+      <div>
+        <span>v1.1.2</span>
+        <h2>Casino-wide feature release</h2>
+      </div>
+      <ul>
+        <li>Introduced the expanded three-theme Bingo Hall experience.</li>
+        <li>Added active-spin elapsed timing and improved result messaging across every slot.</li>
+        <li>Improved responsive game artwork, oversized featured titles, scrolling, and cache refresh behavior.</li>
+        <li>Kept game preferences and release information consistent across the casino.</li>
+      </ul>
+    </section>
+
+    <div class="history-grid">
+      <article id="casino" class="history-card">
+        <header><span class="game-icon">M</span><div><p>Casino shell</p><h2>Muha Casino Home</h2></div><b>v1.1.2</b></header>
+        <section><h3>v1.1.2 · Current</h3><ul>
+          <li>Added this About and per-game version-history screen.</li>
+          <li>Refined the full-screen featured carousel, oversized game titles, artwork clearance, and responsive layout.</li>
+          <li>Added visible release metadata without the old version flash during page loading.</li>
+          <li>Organized Bingo, slots, and tabletop titles into accurate game categories.</li>
+        </ul><small>Milestones reconstructed from commits f4c94ab through a55f757.</small></section>
+        <section><h3>v1.0.0 · Initial release</h3><p>Launched the game library, then expanded it into Muha Casino with slots, Bingo, Sorry!, and Yahtzee.</p><small>Initial milestones: 50aeba8, 78b2926, ad50010.</small></section>
+      </article>
+
+      <article id="big-money" class="history-card">
+        <header><span class="game-icon money">7</span><div><p>Slot game</p><h2>Big Money Deluxe</h2></div><b>v1.1.2</b></header>
+        <section><h3>v1.1.2 · Current</h3><ul>
+          <li>Added cumulative active-spin elapsed time for manual and automatic play.</li>
+          <li>Elapsed time pauses between spins and stays outside the win/loss outline.</li>
+          <li>Long result messages now wrap without clipping on smaller screens.</li>
+          <li>Improved jackpot-chip artwork, mobile layout, session tracking, and game scrolling.</li>
+        </ul><small>Feature milestones: 6909171, 52e208e, 11e42a8, a55f757.</small></section>
+        <section><h3>v1.0.0 · Initial release</h3><p>Released the classic cash slot with paylines, credits, wagers, jackpots, and automatic spins.</p></section>
+      </article>
+
+      <article id="neon" class="history-card">
+        <header><span class="game-icon neon">ϟ</span><div><p>Slot game</p><h2>Neon Slots</h2></div><b>v1.1.2</b></header>
+        <section><h3>v1.1.2 · Current</h3><ul>
+          <li>Added cumulative active-spin elapsed time with pause and resume behavior.</li>
+          <li>Separated elapsed time from the result outline and fixed responsive message clipping.</li>
+          <li>Added shared session tracking and improved cached-release loading.</li>
+          <li>Refined reel artwork, mobile controls, and in-game scrolling.</li>
+        </ul><small>Feature milestones: 6909171, 52e208e, 39a1618, a55f757.</small></section>
+        <section><h3>v1.0.0 · Initial release</h3><p>Released the neon casino slot with animated reels, paylines, jackpots, and configurable wagering.</p></section>
+      </article>
+
+      <article id="pretty-penny" class="history-card">
+        <header><span class="game-icon penny">¢</span><div><p>Feature slot</p><h2>Pretty Penny</h2></div><b>v1.1.2</b></header>
+        <section><h3>v1.1.2 · Current</h3><ul>
+          <li>Added cumulative active-spin elapsed time across manual and automatic play.</li>
+          <li>Kept result messages readable and elapsed time outside the status outline.</li>
+          <li>Reworked jackpot and link symbols to fill reel cards cleanly without animation.</li>
+          <li>Kept the bonus wheel and savings-bank features usable on mobile screens.</li>
+        </ul><small>Feature milestones: 41b6de7, 6909171, 11e42a8, a55f757.</small></section>
+        <section><h3>v1.0.0 · Initial release</h3><p>Released the savings-themed feature slot with three banks, link prizes, jackpots, and a bonus wheel.</p></section>
+      </article>
+
+      <article id="bingo" class="history-card featured-history">
+        <header><span class="game-icon bingo">B</span><div><p>Casino Hall</p><h2>Muha Bingo</h2></div><b>v1.1.2</b></header>
+        <section><h3>v1.1.2 · Hall expansion</h3><ul>
+          <li>Added three interfaces: Planet Hall 2, Planet Hall, and Classic.</li>
+          <li>Added dedicated Start, Dealer, Controls / Setup, View, Options, Purchase, and Schedule controls.</li>
+          <li>Added 1–6 card views, Flashboard, more dauber designs, and three called-number states.</li>
+          <li>Added ball tapping to advance calling, persistent preferences, clearer 1-away/2-away indicators, and a prominent Bingo alert.</li>
+          <li>Restored access to the complete dealer console and native game-setup screen from Hall themes.</li>
+        </ul><small>Major Hall release: a55f757 and the current v1.1.2 follow-up.</small></section>
+        <section><h3>v1.0.0 · Initial release</h3><p>Added 75-ball Bingo with player cards, automatic ranking, winning patterns, live calling, dealer controls, and audience displays. Renamed Lucky Hall Bingo to Muha Bingo.</p><small>Initial milestones: 78b2926 and fa88b3b.</small></section>
+      </article>
+
+      <article id="sorry" class="history-card">
+        <header><span class="game-icon sorry">♟</span><div><p>Tabletop game</p><h2>Sorry!</h2></div><b>v1.1.2</b></header>
+        <section><h3>v1.1.2 · Current</h3><ul>
+          <li>Integrated the game into the dedicated Tabletop category.</li>
+          <li>Restored normal in-game scrolling after the casino scrollbar refinements.</li>
+          <li>Applied casino-wide interaction, cache, and responsive launcher improvements.</li>
+        </ul><small>Integration milestones: ad50010, 50572f1, a55f757.</small></section>
+        <section><h3>v1.0.0 · Initial release</h3><p>Added the classic board game with its complete board, cards, pawn movement, turns, and game rules.</p></section>
+      </article>
+
+      <article id="yahtzee" class="history-card">
+        <header><span class="game-icon yahtzee">⚄</span><div><p>Tabletop game</p><h2>Yahtzee</h2></div><b>v1.1.2</b></header>
+        <section><h3>v1.1.2 · Current</h3><ul>
+          <li>Integrated Yahtzee into the dedicated Tabletop category.</li>
+          <li>Restored normal in-game scrolling after the casino scrollbar refinements.</li>
+          <li>Applied casino-wide interaction, cache, and responsive launcher improvements.</li>
+        </ul><small>Integration milestones: ad50010, 50572f1, a55f757.</small></section>
+        <section><h3>v1.0.0 · Initial release</h3><p>Added the classic five-dice game with rolling, holds, scoring categories, bonuses, and full score tracking.</p></section>
+      </article>
+    </div>
+  </main>
+
+  <footer><span>MUHA CASINO</span><a href="index.html">Return to game library</a></footer>
+  <script src="interaction-lock.js?v=1.1.2"></script>
+</body>
+</html>

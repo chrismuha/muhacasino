@@ -140,12 +140,12 @@
     return toggled;
   }
 
-  async function openNativeControls() {
+  async function openNativeControls(openSetup = true) {
     document.documentElement.classList.add("hall-native-controls-open");
     const closeButton = document.querySelector(".hall-native-controls-close");
     if (closeButton) closeButton.hidden = false;
     await waitAndClick(/^dealer console$/i, 500);
-    await waitAndClick(/edit game setup|game setup/i, 700);
+    if (openSetup) await waitAndClick(/edit game setup|game setup/i, 700);
   }
 
   function closeNativeControls() {
@@ -200,6 +200,11 @@
       return;
     }
 
+    if (action === "dealer") {
+      openNativeControls(false);
+      return;
+    }
+
     if (action === "view") {
       openViewOverlay();
       return;
@@ -239,6 +244,7 @@
     if (document.querySelector(".player-hall-controls")) return;
     const controlsMarkup = `
       <button class="hall-start-button" type="button" data-hall-action="start">▶ <span>PLAY SESSION</span></button>
+      <button class="hall-dealer-button" type="button" data-hall-action="dealer">● <span>DEALER</span></button>
       <button class="hall-setup-button" type="button" data-hall-action="setup">☰ <span>CONTROLS / SETUP</span></button>
       <button type="button" data-hall-action="view">⌕ <span>VIEW</span></button>
       <button type="button" data-hall-action="options">⚙ <span>OPTIONS</span></button>
@@ -257,6 +263,7 @@
     planetControls.setAttribute("aria-label", "Planet Hall 2 controls");
     planetControls.innerHTML = `
       <button class="hall-start-button" type="button" data-hall-action="start">▶ <span>PLAY SESSION</span></button>
+      <button class="hall-dealer-button" type="button" data-hall-action="dealer">● <span>DEALER</span></button>
       <button class="hall-setup-button" type="button" data-hall-action="setup">☰ <span>CONTROLS / SETUP</span></button>
       <button type="button" data-hall-action="view">⌕ <span>VIEW</span></button>
       <button type="button" data-hall-action="options">⚙ <span>OPTIONS</span></button>
