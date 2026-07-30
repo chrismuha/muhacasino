@@ -258,6 +258,9 @@ a { color: inherit; text-decoration: none; }
 
 footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: center; justify-content: space-between; margin: 65px auto 0; padding: 34px 0; border-top: 1px solid #202230; color: #72768a; font-size: .8rem; }
 .footer-brand { color: white; }
+.footer-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; }
+.footer-meta p { margin: 0; }
+.version { color: #aeb2c4; font-weight: 800; letter-spacing: .08em; }
 
 .game-view { position: fixed; z-index: 99; inset: 0; background: #050610; }
 .game-toolbar { display: flex; height: 56px; align-items: center; gap: 18px; padding: 0 14px; border-bottom: 1px solid rgba(255,255,255,.12); background: #0a0c19; }
@@ -288,7 +291,8 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   .hero-dots { bottom: 48px; }
   .content-section { width: calc(100% - 28px); padding-top: 55px; }
   .rail-controls { display: none; }
-  footer { width: calc(100% - 28px); flex-direction: column; align-items: flex-start; gap: 18px; }
+  footer { width: calc(100% - 28px); align-items: flex-end; gap: 18px; }
+  .footer-brand { align-self: flex-start; }
 }
 
 @media (prefers-reduced-motion: reduce) {
