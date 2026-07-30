@@ -5,7 +5,7 @@
   const CARD_COUNT_STORAGE_KEY = "muha-bingo-card-count";
   const themes = ["planet", "classic", "current"];
   const daubDesigns = [
-    "splat", "pig", "duck", "star", "circle", "planet", "confetti",
+    "solid", "splat", "pig", "duck", "star", "circle", "planet", "confetti",
     "firework", "dynamite", "cowboy", "clover", "diamond", "lightning",
   ];
 
@@ -733,6 +733,7 @@
       <section role="dialog" aria-modal="true" aria-labelledby="daub-options-title">
         <header id="daub-options-title">Choose a dauber design:</header>
         <div class="daub-design-grid">
+          <button type="button" data-daub-design="solid"><i class="daub-preview solid"></i><span>Solid Color</span></button>
           <button type="button" data-daub-design="splat"><i class="daub-preview splat"></i><span>Splat</span></button>
           <button type="button" data-daub-design="pig"><i class="daub-preview">🐷</i><span>Pig</span></button>
           <button type="button" data-daub-design="duck"><i class="daub-preview">🦆</i><span>Duck</span></button>

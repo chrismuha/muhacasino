@@ -573,7 +573,10 @@ body {
   background: #7750d8;
 }
 
-[data-daub-design="splat"] .planet-card-wall .number-cell:is(.called, .free)::before {
+[data-daub-design="splat"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
   inset: 3px;
   background:
     radial-gradient(circle at 34% 27%, rgba(255,255,255,.95) 0 7%, rgba(255,255,255,.35) 8% 13%, transparent 14%),
@@ -587,7 +590,7 @@ body {
   clip-path: polygon(50% 0,58% 13%,70% 3%,74% 20%,91% 12%,87% 32%,100% 39%,87% 51%,99% 64%,79% 67%,83% 88%,62% 80%,52% 100%,42% 82%,24% 94%,23% 73%,2% 69%,15% 53%,0 42%,16% 34%,7% 15%,27% 22%,31% 3%,42% 15%);
 }
 
-[data-daub-design="splat"] .planet-card-wall .number-cell.called.off-pattern-called::before {
+[data-daub-design="splat"] :is(#app, .planet-card-wall) .number-cell.called.off-pattern-called::before {
   background:
     radial-gradient(circle at 34% 27%, rgba(255,255,255,.92) 0 7%, rgba(255,255,255,.3) 8% 13%, transparent 14%),
     radial-gradient(circle at 48% 48%, #b69bff 0 34%, #805be6 52%, #5531b5 76%);
@@ -1532,6 +1535,13 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
   clip-path: polygon(50% 0,58% 13%,70% 3%,74% 20%,91% 12%,87% 32%,100% 39%,87% 51%,99% 64%,79% 67%,83% 88%,62% 80%,52% 100%,42% 82%,24% 94%,23% 73%,2% 69%,15% 53%,0 42%,16% 34%,7% 15%,27% 22%,31% 3%,42% 15%);
 }
 
+.daub-preview.solid {
+  border: 4px solid color-mix(in srgb, var(--actual-daub, #126eff), #001d50 35%);
+  border-radius: 12px;
+  background: var(--actual-daub, #126eff);
+  box-shadow: inset 0 0 0 4px rgba(255,255,255,.28), 0 3px 0 rgba(0,0,0,.25);
+}
+
 .daub-preview.star {
   color: #126eff;
 }
@@ -1558,17 +1568,32 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
   font-weight: 950;
 }
 
-[data-daub-design="pig"] .planet-card-wall .number-cell:is(.called, .free)::before,
-[data-daub-design="duck"] .planet-card-wall .number-cell:is(.called, .free)::before,
-[data-daub-design="star"] .planet-card-wall .number-cell:is(.called, .free)::before,
-[data-daub-design="planet"] .planet-card-wall .number-cell:is(.called, .free)::before,
-[data-daub-design="confetti"] .planet-card-wall .number-cell:is(.called, .free)::before,
-[data-daub-design="firework"] .planet-card-wall .number-cell:is(.called, .free)::before,
-[data-daub-design="dynamite"] .planet-card-wall .number-cell:is(.called, .free)::before,
-[data-daub-design="cowboy"] .planet-card-wall .number-cell:is(.called, .free)::before,
-[data-daub-design="clover"] .planet-card-wall .number-cell:is(.called, .free)::before,
-[data-daub-design="diamond"] .planet-card-wall .number-cell:is(.called, .free)::before,
-[data-daub-design="lightning"] .planet-card-wall .number-cell:is(.called, .free)::before {
+[data-daub-design]:not([data-daub-design="solid"]) :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free) {
+  position: relative;
+  isolation: isolate;
+  color: #172238;
+  border-color: #d4cfc0;
+  background: #f5f4ed;
+}
+
+[data-daub-design]:not([data-daub-design="solid"]) :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free) > * {
+  position: relative;
+  z-index: 2;
+}
+
+[data-daub-design="pig"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
+[data-daub-design="duck"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
+[data-daub-design="star"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
+[data-daub-design="planet"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
+[data-daub-design="confetti"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
+[data-daub-design="firework"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
+[data-daub-design="dynamite"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
+[data-daub-design="cowboy"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
+[data-daub-design="clover"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
+[data-daub-design="diamond"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
+[data-daub-design="lightning"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
+  position: absolute;
+  z-index: 1;
   display: grid;
   inset: 0;
   place-items: center;
@@ -1578,60 +1603,88 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
   line-height: 1;
 }
 
-[data-daub-design="pig"] .planet-card-wall .number-cell:is(.called, .free)::before {
+[data-daub-design="pig"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
   content: "🐷";
 }
 
-[data-daub-design="duck"] .planet-card-wall .number-cell:is(.called, .free)::before {
+[data-daub-design="duck"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
   content: "🦆";
 }
 
-[data-daub-design="star"] .planet-card-wall .number-cell:is(.called, .free)::before {
+[data-daub-design="star"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
   content: "★";
   color: #126eff;
   font-size: 38px;
 }
 
-[data-daub-design="planet"] .planet-card-wall .number-cell:is(.called, .free)::before {
+[data-daub-design="planet"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
   content: "🪐";
 }
 
-[data-daub-design="confetti"] .planet-card-wall .number-cell:is(.called, .free)::before {
+[data-daub-design="confetti"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
   content: "🎉";
 }
 
-[data-daub-design="firework"] .planet-card-wall .number-cell:is(.called, .free)::before {
+[data-daub-design="firework"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
   content: "🎆";
 }
 
-[data-daub-design="dynamite"] .planet-card-wall .number-cell:is(.called, .free)::before {
+[data-daub-design="dynamite"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
   content: "🧨";
 }
 
-[data-daub-design="cowboy"] .planet-card-wall .number-cell:is(.called, .free)::before {
+[data-daub-design="cowboy"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
   content: "🤠";
 }
 
-[data-daub-design="clover"] .planet-card-wall .number-cell:is(.called, .free)::before {
+[data-daub-design="clover"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
   content: "🍀";
 }
 
-[data-daub-design="diamond"] .planet-card-wall .number-cell:is(.called, .free)::before {
+[data-daub-design="diamond"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
   content: "💎";
 }
 
-[data-daub-design="lightning"] .planet-card-wall .number-cell:is(.called, .free)::before {
+[data-daub-design="lightning"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
   content: "⚡";
 }
 
-[data-daub-design="circle"] .planet-card-wall .number-cell:is(.called, .free)::before {
+[data-daub-design="circle"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
   inset: 5px;
   border-radius: 50%;
   clip-path: none;
+  background: #126eff;
 }
 
-[data-daub-design="star"] .planet-card-wall .number-cell.called.off-pattern-called::before {
+[data-daub-design="star"] :is(#app, .planet-card-wall) .number-cell.called.off-pattern-called::before {
   color: #7750d8;
+}
+
+[data-daub-design="solid"] :is(#app, .planet-card-wall) .number-cell.called {
+  color: #fff;
+  border-color: color-mix(in srgb, var(--actual-daub, #126eff), #00112f 35%);
+  background: var(--actual-daub, #126eff);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.25);
+}
+
+[data-daub-design="solid"] :is(#app, .planet-card-wall) .number-cell.marked:not(.called) {
+  color: #fff;
+  border-color: color-mix(in srgb, var(--pre-daub, #ed3d35), #310000 35%);
+  background: var(--pre-daub, #ed3d35);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.25);
+}
+
+[data-daub-design="solid"] :is(#app, .planet-card-wall) .number-cell.free {
+  color: var(--number-text, #172238);
+  border-color: color-mix(in srgb, var(--free-space, #f5cc4e), #604500 25%);
+  background: var(--free-space, #f5cc4e);
+}
+
+[data-daub-design="solid"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
+  content: none;
 }
 
 @media (max-width: 700px) {
