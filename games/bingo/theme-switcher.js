@@ -128,7 +128,7 @@
     } catch {
       // The selected dauber still works when storage is unavailable.
     }
-    if (selectedDesign === "solid") applySolidColors();
+    if (selectedDesign === "solid" || selectedDesign === "circle") applySolidColors();
   }
 
   function mountThemeSwitcher() {
@@ -795,8 +795,8 @@
         </div>
         <div class="solid-color-panel" hidden>
           <div class="solid-color-heading">
-            <button type="button" data-solid-color-back aria-label="Back to dauber designs">‹</button>
-            <div><strong>Solid Color</strong><span>Customize every type of daub</span></div>
+            <button type="button" data-solid-color-back aria-label="Back to dauber designs"><span>←</span> Back</button>
+          <div><strong data-color-panel-title>Solid Color</strong><span>Customize every type of daub</span></div>
           </div>
           <div class="solid-color-fields">
             <label><input type="color" data-solid-color="pre"><span><strong>Player mark</strong><small>Before the number is called</small></span></label>
@@ -816,10 +816,12 @@
       const designButton = event.target.closest("[data-daub-design]");
       if (designButton) {
         applyDaubDesign(designButton.dataset.daubDesign);
-        if (designButton.dataset.daubDesign === "solid") {
+        if (designButton.dataset.daubDesign === "solid" || designButton.dataset.daubDesign === "circle") {
+          const panelName = designButton.dataset.daubDesign === "circle" ? "Circle" : "Solid Color";
           overlay.querySelector(".daub-design-grid").hidden = true;
           overlay.querySelector(".solid-color-panel").hidden = false;
-          overlay.querySelector("header").textContent = "Customize solid colors:";
+          overlay.querySelector("[data-color-panel-title]").textContent = panelName;
+          overlay.querySelector("header").textContent = `Customize ${panelName.toLowerCase()} colors:`;
         }
       }
       if (event.target.closest("[data-solid-color-back]")) {
