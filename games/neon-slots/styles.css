@@ -1,7 +1,3 @@
-html {
-    scrollbar-gutter: stable;
-}
-
 /* Root Variables */
 :root {
     --bg: #0b0f17;
@@ -1806,3 +1802,35 @@ body.overlay-open {
 .bonus-choices button { min-width: 88px; min-height: 88px; font-size: 2rem; border-radius: 16px; }
 
 @keyframes feature-pulse { to { transform: scale(1.04); filter: brightness(1.25); } }
+
+/* Let status copy grow instead of clipping long win and loss messages. */
+.right .auto-spin-countdown,
+.right .message {
+  grid-column: 1 / -1;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.right .auto-spin-countdown {
+  min-height: 0;
+  margin: 4px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  background: transparent;
+  box-shadow: none;
+  line-height: 1.3;
+}
+
+.right .message {
+  height: auto;
+  min-height: 2.5em;
+  padding-block: 8px;
+  overflow: visible;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}

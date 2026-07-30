@@ -159,6 +159,7 @@ let autoSpinRunning = false;
 let autoSpinStopRequested = false;
 let autoSpinRemaining = 0;
 let autoSpinStartedAt = 0;
+let spinElapsedAccumulatedMs = 0;
 let autoSpinElapsedTimer = 0;
 let spinHoldTimer = 0;
 let spaceSpinHoldTimer = 0;
@@ -1519,6 +1520,11 @@ function resetSessionState() {
     netSessionLossesUSD = 0;
     actualSessionNetUSD = 0;
     creditsInsertedUSD = INITIAL_CREDITS_USD;
+    spinElapsedAccumulatedMs = 0;
+    autoSpinStartedAt = 0;
+    window.clearInterval(autoSpinElapsedTimer);
+    autoSpinElapsedTimer = 0;
+    updateAutoSpinElapsed();
     freeSpinsRemaining = 0;
     freeSpinWagerConfig = null;
     potProgress = [0, 0, 0];
@@ -1561,10 +1567,29 @@ function updateAutoSpinControls() {
 
 function updateAutoSpinElapsed() {
     if (!autoSpinElapsedEl) return;
-    const totalSeconds = autoSpinStartedAt ? Math.floor((Date.now() - autoSpinStartedAt) / 1000) : 0;
+    const activeElapsedMs = autoSpinStartedAt ? Date.now() - autoSpinStartedAt : 0;
+    const totalSeconds = Math.floor((spinElapsedAccumulatedMs + activeElapsedMs) / 1000);
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
     autoSpinElapsedEl.textContent = `Time elapsed: ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+function startSpinElapsedTimer() {
+    if (autoSpinStartedAt) return;
+    autoSpinStartedAt = Date.now();
+    window.clearInterval(autoSpinElapsedTimer);
+    updateAutoSpinElapsed();
+    autoSpinElapsedTimer = window.setInterval(updateAutoSpinElapsed, 250);
+}
+
+function pauseSpinElapsedTimer() {
+    if (autoSpinStartedAt) {
+        spinElapsedAccumulatedMs += Date.now() - autoSpinStartedAt;
+        autoSpinStartedAt = 0;
+    }
+    window.clearInterval(autoSpinElapsedTimer);
+    autoSpinElapsedTimer = 0;
+    updateAutoSpinElapsed();
 }
 
 function updateAutoSpinHint() {
@@ -1593,10 +1618,6 @@ async function runAutoSpin() {
     autoSpinRunning = true;
     autoSpinStopRequested = false;
     autoSpinRemaining = 0;
-    autoSpinStartedAt = Date.now();
-    window.clearInterval(autoSpinElapsedTimer);
-    updateAutoSpinElapsed();
-    autoSpinElapsedTimer = window.setInterval(updateAutoSpinElapsed, 1000);
     updateAutoSpinControls();
     updateAutoSpinHint();
     updateTotals();
@@ -1624,9 +1645,6 @@ async function runAutoSpin() {
     }
 
     const wasStopped = autoSpinStopRequested;
-    window.clearInterval(autoSpinElapsedTimer);
-    autoSpinElapsedTimer = 0;
-    updateAutoSpinElapsed();
     autoSpinRunning = false;
     autoSpinStopRequested = false;
     autoSpinRemaining = 0;
@@ -1659,6 +1677,7 @@ async function doSpin(options = {}) {
         return { completed: false, reason: "insufficient_credits", totalWinUSD: 0 };
     }
 
+    startSpinElapsedTimer();
     isSpinning = true;
     totalBetDisplayOverrideUSD = Number.isFinite(options.totalBetOverrideUSD) ? totalBetUSD : null;
     updateTotals();
@@ -1742,6 +1761,7 @@ async function doSpin(options = {}) {
     }
 
     isSpinning = false;
+    pauseSpinElapsedTimer();
     totalBetDisplayOverrideUSD = null;
     if (freeSpinsRemaining === 0) freeSpinWagerConfig = null;
     updateTotals();
