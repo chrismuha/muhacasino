@@ -73,8 +73,26 @@ const heroDots = document.querySelector("#heroDots");
 const categoryResults = document.querySelector("#categoryResults");
 const categoryTitle = document.querySelector("#categoryTitle");
 const categoryRail = document.querySelector("#categoryRail");
+const appVersion = document.querySelector("#appVersion");
 let activeSlide = 0;
 let sliderTimer;
+
+function displayVersion(packageVersion) {
+  const match = /^(\d+)\.0\.(\d+)$/.exec(packageVersion);
+  return match ? `v${match[1]}.${match[2].padStart(2, "0")}` : `v${packageVersion}`;
+}
+
+fetch("package.json", { cache: "no-store" })
+  .then((response) => {
+    if (!response.ok) throw new Error(`Version request failed: ${response.status}`);
+    return response.json();
+  })
+  .then((packageInfo) => {
+    if (packageInfo.version) appVersion.textContent = displayVersion(String(packageInfo.version));
+  })
+  .catch(() => {
+    // Keep the version embedded in the HTML when the site is opened without a web server.
+  });
 
 function showSlide(index) {
   activeSlide = (index + slides.length) % slides.length;
