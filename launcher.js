@@ -63,7 +63,7 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_VERSION = "1.0.9";
+const SITE_VERSION = "1.0.10";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
@@ -82,6 +82,8 @@ function displayVersion(packageVersion) {
   const match = /^(\d+)\.0\.(\d+)$/.exec(packageVersion);
   return match ? `v${match[1]}.${match[2].padStart(2, "0")}` : `v${packageVersion}`;
 }
+
+appVersion.textContent = displayVersion(SITE_VERSION);
 
 fetch(`package.json?v=${encodeURIComponent(SITE_VERSION)}`, { cache: "no-store" })
   .then((response) => {
