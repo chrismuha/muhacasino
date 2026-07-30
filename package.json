@@ -1,10 +1,10 @@
 {
   "name": "muhacasino",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "private": true,
   "description": "Muha Casino — slots, Bingo, and classic tabletop games in one game library.",
   "scripts": {
     "start": "npx --yes serve .",
-    "check": "node --check launcher.js && node --check sw.js && node --check games/big-money-deluxe/main.js && node --check games/neon-slots/main.js && node --check games/pretty-penny/main.js && node --check games/sorry/main.js && node --check games/sorry/ui/main.js && node --check games/yahtzee/main.js"
+    "check": "node --check launcher.js && node --check interaction-lock.js && node --check sw.js && node --check games/big-money-deluxe/main.js && node --check games/neon-slots/main.js && node --check games/pretty-penny/main.js && node --check games/sorry/main.js && node --check games/sorry/ui/main.js && node --check games/yahtzee/main.js"
   }
 }
