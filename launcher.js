@@ -42,7 +42,7 @@ const games = {
     className: "card-sorry",
     reels: "1 2 3 4",
     icon: "♟",
-    categories: ["table", "classic"],
+    categories: ["table"],
   },
   yahtzee: {
     title: "Yahtzee",
@@ -51,7 +51,7 @@ const games = {
     className: "card-yahtzee",
     reels: "⚄ ⚅ ⚄",
     icon: "⚂",
-    categories: ["table", "classic"],
+    categories: ["table"],
   },
 };
 
