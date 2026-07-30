@@ -1,5 +1,5 @@
 const RELEASE = "1.1.2";
-const BUILD = "20260731-bingo-light-theme";
+const BUILD = "20260731-direct-loading";
 const CACHE_NAME = `muha-casino-${RELEASE}-${BUILD}`;
 
 self.addEventListener("install", () => {

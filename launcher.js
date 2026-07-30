@@ -64,8 +64,7 @@ const categoryNames = {
 };
 
 const SITE_VERSION = "1.1.2";
-const SITE_BUILD = "20260731-bingo-light-theme";
-const SITE_CACHE = `muha-casino-${SITE_VERSION}-${SITE_BUILD}`;
+const SITE_BUILD = "20260731-direct-loading";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
@@ -83,17 +82,25 @@ let activeSlide = 0;
 let sliderTimer;
 let bingoDealerWindow = null;
 
-function clearOutdatedCasinoCaches() {
-  if (!("caches" in window)) return;
-  window.caches.keys()
-    .then((names) => Promise.all(
-      names
-        .filter((name) => name.startsWith("muha-casino-") && name !== SITE_CACHE)
-        .map((name) => window.caches.delete(name))
-    ))
-    .catch(() => {
-      // Online play remains available when browser cache storage is restricted.
-    });
+function removeLegacyCasinoCaching() {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistrations()
+      .then((registrations) => Promise.all(registrations.map((registration) => registration.unregister())))
+      .catch(() => {
+        // Direct network loading still works when service-worker access is restricted.
+      });
+  }
+  if ("caches" in window) {
+    window.caches.keys()
+      .then((names) => Promise.all(
+        names
+          .filter((name) => name.startsWith("muha-casino-"))
+          .map((name) => window.caches.delete(name))
+      ))
+      .catch(() => {
+        // Direct network loading still works when cache storage is restricted.
+      });
+  }
 }
 
 function openBingoDealerWindow() {
@@ -289,18 +296,7 @@ window.addEventListener("popstate", () => {
 
 showSlide(0);
 restartSlider();
-clearOutdatedCasinoCaches();
+removeLegacyCasinoCaching();
 
 const requestedGame = window.location.hash.slice(1);
 if (games[requestedGame]) launchGame(requestedGame, false);
-
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register(`sw.js?build=${encodeURIComponent(SITE_BUILD)}`, { updateViaCache: "none" })
-      .then((registration) => registration.update())
-      .catch(() => {
-        // The games remain usable when service workers are unavailable.
-      });
-  });
-}

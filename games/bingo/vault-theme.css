@@ -443,13 +443,32 @@ html.bingo-popout-window[data-bingo-theme="planet"] #app {
 }
 
 html.bingo-popout-window #app .dealer-layout {
+  min-height: 100vh;
+}
+
+html.bingo-popout-window:not(:has(.theme-dark)),
+html.bingo-popout-window:not(:has(.theme-dark)) body,
+html.bingo-popout-window:not(:has(.theme-dark)) #app,
+html.bingo-popout-window:not(:has(.theme-dark)) #app .app-shell,
+html.bingo-popout-window:not(:has(.theme-dark)) #app .dealer-layout {
   --navy: #132039;
   --line: #c8d4e2;
   --cream: #fff8e8;
-  color: #132039;
+  color: #132039 !important;
+  background: #eef3f9 !important;
 }
 
-html.bingo-popout-window #app .dealer-layout :is(
+html.bingo-popout-window:not(:has(.theme-dark)) #app .topbar {
+  border-bottom-color: #9fb2ce !important;
+  color: #132039 !important;
+  background: #ffffff !important;
+}
+
+html.bingo-popout-window:not(:has(.theme-dark)) #app .topbar * {
+  color: #132039 !important;
+}
+
+html.bingo-popout-window:not(:has(.theme-dark)) #app .dealer-layout :is(
   .dealer-card,
   .dealer-tabs,
   .dealer-stats,
@@ -460,32 +479,13 @@ html.bingo-popout-window #app .dealer-layout :is(
   .winner-log-panel,
   .dealer-pattern-panel
 ) {
-  color: #132039;
+  color: #132039 !important;
+  background-color: #ffffff !important;
 }
 
-html.bingo-popout-window #app .dealer-layout :is(input, select) {
-  color: #132039;
-}
-
-html.bingo-popout-window #app .dealer-layout :is(
-  .popout-btn,
-  .view-target-btn,
-  .dealer-undo,
-  .advanced-settings-btn,
-  .dealer-new-round,
-  .verify-view
-) {
-  color: #243247;
-}
-
-html.bingo-popout-window #app .dealer-layout :is(
-  .btn-call,
-  .btn-auto,
-  .target-call-btn,
-  .setup-round-btn,
-  .verify-approve
-) {
-  color: #ffffff;
+html.bingo-popout-window:not(:has(.theme-dark)) #app .dealer-layout :is(input, select) {
+  color: #132039 !important;
+  background-color: #ffffff !important;
 }
 
 html.bingo-popout-window #app .dealer-layout :is(input, select)::placeholder {
@@ -497,6 +497,33 @@ html.bingo-popout-window #app .dealer-layout button:disabled,
 html.bingo-popout-window #app .dealer-layout :is(input, select):disabled {
   color: #64748b;
   opacity: .72;
+}
+
+html.bingo-popout-window:has(.theme-dark),
+html.bingo-popout-window:has(.theme-dark) body,
+html.bingo-popout-window:has(.theme-dark) #app,
+html.bingo-popout-window:has(.theme-dark) #app .app-shell,
+html.bingo-popout-window:has(.theme-dark) #app .dealer-layout {
+  --navy: #e9eef8;
+  --line: #394458;
+  --cream: #463d28;
+  color: #e9eef8 !important;
+  background: #111722 !important;
+}
+
+html.bingo-popout-window:has(.theme-dark) #app .dealer-layout :is(
+  .dealer-card,
+  .dealer-tabs,
+  .dealer-stats,
+  .stage-toolbar,
+  .fixed-dealer-status,
+  .game-setup-panel,
+  .ball-board-panel,
+  .winner-log-panel,
+  .dealer-pattern-panel
+) {
+  color: #e9eef8 !important;
+  background-color: #1c2432 !important;
 }
 
 html.bingo-popout-window .bingo-theme-switcher {
@@ -511,48 +538,6 @@ html.bingo-popout-window .bingo-theme-menu {
   right: auto;
   bottom: calc(100% + 8px);
   left: 0;
-}
-
-html.bingo-popout-window[data-bingo-theme="current"],
-html.bingo-popout-window[data-bingo-theme="current"] body,
-html.bingo-popout-window[data-bingo-theme="current"] #app,
-html.bingo-popout-window[data-bingo-theme="current"] #app .app-shell,
-html.bingo-popout-window[data-bingo-theme="current"] #app .dealer-layout {
-  color: #18243a !important;
-  background: #eef3f9 !important;
-}
-
-html.bingo-popout-window[data-bingo-theme="current"] #app .topbar {
-  border-bottom-color: #9fb2ce !important;
-  color: #18243a !important;
-  background: #ffffff !important;
-}
-
-html.bingo-popout-window[data-bingo-theme="current"] #app :is(
-  h1, h2, h3, h4, strong, label, legend, p, small, span
-) {
-  color: inherit;
-}
-
-html.bingo-popout-window[data-bingo-theme="current"] #app .dealer-layout > :is(
-  header, section, nav, aside, div
-) {
-  border-color: #c4d0e1;
-}
-
-html.bingo-popout-window[data-bingo-theme="current"] #app .dealer-layout :is(
-  .dealer-card,
-  .dealer-tabs,
-  .dealer-stats,
-  .stage-toolbar,
-  .fixed-dealer-status,
-  .game-setup-panel,
-  .ball-board-panel,
-  .winner-log-panel,
-  .dealer-pattern-panel
-) {
-  color: #18243a !important;
-  background-color: #ffffff !important;
 }
 
 html.bingo-popout-window .universal-view-button {

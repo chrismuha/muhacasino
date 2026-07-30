@@ -183,7 +183,7 @@
     document.body.append(switcher);
     if (window.parent !== window && !isPopout) switcher.hidden = true;
     if (isPopout) switcher.hidden = false;
-    mountPlayerHallControls();
+    if (!isPopout) mountPlayerHallControls();
     applyTheme(savedTheme());
     return true;
   }
@@ -863,7 +863,7 @@
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
       if (isPopout) {
-        applyTheme(savedTheme());
+        mountThemeSwitcher();
         mountViewOverlay();
         restoreSavedPreferences();
         return;
@@ -876,7 +876,7 @@
     }, { once: true });
   } else {
     if (isPopout) {
-      applyTheme(savedTheme());
+      mountThemeSwitcher();
       mountViewOverlay();
       restoreSavedPreferences();
       return;
