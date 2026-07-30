@@ -63,7 +63,8 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_VERSION = "1.0.14";
+const SITE_VERSION = "1.0.0";
+const SITE_BUILD = "20260729-title-rebuild";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
@@ -78,20 +79,6 @@ const appVersion = document.querySelector("#appVersion");
 let activeSlide = 0;
 let sliderTimer;
 
-function fitHeroTitles() {
-  document.querySelectorAll(".hero h1").forEach((title) => {
-    title.style.transform = "none";
-    const range = document.createRange();
-    range.selectNodeContents(title);
-    const naturalWidth = range.getBoundingClientRect().width;
-    const titleLeft = title.getBoundingClientRect().left;
-    const availableWidth = Math.max(1, window.innerWidth - titleLeft - 72);
-    const scale = naturalWidth > availableWidth ? availableWidth / naturalWidth : 1;
-    title.style.transform = `scaleX(${scale})`;
-    range.detach();
-  });
-}
-
 function displayVersion(packageVersion) {
   const match = /^(\d+)\.0\.(\d+)$/.exec(packageVersion);
   return match ? `v${match[1]}.${match[2].padStart(2, "0")}` : `v${packageVersion}`;
@@ -99,7 +86,7 @@ function displayVersion(packageVersion) {
 
 appVersion.textContent = displayVersion(SITE_VERSION);
 
-fetch(`package.json?v=${encodeURIComponent(SITE_VERSION)}`, { cache: "no-store" })
+fetch(`package.json?build=${encodeURIComponent(SITE_BUILD)}`, { cache: "no-store" })
   .then((response) => {
     if (!response.ok) throw new Error(`Version request failed: ${response.status}`);
     return response.json();
@@ -163,7 +150,7 @@ function launchGame(gameId, updateHistory = true) {
   window.clearInterval(sliderTimer);
   currentGame.textContent = game.title;
   gameFrame.title = game.title;
-  gameFrame.src = `${game.path}?v=${encodeURIComponent(SITE_VERSION)}`;
+  gameFrame.src = `${game.path}?build=${encodeURIComponent(SITE_BUILD)}`;
   launcher.hidden = true;
   gameView.hidden = false;
   document.title = `${game.title} | Muha Casino`;
@@ -229,9 +216,6 @@ window.addEventListener("popstate", () => {
 
 showSlide(0);
 restartSlider();
-fitHeroTitles();
-window.addEventListener("resize", fitHeroTitles);
-document.fonts?.ready.then(fitHeroTitles);
 
 const requestedGame = window.location.hash.slice(1);
 if (games[requestedGame]) launchGame(requestedGame, false);
@@ -246,7 +230,7 @@ if ("serviceWorker" in navigator) {
 
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register(`sw.js?v=${encodeURIComponent(SITE_VERSION)}`, { updateViaCache: "none" })
+      .register(`sw.js?build=${encodeURIComponent(SITE_BUILD)}`, { updateViaCache: "none" })
       .then((registration) => registration.update())
       .catch(() => {
         // The games remain usable when service workers are unavailable.

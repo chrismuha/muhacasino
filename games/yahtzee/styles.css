@@ -1,3 +1,7 @@
+html {
+    scrollbar-gutter: stable;
+}
+
 :root {
     --bg: #0f1220;
     --panel: #171a2b;
