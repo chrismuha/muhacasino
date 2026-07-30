@@ -301,8 +301,9 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 
 @media (max-height: 500px) {
   .hero { height: 100vh; min-height: 360px; }
-  .hero-slide { padding-top: 72px; padding-bottom: 42px; }
-  .hero h1 { font-size: clamp(2.5rem, min(7vw, 11vh), 4.5rem); line-height: .96; }
+  .hero-slide { align-items: start; overflow-x: hidden; overflow-y: auto; padding-top: 72px; padding-bottom: 42px; }
+  .hero-content { padding-bottom: 24px; }
+  .hero h1 { font-size: clamp(2.25rem, min(6vw, 10vh), 4rem); line-height: 1; }
   .hero-content > p:not(.eyebrow) { margin: 14px 0; line-height: 1.4; }
 }
 

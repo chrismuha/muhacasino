@@ -63,6 +63,7 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
+const SITE_VERSION = "1.0.7";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
@@ -82,7 +83,7 @@ function displayVersion(packageVersion) {
   return match ? `v${match[1]}.${match[2].padStart(2, "0")}` : `v${packageVersion}`;
 }
 
-fetch("package.json", { cache: "no-store" })
+fetch(`package.json?v=${encodeURIComponent(SITE_VERSION)}`, { cache: "no-store" })
   .then((response) => {
     if (!response.ok) throw new Error(`Version request failed: ${response.status}`);
     return response.json();
@@ -146,7 +147,7 @@ function launchGame(gameId, updateHistory = true) {
   window.clearInterval(sliderTimer);
   currentGame.textContent = game.title;
   gameFrame.title = game.title;
-  gameFrame.src = game.path;
+  gameFrame.src = `${game.path}?v=${encodeURIComponent(SITE_VERSION)}`;
   launcher.hidden = true;
   gameView.hidden = false;
   document.title = `${game.title} | Muha Casino`;
@@ -215,3 +216,21 @@ restartSlider();
 
 const requestedGame = window.location.hash.slice(1);
 if (games[requestedGame]) launchGame(requestedGame, false);
+
+if ("serviceWorker" in navigator) {
+  let refreshingForUpdate = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (refreshingForUpdate) return;
+    refreshingForUpdate = true;
+    window.location.reload();
+  });
+
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register(`sw.js?v=${encodeURIComponent(SITE_VERSION)}`, { updateViaCache: "none" })
+      .then((registration) => registration.update())
+      .catch(() => {
+        // The games remain usable when service workers are unavailable.
+      });
+  });
+}
