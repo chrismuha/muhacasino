@@ -1,4 +1,4 @@
-const RELEASE = "1.0.11";
+const RELEASE = "1.0.12";
 const CACHE_NAME = `muha-casino-${RELEASE}`;
 
 self.addEventListener("install", () => {

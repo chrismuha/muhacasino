@@ -306,6 +306,11 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   .footer-brand { align-self: flex-start; }
 }
 
+@media (max-height: 500px) {
+  .hero { height: 760px; min-height: 760px; }
+  .hero-slide { align-items: start; padding-top: 110px; padding-bottom: 100px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .hero-slide, .game-card, .category-card { transition: none; }
