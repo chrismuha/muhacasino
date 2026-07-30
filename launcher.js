@@ -64,12 +64,14 @@ const categoryNames = {
 };
 
 const SITE_VERSION = "1.1.2";
-const SITE_BUILD = "1.1.2";
+const SITE_BUILD = "20260730-theme-toolbar-3";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
 const currentGame = document.querySelector("#currentGame");
 const backButton = document.querySelector("#backButton");
+const bingoThemeToolbar = document.querySelector("#bingoThemeToolbar");
+const bingoThemeSelect = document.querySelector("#bingoThemeSelect");
 const slides = [...document.querySelectorAll(".hero-slide")];
 const heroDots = document.querySelector("#heroDots");
 const categoryResults = document.querySelector("#categoryResults");
@@ -138,6 +140,7 @@ function showLauncher() {
   gameFrame.src = "about:blank";
   gameView.hidden = true;
   launcher.hidden = false;
+  bingoThemeToolbar.hidden = true;
   document.title = "Muha Casino";
   history.replaceState(null, "", window.location.pathname);
   restartSlider();
@@ -149,6 +152,15 @@ function launchGame(gameId, updateHistory = true) {
 
   window.clearInterval(sliderTimer);
   currentGame.textContent = game.title;
+  bingoThemeToolbar.hidden = gameId !== "bingo";
+  if (gameId === "bingo") {
+    try {
+      const savedTheme = localStorage.getItem("muha-bingo-theme");
+      bingoThemeSelect.value = ["planet", "classic", "current"].includes(savedTheme) ? savedTheme : "planet";
+    } catch {
+      bingoThemeSelect.value = "planet";
+    }
+  }
   gameFrame.title = game.title;
   gameFrame.src = `${game.path}?build=${encodeURIComponent(SITE_BUILD)}`;
   launcher.hidden = true;
@@ -207,6 +219,30 @@ document.querySelector("#closeCategory").addEventListener("click", () => {
 });
 
 backButton.addEventListener("click", showLauncher);
+
+bingoThemeSelect.addEventListener("change", () => {
+  const theme = bingoThemeSelect.value;
+  try {
+    localStorage.setItem("muha-bingo-theme", theme);
+  } catch {
+    // Bingo can still switch themes when storage is unavailable.
+  }
+  sendBingoTheme(theme);
+});
+
+function sendBingoTheme(theme) {
+  gameFrame.contentWindow?.postMessage({
+    type: "muha-bingo-theme",
+    theme,
+  }, window.location.origin);
+  gameFrame.contentWindow?.applyBingoTheme?.(theme);
+}
+
+gameFrame.addEventListener("load", () => {
+  if (!bingoThemeToolbar.hidden) {
+    sendBingoTheme(bingoThemeSelect.value);
+  }
+});
 
 window.addEventListener("popstate", () => {
   const gameId = window.location.hash.slice(1);

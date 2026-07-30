@@ -298,6 +298,33 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 .game-view { position: fixed; z-index: 99; inset: 0; background: #050610; }
 .game-toolbar { display: flex; height: 56px; align-items: center; gap: 18px; padding: 0 14px; border-bottom: 1px solid rgba(255,255,255,.12); background: #0a0c19; }
 .game-toolbar strong { overflow: hidden; color: #c8cbe0; text-overflow: ellipsis; white-space: nowrap; }
+.toolbar-theme-picker {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  color: #9da4bb;
+  font-size: .75rem;
+  font-weight: 850;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.toolbar-theme-picker[hidden] { display: none; }
+.toolbar-theme-picker select {
+  min-height: 38px;
+  padding: 6px 34px 6px 12px;
+  border: 1px solid #424a67;
+  border-radius: 999px;
+  color: #f4f7ff;
+  background: #20263a;
+  font: 800 .82rem/1 system-ui, sans-serif;
+}
+.toolbar-theme-picker select:hover,
+.toolbar-theme-picker select:focus-visible {
+  border-color: var(--cyan);
+  outline: 2px solid rgba(87,228,242,.25);
+}
 .back-button { padding: 9px 14px; border: 1px solid rgba(255,255,255,.22); border-radius: 999px; background: #22263c; font-weight: 800; cursor: pointer; }
 .back-button:hover, .back-button:focus-visible { background: #343b5c; outline: 2px solid var(--cyan); }
 #gameFrame { display: block; width: 100%; height: calc(100vh - 56px); border: 0; background: #090b18; }
@@ -318,6 +345,8 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 @media (max-width: 620px) {
   .topbar { width: calc(100% - 28px); }
   .browse-button { display: none; }
+  .toolbar-theme-picker > span { display: none; }
+  .toolbar-theme-picker select { max-width: 146px; padding-right: 26px; }
   .hero { height: 700px; }
   .hero-slide { --hero-inline-padding: 24px; align-items: flex-start; padding: 145px var(--hero-inline-padding) 80px; }
   .hero-content { width: calc(100vw - 48px); max-width: calc(100vw - 48px); }

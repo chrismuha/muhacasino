@@ -36,6 +36,13 @@
     }
   }
 
+  window.applyBingoTheme = applyTheme;
+  window.addEventListener("message", (event) => {
+    if (event.origin !== window.location.origin) return;
+    if (event.data?.type !== "muha-bingo-theme") return;
+    applyTheme(event.data.theme);
+  });
+
   function savedDaubDesign() {
     try {
       const value = window.localStorage.getItem(DAUB_STORAGE_KEY);
@@ -65,25 +72,42 @@
 
     const switcher = document.createElement("div");
     switcher.className = "bingo-theme-switcher";
-    switcher.setAttribute("role", "group");
     switcher.setAttribute("aria-label", "Bingo interface theme");
     switcher.innerHTML = `
-      <span>Interface</span>
-      <button class="bingo-theme-option" type="button" data-theme="planet">Planet Hall 2</button>
-      <button class="bingo-theme-option" type="button" data-theme="classic">Planet Hall</button>
-      <button class="bingo-theme-option" type="button" data-theme="current">Classic</button>
-      <span class="bingo-daub-key" aria-label="Daub color key">
-        <b><i class="pattern-key"></i>Pattern</b>
-        <b><i class="other-key"></i>Other called</b>
-        <b><i class="player-key"></i>Player</b>
-      </span>
+      <button class="bingo-theme-trigger" type="button" aria-expanded="false" aria-controls="bingo-theme-menu">
+        ◐ <span>Theme</span>
+      </button>
+      <div id="bingo-theme-menu" class="bingo-theme-menu" hidden>
+        <strong>Choose a theme</strong>
+        <button class="bingo-theme-option" type="button" data-theme="planet">Planet Hall 2</button>
+        <button class="bingo-theme-option" type="button" data-theme="classic">Planet Hall</button>
+        <button class="bingo-theme-option" type="button" data-theme="current">Classic</button>
+      </div>
     `;
     switcher.addEventListener("click", (event) => {
+      const trigger = event.target.closest(".bingo-theme-trigger");
+      const menu = switcher.querySelector(".bingo-theme-menu");
+      if (trigger) {
+        const willOpen = menu.hidden;
+        menu.hidden = !willOpen;
+        trigger.setAttribute("aria-expanded", String(willOpen));
+        return;
+      }
       const button = event.target.closest("[data-theme]");
-      if (button) applyTheme(button.dataset.theme);
+      if (button) {
+        applyTheme(button.dataset.theme);
+        menu.hidden = true;
+        switcher.querySelector(".bingo-theme-trigger").setAttribute("aria-expanded", "false");
+      }
+    });
+    document.addEventListener("click", (event) => {
+      if (switcher.contains(event.target)) return;
+      switcher.querySelector(".bingo-theme-menu").hidden = true;
+      switcher.querySelector(".bingo-theme-trigger").setAttribute("aria-expanded", "false");
     });
 
     document.body.append(switcher);
+    if (window.parent !== window) switcher.hidden = true;
     mountPlayerHallControls();
     applyTheme(savedTheme());
     return true;
@@ -117,26 +141,81 @@
     });
   }
 
+  function waitAndClickSelector(selector, timeoutMs = 1800) {
+    return new Promise((resolve) => {
+      const startedAt = Date.now();
+      const attempt = () => {
+        const target = document.querySelector(selector);
+        if (target && !target.disabled) {
+          target.click();
+          resolve(true);
+          return;
+        }
+        if (Date.now() - startedAt >= timeoutMs) {
+          resolve(false);
+          return;
+        }
+        window.setTimeout(attempt, 50);
+      };
+      attempt();
+    });
+  }
+
+  function ensureSetupOpen(timeoutMs = 1800) {
+    return new Promise((resolve) => {
+      const startedAt = Date.now();
+      const attempt = () => {
+        const button = document.querySelector("#app .edit-setup-btn");
+        if (button && !button.disabled) {
+          if (!/close setup/i.test(button.textContent)) button.click();
+          resolve(true);
+          return;
+        }
+        if (Date.now() - startedAt >= timeoutMs) {
+          resolve(false);
+          return;
+        }
+        window.setTimeout(attempt, 50);
+      };
+      attempt();
+    });
+  }
+
+  async function returnToPlayerHall() {
+    await waitAndClick(/^player floor$/i, 1200);
+  }
+
   async function prepareAndStartDefaultRound() {
-    await waitAndClick(/^dealer console$/i, 500);
-    const setupOpened = await waitAndClick(/edit game setup|game setup/i);
-    if (!setupOpened) return false;
-    const roundPrepared = await waitAndClick(/apply\s*&\s*start round/i);
+    const dealerOpened = await waitAndClick(/^dealer console$/i, 1200);
+    if (!dealerOpened) return false;
+
+    const setupButton = await ensureSetupOpen();
+    if (!setupButton) return false;
+
+    const roundPrepared =
+      await waitAndClickSelector("#app .setup-round-btn", 2400) ||
+      await waitAndClick(/apply\s*&\s*start round/i, 1200);
     if (!roundPrepared) return false;
+
     const callingStarted =
-      await waitAndClick(/^▶?\s*start automatic play$|^start auto call$/i) ||
-      await waitAndClick(/call random ball|call next number/i, 500);
-    await waitAndClick(/^player floor$/i, 500);
+      await waitAndClickSelector("#app .btn-auto", 2400) ||
+      await waitAndClick(/^▶?\s*start automatic play$|^start auto call$/i, 1200) ||
+      await waitAndClickSelector("#app .btn-call", 1000) ||
+      await waitAndClick(/call random ball|call next number/i, 1000);
+    await returnToPlayerHall();
     return callingStarted;
   }
 
   async function startOrPausePreparedRound() {
-    await waitAndClick(/^dealer console$/i, 500);
+    const dealerOpened = await waitAndClick(/^dealer console$/i, 1200);
+    if (!dealerOpened) return false;
     const toggled =
-      await waitAndClick(/^■?\s*stop automatic play$|^pause auto call$/i, 500) ||
-      await waitAndClick(/^▶?\s*start automatic play$|^start auto call$/i, 700) ||
-      await waitAndClick(/call random ball|call next number/i, 500);
-    await waitAndClick(/^player floor$/i, 500);
+      await waitAndClickSelector("#app .btn-auto", 1800) ||
+      await waitAndClick(/^■?\s*stop automatic play$|^pause auto call$/i, 1000) ||
+      await waitAndClick(/^▶?\s*start automatic play$|^start auto call$/i, 1000) ||
+      await waitAndClickSelector("#app .btn-call", 1000) ||
+      await waitAndClick(/call random ball|call next number/i, 1000);
+    await returnToPlayerHall();
     return toggled;
   }
 
@@ -149,7 +228,7 @@
   }
 
   function closeNativeControls() {
-    clickMatchingControl(/^player floor$/i);
+    returnToPlayerHall();
     document.documentElement.classList.remove("hall-native-controls-open");
     const closeButton = document.querySelector(".hall-native-controls-close");
     if (closeButton) closeButton.hidden = true;
@@ -299,7 +378,7 @@
     closeControls.className = "hall-native-controls-close";
     closeControls.type = "button";
     closeControls.hidden = true;
-    closeControls.textContent = "← RETURN TO BINGO HALL";
+    closeControls.textContent = "← RETURN TO PLANET HALL";
     closeControls.addEventListener("click", closeNativeControls);
     document.body.append(closeControls);
   }

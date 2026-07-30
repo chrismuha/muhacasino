@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#070811">
   <meta name="description" content="Muha Casino — slots, Bingo, and classic tabletop games in one game library.">
   <title>Muha Casino</title>
-  <link rel="stylesheet" href="styles.css?build=1.1.2">
+  <link rel="stylesheet" href="styles.css?build=20260730-theme-toolbar-2">
 </head>
 <body>
   <main id="launcher">
@@ -192,11 +192,19 @@
     <div class="game-toolbar">
       <button id="backButton" class="back-button" type="button">← Game library</button>
       <strong id="currentGame"></strong>
+      <label id="bingoThemeToolbar" class="toolbar-theme-picker" hidden>
+        <span>Theme</span>
+        <select id="bingoThemeSelect" aria-label="Bingo theme">
+          <option value="planet">Planet Hall 2</option>
+          <option value="classic">Planet Hall</option>
+          <option value="current">Classic</option>
+        </select>
+      </label>
     </div>
     <iframe id="gameFrame" title="Selected slot game" allow="fullscreen"></iframe>
   </section>
 
   <script src="interaction-lock.js?build=1.1.2"></script>
-  <script src="launcher.js?build=1.1.2"></script>
+  <script src="launcher.js?build=20260730-theme-toolbar-3"></script>
 </body>
 </html>
