@@ -19,9 +19,34 @@
     }
   }
 
+  function setHallControlsCollapsed(collapsed) {
+    document.documentElement.classList.toggle("hall-controls-collapsed", collapsed);
+    const controlsToggle = document.querySelector(".hall-controls-toggle");
+    if (!controlsToggle) return;
+    controlsToggle.textContent = collapsed ? "‹" : "›";
+    controlsToggle.setAttribute("aria-expanded", String(!collapsed));
+    controlsToggle.setAttribute(
+      "aria-label",
+      collapsed ? "Show Hall controls" : "Hide Hall controls"
+    );
+  }
+
   function applyTheme(theme) {
     const selectedTheme = themes.includes(theme) ? theme : "planet";
+    document.documentElement.classList.remove("hall-native-controls-open");
+    if (selectedTheme !== "planet") {
+      setHallControlsCollapsed(false);
+    }
     document.documentElement.dataset.bingoTheme = selectedTheme;
+    const app = document.querySelector("#app");
+    if (app) {
+      app.style.removeProperty("left");
+      app.style.removeProperty("visibility");
+      app.style.removeProperty("pointer-events");
+      app.style.removeProperty("opacity");
+    }
+    const closeButton = document.querySelector(".hall-native-controls-close");
+    if (closeButton) closeButton.hidden = true;
 
     document.querySelectorAll(".bingo-theme-option").forEach((button) => {
       const isActive = button.dataset.theme === selectedTheme;
@@ -181,21 +206,67 @@
     });
   }
 
+  function applyDefaultSetupValues() {
+    const defaults = new Map([
+      ["players", 1],
+      ["cards per player", 3],
+      ["maximum winners", 1],
+      ["prize budget", 100],
+    ]);
+
+    document.querySelectorAll("#app .setup-fields label").forEach((label) => {
+      const name = label.querySelector("span")?.textContent?.trim().toLowerCase();
+      const input = label.querySelector("input[type='number']");
+      const fallback = defaults.get(name);
+      if (!input || fallback == null) return;
+      const value = Number(input.value);
+      const minimum = Number(input.min || 0);
+      if (input.value.trim() && Number.isFinite(value) && value >= minimum) return;
+      input.value = String(fallback);
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
+
+  function waitForPlayerCards(timeoutMs = 3000) {
+    return new Promise((resolve) => {
+      const startedAt = Date.now();
+      const attempt = () => {
+        const cardsExist = Boolean(document.querySelector(
+          "#app .bingo-card:not(.preview-card):not(.verification-full-card)"
+        ));
+        if (cardsExist || Date.now() - startedAt >= timeoutMs) {
+          resolve(cardsExist);
+          return;
+        }
+        window.setTimeout(attempt, 60);
+      };
+      attempt();
+    });
+  }
+
   async function returnToPlayerHall() {
     await waitAndClick(/^player floor$/i, 1200);
   }
 
   async function prepareAndStartDefaultRound() {
+    if (typeof window.bingoHallStart === "function") {
+      return window.bingoHallStart();
+    }
+
     const dealerOpened = await waitAndClick(/^dealer console$/i, 1200);
     if (!dealerOpened) return false;
 
     const setupButton = await ensureSetupOpen();
     if (!setupButton) return false;
+    applyDefaultSetupValues();
 
     const roundPrepared =
       await waitAndClickSelector("#app .setup-round-btn", 2400) ||
       await waitAndClick(/apply\s*&\s*start round/i, 1200);
     if (!roundPrepared) return false;
+    await waitAndClickSelector("#app .prompt-confirm-btn", 1800);
+    if (!await waitForPlayerCards()) return false;
 
     const callingStarted =
       await waitAndClickSelector("#app .btn-auto", 2400) ||
@@ -209,6 +280,17 @@
   async function startOrPausePreparedRound() {
     const dealerOpened = await waitAndClick(/^dealer console$/i, 1200);
     if (!dealerOpened) return false;
+
+    const newRoundButton = document.querySelector(
+      "#app .dealer-new-round:not(:disabled), #app .round-complete-alert button:not(:disabled)"
+    );
+    if (newRoundButton) {
+      newRoundButton.click();
+      await waitAndClickSelector("#app .prompt-confirm-btn", 1800);
+      await new Promise((resolve) => window.setTimeout(resolve, 120));
+      return prepareAndStartDefaultRound();
+    }
+
     const toggled =
       await waitAndClickSelector("#app .btn-auto", 1800) ||
       await waitAndClick(/^■?\s*stop automatic play$|^pause auto call$/i, 1000) ||
@@ -263,13 +345,27 @@
       ));
       if (!cardsExist) {
         prepareAndStartDefaultRound().then((started) => {
-          if (!started) openNativeControls();
+          if (started) {
+            setHallControlsCollapsed(true);
+          } else {
+            showHallMessage(
+              "START GAME",
+              "The Bingo engine is still loading. Wait a moment and press Start Game again."
+            );
+          }
         });
         return;
       }
 
       startOrPausePreparedRound().then((started) => {
-        if (!started) openNativeControls();
+        if (started) {
+          setHallControlsCollapsed(true);
+        } else {
+          showHallMessage(
+            "START GAME",
+            "The Bingo engine is still loading. Wait a moment and press Start Game again."
+          );
+        }
       });
       return;
     }
@@ -381,6 +477,16 @@
     closeControls.textContent = "← RETURN TO PLANET HALL";
     closeControls.addEventListener("click", closeNativeControls);
     document.body.append(closeControls);
+
+    const controlsToggle = document.createElement("button");
+    controlsToggle.className = "hall-controls-toggle";
+    controlsToggle.type = "button";
+    controlsToggle.addEventListener("click", () => {
+      const shouldCollapse = !document.documentElement.classList.contains("hall-controls-collapsed");
+      setHallControlsCollapsed(shouldCollapse);
+    });
+    document.body.append(controlsToggle);
+    setHallControlsCollapsed(false);
   }
 
   function calledNumbers() {
