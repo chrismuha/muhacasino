@@ -110,6 +110,13 @@ a { color: inherit; text-decoration: none; }
   text-shadow: 0 12px 40px rgba(0,0,0,.3);
 }
 
+.money-slide h1 {
+  width: 108.7%;
+  padding-right: .12em;
+  transform: scaleX(.92);
+  transform-origin: left center;
+}
+
 .hero h1 em { color: transparent; background: linear-gradient(120deg, #fff, var(--cyan)); background-clip: text; -webkit-background-clip: text; font-style: normal; }
 .mobile-title-break { display: inline; }
 .penny-slide h1 em { background-image: linear-gradient(120deg, #fff, #ffcbd7); }
