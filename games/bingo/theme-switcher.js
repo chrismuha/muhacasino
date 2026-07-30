@@ -1,6 +1,7 @@
 (() => {
   const STORAGE_KEY = "muha-bingo-theme";
   const DAUB_STORAGE_KEY = "muha-bingo-daub-design";
+  const SOLID_COLOR_STORAGE_KEY = "muha-bingo-solid-colors";
   const VIEW_COUNT_STORAGE_KEY = "muha-bingo-view-count";
   const CARD_COUNT_STORAGE_KEY = "muha-bingo-card-count";
   const themes = ["planet", "classic", "current"];
@@ -8,6 +9,43 @@
     "solid", "splat", "pig", "duck", "star", "circle", "planet", "confetti",
     "firework", "dynamite", "cowboy", "clover", "diamond", "lightning",
   ];
+  const defaultSolidColors = {
+    pre: "#ed3d35",
+    actual: "#126eff",
+    free: "#f5cc4e",
+  };
+
+  function savedSolidColors() {
+    try {
+      return {
+        ...defaultSolidColors,
+        ...JSON.parse(window.localStorage.getItem(SOLID_COLOR_STORAGE_KEY) || "{}"),
+      };
+    } catch {
+      return { ...defaultSolidColors };
+    }
+  }
+
+  function applySolidColors(colors = savedSolidColors()) {
+    const values = {
+      "--pre-daub": colors.pre,
+      "--actual-daub": colors.actual,
+      "--free-space": colors.free,
+    };
+    [document.documentElement, ...document.querySelectorAll("#app, #app .app-shell")].forEach((element) => {
+      Object.entries(values).forEach(([property, value]) => {
+        element.style.setProperty(property, value, "important");
+      });
+    });
+    document.querySelectorAll("[data-solid-color]").forEach((input) => {
+      input.value = colors[input.dataset.solidColor];
+    });
+    try {
+      window.localStorage.setItem(SOLID_COLOR_STORAGE_KEY, JSON.stringify(colors));
+    } catch {
+      // The colors still work when storage is unavailable.
+    }
+  }
 
   function savedTheme() {
     try {
@@ -90,6 +128,7 @@
     } catch {
       // The selected dauber still works when storage is unavailable.
     }
+    if (selectedDesign === "solid") applySolidColors();
   }
 
   function mountThemeSwitcher() {
@@ -648,6 +687,7 @@
   }
 
   function restoreSavedPreferences() {
+    applySolidColors();
     restoreCardView();
     restoreCardCount();
     updateBingoProximity();
@@ -721,7 +761,12 @@
 
   function openDaubOptions() {
     const overlay = document.querySelector(".daub-options-overlay");
-    if (overlay) overlay.hidden = false;
+    if (overlay) {
+      overlay.querySelector(".daub-design-grid").hidden = false;
+      overlay.querySelector(".solid-color-panel").hidden = true;
+      overlay.querySelector("header").textContent = "Choose a dauber design:";
+      overlay.hidden = false;
+    }
   }
 
   function mountDaubOptions() {
@@ -748,15 +793,50 @@
           <button type="button" data-daub-design="diamond"><i class="daub-preview">💎</i><span>Diamond</span></button>
           <button type="button" data-daub-design="lightning"><i class="daub-preview">⚡</i><span>Lightning</span></button>
         </div>
+        <div class="solid-color-panel" hidden>
+          <div class="solid-color-heading">
+            <button type="button" data-solid-color-back aria-label="Back to dauber designs">‹</button>
+            <div><strong>Solid Color</strong><span>Customize every type of daub</span></div>
+          </div>
+          <div class="solid-color-fields">
+            <label><input type="color" data-solid-color="pre"><span><strong>Player mark</strong><small>Before the number is called</small></span></label>
+            <label><input type="color" data-solid-color="actual"><span><strong>Called number</strong><small>After the number is called</small></span></label>
+            <label><input type="color" data-solid-color="free"><span><strong>Free space</strong><small>Every center free square</small></span></label>
+          </div>
+          <div class="solid-color-card-preview">
+            <span style="--preview-color:var(--pre-daub)">PLAYER</span>
+            <span style="--preview-color:var(--actual-daub)">CALLED</span>
+            <span style="--preview-color:var(--free-space)">FREE</span>
+          </div>
+        </div>
         <footer><button type="button" data-daub-options-close>CONFIRM</button></footer>
       </section>
     `;
     overlay.addEventListener("click", (event) => {
       const designButton = event.target.closest("[data-daub-design]");
-      if (designButton) applyDaubDesign(designButton.dataset.daubDesign);
+      if (designButton) {
+        applyDaubDesign(designButton.dataset.daubDesign);
+        if (designButton.dataset.daubDesign === "solid") {
+          overlay.querySelector(".daub-design-grid").hidden = true;
+          overlay.querySelector(".solid-color-panel").hidden = false;
+          overlay.querySelector("header").textContent = "Customize solid colors:";
+        }
+      }
+      if (event.target.closest("[data-solid-color-back]")) {
+        overlay.querySelector(".daub-design-grid").hidden = false;
+        overlay.querySelector(".solid-color-panel").hidden = true;
+        overlay.querySelector("header").textContent = "Choose a dauber design:";
+      }
       if (event.target.closest("[data-daub-options-close]") || event.target === overlay) overlay.hidden = true;
     });
+    overlay.addEventListener("input", (event) => {
+      if (!event.target.matches("[data-solid-color]")) return;
+      const colors = savedSolidColors();
+      colors[event.target.dataset.solidColor] = event.target.value;
+      applySolidColors(colors);
+    });
     document.body.append(overlay);
+    applySolidColors();
     applyDaubDesign(savedDaubDesign());
   }
 

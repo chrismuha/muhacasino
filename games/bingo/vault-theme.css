@@ -577,29 +577,36 @@ body {
   content: "";
   position: absolute;
   z-index: 1;
-  inset: 3px;
+  inset: 1px;
   background:
-    radial-gradient(circle at 34% 27%, rgba(255,255,255,.95) 0 7%, rgba(255,255,255,.35) 8% 13%, transparent 14%),
-    radial-gradient(circle at 48% 48%, #5eb4ff 0 34%, #1680f5 52%, #0753c8 76%);
+    radial-gradient(ellipse at 33% 24%, #dff8ff 0 5%, rgba(255,255,255,.82) 6% 9%, transparent 10%),
+    radial-gradient(ellipse at 59% 34%, rgba(173,229,255,.72) 0 3%, transparent 4%),
+    linear-gradient(145deg, #159eff 8%, #0879e8 46%, #0457be 72%, #033d91 100%);
   filter:
-    drop-shadow(1px 0 0 #073b92)
-    drop-shadow(-1px 0 0 #073b92)
-    drop-shadow(0 1px 0 #073b92)
-    drop-shadow(0 -1px 0 #073b92)
-    drop-shadow(2px 3px 0 rgba(0,0,0,.25));
-  clip-path: polygon(50% 0,58% 13%,70% 3%,74% 20%,91% 12%,87% 32%,100% 39%,87% 51%,99% 64%,79% 67%,83% 88%,62% 80%,52% 100%,42% 82%,24% 94%,23% 73%,2% 69%,15% 53%,0 42%,16% 34%,7% 15%,27% 22%,31% 3%,42% 15%);
+    drop-shadow(2px 0 0 #031f55)
+    drop-shadow(-2px 0 0 #031f55)
+    drop-shadow(0 2px 0 #031f55)
+    drop-shadow(0 -2px 0 #031f55)
+    drop-shadow(3px 4px 0 rgba(0,0,0,.38));
+  clip-path: polygon(
+    48% 1%, 56% 15%, 68% 4%, 72% 21%, 91% 10%, 85% 31%,
+    100% 36%, 86% 49%, 98% 61%, 78% 64%, 84% 85%, 63% 78%,
+    54% 100%, 43% 81%, 25% 95%, 25% 73%, 3% 78%, 15% 57%,
+    0 47%, 18% 37%, 6% 19%, 28% 24%, 32% 4%, 42% 17%
+  );
 }
 
 [data-daub-design="splat"] :is(#app, .planet-card-wall) .number-cell.called.off-pattern-called::before {
   background:
-    radial-gradient(circle at 34% 27%, rgba(255,255,255,.92) 0 7%, rgba(255,255,255,.3) 8% 13%, transparent 14%),
-    radial-gradient(circle at 48% 48%, #b69bff 0 34%, #805be6 52%, #5531b5 76%);
+    radial-gradient(ellipse at 33% 24%, #f2eaff 0 5%, rgba(255,255,255,.78) 6% 9%, transparent 10%),
+    radial-gradient(ellipse at 59% 34%, rgba(225,211,255,.68) 0 3%, transparent 4%),
+    linear-gradient(145deg, #9b77ef 8%, #7650d8 46%, #5833b3 72%, #3b217f 100%);
   filter:
-    drop-shadow(1px 0 0 #3e218c)
-    drop-shadow(-1px 0 0 #3e218c)
-    drop-shadow(0 1px 0 #3e218c)
-    drop-shadow(0 -1px 0 #3e218c)
-    drop-shadow(2px 3px 0 rgba(0,0,0,.25));
+    drop-shadow(2px 0 0 #251054)
+    drop-shadow(-2px 0 0 #251054)
+    drop-shadow(0 2px 0 #251054)
+    drop-shadow(0 -2px 0 #251054)
+    drop-shadow(3px 4px 0 rgba(0,0,0,.38));
 }
 
 .planet-card-wall .number-cell.free {
@@ -1518,6 +1525,107 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
   box-shadow: 0 0 0 3px #1769e0;
 }
 
+.solid-color-panel {
+  padding: 22px;
+}
+
+.solid-color-panel[hidden] {
+  display: none;
+}
+
+.solid-color-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.solid-color-heading > button {
+  width: 52px;
+  height: 52px;
+  border: 2px solid #6881b4;
+  border-radius: 50%;
+  color: #fff;
+  background: #202a3c;
+  font-size: 36px;
+}
+
+.solid-color-heading strong,
+.solid-color-heading span {
+  display: block;
+}
+
+.solid-color-heading strong {
+  color: #fff;
+  font-size: 25px;
+}
+
+.solid-color-heading span {
+  color: #9eabc2;
+  margin-top: 3px;
+}
+
+.solid-color-fields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.solid-color-fields label {
+  display: grid;
+  grid-template-columns: 68px 1fr;
+  align-items: center;
+  gap: 12px;
+  min-height: 100px;
+  padding: 14px;
+  border: 2px solid #3f5b91;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(#242936, #11141b);
+}
+
+.solid-color-fields input {
+  width: 68px;
+  height: 68px;
+  padding: 4px;
+  border: 2px solid #dceaff;
+  border-radius: 12px;
+  background: #0a0d13;
+}
+
+.solid-color-fields strong,
+.solid-color-fields small {
+  display: block;
+}
+
+.solid-color-fields small {
+  color: #a7b4ca;
+  margin-top: 5px;
+  line-height: 1.25;
+}
+
+.solid-color-card-preview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 18px;
+  padding: 14px;
+  border: 2px solid #304a78;
+  background: #080a0e;
+}
+
+.solid-color-card-preview span {
+  display: grid;
+  min-height: 74px;
+  place-items: center;
+  border: 3px solid color-mix(in srgb, var(--preview-color), #00112f 30%);
+  border-radius: 8px;
+  color: #fff;
+  background: var(--preview-color);
+  box-shadow: inset 0 0 0 3px rgba(255,255,255,.25);
+  font-weight: 950;
+}
+
 .daub-preview {
   display: grid;
   width: 66px;
@@ -1529,10 +1637,16 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
 
 .daub-preview.splat {
   background:
-    radial-gradient(circle at 34% 27%, #fff 0 7%, #ffffff66 8% 13%, transparent 14%),
-    radial-gradient(circle at 48% 48%, #5eb4ff 0 34%, #1680f5 52%, #0753c8 76%);
-  filter: drop-shadow(2px 3px 0 #073b92);
-  clip-path: polygon(50% 0,58% 13%,70% 3%,74% 20%,91% 12%,87% 32%,100% 39%,87% 51%,99% 64%,79% 67%,83% 88%,62% 80%,52% 100%,42% 82%,24% 94%,23% 73%,2% 69%,15% 53%,0 42%,16% 34%,7% 15%,27% 22%,31% 3%,42% 15%);
+    radial-gradient(ellipse at 33% 24%, #dff8ff 0 5%, #ffffffd1 6% 9%, transparent 10%),
+    radial-gradient(ellipse at 59% 34%, #ade5ffb8 0 3%, transparent 4%),
+    linear-gradient(145deg, #159eff 8%, #0879e8 46%, #0457be 72%, #033d91 100%);
+  filter:
+    drop-shadow(2px 0 0 #031f55)
+    drop-shadow(-2px 0 0 #031f55)
+    drop-shadow(0 2px 0 #031f55)
+    drop-shadow(0 -2px 0 #031f55)
+    drop-shadow(3px 4px 0 #0006);
+  clip-path: polygon(48% 1%,56% 15%,68% 4%,72% 21%,91% 10%,85% 31%,100% 36%,86% 49%,98% 61%,78% 64%,84% 85%,63% 78%,54% 100%,43% 81%,25% 95%,25% 73%,3% 78%,15% 57%,0 47%,18% 37%,6% 19%,28% 24%,32% 4%,42% 17%);
 }
 
 .daub-preview.solid {
@@ -1696,5 +1810,9 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
 
   .daub-design-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .solid-color-fields {
+    grid-template-columns: 1fr;
   }
 }
