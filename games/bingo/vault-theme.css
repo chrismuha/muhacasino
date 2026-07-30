@@ -62,7 +62,7 @@ body {
 .bingo-theme-trigger {
   display: flex;
   min-width: 92px;
-  min-height: 40px;
+  min-height: 48px;
   align-items: center;
   justify-content: center;
   gap: 7px;
@@ -947,10 +947,10 @@ body {
   right: 22px;
   bottom: 22px;
   display: grid;
-  grid-template-columns: repeat(2, minmax(132px, 1fr));
-  gap: 8px;
-  width: min(340px, calc(100vw - 44px));
-  padding: 10px;
+  grid-template-columns: repeat(2, minmax(148px, 1fr));
+  gap: 10px;
+  width: min(390px, calc(100vw - 44px));
+  padding: 12px;
   border: 2px solid #334e86;
   border-radius: 5px;
   background: rgba(7,8,12,.94);
@@ -959,14 +959,36 @@ body {
 
 [data-bingo-theme="classic"] .player-hall-controls button {
   display: flex;
-  min-height: 54px;
+  min-height: 66px;
   align-items: center;
   justify-content: center;
-  gap: 9px;
-  padding: 8px 12px;
-  font-size: 15px;
+  gap: 11px;
+  padding: 10px 14px;
+  font-size: 16px;
   font-weight: 950;
   letter-spacing: .02em;
+}
+
+.player-hall-controls button .bi,
+.universal-start-button .bi,
+.universal-setup-button .bi,
+.universal-view-button .bi,
+.bingo-theme-trigger .bi,
+.hall-native-controls-close .bi {
+  flex: 0 0 auto;
+  color: currentColor;
+  width: 1.15em;
+  font-family: "bootstrap-icons" !important;
+  font-size: 30px !important;
+  font-style: normal;
+  text-align: center;
+  line-height: 1;
+  opacity: 1;
+  filter: drop-shadow(0 2px 1px rgba(0,0,0,.42));
+}
+
+[data-bingo-theme="planet"] .planet-footer-controls button .bi {
+  font-size: 28px !important;
 }
 
 [data-bingo-theme="classic"] .player-hall-controls button:nth-child(1) {
@@ -998,8 +1020,8 @@ body {
   display: grid;
   width: 100%;
   grid-template-columns: repeat(4, minmax(90px, 1fr));
-  gap: 5px;
-  padding: 5px;
+  gap: 7px;
+  padding: 7px;
   border: 2px solid #334e86;
   border-radius: 4px;
   background: #08090d;
@@ -1008,14 +1030,14 @@ body {
 
 [data-bingo-theme="planet"] .planet-footer-controls button {
   display: flex;
-  min-height: 36px;
+  min-height: 54px;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 8px;
   border: 2px solid;
   border-radius: 7px;
   color: #fff;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 950;
   text-shadow: 0 2px 1px rgba(0,0,0,.58);
 }
@@ -1268,42 +1290,42 @@ html.hall-controls-collapsed[data-bingo-theme="current"] .universal-setup-button
   right: 18px;
   bottom: 18px;
   display: flex;
-  min-width: 142px;
-  min-height: 54px;
+  min-width: 158px;
+  min-height: 66px;
   align-items: center;
   justify-content: center;
-  gap: 9px;
+  gap: 11px;
   border: 2px solid #6540ae;
   border-radius: 9px;
   color: #fff;
   background: linear-gradient(#a669ef, #5d28b5);
   box-shadow: inset 0 0 0 2px #caa2ff, 0 3px 0 #32136d;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 950;
 }
 
 [data-bingo-theme="current"] .universal-setup-button {
   position: fixed;
   z-index: 1100;
-  right: 334px;
+  right: 362px;
   bottom: 18px;
   display: flex;
-  min-width: 142px;
-  min-height: 54px;
+  min-width: 158px;
+  min-height: 66px;
   align-items: center;
   justify-content: center;
-  gap: 9px;
+  gap: 11px;
   border: 2px solid #6a7385;
   border-radius: 9px;
   color: #fff;
   background: linear-gradient(#687284, #313847);
   box-shadow: 0 5px 18px rgba(0, 0, 0, .35);
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 950;
 }
 
 [data-bingo-theme="current"] .universal-start-button {
-  right: 176px;
+  right: 190px;
   border-color: #4e8b2f;
   color: #fff;
   background: linear-gradient(#48b948, #18782a);
@@ -1315,7 +1337,10 @@ html.hall-controls-collapsed[data-bingo-theme="current"] .universal-setup-button
   z-index: 20050;
   top: 12px;
   left: 12px;
-  min-height: 46px;
+  display: inline-flex;
+  min-height: 56px;
+  align-items: center;
+  gap: 10px;
   padding: 8px 16px;
   border: 2px solid #f2d16b;
   border-radius: 9px;
@@ -1563,9 +1588,13 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
 }
 
 .solid-color-heading > button span {
+  color: inherit;
+}
+
+.solid-color-heading > button .bi {
   color: #78b9ff;
-  font-size: 22px;
-  line-height: .7;
+  font-size: 20px;
+  line-height: 1;
 }
 
 .solid-color-heading strong,
@@ -1842,5 +1871,30 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
 
   .solid-color-fields {
     grid-template-columns: 1fr;
+  }
+
+  [data-bingo-theme="current"] .universal-view-button,
+  [data-bingo-theme="current"] .universal-start-button,
+  [data-bingo-theme="current"] .universal-setup-button {
+    min-width: 112px;
+    min-height: 60px;
+    padding-inline: 7px;
+    font-size: 13px;
+  }
+
+  [data-bingo-theme="current"] .universal-view-button {
+    right: 8px;
+  }
+
+  [data-bingo-theme="current"] .universal-start-button {
+    right: 128px;
+  }
+
+  [data-bingo-theme="current"] .universal-setup-button {
+    right: 248px;
+  }
+
+  [data-bingo-theme="current"] :is(.universal-view-button, .universal-start-button, .universal-setup-button) .bi {
+    font-size: 26px !important;
   }
 }

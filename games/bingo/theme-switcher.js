@@ -61,7 +61,9 @@
     document.documentElement.classList.toggle("hall-controls-collapsed", collapsed);
     const controlsToggle = document.querySelector(".hall-controls-toggle");
     if (!controlsToggle) return;
-    controlsToggle.textContent = collapsed ? "‹" : "›";
+    controlsToggle.innerHTML = collapsed
+      ? '<i class="bi bi-chevron-left" aria-hidden="true"></i>'
+      : '<i class="bi bi-chevron-right" aria-hidden="true"></i>';
     controlsToggle.setAttribute("aria-expanded", String(!collapsed));
     controlsToggle.setAttribute(
       "aria-label",
@@ -139,7 +141,7 @@
     switcher.setAttribute("aria-label", "Bingo interface theme");
     switcher.innerHTML = `
       <button class="bingo-theme-trigger" type="button" aria-expanded="false" aria-controls="bingo-theme-menu">
-        ◐ <span>Theme</span>
+        <i class="bi bi-palette-fill" aria-hidden="true"></i><span>Theme</span>
       </button>
       <div id="bingo-theme-menu" class="bingo-theme-menu" hidden>
         <strong>Choose a theme</strong>
@@ -457,15 +459,15 @@
   function mountPlayerHallControls() {
     if (document.querySelector(".player-hall-controls")) return;
     const controlsMarkup = `
-      <button class="hall-start-button" type="button" data-hall-action="start">▶ <span>PLAY SESSION</span></button>
-      <button class="hall-dealer-button" type="button" data-hall-action="dealer">● <span>DEALER</span></button>
-      <button class="hall-setup-button" type="button" data-hall-action="setup">☰ <span>CONTROLS / SETUP</span></button>
-      <button type="button" data-hall-action="view">⌕ <span>VIEW</span></button>
-      <button type="button" data-hall-action="options">⚙ <span>OPTIONS</span></button>
-      <button type="button" data-hall-action="trade">↔ <span>TRADE</span></button>
-      <button type="button" data-hall-action="schedule">◷ <span>SCHEDULE</span></button>
-      <button type="button" data-hall-action="purchase">▣ <span>PURCHASE</span></button>
-      <button type="button" data-hall-action="next">NEXT <span>➜</span></button>
+      <button class="hall-start-button" type="button" data-hall-action="start"><i class="bi bi-play-fill" aria-hidden="true"></i><span>PLAY SESSION</span></button>
+      <button class="hall-dealer-button" type="button" data-hall-action="dealer"><i class="bi bi-person-badge-fill" aria-hidden="true"></i><span>DEALER</span></button>
+      <button class="hall-setup-button" type="button" data-hall-action="setup"><i class="bi bi-sliders" aria-hidden="true"></i><span>CONTROLS / SETUP</span></button>
+      <button type="button" data-hall-action="view"><i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i><span>VIEW</span></button>
+      <button type="button" data-hall-action="options"><i class="bi bi-gear-fill" aria-hidden="true"></i><span>OPTIONS</span></button>
+      <button type="button" data-hall-action="trade"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>TRADE</span></button>
+      <button type="button" data-hall-action="schedule"><i class="bi bi-calendar3" aria-hidden="true"></i><span>SCHEDULE</span></button>
+      <button type="button" data-hall-action="purchase"><i class="bi bi-cart-fill" aria-hidden="true"></i><span>PURCHASE</span></button>
+      <button type="button" data-hall-action="next"><span>NEXT</span><i class="bi bi-arrow-right-circle-fill" aria-hidden="true"></i></button>
     `;
     const classicControls = document.createElement("nav");
     classicControls.className = "player-hall-controls classic-hall-controls";
@@ -476,13 +478,13 @@
     planetControls.className = "player-hall-controls planet-footer-controls";
     planetControls.setAttribute("aria-label", "Planet Hall 2 controls");
     planetControls.innerHTML = `
-      <button class="hall-start-button" type="button" data-hall-action="start">▶ <span>PLAY SESSION</span></button>
-      <button class="hall-dealer-button" type="button" data-hall-action="dealer">● <span>DEALER</span></button>
-      <button class="hall-setup-button" type="button" data-hall-action="setup">☰ <span>CONTROLS / SETUP</span></button>
-      <button type="button" data-hall-action="view">⌕ <span>VIEW</span></button>
-      <button type="button" data-hall-action="options">⚙ <span>OPTIONS</span></button>
-      <button type="button" data-hall-action="purchase">▣ <span>PURCHASE</span></button>
-      <button type="button" data-hall-action="schedule">◷ <span>SCHEDULE</span></button>
+      <button class="hall-start-button" type="button" data-hall-action="start"><i class="bi bi-play-fill" aria-hidden="true"></i><span>PLAY SESSION</span></button>
+      <button class="hall-dealer-button" type="button" data-hall-action="dealer"><i class="bi bi-person-badge-fill" aria-hidden="true"></i><span>DEALER</span></button>
+      <button class="hall-setup-button" type="button" data-hall-action="setup"><i class="bi bi-sliders" aria-hidden="true"></i><span>CONTROLS / SETUP</span></button>
+      <button type="button" data-hall-action="view"><i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i><span>VIEW</span></button>
+      <button type="button" data-hall-action="options"><i class="bi bi-gear-fill" aria-hidden="true"></i><span>OPTIONS</span></button>
+      <button type="button" data-hall-action="purchase"><i class="bi bi-cart-fill" aria-hidden="true"></i><span>PURCHASE</span></button>
+      <button type="button" data-hall-action="schedule"><i class="bi bi-calendar3" aria-hidden="true"></i><span>SCHEDULE</span></button>
     `;
 
     [classicControls, planetControls].forEach((controls) => {
@@ -497,7 +499,7 @@
     universalStart.className = "universal-start-button";
     universalStart.type = "button";
     universalStart.dataset.hallAction = "start";
-    universalStart.innerHTML = "▶ <span>START GAME</span>";
+    universalStart.innerHTML = '<i class="bi bi-play-fill" aria-hidden="true"></i><span>START GAME</span>';
     universalStart.addEventListener("click", () => handleHallAction("start"));
     document.body.append(universalStart);
 
@@ -505,7 +507,7 @@
     universalSetup.className = "universal-setup-button";
     universalSetup.type = "button";
     universalSetup.dataset.hallAction = "setup";
-    universalSetup.innerHTML = "☰ <span>CONTROLS</span>";
+    universalSetup.innerHTML = '<i class="bi bi-sliders" aria-hidden="true"></i><span>CONTROLS</span>';
     universalSetup.addEventListener("click", () => handleHallAction("setup"));
     document.body.append(universalSetup);
 
@@ -513,7 +515,7 @@
     closeControls.className = "hall-native-controls-close";
     closeControls.type = "button";
     closeControls.hidden = true;
-    closeControls.textContent = "← RETURN TO PLANET HALL";
+    closeControls.innerHTML = '<i class="bi bi-arrow-left-circle-fill" aria-hidden="true"></i><span>RETURN TO PLANET HALL</span>';
     closeControls.addEventListener("click", closeNativeControls);
     document.body.append(closeControls);
 
@@ -708,7 +710,7 @@
     const viewButton = document.createElement("button");
     viewButton.className = "universal-view-button";
     viewButton.type = "button";
-    viewButton.innerHTML = "⌕ <span>VIEW</span>";
+    viewButton.innerHTML = '<i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i><span>VIEW</span>';
     viewButton.addEventListener("click", openViewOverlay);
     document.body.append(viewButton);
 
@@ -795,7 +797,7 @@
         </div>
         <div class="solid-color-panel" hidden>
           <div class="solid-color-heading">
-            <button type="button" data-solid-color-back aria-label="Back to dauber designs"><span>←</span> Back</button>
+            <button type="button" data-solid-color-back aria-label="Back to dauber designs"><i class="bi bi-arrow-left" aria-hidden="true"></i><span>Back</span></button>
           <div><strong data-color-panel-title>Solid Color</strong><span>Customize every type of daub</span></div>
           </div>
           <div class="solid-color-fields">
