@@ -111,9 +111,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 .money-slide h1 {
-  width: 108.7%;
   padding-right: .12em;
-  transform: scaleX(.92);
   transform-origin: left center;
 }
 

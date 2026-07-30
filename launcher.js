@@ -63,7 +63,7 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_VERSION = "1.0.12";
+const SITE_VERSION = "1.0.13";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
@@ -77,6 +77,20 @@ const categoryRail = document.querySelector("#categoryRail");
 const appVersion = document.querySelector("#appVersion");
 let activeSlide = 0;
 let sliderTimer;
+
+function fitHeroTitles() {
+  document.querySelectorAll(".hero h1").forEach((title) => {
+    title.style.transform = "none";
+    const range = document.createRange();
+    range.selectNodeContents(title);
+    const naturalWidth = range.getBoundingClientRect().width;
+    const titleLeft = title.getBoundingClientRect().left;
+    const availableWidth = Math.max(1, window.innerWidth - titleLeft - 24);
+    const scale = naturalWidth > availableWidth ? availableWidth / naturalWidth : 1;
+    title.style.transform = `scaleX(${scale})`;
+    range.detach();
+  });
+}
 
 function displayVersion(packageVersion) {
   const match = /^(\d+)\.0\.(\d+)$/.exec(packageVersion);
@@ -215,6 +229,9 @@ window.addEventListener("popstate", () => {
 
 showSlide(0);
 restartSlider();
+fitHeroTitles();
+window.addEventListener("resize", fitHeroTitles);
+document.fonts?.ready.then(fitHeroTitles);
 
 const requestedGame = window.location.hash.slice(1);
 if (games[requestedGame]) launchGame(requestedGame, false);
