@@ -3,6 +3,69 @@
   box-sizing: border-box;
 }
 
+html[data-bingo-theme="planet"] {
+  color-scheme: dark;
+  --navy: #edf6ff;
+  --blue: #2f8cf0;
+  --red: #e43b32;
+  --line: #365c9c;
+  --cream: #151922;
+  --actual-daub: #126eff;
+  --pre-daub: #ed3d35;
+  --hall-window-text: #fff;
+  --hall-window-border: #365c9c;
+  --hall-window-start: #5f090a;
+  --hall-window-middle: #d22b22;
+  --hall-window-end: #650808;
+  --hall-window-surface: #111827;
+  --hall-return-border: #8eb8ff;
+  --hall-return-start: #397fdd;
+  --hall-return-end: #164a99;
+  --hall-overlay-shade: rgba(3,7,14,.76);
+}
+
+html[data-bingo-theme="classic"] {
+  color-scheme: dark;
+  --navy: #f5ead0;
+  --blue: #cba44b;
+  --red: #d05b54;
+  --line: #bc8e30;
+  --cream: #252019;
+  --actual-daub: #126eff;
+  --pre-daub: #ed3d35;
+  --hall-window-text: #fff5d8;
+  --hall-window-border: #bc8e30;
+  --hall-window-start: #251710;
+  --hall-window-middle: #8a201d;
+  --hall-window-end: #251710;
+  --hall-window-surface: #17191f;
+  --hall-return-border: #e7c663;
+  --hall-return-start: #d9584e;
+  --hall-return-end: #861c1c;
+  --hall-overlay-shade: rgba(12,7,4,.78);
+}
+
+html[data-bingo-theme="current"] {
+  color-scheme: light;
+  --navy: #18243a;
+  --blue: #2f67b2;
+  --red: #b83942;
+  --line: #8ba1c5;
+  --cream: #f7f9fc;
+  --actual-daub: #1769e0;
+  --pre-daub: #e9424a;
+  --hall-window-text: #18243a;
+  --hall-window-border: #8ba1c5;
+  --hall-window-start: #f7f9fc;
+  --hall-window-middle: #dbe5f2;
+  --hall-window-end: #f7f9fc;
+  --hall-window-surface: #eef3f9;
+  --hall-return-border: #4a6590;
+  --hall-return-start: #607ba6;
+  --hall-return-end: #344b72;
+  --hall-overlay-shade: rgba(13,21,35,.68);
+}
+
 html {
   min-height: 100%;
   overflow-y: auto !important;
@@ -52,7 +115,7 @@ body {
   z-index: 1200;
   top: 10px;
   right: 12px;
-  font: 850 12px/1 system-ui, sans-serif;
+  font: 850 9pt/1 system-ui, sans-serif;
 }
 
 .bingo-theme-switcher[hidden] {
@@ -107,7 +170,7 @@ body {
 .bingo-theme-menu > strong {
   padding: 5px 7px 8px;
   color: #aeb9ca;
-  font-size: 10px;
+  font-size: 7.5pt;
   letter-spacing: .12em;
   text-transform: uppercase;
 }
@@ -157,15 +220,6 @@ body {
 
 [data-bingo-theme="classic"] .pattern-key { background: #e3bd62; }
 [data-bingo-theme="classic"] .other-key { background: #68758e; }
-
-[data-bingo-theme="classic"] {
-  color-scheme: dark;
-  --navy: #f5ead0;
-  --blue: #cba44b;
-  --red: #d05b54;
-  --line: #38445a;
-  --cream: #252d3b;
-}
 
 :is([data-bingo-theme="classic"], [data-bingo-theme="current"]) .app-shell {
   padding-top: 0;
@@ -310,7 +364,7 @@ body {
   color: #3f2600;
   background: #ffd75b;
   box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .45);
-  font: 950 12px/1 system-ui, sans-serif;
+  font: 950 9pt/1 system-ui, sans-serif;
   letter-spacing: .05em;
   white-space: nowrap;
 }
@@ -353,13 +407,13 @@ body {
 }
 
 .bingo-win-alert span {
-  font: 1000 clamp(30px, 5vw, 58px)/.95 system-ui, sans-serif;
+  font: 1000 clamp(22.5pt, 5vw, 43.5pt)/.95 system-ui, sans-serif;
   letter-spacing: .08em;
 }
 
 .bingo-win-alert strong {
   margin-top: 7px;
-  font: 850 clamp(13px, 2vw, 18px)/1.25 system-ui, sans-serif;
+  font: 850 clamp(9.75pt, 2vw, 13.5pt)/1.25 system-ui, sans-serif;
 }
 
 .view-choice-panel [data-card-count].active {
@@ -382,6 +436,10 @@ body {
 
 [data-bingo-theme="planet"] #app {
   display: none !important;
+}
+
+html.bingo-popout-window[data-bingo-theme="planet"] #app {
+  display: block !important;
 }
 
 :is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app {
@@ -430,7 +488,7 @@ body {
   right: 20px;
   bottom: 7px;
   color: #8097cf;
-  font-size: 10px;
+  font-size: 7.5pt;
 }
 
 .planet-logo {
@@ -443,13 +501,13 @@ body {
 }
 
 .planet-logo b {
-  font-size: 30px;
+  font-size: 22.5pt;
   letter-spacing: -.08em;
 }
 
 .planet-logo span {
   color: #ffd537;
-  font-size: 18px;
+  font-size: 13.5pt;
   font-weight: 950;
 }
 
@@ -513,7 +571,7 @@ body {
   height: 100%;
   place-items: center;
   border-right: 2px solid #70db59;
-  font-size: 22px;
+  font-size: 16.5pt;
   font-weight: 950;
 }
 
@@ -537,7 +595,7 @@ body {
   border: 1px solid #d5d2c7;
   border-radius: 0;
   background: linear-gradient(145deg, #fff, #e8e7e0);
-  font-size: 23px;
+  font-size: 17.25pt;
   font-weight: 900;
   box-shadow: none;
 }
@@ -631,7 +689,7 @@ body {
   bottom: 3px;
   left: 7px;
   color: #ecffe8;
-  font-size: 10px;
+  font-size: 7.5pt;
   font-weight: 800;
   letter-spacing: .04em;
 }
@@ -652,7 +710,7 @@ body {
 
 .planet-empty strong {
   color: #fff;
-  font-size: 40px;
+  font-size: 30pt;
 }
 
 .planet-empty span {
@@ -678,7 +736,7 @@ body {
   border: 1px solid #34445f;
   color: #71809c;
   background: #090b10;
-  font-size: 17px;
+  font-size: 12.75pt;
   font-weight: 850;
 }
 
@@ -721,7 +779,7 @@ body {
 
 .planet-game-name {
   color: #d7ef48;
-  font-size: 18px;
+  font-size: 13.5pt;
 }
 
 .planet-current-ball {
@@ -750,14 +808,14 @@ body {
 }
 
 .planet-current-ball strong {
-  font-size: 34px;
+  font-size: 25.5pt;
   line-height: .9;
 }
 
 .planet-credit {
   justify-self: end;
   color: #fff;
-  font-size: 27px;
+  font-size: 20.25pt;
 }
 
 @media (max-width: 1150px) {
@@ -767,17 +825,6 @@ body {
 }
 
 /* Planet Hall: modeled after the photographed red Planet Bingo terminals. */
-[data-bingo-theme="classic"] {
-  --navy: #edf6ff;
-  --blue: #119bea;
-  --red: #ed3d35;
-  --line: #304a78;
-  --cream: #17191f;
-  --actual-daub: #126eff;
-  --pre-daub: #ed3d35;
-  color-scheme: dark;
-}
-
 [data-bingo-theme="classic"] body,
 [data-bingo-theme="classic"] .app-shell {
   color: #f4f7fb;
@@ -964,7 +1011,7 @@ body {
   justify-content: center;
   gap: 11px;
   padding: 10px 14px;
-  font-size: 16px;
+  font-size: 12pt;
   font-weight: 950;
   letter-spacing: .02em;
 }
@@ -979,7 +1026,7 @@ body {
   color: currentColor;
   width: 1.15em;
   font-family: "bootstrap-icons" !important;
-  font-size: 30px !important;
+  font-size: 22.5pt !important;
   font-style: normal;
   text-align: center;
   line-height: 1;
@@ -988,7 +1035,7 @@ body {
 }
 
 [data-bingo-theme="planet"] .planet-footer-controls button .bi {
-  font-size: 28px !important;
+  font-size: 21pt !important;
 }
 
 [data-bingo-theme="classic"] .player-hall-controls button:nth-child(1) {
@@ -1037,7 +1084,7 @@ body {
   border: 2px solid;
   border-radius: 7px;
   color: #fff;
-  font-size: 13px;
+  font-size: 9.75pt;
   font-weight: 950;
   text-shadow: 0 2px 1px rgba(0,0,0,.58);
 }
@@ -1213,14 +1260,14 @@ body {
   color: #fff;
   background: linear-gradient(90deg, #650a0b, #d22b22, #650a0b);
   text-align: center;
-  font-size: 24px;
+  font-size: 18pt;
 }
 
 .player-hall-dialog p {
   margin: 0;
   padding: 30px;
   color: #e9f3ff;
-  font-size: 18px;
+  font-size: 13.5pt;
   line-height: 1.5;
   text-align: center;
 }
@@ -1270,7 +1317,7 @@ body {
   color: #fff;
   background: linear-gradient(#315ca8, #172a52);
   box-shadow: -5px 8px 20px rgba(0,0,0,.4);
-  font-size: 34px;
+  font-size: 25.5pt;
   font-weight: 950;
   line-height: 1;
   transform: translateY(-50%);
@@ -1300,7 +1347,7 @@ html.hall-controls-collapsed[data-bingo-theme="current"] .universal-setup-button
   color: #fff;
   background: linear-gradient(#a669ef, #5d28b5);
   box-shadow: inset 0 0 0 2px #caa2ff, 0 3px 0 #32136d;
-  font-size: 17px;
+  font-size: 12.75pt;
   font-weight: 950;
 }
 
@@ -1320,7 +1367,7 @@ html.hall-controls-collapsed[data-bingo-theme="current"] .universal-setup-button
   color: #fff;
   background: linear-gradient(#687284, #313847);
   box-shadow: 0 5px 18px rgba(0, 0, 0, .35);
-  font-size: 17px;
+  font-size: 12.75pt;
   font-weight: 950;
 }
 
@@ -1335,17 +1382,17 @@ html.hall-controls-collapsed[data-bingo-theme="current"] .universal-setup-button
 .hall-native-controls-close {
   position: fixed;
   z-index: 20050;
-  top: 12px;
-  left: 12px;
+  top: clamp(82px, calc(7vh + 10px), 116px);
+  right: clamp(30px, calc(5vw + 12px), 108px);
   display: inline-flex;
   min-height: 56px;
   align-items: center;
   gap: 10px;
   padding: 8px 16px;
-  border: 2px solid #f2d16b;
+  border: 2px solid var(--hall-return-border);
   border-radius: 9px;
   color: #fff;
-  background: linear-gradient(#bd342d, #741316);
+  background: linear-gradient(var(--hall-return-start), var(--hall-return-end));
   box-shadow: 0 5px 18px rgba(0, 0, 0, .5);
   font-weight: 950;
 }
@@ -1354,22 +1401,103 @@ html.hall-controls-collapsed[data-bingo-theme="current"] .universal-setup-button
   display: none;
 }
 
-html.hall-native-controls-open[data-bingo-theme="planet"] #app {
+.hall-dealer-window-header[hidden] {
+  display: none;
+}
+
+.hall-dealer-window-header {
+  position: fixed;
+  z-index: 20040;
+  top: clamp(72px, 7vh, 106px);
+  right: clamp(18px, 5vw, 90px);
+  left: clamp(18px, 5vw, 90px);
+  display: flex;
+  height: 66px;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 290px 9px 20px;
+  border: 3px solid var(--hall-window-border);
+  border-bottom: 0;
+  border-radius: 14px 14px 0 0;
+  color: var(--hall-window-text);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.16), transparent 30%, rgba(0,0,0,.2)),
+    linear-gradient(90deg, var(--hall-window-start), var(--hall-window-middle) 52%, var(--hall-window-end));
+  box-shadow: 0 -8px 35px rgba(0,0,0,.42);
+}
+
+.hall-dealer-window-header > .bi {
+  font-family: "bootstrap-icons" !important;
+  font-size: 25.5pt;
+}
+
+.hall-dealer-window-header span,
+.hall-dealer-window-header strong {
+  display: block;
+}
+
+.hall-dealer-window-header span {
+  opacity: .72;
+  font-size: 7.5pt;
+  letter-spacing: .15em;
+}
+
+.hall-dealer-window-header strong {
+  margin-top: 2px;
+  font-size: 15.75pt;
+  letter-spacing: .035em;
+}
+
+.hall-dealer-window-header small {
+  margin-left: auto;
+  opacity: .75;
+  font-weight: 850;
+  letter-spacing: .08em;
+}
+
+html.hall-native-controls-open body::before {
+  content: "";
+  position: fixed;
+  z-index: 19980;
+  inset: 0;
+  background: var(--hall-overlay-shade);
+  backdrop-filter: blur(5px);
+}
+
+.hall-overlay-background {
+  position: fixed !important;
+  z-index: 19970 !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  opacity: .72;
+}
+
+html.hall-native-controls-open #app {
   display: block !important;
   position: fixed;
   z-index: 20000;
-  inset: 0;
-  left: 0;
-  width: 100%;
+  inset: calc(clamp(72px, 7vh, 106px) + 63px) clamp(18px, 5vw, 90px) clamp(20px, 5vh, 72px);
+  width: auto;
+  height: auto;
   visibility: visible;
   pointer-events: auto;
   overflow: auto;
-  background: #111827;
+  background: var(--hall-window-surface);
+  border: 3px solid var(--hall-window-border);
+  border-radius: 0 0 14px 14px;
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.78),
+    inset 0 0 0 2px rgba(255,255,255,.12);
 }
 
-html.hall-native-controls-open[data-bingo-theme="planet"] .planet-hall-shell,
 html.hall-native-controls-open[data-bingo-theme="planet"] .planet-footer-controls,
-html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls {
+html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls,
+html.hall-native-controls-open[data-bingo-theme="current"] :is(.universal-view-button, .universal-start-button, .universal-setup-button),
+html.hall-native-controls-open .hall-controls-toggle {
   display: none;
 }
 
@@ -1411,7 +1539,7 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
   border: 1px solid #516a9e;
   color: #fff;
   background: linear-gradient(90deg, #63090a, #d32c23, #63090a);
-  font-size: 28px;
+  font-size: 21pt;
   font-weight: 850;
 }
 
@@ -1427,7 +1555,7 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
   border-radius: 5px;
   color: #edf4ff;
   background: linear-gradient(#242936, #11141b);
-  font-size: 21px;
+  font-size: 15.75pt;
   font-weight: 800;
 }
 
@@ -1477,7 +1605,7 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
   border: 1px solid #3b4d6d;
   color: #7786a0;
   background: #090b10;
-  font-size: 20px;
+  font-size: 15pt;
   font-weight: 900;
 }
 
@@ -1519,7 +1647,7 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
   color: #fff;
   background: linear-gradient(90deg, #63090a, #d32c23, #63090a);
   text-align: center;
-  font-size: 27px;
+  font-size: 20.25pt;
   font-weight: 850;
 }
 
@@ -1539,7 +1667,7 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
   border-radius: 8px;
   color: #eaf2ff;
   background: linear-gradient(#242936, #11141b);
-  font-size: 16px;
+  font-size: 12pt;
   font-weight: 850;
 }
 
@@ -1578,7 +1706,7 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
   color: #eaf2ff;
   background: linear-gradient(#2a354a, #182134);
   box-shadow: inset 0 1px rgba(255,255,255,.13), 0 3px 8px rgba(0,0,0,.3);
-  font-size: 15px;
+  font-size: 11.25pt;
   font-weight: 850;
 }
 
@@ -1593,7 +1721,7 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
 
 .solid-color-heading > button .bi {
   color: #78b9ff;
-  font-size: 20px;
+  font-size: 15pt;
   line-height: 1;
 }
 
@@ -1604,7 +1732,7 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
 
 .solid-color-heading strong {
   color: #fff;
-  font-size: 25px;
+  font-size: 18.75pt;
 }
 
 .solid-color-heading span {
@@ -1678,7 +1806,7 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
   width: 66px;
   height: 66px;
   place-items: center;
-  font-size: 47px;
+  font-size: 35.25pt;
   font-style: normal;
 }
 
@@ -1761,7 +1889,7 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
   place-items: center;
   clip-path: none;
   background: transparent !important;
-  font-size: 31px;
+  font-size: 23.25pt;
   line-height: 1;
 }
 
@@ -1776,7 +1904,7 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
 [data-daub-design="star"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
   content: "★";
   color: #126eff;
-  font-size: 38px;
+  font-size: 28.5pt;
 }
 
 [data-daub-design="planet"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
@@ -1879,7 +2007,7 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
     min-width: 112px;
     min-height: 60px;
     padding-inline: 7px;
-    font-size: 13px;
+    font-size: 9.75pt;
   }
 
   [data-bingo-theme="current"] .universal-view-button {
@@ -1895,6 +2023,6 @@ html.hall-native-controls-open[data-bingo-theme="classic"] .player-hall-controls
   }
 
   [data-bingo-theme="current"] :is(.universal-view-button, .universal-start-button, .universal-setup-button) .bi {
-    font-size: 26px !important;
+    font-size: 19.5pt !important;
   }
 }

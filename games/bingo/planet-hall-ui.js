@@ -1,4 +1,7 @@
 (() => {
+  const launchParameters = new URLSearchParams(window.location.search);
+  if (launchParameters.has("screen") || launchParameters.has("player")) return;
+
   let renderQueued = false;
 
   function numberFromCell(cell) {

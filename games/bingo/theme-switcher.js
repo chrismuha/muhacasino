@@ -4,6 +4,8 @@
   const SOLID_COLOR_STORAGE_KEY = "muha-bingo-solid-colors";
   const VIEW_COUNT_STORAGE_KEY = "muha-bingo-view-count";
   const CARD_COUNT_STORAGE_KEY = "muha-bingo-card-count";
+  const launchParameters = new URLSearchParams(window.location.search);
+  const isPopout = launchParameters.has("screen") || launchParameters.has("player");
   const themes = ["planet", "classic", "current"];
   const daubDesigns = [
     "solid", "splat", "pig", "duck", "star", "circle", "planet", "confetti",
@@ -74,6 +76,7 @@
   function applyTheme(theme) {
     const selectedTheme = themes.includes(theme) ? theme : "planet";
     document.documentElement.classList.remove("hall-native-controls-open");
+    document.querySelector(".hall-overlay-background")?.remove();
     if (selectedTheme !== "planet") {
       setHallControlsCollapsed(false);
     }
@@ -87,6 +90,8 @@
     }
     const closeButton = document.querySelector(".hall-native-controls-close");
     if (closeButton) closeButton.hidden = true;
+    const windowHeader = document.querySelector(".hall-dealer-window-header");
+    if (windowHeader) windowHeader.hidden = true;
 
     document.querySelectorAll(".bingo-theme-option").forEach((button) => {
       const isActive = button.dataset.theme === selectedTheme;
@@ -102,6 +107,9 @@
   }
 
   window.applyBingoTheme = applyTheme;
+  window.addEventListener("storage", (event) => {
+    if (event.key === STORAGE_KEY && event.newValue) applyTheme(event.newValue);
+  });
   window.addEventListener("message", (event) => {
     if (event.origin !== window.location.origin) return;
     if (event.data?.type !== "muha-bingo-theme") return;
@@ -342,19 +350,16 @@
     return toggled;
   }
 
-  async function openNativeControls(openSetup = true) {
-    document.documentElement.classList.add("hall-native-controls-open");
-    const closeButton = document.querySelector(".hall-native-controls-close");
-    if (closeButton) closeButton.hidden = false;
-    await waitAndClick(/^dealer console$/i, 500);
-    if (openSetup) await waitAndClick(/edit game setup|game setup/i, 700);
-  }
-
-  function closeNativeControls() {
-    returnToPlayerHall();
-    document.documentElement.classList.remove("hall-native-controls-open");
-    const closeButton = document.querySelector(".hall-native-controls-close");
-    if (closeButton) closeButton.hidden = true;
+  function openDealerWindow() {
+    const popup = window.bingoApi?.openScreen?.("dealer");
+    if (!popup) {
+      showHallMessage(
+        "DEALER WINDOW BLOCKED",
+        "Allow pop-ups for Muha Casino, then press DEALER or CONTROLS again."
+      );
+      return false;
+    }
+    return true;
   }
 
   function showHallMessage(title, message) {
@@ -381,6 +386,7 @@
 
   function handleHallAction(action) {
     if (action === "start") {
+      openDealerWindow();
       const cardsExist = Boolean(document.querySelector(
         "#app .bingo-card:not(.preview-card):not(.verification-full-card)"
       ));
@@ -412,12 +418,12 @@
     }
 
     if (action === "setup") {
-      openNativeControls();
+      openDealerWindow();
       return;
     }
 
     if (action === "dealer") {
-      openNativeControls(false);
+      openDealerWindow();
       return;
     }
 
@@ -510,14 +516,6 @@
     universalSetup.innerHTML = '<i class="bi bi-sliders" aria-hidden="true"></i><span>CONTROLS</span>';
     universalSetup.addEventListener("click", () => handleHallAction("setup"));
     document.body.append(universalSetup);
-
-    const closeControls = document.createElement("button");
-    closeControls.className = "hall-native-controls-close";
-    closeControls.type = "button";
-    closeControls.hidden = true;
-    closeControls.innerHTML = '<i class="bi bi-arrow-left-circle-fill" aria-hidden="true"></i><span>RETURN TO PLANET HALL</span>';
-    closeControls.addEventListener("click", closeNativeControls);
-    document.body.append(closeControls);
 
     const controlsToggle = document.createElement("button");
     controlsToggle.className = "hall-controls-toggle";
@@ -860,6 +858,11 @@
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
+      if (isPopout) {
+        applyTheme(savedTheme());
+        restoreSavedPreferences();
+        return;
+      }
       mountThemeSwitcher();
       mountViewOverlay();
       mountDaubOptions();
@@ -867,6 +870,11 @@
       restoreSavedPreferences();
     }, { once: true });
   } else {
+    if (isPopout) {
+      applyTheme(savedTheme());
+      restoreSavedPreferences();
+      return;
+    }
     mountThemeSwitcher();
     mountViewOverlay();
     mountDaubOptions();
