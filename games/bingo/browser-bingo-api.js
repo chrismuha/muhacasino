@@ -78,7 +78,7 @@
     const url = new URL(window.location.href);
     url.search = "";
     Object.entries(parameters).forEach(([key, value]) => url.searchParams.set(key, value));
-    const build = "20260731-v1.1.4";
+    const build = "20260731-classic-auto-recent";
     url.searchParams.set("build", build);
     const windowOwner = window.top && window.top !== window ? window.top : window;
     const popup = windowOwner.open("", name);

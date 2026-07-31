@@ -1,5 +1,5 @@
 const RELEASE = "1.1.4";
-const BUILD = "20260731-v1.1.4";
+const BUILD = "20260731-final-layout-polish";
 const CACHE_NAME = `muha-casino-${RELEASE}-${BUILD}`;
 
 self.addEventListener("install", () => {

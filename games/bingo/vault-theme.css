@@ -359,6 +359,299 @@ body {
   }
 }
 
+/* Sort Cards remains legible in every card-count and Hall layout. */
+[data-bingo-theme] #app .sort-control {
+  display: grid !important;
+  grid-template-columns: auto minmax(250px, 1fr) !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+[data-bingo-theme] #app .sort-control > span {
+  color: var(--dealer-text) !important;
+  font-size: 11.25pt !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+[data-bingo-theme] #app .sort-control select {
+  width: 100% !important;
+  min-width: 250px !important;
+  min-height: 56px !important;
+  padding: 10px 40px 10px 14px !important;
+  font-size: 12pt !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .sort-control select option {
+  font-size: 12pt !important;
+}
+
+/* Keep the full Dealer workspace beside the open Planet Hall control drawer. */
+@media (min-width: 1201px) {
+  html[data-bingo-theme="classic"]:not(.hall-controls-collapsed) #app .dealer-layout {
+    padding-right: 430px !important;
+  }
+}
+
+[data-bingo-theme] #app .ball-board-panel,
+[data-bingo-theme] #app .dealer-ball-board,
+[data-bingo-theme] #app .dealer-ball-column {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+[data-bingo-theme] #app .dealer-ball-board {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+}
+
+[data-bingo-theme] #app .dealer-ball-column {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+}
+
+[data-bingo-theme] #app .dealer-ball-column > strong {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+[data-bingo-theme] #app .dealer-ball-column button {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 38px !important;
+  aspect-ratio: auto !important;
+  padding: 4px 2px !important;
+}
+
+@media (max-width: 1200px) {
+  [data-bingo-theme] #app .dealer-ball-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  [data-bingo-theme] #app .dealer-ball-column:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Card Design uses full-size form typography and stays clear of the Hall drawer. */
+@media (min-width: 1201px) {
+  html[data-bingo-theme="classic"]:not(.hall-controls-collapsed) #app .design-screen {
+    padding-right: 430px !important;
+  }
+}
+
+[data-bingo-theme] #app .design-copy > .eyebrow {
+  color: var(--dealer-muted) !important;
+  font-size: 10.5pt !important;
+  letter-spacing: .12em !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .design-copy > h2 {
+  color: var(--dealer-text) !important;
+  font-size: 30pt !important;
+  line-height: 1.1 !important;
+}
+
+[data-bingo-theme] #app .design-copy > p {
+  color: var(--dealer-muted) !important;
+  font-size: 13.5pt !important;
+  line-height: 1.5 !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .design-group {
+  gap: 18px !important;
+  padding: 22px !important;
+}
+
+[data-bingo-theme] #app .design-group h3 {
+  color: var(--dealer-text) !important;
+  font-size: 16.5pt !important;
+  line-height: 1.2 !important;
+}
+
+[data-bingo-theme] #app .design-group p {
+  color: var(--dealer-muted) !important;
+  font-size: 11.25pt !important;
+  line-height: 1.45 !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .color-field,
+[data-bingo-theme] #app .design-options :is(label, legend) {
+  color: var(--dealer-text) !important;
+  font-size: 11.25pt !important;
+  line-height: 1.3 !important;
+}
+
+[data-bingo-theme] #app .color-field input[type="color"] {
+  width: 54px !important;
+  height: 54px !important;
+}
+
+[data-bingo-theme] #app .color-field code {
+  color: var(--dealer-muted) !important;
+  font-size: 9.75pt !important;
+  font-weight: 800 !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .design-options select {
+  min-height: 52px !important;
+  font-size: 12pt !important;
+  font-weight: 750 !important;
+}
+
+[data-bingo-theme] #app .symbol-picker {
+  flex-wrap: wrap;
+  gap: 9px !important;
+}
+
+[data-bingo-theme] #app .symbol-picker button {
+  width: 48px !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  font-size: 16.5pt !important;
+}
+
+[data-bingo-theme] #app .design-preview > span {
+  color: var(--dealer-muted) !important;
+  font-size: 11.25pt !important;
+  font-weight: 900 !important;
+  opacity: 1 !important;
+}
+
+/* Planet Hall boards use wide letter rows; the working Classic grid stays intact. */
+html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .dealer-ball-board {
+  grid-template-columns: 1fr !important;
+  gap: 12px !important;
+}
+
+html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .dealer-ball-column {
+  grid-template-columns: 72px repeat(15, minmax(42px, 1fr)) !important;
+  align-items: center !important;
+  gap: 7px !important;
+  overflow-x: auto !important;
+}
+
+html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .dealer-ball-column > strong {
+  grid-column: auto !important;
+  grid-row: 1 !important;
+  width: 72px !important;
+  min-width: 72px !important;
+  height: 48px !important;
+  margin: 0 !important;
+  border-radius: 8px !important;
+}
+
+html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .dealer-ball-column button {
+  min-width: 42px !important;
+  min-height: 42px !important;
+}
+
+@media (max-width: 900px) {
+  html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .dealer-ball-column {
+    grid-template-columns: 58px repeat(15, 42px) !important;
+  }
+
+  html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .dealer-ball-column > strong {
+    width: 58px !important;
+    min-width: 58px !important;
+  }
+}
+
+/* Planet Hall only: fit every ball in its row without an inner scrollbar. */
+html[data-bingo-theme="classic"] #app .dealer-ball-column {
+  grid-template-columns: 60px repeat(15, minmax(0, 1fr)) !important;
+  width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+html[data-bingo-theme="classic"] #app .dealer-ball-column > strong {
+  width: 60px !important;
+  min-width: 60px !important;
+}
+
+html[data-bingo-theme="classic"] #app .dealer-ball-column button {
+  width: 100% !important;
+  min-width: 0 !important;
+  padding-inline: 0 !important;
+}
+
+/* Classic Player Floor auto-call and Recent Calls states remain unmistakable. */
+html[data-bingo-theme="current"] #app .caller-panel .btn-auto {
+  min-height: 56px !important;
+  color: #fff !important;
+  border: 2px solid #55ce8c !important;
+  background: #147a45 !important;
+  box-shadow: 0 5px 14px rgba(20, 122, 69, .24) !important;
+  font-size: 11.25pt !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] #app .caller-panel .btn-auto:disabled {
+  color: #40536d !important;
+  border-color: #9bacc1 !important;
+  background: #e3e9f1 !important;
+  box-shadow: inset 0 0 0 1px #fff !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] #app .caller-panel .btn-auto:is(:hover, :focus-visible):not(:disabled) {
+  color: #fff !important;
+  border-color: #9af0bd !important;
+  background: #0f6839 !important;
+  outline: 3px solid #76dba0 !important;
+  outline-offset: 2px !important;
+}
+
+html[data-bingo-theme="current"] #app .recent-panel .section-heading {
+  min-height: 52px;
+  align-items: center !important;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #8da9cf;
+}
+
+html[data-bingo-theme="current"] #app .recent-panel .section-heading h2 {
+  color: var(--dealer-text) !important;
+  font-size: 15pt !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] #app .recent-panel .section-heading > span {
+  min-width: 66px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  color: #fff !important;
+  background: #1769d7 !important;
+  font-size: 10.5pt !important;
+  font-weight: 900 !important;
+  text-align: center;
+  opacity: 1 !important;
+}
+
+@media (max-width: 620px) {
+  [data-bingo-theme] #app .sort-control {
+    grid-template-columns: 1fr !important;
+  }
+
+  [data-bingo-theme] #app .sort-control select {
+    min-width: 0 !important;
+  }
+}
+
 /* Clear, static card-progress states shared by every Bingo theme. */
 .bingo-card {
   position: relative;
@@ -813,6 +1106,544 @@ html.bingo-embedded-window .bingo-theme-switcher { display: none !important; }
     inline-size: min(100%, 280px) !important;
     min-inline-size: min(100%, 280px) !important;
     max-inline-size: min(100%, 280px) !important;
+  }
+}
+
+/* Round summary is plain readable text, not a highlighted pattern badge. */
+[data-bingo-theme] #app .round-snapshot {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px !important;
+  font-size: 11.25pt !important;
+}
+
+[data-bingo-theme] #app .round-snapshot > span,
+[data-bingo-theme] #app .round-snapshot > :first-child {
+  padding: 0 !important;
+  border: 0 !important;
+  color: var(--dealer-text) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+[data-bingo-theme] #app .round-snapshot strong {
+  color: var(--dealer-text) !important;
+  font-size: 12.75pt !important;
+  font-weight: 950 !important;
+}
+
+/* Call history stays readable from the Player Hall at normal viewing distance. */
+[data-bingo-theme] #app .called-history-frame {
+  min-height: 76px !important;
+  gap: 18px !important;
+  padding: 12px 16px !important;
+}
+
+[data-bingo-theme] #app .called-history-frame > div:first-child {
+  min-width: 98px !important;
+}
+
+[data-bingo-theme] #app .called-history-frame > div:first-child span {
+  font-size: 9pt !important;
+  line-height: 1.2 !important;
+}
+
+[data-bingo-theme] #app .called-history-frame > div:first-child strong {
+  margin-top: 4px;
+  font-size: 11.25pt !important;
+  line-height: 1.2 !important;
+}
+
+[data-bingo-theme] #app .called-history-frame > p {
+  font-size: 10.5pt !important;
+  line-height: 1.4 !important;
+}
+
+[data-bingo-theme] #app .history-balls {
+  gap: 7px !important;
+  overflow-x: auto !important;
+}
+
+[data-bingo-theme] #app .history-balls span {
+  min-width: 46px !important;
+  padding: 8px 7px !important;
+  font-size: 9pt !important;
+}
+
+/* Credits and prize totals are key Dealer information, not fine print. */
+[data-bingo-theme] #app .finance-summary-panel .dealer-section-title :is(h2, h3) {
+  font-size: 18pt !important;
+  line-height: 1.15 !important;
+}
+
+[data-bingo-theme] #app .finance-summary-panel .dealer-section-title :is(span, p, small) {
+  font-size: 10.5pt !important;
+  line-height: 1.4 !important;
+}
+
+[data-bingo-theme] #app .credit-summary {
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)) !important;
+  gap: 12px !important;
+}
+
+[data-bingo-theme] #app .credit-summary > div {
+  min-height: 82px !important;
+  padding: 15px 16px !important;
+}
+
+[data-bingo-theme] #app .credit-summary span {
+  font-size: 9.75pt !important;
+  line-height: 1.25 !important;
+}
+
+[data-bingo-theme] #app .credit-summary strong {
+  margin-top: 7px !important;
+  font-size: 15pt !important;
+  line-height: 1.15 !important;
+}
+
+/* Card identity uses clean interface typography instead of terminal-style lettering. */
+[data-bingo-theme] #app .bingo-card .card-top {
+  min-height: 52px !important;
+  align-items: center !important;
+  padding: 9px 12px !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif !important;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+}
+
+[data-bingo-theme] #app .bingo-card .card-top span {
+  font-family: inherit !important;
+  font-size: 9pt !important;
+  font-weight: 800 !important;
+  letter-spacing: .11em !important;
+  line-height: 1.15 !important;
+  text-shadow: none !important;
+}
+
+[data-bingo-theme] #app .bingo-card .card-top strong {
+  margin-top: 4px !important;
+  font-family: inherit !important;
+  font-size: 13.5pt !important;
+  font-weight: 750 !important;
+  letter-spacing: .01em !important;
+  line-height: 1.1 !important;
+  text-shadow: none !important;
+}
+
+[data-bingo-theme] #app .bingo-card .card-id {
+  font-family: inherit !important;
+  font-size: 8.25pt !important;
+  font-weight: 700 !important;
+  letter-spacing: .03em !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme="classic"] #app .bingo-card .card-top {
+  color: #fff !important;
+  background: linear-gradient(135deg, #18355f, #10213d) !important;
+}
+
+html[data-bingo-theme="classic"] #app .bingo-card .card-top span {
+  color: #ffd968 !important;
+}
+
+html[data-bingo-theme="classic"] #app .bingo-card .card-top strong {
+  color: #fff !important;
+}
+
+html[data-bingo-theme="classic"] #app .bingo-card .card-id {
+  color: #c8d6eb !important;
+}
+
+/* Card footer information is a readable status band, never fine print. */
+[data-bingo-theme] #app .bingo-card .card-distance {
+  min-height: 42px !important;
+  gap: 12px !important;
+  margin-top: 10px !important;
+  padding: 9px 11px !important;
+  border: 2px solid #b8c8dc !important;
+  border-radius: 8px !important;
+  color: #25364e !important;
+  background: #edf3fa !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif !important;
+  font-size: 10.5pt !important;
+  line-height: 1.25 !important;
+  text-shadow: none !important;
+}
+
+[data-bingo-theme] #app .bingo-card .card-distance span {
+  color: #3f516a !important;
+  font-size: 10.5pt !important;
+  font-weight: 800 !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .bingo-card .card-distance strong {
+  color: #155aab !important;
+  font-size: 11.25pt !important;
+  font-weight: 900 !important;
+}
+
+[data-bingo-theme] #app .bingo-card .card-distance.ready {
+  border-color: #c58a12 !important;
+  background: #fff0b8 !important;
+}
+
+[data-bingo-theme] #app .bingo-card .card-distance.ready :is(span, strong) {
+  color: #684600 !important;
+}
+
+[data-bingo-theme] #app .bingo-card .card-hint {
+  display: block !important;
+  margin: 8px 0 0 !important;
+  padding: 7px 9px !important;
+  border-radius: 6px;
+  color: #334761 !important;
+  background: rgba(255, 255, 255, .9) !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif !important;
+  font-size: 9.75pt !important;
+  font-weight: 650 !important;
+  line-height: 1.35 !important;
+  white-space: normal !important;
+  text-overflow: clip !important;
+  overflow: visible !important;
+  text-shadow: none !important;
+}
+
+/* Light-mode time controls keep dark ink regardless of the Hall palette. */
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-shell.theme-light .play-time-panel {
+  color: #17243a !important;
+  border-color: #7897c0 !important;
+  background: #edf4fd !important;
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-shell.theme-light .play-time-panel :is(span, strong, label) {
+  color: #17243a !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-shell.theme-light .play-time-panel label > span {
+  color: #40536f !important;
+  font-weight: 900 !important;
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-shell.theme-light .play-time-panel select {
+  color: #17243a !important;
+  border-color: #7897c0 !important;
+  background-color: #fff !important;
+  background-image: none !important;
+  opacity: 1 !important;
+}
+
+/* Distance-to-Bingo is the primary card footer status. */
+[data-bingo-theme] #app .bingo-card .card-distance strong {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  color: #fff !important;
+  background: #155aab !important;
+  font-size: 13.5pt !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  letter-spacing: .01em;
+}
+
+[data-bingo-theme] #app .bingo-card .card-distance.ready strong {
+  color: #3d2900 !important;
+  background: #ffd75b !important;
+}
+
+/* Live Draw controls use explicit, readable action and disabled states. */
+[data-bingo-theme] #app .dealer-primary-actions {
+  gap: 10px !important;
+}
+
+[data-bingo-theme] #app .dealer-primary-actions .btn {
+  min-height: 56px !important;
+  border: 2px solid !important;
+  font-size: 11.25pt !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .dealer-primary-actions .btn-call:not(:disabled) {
+  color: #fff !important;
+  border-color: #71c9ff !important;
+  background: #1769d7 !important;
+}
+
+[data-bingo-theme] #app .dealer-primary-actions .btn-auto:not(:disabled) {
+  color: #fff !important;
+  border-color: #66d99b !important;
+  background: #147a45 !important;
+}
+
+[data-bingo-theme] #app .dealer-primary-actions .dealer-undo:not(:disabled) {
+  color: #241600 !important;
+  border-color: #ffcf68 !important;
+  background: #f0ad32 !important;
+}
+
+[data-bingo-theme] #app .dealer-primary-actions .btn:disabled {
+  color: #d2ddec !important;
+  border-color: #647794 !important;
+  background: #2b3b53 !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08) !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .dealer-primary-actions .btn:is(:hover, :focus-visible):not(:disabled) {
+  filter: brightness(1.12) saturate(1.05);
+  outline: 3px solid #9fe8ff !important;
+  outline-offset: 2px !important;
+}
+
+/* Directed Play is a primary Dealer workflow and uses full control sizing. */
+[data-bingo-theme] #app .target-card-panel > .eyebrow {
+  font-size: 10.5pt !important;
+  letter-spacing: .12em !important;
+}
+
+[data-bingo-theme] #app .target-card-panel > h3 {
+  margin-top: 6px !important;
+  font-size: 19.5pt !important;
+  line-height: 1.15 !important;
+}
+
+[data-bingo-theme] #app .target-card-panel > p {
+  margin: 10px 0 20px !important;
+  font-size: 11.25pt !important;
+  line-height: 1.5 !important;
+}
+
+[data-bingo-theme] #app .target-card-panel label > span {
+  margin-bottom: 7px !important;
+  font-size: 10.5pt !important;
+}
+
+[data-bingo-theme] #app .target-card-panel input {
+  min-width: 110px;
+  min-height: 52px !important;
+  padding: 10px 13px !important;
+  font-size: 13.5pt !important;
+}
+
+[data-bingo-theme] #app .target-summary {
+  grid-template-columns: repeat(3, minmax(150px, 1fr)) !important;
+  gap: 12px !important;
+  margin: 16px 0 !important;
+}
+
+[data-bingo-theme] #app .target-summary > div {
+  min-height: 78px !important;
+  padding: 13px 14px !important;
+}
+
+[data-bingo-theme] #app .target-summary span {
+  font-size: 9pt !important;
+  line-height: 1.2 !important;
+}
+
+[data-bingo-theme] #app .target-summary strong {
+  margin-top: 7px !important;
+  font-size: 13.5pt !important;
+  line-height: 1.2 !important;
+}
+
+[data-bingo-theme] #app .target-card-panel :is(.target-call-btn, .view-target-btn) {
+  min-height: 54px !important;
+  margin-top: 10px !important;
+  padding: 10px 16px !important;
+  font-size: 11.25pt !important;
+  font-weight: 900 !important;
+}
+
+@media (max-width: 720px) {
+  [data-bingo-theme] #app .target-summary {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Manual balls and winning patterns use fixed accessible color pairs. */
+[data-bingo-theme] #app .dealer-ball-column {
+  border-color: #587294 !important;
+  background: #17263b !important;
+}
+
+[data-bingo-theme] #app .dealer-ball-column > strong {
+  color: #fff !important;
+  border: 1px solid #7194c2;
+  background: #0d203c !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .dealer-ball-column button {
+  color: #14243b !important;
+  border: 2px solid #8198b7 !important;
+  background: #f7f9fc !important;
+  font-size: 9pt !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .dealer-ball-column button:is(:hover, :focus-visible):not(:disabled) {
+  color: #fff !important;
+  border-color: #8deaff !important;
+  background: #1769d7 !important;
+  outline: 2px solid #8deaff !important;
+  outline-offset: 2px !important;
+}
+
+[data-bingo-theme] #app .dealer-ball-column button:is(.called, :disabled) {
+  color: #fff !important;
+  border-color: #ff9a91 !important;
+  background: #b72825 !important;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .16) !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .dealer-pattern-list button {
+  color: #31445f !important;
+  border-color: #8198b7 !important;
+  background: #f3f6fa !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .dealer-pattern-list button span {
+  color: #152b4a !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .dealer-pattern-list button small {
+  color: #425875 !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .dealer-pattern-list button:is(:hover, :focus-visible) {
+  color: #10213d !important;
+  border-color: #2c79cc !important;
+  background: #dcecff !important;
+  outline: 3px solid #7dcfff !important;
+  outline-offset: 2px !important;
+}
+
+[data-bingo-theme] #app .dealer-pattern-list button.active {
+  color: #fff !important;
+  border-color: #9fe8ff !important;
+  background: var(--dealer-active) !important;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .2) !important;
+}
+
+[data-bingo-theme] #app .dealer-pattern-list button.active :is(span, small) {
+  color: #fff !important;
+  opacity: 1 !important;
+}
+
+/* Manual Draw owns the full Dealer row and fills it edge to edge. */
+[data-bingo-theme] #app .dealer-grid {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+[data-bingo-theme] #app .ball-board-panel {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: none !important;
+  padding: clamp(18px, 2vw, 28px) !important;
+}
+
+[data-bingo-theme] #app .dealer-ball-board {
+  width: 100% !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: clamp(12px, 1.4vw, 22px) !important;
+  align-items: stretch;
+}
+
+[data-bingo-theme] #app .dealer-ball-column {
+  width: 100% !important;
+  min-width: 0 !important;
+  gap: clamp(6px, .7vw, 10px) !important;
+  padding: clamp(10px, 1vw, 16px) !important;
+}
+
+[data-bingo-theme] #app .dealer-ball-column > strong {
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  font-size: 16.5pt !important;
+}
+
+[data-bingo-theme] #app .dealer-ball-column button {
+  width: 100% !important;
+  min-width: 34px;
+  min-height: 34px;
+}
+
+@media (max-width: 900px) {
+  [data-bingo-theme] #app .dealer-ball-board {
+    grid-template-columns: 1fr !important;
+  }
+
+  [data-bingo-theme] #app .dealer-ball-column {
+    grid-template-columns: repeat(15, minmax(34px, 1fr)) !important;
+    overflow-x: auto;
+  }
+}
+
+/* Player cards grow with their five number rows and readable footer content. */
+[data-bingo-theme] #app .cards-stage {
+  min-height: 820px !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+[data-bingo-theme] #app .cards-grid {
+  height: auto !important;
+  min-height: 0 !important;
+  grid-template-rows: repeat(var(--card-rows), minmax(680px, auto)) !important;
+  align-items: stretch !important;
+  overflow: visible !important;
+}
+
+[data-bingo-theme] #app .cards-grid > .bingo-card {
+  min-height: 680px !important;
+  height: 100% !important;
+  align-self: stretch !important;
+  overflow: visible !important;
+}
+
+[data-bingo-theme] #app .bingo-card .number-grid {
+  flex: 0 0 auto !important;
+  min-height: 360px !important;
+  grid-template-rows: repeat(5, minmax(62px, 1fr)) !important;
+  overflow: visible !important;
+}
+
+[data-bingo-theme] #app .bingo-card .number-cell {
+  min-height: 62px !important;
+  overflow: visible !important;
+}
+
+@media (max-width: 700px) {
+  [data-bingo-theme] #app .cards-stage {
+    min-height: 760px !important;
+  }
+
+  [data-bingo-theme] #app .cards-grid {
+    grid-template-rows: repeat(var(--card-rows), minmax(620px, auto)) !important;
+  }
+
+  [data-bingo-theme] #app .cards-grid > .bingo-card {
+    min-height: 620px !important;
   }
 }
 
@@ -3242,6 +4073,67 @@ html.bingo-popout-window #app .dealer-ball-column button {
   background: var(--dealer-panel-alt) !important;
 }
 
+/* Player Hall 2 dealer ball keeps its own readable ink and illuminated rim. */
+html[data-bingo-theme="planet"] #app .dealer-current-ball {
+  width: 88px;
+  height: 88px;
+  border: 7px solid #2ad8ff !important;
+  color: #10213d !important;
+  background: radial-gradient(circle at 36% 28%, #ffffff 0 22%, #fff7d9 68%, #f2dba5 100%) !important;
+  box-shadow:
+    0 0 0 4px #1553a0,
+    0 0 24px rgba(42, 216, 255, .52),
+    0 10px 24px rgba(0, 0, 0, .48) !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme="planet"] #app .dealer-current-ball :is(span, small) {
+  color: #d92f2a !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme="planet"] #app .dealer-current-ball strong {
+  color: #10213d !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+/* Dealer pattern cards are primary setup controls and must read at a glance. */
+[data-bingo-theme] #app .dealer-pattern-list {
+  grid-template-columns: repeat(3, minmax(220px, 1fr)) !important;
+  gap: 12px !important;
+  margin-top: 18px !important;
+}
+
+[data-bingo-theme] #app .dealer-pattern-list button {
+  min-height: 82px !important;
+  padding: 14px 16px !important;
+}
+
+[data-bingo-theme] #app .dealer-pattern-list button span {
+  font-size: 12pt !important;
+  line-height: 1.15 !important;
+}
+
+[data-bingo-theme] #app .dealer-pattern-list button small {
+  margin-top: 7px !important;
+  font-size: 9pt !important;
+  line-height: 1.35 !important;
+}
+
+@media (max-width: 1150px) {
+  [data-bingo-theme] #app .dealer-pattern-list {
+    grid-template-columns: repeat(2, minmax(220px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  [data-bingo-theme] #app .dealer-pattern-list {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 [data-bingo-theme] #app .dealer-layout :is(input, select) {
   color: var(--dealer-text) !important;
   border: 2px solid var(--dealer-line) !important;
@@ -3820,5 +4712,366 @@ html.bingo-popout-window #app .dealer-ball-column button {
 
   [data-bingo-theme="current"] :is(.universal-view-button, .universal-start-button, .universal-setup-button, .universal-purchase-button) .bi {
     font-size: 19.5pt !important;
+  }
+}
+
+/* Player Hall 2: keep recent calls and card copy readable in both display modes. */
+html[data-bingo-theme="current"] #app .app-shell:is(.theme-light, .theme-dark) .recent-panel .section-heading h2 {
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-light .recent-panel .section-heading h2 {
+  color: #17243a !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .recent-panel .section-heading h2 {
+  color: #f4f7fc !important;
+}
+
+html[data-bingo-theme="current"] #app .recent-panel .section-heading > span {
+  color: #fff !important;
+  background: #1769d7 !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .recent-panel :is(p, small) {
+  color: #c8d5e8 !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-light .recent-panel :is(p, small) {
+  color: #52647d !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] #app .bingo-card {
+  color: #17243a !important;
+  background: #fff !important;
+}
+
+html[data-bingo-theme="current"] #app .bingo-card .card-distance {
+  display: grid !important;
+  grid-template-columns: minmax(92px, .75fr) minmax(170px, 1.25fr) !important;
+  align-items: center !important;
+  width: 100% !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme="current"] #app .bingo-card .card-distance span {
+  min-width: 0 !important;
+  color: #344963 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+html[data-bingo-theme="current"] #app .bingo-card .card-distance strong {
+  min-width: 0 !important;
+  color: #fff !important;
+  background: #075cae !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+html[data-bingo-theme="current"] #app .bingo-card .card-distance.ready strong {
+  color: #3d2900 !important;
+  background: #ffd75b !important;
+}
+
+html[data-bingo-theme="current"] #app .bingo-card .card-hint {
+  color: #344963 !important;
+  background: #fff !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+@media (max-width: 1050px) {
+  html[data-bingo-theme="current"] #app .bingo-card .card-distance {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Player Hall 2: mode changes never move the clock and visibly restyle Audience Display. */
+html[data-bingo-theme="current"] #app .topbar {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .brand-lockup {
+  justify-self: start !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .play-time-panel {
+  position: absolute !important;
+  left: 50% !important;
+  width: 460px !important;
+  max-width: 100% !important;
+  transform: translateX(-50%) !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .header-actions {
+  margin-left: auto !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-light .topbar {
+  color: #17243a !important;
+  border-bottom-color: #7897c0 !important;
+  background: #fff !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .topbar {
+  color: #f4f7fc !important;
+  border-bottom-color: #3d83c9 !important;
+  background: #0d1d33 !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-light .audience-screen {
+  color: #17243a !important;
+  background:
+    radial-gradient(circle at 24% 42%, rgba(23, 105, 224, .12), transparent 31%),
+    #eef4fc !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-light .audience-header {
+  color: #17243a !important;
+  border-color: #7897c0 !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-light .audience-header :is(strong, small, div),
+html[data-bingo-theme="current"] #app .app-shell.theme-light .audience-side :is(h2, h3, strong),
+html[data-bingo-theme="current"] #app .app-shell.theme-light .audience-call > p {
+  color: #17243a !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-light .audience-side section {
+  color: #17243a !important;
+  border-color: #7897c0 !important;
+  background: #fff !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-light .audience-side section > span,
+html[data-bingo-theme="current"] #app .app-shell.theme-light .audience-call > span,
+html[data-bingo-theme="current"] #app .app-shell.theme-light .audience-side p {
+  color: #52647d !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .audience-screen {
+  color: #f4f7fc !important;
+  background:
+    radial-gradient(circle at 24% 42%, rgba(38, 154, 230, .2), transparent 31%),
+    #071529 !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .audience-header {
+  color: #f4f7fc !important;
+  border-color: #3d83c9 !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .audience-header :is(strong, small, div),
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .audience-side :is(h2, h3, strong),
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .audience-call > p {
+  color: #f4f7fc !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .audience-side section {
+  color: #f4f7fc !important;
+  border-color: #3d83c9 !important;
+  background: #102746 !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .audience-side section > span,
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .audience-call > span,
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .audience-side p {
+  color: #b7c9e3 !important;
+}
+
+@media (max-width: 1800px) {
+  html[data-bingo-theme="current"] #app .topbar {
+    display: grid !important;
+    grid-template-columns: minmax(240px, 1fr) auto !important;
+    gap: 14px !important;
+  }
+
+  html[data-bingo-theme="current"] #app .topbar .play-time-panel {
+    position: static !important;
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    justify-self: center !important;
+    width: 400px !important;
+    transform: none !important;
+  }
+
+  html[data-bingo-theme="current"] #app .topbar .header-actions {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+  }
+}
+
+/* Card progress stays inside its card instead of sizing from its full sentence. */
+html[data-bingo-theme="current"] #app .bingo-card .card-distance {
+  grid-template-columns: minmax(90px, .8fr) minmax(0, 1.2fr) !important;
+  box-sizing: border-box !important;
+}
+
+html[data-bingo-theme="current"] #app .bingo-card .card-distance strong {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 42px !important;
+  padding: 7px 10px !important;
+  color: #fff !important;
+  background: #075cae !important;
+  font-size: 12pt !important;
+  line-height: 1.15 !important;
+  text-align: center !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme="current"] #app .bingo-card .card-distance.ready strong {
+  color: #3d2900 !important;
+  background: #ffd75b !important;
+}
+
+/* Auto-call speed remains readable on Player Hall 2's dark surface. */
+html[data-bingo-theme="current"] #app .app-shell.theme-dark :is(.speed-control, .auto-speed) > :is(span, label),
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .caller-panel .auto-speed {
+  color: #dce8f8 !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark :is(.speed-control, .auto-speed) select,
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .caller-panel select {
+  color: #f7faff !important;
+  border: 2px solid #6f91bd !important;
+  background: #10243d !important;
+  opacity: 1 !important;
+}
+
+/* Sort Cards text gets enough vertical room in every Bingo theme. */
+[data-bingo-theme] #app .sort-control select {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 290px !important;
+  min-height: 62px !important;
+  height: auto !important;
+  padding: 14px 34px 14px 13px !important;
+  font-size: 10.5pt !important;
+  line-height: 1.4 !important;
+  white-space: nowrap !important;
+  text-overflow: clip !important;
+}
+
+[data-bingo-theme] #app .sort-control {
+  grid-template-columns: auto minmax(290px, 1fr) !important;
+}
+
+/* Every screen tab has a complete outline, including the rightmost Audience tab. */
+[data-bingo-theme] #app .screen-switcher {
+  box-sizing: border-box !important;
+  border-width: 2px !important;
+  padding: 5px !important;
+  overflow: visible !important;
+}
+
+[data-bingo-theme] #app .screen-switcher button {
+  box-sizing: border-box !important;
+  border: 2px solid transparent !important;
+}
+
+[data-bingo-theme] #app .screen-switcher button.active {
+  border-color: color-mix(in srgb, var(--dealer-accent) 72%, #fff) !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.3), 0 4px 10px rgba(19,32,57,.18) !important;
+}
+
+/* Time-zone geometry is identical in light and dark mode on every theme. */
+[data-bingo-theme] #app .play-time-panel {
+  --timezone-arrow: #52647d;
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: 78px 122px 190px !important;
+  align-items: center !important;
+  gap: 10px !important;
+  min-width: 430px !important;
+  min-height: 68px !important;
+  padding: 7px 10px !important;
+}
+
+[data-bingo-theme] #app .app-shell.theme-dark .play-time-panel {
+  --timezone-arrow: #dce8f8;
+}
+
+[data-bingo-theme] #app .play-time-panel > :is(div, label) {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+[data-bingo-theme] #app .play-time-panel label {
+  width: 190px !important;
+}
+
+[data-bingo-theme] #app .play-time-panel select {
+  box-sizing: border-box !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  width: 190px !important;
+  min-width: 190px !important;
+  max-width: 190px !important;
+  min-height: 36px !important;
+  margin: 0 !important;
+  padding: 6px 34px 6px 10px !important;
+  border-width: 2px !important;
+  border-style: solid !important;
+  border-radius: 7px !important;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--timezone-arrow) 50%),
+    linear-gradient(135deg, var(--timezone-arrow) 50%, transparent 50%) !important;
+  background-position:
+    calc(100% - 16px) 50%,
+    calc(100% - 11px) 50% !important;
+  background-size: 6px 6px, 6px 6px !important;
+  background-repeat: no-repeat !important;
+  font-size: 9pt !important;
+  line-height: 1.2 !important;
+}
+
+@media (max-width: 700px) {
+  [data-bingo-theme] #app .play-time-panel {
+    grid-template-columns: 70px 110px minmax(160px, 190px) !important;
+    min-width: 380px !important;
+  }
+}
+
+/* Final responsive safeguards for the Hall control rail and action docks. */
+html[data-bingo-theme="current"] #app .game-layout {
+  box-sizing: border-box !important;
+  padding-right: max(64px, env(safe-area-inset-right)) !important;
+}
+
+html[data-bingo-theme="current"] .hall-controls-toggle {
+  right: 8px !important;
+}
+
+html[data-bingo-theme="current"] .universal-controls-dock {
+  position: static !important;
+  inset: auto !important;
+  flex: 0 0 auto !important;
+  box-sizing: border-box !important;
+}
+
+html[data-bingo-theme="classic"]:not(.hall-controls-collapsed) #app .game-layout {
+  box-sizing: border-box !important;
+  padding-bottom: clamp(360px, 46vh, 510px) !important;
+}
+
+@media (max-height: 760px) {
+  html[data-bingo-theme="classic"] .player-hall-controls {
+    max-height: calc(100vh - 32px) !important;
+    overflow-y: auto !important;
   }
 }
