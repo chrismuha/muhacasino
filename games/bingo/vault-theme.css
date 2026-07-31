@@ -5342,3 +5342,54 @@ html[data-bingo-theme="current"] #app .dealer-stats > div :is(span, small, p) {
   background: #263143 !important;
   opacity: 1 !important;
 }
+
+/* Classic light Dealer uses light surfaces, so its Dealer tokens must follow suit. */
+html[data-bingo-theme="classic"] #app .app-shell.theme-light .dealer-layout {
+  --dealer-bg: #f2dfb8;
+  --dealer-panel: #fff8e8;
+  --dealer-panel-alt: #f8e8c8;
+  --dealer-text: #2d1813;
+  --dealer-muted: #65483a;
+  --dealer-line: #a96b25;
+  --dealer-accent: #8a251f;
+  --dealer-active: #2d67b5;
+  --dealer-input: #fffaf0;
+}
+
+html[data-bingo-theme="classic"] #app .app-shell.theme-light .dealer-stats > div :is(span, small, p, strong),
+html[data-bingo-theme="classic"] #app .app-shell.theme-light .round-snapshot :is(span, small, p, strong) {
+  color: #2d1813 !important;
+  -webkit-text-fill-color: #2d1813 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme="classic"] #app .app-shell.theme-light .dealer-stats > div,
+html[data-bingo-theme="classic"] #app .app-shell.theme-light .round-snapshot {
+  border-color: #a96b25 !important;
+  background: #fff8e8 !important;
+}
+
+html.bingo-popout-window[data-bingo-theme="classic"] #app .app-shell.theme-light .cards-stage .stage-heading :is(.eyebrow, h2) {
+  color: #fff8e6 !important;
+  -webkit-text-fill-color: #fff8e6 !important;
+  opacity: 1 !important;
+}
+
+html.bingo-popout-window[data-bingo-theme="classic"] #app .app-shell.theme-light .cards-stage .stage-heading .eyebrow {
+  color: #ffd968 !important;
+  -webkit-text-fill-color: #ffd968 !important;
+}
+
+html.bingo-popout-window[data-bingo-theme="classic"] #app .app-shell.theme-light .called-history-frame {
+  color: #2d1813 !important;
+  background: #fff8e8 !important;
+  border-color: #a96b25 !important;
+}
+
+html.bingo-popout-window[data-bingo-theme="classic"] #app .app-shell.theme-light .called-history-frame > div:first-child :is(span, strong),
+html.bingo-popout-window[data-bingo-theme="classic"] #app .app-shell.theme-light .called-history-frame > p {
+  color: #2d1813 !important;
+  -webkit-text-fill-color: #2d1813 !important;
+  opacity: 1 !important;
+}
