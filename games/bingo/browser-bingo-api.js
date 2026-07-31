@@ -3,7 +3,30 @@
 
   const STATE_KEY = "muha-bingo-live-state";
   const channel = "BroadcastChannel" in window ? new BroadcastChannel("muha-bingo-live") : null;
+  const diagnosticChannel = "BroadcastChannel" in window
+    ? new BroadcastChannel("muha-bingo-diagnostics")
+    : null;
   const listeners = new Set();
+  const parameters = new URLSearchParams(window.location.search);
+  const windowId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+  function windowLabel() {
+    if (parameters.has("player")) return `Player ${parameters.get("player")}`;
+    const screen = parameters.get("screen");
+    if (screen === "dealer") return "Dealer";
+    if (screen === "audience") return "Audience";
+    return window.parent === window ? "Player Hall" : "Casino Player Hall";
+  }
+
+  diagnosticChannel?.addEventListener("message", (event) => {
+    if (event.data?.type !== "presence-request") return;
+    diagnosticChannel.postMessage({
+      type: "presence",
+      requestId: event.data.requestId,
+      id: windowId,
+      label: windowLabel(),
+    });
+  });
 
   function readState() {
     try {
@@ -38,13 +61,19 @@
     const url = new URL(window.location.href);
     url.search = "";
     Object.entries(parameters).forEach(([key, value]) => url.searchParams.set(key, value));
-    const build = "20260731-direct-loading";
+    const build = "20260731-window-reliability";
     url.searchParams.set("build", build);
-    const popup = window.open("", name);
+    const windowOwner = window.top && window.top !== window ? window.top : window;
+    const popup = windowOwner.open("", name);
     if (popup) {
-      const current = popup.location.href === "about:blank" || popup.location.href === ""
-        ? null
-        : new URL(popup.location.href);
+      let current = null;
+      try {
+        current = popup.location.href === "about:blank" || popup.location.href === ""
+          ? null
+          : new URL(popup.location.href);
+      } catch {
+        // A named window from another page can still be safely navigated below.
+      }
       const wrongScreen = Object.entries(parameters).some(
         ([key, value]) => current?.searchParams.get(key) !== String(value)
       );

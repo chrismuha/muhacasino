@@ -332,6 +332,43 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 .back-button { padding: 9px 14px; border: 1px solid rgba(255,255,255,.22); border-radius: 999px; background: #22263c; font-weight: 800; cursor: pointer; }
 .back-button:hover, .back-button:focus-visible { background: #343b5c; outline: 2px solid var(--cyan); }
 #gameFrame { display: block; width: 100%; height: calc(100vh - 56px); border: 0; background: #090b18; }
+.game-load-state {
+  position: absolute;
+  z-index: 4;
+  inset: 56px 0 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: #f5f7ff;
+  background: radial-gradient(circle at 50% 35%, #1c2340 0, #090b18 55%, #050610 100%);
+}
+.game-load-state[hidden] { display: none; }
+.game-load-card {
+  width: min(520px, 100%);
+  padding: 34px;
+  border: 1px solid #3c466b;
+  border-radius: 22px;
+  text-align: center;
+  background: #111528;
+  box-shadow: 0 24px 80px rgba(0,0,0,.42);
+}
+.game-load-card h2 { margin: 18px 0 8px; font-size: 20pt; }
+.game-load-card p { margin: 0; color: #b7bdd2; font-size: 11pt; line-height: 1.55; }
+.game-load-spinner {
+  display: inline-block;
+  width: 46px;
+  height: 46px;
+  border: 5px solid #343b59;
+  border-top-color: var(--cyan);
+  border-radius: 50%;
+  animation: game-load-spin .8s linear infinite;
+}
+.game-load-state.is-error .game-load-spinner { display: none; }
+.game-load-actions { display: flex; justify-content: center; gap: 12px; margin-top: 24px; }
+.game-load-actions[hidden] { display: none; }
+.game-load-actions button { min-height: 44px; padding: 10px 18px; border-radius: 999px; font-weight: 850; cursor: pointer; }
+.game-load-actions .secondary-button { border: 1px solid #525b7b; color: #f5f7ff; background: #252b43; }
+@keyframes game-load-spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 900px) {
   .nav-links { display: none; }

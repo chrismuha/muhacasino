@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#070811">
   <meta name="description" content="Muha Casino — slots, Bingo, and classic tabletop games in one game library.">
   <title>Muha Casino</title>
-  <link rel="stylesheet" href="styles.css?build=20260731-featured-alignment">
+  <link rel="stylesheet" href="styles.css?build=20260731-recovery-tools">
 </head>
 <body>
   <main id="launcher">
@@ -202,9 +202,20 @@
       </label>
     </div>
     <iframe id="gameFrame" title="Selected slot game" allow="fullscreen"></iframe>
+    <div id="gameLoadState" class="game-load-state" role="status" aria-live="polite">
+      <div class="game-load-card">
+        <span class="game-load-spinner" aria-hidden="true"></span>
+        <h2 id="gameLoadTitle">Loading game…</h2>
+        <p id="gameLoadMessage">Preparing the latest version.</p>
+        <div id="gameLoadActions" class="game-load-actions" hidden>
+          <button id="reloadGame" class="primary-button" type="button">Reload game</button>
+          <button id="returnToLibraryFromError" class="secondary-button" type="button">Return to library</button>
+        </div>
+      </div>
+    </div>
   </section>
 
   <script src="interaction-lock.js?build=1.1.2"></script>
-  <script src="launcher.js?build=20260731-direct-loading"></script>
+  <script src="launcher.js?build=20260731-window-reliability"></script>
 </body>
 </html>

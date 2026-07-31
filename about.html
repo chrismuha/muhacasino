@@ -4,9 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#070811">
+  <meta name="muha-build" content="20260731-window-reliability">
   <meta name="description" content="Muha Casino version history and game release notes.">
   <title>About & Version History | Muha Casino</title>
-  <link rel="stylesheet" href="about.css?build=20260731-casino-point-type">
+  <link rel="stylesheet" href="about.css?build=20260731-recovery-tools">
 </head>
 <body>
   <header class="about-topbar">
@@ -21,7 +22,7 @@
     <section class="about-hero">
       <p class="eyebrow">About this release</p>
       <h1>Version history</h1>
-      <p>This history was reconstructed from all 334 commits in the combined repository, including the original standalone history of every game. Major features are grouped into a few meaningful releases—v1.0.0, v1.0.1, v1.1.0, and the current v1.1.2—instead of assigning a new version to every small fix.</p>
+      <p>Major features are grouped into meaningful releases—v1.0.0, v1.0.1, v1.1.0, and the current v1.1.2—instead of assigning a new version to every small adjustment.</p>
       <div class="release-badge"><span>Current casino release</span><strong>v1.1.2</strong><small>July 29, 2026</small></div>
     </section>
 
@@ -35,6 +36,31 @@
       <a href="#yahtzee">Yahtzee</a>
     </nav>
 
+    <section class="diagnostic-panel" aria-labelledby="diagnosticTitle">
+      <div class="diagnostic-heading">
+        <div>
+          <p class="eyebrow">System status</p>
+          <h2 id="diagnosticTitle">Casino diagnostics</h2>
+        </div>
+        <button id="refreshDiagnostics" type="button">Refresh status</button>
+      </div>
+      <div class="diagnostic-grid">
+        <article><span>Version</span><strong id="diagnosticVersion">v1.1.2</strong></article>
+        <article><span>Build</span><strong id="diagnosticBuild">Checking…</strong></article>
+        <article><span>Bingo theme</span><strong id="diagnosticTheme">Checking…</strong></article>
+        <article><span>Legacy cache</span><strong id="diagnosticCache">Checking…</strong></article>
+        <article class="diagnostic-windows">
+          <span>Connected Bingo windows</span>
+          <strong id="diagnosticWindowCount">Checking…</strong>
+          <small id="diagnosticWindowList">Waiting for responses…</small>
+        </article>
+      </div>
+      <div class="diagnostic-actions">
+        <p>Use the reset only when a saved preference or an old browser cache is causing a problem.</p>
+        <button id="clearCasinoData" class="danger-action" type="button">Clear saved data and reload</button>
+      </div>
+    </section>
+
     <section class="suite-summary">
       <div>
         <span>v1.1.2</span>
@@ -46,7 +72,6 @@
         <li>Improved responsive game artwork, oversized featured titles, scrolling, and cache refresh behavior.</li>
         <li>Kept game preferences and release information consistent across the casino.</li>
         <li>Standardized explicit typography in point units and isolated readable root palettes across the casino shell and every game.</li>
-        <li>Re-audited all 334 commits and restored the meaningful development history from every original game repository.</li>
       </ul>
     </section>
 
@@ -60,13 +85,15 @@
           <li>Organized Bingo, slots, and tabletop titles into accurate game categories.</li>
           <li>Applied point-based typography and game-specific semantic color roots across the casino shell, slots, Bingo, Sorry!, and Yahtzee.</li>
           <li>Corrected the root launcher cache reference and removed its service-worker reload loop so the casino opens reliably from Live Server.</li>
-        </ul><small>Milestones reconstructed from commits f4c94ab through a55f757.</small></section>
+          <li>Added live About diagnostics, connected Bingo-window reporting, and a saved-data reset control.</li>
+          <li>Added visible game loading and failure screens with Reload Game and Return to Library recovery actions.</li>
+        </ul></section>
         <section><h3>v1.1.0 · Unified casino</h3><ul>
-          <li>Created the shared game library and merged the separate slot, Bingo, Sorry!, and Yahtzee repositories without discarding their histories.</li>
+          <li>Created the shared game library and combined the separate slot, Bingo, Sorry!, and Yahtzee games.</li>
           <li>Rebranded the library as Muha Casino with game categories, shared play-session tracking, portable paths, and responsive launch cards.</li>
           <li>Added casino-wide cache management, mobile navigation, interaction rules, and consistent session information.</li>
-        </ul><small>Audited milestones: 50aeba8, 7331f08, 78b2926, ad50010, 8163705.</small></section>
-        <section><h3>v1.0.0 · Initial release</h3><p>Launched the game library, then expanded it into Muha Casino with slots, Bingo, Sorry!, and Yahtzee.</p><small>Initial milestones: 50aeba8, 78b2926, ad50010.</small></section>
+        </ul></section>
+        <section><h3>v1.0.0 · Initial release</h3><p>Launched the game library, then expanded it into Muha Casino with slots, Bingo, Sorry!, and Yahtzee.</p></section>
       </article>
 
       <article id="big-money" class="history-card">
@@ -76,16 +103,16 @@
           <li>Elapsed time pauses between spins and stays outside the win/loss outline.</li>
           <li>Long result messages now wrap without clipping on smaller screens.</li>
           <li>Improved jackpot-chip artwork, mobile layout, session tracking, and game scrolling.</li>
-        </ul><small>Feature milestones: 6909171, 52e208e, 11e42a8, a55f757.</small></section>
+        </ul></section>
         <section><h3>v1.1.0 · Cash-slot expansion</h3><ul>
           <li>Added four independent jackpots, cash denominations, separate jackpot odds, paginated settings, pinned options, and clearer inserted-credit accounting.</li>
           <li>Added Spacebar spin and hold-to-auto-spin, centered reel chips, refined jackpot artwork, responsive controls, and last-chance-spin behavior.</li>
           <li>Expanded session statistics and denomination displays; Wild symbols were tested during development and later intentionally removed.</li>
-        </ul><small>Audited milestones: 07618e4, 1980a9d, 79c3d8f, 643a2ca, fd3a1b2, 3c37e8b, 453f7fd, 4e60694.</small></section>
+        </ul></section>
         <section><h3>v1.0.1 · Play and payout polish</h3><ul>
           <li>Improved reel spacing, jackpot alignment, payout chips, mobile formatting, settings defaults, and jackpot frequency.</li>
           <li>Added desktop keyboard play and repaired odds, statistics, balance increments, and credit calculations.</li>
-        </ul><small>Audited from the original Big Money repository history merged on July 29, 2026.</small></section>
+        </ul></section>
         <section><h3>v1.0.0 · Initial release</h3><p>Released the classic cash slot with paylines, credits, wagers, jackpots, and automatic spins.</p></section>
       </article>
 
@@ -96,16 +123,16 @@
           <li>Separated elapsed time from the result outline and fixed responsive message clipping.</li>
           <li>Added shared session tracking and improved cached-release loading.</li>
           <li>Refined reel artwork, mobile controls, and in-game scrolling.</li>
-        </ul><small>Feature milestones: 6909171, 52e208e, 39a1618, a55f757.</small></section>
+        </ul></section>
         <section><h3>v1.1.0 · Bonus and jackpot expansion</h3><ul>
           <li>Added independent jackpots, reel-driven features, free spins, a pick bonus, configurable bonus frequency and prizes, and adjustable reel sizing.</li>
           <li>Built hold-to-open and Spacebar auto-spin controls with countdowns, stop/reset behavior, mobile support, and crash recovery.</li>
           <li>Added configurable odds, improved payouts, realistic win/loss behavior, session winnings, reset controls, and corrected credit deductions.</li>
-        </ul><small>Audited milestones: c9e8f33, 33b6474, 9256f81, 736b859, 96b29d3, fc1c0e9, d950bb4, ed9d9fc, befeb93, a64db4d.</small></section>
+        </ul></section>
         <section><h3>v1.0.1 · Original slot refinement</h3><ul>
           <li>Added available credits and session winnings, improved arrow feedback, keyboard shortcuts, trackpad support, and mobile layouts.</li>
           <li>Refined reel presentation, metallic styling, payout messages, settings organization, and automatic-spin reliability.</li>
-        </ul><small>Audited from the original Neon Slots history beginning at commit 2ca4654.</small></section>
+        </ul></section>
         <section><h3>v1.0.0 · Initial release</h3><p>Released the neon casino slot with animated reels, paylines, jackpots, and configurable wagering.</p></section>
       </article>
 
@@ -116,54 +143,59 @@
           <li>Kept result messages readable and elapsed time outside the status outline.</li>
           <li>Reworked jackpot and link symbols to fill reel cards cleanly without animation.</li>
           <li>Kept the bonus wheel and savings-bank features usable on mobile screens.</li>
-        </ul><small>Feature milestones: 41b6de7, 6909171, 11e42a8, a55f757.</small></section>
+        </ul></section>
         <section><h3>v1.1.0 · Pretty Penny redesign</h3><ul>
           <li>Transformed the original Treasure Pots prototype into Pretty Penny with a complete savings-themed visual and gameplay redesign.</li>
           <li>Added the custom symbol set, collectible banks, link prizes, jackpots, purchase controls, and bonus wheel.</li>
           <li>Improved wheel visibility and controls for short and mobile screens before Muha Casino integration.</li>
-        </ul><small>Audited milestones: bb895c2, b66414d, ed66ef5, a45167e, bcd8262, 41b6de7.</small></section>
+        </ul></section>
         <section><h3>v1.0.0 · Initial release</h3><p>Released the savings-themed feature slot with three banks, link prizes, jackpots, and a bonus wheel.</p></section>
       </article>
 
       <article id="bingo" class="history-card featured-history">
         <header><span class="game-icon bingo">B</span><div><p>Casino Hall</p><h2>Muha Bingo</h2></div><b>v1.1.2</b></header>
-        <section><h3>v1.1.2 · Hall expansion</h3><ul>
-          <li>Added three interfaces: Planet Hall 2, Planet Hall, and Classic.</li>
-          <li>Added dedicated Start, Dealer, Controls / Setup, View, Options, Purchase, and Schedule controls.</li>
-          <li>Added 1–6 card views, Flashboard, more dauber designs, and three called-number states.</li>
-          <li>Added ball tapping to advance calling, persistent preferences, clearer 1-away/2-away indicators, and a prominent Bingo alert.</li>
-          <li>Restored access to the complete dealer console and native game-setup screen from Hall themes.</li>
-          <li>Moved the three-theme selector into the casino game bar and kept Planet Hall 2 as the default interface.</li>
-          <li>Improved Start Game reliability, added a direct Return to Planet Hall control, and gave each Hall action a distinct readable color.</li>
-          <li>Corrected the unconfigured Planet Hall 2 screen so its centered setup message no longer overlaps the number board.</li>
-          <li>Restored Planet Hall and Classic rendering and compacted the Planet Hall 2 footer to provide more room for cards and called numbers.</li>
-          <li>Made Start Game launch immediately with safe default Hall settings and fresh randomized cards and calls when custom setup is skipped.</li>
-          <li>Repaired the Bingo runtime startup so Planet Hall, Classic, and the native dealer interface render reliably.</li>
-          <li>Changed the older-theme button overlays into an arrow-controlled drawer that starts open and collapses automatically after Start Game.</li>
-          <li>Added a Solid Color dauber mode so custom daub colors only apply when selected, while graphic daubers now cover called, player-marked, and free squares in every interface.</li>
-          <li>Added a saved Solid Color customization overlay for player marks, called numbers, and free spaces, and redesigned the Splat dauber as glossy cartoon ink.</li>
-          <li>Extended saved color customization to the Circle dauber and replaced the customization overlay arrow with a clearer Back control.</li>
-          <li>Replaced improvised Hall button symbols with large, visible Bootstrap Icons and enlarged the complete control sets across Planet Hall 2, Planet Hall, and Classic.</li>
-          <li>Changed Dealer and Controls / Setup into a real connected browser window so the Hall remains unobstructed while rounds are configured and calls are controlled.</li>
-          <li>Made the Dealer window open with Bingo from the casino launch action and focus automatically again when Start, Dealer, or Controls is pressed.</li>
-          <li>Added live browser synchronization for Bingo settings, cards, calls, winners, and corrections across the Player Hall and Dealer window.</li>
-          <li>Separated all three Bingo interfaces into independent color-variable roots, corrected themed control contrast, and converted every Bingo font size to equivalent point units.</li>
-          <li>Removed the stale in-page Dealer takeover, forced a fresh Bingo cache generation, and kept the dedicated Dealer tab on its actual console screen.</li>
-          <li>Corrected low-contrast Dealer controls, expanded the Flashboard into a near-full-screen display, and added two confirmation steps before approving a Bingo claim.</li>
-          <li>Replaced the remaining legacy Bingo branding with a custom, CSS-rendered Muha Bingo logo throughout the Hall and connected screens.</li>
-          <li>Separated the Dealer window’s native Light/Dark palette from Hall themes, corrected both modes’ contrast, and kept the theme control available in every pop-out state.</li>
-          <li>Removed stale service-worker caching, forced reused Bingo windows onto the current build, and made the theme selector mount consistently in dealer and display pop-outs.</li>
-        </ul><small>Major Hall release: a55f757 and the current v1.1.2 follow-up.</small></section>
+        <section><h3>v1.1.2 · Hall expansion</h3>
+          <div class="release-groups">
+            <div class="release-group"><h4>Themes</h4><ul>
+              <li>Added Planet Hall 2, Planet Hall, and Classic, with Planet Hall 2 as the default.</li>
+              <li>Restored complete rendering in every theme and gave each interface independent, readable color roots.</li>
+              <li>Added a custom CSS-rendered Muha Bingo logo and large Bootstrap Icons throughout the Hall.</li>
+              <li>Separated native Light/Dark palettes from Hall themes and synchronized theme changes across every connected screen.</li>
+            </ul></div>
+            <div class="release-group"><h4>Dealer tools</h4><ul>
+              <li>Added dedicated Start, Dealer, Controls / Setup, View, Options, Purchase, and Schedule controls.</li>
+              <li>Restored the complete Dealer Console and game setup in a connected browser window that does not cover the Hall.</li>
+              <li>Added live synchronization for settings, cards, calls, winners, corrections, and focused window controls.</li>
+              <li>Improved Dealer contrast, expanded the Flashboard, and added two confirmation steps before approving claims.</li>
+              <li>Added a persistent Return to Player Hall control that focuses the existing casino player window or reopens it when necessary.</li>
+              <li>Stabilized named Dealer and Player windows, moved pop-out controls into a reserved dock, and added visible startup recovery instead of blank white pages.</li>
+            </ul></div>
+            <div class="release-group"><h4>Gameplay</h4><ul>
+              <li>Added 1–6 card views, automatic closest-to-Bingo sorting, distance labels, Flashboard, and three called-number states.</li>
+              <li>Added ball tapping, persistent preferences, 1-away/2-away indicators, and a prominent Bingo alert.</li>
+              <li>Made Start Game use safe randomized defaults when custom setup is skipped.</li>
+              <li>Added Solid Color, Circle, glossy Splat, and other saved dauber designs for called, marked, and free squares.</li>
+              <li>Changed older-theme controls into an arrow drawer that starts open and collapses after play begins.</li>
+            </ul></div>
+            <div class="release-group"><h4>Reliability</h4><ul>
+              <li>Corrected unconfigured-screen overlap, footer sizing, startup rendering, and return-to-Hall behavior.</li>
+              <li>Removed the stale in-page Dealer takeover and kept the dedicated Dealer tab on its real console.</li>
+              <li>Removed stale service-worker caching and forced reused Bingo windows onto the current build.</li>
+              <li>Made the theme selector mount consistently in Dealer, Audience, and player pop-outs.</li>
+              <li>Added connected-window diagnostics and launcher recovery controls without changing the v1.1.2 release number.</li>
+            </ul></div>
+          </div>
+        </section>
         <section><h3>v1.1.0 · Hall operations</h3><ul>
           <li>Expanded the original Bingo application with player-floor, dealer-console, audience-display, and card-design screens.</li>
           <li>Added round setup, patterns, manual and automatic calling, winner verification, credits, prizes, player lookup, printing, and pop-out displays.</li>
           <li>Added mobile layouts, shared playtime, card sorting, more winning patterns, portable assets, and the Muha Bingo rebrand.</li>
-        </ul><small>Audited milestones: 5f44e04, 71c8dd7, b2d8803, 4f07637, 115857b, 78b2926, fa88b3b.</small></section>
+        </ul></section>
         <section><h3>v1.0.1 · Player and dealer refinement</h3><ul>
           <li>Improved card presentation, live call status, player navigation, dealer workflows, results, winner review, and responsive operation.</li>
           <li>Prepared the standalone Electron hall for portable browser integration into Muha Casino.</li>
-        </ul><small>Reconstructed from the original Bingo repository and Electron build history.</small></section>
-        <section><h3>v1.0.0 · Initial release</h3><p>Added 75-ball Bingo with player cards, automatic ranking, winning patterns, live calling, dealer controls, and audience displays. Renamed Lucky Hall Bingo to Muha Bingo.</p><small>Initial milestones: 78b2926 and fa88b3b.</small></section>
+        </ul></section>
+        <section><h3>v1.0.0 · Initial release</h3><p>Added 75-ball Bingo with player cards, automatic ranking, winning patterns, live calling, dealer controls, and audience displays. Renamed Lucky Hall Bingo to Muha Bingo.</p></section>
       </article>
 
       <article id="sorry" class="history-card">
@@ -172,11 +204,11 @@
           <li>Integrated the game into the dedicated Tabletop category.</li>
           <li>Restored normal in-game scrolling after the casino scrollbar refinements.</li>
           <li>Applied casino-wide interaction, cache, and responsive launcher improvements.</li>
-        </ul><small>Integration milestones: ad50010, 50572f1, a55f757.</small></section>
+        </ul></section>
         <section><h3>v1.0.1 · Board and rules refinement</h3><ul>
           <li>Redesigned the complete board in CSS and repaired card drawing, board inconsistencies, pawn movement, starts, homes, slides, and safety zones.</li>
           <li>Restored the start circles and home stars and corrected the rule allowing pawns to leave Start on any legal number or Sorry! card.</li>
-        </ul><small>Audited milestones: 51b04aa, 7bcb8ec, a839800, f959153, f8d0442.</small></section>
+        </ul></section>
         <section><h3>v1.0.0 · Initial release</h3><p>Added the classic board game with its complete board, cards, pawn movement, turns, and game rules.</p></section>
       </article>
 
@@ -186,11 +218,11 @@
           <li>Integrated Yahtzee into the dedicated Tabletop category.</li>
           <li>Restored normal in-game scrolling after the casino scrollbar refinements.</li>
           <li>Applied casino-wide interaction, cache, and responsive launcher improvements.</li>
-        </ul><small>Integration milestones: ad50010, 50572f1, a55f757.</small></section>
+        </ul></section>
         <section><h3>v1.0.1 · Dice and round refinement</h3><ul>
           <li>Redesigned the dice for a more realistic appearance with hover and active motion and added the upper-section header.</li>
           <li>Repaired automatic roll resets between rounds, added movable dice interaction, and refined scoring and layout behavior.</li>
-        </ul><small>Audited milestones: 8e61fe6 and 1f213d8.</small></section>
+        </ul></section>
         <section><h3>v1.0.0 · Initial release</h3><p>Added the classic five-dice game with rolling, holds, scoring categories, bonuses, and full score tracking.</p></section>
       </article>
     </div>
@@ -198,5 +230,6 @@
 
   <footer><span>MUHA CASINO</span><a href="index.html">Return to game library</a></footer>
   <script src="interaction-lock.js?v=1.1.2"></script>
+  <script src="about-diagnostics.js?build=20260731-recovery-tools"></script>
 </body>
 </html>

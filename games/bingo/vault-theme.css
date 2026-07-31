@@ -443,8 +443,10 @@ html.bingo-popout-window[data-bingo-theme="planet"] #app {
 }
 
 html.bingo-popout-window #app .dealer-layout {
-  min-height: 100vh;
+  min-height: calc(100vh - 76px);
 }
+
+html.bingo-popout-window body { padding-bottom: 76px !important; }
 
 html.bingo-popout-window:not(:has(.theme-dark)),
 html.bingo-popout-window:not(:has(.theme-dark)) body,
@@ -529,8 +531,8 @@ html.bingo-popout-window:has(.theme-dark) #app .dealer-layout :is(
 html.bingo-popout-window .bingo-theme-switcher {
   top: auto;
   right: auto;
-  bottom: 20px;
-  left: 20px;
+  bottom: 10px;
+  left: 12px;
 }
 
 html.bingo-popout-window .bingo-theme-menu {
@@ -543,8 +545,8 @@ html.bingo-popout-window .bingo-theme-menu {
 html.bingo-popout-window .universal-view-button {
   position: fixed;
   z-index: 1400;
-  right: 20px;
-  bottom: 20px;
+  right: 12px;
+  bottom: 10px;
   display: inline-flex;
   min-width: 140px;
   min-height: 54px;
@@ -558,6 +560,58 @@ html.bingo-popout-window .universal-view-button {
   box-shadow: 0 8px 24px rgba(0,0,0,.38);
   font-size: 11.25pt;
   font-weight: 900;
+}
+
+.return-to-player-window {
+  position: fixed;
+  z-index: 10020;
+  top: auto;
+  bottom: 10px;
+  left: 118px;
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border: 2px solid var(--hall-return-border);
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(180deg, var(--hall-return-start), var(--hall-return-end));
+  box-shadow: 0 7px 20px rgba(0, 0, 0, .32);
+  font: 850 10.5pt/1 system-ui, sans-serif;
+  cursor: pointer;
+}
+
+html.bingo-embedded-window .bingo-theme-switcher { display: none !important; }
+
+@media (max-width: 680px) {
+  html.bingo-popout-window body { padding-bottom: 68px !important; }
+  html.bingo-popout-window .bingo-theme-trigger {
+    min-width: 48px;
+    width: 48px;
+    padding: 7px;
+  }
+  html.bingo-popout-window .bingo-theme-trigger span,
+  .return-to-player-window span { display: none; }
+  .return-to-player-window {
+    left: 70px;
+    width: 48px;
+    min-height: 48px;
+    justify-content: center;
+    padding: 6px;
+  }
+  html.bingo-popout-window .universal-view-button {
+    min-width: 92px;
+    min-height: 48px;
+  }
+}
+
+.return-to-player-window .bi { font-size: 18pt; }
+.return-to-player-window:hover,
+.return-to-player-window:focus-visible {
+  filter: brightness(1.12);
+  outline: 3px solid rgba(255, 255, 255, .55);
+  outline-offset: 2px;
 }
 
 :is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app {

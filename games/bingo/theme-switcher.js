@@ -6,6 +6,9 @@
   const CARD_COUNT_STORAGE_KEY = "muha-bingo-card-count";
   const launchParameters = new URLSearchParams(window.location.search);
   const isPopout = launchParameters.has("screen") || launchParameters.has("player");
+  const themeChannel = "BroadcastChannel" in window
+    ? new BroadcastChannel("muha-bingo-theme-sync")
+    : null;
   const themes = ["planet", "classic", "current"];
   const daubDesigns = [
     "solid", "splat", "pig", "duck", "star", "circle", "planet", "confetti",
@@ -73,7 +76,7 @@
     );
   }
 
-  function applyTheme(theme) {
+  function applyTheme(theme, broadcast = true) {
     const selectedTheme = themes.includes(theme) ? theme : "planet";
     document.documentElement.classList.remove("hall-native-controls-open");
     document.querySelector(".hall-overlay-background")?.remove();
@@ -104,16 +107,28 @@
     } catch {
       // The theme still works when local storage is unavailable.
     }
+    if (broadcast) themeChannel?.postMessage({ theme: selectedTheme });
   }
 
   window.applyBingoTheme = applyTheme;
   window.addEventListener("storage", (event) => {
-    if (event.key === STORAGE_KEY && event.newValue) applyTheme(event.newValue);
+    if (event.key === STORAGE_KEY && event.newValue) applyTheme(event.newValue, false);
   });
   window.addEventListener("message", (event) => {
     if (event.origin !== window.location.origin) return;
+    if (event.data?.type === "muha-bingo-focus-player-hall") {
+      window.focus();
+      if (window.parent !== window) {
+        window.parent.postMessage(event.data, window.location.origin);
+        window.parent.focus();
+      }
+      return;
+    }
     if (event.data?.type !== "muha-bingo-theme") return;
-    applyTheme(event.data.theme);
+    applyTheme(event.data.theme, false);
+  });
+  themeChannel?.addEventListener("message", (event) => {
+    if (event.data?.theme) applyTheme(event.data.theme, false);
   });
 
   function savedDaubDesign() {
@@ -857,6 +872,30 @@
     });
   }
 
+  function returnToPlayerWindow() {
+    if (window.opener && !window.opener.closed) {
+      window.opener.postMessage({ type: "muha-bingo-focus-player-hall" }, window.location.origin);
+      window.opener.focus();
+      return;
+    }
+    const playerUrl = new URL(window.location.href);
+    playerUrl.searchParams.delete("screen");
+    playerUrl.searchParams.delete("player");
+    playerUrl.searchParams.set("build", "20260731-player-return");
+    const playerWindow = window.open(playerUrl.href, "muha-bingo-player-hall");
+    playerWindow?.focus();
+  }
+
+  function mountPlayerReturnButton() {
+    if (!isPopout || document.querySelector(".return-to-player-window")) return;
+    const button = document.createElement("button");
+    button.className = "return-to-player-window";
+    button.type = "button";
+    button.innerHTML = '<i class="bi bi-arrow-left-circle-fill" aria-hidden="true"></i><span>RETURN TO PLAYER HALL</span>';
+    button.addEventListener("click", returnToPlayerWindow);
+    document.body.append(button);
+  }
+
   document.addEventListener("input", saveCardCount, true);
   document.addEventListener("change", saveCardCount, true);
 
@@ -864,6 +903,7 @@
     document.addEventListener("DOMContentLoaded", () => {
       if (isPopout) {
         mountThemeSwitcher();
+        mountPlayerReturnButton();
         mountViewOverlay();
         restoreSavedPreferences();
         return;
@@ -877,6 +917,7 @@
   } else {
     if (isPopout) {
       mountThemeSwitcher();
+      mountPlayerReturnButton();
       mountViewOverlay();
       restoreSavedPreferences();
       return;

@@ -64,7 +64,7 @@ const categoryNames = {
 };
 
 const SITE_VERSION = "1.1.2";
-const SITE_BUILD = "20260731-direct-loading";
+const SITE_BUILD = "20260731-window-reliability";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
@@ -72,6 +72,12 @@ const currentGame = document.querySelector("#currentGame");
 const backButton = document.querySelector("#backButton");
 const bingoThemeToolbar = document.querySelector("#bingoThemeToolbar");
 const bingoThemeSelect = document.querySelector("#bingoThemeSelect");
+const gameLoadState = document.querySelector("#gameLoadState");
+const gameLoadTitle = document.querySelector("#gameLoadTitle");
+const gameLoadMessage = document.querySelector("#gameLoadMessage");
+const gameLoadActions = document.querySelector("#gameLoadActions");
+const reloadGameButton = document.querySelector("#reloadGame");
+const returnToLibraryFromError = document.querySelector("#returnToLibraryFromError");
 const slides = [...document.querySelectorAll(".hero-slide")];
 const heroDots = document.querySelector("#heroDots");
 const categoryResults = document.querySelector("#categoryResults");
@@ -81,6 +87,11 @@ const appVersion = document.querySelector("#appVersion");
 let activeSlide = 0;
 let sliderTimer;
 let bingoDealerWindow = null;
+let activeGameId = null;
+let gameLoadTimer = 0;
+const bingoThemeChannel = "BroadcastChannel" in window
+  ? new BroadcastChannel("muha-bingo-theme-sync")
+  : null;
 
 function removeLegacyCasinoCaching() {
   if ("serviceWorker" in navigator) {
@@ -178,6 +189,9 @@ document.querySelector("#heroNext").addEventListener("click", () => {
 });
 
 function showLauncher() {
+  window.clearTimeout(gameLoadTimer);
+  activeGameId = null;
+  gameLoadState.hidden = true;
   gameFrame.src = "about:blank";
   gameView.hidden = true;
   launcher.hidden = false;
@@ -187,11 +201,43 @@ function showLauncher() {
   restartSlider();
 }
 
+function showGameLoading() {
+  window.clearTimeout(gameLoadTimer);
+  gameLoadState.classList.remove("is-error");
+  gameLoadTitle.textContent = "Loading game…";
+  gameLoadMessage.textContent = "Preparing the latest version.";
+  gameLoadActions.hidden = true;
+  gameLoadState.hidden = false;
+  gameLoadTimer = window.setTimeout(() => {
+    showGameError("This game is taking too long to load.");
+  }, 12000);
+}
+
+function showGameError(message = "The game could not be loaded.") {
+  window.clearTimeout(gameLoadTimer);
+  gameLoadState.classList.add("is-error");
+  gameLoadTitle.textContent = "Game unavailable";
+  gameLoadMessage.textContent = message;
+  gameLoadActions.hidden = false;
+  gameLoadState.hidden = false;
+}
+
+function activeGameUrl() {
+  const game = games[activeGameId];
+  if (!game) return null;
+  const url = new URL(game.path, window.location.href);
+  url.searchParams.set("build", SITE_BUILD);
+  url.searchParams.set("reload", Date.now().toString());
+  return url.href;
+}
+
 function launchGame(gameId, updateHistory = true) {
   const game = games[gameId];
   if (!game) return;
 
   window.clearInterval(sliderTimer);
+  activeGameId = gameId;
+  showGameLoading();
   currentGame.textContent = game.title;
   bingoThemeToolbar.hidden = gameId !== "bingo";
   if (gameId === "bingo") {
@@ -282,11 +328,53 @@ function sendBingoTheme(theme) {
   gameFrame.contentWindow?.applyBingoTheme?.(theme);
 }
 
+bingoThemeChannel?.addEventListener("message", (event) => {
+  const theme = event.data?.theme;
+  if (!["planet", "classic", "current"].includes(theme)) return;
+  bingoThemeSelect.value = theme;
+  if (!bingoThemeToolbar.hidden) sendBingoTheme(theme);
+});
+
+window.addEventListener("message", (event) => {
+  if (event.origin !== window.location.origin) return;
+  if (event.data?.type !== "muha-bingo-focus-player-hall") return;
+  if (activeGameId !== "bingo") launchGame("bingo");
+  window.focus();
+  gameFrame.focus();
+});
+
 gameFrame.addEventListener("load", () => {
+  if (!activeGameId || gameFrame.src === "about:blank") return;
+  window.clearTimeout(gameLoadTimer);
+  try {
+    const frameDocument = gameFrame.contentDocument;
+    const visibleText = frameDocument?.body?.innerText?.trim();
+    const hasContent = Boolean(frameDocument?.body?.children?.length || visibleText);
+    if (!hasContent) {
+      showGameError("The game opened without any content.");
+      return;
+    }
+  } catch {
+    // Cross-origin frames cannot be inspected, but a completed load is still usable.
+  }
+  gameLoadState.hidden = true;
   if (!bingoThemeToolbar.hidden) {
     sendBingoTheme(bingoThemeSelect.value);
   }
 });
+
+gameFrame.addEventListener("error", () => {
+  if (activeGameId) showGameError();
+});
+
+reloadGameButton.addEventListener("click", () => {
+  const url = activeGameUrl();
+  if (!url) return showLauncher();
+  showGameLoading();
+  gameFrame.src = url;
+});
+
+returnToLibraryFromError.addEventListener("click", showLauncher);
 
 window.addEventListener("popstate", () => {
   const gameId = window.location.hash.slice(1);
