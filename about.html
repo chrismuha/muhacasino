@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#070811">
-  <meta name="muha-build" content="20260731-window-reliability">
+  <meta name="muha-build" content="20260731-dealer-overlay-logo">
   <meta name="description" content="Muha Casino version history and game release notes.">
   <title>About & Version History | Muha Casino</title>
-  <link rel="stylesheet" href="about.css?build=20260731-recovery-tools">
+  <link rel="stylesheet" href="about.css?build=20260731-dealer-overlay-logo">
 </head>
 <body>
   <header class="about-topbar">
@@ -22,8 +22,8 @@
     <section class="about-hero">
       <p class="eyebrow">About this release</p>
       <h1>Version history</h1>
-      <p>Major features are grouped into meaningful releases—v1.0.0, v1.0.1, v1.1.0, and the current v1.1.2—instead of assigning a new version to every small adjustment.</p>
-      <div class="release-badge"><span>Current casino release</span><strong>v1.1.2</strong><small>July 29, 2026</small></div>
+      <p>Major features are grouped into meaningful releases, with each update focused on improvements players can see and use.</p>
+      <div class="release-badge"><span>Current casino release</span><strong>v1.1.3</strong><small>July 31, 2026</small></div>
     </section>
 
     <nav class="history-nav" aria-label="Choose version history">
@@ -45,7 +45,7 @@
         <button id="refreshDiagnostics" type="button">Refresh status</button>
       </div>
       <div class="diagnostic-grid">
-        <article><span>Version</span><strong id="diagnosticVersion">v1.1.2</strong></article>
+        <article><span>Version</span><strong id="diagnosticVersion">v1.1.3</strong></article>
         <article><span>Build</span><strong id="diagnosticBuild">Checking…</strong></article>
         <article><span>Bingo theme</span><strong id="diagnosticTheme">Checking…</strong></article>
         <article><span>Legacy cache</span><strong id="diagnosticCache">Checking…</strong></article>
@@ -63,22 +63,37 @@
 
     <section class="suite-summary">
       <div>
-        <span>v1.1.2</span>
-        <h2>Casino-wide feature release</h2>
+        <span>v1.1.3</span>
+        <h2>Bingo Hall usability release</h2>
       </div>
       <ul>
-        <li>Introduced the expanded three-theme Bingo Hall experience.</li>
-        <li>Added active-spin elapsed timing and improved result messaging across every slot.</li>
-        <li>Improved responsive game artwork, oversized featured titles, scrolling, and cache refresh behavior.</li>
-        <li>Kept game preferences and release information consistent across the casino.</li>
-        <li>Standardized explicit typography in point units and isolated readable root palettes across the casino shell and every game.</li>
+        <li>Changed the Big Money Deluxe title accent from blue to yellow.</li>
+        <li>Gave Pretty Penny a copper Home theme, cabinet, symbol, and game card.</li>
+        <li>Gave Muha Bingo a green Home theme, cabinet, ball, and game card.</li>
+        <li>Kept Bingo on the Player Hall instead of opening Dealer automatically.</li>
+        <li>Expanded the Player Hall Flashboard to fill its section in every theme.</li>
+        <li>Added a 1–6 card purchase flow powered by unlimited test credits.</li>
+        <li>Made Dealer a full-screen overlay with a separate-window option in Settings.</li>
+        <li>Required Dealer setup before a game can begin.</li>
+        <li>Hid setup after calling begins while keeping Dealer tabs available.</li>
+        <li>Added clearer Dealer steps, larger controls, and responsive layouts.</li>
+        <li>Redesigned the Muha Bingo logo for brighter, clearer lettering.</li>
+        <li>Centered the unlimited symbol directly above the Credits label.</li>
+        <li>Updated release diagnostics and cache identifiers for v1.1.3.</li>
       </ul>
     </section>
 
     <div class="history-grid">
       <article id="casino" class="history-card">
-        <header><span class="game-icon">M</span><div><p>Casino shell</p><h2>Muha Casino Home</h2></div><b>v1.1.2</b></header>
-        <section><h3>v1.1.2 · Current</h3><ul>
+        <header><span class="game-icon">M</span><div><p>Casino shell</p><h2>Muha Casino Home</h2></div><b>v1.1.3</b></header>
+        <section><h3>v1.1.3 · Current</h3><ul>
+          <li>Changed the Big Money Deluxe title accent from blue to yellow.</li>
+          <li>Gave Pretty Penny a copper Home theme and matching game card.</li>
+          <li>Gave Muha Bingo a green Home theme and matching game card.</li>
+          <li>Kept Bingo focused on the Player Hall until Dealer controls are requested.</li>
+          <li>Updated visible version, diagnostics, and cache metadata for v1.1.3.</li>
+        </ul></section>
+        <section><h3>v1.1.2 · Casino expansion</h3><ul>
           <li>Added this About and per-game version-history screen.</li>
           <li>Refined the full-screen featured carousel, oversized game titles, artwork clearance, and responsive layout.</li>
           <li>Added visible release metadata without the old version flash during page loading.</li>
@@ -153,7 +168,18 @@
       </article>
 
       <article id="bingo" class="history-card featured-history">
-        <header><span class="game-icon bingo">B</span><div><p>Casino Hall</p><h2>Muha Bingo</h2></div><b>v1.1.2</b></header>
+        <header><span class="game-icon bingo">B</span><div><p>Casino Hall</p><h2>Muha Bingo</h2></div><b>v1.1.3</b></header>
+        <section><h3>v1.1.3 · Player and dealer usability</h3><ul>
+          <li>Added a guided 1–6 card-purchase flow with unlimited test credits.</li>
+          <li>Expanded the Player Hall Flashboard to fill its section in every theme.</li>
+          <li>Made Dealer a full-screen overlay by default.</li>
+          <li>Added an optional separate Dealer window under Settings.</li>
+          <li>Required Dealer setup before starting a game.</li>
+          <li>Hid setup after calling begins while retaining Dealer tabs.</li>
+          <li>Added larger Dealer controls, clearer steps, and responsive layouts.</li>
+          <li>Redesigned the Muha Bingo logo with brighter, more readable lettering.</li>
+          <li>Centered the unlimited symbol directly above the Credits label.</li>
+        </ul></section>
         <section><h3>v1.1.2 · Hall expansion</h3>
           <div class="release-groups">
             <div class="release-group"><h4>Themes</h4><ul>
@@ -232,7 +258,7 @@
   </main>
 
   <footer><span>MUHA CASINO</span><a href="index.html">Return to game library</a></footer>
-  <script src="interaction-lock.js?v=1.1.2"></script>
-  <script src="about-diagnostics.js?build=20260731-recovery-tools"></script>
+  <script src="interaction-lock.js?v=1.1.3"></script>
+  <script src="about-diagnostics.js?build=20260731-dealer-overlay-logo"></script>
 </body>
 </html>

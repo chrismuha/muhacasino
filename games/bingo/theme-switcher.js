@@ -4,6 +4,8 @@
   const SOLID_COLOR_STORAGE_KEY = "muha-bingo-solid-colors";
   const VIEW_COUNT_STORAGE_KEY = "muha-bingo-view-count";
   const CARD_COUNT_STORAGE_KEY = "muha-bingo-card-count";
+  const DEALER_POPOUT_STORAGE_KEY = "muha-bingo-dealer-popout";
+  const UNLIMITED_CREDITS = 1_000_000_000;
   const launchParameters = new URLSearchParams(window.location.search);
   const isPopout = launchParameters.has("screen") || launchParameters.has("player");
   const themeChannel = "BroadcastChannel" in window
@@ -294,6 +296,79 @@
       input.dispatchEvent(new Event("input", { bubbles: true }));
       input.dispatchEvent(new Event("change", { bubbles: true }));
     });
+    setSetupNumber(/^starting credits$/i, UNLIMITED_CREDITS);
+  }
+
+  function setSetupNumber(labelPattern, value) {
+    const label = [...document.querySelectorAll("#app .setup-fields label")].find((candidate) =>
+      labelPattern.test(candidate.querySelector("span")?.textContent?.trim() || "")
+    );
+    const input = label?.querySelector("input[type='number']");
+    if (!input) return false;
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+    if (setter) setter.call(input, String(value));
+    else input.value = String(value);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    return true;
+  }
+
+  function showUnlimitedCredits() {
+    document.querySelectorAll("#app div").forEach((container) => {
+      const label = container.querySelector(":scope > span")?.textContent?.trim() || "";
+      if (!/^(credit balance|player balance|starting credits)$/i.test(label)) return;
+      const value = container.querySelector(":scope > strong");
+      if (value && value.textContent !== "∞ credits") value.textContent = "∞ credits";
+    });
+    const planetCredit = document.querySelector(".planet-credit");
+    if (planetCredit) {
+      if (!planetCredit.querySelector("strong") || !planetCredit.querySelector("span")) {
+        planetCredit.innerHTML = "<strong>∞</strong><span>CREDITS</span>";
+      }
+      planetCredit.querySelector("strong").textContent = "∞";
+      planetCredit.querySelector("span").textContent = "CREDITS";
+    }
+  }
+
+  function enhanceDealerSetup() {
+    const setup = document.querySelector("#app .game-setup-panel");
+    if (!setup || setup.querySelector(".dealer-setup-guide")) return;
+    const guide = document.createElement("ol");
+    guide.className = "dealer-setup-guide";
+    guide.setAttribute("aria-label", "Dealer setup steps");
+    guide.innerHTML = `
+      <li><strong>1</strong><span><b>Set up</b><small>Choose players, cards, and winners.</small></span></li>
+      <li><strong>2</strong><span><b>Prepare cards</b><small>Create the Player Hall cards.</small></span></li>
+      <li><strong>3</strong><span><b>Start calling</b><small>Begin the session when players are ready.</small></span></li>
+    `;
+    setup.prepend(guide);
+  }
+
+  async function purchaseCards(cardCount) {
+    const count = Math.max(1, Math.min(6, Number(cardCount) || 1));
+    try {
+      window.localStorage.setItem(CARD_COUNT_STORAGE_KEY, String(count));
+    } catch {
+      // The purchase can still complete when preference storage is unavailable.
+    }
+
+    const dealerOpened = openDealerWindow();
+    if (!dealerOpened || !await ensureSetupOpen(2000)) return false;
+    setSetupNumber(/^players$/i, 1);
+    setSetupNumber(/^cards per player$/i, count);
+    setSetupNumber(/^starting credits$/i, UNLIMITED_CREDITS);
+    setSetupNumber(/^card cost$/i, 1);
+    setSetupNumber(/^maximum winners$/i, 1);
+
+    const prepared =
+      await waitAndClickSelector("#app .setup-round-btn", 2400) ||
+      await waitAndClick(/apply\s*&\s*start round/i, 1200);
+    if (!prepared) return false;
+    await waitAndClickSelector("#app .prompt-confirm-btn", 1800);
+    const cardsReady = await waitForPlayerCards(3500);
+    await returnToPlayerHall();
+    showUnlimitedCredits();
+    return cardsReady;
   }
 
   function waitForPlayerCards(timeoutMs = 3000) {
@@ -370,6 +445,17 @@
   }
 
   function openDealerWindow() {
+    let usePopout = false;
+    try {
+      usePopout = window.localStorage.getItem(DEALER_POPOUT_STORAGE_KEY) === "true";
+    } catch {
+      // The full-screen Dealer overlay remains the default.
+    }
+    if (!usePopout) {
+      const opened = clickMatchingControl(/^dealer console$/i);
+      if (opened) document.documentElement.classList.add("dealer-overlay-open");
+      return opened;
+    }
     const popup = window.bingoApi?.openScreen?.("dealer");
     if (!popup) {
       showHallMessage(
@@ -410,16 +496,10 @@
         "#app .bingo-card:not(.preview-card):not(.verification-full-card)"
       ));
       if (!cardsExist) {
-        prepareAndStartDefaultRound().then((started) => {
-          if (started) {
-            setHallControlsCollapsed(true);
-          } else {
-            showHallMessage(
-              "START GAME",
-              "The Bingo engine is still loading. Wait a moment and press Start Game again."
-            );
-          }
-        });
+        showHallMessage(
+          "SETUP REQUIRED",
+          "Complete Dealer Setup and prepare player cards before starting the game."
+        );
         return;
       }
 
@@ -457,9 +537,7 @@
     }
 
     if (action === "purchase") {
-      if (!clickMatchingControl(/setup|prepare|new round/i)) {
-        showHallMessage("PURCHASE", "Prepare player cards in Game Setup before adding cards to the session.");
-      }
+      openPurchaseOverlay();
       return;
     }
 
@@ -535,6 +613,14 @@
     universalSetup.innerHTML = '<i class="bi bi-sliders" aria-hidden="true"></i><span>CONTROLS</span>';
     universalSetup.addEventListener("click", () => handleHallAction("setup"));
     document.body.append(universalSetup);
+
+    const universalPurchase = document.createElement("button");
+    universalPurchase.className = "universal-purchase-button";
+    universalPurchase.type = "button";
+    universalPurchase.dataset.hallAction = "purchase";
+    universalPurchase.innerHTML = '<i class="bi bi-cart-fill" aria-hidden="true"></i><span>PURCHASE</span>';
+    universalPurchase.addEventListener("click", () => handleHallAction("purchase"));
+    document.body.append(universalPurchase);
 
     const controlsToggle = document.createElement("button");
     controlsToggle.className = "hall-controls-toggle";
@@ -703,6 +789,10 @@
       "#app .bingo-card:not(.preview-card):not(.verification-full-card)"
     ));
     const label = isRunning ? "PAUSE SESSION" : hasCards ? "PLAY SESSION" : "START GAME";
+    document.documentElement.classList.toggle(
+      "dealer-round-active",
+      isRunning || calledNumbers().size > 0
+    );
     document.querySelectorAll("[data-hall-action='start'] span").forEach((span) => {
       if (span.textContent !== label) span.textContent = label;
     });
@@ -714,6 +804,63 @@
     restoreCardCount();
     updateBingoProximity();
     syncStartButtons();
+    showUnlimitedCredits();
+    enhanceDealerSetup();
+  }
+
+  function openPurchaseOverlay() {
+    const overlay = document.querySelector(".purchase-cards-overlay");
+    if (!overlay) return;
+    const saved = savedCount(CARD_COUNT_STORAGE_KEY, 3);
+    overlay.querySelector("[data-purchase-count]").value = String(saved);
+    overlay.querySelector("[data-purchase-summary]").textContent =
+      `${saved} card${saved === 1 ? "" : "s"} · ${saved} fake credit${saved === 1 ? "" : "s"}`;
+    overlay.hidden = false;
+  }
+
+  function mountPurchaseOverlay() {
+    if (document.querySelector(".purchase-cards-overlay")) return;
+    const overlay = document.createElement("div");
+    overlay.className = "purchase-cards-overlay";
+    overlay.hidden = true;
+    overlay.innerHTML = `
+      <section role="dialog" aria-modal="true" aria-labelledby="purchase-cards-title">
+        <header><span>PLAYER HALL STORE</span><h2 id="purchase-cards-title">Purchase Bingo cards</h2></header>
+        <p>Choose cards for this session. Credits are unlimited while the casino economy is in test mode.</p>
+        <label><span>Cards</span><select data-purchase-count>
+          <option value="1">1 card</option><option value="2">2 cards</option>
+          <option value="3">3 cards</option><option value="4">4 cards</option>
+          <option value="5">5 cards</option><option value="6">6 cards</option>
+        </select></label>
+        <div class="purchase-credit-row"><span>Available</span><strong>∞ CREDITS</strong></div>
+        <div class="purchase-credit-row"><span>Order</span><strong data-purchase-summary></strong></div>
+        <footer><button type="button" data-purchase-cancel>CANCEL</button><button type="button" data-purchase-confirm>PURCHASE CARDS</button></footer>
+      </section>
+    `;
+    const countInput = overlay.querySelector("[data-purchase-count]");
+    countInput.addEventListener("change", () => {
+      const count = Number(countInput.value);
+      overlay.querySelector("[data-purchase-summary]").textContent =
+        `${count} card${count === 1 ? "" : "s"} · ${count} fake credit${count === 1 ? "" : "s"}`;
+    });
+    overlay.addEventListener("click", async (event) => {
+      if (event.target === overlay || event.target.closest("[data-purchase-cancel]")) overlay.hidden = true;
+      const confirm = event.target.closest("[data-purchase-confirm]");
+      if (!confirm) return;
+      confirm.disabled = true;
+      confirm.textContent = "PREPARING CARDS…";
+      const purchased = await purchaseCards(Number(countInput.value));
+      confirm.disabled = false;
+      confirm.textContent = "PURCHASE CARDS";
+      overlay.hidden = true;
+      showHallMessage(
+        purchased ? "PURCHASE COMPLETE" : "PURCHASE NEEDS ATTENTION",
+        purchased
+          ? "Your cards are ready in the Player Hall. Your fake-credit balance remains unlimited."
+          : "The Bingo setup did not finish. Open Controls / Setup and try the purchase again."
+      );
+    });
+    document.body.append(overlay);
   }
 
   function openViewOverlay() {
@@ -831,6 +978,10 @@
             <span style="--preview-color:var(--free-space)">FREE</span>
           </div>
         </div>
+        <label class="dealer-window-setting">
+          <input type="checkbox" data-dealer-popout>
+          <span><strong>Open Dealer in a separate window</strong><small>Disabled by default. Enable this to use a separate Dealer tab instead of the full-screen overlay.</small></span>
+        </label>
         <footer><button type="button" data-daub-options-close>CONFIRM</button></footer>
       </section>
     `;
@@ -854,12 +1005,26 @@
       if (event.target.closest("[data-daub-options-close]") || event.target === overlay) overlay.hidden = true;
     });
     overlay.addEventListener("input", (event) => {
+      if (event.target.matches("[data-dealer-popout]")) {
+        try {
+          window.localStorage.setItem(DEALER_POPOUT_STORAGE_KEY, String(event.target.checked));
+        } catch {
+          // The selection remains usable until this page closes.
+        }
+        return;
+      }
       if (!event.target.matches("[data-solid-color]")) return;
       const colors = savedSolidColors();
       colors[event.target.dataset.solidColor] = event.target.value;
       applySolidColors(colors);
     });
     document.body.append(overlay);
+    try {
+      overlay.querySelector("[data-dealer-popout]").checked =
+        window.localStorage.getItem(DEALER_POPOUT_STORAGE_KEY) === "true";
+    } catch {
+      overlay.querySelector("[data-dealer-popout]").checked = false;
+    }
     applySolidColors();
     applyDaubDesign(savedDaubDesign());
   }
@@ -868,6 +1033,9 @@
     if (document.documentElement.dataset.ballTapReady === "true") return;
     document.documentElement.dataset.ballTapReady = "true";
     document.addEventListener("click", (event) => {
+      if (event.target.closest("#app button")?.textContent?.trim().match(/^player floor$/i)) {
+        document.documentElement.classList.remove("dealer-overlay-open");
+      }
       const ball = event.target.closest(
         ".planet-current-ball, #app .bingo-ball, #app .dealer-current-ball, #app .audience-ball"
       );
@@ -879,7 +1047,7 @@
     const playerUrl = new URL(window.location.href);
     playerUrl.searchParams.delete("screen");
     playerUrl.searchParams.delete("player");
-    playerUrl.searchParams.set("build", "20260731-time-card-contrast");
+    playerUrl.searchParams.set("build", "20260731-dealer-overlay-logo");
 
     if (window.opener && !window.opener.closed) {
       let playerWindow = window.opener;
@@ -938,6 +1106,7 @@
       mountThemeSwitcher();
       mountViewOverlay();
       mountDaubOptions();
+      mountPurchaseOverlay();
       mountBallTapControl();
       restoreSavedPreferences();
     }, { once: true });
@@ -953,6 +1122,7 @@
     mountThemeSwitcher();
     mountViewOverlay();
     mountDaubOptions();
+    mountPurchaseOverlay();
     mountBallTapControl();
     restoreSavedPreferences();
   }
