@@ -5,11 +5,15 @@
   const VIEW_COUNT_STORAGE_KEY = "muha-bingo-view-count";
   const CARD_COUNT_STORAGE_KEY = "muha-bingo-card-count";
   const DEALER_POPOUT_STORAGE_KEY = "muha-bingo-dealer-popout";
+  const INCORRECT_BINGO_STORAGE_KEY = "muha-bingo-incorrect-claims";
   const UNLIMITED_CREDITS = 1_000_000_000;
   const launchParameters = new URLSearchParams(window.location.search);
   const isPopout = launchParameters.has("screen") || launchParameters.has("player");
   const themeChannel = "BroadcastChannel" in window
     ? new BroadcastChannel("muha-bingo-theme-sync")
+    : null;
+  const incorrectBingoChannel = "BroadcastChannel" in window
+    ? new BroadcastChannel("muha-bingo-incorrect-claims")
     : null;
   const themes = ["planet", "classic", "current"];
   const daubDesigns = [
@@ -200,7 +204,9 @@
       switcher.querySelector(".bingo-theme-trigger").setAttribute("aria-expanded", "false");
     });
 
-    document.body.append(switcher);
+    const headerActions = document.querySelector("#app .header-actions");
+    (headerActions || document.body).append(switcher);
+    switcher.classList.toggle("header-theme-switcher", Boolean(headerActions));
     if (window.parent !== window && !isPopout) switcher.hidden = true;
     if (isPopout) switcher.hidden = false;
     if (!isPopout) mountPlayerHallControls();
@@ -343,6 +349,101 @@
     `;
     setup.prepend(guide);
   }
+
+  function readIncorrectBingoState() {
+    try {
+      return {
+        count: 0,
+        lastCallCount: 0,
+        lastClaimCall: 0,
+        ...JSON.parse(window.localStorage.getItem(INCORRECT_BINGO_STORAGE_KEY) || "{}"),
+      };
+    } catch {
+      return { count: 0, lastCallCount: 0, lastClaimCall: 0 };
+    }
+  }
+
+  function saveIncorrectBingoState(state, announce = false) {
+    try {
+      window.localStorage.setItem(INCORRECT_BINGO_STORAGE_KEY, JSON.stringify(state));
+    } catch {
+      // The current window can still show the tally without persistent storage.
+    }
+    incorrectBingoChannel?.postMessage({ type: "incorrect-bingo-state", state, announce });
+    renderIncorrectBingoTally(state, announce);
+  }
+
+  function incorrectBingoPanel(className = "", tagName = "section") {
+    const panel = document.createElement(tagName);
+    panel.className = `incorrect-bingo-tally ${className}`.trim();
+    panel.innerHTML = "<span>Incorrect Bingo calls</span><strong>0</strong><small>Claims checked and rejected</small>";
+    return panel;
+  }
+
+  function renderIncorrectBingoTally(state = readIncorrectBingoState(), announce = false) {
+    const dealerStats = document.querySelector("#app .dealer-stats");
+    if (dealerStats && !dealerStats.querySelector(".incorrect-bingo-tally")) {
+      dealerStats.append(incorrectBingoPanel("dealer-incorrect-bingo"));
+    }
+    const audienceWinners = document.querySelector("#app .audience-winners");
+    if (audienceWinners && !audienceWinners.querySelector(".incorrect-bingo-tally")) {
+      audienceWinners.append(incorrectBingoPanel("audience-incorrect-bingo", "div"));
+    }
+    document.querySelectorAll(".incorrect-bingo-tally strong").forEach((value) => {
+      const next = String(state.count);
+      if (value.textContent !== next) value.textContent = next;
+    });
+
+    if (!announce) return;
+    let alert = document.querySelector(".incorrect-bingo-alert");
+    if (!alert) {
+      alert = document.createElement("div");
+      alert.className = "incorrect-bingo-alert";
+      alert.setAttribute("role", "status");
+      alert.innerHTML = "<strong>INCORRECT BINGO</strong><span>Claim checked and rejected</span>";
+      document.body.append(alert);
+    }
+    alert.classList.add("show");
+    window.clearTimeout(Number(alert.dataset.hideTimer || 0));
+    alert.dataset.hideTimer = String(window.setTimeout(() => alert.classList.remove("show"), 4200));
+  }
+
+  function syncIncorrectBingoClaims() {
+    const callCount = calledNumbers().size;
+    const state = readIncorrectBingoState();
+    if (callCount === 0 && state.lastCallCount > 0) {
+      saveIncorrectBingoState({ count: 0, lastCallCount: 0, lastClaimCall: 0 });
+      return;
+    }
+    if (isPopout || callCount <= state.lastCallCount) {
+      renderIncorrectBingoTally(state);
+      return;
+    }
+
+    let announce = false;
+    const callsSinceClaim = callCount - state.lastClaimCall;
+    if (callCount >= 6 && callsSinceClaim >= 5 && (Math.random() < .16 || callsSinceClaim >= 11)) {
+      state.count += 1;
+      state.lastClaimCall = callCount;
+      announce = true;
+    }
+    state.lastCallCount = callCount;
+    saveIncorrectBingoState(state, announce);
+  }
+
+  incorrectBingoChannel?.addEventListener("message", (event) => {
+    if (event.data?.type !== "incorrect-bingo-state") return;
+    renderIncorrectBingoTally(event.data.state, event.data.announce);
+  });
+
+  window.addEventListener("storage", (event) => {
+    if (event.key !== INCORRECT_BINGO_STORAGE_KEY || !event.newValue) return;
+    try {
+      renderIncorrectBingoTally(JSON.parse(event.newValue));
+    } catch {
+      // Ignore an incomplete cross-window update.
+    }
+  });
 
   async function purchaseCards(cardCount) {
     const count = Math.max(1, Math.min(6, Number(cardCount) || 1));
@@ -676,7 +777,7 @@
     document.querySelector(".bingo-view-overlay").hidden = true;
   }
 
-  function savedCount(key, fallback = 2) {
+  function savedCount(key, fallback = 3) {
     try {
       const value = Number(window.localStorage.getItem(key));
       return value >= 1 && value <= 6 ? value : fallback;
@@ -806,6 +907,7 @@
     syncStartButtons();
     showUnlimitedCredits();
     enhanceDealerSetup();
+    syncIncorrectBingoClaims();
   }
 
   function openPurchaseOverlay() {
@@ -1047,7 +1149,7 @@
     const playerUrl = new URL(window.location.href);
     playerUrl.searchParams.delete("screen");
     playerUrl.searchParams.delete("player");
-    playerUrl.searchParams.set("build", "20260731-bingo-footer-call-ball");
+    playerUrl.searchParams.set("build", "20260731-cross-theme-contrast-audit");
 
     if (window.opener && !window.opener.closed) {
       let playerWindow = window.opener;

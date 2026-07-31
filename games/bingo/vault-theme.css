@@ -122,6 +122,18 @@ body {
   display: none;
 }
 
+.bingo-theme-switcher.header-theme-switcher {
+  position: relative;
+  z-index: 80;
+  inset: auto;
+  flex: 0 0 auto;
+}
+
+.bingo-theme-switcher.header-theme-switcher .bingo-theme-menu {
+  top: calc(100% + 8px);
+  right: 0;
+}
+
 .bingo-theme-trigger {
   display: flex;
   min-width: 92px;
@@ -2778,6 +2790,527 @@ html.bingo-popout-window #app .dealer-ball-column button {
   color: #b8c6dd;
   font-size: 8.25pt;
   line-height: 1.4;
+}
+
+/* Complete Dealer identities: readable and intentionally different in each Hall theme. */
+[data-bingo-theme="planet"] {
+  --dealer-bg: #071225;
+  --dealer-panel: #102442;
+  --dealer-panel-alt: #163055;
+  --dealer-text: #f5fbff;
+  --dealer-muted: #b8cbed;
+  --dealer-line: #3a77bd;
+  --dealer-accent: #37dcff;
+  --dealer-active: #1769e0;
+  --dealer-input: #08182e;
+}
+
+[data-bingo-theme="classic"] {
+  --dealer-bg: #180c0b;
+  --dealer-panel: #2b1714;
+  --dealer-panel-alt: #3a2019;
+  --dealer-text: #fff8e6;
+  --dealer-muted: #e6cba3;
+  --dealer-line: #b98032;
+  --dealer-accent: #ffd45c;
+  --dealer-active: #b52b25;
+  --dealer-input: #160d0b;
+}
+
+[data-bingo-theme="current"] {
+  --dealer-bg: #e8eff8;
+  --dealer-panel: #ffffff;
+  --dealer-panel-alt: #edf4fd;
+  --dealer-text: #17243a;
+  --dealer-muted: #53647d;
+  --dealer-line: #8da9cf;
+  --dealer-accent: #1769e0;
+  --dealer-active: #1769e0;
+  --dealer-input: #ffffff;
+}
+
+[data-bingo-theme] #app .dealer-layout {
+  color: var(--dealer-text) !important;
+  background:
+    radial-gradient(circle at 50% 0, color-mix(in srgb, var(--dealer-accent) 14%, transparent), transparent 34rem),
+    var(--dealer-bg) !important;
+}
+
+[data-bingo-theme] #app .dealer-hero :is(h1, h2),
+[data-bingo-theme] #app .dealer-layout :is(h2, h3, h4, strong, label) {
+  color: var(--dealer-text) !important;
+}
+
+[data-bingo-theme] #app .dealer-layout :is(p, small, .eyebrow, .dealer-section-title > span) {
+  color: var(--dealer-muted) !important;
+}
+
+[data-bingo-theme] #app .dealer-layout :is(
+  .dealer-card,
+  .dealer-stats,
+  .dealer-tabs,
+  .dealer-command-bar,
+  .round-snapshot,
+  .stage-toolbar,
+  .fixed-dealer-status,
+  .game-setup-panel,
+  .ball-board-panel,
+  .winner-log-panel,
+  .dealer-pattern-panel,
+  .finance-summary-panel
+) {
+  color: var(--dealer-text) !important;
+  border-color: var(--dealer-line) !important;
+  background: var(--dealer-panel) !important;
+}
+
+[data-bingo-theme] #app .dealer-stats > div,
+[data-bingo-theme] #app .credit-summary > div,
+[data-bingo-theme] #app .round-snapshot > div,
+[data-bingo-theme] #app .target-summary > div,
+[data-bingo-theme] #app .dealer-ball-column {
+  color: var(--dealer-text) !important;
+  border-color: var(--dealer-line) !important;
+  background: var(--dealer-panel-alt) !important;
+}
+
+[data-bingo-theme] #app .dealer-layout :is(input, select) {
+  color: var(--dealer-text) !important;
+  border: 2px solid var(--dealer-line) !important;
+  background: var(--dealer-input) !important;
+}
+
+[data-bingo-theme] #app .dealer-layout :is(input, select)::placeholder {
+  color: var(--dealer-muted) !important;
+  opacity: .85 !important;
+}
+
+[data-bingo-theme] #app .dealer-tabs button {
+  color: var(--dealer-muted) !important;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+}
+
+[data-bingo-theme] #app .dealer-tabs button.active {
+  color: #fff !important;
+  border-color: color-mix(in srgb, var(--dealer-accent) 70%, #fff) !important;
+  background: var(--dealer-active) !important;
+}
+
+[data-bingo-theme] #app .dealer-command-bar > button,
+[data-bingo-theme] #app .dealer-layout :is(.advanced-settings-btn, .edit-setup-btn, .dealer-undo, .view-target-btn) {
+  color: var(--dealer-text) !important;
+  border-color: var(--dealer-line) !important;
+  background: var(--dealer-panel-alt) !important;
+}
+
+[data-bingo-theme] #app .dealer-layout :is(button, input, select):disabled {
+  color: var(--dealer-muted) !important;
+  border-color: color-mix(in srgb, var(--dealer-line) 65%, transparent) !important;
+  background: color-mix(in srgb, var(--dealer-panel-alt) 86%, var(--dealer-bg)) !important;
+  opacity: .72 !important;
+}
+
+[data-bingo-theme] #app .dealer-ball-column > strong,
+[data-bingo-theme] #app .stage-indicator,
+[data-bingo-theme] #app .dealer-notice {
+  color: var(--dealer-text) !important;
+  border-color: var(--dealer-line) !important;
+  background: var(--dealer-panel-alt) !important;
+}
+
+[data-bingo-theme="planet"] #app .dealer-layout :is(.dealer-card, .dealer-stats, .dealer-tabs) {
+  border-radius: 6px !important;
+  box-shadow: inset 0 0 0 1px rgba(55, 220, 255, .16), 0 12px 28px rgba(0,0,0,.3) !important;
+}
+
+[data-bingo-theme="planet"] #app .dealer-hero .eyebrow {
+  color: #37dcff !important;
+}
+
+[data-bingo-theme="classic"] #app .dealer-layout :is(.dealer-card, .dealer-stats, .dealer-tabs) {
+  border-width: 2px !important;
+  border-radius: 3px !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 212, 92, .15), 0 10px 24px rgba(0,0,0,.42) !important;
+}
+
+[data-bingo-theme="classic"] #app .dealer-hero .eyebrow {
+  color: #ffd45c !important;
+}
+
+[data-bingo-theme="current"] #app .dealer-layout :is(.dealer-card, .dealer-stats, .dealer-tabs) {
+  border-radius: 16px !important;
+  box-shadow: 0 10px 28px rgba(29, 65, 111, .12) !important;
+}
+
+[data-bingo-theme="current"] #app .dealer-hero .eyebrow {
+  color: #1769e0 !important;
+}
+
+[data-bingo-theme="planet"] #app .topbar {
+  color: #f5fbff !important;
+  border-bottom-color: #37dcff !important;
+  background: linear-gradient(90deg, #071225, #133a68, #071225) !important;
+}
+
+[data-bingo-theme="classic"] #app .topbar {
+  color: #fff8e6 !important;
+  border-bottom-color: #ffd45c !important;
+  background: linear-gradient(90deg, #260d0c, #9f221f, #260d0c) !important;
+}
+
+[data-bingo-theme="current"] #app .topbar {
+  color: #17243a !important;
+  border-bottom-color: #8da9cf !important;
+  background: #ffffff !important;
+}
+
+[data-bingo-theme] #app .topbar :is(.brand-lockup h1, .brand-lockup p, .play-time-panel strong, .play-time-panel span) {
+  color: inherit !important;
+}
+
+[data-bingo-theme] #app .screen-switcher {
+  color: var(--dealer-text) !important;
+  border-color: var(--dealer-line) !important;
+  background: var(--dealer-panel) !important;
+}
+
+[data-bingo-theme] #app .screen-switcher button {
+  color: var(--dealer-muted) !important;
+  background: transparent !important;
+}
+
+[data-bingo-theme] #app .screen-switcher button.active {
+  color: #fff !important;
+  background: var(--dealer-active) !important;
+}
+
+[data-bingo-theme] #app .current-call-panel .bingo-ball {
+  color: #17243a !important;
+  border-color: #e23b31 !important;
+  background: #fff8dc !important;
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--dealer-active) 58%, #25110e), 0 10px 25px rgba(0,0,0,.4) !important;
+}
+
+[data-bingo-theme] #app .current-call-panel .bingo-ball :is(strong, .ball-letter),
+[data-bingo-theme] #app .current-call-panel .bingo-ball > span:not(.ball-letter) {
+  color: #17243a !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+[data-bingo-theme] #app .current-call-panel .bingo-ball .ball-letter {
+  color: #d52d28 !important;
+}
+
+[data-bingo-theme] #app .topbar .header-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Player controls use explicit foreground/background pairs in every theme. */
+[data-bingo-theme] #app .game-layout :is(
+  .caller-panel,
+  .cards-stage,
+  .current-call-panel,
+  .recent-panel,
+  .pattern-panel,
+  .called-history-frame,
+  .stage-toolbar
+) {
+  color: var(--dealer-text) !important;
+  border-color: var(--dealer-line) !important;
+  background: var(--dealer-panel) !important;
+}
+
+[data-bingo-theme] #app :is(.sort-control span, .view-control > span, .card-pager strong) {
+  color: var(--dealer-muted) !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .sort-control select {
+  min-height: 48px;
+  border: 2px solid var(--dealer-line) !important;
+  border-radius: 8px;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme="planet"] #app .sort-control select {
+  color: #f5fbff !important;
+  background: #08182e !important;
+}
+
+[data-bingo-theme="classic"] #app .sort-control select {
+  color: #2b1714 !important;
+  background: #fff8e6 !important;
+}
+
+[data-bingo-theme="current"] #app .sort-control select {
+  color: #17243a !important;
+  background: #ffffff !important;
+}
+
+[data-bingo-theme] #app .sort-control select option {
+  color: #17243a !important;
+  background: #ffffff !important;
+}
+
+[data-bingo-theme] #app :is(.card-pager, .view-control) button {
+  color: var(--dealer-text) !important;
+  border-color: var(--dealer-line) !important;
+  background: var(--dealer-panel-alt) !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app :is(.card-pager, .view-control) button:is(.active, [aria-pressed="true"], :hover, :focus-visible) {
+  color: #fff !important;
+  border-color: var(--dealer-accent) !important;
+  background: var(--dealer-active) !important;
+}
+
+[data-bingo-theme] #app :is(.card-pager, .view-control) button:disabled {
+  color: var(--dealer-muted) !important;
+  border-color: var(--dealer-line) !important;
+  background: var(--dealer-panel) !important;
+  opacity: .72 !important;
+}
+
+[data-bingo-theme] #app :is(.recent-panel, .pattern-panel, .called-history-frame) :is(h2, h3, strong) {
+  color: var(--dealer-text) !important;
+}
+
+[data-bingo-theme] #app :is(.recent-panel, .pattern-panel, .called-history-frame) :is(p, small, span) {
+  color: var(--dealer-muted) !important;
+}
+
+[data-bingo-theme] #app .recent-list strong,
+[data-bingo-theme] #app .history-balls strong {
+  color: #17243a !important;
+  border: 2px solid var(--dealer-line) !important;
+  background: #fffdf5 !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] :is(
+  .player-hall-dialog,
+  .bingo-view-overlay,
+  .daub-options-overlay,
+  .purchase-cards-overlay,
+  .app-prompt-backdrop,
+  .verification-overlay
+) :is(button, input, select):focus-visible {
+  outline: 3px solid #67dce9 !important;
+  outline-offset: 3px !important;
+}
+
+/* Audience screens inherit each theme without sacrificing call readability. */
+[data-bingo-theme] #app .audience-screen {
+  color: var(--dealer-text) !important;
+  background:
+    radial-gradient(circle at 24% 42%, color-mix(in srgb, var(--dealer-accent) 16%, transparent), transparent 31%),
+    var(--dealer-bg) !important;
+}
+
+[data-bingo-theme] #app .audience-header {
+  color: var(--dealer-text) !important;
+  border-color: var(--dealer-line) !important;
+}
+
+[data-bingo-theme] #app .audience-header :is(strong, small, div) {
+  color: var(--dealer-text) !important;
+}
+
+[data-bingo-theme] #app .audience-side section {
+  color: var(--dealer-text) !important;
+  border: 2px solid var(--dealer-line) !important;
+  background: var(--dealer-panel) !important;
+}
+
+[data-bingo-theme] #app .audience-side section > span,
+[data-bingo-theme] #app .audience-call > span,
+[data-bingo-theme] #app .audience-side p {
+  color: var(--dealer-muted) !important;
+}
+
+[data-bingo-theme] #app .audience-side :is(h2, h3, strong),
+[data-bingo-theme] #app .audience-call > p {
+  color: var(--dealer-text) !important;
+}
+
+[data-bingo-theme] #app .audience-ball {
+  color: #14213a !important;
+  border-color: #ef3d35 !important;
+  background: #fffdf5 !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,.42), inset 0 -16px 28px rgba(18, 43, 80, .1) !important;
+}
+
+[data-bingo-theme] #app .audience-ball small {
+  color: #d92825 !important;
+}
+
+[data-bingo-theme] #app .audience-ball strong {
+  color: #14213a !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .audience-history strong {
+  color: #14213a !important;
+  border: 2px solid var(--dealer-line) !important;
+  background: #fffdf5 !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .audience-pattern .pattern-preview {
+  border: 2px solid var(--dealer-line) !important;
+  background: #f5f8fc !important;
+}
+
+[data-bingo-theme="planet"] #app .audience-side section {
+  border-radius: 8px !important;
+  box-shadow: inset 0 0 0 1px rgba(55, 220, 255, .14) !important;
+}
+
+[data-bingo-theme="classic"] #app .audience-side section {
+  border-radius: 3px !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 212, 92, .15) !important;
+}
+
+[data-bingo-theme="current"] #app .audience-side section {
+  border-radius: 16px !important;
+  box-shadow: 0 10px 28px rgba(29, 65, 111, .12) !important;
+}
+
+[data-bingo-theme] #app .topbar :is(.appearance-btn, .new-game-btn) {
+  color: var(--dealer-text) !important;
+  border-color: var(--dealer-line) !important;
+  background: var(--dealer-panel-alt) !important;
+}
+
+[data-bingo-theme] #app .topbar :is(.appearance-btn, .new-game-btn):disabled {
+  color: var(--dealer-muted) !important;
+  opacity: .76 !important;
+}
+
+[data-bingo-theme] #app .topbar .header-actions > :is(.appearance-btn, .new-game-btn) {
+  min-height: 52px;
+  color: var(--dealer-text) !important;
+  border: 2px solid var(--dealer-line) !important;
+  background: var(--dealer-panel-alt) !important;
+  box-shadow: 0 5px 14px rgba(0,0,0,.2) !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .topbar .header-actions > :is(.appearance-btn, .new-game-btn):is(:hover, :focus-visible, .active) {
+  color: #fff !important;
+  border-color: var(--dealer-accent) !important;
+  background: var(--dealer-active) !important;
+  filter: brightness(1.08);
+}
+
+[data-bingo-theme] #app .topbar .header-actions > :is(.appearance-btn, .new-game-btn):disabled {
+  color: var(--dealer-muted) !important;
+  border-color: var(--dealer-line) !important;
+  background: var(--dealer-panel) !important;
+  box-shadow: none !important;
+  opacity: .78 !important;
+}
+
+[data-bingo-theme="current"] #app .topbar .header-actions > :is(.appearance-btn, .new-game-btn) {
+  color: #17243a !important;
+  border-color: #7897c0 !important;
+  background: #edf4fd !important;
+}
+
+[data-bingo-theme="classic"] #app .topbar .header-actions > :is(.appearance-btn, .new-game-btn) {
+  color: #fff8e6 !important;
+  border-color: #d39a3d !important;
+  background: #3a2019 !important;
+}
+
+[data-bingo-theme="planet"] #app .topbar .header-actions > :is(.appearance-btn, .new-game-btn) {
+  color: #f5fbff !important;
+  border-color: #4c8fd1 !important;
+  background: #163055 !important;
+}
+
+.incorrect-bingo-tally {
+  min-width: 150px;
+}
+
+.incorrect-bingo-tally span,
+.incorrect-bingo-tally strong,
+.incorrect-bingo-tally small {
+  display: block;
+}
+
+.incorrect-bingo-tally span {
+  color: var(--dealer-muted) !important;
+  font-size: 7.5pt !important;
+  font-weight: 900;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.incorrect-bingo-tally strong {
+  margin-top: 4px;
+  color: #ff6257 !important;
+  font-size: 24pt !important;
+  line-height: 1;
+}
+
+.incorrect-bingo-tally small {
+  margin-top: 5px;
+  color: var(--dealer-muted) !important;
+  font-size: 7.5pt !important;
+}
+
+.audience-incorrect-bingo {
+  margin-top: 14px;
+  padding-top: 13px;
+  border-top: 1px solid var(--dealer-line);
+}
+
+.incorrect-bingo-alert {
+  position: fixed;
+  z-index: 1700;
+  top: 92px;
+  left: 50%;
+  min-width: min(440px, calc(100vw - 32px));
+  padding: 18px 24px;
+  border: 3px solid #ff9a91;
+  border-radius: 13px;
+  color: #fff;
+  background: linear-gradient(#e9424a, #9f171e);
+  box-shadow: 0 18px 46px rgba(0,0,0,.48);
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -18px);
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.incorrect-bingo-alert.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.incorrect-bingo-alert strong,
+.incorrect-bingo-alert span {
+  display: block;
+}
+
+.incorrect-bingo-alert strong {
+  font-size: 16.5pt;
+  letter-spacing: .08em;
+}
+
+.incorrect-bingo-alert span {
+  margin-top: 4px;
+  font-size: 9.75pt;
 }
 
 @media (max-width: 1100px) {
