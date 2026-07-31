@@ -5087,3 +5087,24 @@ html[data-bingo-theme="classic"]:not(.hall-controls-collapsed) #app .game-layout
   justify-content: center !important;
   white-space: nowrap !important;
 }
+
+/* Call History balls use explicit high-contrast states in every theme and mode. */
+[data-bingo-theme] #app .history-balls span {
+  min-width: 44px !important;
+  padding: 8px 7px !important;
+  color: #17243a !important;
+  border: 2px solid #6783a8 !important;
+  background: #fffdf5 !important;
+  font-size: 9.75pt !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+[data-bingo-theme] #app .history-balls span.latest {
+  color: #fff !important;
+  border-color: #ff8b82 !important;
+  background: #b82027 !important;
+  box-shadow: 0 0 0 2px rgba(255,255,255,.22) !important;
+}

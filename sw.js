@@ -1,5 +1,5 @@
 const RELEASE = "1.1.4";
-const BUILD = "20260731-theme-toggle-stability";
+const BUILD = "20260731-call-history-contrast";
 const CACHE_NAME = `muha-casino-${RELEASE}-${BUILD}`;
 
 self.addEventListener("install", () => {
