@@ -86,7 +86,6 @@
           <span class="muha-bingo-mark" aria-hidden="true">M</span>
           <span class="muha-bingo-words"><b>MUHA</b><span>BINGO</span></span>
         </div>
-        <small>AMERICAN SESSION BINGO</small>
       </header>
       <section class="planet-play-surface">
         <div class="planet-card-area">
@@ -104,7 +103,7 @@
           <strong class="planet-game-name">Waiting for session</strong>
         </section>
         <div class="planet-current-ball"><small>CALL</small><strong>—</strong></div>
-        <div class="planet-credit">$0.00</div>
+        <div class="planet-credit"><strong>∞</strong><span>CREDITS</span></div>
       </footer>
     `;
     shell.addEventListener("click", (event) => {

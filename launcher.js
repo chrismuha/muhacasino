@@ -63,8 +63,8 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_VERSION = "1.1.2";
-const SITE_BUILD = "20260731-time-card-contrast";
+const SITE_VERSION = "1.1.3";
+const SITE_BUILD = "20260731-bingo-footer-call-ball";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
@@ -86,7 +86,6 @@ const categoryRail = document.querySelector("#categoryRail");
 const appVersion = document.querySelector("#appVersion");
 let activeSlide = 0;
 let sliderTimer;
-let bingoDealerWindow = null;
 let activeGameId = null;
 let gameLoadTimer = 0;
 const bingoThemeChannel = "BroadcastChannel" in window
@@ -112,25 +111,6 @@ function removeLegacyCasinoCaching() {
         // Direct network loading still works when cache storage is restricted.
       });
   }
-}
-
-function openBingoDealerWindow() {
-  try {
-    localStorage.removeItem("muha-bingo-live-state");
-  } catch {
-    // A fresh browser session still starts when storage is unavailable.
-  }
-  const url = new URL(games.bingo.path, window.location.href);
-  url.searchParams.set("screen", "dealer");
-  url.searchParams.set("build", SITE_BUILD);
-  if (bingoDealerWindow && !bingoDealerWindow.closed) {
-    bingoDealerWindow.location.href = url.href;
-    bingoDealerWindow.focus();
-    return true;
-  }
-  bingoDealerWindow = window.open(url, "muha-bingo-dealer");
-  bingoDealerWindow?.focus();
-  return Boolean(bingoDealerWindow);
 }
 
 function displayVersion(packageVersion) {
@@ -284,7 +264,6 @@ function showCategory(categoryId) {
 document.addEventListener("click", (event) => {
   const gameButton = event.target.closest("[data-game]");
   if (gameButton) {
-    if (gameButton.dataset.game === "bingo") openBingoDealerWindow();
     launchGame(gameButton.dataset.game);
   }
 

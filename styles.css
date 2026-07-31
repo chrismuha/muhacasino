@@ -94,8 +94,8 @@ a { color: inherit; text-decoration: none; }
 .hero-slide.active { visibility: visible; opacity: 1; transform: none; }
 .money-slide { background: radial-gradient(circle at 76% 42%, #775514 0, #243517 31%, #10150f 68%); }
 .neon-slide { background: radial-gradient(circle at 75% 42%, #a3128d 0, #351359 33%, #100b22 70%); }
-.penny-slide { background: radial-gradient(circle at 76% 42%, #d17283 0, #651b49 34%, #1d0b1b 72%); }
-.bingo-slide { background: radial-gradient(circle at 76% 42%, #1769e0 0, #173866 34%, #090f1d 72%); }
+.penny-slide { background: radial-gradient(circle at 76% 42%, #b87333 0, #5b2c18 34%, #1b0e09 72%); }
+.bingo-slide { background: radial-gradient(circle at 76% 42%, #36a866 0, #174d31 34%, #091a11 72%); }
 
 .hero-slide::after {
   content: "";
@@ -129,8 +129,9 @@ a { color: inherit; text-decoration: none; }
 }
 
 .hero h1 em { color: transparent; background: linear-gradient(120deg, #fff, var(--cyan)); background-clip: text; -webkit-background-clip: text; font-style: normal; }
-.penny-slide h1 em { background-image: linear-gradient(120deg, #fff, #ffcbd7); }
-.bingo-slide h1 em { background-image: linear-gradient(120deg, #fff, #65b8ff); }
+.money-slide h1 em { color: #ffd84d; background: none; }
+.penny-slide h1 em { background-image: linear-gradient(120deg, #ffe5bf, #b87333); }
+.bingo-slide h1 em { background-image: linear-gradient(120deg, #eafff1, #55d98b); }
 .hero-content > p:not(.eyebrow) { max-width: 540px; margin: 30px 0; color: #d4d5df; font-size: 13.2pt; line-height: 1.6; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .primary-button { padding: 15px 24px; background: white; color: #0b0c14; box-shadow: 0 10px 30px rgba(0,0,0,.28); }
@@ -165,11 +166,11 @@ a { color: inherit; text-decoration: none; }
 .cabinet b { color: #ffe688; font-size: 12pt; letter-spacing: .18em; }
 .neon-art .cabinet { border-color: #ff42dd; box-shadow: 0 0 0 7px #4e1752, 0 0 50px #f525db, 0 30px 80px rgba(0,0,0,.6); }
 .neon-art .cabinet span { border-color: #ab26c0; background: #19112b; color: #62f4ff; text-shadow: 0 0 14px #33e9ff; }
-.penny-art .cabinet { border-color: #ffb4c9; box-shadow: 0 0 0 7px #7c3158, 0 0 40px rgba(255,148,193,.5), 0 30px 80px rgba(0,0,0,.6); }
-.penny-art .cabinet span { border-color: #b8507a; background: #fff0f5; color: #ad3e6c; }
-.bingo-art .cabinet { border-color: #62b0ff; box-shadow: 0 0 0 7px #173e72, 0 0 48px rgba(49,145,255,.55), 0 30px 80px rgba(0,0,0,.6); }
-.bingo-art .cabinet span { border-color: #2f76c5; background: #f4f9ff; color: #1769e0; font-size: clamp(14.4pt, 2.8vw, 28.8pt); }
-.bingo-ball-art { position: absolute; z-index: 2; top: 0; left: 5%; display: grid; width: 130px; height: 130px; place-items: center; border: 8px solid #dceeff; border-radius: 50%; color: #fff; background: #1769e0; box-shadow: 0 0 40px rgba(73,164,255,.8); font-size: 24pt; font-weight: 1000; line-height: .75; text-align: center; transform: rotate(-10deg); }
+.penny-art .cabinet { border-color: #d9955d; box-shadow: 0 0 0 7px #65351f, 0 0 40px rgba(184,115,51,.55), 0 30px 80px rgba(0,0,0,.6); }
+.penny-art .cabinet span { border-color: #a85d2d; background: #fff1dc; color: #8b451f; }
+.bingo-art .cabinet { border-color: #62d996; box-shadow: 0 0 0 7px #175334, 0 0 48px rgba(65,201,122,.55), 0 30px 80px rgba(0,0,0,.6); }
+.bingo-art .cabinet span { border-color: #30965c; background: #f1fff6; color: #197844; font-size: clamp(14.4pt, 2.8vw, 28.8pt); }
+.bingo-ball-art { position: absolute; z-index: 2; top: 0; left: 5%; display: grid; width: 130px; height: 130px; place-items: center; border: 8px solid #dcffea; border-radius: 50%; color: #fff; background: #218b50; box-shadow: 0 0 40px rgba(73,220,137,.8); font-size: 24pt; font-weight: 1000; line-height: .75; text-align: center; transform: rotate(-10deg); }
 .bingo-ball-art b { font-size: 36pt; }
 
 .coin, .bolt, .penny-symbol { position: absolute; z-index: 2; display: grid; place-items: center; font-weight: 1000; }
@@ -177,7 +178,7 @@ a { color: inherit; text-decoration: none; }
 .coin-one { top: 2%; left: 12%; transform: rotate(-18deg); }
 .coin-two { top: 25%; right: 0; width: 58px; height: 58px; transform: rotate(24deg); }
 .bolt { top: 0; left: 6%; color: #67f2ff; font-size: 120pt; text-shadow: 0 0 30px #00eaff; transform: rotate(-11deg); }
-.penny-symbol { top: 1%; left: 5%; width: 130px; height: 130px; border: 8px double #fff0f5; border-radius: 50%; color: #fff0f5; font-size: 72pt; box-shadow: 0 0 40px #ff8fc2; transform: rotate(-12deg); }
+.penny-symbol { top: 1%; left: 5%; width: 130px; height: 130px; border: 8px double #e2a66f; border-radius: 50%; color: #f0bb83; font-size: 72pt; box-shadow: 0 0 40px #b87333; transform: rotate(-12deg); }
 
 .hero-arrow {
   position: absolute;
@@ -251,15 +252,15 @@ a { color: inherit; text-decoration: none; }
 }
 .card-money .card-visual { background: radial-gradient(circle at 50% 35%, #9d721b, #162815 68%); }
 .card-neon .card-visual { background: radial-gradient(circle at 50% 35%, #d21db3, #28114e 68%); }
-.card-penny .card-visual { background: radial-gradient(circle at 50% 35%, #e88ba0, #6f1b4b 68%); }
-.card-bingo .card-visual { background: radial-gradient(circle at 50% 35%, #2a8cff, #11294d 68%); }
+.card-penny .card-visual { background: radial-gradient(circle at 50% 35%, #cf874d, #512714 68%); }
+.card-bingo .card-visual { background: radial-gradient(circle at 50% 35%, #42bf77, #123c27 68%); }
 .card-sorry .card-visual { background: radial-gradient(circle at 50% 35%, #f25555, #51151d 68%); }
 .card-yahtzee .card-visual { background: radial-gradient(circle at 50% 35%, #39a96b, #123c2b 68%); }
 .card-visual i { position: absolute; right: -10px; bottom: -40px; color: rgba(255,255,255,.12); font-size: 144pt; font-style: normal; font-weight: 1000; transform: rotate(-10deg); }
 .mini-reels { z-index: 1; padding: 22px 24px; border: 6px solid rgba(255,255,255,.5); border-radius: 17px; background: #fff8de; color: #171717; box-shadow: 0 20px 50px rgba(0,0,0,.38); font-size: 21.6pt; font-weight: 1000; letter-spacing: .08em; transform: rotate(-3deg); }
 .card-neon .mini-reels { border-color: #fe55e9; background: #171027; color: #63edff; box-shadow: 0 0 28px #e92ad7; }
-.card-penny .mini-reels { border-color: #ffd0df; background: #fff3f7; color: #b74271; }
-.card-bingo .mini-reels { border-color: #b9dcff; background: #f4f9ff; color: #1769e0; letter-spacing: .16em; }
+.card-penny .mini-reels { border-color: #d9955d; background: #fff1dc; color: #8b451f; }
+.card-bingo .mini-reels { border-color: #a9eac4; background: #f1fff6; color: #197844; letter-spacing: .16em; }
 .card-sorry .mini-reels { border-color: #ffd0d0; background: #fff6ef; color: #c9252d; }
 .card-yahtzee .mini-reels { border-color: #c9f4d9; background: #f5fff8; color: #187244; }
 .card-details {

@@ -78,7 +78,7 @@
     const url = new URL(window.location.href);
     url.search = "";
     Object.entries(parameters).forEach(([key, value]) => url.searchParams.set(key, value));
-    const build = "20260731-time-card-contrast";
+    const build = "20260731-bingo-footer-call-ball";
     url.searchParams.set("build", build);
     const windowOwner = window.top && window.top !== window ? window.top : window;
     const popup = windowOwner.open("", name);
