@@ -64,7 +64,7 @@ const categoryNames = {
 };
 
 const SITE_VERSION = "1.1.3";
-const SITE_BUILD = "20260731-dealer-overlay-logo";
+const SITE_BUILD = "20260731-bingo-footer-call-ball";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");

@@ -86,7 +86,6 @@
           <span class="muha-bingo-mark" aria-hidden="true">M</span>
           <span class="muha-bingo-words"><b>MUHA</b><span>BINGO</span></span>
         </div>
-        <small>AMERICAN SESSION BINGO</small>
       </header>
       <section class="planet-play-surface">
         <div class="planet-card-area">

@@ -858,7 +858,7 @@ html.bingo-embedded-window .bingo-theme-switcher { display: none !important; }
   flex-direction: column;
   gap: 8px;
   min-height: 680px;
-  padding: 12px 12px 108px;
+  padding: 12px 12px 150px;
 }
 
 .planet-card-area {
@@ -1131,8 +1131,8 @@ html.bingo-embedded-window .bingo-theme-switcher { display: none !important; }
   bottom: 0;
   left: 0;
   display: grid;
-  min-height: 94px;
-  grid-template-columns: minmax(210px, 1fr) 90px 80px minmax(400px, 560px);
+  min-height: 136px;
+  grid-template-columns: minmax(210px, 1fr) 132px 92px minmax(400px, 560px);
   align-items: center;
   gap: 10px;
   padding: 6px 10px 6px 14px;
@@ -1157,8 +1157,8 @@ html.bingo-embedded-window .bingo-theme-switcher { display: none !important; }
 
 .planet-current-ball {
   display: grid;
-  width: 78px;
-  height: 78px;
+  width: 118px;
+  height: 118px;
   place-content: center;
   justify-self: center;
   border: 7px solid #e33b32;
@@ -1177,11 +1177,12 @@ html.bingo-embedded-window .bingo-theme-switcher { display: none !important; }
 }
 
 .planet-current-ball small {
+  font-size: 10.5pt;
   font-weight: 900;
 }
 
 .planet-current-ball strong {
-  font-size: 25.5pt;
+  font-size: 39pt;
   line-height: .9;
 }
 
