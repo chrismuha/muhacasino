@@ -1214,7 +1214,7 @@
     const playerUrl = new URL(window.location.href);
     playerUrl.searchParams.delete("screen");
     playerUrl.searchParams.delete("player");
-    playerUrl.searchParams.set("build", "20260731-final-bingo-release");
+    playerUrl.searchParams.set("build", "20260731-screenshot-contrast-fixes");
 
     if (window.opener && !window.opener.closed) {
       let playerWindow = window.opener;

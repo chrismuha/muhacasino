@@ -78,7 +78,7 @@
     const url = new URL(window.location.href);
     url.search = "";
     Object.entries(parameters).forEach(([key, value]) => url.searchParams.set(key, value));
-    const build = "20260731-final-bingo-release";
+    const build = "20260731-screenshot-contrast-fixes";
     url.searchParams.set("build", build);
     const windowOwner = window.top && window.top !== window ? window.top : window;
     const popup = windowOwner.open("", name);

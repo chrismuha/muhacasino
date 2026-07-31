@@ -5192,3 +5192,153 @@ html.bingo-popout-window:is([data-bingo-theme="planet"], [data-bingo-theme="clas
   opacity: 1 !important;
   text-shadow: none !important;
 }
+
+/* Dual-contrast arrow: white rim remains visible on dark fields, black center on light fields. */
+[data-bingo-theme] #app .play-time-panel label::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  right: 12px;
+  bottom: 11px;
+  width: 0;
+  height: 0;
+  border-right: 9px solid transparent;
+  border-left: 9px solid transparent;
+  border-top: 10px solid #fff;
+  pointer-events: none;
+}
+
+[data-bingo-theme] #app .play-time-panel label::after,
+[data-bingo-theme] #app .app-shell.theme-dark .play-time-panel label::after {
+  right: 14px;
+  bottom: 13px;
+  border-right-width: 7px;
+  border-left-width: 7px;
+  border-top: 8px solid #000;
+}
+
+[data-bingo-theme] #app .app-shell.theme-light .play-time-panel label::before,
+[data-bingo-theme] #app .app-shell.theme-dark .play-time-panel label::before {
+  display: none;
+}
+
+[data-bingo-theme] #app .app-shell.theme-light .play-time-panel label::after {
+  border-top-color: #000 !important;
+}
+
+[data-bingo-theme] #app .app-shell.theme-dark .play-time-panel label::after {
+  border-top-color: #fff !important;
+}
+
+/* Player pop-out stage banners always use light ink on navy. */
+html.bingo-popout-window #app .cards-stage .stage-heading :is(.eyebrow, h2) {
+  color: #fff8e6 !important;
+  -webkit-text-fill-color: #fff8e6 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html.bingo-popout-window #app .cards-stage .stage-heading .eyebrow {
+  color: #ffd968 !important;
+  -webkit-text-fill-color: #ffd968 !important;
+}
+
+/* Card Design remains dark-on-light even when a dark Hall palette is active. */
+html.bingo-popout-window #app .design-screen {
+  color: #17243a !important;
+  background: #eef3f9 !important;
+}
+
+html.bingo-popout-window #app .design-screen :is(.design-copy h2, .design-group h3, label, legend, strong) {
+  color: #17243a !important;
+  -webkit-text-fill-color: #17243a !important;
+  opacity: 1 !important;
+}
+
+html.bingo-popout-window #app .design-screen :is(.design-copy > p, .design-group p, .color-field code, .design-preview > span) {
+  color: #40536f !important;
+  -webkit-text-fill-color: #40536f !important;
+  opacity: 1 !important;
+}
+
+html.bingo-popout-window #app .design-screen .design-group {
+  color: #17243a !important;
+  border-color: #7897c0 !important;
+  background: #fff !important;
+}
+
+/* Pop-out history and Auto Call states remain readable in every palette. */
+html.bingo-popout-window #app .called-history-frame {
+  color: #eef5ff !important;
+  background: #122947 !important;
+  border-color: #7897c0 !important;
+}
+
+html.bingo-popout-window #app .called-history-frame > div:first-child :is(span, strong),
+html.bingo-popout-window #app .called-history-frame > p {
+  color: #eef5ff !important;
+  -webkit-text-fill-color: #eef5ff !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .btn-auto:not(:disabled),
+[data-bingo-theme] #app .btn-auto:not(:disabled) * {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .btn-auto:disabled,
+[data-bingo-theme] #app .btn-auto:disabled * {
+  color: #40536d !important;
+  -webkit-text-fill-color: #40536d !important;
+  border-color: #9bacc1 !important;
+  background: #e3e9f1 !important;
+  opacity: 1 !important;
+}
+
+/* Dealer navigation and all four stat cells remain distinct and readable. */
+[data-bingo-theme] #app .screen-switcher button:not(.active) {
+  color: #17243a !important;
+  -webkit-text-fill-color: #17243a !important;
+  border-color: #7897c0 !important;
+  background: #f4f7fc !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .dealer-stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+[data-bingo-theme] #app .dealer-stats > div {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
+html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .dealer-stats > div :is(span, small, p) {
+  color: #d7e1f0 !important;
+  -webkit-text-fill-color: #d7e1f0 !important;
+  opacity: 1 !important;
+}
+
+html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .dealer-stats > div strong {
+  color: #fff8e6 !important;
+  -webkit-text-fill-color: #fff8e6 !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] #app .dealer-stats > div :is(span, small, p) {
+  color: #40536f !important;
+  -webkit-text-fill-color: #40536f !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .dealer-layout button:disabled,
+[data-bingo-theme] #app .dealer-layout button:disabled * {
+  color: #c8d5e8 !important;
+  -webkit-text-fill-color: #c8d5e8 !important;
+  border-color: #617a9e !important;
+  background: #263143 !important;
+  opacity: 1 !important;
+}
