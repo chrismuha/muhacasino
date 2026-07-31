@@ -5393,3 +5393,21 @@ html.bingo-popout-window[data-bingo-theme="classic"] #app .app-shell.theme-light
   -webkit-text-fill-color: #2d1813 !important;
   opacity: 1 !important;
 }
+
+/* The Player Cards title is rendered directly in the toolbar in player pop-outs. */
+html.bingo-popout-window[data-bingo-theme="classic"] #app .app-shell.theme-light .cards-stage .stage-toolbar {
+  color: #fff8e6 !important;
+  -webkit-text-fill-color: #fff8e6 !important;
+}
+
+html.bingo-popout-window[data-bingo-theme="classic"] #app .app-shell.theme-light .cards-stage .stage-toolbar :is(h1, h2, h3, .eyebrow) {
+  color: #fff8e6 !important;
+  -webkit-text-fill-color: #fff8e6 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html.bingo-popout-window[data-bingo-theme="classic"] #app .app-shell.theme-light .cards-stage .stage-toolbar .eyebrow {
+  color: #ffd968 !important;
+  -webkit-text-fill-color: #ffd968 !important;
+}
