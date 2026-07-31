@@ -25,6 +25,7 @@
     actual: "#126eff",
     free: "#f5cc4e",
   };
+  let currentViewCount = 3;
 
   function savedSolidColors() {
     try {
@@ -699,13 +700,18 @@
       document.body.append(controls);
     });
 
+    const universalDock = document.createElement("nav");
+    universalDock.className = "universal-controls-dock";
+    universalDock.setAttribute("aria-label", "Player Hall actions");
+    document.body.append(universalDock);
+
     const universalStart = document.createElement("button");
     universalStart.className = "universal-start-button";
     universalStart.type = "button";
     universalStart.dataset.hallAction = "start";
     universalStart.innerHTML = '<i class="bi bi-play-fill" aria-hidden="true"></i><span>START GAME</span>';
     universalStart.addEventListener("click", () => handleHallAction("start"));
-    document.body.append(universalStart);
+    universalDock.append(universalStart);
 
     const universalSetup = document.createElement("button");
     universalSetup.className = "universal-setup-button";
@@ -713,7 +719,7 @@
     universalSetup.dataset.hallAction = "setup";
     universalSetup.innerHTML = '<i class="bi bi-sliders" aria-hidden="true"></i><span>CONTROLS</span>';
     universalSetup.addEventListener("click", () => handleHallAction("setup"));
-    document.body.append(universalSetup);
+    universalDock.append(universalSetup);
 
     const universalPurchase = document.createElement("button");
     universalPurchase.className = "universal-purchase-button";
@@ -721,7 +727,8 @@
     universalPurchase.dataset.hallAction = "purchase";
     universalPurchase.innerHTML = '<i class="bi bi-cart-fill" aria-hidden="true"></i><span>PURCHASE</span>';
     universalPurchase.addEventListener("click", () => handleHallAction("purchase"));
-    document.body.append(universalPurchase);
+    universalDock.prepend(universalPurchase);
+    universalDock.insertBefore(universalSetup, universalStart);
 
     const controlsToggle = document.createElement("button");
     controlsToggle.className = "hall-controls-toggle";
@@ -761,6 +768,7 @@
 
   function selectCardView(count) {
     const selectedCount = Math.max(1, Math.min(6, Number(count) || 1));
+    currentViewCount = selectedCount;
     const source = [...document.querySelectorAll("#app .view-control button")]
       .find((button) => button.textContent.trim() === String(selectedCount));
     if (source) source.click();
@@ -787,7 +795,7 @@
   }
 
   function restoreCardView() {
-    const selectedCount = savedCount(VIEW_COUNT_STORAGE_KEY);
+    const selectedCount = currentViewCount;
     const source = [...document.querySelectorAll("#app .view-control button")]
       .find((button) => button.textContent.trim() === String(selectedCount));
     if (!source) return false;
@@ -828,6 +836,24 @@
     } catch {
       // Setup remains usable when storage is unavailable.
     }
+  }
+
+  function saveNativeCardView(event) {
+    const button = event.target.closest("#app .view-control button");
+    if (!button) return;
+    const count = Number(button.textContent.trim());
+    if (count < 1 || count > 6) return;
+    currentViewCount = count;
+    try {
+      window.localStorage.setItem(VIEW_COUNT_STORAGE_KEY, String(count));
+    } catch {
+      // The selected view still works for the current session.
+    }
+    document.querySelectorAll("[data-card-count]").forEach((choice) => {
+      const isActive = Number(choice.dataset.cardCount) === count;
+      choice.classList.toggle("active", isActive);
+      choice.setAttribute("aria-pressed", String(isActive));
+    });
   }
 
   function updateBingoProximity() {
@@ -981,7 +1007,7 @@
     viewButton.type = "button";
     viewButton.innerHTML = '<i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i><span>VIEW</span>';
     viewButton.addEventListener("click", openViewOverlay);
-    document.body.append(viewButton);
+    (document.querySelector(".universal-controls-dock") || document.body).append(viewButton);
 
     const overlay = document.createElement("div");
     overlay.className = "bingo-view-overlay";
@@ -1149,7 +1175,7 @@
     const playerUrl = new URL(window.location.href);
     playerUrl.searchParams.delete("screen");
     playerUrl.searchParams.delete("player");
-    playerUrl.searchParams.set("build", "20260731-cross-theme-contrast-audit");
+    playerUrl.searchParams.set("build", "20260731-v1.1.4");
 
     if (window.opener && !window.opener.closed) {
       let playerWindow = window.opener;
@@ -1194,6 +1220,7 @@
 
   document.addEventListener("input", saveCardCount, true);
   document.addEventListener("change", saveCardCount, true);
+  document.addEventListener("click", saveNativeCardView, true);
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {

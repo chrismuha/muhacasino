@@ -86,6 +86,17 @@
           <span class="muha-bingo-mark" aria-hidden="true">M</span>
           <span class="muha-bingo-words"><b>MUHA</b><span>BINGO</span></span>
         </div>
+        <div class="planet-theme-control">
+          <button class="planet-theme-trigger" type="button" aria-expanded="false">
+            <span aria-hidden="true">🎨</span> THEME
+          </button>
+          <div class="planet-theme-menu" hidden>
+            <strong>CHOOSE A HALL</strong>
+            <button class="bingo-theme-option" type="button" data-theme="planet">Planet Hall 2</button>
+            <button class="bingo-theme-option" type="button" data-theme="classic">Planet Hall</button>
+            <button class="bingo-theme-option" type="button" data-theme="current">Classic</button>
+          </div>
+        </div>
       </header>
       <section class="planet-play-surface">
         <div class="planet-card-area">
@@ -107,6 +118,21 @@
       </footer>
     `;
     shell.addEventListener("click", (event) => {
+      const themeTrigger = event.target.closest(".planet-theme-trigger");
+      const themeMenu = shell.querySelector(".planet-theme-menu");
+      if (themeTrigger) {
+        const willOpen = themeMenu.hidden;
+        themeMenu.hidden = !willOpen;
+        themeTrigger.setAttribute("aria-expanded", String(willOpen));
+        return;
+      }
+      const themeOption = event.target.closest(".planet-theme-menu [data-theme]");
+      if (themeOption) {
+        window.applyBingoTheme?.(themeOption.dataset.theme);
+        themeMenu.hidden = true;
+        shell.querySelector(".planet-theme-trigger")?.setAttribute("aria-expanded", "false");
+        return;
+      }
       const copiedCell = event.target.closest("[data-source-cell]");
       if (!copiedCell) return;
       const copiedCard = copiedCell.closest("[data-source-card]");
@@ -114,6 +140,13 @@
       sourceCards[Number(copiedCard.dataset.sourceCard)]
         ?.querySelectorAll("button.number-cell")[Number(copiedCell.dataset.sourceCell)]
         ?.click();
+    });
+    document.addEventListener("click", (event) => {
+      const control = shell.querySelector(".planet-theme-control");
+      if (control?.contains(event.target)) return;
+      const menu = shell.querySelector(".planet-theme-menu");
+      if (menu) menu.hidden = true;
+      shell.querySelector(".planet-theme-trigger")?.setAttribute("aria-expanded", "false");
     });
     document.body.append(shell);
     const footerControls = document.querySelector(".planet-footer-controls");

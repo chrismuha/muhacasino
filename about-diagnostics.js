@@ -49,9 +49,9 @@
       const packageInfo = await fetch(`package.json?build=${encodeURIComponent(build)}`, {
         cache: "no-store",
       }).then((response) => response.json());
-      versionNode.textContent = `v${packageInfo.version || "1.1.3"}`;
+      versionNode.textContent = `v${packageInfo.version || "1.1.4"}`;
     } catch {
-      versionNode.textContent = "v1.1.3";
+      versionNode.textContent = "v1.1.4";
     }
     try {
       themeNode.textContent = displayTheme(localStorage.getItem("muha-bingo-theme"));

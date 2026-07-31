@@ -63,8 +63,8 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_VERSION = "1.1.3";
-const SITE_BUILD = "20260731-cross-theme-contrast-audit";
+const SITE_VERSION = "1.1.4";
+const SITE_BUILD = "20260731-v1.1.4";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");

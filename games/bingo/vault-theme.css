@@ -439,6 +439,70 @@ body {
   display: none;
 }
 
+.planet-terminal-header {
+  position: relative;
+}
+
+.planet-theme-control {
+  position: absolute;
+  z-index: 25;
+  top: 50%;
+  right: 18px;
+  transform: translateY(-50%);
+}
+
+.planet-theme-trigger {
+  min-width: 122px;
+  min-height: 48px;
+  border: 2px solid #71dff2;
+  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(#275b9d, #122a57);
+  box-shadow: inset 0 0 0 2px rgba(163, 231, 255, .25), 0 4px 12px rgba(0, 0, 0, .4);
+  font-weight: 950;
+}
+
+.planet-theme-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  display: grid;
+  width: 210px;
+  gap: 7px;
+  padding: 10px;
+  border: 2px solid #4b78b4;
+  border-radius: 8px;
+  color: #eef7ff;
+  background: #0b1425;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, .58);
+}
+
+.planet-theme-menu[hidden] {
+  display: none;
+}
+
+.planet-theme-menu strong {
+  padding: 4px 6px;
+  color: #9fb9dd;
+  font-size: 8.25pt;
+  letter-spacing: .1em;
+}
+
+.planet-theme-menu .bingo-theme-option {
+  min-height: 42px;
+  border: 1px solid #496998;
+  border-radius: 5px;
+  color: #f5f9ff;
+  background: #172744;
+  font-weight: 850;
+}
+
+.planet-theme-menu .bingo-theme-option:is(:hover, :focus-visible, .active) {
+  color: #111a28;
+  border-color: #a8edff;
+  background: #75d9ed;
+}
+
 [data-bingo-theme="planet"] body {
   min-width: 900px;
   color: #f4f7ff;
@@ -1370,6 +1434,91 @@ html.bingo-embedded-window .bingo-theme-switcher { display: none !important; }
   background: linear-gradient(#1a1c22, #0b0c10);
 }
 
+/* Planet Hall has two complete casino palettes, not a label-only mode toggle. */
+html[data-bingo-theme="classic"] #app .app-shell.theme-light {
+  color: #342019 !important;
+  background: #f3e5c8 !important;
+  --dealer-bg: #ead8b7;
+  --dealer-panel: #fffaf0;
+  --dealer-panel-alt: #f4e5c8;
+  --dealer-text: #342019;
+  --dealer-muted: #6c523f;
+  --dealer-line: #a86d31;
+  --dealer-accent: #a92120;
+  --dealer-active: #b52b25;
+  --dealer-input: #fffdf8;
+}
+
+html[data-bingo-theme="classic"] #app .app-shell.theme-light :is(.game-layout, .dealer-layout, .design-screen) {
+  color: #342019 !important;
+  background:
+    linear-gradient(rgba(116, 55, 24, .055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(116, 55, 24, .055) 1px, transparent 1px),
+    #ead8b7 !important;
+  background-size: 24px 24px !important;
+}
+
+html[data-bingo-theme="classic"] #app .app-shell.theme-light :is(
+  .caller-panel,
+  .cards-stage,
+  .current-call-panel,
+  .recent-panel,
+  .pattern-panel,
+  .called-history-frame,
+  .play-time-panel,
+  .screen-switcher,
+  .dealer-card,
+  .design-group
+) {
+  color: #342019 !important;
+  border-color: #a86d31 !important;
+  background: #fffaf0 !important;
+  box-shadow: 0 10px 24px rgba(79, 37, 18, .14) !important;
+}
+
+html[data-bingo-theme="classic"] #app .app-shell.theme-light :is(.game-layout, .dealer-layout, .design-screen) :is(.eyebrow, .call-name, .card-hint, p, small) {
+  color: #6c523f !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="classic"] #app .app-shell.theme-light :is(.game-layout, .dealer-layout, .design-screen) :is(h1, h2, h3, strong, label) {
+  color: #342019;
+}
+
+html[data-bingo-theme="classic"] #app .app-shell.theme-light .app-footer {
+  color: #fff8e6 !important;
+  border-color: #813028 !important;
+  background: linear-gradient(90deg, #3b1714, #7e211e, #3b1714) !important;
+}
+
+html[data-bingo-theme="classic"] #app .app-shell.theme-light .app-footer :is(strong, span, p, small) {
+  color: #fff2d7 !important;
+}
+
+html[data-bingo-theme="classic"] #app .app-shell.theme-dark :is(.game-layout, .dealer-layout, .design-screen) {
+  color: #f4f7fb !important;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(167, 30, 27, .13), transparent 34rem),
+    #090a0e !important;
+}
+
+html[data-bingo-theme="classic"] #app .app-shell.theme-dark :is(.caller-panel, .cards-stage, .current-call-panel, .recent-panel, .pattern-panel) {
+  color: #f4f7fb !important;
+  border-color: #405987 !important;
+  background: linear-gradient(145deg, #181a20, #090a0e) !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .play-time-panel {
+  flex: 0 0 370px;
+  width: 370px;
+  min-width: 370px;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .header-actions > .appearance-btn {
+  flex: 0 0 104px;
+  width: 104px;
+}
+
 .player-hall-controls {
   display: none;
 }
@@ -1602,16 +1751,36 @@ html.bingo-embedded-window .bingo-theme-switcher { display: none !important; }
 }
 
 [data-bingo-theme="classic"] .player-hall-controls [data-hall-action="next"] {
-  border-color: #987000 !important;
-  color: #241900 !important;
-  background: linear-gradient(#ffe65b, #d6a900) !important;
-  box-shadow: inset 0 0 0 2px #fff39a, 0 3px 0 #6c4d00 !important;
+  min-height: 58px;
+  justify-content: space-between;
+  padding: 10px 18px;
+  border: 2px solid #59c7f2 !important;
+  border-radius: 999px !important;
+  color: #fff !important;
+  background: linear-gradient(135deg, #1769e0, #0b4da9) !important;
+  box-shadow: inset 0 1px rgba(255,255,255,.25), 0 8px 18px rgba(0,54,130,.36) !important;
+  font-size: 11.25pt;
+  letter-spacing: .06em;
+  text-shadow: none !important;
 }
 
 [data-bingo-theme="classic"] .player-hall-controls [data-hall-action="next"] .bi {
-  width: 1.35em;
-  font-size: 24pt !important;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 50%;
+  color: #0b4da9;
+  background: #fff;
+  font-size: 17.25pt !important;
   filter: none;
+}
+
+[data-bingo-theme="classic"] .player-hall-controls [data-hall-action="next"]:is(:hover, :focus-visible) {
+  border-color: #9eeaff !important;
+  background: linear-gradient(135deg, #2681f4, #0e5fc7) !important;
+  box-shadow: inset 0 1px rgba(255,255,255,.3), 0 10px 22px rgba(0,71,166,.44) !important;
+  transform: translateY(-1px);
 }
 
 /* Reliable high-contrast surfaces in every Planet Hall player/dealer window. */
@@ -1740,6 +1909,10 @@ html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) .round-snapsh
   display: none;
 }
 
+.universal-controls-dock {
+  display: none;
+}
+
 .hall-controls-toggle {
   display: none;
 }
@@ -1785,50 +1958,60 @@ html.hall-controls-collapsed[data-bingo-theme="current"] .universal-purchase-but
   display: none !important;
 }
 
+html[data-bingo-theme="current"] .universal-controls-dock {
+  position: relative;
+  z-index: 1100;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+  padding: 10px max(14px, calc((100vw - 920px) / 2));
+  border-top: 2px solid #526b9f;
+  background: #111b2a;
+  box-shadow: 0 -5px 18px rgba(0, 0, 0, .25);
+}
+
+html.hall-controls-collapsed[data-bingo-theme="current"] .universal-controls-dock {
+  display: none;
+}
+
 [data-bingo-theme="current"] .universal-view-button,
 [data-bingo-theme="current"] .universal-start-button,
 [data-bingo-theme="current"] .universal-purchase-button {
-  position: fixed;
-  z-index: 1100;
-  right: 18px;
-  bottom: 18px;
+  position: static;
   display: flex;
-  min-width: 158px;
-  min-height: 66px;
+  min-width: 126px;
+  min-height: 50px;
   align-items: center;
   justify-content: center;
-  gap: 11px;
+  gap: 8px;
   border: 2px solid #6540ae;
   border-radius: 9px;
   color: #fff;
   background: linear-gradient(#a669ef, #5d28b5);
   box-shadow: inset 0 0 0 2px #caa2ff, 0 3px 0 #32136d;
-  font-size: 12.75pt;
+  font-size: 10.5pt;
   font-weight: 950;
 }
 
 [data-bingo-theme="current"] .universal-setup-button {
-  position: fixed;
-  z-index: 1100;
-  right: 362px;
-  bottom: 18px;
+  position: static;
   display: flex;
-  min-width: 158px;
-  min-height: 66px;
+  min-width: 126px;
+  min-height: 50px;
   align-items: center;
   justify-content: center;
-  gap: 11px;
+  gap: 8px;
   border: 2px solid #6a7385;
   border-radius: 9px;
   color: #fff;
   background: linear-gradient(#687284, #313847);
   box-shadow: 0 5px 18px rgba(0, 0, 0, .35);
-  font-size: 12.75pt;
+  font-size: 10.5pt;
   font-weight: 950;
 }
 
 [data-bingo-theme="current"] .universal-purchase-button {
-  right: 534px;
   border-color: #5f8d20;
   color: #fff;
   background: linear-gradient(#a4ed42, #58a515);
@@ -1836,11 +2019,155 @@ html.hall-controls-collapsed[data-bingo-theme="current"] .universal-purchase-but
 }
 
 [data-bingo-theme="current"] .universal-start-button {
-  right: 190px;
   border-color: #4e8b2f;
   color: #fff;
   background: linear-gradient(#48b948, #18782a);
   box-shadow: 0 5px 18px rgba(0, 0, 0, .35);
+}
+
+/* Classic theme dark mode must win over its light-theme presentation rules. */
+html[data-bingo-theme="current"] #app .app-shell.theme-dark {
+  color: #edf3ff !important;
+  background: #0d1420 !important;
+  --navy: #edf3ff;
+  --line: #4b607e;
+  --cream: #121b29;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark :is(
+  .topbar,
+  .game-layout,
+  .cards-stage,
+  .stage-toolbar,
+  .current-call-panel,
+  .recent-panel,
+  .called-history-frame,
+  .pattern-panel,
+  .app-footer
+) {
+  color: #edf3ff !important;
+  border-color: #4b607e !important;
+  background-color: #111b2a !important;
+  background-image: none !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .topbar .header-actions > :is(.appearance-btn, .new-game-btn) {
+  color: #f7faff !important;
+  border-color: #617a9e !important;
+  background: #1b2a3e !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark :is(.stage-toolbar, .called-history-frame) :is(span, p, label),
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .stage-heading :is(.eyebrow, h2) {
+  color: #dce8f8 !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark :is(.sort-control, .auto-speed) select,
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .card-pager,
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .card-pager button,
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .card-pager strong,
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .card-count-picker {
+  color: #f5f8ff !important;
+  border-color: #617a9e !important;
+  background: #18263a !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .card-count-picker button:not(.active) {
+  color: #e4edfa !important;
+  background: #22324a !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .view-control {
+  color: #dce8f8 !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .view-control button:not(.active) {
+  color: #263852 !important;
+  border-color: #cad5e5 !important;
+  background: #f1f5fa !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .btn-auto:disabled {
+  color: #52647e !important;
+  border-color: #9cacbf !important;
+  background: #e5ebf3 !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .called-history-frame > div :is(span, strong),
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .bingo-card :is(.card-hint, .card-distance span) {
+  color: #50627d !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .bingo-card .card-distance strong {
+  color: #1761b4 !important;
+}
+
+/* Classic light mode uses deliberate ink colors instead of dark-mode leftovers. */
+html[data-bingo-theme="current"] #app .app-shell.theme-light :is(
+  .game-layout,
+  .cards-stage,
+  .stage-toolbar,
+  .current-call-panel,
+  .recent-panel,
+  .called-history-frame,
+  .pattern-panel
+) {
+  color: #17243a !important;
+  border-color: #7897c0 !important;
+  background-color: #fff !important;
+  background-image: none !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-light .stage-toolbar :is(.eyebrow, h2),
+html[data-bingo-theme="current"] #app .app-shell.theme-light .current-call-panel :is(.eyebrow, .call-name),
+html[data-bingo-theme="current"] #app .app-shell.theme-light :is(.sort-control, .view-control, .speed-control) > span {
+  color: #40536f !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-light .stage-toolbar h2 {
+  color: #18345d !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-light .btn-auto:disabled {
+  color: #4b5c73 !important;
+  border-color: #a9b8cb !important;
+  background: #e5ebf3 !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-light .bingo-card :is(.card-hint, .card-distance span) {
+  color: #53647d !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-light .bingo-card .card-distance {
+  color: #294f86 !important;
+  border-color: #c1cde0 !important;
+  background: #edf3fa !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-light .bingo-card .card-distance strong {
+  color: #1761b4 !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-light .app-footer {
+  color: #f4f7fc !important;
+  border-color: #435775 !important;
+  background: #17243a !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-light .app-footer :is(span, p, small) {
+  color: #c8d4e5 !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-light .app-footer :is(strong, h2, h3) {
+  color: #fff !important;
 }
 
 .bingo-view-overlay[hidden],
@@ -1855,7 +2182,8 @@ html.hall-controls-collapsed[data-bingo-theme="current"] .universal-purchase-but
   inset: 0;
   display: grid;
   place-items: center;
-  padding: 24px;
+  padding: 12px;
+  overflow: auto;
   background: rgba(0,0,0,.78);
   backdrop-filter: blur(6px);
 }
@@ -1871,6 +2199,14 @@ html.hall-controls-collapsed[data-bingo-theme="current"] .universal-purchase-but
   box-shadow: 0 25px 80px rgba(0,0,0,.75);
 }
 
+.view-choice-panel {
+  height: auto;
+  max-height: min(680px, 94vh);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+}
+
 .view-flashboard-panel {
   width: 100%;
   height: 100%;
@@ -1882,31 +2218,38 @@ html.hall-controls-collapsed[data-bingo-theme="current"] .universal-purchase-but
 .view-choice-panel > header,
 .view-flashboard-panel > header {
   display: flex;
-  min-height: 72px;
+  min-height: 56px;
   align-items: center;
   justify-content: center;
-  padding: 14px 24px;
+  padding: 10px 20px;
   border: 1px solid #516a9e;
   color: #fff;
   background: linear-gradient(90deg, #63090a, #d32c23, #63090a);
-  font-size: 21pt;
+  font-size: 18pt;
   font-weight: 850;
 }
 
 .view-choice-panel > div {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
-  padding: 14px;
+  padding: 10px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .view-choice-panel > div button {
-  min-height: 62px;
+  min-height: 50px;
   border: 1px solid #3f5b91;
   border-radius: 5px;
   color: #edf4ff;
   background: linear-gradient(#242936, #11141b);
-  font-size: 15.75pt;
+  font-size: 12.75pt;
   font-weight: 800;
+}
+
+.view-choice-panel > div [data-view-flashboard] {
+  grid-column: 1 / -1;
 }
 
 .view-choice-panel > div button:hover,
@@ -1920,7 +2263,31 @@ html.hall-controls-collapsed[data-bingo-theme="current"] .universal-purchase-but
 .view-flashboard-panel footer {
   display: flex;
   justify-content: center;
-  padding: 12px;
+  padding: 8px;
+}
+
+.view-choice-panel footer {
+  position: relative;
+  z-index: 2;
+  border-top: 1px solid #3f5b91;
+  background: #101217;
+  box-shadow: 0 -8px 18px rgba(0,0,0,.34);
+}
+
+.view-choice-panel footer button {
+  min-height: 46px;
+  padding-inline: 24px;
+  white-space: nowrap;
+}
+
+@media (max-width: 620px) {
+  .view-choice-panel > div {
+    grid-template-columns: 1fr;
+  }
+
+  .view-choice-panel > div button {
+    min-height: 46px;
+  }
 }
 
 .view-choice-panel footer button,
@@ -2103,20 +2470,21 @@ html.hall-controls-collapsed[data-bingo-theme="current"] .universal-purchase-but
 .daub-design-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-  padding: 20px;
+  gap: 8px;
+  padding: 14px;
 }
 
 .daub-design-grid button {
   display: grid;
-  min-height: 145px;
+  min-height: 104px;
   place-items: center;
-  gap: 8px;
+  gap: 5px;
+  padding: 9px 6px;
   border: 2px solid #3f5b91;
   border-radius: 8px;
   color: #eaf2ff;
   background: linear-gradient(#242936, #11141b);
-  font-size: 12pt;
+  font-size: 9.75pt;
   font-weight: 850;
 }
 
@@ -2252,10 +2620,10 @@ html.hall-controls-collapsed[data-bingo-theme="current"] .universal-purchase-but
 
 .daub-preview {
   display: grid;
-  width: 66px;
-  height: 66px;
+  width: 48px;
+  height: 48px;
   place-items: center;
-  font-size: 35.25pt;
+  font-size: 25.5pt;
   font-style: normal;
 }
 
@@ -3058,6 +3426,83 @@ html.bingo-popout-window #app .dealer-ball-column button {
   background: #ffffff !important;
 }
 
+[data-bingo-theme] #app .speed-control > span {
+  color: var(--dealer-muted) !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .speed-control select {
+  min-height: 48px;
+  border: 2px solid var(--dealer-line) !important;
+  border-radius: 8px;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme="planet"] #app .speed-control select {
+  color: #f5fbff !important;
+  background: #08182e !important;
+}
+
+[data-bingo-theme="classic"] #app .speed-control select {
+  color: #2b1714 !important;
+  background: #fff8e6 !important;
+}
+
+[data-bingo-theme="current"] #app .speed-control select {
+  color: #17243a !important;
+  background: #ffffff !important;
+}
+
+[data-bingo-theme] #app .speed-control select option {
+  color: #17243a !important;
+  background: #ffffff !important;
+}
+
+[data-bingo-theme] #app .card-pager {
+  color: var(--dealer-text) !important;
+  border-color: var(--dealer-line) !important;
+  background: transparent !important;
+}
+
+[data-bingo-theme] #app .card-pager strong {
+  display: grid;
+  min-width: 112px;
+  min-height: 48px;
+  place-items: center;
+  padding: 8px 12px;
+  border: 2px solid var(--dealer-line) !important;
+  border-radius: 8px;
+  color: var(--dealer-text) !important;
+  background: var(--dealer-panel-alt) !important;
+  font-size: 13.5pt !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .card-pager button {
+  min-width: 48px;
+  min-height: 48px;
+  color: var(--dealer-text) !important;
+  border: 2px solid var(--dealer-line) !important;
+  background: var(--dealer-panel-alt) !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .card-pager button:is(:hover, :focus-visible) {
+  color: #fff !important;
+  border-color: var(--dealer-accent) !important;
+  background: var(--dealer-active) !important;
+}
+
+[data-bingo-theme] #app .card-pager button:disabled {
+  color: var(--dealer-muted) !important;
+  border-color: var(--dealer-line) !important;
+  background: var(--dealer-panel) !important;
+  opacity: .72 !important;
+}
+
 [data-bingo-theme] #app :is(.card-pager, .view-control) button {
   color: var(--dealer-text) !important;
   border-color: var(--dealer-line) !important;
@@ -3365,7 +3810,12 @@ html.bingo-popout-window #app .dealer-ball-column button {
   }
 
   [data-bingo-theme="current"] .universal-purchase-button {
-    right: 368px;
+    right: auto;
+  }
+
+  html[data-bingo-theme="current"] .universal-controls-dock {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 8px;
   }
 
   [data-bingo-theme="current"] :is(.universal-view-button, .universal-start-button, .universal-setup-button, .universal-purchase-button) .bi {

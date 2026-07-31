@@ -1,5 +1,5 @@
-const RELEASE = "1.1.3";
-const BUILD = "20260731-cross-theme-contrast-audit";
+const RELEASE = "1.1.4";
+const BUILD = "20260731-v1.1.4";
 const CACHE_NAME = `muha-casino-${RELEASE}-${BUILD}`;
 
 self.addEventListener("install", () => {
