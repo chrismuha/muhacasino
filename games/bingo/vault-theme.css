@@ -5075,3 +5075,15 @@ html[data-bingo-theme="classic"]:not(.hall-controls-collapsed) #app .game-layout
     overflow-y: auto !important;
   }
 }
+
+/* Light and Dark labels occupy identical space, preventing header reflow. */
+[data-bingo-theme] #app .topbar .header-actions > .appearance-btn {
+  box-sizing: border-box !important;
+  flex: 0 0 118px !important;
+  width: 118px !important;
+  min-width: 118px !important;
+  max-width: 118px !important;
+  padding-inline: 10px !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+}
