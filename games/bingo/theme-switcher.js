@@ -421,15 +421,21 @@
       return;
     }
 
-    let announce = false;
-    const callsSinceClaim = callCount - state.lastClaimCall;
-    if (callCount >= 6 && callsSinceClaim >= 5 && (Math.random() < .16 || callsSinceClaim >= 11)) {
-      state.count += 1;
-      state.lastClaimCall = callCount;
-      announce = true;
-    }
     state.lastCallCount = callCount;
-    saveIncorrectBingoState(state, announce);
+    saveIncorrectBingoState(state);
+  }
+
+  function recordManualClaimDecision(event) {
+    const rejectButton = event.target.closest("#app .verify-reject");
+    if (!rejectButton || rejectButton.dataset.incorrectBingoRecorded === "true") return;
+    rejectButton.dataset.incorrectBingoRecorded = "true";
+
+    const state = readIncorrectBingoState();
+    const callCount = calledNumbers().size;
+    state.count += 1;
+    state.lastCallCount = Math.max(state.lastCallCount, callCount);
+    state.lastClaimCall = callCount;
+    saveIncorrectBingoState(state, true);
   }
 
   incorrectBingoChannel?.addEventListener("message", (event) => {
@@ -907,6 +913,39 @@
     if (alert.querySelector("strong").textContent !== winnerText) {
       alert.querySelector("strong").textContent = winnerText;
     }
+    syncBingoCallHalt(winners.length > 0);
+  }
+
+  function syncBingoCallHalt(hasWinner) {
+    const wasHalted = document.documentElement.classList.contains("bingo-call-halted");
+    document.documentElement.classList.toggle("bingo-call-halted", hasWinner);
+
+    if (hasWinner && !wasHalted) {
+      const runningAutoCall = [...document.querySelectorAll("#app button")].find((button) =>
+        /stop automatic play|pause auto call|pause automatic play/i.test(button.textContent)
+      );
+      runningAutoCall?.click();
+    }
+
+    document.querySelectorAll("#app button").forEach((button) => {
+      if (!/call random ball|call next number|call number|call next target number|start number calling|start automatic play|start auto call/i.test(button.textContent)) return;
+      if (hasWinner) {
+        button.dataset.bingoCallHalted = "true";
+        button.disabled = true;
+        button.setAttribute("aria-disabled", "true");
+      } else if (button.dataset.bingoCallHalted === "true") {
+        delete button.dataset.bingoCallHalted;
+        button.disabled = false;
+        button.removeAttribute("aria-disabled");
+      }
+    });
+  }
+
+  function blockCallingShortcutAfterBingo(event) {
+    if (!document.documentElement.classList.contains("bingo-call-halted")) return;
+    if (event.code !== "Space" && !/^[pP]$/.test(event.key)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
   }
 
   function syncStartButtons() {
@@ -1175,7 +1214,7 @@
     const playerUrl = new URL(window.location.href);
     playerUrl.searchParams.delete("screen");
     playerUrl.searchParams.delete("player");
-    playerUrl.searchParams.set("build", "20260731-theme-toggle-stability");
+    playerUrl.searchParams.set("build", "20260731-final-bingo-release");
 
     if (window.opener && !window.opener.closed) {
       let playerWindow = window.opener;
@@ -1221,6 +1260,8 @@
   document.addEventListener("input", saveCardCount, true);
   document.addEventListener("change", saveCardCount, true);
   document.addEventListener("click", saveNativeCardView, true);
+  document.addEventListener("click", recordManualClaimDecision, true);
+  document.addEventListener("keydown", blockCallingShortcutAfterBingo, true);
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {

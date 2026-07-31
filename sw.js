@@ -1,5 +1,5 @@
 const RELEASE = "1.1.4";
-const BUILD = "20260731-call-history-contrast";
+const BUILD = "20260731-final-bingo-release";
 const CACHE_NAME = `muha-casino-${RELEASE}-${BUILD}`;
 
 self.addEventListener("install", () => {

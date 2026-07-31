@@ -5002,7 +5002,11 @@ html[data-bingo-theme="current"] #app .app-shell.theme-dark .caller-panel select
 }
 
 [data-bingo-theme] #app .app-shell.theme-dark .play-time-panel {
-  --timezone-arrow: #dce8f8;
+  --timezone-arrow: #fff;
+}
+
+html[data-bingo-theme="current"] #app .app-shell.theme-dark .play-time-panel {
+  --timezone-arrow: #fff;
 }
 
 [data-bingo-theme] #app .play-time-panel > :is(div, label) {
@@ -5107,4 +5111,84 @@ html[data-bingo-theme="classic"]:not(.hall-controls-collapsed) #app .game-layout
   border-color: #ff8b82 !important;
   background: #b82027 !important;
   box-shadow: 0 0 0 2px rgba(255,255,255,.22) !important;
+}
+
+/* Planet Hall's cream Dealer ball always uses dark ink for its number. */
+html[data-bingo-theme="classic"] #app .dealer-current-ball strong {
+  color: #151d2c !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme="classic"] #app .dealer-current-ball :is(span, small) {
+  color: #c82b27 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+/* Light Hall selectors use a visible black arrow; dark Hall selectors use white. */
+[data-bingo-theme] #app .app-shell.theme-light .play-time-panel {
+  --timezone-arrow: #000;
+}
+
+[data-bingo-theme] #app .app-shell.theme-light .play-time-panel select {
+  background-image:
+    linear-gradient(45deg, transparent 50%, #000 50%),
+    linear-gradient(135deg, #000 50%, transparent 50%) !important;
+}
+
+[data-bingo-theme] #app .app-shell.theme-dark .play-time-panel select {
+  background-image:
+    linear-gradient(45deg, transparent 50%, #fff 50%),
+    linear-gradient(135deg, #fff 50%, transparent 50%) !important;
+}
+
+/* A real triangle keeps the time-zone arrow visible when Hall rules clear select backgrounds. */
+[data-bingo-theme] #app .play-time-panel label {
+  position: relative !important;
+}
+
+[data-bingo-theme] #app .play-time-panel label::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  right: 14px;
+  bottom: 13px;
+  width: 0;
+  height: 0;
+  border-right: 7px solid transparent;
+  border-left: 7px solid transparent;
+  border-top: 8px solid #000;
+  pointer-events: none;
+}
+
+[data-bingo-theme] #app .app-shell.theme-dark .play-time-panel label::after {
+  border-top-color: #fff;
+}
+
+/* Pop-out card headers retain bright text on their dark Hall banner. */
+html.bingo-popout-window:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .stage-heading .eyebrow {
+  color: #ffd968 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html.bingo-popout-window:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .stage-heading h2 {
+  color: #fff8e6 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+/* Dark dealer pop-outs use readable placeholder copy. */
+html.bingo-popout-window:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .dealer-layout :is(input, select)::placeholder {
+  color: #c8d5e8 !important;
+  opacity: 1 !important;
+}
+
+/* Green calling actions use white icons instead of low-contrast red. */
+[data-bingo-theme] #app .btn-auto:not(:disabled) :is(.bi, i),
+[data-bingo-theme] #app button:is(.hall-start-button, .primary-dealer-action):not(:disabled) :is(.bi, i) {
+  color: #fff !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
 }
