@@ -9,6 +9,16 @@
   const listeners = new Set();
   const parameters = new URLSearchParams(window.location.search);
   const windowId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  const navigationEntry = window.performance?.getEntriesByType?.("navigation")?.[0];
+
+  if (navigationEntry?.type === "reload") {
+    try {
+      localStorage.removeItem(STATE_KEY);
+    } catch {
+      // A reload still starts from the app defaults when storage is unavailable.
+    }
+    channel?.postMessage({ type: "round-reset", source: windowId });
+  }
 
   function windowLabel() {
     if (parameters.has("player")) return `Player ${parameters.get("player")}`;
@@ -42,6 +52,13 @@
 
   channel?.addEventListener("message", (event) => {
     if (event.data?.type === "state") deliver(event.data.state);
+    if (event.data?.type === "round-reset" && event.data.source !== windowId) {
+      try {
+        localStorage.removeItem(STATE_KEY);
+      } catch {
+        // Connected windows will stop restoring the previous round when possible.
+      }
+    }
     if (event.data?.type === "request-state") {
       const state = readState();
       if (state) channel.postMessage({ type: "state", state });
@@ -61,7 +78,7 @@
     const url = new URL(window.location.href);
     url.search = "";
     Object.entries(parameters).forEach(([key, value]) => url.searchParams.set(key, value));
-    const build = "20260731-window-reliability";
+    const build = "20260731-time-card-contrast";
     url.searchParams.set("build", build);
     const windowOwner = window.top && window.top !== window ? window.top : window;
     const popup = windowOwner.open("", name);

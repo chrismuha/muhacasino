@@ -64,7 +64,7 @@ const categoryNames = {
 };
 
 const SITE_VERSION = "1.1.2";
-const SITE_BUILD = "20260731-window-reliability";
+const SITE_BUILD = "20260731-time-card-contrast";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
@@ -325,7 +325,6 @@ function sendBingoTheme(theme) {
     type: "muha-bingo-theme",
     theme,
   }, window.location.origin);
-  gameFrame.contentWindow?.applyBingoTheme?.(theme);
 }
 
 bingoThemeChannel?.addEventListener("message", (event) => {

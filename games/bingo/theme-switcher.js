@@ -67,8 +67,8 @@
     const controlsToggle = document.querySelector(".hall-controls-toggle");
     if (!controlsToggle) return;
     controlsToggle.innerHTML = collapsed
-      ? '<i class="bi bi-chevron-left" aria-hidden="true"></i>'
-      : '<i class="bi bi-chevron-right" aria-hidden="true"></i>';
+      ? '<i class="bi bi-caret-left-fill" aria-hidden="true"></i>'
+      : '<i class="bi bi-caret-right-fill" aria-hidden="true"></i>';
     controlsToggle.setAttribute("aria-expanded", String(!collapsed));
     controlsToggle.setAttribute(
       "aria-label",
@@ -78,6 +78,7 @@
 
   function applyTheme(theme, broadcast = true) {
     const selectedTheme = themes.includes(theme) ? theme : "planet";
+    const previousTheme = document.documentElement.dataset.bingoTheme;
     document.documentElement.classList.remove("hall-native-controls-open");
     document.querySelector(".hall-overlay-background")?.remove();
     if (selectedTheme !== "planet") {
@@ -107,7 +108,9 @@
     } catch {
       // The theme still works when local storage is unavailable.
     }
-    if (broadcast) themeChannel?.postMessage({ theme: selectedTheme });
+    if (broadcast && previousTheme !== selectedTheme) {
+      themeChannel?.postMessage({ theme: selectedTheme });
+    }
   }
 
   window.applyBingoTheme = applyTheme;
@@ -489,7 +492,7 @@
       <button type="button" data-hall-action="trade"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>TRADE</span></button>
       <button type="button" data-hall-action="schedule"><i class="bi bi-calendar3" aria-hidden="true"></i><span>SCHEDULE</span></button>
       <button type="button" data-hall-action="purchase"><i class="bi bi-cart-fill" aria-hidden="true"></i><span>PURCHASE</span></button>
-      <button type="button" data-hall-action="next"><span>NEXT</span><i class="bi bi-arrow-right-circle-fill" aria-hidden="true"></i></button>
+      <button type="button" data-hall-action="next"><span>NEXT</span><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
     `;
     const classicControls = document.createElement("nav");
     classicControls.className = "player-hall-controls classic-hall-controls";
@@ -873,17 +876,25 @@
   }
 
   function returnToPlayerWindow() {
-    if (window.opener && !window.opener.closed) {
-      window.opener.postMessage({ type: "muha-bingo-focus-player-hall" }, window.location.origin);
-      window.opener.focus();
-      return;
-    }
     const playerUrl = new URL(window.location.href);
     playerUrl.searchParams.delete("screen");
     playerUrl.searchParams.delete("player");
-    playerUrl.searchParams.set("build", "20260731-player-return");
-    const playerWindow = window.open(playerUrl.href, "muha-bingo-player-hall");
-    playerWindow?.focus();
+    playerUrl.searchParams.set("build", "20260731-time-card-contrast");
+
+    if (window.opener && !window.opener.closed) {
+      let playerWindow = window.opener;
+      try {
+        playerWindow = window.opener.top || window.opener;
+      } catch {
+        // The immediate opener is still usable.
+      }
+      playerWindow.postMessage({ type: "muha-bingo-focus-player-hall" }, window.location.origin);
+      playerWindow.focus();
+      window.setTimeout(() => window.location.replace(playerUrl.href), 250);
+      window.close();
+      return;
+    }
+    window.location.replace(playerUrl.href);
   }
 
   function mountPlayerReturnButton() {
@@ -896,6 +907,21 @@
     document.body.append(button);
   }
 
+  function mountPopoutToolbar() {
+    if (!isPopout) return;
+    let toolbar = document.querySelector(".bingo-popout-toolbar");
+    if (!toolbar) {
+      toolbar = document.createElement("nav");
+      toolbar.className = "bingo-popout-toolbar";
+      toolbar.setAttribute("aria-label", "Bingo window controls");
+      document.body.append(toolbar);
+    }
+    const returnButton = document.querySelector(".return-to-player-window");
+    const themeSwitcher = document.querySelector(".bingo-theme-switcher");
+    if (returnButton && returnButton.parentElement !== toolbar) toolbar.prepend(returnButton);
+    if (themeSwitcher && themeSwitcher.parentElement !== toolbar) toolbar.append(themeSwitcher);
+  }
+
   document.addEventListener("input", saveCardCount, true);
   document.addEventListener("change", saveCardCount, true);
 
@@ -904,6 +930,7 @@
       if (isPopout) {
         mountThemeSwitcher();
         mountPlayerReturnButton();
+        mountPopoutToolbar();
         mountViewOverlay();
         restoreSavedPreferences();
         return;
@@ -918,6 +945,7 @@
     if (isPopout) {
       mountThemeSwitcher();
       mountPlayerReturnButton();
+      mountPopoutToolbar();
       mountViewOverlay();
       restoreSavedPreferences();
       return;

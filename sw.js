@@ -1,5 +1,5 @@
 const RELEASE = "1.1.2";
-const BUILD = "20260731-window-reliability";
+const BUILD = "20260731-time-card-contrast";
 const CACHE_NAME = `muha-casino-${RELEASE}-${BUILD}`;
 
 self.addEventListener("install", () => {
