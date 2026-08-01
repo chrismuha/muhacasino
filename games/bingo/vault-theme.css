@@ -656,12 +656,11 @@ html[data-bingo-theme] body #app .app-shell.theme-light .design-screen .eyebrow 
 html[data-bingo-theme] #app .audience-side {
   box-sizing: border-box !important;
   display: grid !important;
-  grid-template-rows:
-    minmax(76px, .65fr)
-    minmax(130px, 1.15fr)
-    minmax(125px, 1fr) !important;
-  align-self: stretch !important;
-  height: 100% !important;
+  grid-template-rows: 90px 150px 140px !important;
+  align-self: start !important;
+  gap: 10px !important;
+  height: auto !important;
+  max-height: none !important;
   min-height: 0 !important;
   overflow: hidden !important;
 }
@@ -671,6 +670,65 @@ html[data-bingo-theme] #app .audience-side > section {
   min-height: 0 !important;
   padding: 14px !important;
   overflow: hidden !important;
+}
+
+@media (max-height: 760px) {
+  html[data-bingo-theme] #app .audience-side {
+    grid-template-rows: 70px 120px 110px !important;
+    gap: 8px !important;
+  }
+
+  html[data-bingo-theme] #app .audience-side > section {
+    padding: 10px !important;
+  }
+}
+
+html[data-bingo-theme] #app .audience-winners > p {
+  margin-top: 0 !important;
+  transform: translateY(-4px) !important;
+}
+
+/* Audience header pattern and called-count indicators need display-size type. */
+html[data-bingo-theme] #app .audience-header > strong {
+  font-size: 12pt !important;
+  line-height: 1.2 !important;
+  padding: 9px 16px !important;
+}
+
+html[data-bingo-theme] #app .audience-header > small {
+  font-size: 11pt !important;
+  line-height: 1.2 !important;
+  font-weight: 800 !important;
+  opacity: 1 !important;
+}
+
+/* Planet Hall light Dealer surfaces use dark labels; dark mode retains white. */
+html[data-bingo-theme="classic"] #app .app-shell.theme-light .dealer-tabs button:not(.active) {
+  color: #342019 !important;
+  -webkit-text-fill-color: #342019 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme="classic"] #app .app-shell.theme-light .incorrect-bingo-tally :is(span, small) {
+  color: #50321f !important;
+  -webkit-text-fill-color: #50321f !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme="classic"] #app .app-shell.theme-dark .dealer-tabs button,
+html[data-bingo-theme="classic"] #app .app-shell.theme-dark .incorrect-bingo-tally :is(span, small) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme] #app .audience-call > span {
+  font-size: 12pt !important;
+  line-height: 1.2 !important;
+  font-weight: 900 !important;
+  opacity: 1 !important;
 }
 
 /* Audience waiting status follows the actual light/dark canvas contrast. */
@@ -6245,6 +6303,123 @@ html[data-bingo-theme] body :is(
   opacity: 1 !important;
 }
 
+/* Final Hall header geometry: Theme belongs in the first action row. */
+html[data-bingo-theme="classic"] #app .topbar .header-actions {
+  grid-template-columns: minmax(300px, 1fr) repeat(5, max-content) !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .header-actions > .header-theme-switcher {
+  align-self: stretch !important;
+  min-width: 0 !important;
+  height: 46px !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .header-actions > .header-theme-switcher .bingo-theme-trigger {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  padding: 6px 11px !important;
+  border-radius: 8px !important;
+}
+
+@media (max-width: 1200px) {
+  html[data-bingo-theme="classic"] #app .topbar .header-actions {
+    grid-template-columns: minmax(260px, 1fr) repeat(5, max-content) !important;
+  }
+}
+
+/* Find Card is one complete outlined control, not two conflicting boxes. */
+html[data-bingo-theme] #app .dealer-layout .dealer-search {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: stretch !important;
+  border: 2px solid var(--dealer-line) !important;
+  border-radius: 9px !important;
+  background: var(--dealer-input) !important;
+  overflow: hidden !important;
+  box-shadow: none !important;
+}
+
+html[data-bingo-theme] #app .dealer-layout .dealer-search > input {
+  min-width: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-bingo-theme] #app .dealer-layout .dealer-search > button {
+  margin: 0 !important;
+  border: 0 !important;
+  border-left: 2px solid var(--dealer-line) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-bingo-theme] #app .dealer-layout .dealer-search:focus-within {
+  outline: 3px solid color-mix(in srgb, var(--dealer-accent) 45%, transparent) !important;
+  outline-offset: 2px !important;
+}
+
+/* The shared header remains present on Player Floor, Dealer, and Audience. */
+html[data-bingo-theme="classic"] #app .topbar {
+  position: relative !important;
+  z-index: 100 !important;
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .header-actions {
+  grid-template-columns: minmax(280px, 1fr) repeat(4, minmax(92px, 118px)) 104px !important;
+}
+
+/* Theme is a compact header action, never a large Hall control. */
+html[data-bingo-theme] #app .topbar .bingo-theme-switcher.header-theme-switcher {
+  box-sizing: border-box !important;
+  width: 104px !important;
+  min-width: 104px !important;
+  max-width: 104px !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  max-height: 46px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html[data-bingo-theme] #app .topbar .bingo-theme-switcher.header-theme-switcher > .bingo-theme-trigger {
+  box-sizing: border-box !important;
+  display: flex !important;
+  width: 104px !important;
+  min-width: 104px !important;
+  max-width: 104px !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  max-height: 46px !important;
+  margin: 0 !important;
+  padding: 5px 8px !important;
+  border-radius: 8px !important;
+  font-size: 8.25pt !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 1200px) {
+  html[data-bingo-theme="classic"] #app .topbar .header-actions {
+    grid-template-columns: minmax(230px, 1fr) repeat(4, minmax(78px, 1fr)) 92px !important;
+  }
+
+  html[data-bingo-theme] #app .topbar .bingo-theme-switcher.header-theme-switcher,
+  html[data-bingo-theme] #app .topbar .bingo-theme-switcher.header-theme-switcher > .bingo-theme-trigger {
+    width: 92px !important;
+    min-width: 92px !important;
+    max-width: 92px !important;
+  }
+}
+
 /* Planet Hall: keep the complete console inside the viewport. */
 html[data-bingo-theme="classic"],
 html[data-bingo-theme="classic"] body,
@@ -6458,4 +6633,51 @@ html[data-bingo-theme] body :is(
   -webkit-text-fill-color: #10213d !important;
   text-shadow: none !important;
   opacity: 1 !important;
+}
+
+/* Final placement: keep Theme in the upper action row without consuming a grid row. */
+html[data-bingo-theme="classic"] #app .topbar .header-actions {
+  position: relative !important;
+  grid-template-columns: minmax(280px, 1fr) repeat(4, minmax(92px, 118px)) !important;
+  padding-right: 112px !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .header-actions > .bingo-theme-switcher.header-theme-switcher {
+  position: absolute !important;
+  z-index: 120 !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: auto !important;
+  left: auto !important;
+  align-self: auto !important;
+  width: 104px !important;
+  height: 46px !important;
+  margin: 0 !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .header-actions > .bingo-theme-switcher.header-theme-switcher > .bingo-theme-trigger {
+  width: 104px !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  margin: 0 !important;
+  padding: 5px 8px !important;
+  font-size: 8.25pt !important;
+}
+
+/* Start auto call is a blue action with no inherited green Hall outline. */
+html[data-bingo-theme] #app .caller-panel .btn-auto {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  border: 2px solid #1558ad !important;
+  background: #1769e0 !important;
+  outline: 0 !important;
+  box-shadow: inset 0 0 0 2px #67a8ff, 0 3px 0 #0d3f82 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme] #app .caller-panel .btn-auto:is(:hover, :focus-visible) {
+  border-color: #0d4f9f !important;
+  background: #125bbf !important;
+  outline: 3px solid rgba(23, 105, 224, .3) !important;
+  outline-offset: 2px !important;
 }
