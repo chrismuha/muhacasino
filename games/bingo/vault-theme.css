@@ -6854,3 +6854,76 @@ html[data-bingo-theme="current"] #app .topbar .status-pill {
   max-height: 52px !important;
   border-radius: 8px !important;
 }
+
+/* Classic header uses three visual lines: identity/time, actions, then screen tabs. */
+html[data-bingo-theme="current"] #app .topbar {
+  grid-template-columns: minmax(220px, 320px) minmax(0, 1fr) !important;
+  grid-template-rows: auto auto !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .header-actions {
+  display: grid !important;
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  grid-template-rows: auto auto !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .header-actions > .play-time-panel {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .header-actions > :is(
+  .appearance-btn,
+  .status-pill,
+  .new-game-btn,
+  .bingo-theme-switcher.header-theme-switcher
+) {
+  grid-row: 2 !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  margin: 0 !important;
+  border-radius: 8px !important;
+  white-space: nowrap !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .header-actions > .bingo-theme-switcher.header-theme-switcher > .bingo-theme-trigger {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  margin: 0 !important;
+  border-radius: 8px !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .screen-switcher {
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+@media (max-width: 1400px) {
+  html[data-bingo-theme="current"] #app .topbar {
+    grid-template-columns: 1fr !important;
+  }
+
+  html[data-bingo-theme="current"] #app .topbar .header-actions {
+    grid-column: 1 !important;
+  }
+}
