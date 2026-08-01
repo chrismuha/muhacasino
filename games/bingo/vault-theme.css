@@ -1130,6 +1130,105 @@ html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) .planet-ga
   color: #24559b;
 }
 
+/* Planet Hall 2 Dealer Console uses the Player Hall's red, green, and black cabinet palette. */
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout {
+  --dealer-bg: #090b10;
+  --dealer-panel: #171a20;
+  --dealer-panel-alt: #20242c;
+  --dealer-text: #ffffff;
+  --dealer-muted: #d7dfeb;
+  --dealer-line: #3fc548;
+  --dealer-accent: #ed3d35;
+  --dealer-active: #c62828;
+  --dealer-input: #0d1118;
+  color: #fff !important;
+  background-color: #090b10 !important;
+  background-image: none !important;
+}
+
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout > .dealer-hero {
+  color: #fff !important;
+  border: 3px solid #3fc548 !important;
+  background-color: #9f1f1c !important;
+  background-image: none !important;
+  box-shadow: inset 0 0 0 2px #ff6860, 0 6px 0 #185f24 !important;
+}
+
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout > .dealer-hero :is(h1, h2, .eyebrow) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout :is(
+  .dealer-card,
+  .dealer-stats,
+  .dealer-tabs,
+  .dealer-command-bar,
+  .round-snapshot,
+  .dealer-search-result,
+  .stage-toolbar,
+  .fixed-dealer-status,
+  .game-setup-panel,
+  .current-call-panel,
+  .target-card-panel,
+  .ball-board-panel,
+  .dealer-pattern-panel,
+  .winner-log-panel,
+  .finance-summary-panel
+) {
+  color: #fff !important;
+  border-color: #3fc548 !important;
+  background-color: #171a20 !important;
+  background-image: none !important;
+  box-shadow: inset 0 0 0 1px #73ea79 !important;
+}
+
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout :is(
+  h1, h2, h3, h4, p, small, span, strong, label, .eyebrow
+) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-tabs button {
+  color: #fff !important;
+  border-color: #3fc548 !important;
+  background-color: #20242c !important;
+  background-image: none !important;
+}
+
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-tabs button.active {
+  color: #fff !important;
+  border-color: #ff6860 !important;
+  background-color: #c62828 !important;
+  box-shadow: inset 0 0 0 2px #ff7770, 0 4px 0 #185f24 !important;
+}
+
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout :is(input, select, textarea) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  border-color: #3fc548 !important;
+  background-color: #0d1118 !important;
+  background-image: none !important;
+}
+
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout :is(.btn-call, .setup-round-btn, .target-call-btn) {
+  color: #fff !important;
+  border-color: #89ef78 !important;
+  background-color: #38a92f !important;
+  background-image: none !important;
+  box-shadow: inset 0 0 0 2px #78e96e, 0 4px 0 #185f24 !important;
+}
+
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout :is(.btn-auto, .dealer-new-round) {
+  color: #fff !important;
+  border-color: #ff7770 !important;
+  background-color: #c62828 !important;
+  background-image: none !important;
+}
+
 .planet-theme-menu {
   position: absolute;
   top: calc(100% + 8px);
