@@ -7622,3 +7622,57 @@ html[data-bingo-theme="current"] body #app > .app-shell.theme-dark main.dealer-l
   -webkit-text-fill-color: #fff !important;
   opacity: 1 !important;
 }
+
+/* Final cross-theme section-heading contrast; do not depend on wrapper structure. */
+html[data-bingo-theme] body #app .app-shell .cards-stage .stage-heading .eyebrow,
+html[data-bingo-theme] body #app .app-shell.theme-light .cards-stage .stage-heading .eyebrow,
+html[data-bingo-theme] body #app .app-shell.theme-dark .cards-stage .stage-heading .eyebrow {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme] body #app .app-shell.theme-light .dealer-layout .dealer-hero .eyebrow {
+  color: #17243a !important;
+  -webkit-text-fill-color: #17243a !important;
+  opacity: 1 !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme] body #app .app-shell.theme-dark .dealer-layout .dealer-hero .eyebrow {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+/* Rendered Dealer Console markup uses stage-toolbar, not stage-heading. */
+html[data-bingo-theme] body #app .app-shell .cards-stage > .stage-toolbar > div:first-child > .eyebrow {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  font-size: 14pt !important;
+  font-weight: 950 !important;
+  opacity: 1 !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme] body #app .app-shell.theme-light .dealer-layout > .dealer-hero > div:first-child > .eyebrow {
+  color: #17243a !important;
+  -webkit-text-fill-color: #17243a !important;
+  opacity: 1 !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme] body #app .app-shell.theme-dark .dealer-layout > .dealer-hero > div:first-child > .eyebrow {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
