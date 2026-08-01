@@ -71,6 +71,15 @@
       "Waiting for session";
     shell.querySelector(".planet-call-count").textContent =
       `${activeCalledNumbers(sourceCards).size} Balls Called`;
+
+    const darkMode = document.querySelector("#app .app-shell")?.classList.contains("theme-dark");
+    const modeButton = shell.querySelector(".planet-mode-trigger");
+    if (modeButton) {
+      modeButton.innerHTML = darkMode
+        ? '<span aria-hidden="true">☀</span> LIGHT'
+        : '<span aria-hidden="true">☾</span> DARK';
+      modeButton.setAttribute("aria-label", darkMode ? "Use light mode" : "Use dark mode");
+    }
   }
 
   function queueSync() {
@@ -89,6 +98,9 @@
           <span class="muha-bingo-mark" aria-hidden="true">M</span>
           <span class="muha-bingo-words"><b>MUHA</b><span>BINGO</span></span>
         </div>
+        <button class="planet-mode-trigger" type="button" aria-label="Use dark mode">
+          <span aria-hidden="true">☾</span> DARK
+        </button>
         <div class="planet-theme-control">
           <button class="planet-theme-trigger" type="button" aria-expanded="false">
             <span aria-hidden="true">🎨</span> THEME
@@ -121,6 +133,12 @@
       </footer>
     `;
     shell.addEventListener("click", (event) => {
+      const modeTrigger = event.target.closest(".planet-mode-trigger");
+      if (modeTrigger) {
+        document.querySelector('#app .appearance-btn[aria-label^="Use "]')?.click();
+        queueSync();
+        return;
+      }
       const themeTrigger = event.target.closest(".planet-theme-trigger");
       const themeMenu = shell.querySelector(".planet-theme-menu");
       if (themeTrigger) {

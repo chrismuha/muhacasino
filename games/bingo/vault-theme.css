@@ -1059,6 +1059,77 @@ html[data-bingo-theme="current"] #app .recent-panel .section-heading > span {
   font-weight: 950;
 }
 
+.planet-mode-trigger {
+  position: absolute;
+  z-index: 25;
+  top: 50%;
+  right: 158px;
+  min-width: 122px;
+  min-height: 48px;
+  transform: translateY(-50%);
+  border: 2px solid #71dff2;
+  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(#275b9d, #122a57);
+  box-shadow: inset 0 0 0 2px rgba(163, 231, 255, .25), 0 4px 12px rgba(0, 0, 0, .4);
+  font-weight: 950;
+}
+
+.planet-mode-trigger:hover,
+.planet-mode-trigger:focus-visible {
+  border-color: #fff;
+  background: #1769e0;
+}
+
+/* Planet Hall 2 light mode keeps its arcade identity on a bright terminal surface. */
+html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) .planet-hall-shell {
+  color: #10213d;
+  background-color: #e8f1fb;
+  background-image: none;
+}
+
+html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) .planet-play-surface {
+  background: #e8f1fb;
+}
+
+html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) .planet-card-area {
+  border-color: #557db2;
+  background: #dce9f7;
+  box-shadow: inset 0 0 0 2px #b8cee8;
+}
+
+html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) .planet-number-board {
+  border-color: #557db2;
+  background: #d5e4f4;
+  box-shadow: inset 0 0 0 2px #aec7e3;
+}
+
+html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) .planet-number-board span {
+  color: #314b70;
+  border-color: #91add0;
+  background: #f7fbff;
+}
+
+html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) .planet-number-board span.called {
+  color: #fff;
+  background: #245ac9;
+}
+
+html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) .planet-status-bar {
+  color: #10213d;
+  border-top-color: #557db2;
+  background: #e6eff9;
+  box-shadow: 0 -8px 24px rgba(29, 65, 111, .2);
+}
+
+html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) :is(.planet-call-count, .planet-credit span) {
+  color: #314b70;
+}
+
+html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) .planet-game-name {
+  color: #24559b;
+}
+
 .planet-theme-menu {
   position: absolute;
   top: calc(100% + 8px);
