@@ -73,7 +73,7 @@ const categoryNames = {
 };
 
 const SITE_VERSION = "1.1.4";
-const SITE_BUILD = "20260801-treasurepots-hero";
+const SITE_BUILD = "20260801-oversized-reel-chips-v3";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
@@ -238,7 +238,7 @@ function launchGame(gameId, updateHistory = true) {
     }
   }
   gameFrame.title = game.title;
-  gameFrame.src = `${game.path}?build=${encodeURIComponent(SITE_BUILD)}`;
+  gameFrame.src = activeGameUrl();
   launcher.hidden = true;
   gameView.hidden = false;
   document.title = `${game.title} | Muha Casino`;
