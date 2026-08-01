@@ -7016,6 +7016,14 @@ html[data-bingo-theme] #app .topbar .play-time-panel label > select {
   }
 }
 
+/* Planet Hall 2 Audience canvas is dark in both app modes, so this status is always white. */
+html[data-bingo-theme="planet"] #app .audience-call > p {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+  text-shadow: 0 2px 2px rgba(0, 0, 0, .75) !important;
+}
+
 /* Do not let the viewport flex layout collapse the three Classic header lines. */
 html[data-bingo-theme="current"] #app .topbar {
   flex: 0 0 auto !important;
@@ -7425,7 +7433,7 @@ html[data-bingo-theme] #app .app-shell.theme-dark .audience-call > p {
   text-shadow: 0 2px 2px rgba(0, 0, 0, .75) !important;
 }
 
-html[data-bingo-theme] #app .app-shell.theme-light .audience-call > p {
+html[data-bingo-theme]:not([data-bingo-theme="planet"]) #app .app-shell.theme-light .audience-call > p {
   color: #111 !important;
   -webkit-text-fill-color: #111 !important;
   opacity: 1 !important;
@@ -7444,4 +7452,13 @@ html[data-bingo-theme] #app .app-shell.theme-light .audience-call > p {
   html[data-bingo-theme] #app .topbar .header-actions {
     grid-column: 1 !important;
   }
+}
+
+/* Absolute final contrast override for Planet Hall 2's always-dark Audience canvas. */
+html[data-bingo-theme="planet"] body #app .app-shell .audience-screen .audience-content .audience-call > p {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+  filter: none !important;
+  text-shadow: 0 2px 2px rgba(0, 0, 0, .8) !important;
 }
