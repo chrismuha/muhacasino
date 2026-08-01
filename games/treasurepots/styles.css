@@ -3391,10 +3391,19 @@ label {
 .reels .symbol-art::before {
   display: block;
   flex: 0 0 auto;
-  font-size: clamp(1.40679rem, 3.8808vw, 2.18295rem);
+  font-size: clamp(1.44899rem, 3.99722vw, 2.24844rem);
   line-height: 1;
   transform: none;
   transform-origin: center;
+}
+
+.reels .symbol-harp::before,
+.overlay-paytable .symbol-harp::before {
+  content: "♫";
+  color: #b77b08;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 900;
+  line-height: .9;
 }
 
 .reels .scatter-chip,
@@ -3445,5 +3454,5 @@ label {
 
 @media (max-width: 350px) {
   .reels { --reel-row-h: 29px; }
-  .reels .symbol-art::before { font-size: 1.26126rem; }
+  .reels .symbol-art::before { font-size: 1.2991rem; }
 }
