@@ -56,10 +56,13 @@
     wall.replaceChildren(...sourceCards.map(cardCopy));
     empty.hidden = sourceCards.length > 0;
 
-    const latestText =
-      document.querySelector("#app .bingo-ball strong, #app .dealer-current-ball strong, #app .audience-ball strong")
-        ?.textContent?.trim() || "—";
+    const sourceBall = document.querySelector(
+      "#app .bingo-ball, #app .dealer-current-ball, #app .audience-ball"
+    );
+    const latestText = sourceBall?.querySelector("strong")?.textContent?.trim() || "#";
+    const latestLetter = sourceBall?.querySelector("span, small")?.textContent?.trim() || "-";
     const latestNumber = /^\d+$/.test(latestText) ? Number(latestText) : null;
+    shell.querySelector(".planet-current-ball small").textContent = latestNumber ? latestLetter : "-";
     shell.querySelector(".planet-current-ball strong").textContent = latestText;
     renderNumberBoard(shell.querySelector(".planet-number-board"), activeCalledNumbers(sourceCards), latestNumber);
 
@@ -113,7 +116,7 @@
           <span class="planet-call-count">0 Balls Called</span>
           <strong class="planet-game-name">Waiting for session</strong>
         </section>
-        <div class="planet-current-ball"><small>CALL</small><strong>—</strong></div>
+        <div class="planet-current-ball"><small>-</small><strong>#</strong></div>
         <div class="planet-credit"><strong>∞</strong><span>CREDITS</span></div>
       </footer>
     `;
