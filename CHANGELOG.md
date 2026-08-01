@@ -17,6 +17,7 @@
 - Restored the original magnet emoji with dedicated contained sizing so it remains centered without clipping.
 - Replaced inherited pink Major-jackpot and pot-status text with high-contrast warm white.
 - Enlarged the clover emblem beside the TreasurePots header for stronger branding and visibility.
+- Corrected cream-card and dark-panel text colors across the jackpot board, pot feature, status pill, and footer guidance.
 
 ## 1.1.4 — 2026-07-31
 

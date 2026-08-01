@@ -3494,3 +3494,41 @@ label {
   font-size: .9em;
   line-height: 1;
 }
+
+.jackpot-board h3 {
+  color: #ffe69a !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .75), 0 0 10px rgba(230, 184, 63, .3);
+}
+
+.jackpot-pill,
+.jackpot-pill span,
+.jackpot-pill strong,
+.jackpot-pill b,
+.jackpot-pill.jackpot-major,
+.jackpot-pill.jackpot-major span,
+.jackpot-pill.jackpot-major b {
+  color: #123e3a !important;
+  text-shadow: none;
+}
+
+.pot b,
+.pot small {
+  color: #123e3a !important;
+  text-shadow: none;
+}
+
+.pot-copy .eyebrow {
+  color: #8df0ce !important;
+}
+
+.feature-status {
+  color: #123e3a !important;
+  text-shadow: none;
+}
+
+.footer,
+.auto-spin-hint,
+.right .message,
+.right .auto-spin-countdown {
+  color: #d9ebe4;
+}
