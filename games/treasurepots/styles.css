@@ -3466,3 +3466,20 @@ label {
   .reels { --reel-row-h: 29px; }
   .reels .symbol-art::before { font-size: 1.2991rem; }
 }
+
+/* High-contrast TreasurePots copy; remove inherited Pretty Penny pink text. */
+.jackpot-major,
+.jackpot-major strong,
+.jackpot-major span,
+.jackpot-major b,
+.wheel-award-chip.jackpot-major,
+.wheel-award-chip.jackpot-major strong,
+.wheel-award-chip.jackpot-major span,
+.pot-copy strong,
+.pot b,
+.pot small,
+.pot-rule,
+.feature-status {
+  color: #fffdf5 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .72);
+}
