@@ -26,6 +26,15 @@ const games = {
     icon: "¢",
     categories: ["feature", "jackpot"],
   },
+  treasurepots: {
+    title: "TreasurePots",
+    subtitle: "Hold & Link",
+    path: "games/treasurepots/index.html",
+    className: "card-treasure",
+    reels: "☘ $ ☘",
+    icon: "🏆",
+    categories: ["feature", "jackpot"],
+  },
   bingo: {
     title: "Muha Bingo",
     subtitle: "75-Ball Bingo",

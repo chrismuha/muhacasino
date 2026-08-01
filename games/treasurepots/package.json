@@ -1,0 +1,12 @@
+{
+  "name": "treasurepots",
+  "version": "1.1.2",
+  "description": "TreasurePots is a play-money slot with emerald symbols, scatter free spins, and a 6+ coin Hold & Link feature with a guaranteed COLLECT coin. NO REAL MONEY",
+  "main": "main.js",
+  "scripts": {
+    "build": "node --check main.js"
+  },
+  "private": true,
+  "keywords": [],
+  "author": ""
+}
