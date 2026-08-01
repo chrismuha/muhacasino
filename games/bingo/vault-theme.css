@@ -6841,6 +6841,120 @@ html[data-bingo-theme="current"] #app :is(.game-layout, .dealer-layout, .design-
   min-height: 0 !important;
 }
 
+/* Planet Hall 2 uses the same protected three-line header structure. */
+html[data-bingo-theme="planet"] #app .topbar {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: minmax(220px, 320px) minmax(0, 1fr) !important;
+  grid-template-rows: minmax(104px, auto) 54px !important;
+  align-items: center !important;
+  align-content: start !important;
+  gap: 8px 14px !important;
+  flex: 0 0 auto !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  padding: 10px 14px !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme="planet"] #app .topbar .brand-lockup {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  min-width: 0 !important;
+}
+
+html[data-bingo-theme="planet"] #app .topbar .header-actions {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  grid-template-rows: 48px 48px !important;
+  align-content: start !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 104px !important;
+  min-height: 104px !important;
+  max-height: 104px !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme="planet"] #app .topbar .header-actions > .play-time-panel {
+  position: static !important;
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+  box-sizing: border-box !important;
+  justify-self: stretch !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  transform: none !important;
+}
+
+html[data-bingo-theme="planet"] #app .topbar .header-actions > :is(
+  .appearance-btn,
+  .status-pill,
+  .new-game-btn,
+  .bingo-theme-switcher.header-theme-switcher
+) {
+  grid-row: 2 !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  margin: 0 !important;
+  border-radius: 8px !important;
+  white-space: nowrap !important;
+}
+
+html[data-bingo-theme="planet"] #app .topbar .header-actions > .bingo-theme-switcher.header-theme-switcher > .bingo-theme-trigger {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  margin: 0 !important;
+  border-radius: 8px !important;
+}
+
+html[data-bingo-theme="planet"] #app .topbar .screen-switcher {
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+  align-self: stretch !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 54px !important;
+  min-height: 54px !important;
+  max-height: 54px !important;
+}
+
+@media (max-width: 1400px) {
+  html[data-bingo-theme="planet"] #app .topbar {
+    grid-template-columns: 1fr !important;
+  }
+
+  html[data-bingo-theme="planet"] #app .topbar .brand-lockup {
+    display: none !important;
+  }
+
+  html[data-bingo-theme="planet"] #app .topbar .header-actions {
+    grid-column: 1 !important;
+  }
+}
+
 /* Screen tabs always occupy a separate contained line; the page never pans sideways. */
 html[data-bingo-theme],
 html[data-bingo-theme] body,
