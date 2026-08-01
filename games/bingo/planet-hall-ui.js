@@ -166,3 +166,44 @@
     mountPlanetHall();
   }
 })();
+
+/* Keep the Dealer Console eyebrow readable after every Vue/theme rerender. */
+(() => {
+  let contrastFrame = 0;
+
+  function enforceDealerHeaderContrast() {
+    contrastFrame = 0;
+    const shell = document.querySelector("#app .app-shell");
+    const heading = shell?.querySelector(".dealer-layout > .dealer-hero > div:first-child > .eyebrow");
+    if (!heading) return;
+    const color = shell.classList.contains("theme-dark") ? "#ffffff" : "#000000";
+    if (heading.style.getPropertyValue("color") !== color) {
+      heading.style.setProperty("color", color, "important");
+      heading.style.setProperty("-webkit-text-fill-color", color, "important");
+      heading.style.setProperty("opacity", "1", "important");
+    }
+  }
+
+  function queueDealerHeaderContrast() {
+    if (contrastFrame) return;
+    contrastFrame = window.requestAnimationFrame(enforceDealerHeaderContrast);
+  }
+
+  function observeDealerHeaderContrast() {
+    const app = document.querySelector("#app");
+    if (!app) return;
+    new MutationObserver(queueDealerHeaderContrast).observe(app, {
+      attributes: true,
+      attributeFilter: ["class"],
+      childList: true,
+      subtree: true,
+    });
+    queueDealerHeaderContrast();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", observeDealerHeaderContrast, { once: true });
+  } else {
+    observeDealerHeaderContrast();
+  }
+})();
