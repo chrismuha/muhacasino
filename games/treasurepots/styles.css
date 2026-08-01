@@ -3408,12 +3408,14 @@ label {
 
 .reels .symbol-horseshoe::before,
 .overlay-paytable .symbol-horseshoe::before {
-  content: "∪";
-  color: #d79b1e;
-  font-family: Georgia, "Times New Roman", serif;
-  font-weight: 900;
-  line-height: .72;
-  text-shadow: 0 2px 0 #6f4700, 0 0 6px rgba(255, 226, 125, .6);
+  content: "🧲";
+  color: initial;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  font-size: clamp(1.25rem, 3.35vw, 1.85rem);
+  font-weight: 400;
+  line-height: 1;
+  text-shadow: none;
+  transform: scale(.92);
 }
 
 .reels .scatter-chip,

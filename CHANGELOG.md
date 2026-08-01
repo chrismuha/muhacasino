@@ -14,7 +14,7 @@
 - Fixed launcher cache invalidation so updated game layouts load immediately on every launch.
 - Moved TreasurePots sizing rules after all responsive styles so its symbols and chips reliably match Pretty Penny's final reel footprint.
 - Restored the TreasurePots symbols by 3% and replaced the clipped music emoji with a centered typographic music mark.
-- Replaced the magnet emoji with a centered gold horseshoe symbol.
+- Restored the original magnet emoji with dedicated contained sizing so it remains centered without clipping.
 - Replaced inherited pink Major-jackpot and pot-status text with high-contrast warm white.
 
 ## 1.1.4 — 2026-07-31
