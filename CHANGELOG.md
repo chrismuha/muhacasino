@@ -10,6 +10,7 @@
 
 - Centered and reduced TreasurePots reel symbols so they remain fully visible without clipping.
 - Redesigned the TreasurePots interface with a distinct Emerald Vault palette, green reel glass, antique-gold controls, and teal accents.
+- Enlarged TreasurePots coin and scatter chips into full-width reel pills for clearer labels and stronger visual impact.
 
 ## 1.1.4 — 2026-07-31
 

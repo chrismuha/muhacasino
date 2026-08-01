@@ -2460,6 +2460,35 @@ body {
   filter: drop-shadow(0 2px 1px rgba(12, 56, 39, .3));
 }
 
+.reels .scatter-chip,
+.reels .hold-coin {
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
+  min-width: 0;
+  min-height: 0;
+  margin: 2px;
+  padding: 2px 7px;
+  aspect-ratio: auto;
+  border: 2px solid #ffe487;
+  border-radius: 999px;
+  place-content: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.reels .scatter-chip strong,
+.reels .hold-coin strong {
+  font-size: clamp(6.75pt, 1.1vw, 10.5pt);
+  line-height: .95;
+}
+
+.reels .scatter-chip span,
+.reels .hold-coin span {
+  margin-top: 1px;
+  font-size: clamp(5.25pt, .78vw, 7.5pt);
+  line-height: .95;
+}
+
 .overlay-paytable .symbol-art {
   display: grid;
   width: 40px;
