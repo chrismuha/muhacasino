@@ -2352,6 +2352,12 @@ body {
   white-space: normal;
 }
 
+/* Keep the decorative cent mark readable on cream savings cards. */
+.pot::after {
+  color: #9b4d35;
+  opacity: 1;
+}
+
 .pot-feature {
   grid-template-columns: minmax(165px, .7fr) minmax(0, 1.8fr);
   box-shadow: 0 4px 0 #bd623f;

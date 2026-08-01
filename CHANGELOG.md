@@ -20,6 +20,7 @@
 - Corrected cream-card and dark-panel text colors across the jackpot board, pot feature, status pill, and footer guidance.
 - Aligned TreasurePots rules and README terminology with Emerald Vault jackpots, savings pots, Emerald Links, and the implemented wheel prize names.
 - Fixed the final savings-pot cent-mark and HUD stat contrast issues with dark-on-cream and white/mint-on-emerald colors.
+- Darkened Pretty Penny's decorative savings-card cent marks for readable contrast on cream backgrounds.
 
 ## 1.1.4 — 2026-07-31
 
