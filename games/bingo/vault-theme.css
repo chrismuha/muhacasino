@@ -7533,3 +7533,28 @@ html[data-bingo-theme="classic"] #app .app-shell.theme-light :is(.stage-heading,
   color: #50321f !important;
   -webkit-text-fill-color: #50321f !important;
 }
+
+/* Player Floor Current Call heading uses display-size, high-contrast type. */
+html[data-bingo-theme] #app .current-call-panel > .eyebrow {
+  font-size: 14pt !important;
+  font-weight: 950 !important;
+  line-height: 1.2 !important;
+  letter-spacing: .12em !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme] #app .app-shell.theme-light .current-call-panel > .eyebrow {
+  color: #263a55 !important;
+  -webkit-text-fill-color: #263a55 !important;
+}
+
+html[data-bingo-theme] #app .app-shell.theme-dark .current-call-panel > .eyebrow {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html[data-bingo-theme="classic"] #app .app-shell.theme-light .current-call-panel > .eyebrow {
+  color: #50321f !important;
+  -webkit-text-fill-color: #50321f !important;
+}
