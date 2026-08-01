@@ -3406,6 +3406,16 @@ label {
   line-height: .9;
 }
 
+.reels .symbol-horseshoe::before,
+.overlay-paytable .symbol-horseshoe::before {
+  content: "∪";
+  color: #d79b1e;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 900;
+  line-height: .72;
+  text-shadow: 0 2px 0 #6f4700, 0 0 6px rgba(255, 226, 125, .6);
+}
+
 .reels .scatter-chip,
 .reels .hold-coin,
 .reels .jackpot-chip,
