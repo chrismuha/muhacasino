@@ -6826,6 +6826,178 @@ html:is([data-bingo-theme="planet"], [data-bingo-theme="current"]) #app .topbar 
   max-height: 42px !important;
 }
 
+/* Raise the complete clock/time-zone group together inside its header panel. */
+html:is([data-bingo-theme="planet"], [data-bingo-theme="current"]) #app .topbar .play-time-panel > :is(div, label) {
+  position: relative !important;
+  top: -4px !important;
+}
+
+html:is([data-bingo-theme="planet"], [data-bingo-theme="current"]) #app .topbar .play-time-panel label > select {
+  box-sizing: border-box !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  font-size: 8.25pt !important;
+  line-height: 1.1 !important;
+}
+
+/* Final shared geometry: every theme and mode uses identical header positioning. */
+html[data-bingo-theme] #app .topbar {
+  box-sizing: border-box !important;
+  position: relative !important;
+  z-index: 5000 !important;
+  display: grid !important;
+  grid-template-columns: minmax(220px, 320px) minmax(0, 1fr) !important;
+  grid-template-rows: minmax(124px, auto) 54px !important;
+  align-items: center !important;
+  align-content: start !important;
+  gap: 8px 14px !important;
+  flex: 0 0 auto !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  padding: 10px 14px !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme] #app .topbar .brand-lockup {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  min-width: 0 !important;
+}
+
+html[data-bingo-theme] #app .topbar .header-actions {
+  box-sizing: border-box !important;
+  position: relative !important;
+  z-index: 5100 !important;
+  display: grid !important;
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  grid-template-rows: 68px 48px !important;
+  align-items: stretch !important;
+  align-content: start !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 124px !important;
+  min-height: 124px !important;
+  max-height: 124px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme] #app .topbar .header-actions > .play-time-panel {
+  box-sizing: border-box !important;
+  position: static !important;
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+  justify-self: stretch !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 68px !important;
+  min-height: 68px !important;
+  max-height: 68px !important;
+  transform: none !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme] #app .topbar .header-actions > :is(
+  .appearance-btn,
+  .status-pill,
+  .new-game-btn,
+  .bingo-theme-switcher.header-theme-switcher
+) {
+  position: relative !important;
+  inset: auto !important;
+  grid-row: 2 !important;
+  box-sizing: border-box !important;
+  align-self: stretch !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 8px !important;
+  white-space: nowrap !important;
+}
+
+html[data-bingo-theme] #app .topbar .status-pill {
+  display: grid !important;
+  place-items: center !important;
+  padding: 6px 10px !important;
+  border-radius: 8px !important;
+}
+
+html[data-bingo-theme] #app .topbar .header-actions > .bingo-theme-switcher.header-theme-switcher > .bingo-theme-trigger {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  margin: 0 !important;
+  padding: 5px 8px !important;
+  border-radius: 8px !important;
+}
+
+html[data-bingo-theme] #app .topbar .screen-switcher {
+  box-sizing: border-box !important;
+  position: relative !important;
+  z-index: 1 !important;
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+  align-self: stretch !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: 54px !important;
+  min-height: 54px !important;
+  max-height: 54px !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme] #app .topbar .play-time-panel > :is(div, label) {
+  position: relative !important;
+  top: -4px !important;
+}
+
+html[data-bingo-theme] #app .topbar .play-time-panel label > select {
+  box-sizing: border-box !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  line-height: 1.1 !important;
+}
+
+@media (max-width: 1400px) {
+  html[data-bingo-theme] #app .topbar {
+    grid-template-columns: 1fr !important;
+  }
+
+  html[data-bingo-theme] #app .topbar .brand-lockup {
+    display: none !important;
+  }
+
+  html[data-bingo-theme] #app .topbar .header-actions {
+    grid-column: 1 !important;
+  }
+}
+
 /* Do not let the viewport flex layout collapse the three Classic header lines. */
 html[data-bingo-theme="current"] #app .topbar {
   flex: 0 0 auto !important;
@@ -7101,6 +7273,142 @@ html[data-bingo-theme="current"] #app .topbar .screen-switcher {
   }
 
   html[data-bingo-theme="current"] #app .topbar .header-actions {
+    grid-column: 1 !important;
+  }
+}
+
+/* Cascade-final synchronized header geometry for every theme and mode. */
+html[data-bingo-theme] #app .topbar {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: minmax(220px, 320px) minmax(0, 1fr) !important;
+  grid-template-rows: minmax(124px, auto) 54px !important;
+  align-items: center !important;
+  align-content: start !important;
+  gap: 8px 14px !important;
+  flex: 0 0 auto !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  padding: 10px 14px !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme] #app .topbar .brand-lockup {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  min-width: 0 !important;
+}
+
+html[data-bingo-theme] #app .topbar .header-actions {
+  box-sizing: border-box !important;
+  position: relative !important;
+  display: grid !important;
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  grid-template-rows: 68px 48px !important;
+  align-content: start !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 124px !important;
+  min-height: 124px !important;
+  max-height: 124px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme] #app .topbar .header-actions > .play-time-panel {
+  box-sizing: border-box !important;
+  position: static !important;
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 68px !important;
+  min-height: 68px !important;
+  max-height: 68px !important;
+  transform: none !important;
+}
+
+html[data-bingo-theme] #app .topbar .header-actions > :is(.appearance-btn, .status-pill, .new-game-btn, .bingo-theme-switcher.header-theme-switcher) {
+  position: relative !important;
+  inset: auto !important;
+  grid-row: 2 !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  margin: 0 !important;
+  border-radius: 8px !important;
+  white-space: nowrap !important;
+}
+
+html[data-bingo-theme] #app .topbar .status-pill {
+  display: grid !important;
+  place-items: center !important;
+  padding: 6px 10px !important;
+  border-radius: 8px !important;
+}
+
+html[data-bingo-theme] #app .topbar .header-actions > .bingo-theme-switcher.header-theme-switcher > .bingo-theme-trigger {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  margin: 0 !important;
+  border-radius: 8px !important;
+}
+
+html[data-bingo-theme] #app .topbar .screen-switcher {
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: 54px !important;
+  min-height: 54px !important;
+  max-height: 54px !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme] #app .topbar .play-time-panel > :is(div, label) {
+  position: relative !important;
+  top: -4px !important;
+}
+
+html[data-bingo-theme] #app .topbar .play-time-panel label > select {
+  box-sizing: border-box !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
+
+@media (max-width: 1400px) {
+  html[data-bingo-theme] #app .topbar {
+    grid-template-columns: 1fr !important;
+  }
+
+  html[data-bingo-theme] #app .topbar .brand-lockup {
+    display: none !important;
+  }
+
+  html[data-bingo-theme] #app .topbar .header-actions {
     grid-column: 1 !important;
   }
 }
