@@ -6681,3 +6681,117 @@ html[data-bingo-theme] #app .caller-panel .btn-auto:is(:hover, :focus-visible) {
   outline: 3px solid rgba(23, 105, 224, .3) !important;
   outline-offset: 2px !important;
 }
+
+/* Theme menu opens above the navigation and game canvas without being clipped. */
+html[data-bingo-theme] #app .topbar {
+  z-index: 5000 !important;
+  overflow: visible !important;
+  isolation: isolate !important;
+}
+
+html[data-bingo-theme] #app .topbar .header-actions,
+html[data-bingo-theme] #app .topbar .bingo-theme-switcher.header-theme-switcher {
+  z-index: 5100 !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme] #app .topbar .bingo-theme-switcher.header-theme-switcher .bingo-theme-menu {
+  z-index: 5200 !important;
+  top: calc(100% + 8px) !important;
+  right: 0 !important;
+  max-height: min(360px, calc(100vh - 90px)) !important;
+  overflow-y: auto !important;
+}
+
+html[data-bingo-theme] #app .topbar .screen-switcher {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Classic header: two contained rows with no wrapped pills or clipped tabs. */
+html[data-bingo-theme="current"] #app .topbar {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: minmax(220px, 320px) minmax(0, 1fr) !important;
+  grid-template-rows: auto auto !important;
+  align-items: center !important;
+  gap: 8px 14px !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  padding: 10px 14px !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .brand-lockup {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  min-width: 0 !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .header-actions {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  grid-template-columns: minmax(340px, 1fr) 110px 132px 140px 110px 104px !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .play-time-panel {
+  position: static !important;
+  grid-column: auto !important;
+  grid-row: auto !important;
+  justify-self: stretch !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  transform: none !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .status-pill {
+  box-sizing: border-box !important;
+  width: 140px !important;
+  min-width: 140px !important;
+  max-width: 140px !important;
+  height: 52px !important;
+  min-height: 52px !important;
+  max-height: 52px !important;
+  padding: 8px 12px !important;
+  border-radius: 999px !important;
+  white-space: nowrap !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .header-actions > :is(.appearance-btn, .new-game-btn),
+html[data-bingo-theme="current"] #app .topbar .header-actions > .header-theme-switcher,
+html[data-bingo-theme="current"] #app .topbar .header-actions > .header-theme-switcher > .bingo-theme-trigger {
+  height: 52px !important;
+  min-height: 52px !important;
+  max-height: 52px !important;
+  white-space: nowrap !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .screen-switcher {
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+@media (max-width: 1400px) {
+  html[data-bingo-theme="current"] #app .topbar {
+    grid-template-columns: 1fr !important;
+  }
+
+  html[data-bingo-theme="current"] #app .topbar .brand-lockup {
+    display: none !important;
+  }
+
+  html[data-bingo-theme="current"] #app .topbar .header-actions {
+    grid-column: 1 !important;
+    grid-template-columns: minmax(300px, 1fr) repeat(5, minmax(88px, max-content)) !important;
+  }
+}
