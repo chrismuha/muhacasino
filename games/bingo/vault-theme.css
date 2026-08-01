@@ -5411,3 +5411,427 @@ html.bingo-popout-window[data-bingo-theme="classic"] #app .app-shell.theme-light
   color: #ffd968 !important;
   -webkit-text-fill-color: #ffd968 !important;
 }
+
+/* Keep pattern instructions readable on the light pattern cards. */
+[data-bingo-theme] #app .dealer-pattern-list button:not(.active) small {
+  color: #31445f !important;
+  -webkit-text-fill-color: #31445f !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .dealer-pattern-list button.active small {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+}
+
+/* The win-confirmation dialog always has a white surface, including in dark mode. */
+[data-bingo-theme] #app .verification-dialog > header span {
+  color: #536174 !important;
+  -webkit-text-fill-color: #536174 !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .verification-dialog > header h2 {
+  color: #132039 !important;
+  -webkit-text-fill-color: #132039 !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .verification-dialog > header p {
+  color: #52627a !important;
+  -webkit-text-fill-color: #52627a !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .verification-dialog > header > strong {
+  color: #244d78 !important;
+  -webkit-text-fill-color: #244d78 !important;
+  background: #e4eef9 !important;
+  opacity: 1 !important;
+}
+
+/* Confirmation prompts use a white card even when the surrounding game is dark. */
+[data-bingo-theme] .app-prompt-backdrop {
+  z-index: 10000 !important;
+  align-items: start !important;
+  padding: max(24px, env(safe-area-inset-top)) 24px 24px !important;
+  overflow-y: auto !important;
+}
+
+[data-bingo-theme] .app-prompt {
+  min-height: 0 !important;
+  max-height: calc(100dvh - 48px) !important;
+  margin: auto !important;
+  overflow-y: auto !important;
+}
+
+[data-bingo-theme] .app-prompt > div:nth-child(2) > span {
+  color: #536174 !important;
+  -webkit-text-fill-color: #536174 !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] .app-prompt h2 {
+  color: #132039 !important;
+  -webkit-text-fill-color: #132039 !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] .app-prompt p {
+  color: #52627a !important;
+  -webkit-text-fill-color: #52627a !important;
+  opacity: 1 !important;
+}
+
+/* Keep all three navigation buttons inside one complete outer outline. */
+[data-bingo-theme] #app .screen-switcher {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  flex: 1 0 100% !important;
+  order: 10 !important;
+  overflow: hidden !important;
+}
+
+[data-bingo-theme] #app .screen-switcher button {
+  width: 100% !important;
+  min-width: 0 !important;
+  padding-inline: 6px !important;
+  font-size: clamp(8.25pt, 1.2vw, 10.5pt) !important;
+  white-space: nowrap !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .screen-switcher {
+  grid-column: 1 / -1 !important;
+  grid-row: 3 !important;
+  justify-self: stretch !important;
+}
+
+/* Call History is a light card in light mode and needs dark foreground text. */
+[data-bingo-theme] #app .app-shell.theme-light .called-history-frame > div:first-child span {
+  color: #40536d !important;
+  -webkit-text-fill-color: #40536d !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .app-shell.theme-light .called-history-frame > div:first-child strong {
+  color: #132039 !important;
+  -webkit-text-fill-color: #132039 !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .app-shell.theme-light .called-history-frame > p {
+  color: #52627a !important;
+  -webkit-text-fill-color: #52627a !important;
+  opacity: 1 !important;
+}
+
+/* Distance-to-Bingo text must contrast with its solid status pill. */
+[data-bingo-theme] #app .bingo-card .card-distance:not(.ready) strong {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .bingo-card .card-distance.ready strong {
+  color: #3d2900 !important;
+  -webkit-text-fill-color: #3d2900 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* Disabled auto-call uses a light surface, so its label and icon stay dark. */
+[data-bingo-theme] #app .btn-auto:disabled {
+  color: #31445f !important;
+  -webkit-text-fill-color: #31445f !important;
+  border-color: #91a3ba !important;
+  background: #e3e9f1 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .btn-auto:disabled * {
+  color: #31445f !important;
+  -webkit-text-fill-color: #31445f !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* Call History uses a navy surface in dark mode and needs light foreground text. */
+[data-bingo-theme] #app .app-shell.theme-dark .called-history-frame > div:first-child span {
+  color: #b7c9e3 !important;
+  -webkit-text-fill-color: #b7c9e3 !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .app-shell.theme-dark .called-history-frame > div:first-child strong {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .app-shell.theme-dark .called-history-frame > p {
+  color: #c1d0e5 !important;
+  -webkit-text-fill-color: #c1d0e5 !important;
+  opacity: 1 !important;
+}
+
+/* Enabled auto-call is a primary action and always uses a solid dark surface. */
+[data-bingo-theme] #app .btn-auto:not(:disabled) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  border-color: #8cc8ff !important;
+  background: #075cae !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+[data-bingo-theme] #app .btn-auto:not(:disabled) * {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* Planet themes always use a dark history surface, regardless of appearance mode. */
+html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .called-history-frame > div:first-child span,
+html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .called-history-frame > p {
+  color: #c1d0e5 !important;
+  -webkit-text-fill-color: #c1d0e5 !important;
+  opacity: 1 !important;
+}
+
+html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .called-history-frame > div:first-child strong {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme] .called-history-frame > div:first-child span,
+html[data-bingo-theme] .called-history-frame > p {
+  color: #c7d7eb !important;
+  -webkit-text-fill-color: #c7d7eb !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme] .called-history-frame > div:first-child strong {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* Only the text is normalized; each theme keeps its own panel styling. */
+html[data-bingo-theme] body #app .app-shell .called-history-frame :is(span, p) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .called-history-frame strong {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* Planet Hall 2: explicit foregrounds for the exact Call History elements. */
+html[data-bingo-theme="planet"] body #app .app-shell .called-history-frame > div:first-child > span,
+html[data-bingo-theme="planet"] body #app .app-shell .called-history-frame > p {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  text-shadow: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="planet"] body #app .app-shell .called-history-frame > div:first-child > strong {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  text-shadow: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* Planet Hall 2 empty-history message. */
+html[data-bingo-theme="planet"] body #app .app-shell .called-history-frame.called-history-frame > p {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  font-weight: 800 !important;
+  text-shadow: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* Planet Hall 2 Call History heading. */
+html[data-bingo-theme="planet"] body #app .app-shell .called-history-frame.called-history-frame > div:first-child > span {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  font-weight: 950 !important;
+  text-shadow: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* Planet Hall 2 footer pattern uses dark ink on its light footer surface. */
+html:is([data-bingo-theme="planet"], [data-bingo-theme="current"]) body #app .app-shell .app-footer {
+  color: #31445f !important;
+  border-color: #8da9cf !important;
+  background: #f7f9fc !important;
+  opacity: 1 !important;
+}
+
+html:is([data-bingo-theme="planet"], [data-bingo-theme="current"]) body #app .app-shell .footer-pattern span,
+html:is([data-bingo-theme="planet"], [data-bingo-theme="current"]) body #app .app-shell .footer-pattern small {
+  color: #40536d !important;
+  -webkit-text-fill-color: #40536d !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html:is([data-bingo-theme="planet"], [data-bingo-theme="current"]) body #app .app-shell .footer-pattern strong {
+  color: #132039 !important;
+  -webkit-text-fill-color: #132039 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html:is([data-bingo-theme="planet"], [data-bingo-theme="current"]) body #app .app-shell .app-footer > small {
+  color: #31445f !important;
+  -webkit-text-fill-color: #31445f !important;
+  font-weight: 800 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* Classic dark mode keeps a dark footer and therefore needs light text. */
+html[data-bingo-theme="current"] body #app .app-shell.theme-dark .app-footer {
+  color: #eef5ff !important;
+  border-color: #617a9e !important;
+  background: #17243a !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell.theme-dark .footer-pattern :is(span, small),
+html[data-bingo-theme="current"] body #app .app-shell.theme-dark .app-footer > small {
+  color: #dce8f8 !important;
+  -webkit-text-fill-color: #dce8f8 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell.theme-dark .footer-pattern strong {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* Classic light mode uses dark text on its light footer. */
+html[data-bingo-theme="current"] body #app .app-shell.theme-light .app-footer {
+  color: #31445f !important;
+  border-color: #8da9cf !important;
+  background: #f7f9fc !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell.theme-light .footer-pattern :is(span, small),
+html[data-bingo-theme="current"] body #app .app-shell.theme-light .app-footer > small {
+  color: #40536d !important;
+  -webkit-text-fill-color: #40536d !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell.theme-light .footer-pattern strong {
+  color: #132039 !important;
+  -webkit-text-fill-color: #132039 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* Footer legend labels follow the footer surface in every supported mode. */
+html[data-bingo-theme="planet"] body #app .app-shell .app-footer > span,
+html[data-bingo-theme="current"] body #app .app-shell.theme-light .app-footer > span {
+  color: #31445f !important;
+  -webkit-text-fill-color: #31445f !important;
+  font-weight: 800 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell.theme-dark .app-footer > span {
+  color: #dce8f8 !important;
+  -webkit-text-fill-color: #dce8f8 !important;
+  font-weight: 800 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* Classic dark-mode incorrect-call summary uses light text on navy. */
+html[data-bingo-theme="current"] body #app .app-shell.theme-dark .incorrect-bingo-tally span,
+html[data-bingo-theme="current"] body #app .app-shell.theme-dark .incorrect-bingo-tally small {
+  color: #dce8f8 !important;
+  -webkit-text-fill-color: #dce8f8 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell.theme-dark .incorrect-bingo-tally strong {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* Classic light-mode incorrect-call summary uses dark text on the light card. */
+html[data-bingo-theme="current"] body #app .app-shell.theme-light .incorrect-bingo-tally span,
+html[data-bingo-theme="current"] body #app .app-shell.theme-light .incorrect-bingo-tally small {
+  color: #40536d !important;
+  -webkit-text-fill-color: #40536d !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell.theme-light .incorrect-bingo-tally strong {
+  color: #a5231d !important;
+  -webkit-text-fill-color: #a5231d !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* Classic dealer stats stay light in both modes, so use dark tally text. */
+html[data-bingo-theme="current"] body #app .app-shell .dealer-stats .incorrect-bingo-tally :is(span, small) {
+  color: #40536d !important;
+  -webkit-text-fill-color: #40536d !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .dealer-stats .incorrect-bingo-tally strong {
+  color: #a5231d !important;
+  -webkit-text-fill-color: #a5231d !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* The audience tally is on navy and keeps a light foreground. */
+html[data-bingo-theme="current"] body #app .app-shell .audience-incorrect-bingo :is(span, small) {
+  color: #dce8f8 !important;
+  -webkit-text-fill-color: #dce8f8 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .audience-incorrect-bingo strong {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}

@@ -106,7 +106,14 @@ a { color: inherit; text-decoration: none; }
   pointer-events: none;
 }
 
-.hero-content { position: relative; z-index: 2; width: 100%; max-width: 650px; min-width: 0; }
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 650px;
+  min-width: 0;
+  min-height: 430px;
+}
 .money-slide .hero-content { transform: translateY(-18px); }
 .eyebrow, .section-kicker { margin: 0 0 13px; color: var(--cyan); font-size: 9pt; font-weight: 950; letter-spacing: .22em; text-transform: uppercase; }
 
@@ -398,7 +405,7 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   .toolbar-theme-picker select { max-width: 146px; padding-right: 26px; }
   .hero { height: 700px; }
   .hero-slide { --hero-inline-padding: 24px; align-items: flex-start; padding: 145px var(--hero-inline-padding) 80px; }
-  .hero-content { width: calc(100vw - 48px); max-width: calc(100vw - 48px); }
+  .hero-content { width: calc(100vw - 48px); max-width: calc(100vw - 48px); min-height: 0; }
   .hero-art {
     right: 18px;
     bottom: 2%;
