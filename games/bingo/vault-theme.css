@@ -7603,3 +7603,22 @@ html[data-bingo-theme="classic"] body #app .app-shell.theme-dark .dealer-layout 
   filter: none !important;
   text-shadow: none !important;
 }
+
+/* Classic uses the current theme key: force correct contrast on each surface. */
+html[data-bingo-theme="current"] body #app > .app-shell.theme-dark main.game-layout .cards-stage .stage-heading > .eyebrow {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] body #app > .app-shell.theme-light main.dealer-layout .dealer-hero .eyebrow {
+  color: #17243a !important;
+  -webkit-text-fill-color: #17243a !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] body #app > .app-shell.theme-dark main.dealer-layout .dealer-hero .eyebrow {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+}
