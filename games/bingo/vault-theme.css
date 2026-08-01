@@ -7686,3 +7686,61 @@ html[data-bingo-theme="classic"] body #app .app-shell.theme-light .dealer-layout
   filter: none !important;
   text-shadow: none !important;
 }
+
+/* Classic dark mode carries one navy palette throughout the Dealer Console. */
+html[data-bingo-theme="current"] body #app .app-shell.theme-dark .dealer-layout {
+  --dealer-bg: #071a2f;
+  --dealer-panel: #102a49;
+  --dealer-panel-alt: #17365d;
+  --dealer-text: #ffffff;
+  --dealer-muted: #dbe8f8;
+  --dealer-line: #4b86c5;
+  --dealer-input: #0d2440;
+  color: #fff !important;
+  background-color: #071a2f !important;
+  background-image: none !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell.theme-dark .dealer-layout :is(
+  .dealer-card,
+  .dealer-stats,
+  .dealer-tabs,
+  .dealer-command-bar,
+  .round-snapshot,
+  .dealer-search-result,
+  .stage-toolbar,
+  .fixed-dealer-status,
+  .game-setup-panel,
+  .current-call-panel,
+  .target-card-panel,
+  .ball-board-panel,
+  .dealer-pattern-panel,
+  .winner-log-panel
+) {
+  color: #fff !important;
+  border-color: #4b86c5 !important;
+  background-color: #102a49 !important;
+  background-image: none !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell.theme-dark .dealer-layout :is(
+  h1, h2, h3, h4, p, small, span, strong, label, .eyebrow, .dealer-section-title > span
+) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell.theme-dark .dealer-layout :is(input, select, textarea) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  border-color: #5d94ce !important;
+  background-color: #0d2440 !important;
+  background-image: none !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell.theme-dark .dealer-layout :is(input, textarea)::placeholder {
+  color: #dbe8f8 !important;
+  -webkit-text-fill-color: #dbe8f8 !important;
+  opacity: 1 !important;
+}
