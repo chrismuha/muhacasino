@@ -513,7 +513,7 @@ function setupFeatureUI() {
         <div class="feature-dialog wheel-dialog" role="dialog" aria-modal="true" aria-labelledby="bonusTitle">
             <span class="wheel-kicker">TreasurePots Bonus</span>
             <h2 id="bonusTitle">Spin the TreasurePots Wheel</h2>
-            <p>Most spins win a coin prize. Penny Emerald jackpots are rare.</p>
+            <p>Most spins win a coin prize. Emerald Vault jackpots are rare.</p>
             <div class="bonus-wheel-wrap">
                 <span class="wheel-pointer" aria-hidden="true"></span>
                 <div class="bonus-wheel" aria-label="Jackpot wheel">

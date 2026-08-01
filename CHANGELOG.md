@@ -18,6 +18,7 @@
 - Replaced inherited pink Major-jackpot and pot-status text with high-contrast warm white.
 - Enlarged the clover emblem beside the TreasurePots header for stronger branding and visibility.
 - Corrected cream-card and dark-panel text colors across the jackpot board, pot feature, status pill, and footer guidance.
+- Aligned TreasurePots rules and README terminology with Emerald Vault jackpots, savings pots, Emerald Links, and the implemented wheel prize names.
 
 ## 1.1.4 — 2026-07-31
 

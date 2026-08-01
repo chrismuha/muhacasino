@@ -3469,7 +3469,7 @@ label {
   .reels .symbol-art::before { font-size: 1.2991rem; }
 }
 
-/* High-contrast TreasurePots copy; remove inherited Pretty Penny pink text. */
+/* High-contrast TreasurePots copy; remove inherited legacy-theme pink text. */
 .jackpot-major,
 .jackpot-major strong,
 .jackpot-major span,
