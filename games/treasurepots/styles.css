@@ -2478,14 +2478,14 @@ body {
 
 .reels .scatter-chip strong,
 .reels .hold-coin strong {
-  font-size: clamp(8.25pt, 1.25vw, 12pt);
+  font-size: clamp(12pt, 1.65vw, 16.5pt);
   line-height: .95;
 }
 
 .reels .scatter-chip span,
 .reels .hold-coin span {
-  margin-top: 1px;
-  font-size: clamp(6pt, .85vw, 8.25pt);
+  margin-top: 3px;
+  font-size: clamp(8.25pt, 1.05vw, 10.5pt);
   line-height: .95;
 }
 
@@ -2500,12 +2500,23 @@ body {
 
 .reels .jackpot-chip strong,
 .reels .link-chip strong {
-  font-size: clamp(8.25pt, 1.2vw, 11.25pt);
+  font-size: clamp(12pt, 1.6vw, 15.75pt);
 }
 
 .reels .jackpot-chip span,
 .reels .link-chip span {
-  font-size: clamp(6pt, .85vw, 8.25pt);
+  margin-top: 3px;
+  font-size: clamp(8.25pt, 1.05vw, 10.5pt);
+}
+
+.reels .cell.jackpot-teaser-cell,
+.reels .cell.jackpot-win,
+.reels .cell.link-teaser-cell,
+.reels .cell.link-win-cell,
+.reels .cell.bonus-win,
+.reels .cell.scatter-cell,
+.reels .cell.hold-link-cell {
+  padding: 0;
 }
 
 .overlay-paytable .symbol-art {
@@ -2555,15 +2566,15 @@ button {
 .dot2 { background: linear-gradient(180deg, #12533f, #06271f); }
 
 @media (min-width: 701px) {
-  .reels { --reel-row-h: 48px; }
+  .reels { --reel-row-h: 72px; }
 }
 
 @media (max-width: 700px) {
-  .reels { --reel-row-h: 42px; }
+  .reels { --reel-row-h: 58px; }
 }
 
 @media (max-width: 350px) {
-  .reels { --reel-row-h: 38px; }
+  .reels { --reel-row-h: 50px; }
 }
 
 .pot-feature {
