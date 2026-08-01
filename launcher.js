@@ -73,7 +73,7 @@ const categoryNames = {
 };
 
 const SITE_VERSION = "1.1.4";
-const SITE_BUILD = "20260801-rules-alignment-v14";
+const SITE_BUILD = "20260801-final-contrast-v15";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");

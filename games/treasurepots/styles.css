@@ -3532,3 +3532,35 @@ label {
 .right .auto-spin-countdown {
   color: #d9ebe4;
 }
+
+.pot::after {
+  color: #7b3c28;
+  opacity: 1;
+}
+
+.hud .stat,
+.hud .stat .muted,
+.hud .stat-box,
+.hud .credit-controls label,
+.hud .credit-controls .overlay-note,
+.hud .select label,
+.hud .checkbox-setting label,
+.hud .auto-spin-hint {
+  color: #f4f0dc !important;
+  text-shadow: none;
+}
+
+.hud .stat b,
+.hud .stat-box strong,
+.hud #balance,
+.hud #totalBet,
+.hud #creditsInserted,
+.hud [id*="SessionWinnings"],
+.hud [id*="SessionLosses"] {
+  color: #8df0ce !important;
+  text-shadow: none;
+}
+
+.hud #creditStepEffect {
+  color: #d9ebe4 !important;
+}
