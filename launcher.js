@@ -73,7 +73,7 @@ const categoryNames = {
 };
 
 const SITE_VERSION = "1.1.4";
-const SITE_BUILD = "20260731-classic-header-final";
+const SITE_BUILD = "20260801-treasurepots-hero";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");

@@ -670,7 +670,7 @@ body { background: radial-gradient(circle at 50% 0, #175f43 0, #08291f 46%, #031
 .title-mark { color: #62e293; }
 .jackpot-board, .pot-feature, .reels-wrap { border-color: #b98a22; background-color: #0a2d22; }
 .reels .cell { background: radial-gradient(circle, #fff8d8, #e8d791); border-color: #a77a17; }
-.symbol-art { display: grid; place-items: center; background: none !important; font-size: clamp(1.65rem, 4.8vw, 4.5rem); line-height: 1; }
+.symbol-art { display: grid; place-items: center; background: none !important; font-size: clamp(1.35rem, 3.8vw, 3.6rem); line-height: 1; }
 .symbol-art::before { filter: drop-shadow(0 3px 2px #2d1b0066); }
 .symbol-lantern::before { content: "🏮"; }
 .symbol-clover::before { content: "🍀"; }
@@ -2374,6 +2374,137 @@ body {
   padding-inline: clamp(5px, 1vw, 10px);
   white-space: normal;
 }
+
+/* Emerald Vault visual identity and contained reel symbols. */
+:root {
+  --bg: #020b0c;
+  --card: #061815;
+  --accent: #e6b83f;
+  --accent2: #22b889;
+  --text: #f4f0dc;
+  --muted: #91b9ad;
+  --win: #ffe487;
+  --game-bg: #020b0c;
+  --game-surface: #061815;
+  --game-text: #f4f0dc;
+  --game-muted: #91b9ad;
+}
+
+body {
+  background:
+    radial-gradient(circle at 18% 0, rgba(28, 151, 111, .24), transparent 32%),
+    radial-gradient(circle at 88% 12%, rgba(208, 159, 43, .17), transparent 28%),
+    linear-gradient(145deg, #020a0b, #06231d 52%, #03120f) fixed;
+}
+
+.card {
+  background:
+    linear-gradient(135deg, rgba(229, 183, 62, .06), transparent 34%),
+    linear-gradient(180deg, #07231d, #03110f 72%);
+  box-shadow: inset 0 0 0 1px rgba(230, 184, 63, .2), 0 24px 70px rgba(0, 0, 0, .62);
+}
+
+.title {
+  color: #ffe69a;
+  animation: none;
+  text-shadow: 0 2px 0 #3c2904, 0 0 24px rgba(230, 184, 63, .34);
+}
+
+.title-mark { color: #39d49f; }
+
+.jackpot-board,
+.pot-feature,
+.reels-wrap {
+  border: 1px solid rgba(230, 184, 63, .42);
+  background: linear-gradient(150deg, rgba(12, 65, 51, .96), rgba(3, 25, 22, .98));
+  box-shadow: inset 0 0 28px rgba(35, 184, 137, .1), 0 10px 28px rgba(0, 0, 0, .3);
+}
+
+.reels-wrap {
+  background: linear-gradient(180deg, #07382d, #031b17);
+}
+
+.reels .cell {
+  border: 1px solid rgba(230, 184, 63, .5);
+  background: radial-gradient(circle at 50% 38%, #dff8e9, #9bcdb4 68%, #5a9a7d);
+  box-shadow: inset 0 0 12px rgba(3, 55, 39, .3);
+}
+
+.reels .icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: transparent;
+}
+
+.reels .symbol-art {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 0;
+  line-height: 1;
+  text-align: center;
+}
+
+.reels .symbol-art::before {
+  display: block;
+  flex: 0 0 auto;
+  font-size: clamp(1rem, 2.25vw, 1.65rem);
+  line-height: 1;
+  transform: none;
+  transform-origin: center;
+  filter: drop-shadow(0 2px 1px rgba(12, 56, 39, .3));
+}
+
+.overlay-paytable .symbol-art {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  overflow: hidden;
+  font-size: 0;
+}
+
+.overlay-paytable .symbol-art::before {
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.stat,
+.select,
+.auto-spin-panel,
+.right .message {
+  background: rgba(3, 39, 32, .82);
+  box-shadow: inset 0 0 0 1px rgba(76, 180, 142, .25);
+}
+
+select,
+input[type="number"],
+input[type="text"] {
+  border-color: rgba(230, 184, 63, .38);
+  color: #f8f1d4;
+  background: #041e19;
+}
+
+button {
+  color: #132a20;
+  background: linear-gradient(145deg, #ffe58a, #d7a52e 55%, #a97712);
+  box-shadow: 0 8px 24px rgba(190, 137, 20, .28), inset 0 1px rgba(255, 255, 255, .5);
+}
+
+#spin {
+  color: #effff8;
+  background: linear-gradient(145deg, #31d7a0, #14825f 58%, #07513d);
+  box-shadow: 0 10px 28px rgba(30, 190, 137, .34), inset 0 1px rgba(255, 255, 255, .3);
+}
+
+.table div { background: #05271f; }
+.table .head { color: #e9c969; background: #09382c; }
+.dot2 { background: linear-gradient(180deg, #12533f, #06271f); }
 
 .pot-feature {
   grid-template-columns: minmax(165px, .7fr) minmax(0, 1.8fr);

@@ -95,6 +95,7 @@ a { color: inherit; text-decoration: none; }
 .money-slide { background: radial-gradient(circle at 76% 42%, #775514 0, #243517 31%, #10150f 68%); }
 .neon-slide { background: radial-gradient(circle at 75% 42%, #a3128d 0, #351359 33%, #100b22 70%); }
 .penny-slide { background: radial-gradient(circle at 76% 42%, #b87333 0, #5b2c18 34%, #1b0e09 72%); }
+.treasure-slide { background: radial-gradient(circle at 76% 42%, #38bd70 0, #145536 34%, #071b11 72%); }
 .bingo-slide { background: radial-gradient(circle at 76% 42%, #36a866 0, #174d31 34%, #091a11 72%); }
 
 .hero-slide::after {
@@ -131,6 +132,7 @@ a { color: inherit; text-decoration: none; }
 .hero h1 em { color: transparent; background: linear-gradient(120deg, #fff, var(--cyan)); background-clip: text; -webkit-background-clip: text; font-style: normal; }
 .money-slide h1 em { color: #ffd84d; background: none; }
 .penny-slide h1 em { background-image: linear-gradient(120deg, #ffe5bf, #b87333); }
+.treasure-slide h1 em { background-image: linear-gradient(120deg, #fff3a8, #e3b82f); }
 .bingo-slide h1 em { background-image: linear-gradient(120deg, #eafff1, #55d98b); }
 .hero-content > p:not(.eyebrow) { max-width: 540px; margin: 30px 0; color: #d4d5df; font-size: 13.2pt; line-height: 1.6; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
@@ -168,17 +170,20 @@ a { color: inherit; text-decoration: none; }
 .neon-art .cabinet span { border-color: #ab26c0; background: #19112b; color: #62f4ff; text-shadow: 0 0 14px #33e9ff; }
 .penny-art .cabinet { border-color: #d9955d; box-shadow: 0 0 0 7px #65351f, 0 0 40px rgba(184,115,51,.55), 0 30px 80px rgba(0,0,0,.6); }
 .penny-art .cabinet span { border-color: #a85d2d; background: #fff1dc; color: #8b451f; }
+.treasure-art .cabinet { border-color: #f0c84f; box-shadow: 0 0 0 7px #4d3c0c, 0 0 48px rgba(54,207,116,.55), 0 30px 80px rgba(0,0,0,.6); }
+.treasure-art .cabinet span { border-color: #d5ad2d; background: #fff8cf; color: #17663c; }
 .bingo-art .cabinet { border-color: #62d996; box-shadow: 0 0 0 7px #175334, 0 0 48px rgba(65,201,122,.55), 0 30px 80px rgba(0,0,0,.6); }
 .bingo-art .cabinet span { border-color: #30965c; background: #f1fff6; color: #197844; font-size: clamp(14.4pt, 2.8vw, 28.8pt); }
 .bingo-ball-art { position: absolute; z-index: 2; top: 0; left: 5%; display: grid; width: 130px; height: 130px; place-items: center; border: 8px solid #dcffea; border-radius: 50%; color: #fff; background: #218b50; box-shadow: 0 0 40px rgba(73,220,137,.8); font-size: 24pt; font-weight: 1000; line-height: .75; text-align: center; transform: rotate(-10deg); }
 .bingo-ball-art b { font-size: 36pt; }
 
-.coin, .bolt, .penny-symbol { position: absolute; z-index: 2; display: grid; place-items: center; font-weight: 1000; }
+.coin, .bolt, .penny-symbol, .treasure-symbol { position: absolute; z-index: 2; display: grid; place-items: center; font-weight: 1000; }
 .coin { width: 82px; height: 82px; border: 8px double #705118; border-radius: 50%; background: #ffd74a; color: #705118; box-shadow: 0 10px 30px #0008; }
 .coin-one { top: 2%; left: 12%; transform: rotate(-18deg); }
 .coin-two { top: 25%; right: 0; width: 58px; height: 58px; transform: rotate(24deg); }
 .bolt { top: 0; left: 6%; color: #67f2ff; font-size: 120pt; text-shadow: 0 0 30px #00eaff; transform: rotate(-11deg); }
 .penny-symbol { top: 1%; left: 5%; width: 130px; height: 130px; border: 8px double #e2a66f; border-radius: 50%; color: #f0bb83; font-size: 72pt; box-shadow: 0 0 40px #b87333; transform: rotate(-12deg); }
+.treasure-symbol { top: 1%; left: 5%; width: 130px; height: 130px; border: 8px double #f0cf5a; border-radius: 50%; color: #f6dc72; background: #17663c; box-shadow: 0 0 42px rgba(54,220,123,.8); font-size: 66pt; transform: rotate(-11deg); }
 
 .hero-arrow {
   position: absolute;
