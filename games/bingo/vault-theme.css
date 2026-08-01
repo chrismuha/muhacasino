@@ -7584,3 +7584,22 @@ html[data-bingo-theme="classic"] #app .app-shell.theme-light .cards-stage .stage
   color: #342019 !important;
   -webkit-text-fill-color: #342019 !important;
 }
+
+/* Classic dark mode section eyebrows must override older per-theme muted colors. */
+html[data-bingo-theme="current"] body #app .app-shell.theme-dark .cards-stage .stage-heading .eyebrow,
+html[data-bingo-theme="classic"] body #app .app-shell.theme-dark .cards-stage .stage-heading .eyebrow {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell.theme-dark .dealer-layout .dealer-hero .eyebrow,
+html[data-bingo-theme="classic"] body #app .app-shell.theme-dark .dealer-layout .dealer-hero .eyebrow {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
