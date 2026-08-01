@@ -6802,6 +6802,30 @@ html[data-bingo-theme="current"] #app .topbar .screen-switcher {
   }
 }
 
+/* Time-zone panels retain their full control height inside the separated header. */
+html:is([data-bingo-theme="planet"], [data-bingo-theme="current"]) #app .topbar {
+  grid-template-rows: minmax(124px, auto) 54px !important;
+}
+
+html:is([data-bingo-theme="planet"], [data-bingo-theme="current"]) #app .topbar .header-actions {
+  grid-template-rows: 68px 48px !important;
+  height: 124px !important;
+  min-height: 124px !important;
+  max-height: 124px !important;
+}
+
+html:is([data-bingo-theme="planet"], [data-bingo-theme="current"]) #app .topbar .header-actions > .play-time-panel {
+  height: 68px !important;
+  min-height: 68px !important;
+  max-height: 68px !important;
+  overflow: visible !important;
+}
+
+html:is([data-bingo-theme="planet"], [data-bingo-theme="current"]) #app .topbar .play-time-panel select {
+  box-sizing: border-box !important;
+  max-height: 42px !important;
+}
+
 /* Do not let the viewport flex layout collapse the three Classic header lines. */
 html[data-bingo-theme="current"] #app .topbar {
   flex: 0 0 auto !important;
