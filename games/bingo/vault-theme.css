@@ -6792,6 +6792,65 @@ html[data-bingo-theme="current"] #app .topbar .screen-switcher {
 
   html[data-bingo-theme="current"] #app .topbar .header-actions {
     grid-column: 1 !important;
-    grid-template-columns: minmax(300px, 1fr) repeat(5, minmax(88px, max-content)) !important;
+    grid-template-columns: minmax(260px, 1fr) repeat(5, minmax(0, 1fr)) !important;
   }
+
+  html[data-bingo-theme="current"] #app .topbar .status-pill {
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+}
+
+/* Screen tabs always occupy a separate contained line; the page never pans sideways. */
+html[data-bingo-theme],
+html[data-bingo-theme] body,
+html[data-bingo-theme] body > #app,
+html[data-bingo-theme] body > #app > .app-shell {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+html[data-bingo-theme] #app .topbar,
+html[data-bingo-theme] #app .topbar .header-actions,
+html[data-bingo-theme] #app .topbar .screen-switcher,
+html[data-bingo-theme] #app :is(.game-layout, .dealer-layout, .design-screen, .audience-screen) {
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+html[data-bingo-theme] #app .topbar .screen-switcher {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  flex: none !important;
+  order: 20 !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme] #app :is(.game-layout, .dealer-layout, .design-screen, .audience-screen) {
+  overflow-x: hidden !important;
+}
+
+/* Ready to play matches the rectangular header action buttons, never a round pill. */
+html[data-bingo-theme] #app .topbar .status-pill {
+  box-sizing: border-box !important;
+  display: grid !important;
+  place-items: center !important;
+  min-height: 46px !important;
+  padding: 7px 12px !important;
+  border-width: 2px !important;
+  border-style: solid !important;
+  border-radius: 8px !important;
+  line-height: 1.1 !important;
+  white-space: nowrap !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .status-pill {
+  height: 52px !important;
+  min-height: 52px !important;
+  max-height: 52px !important;
+  border-radius: 8px !important;
 }
