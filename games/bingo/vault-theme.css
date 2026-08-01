@@ -7462,3 +7462,74 @@ html[data-bingo-theme="planet"] body #app .app-shell .audience-screen .audience-
   filter: none !important;
   text-shadow: 0 2px 2px rgba(0, 0, 0, .8) !important;
 }
+
+/* Player Hall pages scroll vertically; Dealer and Audience keep their contained layouts. */
+html[data-bingo-theme]:has(#app .game-layout),
+html[data-bingo-theme]:has(#app .game-layout) body {
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+html[data-bingo-theme]:has(#app .game-layout) body > #app,
+html[data-bingo-theme]:has(#app .game-layout) #app > .app-shell {
+  height: auto !important;
+  min-height: 100vh !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+}
+
+html[data-bingo-theme] #app .game-layout {
+  flex: none !important;
+  height: auto !important;
+  min-height: calc(100vh - 190px) !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+}
+
+html[data-bingo-theme] #app .game-layout :is(.cards-stage, .cards-grid) {
+  height: auto !important;
+  overflow-y: visible !important;
+}
+
+html[data-bingo-theme="planet"],
+html[data-bingo-theme="planet"] body {
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+html[data-bingo-theme="planet"] .planet-hall-shell,
+html[data-bingo-theme="planet"] .planet-play-surface,
+html[data-bingo-theme="planet"] .planet-card-area,
+html[data-bingo-theme="planet"] .planet-card-wall {
+  height: auto !important;
+  overflow-y: visible !important;
+}
+
+/* Player Cards and House Controls are prominent, high-contrast section headers. */
+html[data-bingo-theme] #app .app-shell :is(.stage-heading, .dealer-hero) .eyebrow {
+  font-size: 12pt !important;
+  font-weight: 950 !important;
+  line-height: 1.2 !important;
+  letter-spacing: .11em !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme] #app .app-shell.theme-light :is(.stage-heading, .dealer-hero) .eyebrow {
+  color: #263a55 !important;
+  -webkit-text-fill-color: #263a55 !important;
+}
+
+html[data-bingo-theme] #app .app-shell.theme-dark :is(.stage-heading, .dealer-hero) .eyebrow {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html[data-bingo-theme="classic"] #app .app-shell.theme-light :is(.stage-heading, .dealer-hero) .eyebrow {
+  color: #50321f !important;
+  -webkit-text-fill-color: #50321f !important;
+}
