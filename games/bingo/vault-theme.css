@@ -6802,6 +6802,45 @@ html[data-bingo-theme="current"] #app .topbar .screen-switcher {
   }
 }
 
+/* Do not let the viewport flex layout collapse the three Classic header lines. */
+html[data-bingo-theme="current"] #app .topbar {
+  flex: 0 0 auto !important;
+  flex-shrink: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  grid-template-rows: minmax(104px, auto) 54px !important;
+  align-content: start !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .header-actions {
+  align-content: start !important;
+  grid-template-rows: 48px 48px !important;
+  min-height: 104px !important;
+  height: 104px !important;
+  max-height: 104px !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .header-actions > .play-time-panel {
+  box-sizing: border-box !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+}
+
+html[data-bingo-theme="current"] #app .topbar .screen-switcher {
+  align-self: stretch !important;
+  height: 54px !important;
+  min-height: 54px !important;
+  max-height: 54px !important;
+}
+
+html[data-bingo-theme="current"] #app :is(.game-layout, .dealer-layout, .design-screen, .audience-screen) {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+}
+
 /* Screen tabs always occupy a separate contained line; the page never pans sideways. */
 html[data-bingo-theme],
 html[data-bingo-theme] body,
