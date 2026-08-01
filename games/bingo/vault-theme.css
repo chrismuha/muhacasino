@@ -6802,6 +6802,24 @@ html[data-bingo-theme="current"] #app .topbar .screen-switcher {
   }
 }
 
+/* Shared time-panel background is 70px tall in every theme and mode. */
+html[data-bingo-theme] #app .topbar {
+  grid-template-rows: minmax(126px, auto) 54px !important;
+}
+
+html[data-bingo-theme] #app .topbar .header-actions {
+  grid-template-rows: 70px 48px !important;
+  height: 126px !important;
+  min-height: 126px !important;
+  max-height: 126px !important;
+}
+
+html[data-bingo-theme] #app .topbar .header-actions > .play-time-panel {
+  height: 70px !important;
+  min-height: 70px !important;
+  max-height: 70px !important;
+}
+
 /* Time-zone panels retain their full control height inside the separated header. */
 html:is([data-bingo-theme="planet"], [data-bingo-theme="current"]) #app .topbar {
   grid-template-rows: minmax(124px, auto) 54px !important;
@@ -7282,7 +7300,7 @@ html[data-bingo-theme] #app .topbar {
   box-sizing: border-box !important;
   display: grid !important;
   grid-template-columns: minmax(220px, 320px) minmax(0, 1fr) !important;
-  grid-template-rows: minmax(124px, auto) 54px !important;
+  grid-template-rows: minmax(126px, auto) 54px !important;
   align-items: center !important;
   align-content: start !important;
   gap: 8px 14px !important;
@@ -7310,14 +7328,14 @@ html[data-bingo-theme] #app .topbar .header-actions {
   grid-column: 2 !important;
   grid-row: 1 !important;
   grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-  grid-template-rows: 68px 48px !important;
+  grid-template-rows: 70px 48px !important;
   align-content: start !important;
   gap: 8px !important;
   width: 100% !important;
   min-width: 0 !important;
-  height: 124px !important;
-  min-height: 124px !important;
-  max-height: 124px !important;
+  height: 126px !important;
+  min-height: 126px !important;
+  max-height: 126px !important;
   margin: 0 !important;
   padding: 0 !important;
   overflow: visible !important;
@@ -7331,9 +7349,9 @@ html[data-bingo-theme] #app .topbar .header-actions > .play-time-panel {
   width: 100% !important;
   min-width: 0 !important;
   max-width: none !important;
-  height: 68px !important;
-  min-height: 68px !important;
-  max-height: 68px !important;
+  height: 70px !important;
+  min-height: 70px !important;
+  max-height: 70px !important;
   transform: none !important;
 }
 
@@ -7397,6 +7415,21 @@ html[data-bingo-theme] #app .topbar .play-time-panel label > select {
   max-height: 34px !important;
   padding-top: 4px !important;
   padding-bottom: 4px !important;
+}
+
+/* Cascade-final Audience waiting-message contrast. */
+html[data-bingo-theme] #app .app-shell.theme-dark .audience-call > p {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+  text-shadow: 0 2px 2px rgba(0, 0, 0, .75) !important;
+}
+
+html[data-bingo-theme] #app .app-shell.theme-light .audience-call > p {
+  color: #111 !important;
+  -webkit-text-fill-color: #111 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
 }
 
 @media (max-width: 1400px) {
