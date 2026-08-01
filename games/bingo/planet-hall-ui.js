@@ -174,9 +174,12 @@
   function enforceDealerHeaderContrast() {
     contrastFrame = 0;
     const shell = document.querySelector("#app .app-shell");
-    const heading = shell?.querySelector(".dealer-layout > .dealer-hero > div:first-child > .eyebrow");
+    const heading = shell?.querySelector(".dealer-layout .dealer-hero .eyebrow");
     if (!heading) return;
-    const color = shell.classList.contains("theme-dark") ? "#ffffff" : "#000000";
+    const surface = heading.closest(".dealer-layout");
+    const rgb = getComputedStyle(surface).backgroundColor.match(/[\d.]+/g)?.slice(0, 3).map(Number);
+    const luminance = rgb?.length === 3 ? (rgb[0] * 0.299) + (rgb[1] * 0.587) + (rgb[2] * 0.114) : 0;
+    const color = luminance > 140 ? "#000000" : "#ffffff";
     if (heading.style.getPropertyValue("color") !== color) {
       heading.style.setProperty("color", color, "important");
       heading.style.setProperty("-webkit-text-fill-color", color, "important");

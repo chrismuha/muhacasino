@@ -7676,3 +7676,13 @@ html[data-bingo-theme] body #app .app-shell.theme-dark .dealer-layout > .dealer-
   filter: none !important;
   text-shadow: none !important;
 }
+
+/* Classic light mode requires a true black House Controls heading. */
+html[data-bingo-theme="current"] body #app .app-shell.theme-light .dealer-layout > .dealer-hero > div:first-child > .eyebrow,
+html[data-bingo-theme="classic"] body #app .app-shell.theme-light .dealer-layout > .dealer-hero > div:first-child > .eyebrow {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  opacity: 1 !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
