@@ -3391,7 +3391,7 @@ label {
 .reels .symbol-art::before {
   display: block;
   flex: 0 0 auto;
-  font-size: clamp(1.45rem, 4vw, 2.25rem);
+  font-size: clamp(1.4355rem, 3.96vw, 2.2275rem);
   line-height: 1;
   transform: none;
   transform-origin: center;
@@ -3445,5 +3445,5 @@ label {
 
 @media (max-width: 350px) {
   .reels { --reel-row-h: 29px; }
-  .reels .symbol-art::before { font-size: 1.3rem; }
+  .reels .symbol-art::before { font-size: 1.287rem; }
 }
