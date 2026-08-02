@@ -979,46 +979,73 @@
     const overlay = document.querySelector(".purchase-cards-overlay");
     if (!overlay) return;
     const saved = savedCount(CARD_COUNT_STORAGE_KEY, 3);
-    overlay.querySelector("[data-purchase-count]").value = String(saved);
-    overlay.querySelector("[data-purchase-summary]").textContent =
-      `${saved} card${saved === 1 ? "" : "s"} · ${saved} fake credit${saved === 1 ? "" : "s"}`;
+    updatePurchaseQuantity(overlay, saved);
     overlay.hidden = false;
+  }
+
+  function updatePurchaseQuantity(overlay, requestedCount) {
+    const count = Math.max(1, Math.min(6, Number(requestedCount) || 1));
+    overlay.querySelector("[data-purchase-count]").value = String(count);
+    overlay.querySelector("[data-purchase-quantity]").textContent = String(count);
+    overlay.querySelector("[data-purchase-summary]").textContent = `${count} CREDITS`;
+    overlay.querySelector("[data-purchase-minus]").disabled = count <= 1;
+    overlay.querySelector("[data-purchase-plus]").disabled = count >= 6;
   }
 
   function mountPurchaseOverlay() {
     if (document.querySelector(".purchase-cards-overlay")) return;
     const overlay = document.createElement("div");
-    overlay.className = "purchase-cards-overlay";
+    overlay.className = "purchase-cards-overlay planet-purchase-terminal";
     overlay.hidden = true;
     overlay.innerHTML = `
       <section role="dialog" aria-modal="true" aria-labelledby="purchase-cards-title">
-        <header><span>PLAYER HALL STORE</span><h2 id="purchase-cards-title">Purchase Bingo cards</h2></header>
-        <p>Choose cards for this session. Credits are unlimited while the casino economy is in test mode.</p>
-        <label><span>Cards</span><select data-purchase-count>
-          <option value="1">1 card</option><option value="2">2 cards</option>
-          <option value="3">3 cards</option><option value="4">4 cards</option>
-          <option value="5">5 cards</option><option value="6">6 cards</option>
-        </select></label>
-        <div class="purchase-credit-row"><span>Available</span><strong>∞ CREDITS</strong></div>
-        <div class="purchase-credit-row"><span>Order</span><strong data-purchase-summary></strong></div>
-        <footer><button type="button" data-purchase-cancel>CANCEL</button><button type="button" data-purchase-confirm>PURCHASE CARDS</button></footer>
+        <header>
+          <span>PLANET HALL 2 PLAYER STORE</span>
+          <h2 id="purchase-cards-title">Add Cards for Purchase</h2>
+        </header>
+        <div class="purchase-table" role="group" aria-label="Bingo card order">
+          <div class="purchase-table-head" aria-hidden="true">
+            <span>GAME</span><span>PRICE</span><span>QUANTITY</span><span>PURCHASE</span>
+          </div>
+          <div class="purchase-item-row">
+            <strong>Planet Hall Bingo Cards</strong>
+            <span>1 CREDIT</span>
+            <output data-purchase-quantity aria-live="polite">3</output>
+            <div class="purchase-stepper">
+              <button type="button" data-purchase-minus aria-label="Remove one card">−</button>
+              <button type="button" data-purchase-plus aria-label="Add one card">+</button>
+            </div>
+          </div>
+          <input type="hidden" data-purchase-count value="3">
+          <div class="purchase-totals">
+            <span>Balance:</span><strong>∞ CREDITS</strong>
+            <span>Total:</span><strong data-purchase-summary>3 CREDITS</strong>
+          </div>
+        </div>
+        <footer>
+          <button type="button" data-purchase-cancel>← BACK</button>
+          <button type="button" data-purchase-confirm>🛒 PURCHASE</button>
+        </footer>
       </section>
     `;
     const countInput = overlay.querySelector("[data-purchase-count]");
-    countInput.addEventListener("change", () => {
-      const count = Number(countInput.value);
-      overlay.querySelector("[data-purchase-summary]").textContent =
-        `${count} card${count === 1 ? "" : "s"} · ${count} fake credit${count === 1 ? "" : "s"}`;
-    });
     overlay.addEventListener("click", async (event) => {
       if (event.target === overlay || event.target.closest("[data-purchase-cancel]")) overlay.hidden = true;
+      if (event.target.closest("[data-purchase-minus]")) {
+        updatePurchaseQuantity(overlay, Number(countInput.value) - 1);
+        return;
+      }
+      if (event.target.closest("[data-purchase-plus]")) {
+        updatePurchaseQuantity(overlay, Number(countInput.value) + 1);
+        return;
+      }
       const confirm = event.target.closest("[data-purchase-confirm]");
       if (!confirm) return;
       confirm.disabled = true;
       confirm.textContent = "PREPARING CARDS…";
       const purchased = await purchaseCards(Number(countInput.value));
       confirm.disabled = false;
-      confirm.textContent = "PURCHASE CARDS";
+      confirm.textContent = "🛒 PURCHASE";
       overlay.hidden = true;
       showHallMessage(
         purchased ? "PURCHASE COMPLETE" : "PURCHASE NEEDS ATTENTION",

@@ -3988,6 +3988,197 @@ html[data-bingo-theme="current"] #app .app-shell.theme-light .app-footer :is(str
   box-shadow: inset 0 0 0 2px #caff74;
 }
 
+/* Planet Hall 2 purchase terminal mirrors the red-and-black hall kiosk. */
+[data-bingo-theme="planet"] .planet-purchase-terminal {
+  padding: 20px;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(190, 28, 24, .24), transparent 34rem),
+    rgba(0, 0, 0, .9);
+  backdrop-filter: blur(5px);
+}
+
+[data-bingo-theme="planet"] .planet-purchase-terminal > section {
+  width: min(820px, 96vw);
+  padding: 18px 22px 20px;
+  border: 5px solid #951c1a;
+  border-radius: 5px;
+  color: #edf6ff;
+  background: linear-gradient(145deg, #242834, #0b0d12);
+  box-shadow:
+    inset 0 0 0 2px #ff584c,
+    0 0 0 7px #11151d,
+    0 28px 90px rgba(0, 0, 0, .78);
+}
+
+[data-bingo-theme="planet"] .planet-purchase-terminal header {
+  margin: -4px 54px 18px;
+  padding: 10px 18px 12px;
+  border: 3px solid #516c9b;
+  border-radius: 3px;
+  text-align: center;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .16), transparent 28%, rgba(0, 0, 0, .18)),
+    linear-gradient(90deg, #5f1114, #c42e28, #5f1114);
+  box-shadow: inset 0 0 0 2px #291b2b, 0 5px 12px rgba(0, 0, 0, .45);
+}
+
+[data-bingo-theme="planet"] .planet-purchase-terminal header > span {
+  color: #ffd45c;
+  font-size: 8.25pt;
+  letter-spacing: .15em;
+}
+
+[data-bingo-theme="planet"] .planet-purchase-terminal h2 {
+  margin: 3px 0 0;
+  color: #fff;
+  font: 900 clamp(20pt, 3vw, 29pt)/1.1 "Arial Narrow", system-ui, sans-serif;
+  text-shadow: 0 2px 2px #4f0909;
+}
+
+[data-bingo-theme="planet"] .purchase-table {
+  padding: 16px 18px 18px;
+  border: 3px solid #405b8d;
+  border-radius: 3px;
+  background: linear-gradient(145deg, #20232d, #111319);
+  box-shadow: inset 0 0 0 1px #6e7891;
+}
+
+[data-bingo-theme="planet"] :is(.purchase-table-head, .purchase-item-row) {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.6fr) minmax(110px, .7fr) minmax(105px, .65fr) minmax(190px, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+[data-bingo-theme="planet"] .purchase-table-head {
+  min-height: 36px;
+  color: #ffd45c;
+  text-align: center;
+  font-size: 10.5pt;
+  font-weight: 950;
+  letter-spacing: .06em;
+}
+
+[data-bingo-theme="planet"] .purchase-table-head span:first-child {
+  text-align: left;
+}
+
+[data-bingo-theme="planet"] .purchase-item-row {
+  min-height: 76px;
+  border-block: 1px solid #414a5c;
+}
+
+[data-bingo-theme="planet"] .purchase-item-row > strong {
+  color: #eaf4ff;
+  font-size: 14.25pt;
+}
+
+[data-bingo-theme="planet"] .purchase-item-row > span,
+[data-bingo-theme="planet"] .purchase-item-row > output {
+  color: #72d7ff;
+  text-align: center;
+  font-size: 18pt;
+  font-weight: 900;
+}
+
+[data-bingo-theme="planet"] .purchase-stepper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+[data-bingo-theme="planet"] .purchase-stepper button {
+  min-height: 54px;
+  border: 3px solid #5874a3;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 25.5pt;
+  font-weight: 1000;
+  line-height: 1;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .34), 0 4px 0 rgba(0, 0, 0, .42);
+}
+
+[data-bingo-theme="planet"] .purchase-stepper [data-purchase-minus] {
+  background: linear-gradient(#ff655a, #c82420);
+}
+
+[data-bingo-theme="planet"] .purchase-stepper [data-purchase-plus] {
+  background: linear-gradient(#b1f35c, #58a91b);
+}
+
+[data-bingo-theme="planet"] .purchase-stepper button:is(:hover, :focus-visible):not(:disabled) {
+  filter: brightness(1.16) saturate(1.08);
+  transform: translateY(-1px);
+}
+
+[data-bingo-theme="planet"] .purchase-stepper button:disabled {
+  filter: grayscale(.55);
+  opacity: .48;
+}
+
+[data-bingo-theme="planet"] .purchase-totals {
+  display: grid;
+  grid-template-columns: 130px minmax(150px, 1fr);
+  gap: 4px 14px;
+  width: min(420px, 100%);
+  margin-top: 18px;
+  font-size: 16.5pt;
+}
+
+[data-bingo-theme="planet"] .purchase-totals span {
+  color: #ffd45c;
+  font-weight: 900;
+}
+
+[data-bingo-theme="planet"] .purchase-totals strong {
+  color: #72d7ff;
+}
+
+[data-bingo-theme="planet"] .planet-purchase-terminal footer {
+  grid-template-columns: minmax(150px, .65fr) minmax(230px, 1fr);
+  justify-content: end;
+  margin-top: 16px;
+}
+
+[data-bingo-theme="planet"] .planet-purchase-terminal footer button {
+  min-height: 58px;
+  border-width: 3px;
+  font-size: 12pt;
+}
+
+[data-bingo-theme="planet"] .planet-purchase-terminal [data-purchase-cancel] {
+  border-color: #5874a3;
+  background: linear-gradient(#52647e, #283447);
+}
+
+[data-bingo-theme="planet"] .planet-purchase-terminal [data-purchase-confirm] {
+  border-color: #65972a;
+  background: linear-gradient(#b1f35c, #58a91b);
+  box-shadow: inset 0 0 0 2px #d2ff92, 0 4px 0 #274d0b;
+}
+
+[data-bingo-theme="planet"] .planet-purchase-terminal footer button:is(:hover, :focus-visible):not(:disabled) {
+  filter: brightness(1.13);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 700px) {
+  [data-bingo-theme="planet"] .planet-purchase-terminal header {
+    margin-inline: 8px;
+  }
+
+  [data-bingo-theme="planet"] :is(.purchase-table-head, .purchase-item-row) {
+    grid-template-columns: 1fr 90px;
+  }
+
+  [data-bingo-theme="planet"] .purchase-table-head span:nth-child(2),
+  [data-bingo-theme="planet"] .purchase-table-head span:nth-child(3),
+  [data-bingo-theme="planet"] .purchase-item-row > span,
+  [data-bingo-theme="planet"] .purchase-item-row > output {
+    display: none;
+  }
+}
+
 .daub-options-overlay[hidden] {
   display: none;
 }
