@@ -2555,44 +2555,10 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-sh
 }
 
 [data-daub-design="splat"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
+  --splat-ink: var(--actual-daub, #126eff);
   content: "";
   position: absolute;
   z-index: 1;
-  inset: 1px;
-  background:
-    radial-gradient(ellipse at 33% 24%, #dff8ff 0 5%, rgba(255,255,255,.82) 6% 9%, transparent 10%),
-    radial-gradient(ellipse at 59% 34%, rgba(173,229,255,.72) 0 3%, transparent 4%),
-    linear-gradient(145deg, #159eff 8%, #0879e8 46%, #0457be 72%, #033d91 100%);
-  filter:
-    drop-shadow(2px 0 0 #031f55)
-    drop-shadow(-2px 0 0 #031f55)
-    drop-shadow(0 2px 0 #031f55)
-    drop-shadow(0 -2px 0 #031f55)
-    drop-shadow(3px 4px 0 rgba(0,0,0,.38));
-  clip-path: polygon(
-    48% 1%, 56% 15%, 68% 4%, 72% 21%, 91% 10%, 85% 31%,
-    100% 36%, 86% 49%, 98% 61%, 78% 64%, 84% 85%, 63% 78%,
-    54% 100%, 43% 81%, 25% 95%, 25% 73%, 3% 78%, 15% 57%,
-    0 47%, 18% 37%, 6% 19%, 28% 24%, 32% 4%, 42% 17%
-  );
-}
-
-[data-daub-design="splat"] :is(#app, .planet-card-wall) .number-cell.called.off-pattern-called::before {
-  background:
-    radial-gradient(ellipse at 33% 24%, #f2eaff 0 5%, rgba(255,255,255,.78) 6% 9%, transparent 10%),
-    radial-gradient(ellipse at 59% 34%, rgba(225,211,255,.68) 0 3%, transparent 4%),
-    linear-gradient(145deg, #9b77ef 8%, #7650d8 46%, #5833b3 72%, #3b217f 100%);
-  filter:
-    drop-shadow(2px 0 0 #251054)
-    drop-shadow(-2px 0 0 #251054)
-    drop-shadow(0 2px 0 #251054)
-    drop-shadow(0 -2px 0 #251054)
-    drop-shadow(3px 4px 0 rgba(0,0,0,.38));
-}
-
-/* Planet Hall 2 matches the compact, spiked blue dauber stamp on the hall terminals. */
-[data-bingo-theme="planet"][data-daub-design="splat"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
-  --splat-ink: var(--actual-daub, #126eff);
   inset: 2px;
   border-radius: 0;
   background: var(--splat-ink);
@@ -2609,15 +2575,15 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-sh
   opacity: 1;
 }
 
-[data-bingo-theme="planet"][data-daub-design="splat"] :is(#app, .planet-card-wall) .number-cell.marked:not(.called)::before {
+[data-daub-design="splat"] :is(#app, .planet-card-wall) .number-cell.marked:not(.called)::before {
   --splat-ink: var(--pre-daub, #ed3d35);
 }
 
-[data-bingo-theme="planet"][data-daub-design="splat"] :is(#app, .planet-card-wall) .number-cell.called.off-pattern-called::before {
+[data-daub-design="splat"] :is(#app, .planet-card-wall) .number-cell.called.off-pattern-called::before {
   --splat-ink: #7750d8;
 }
 
-[data-bingo-theme="planet"][data-daub-design="splat"] :is(#app, .planet-card-wall) .number-cell.free::before {
+[data-daub-design="splat"] :is(#app, .planet-card-wall) .number-cell.free::before {
   --splat-ink: var(--free-space, #f5cc4e);
 }
 
@@ -4187,7 +4153,7 @@ html[data-bingo-theme="current"] #app .app-shell.theme-light .app-footer :is(str
 
 .daub-design-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
   gap: 8px;
   padding: 14px;
 }
@@ -4204,6 +4170,7 @@ html[data-bingo-theme="current"] #app .app-shell.theme-light .app-footer :is(str
   background: linear-gradient(#242936, #11141b);
   font-size: 9.75pt;
   font-weight: 850;
+  cursor: pointer;
 }
 
 .daub-design-grid button.active {
@@ -4346,21 +4313,7 @@ html[data-bingo-theme="current"] #app .app-shell.theme-light .app-footer :is(str
 }
 
 .daub-preview.splat {
-  background:
-    radial-gradient(ellipse at 33% 24%, #dff8ff 0 5%, #ffffffd1 6% 9%, transparent 10%),
-    radial-gradient(ellipse at 59% 34%, #ade5ffb8 0 3%, transparent 4%),
-    linear-gradient(145deg, #159eff 8%, #0879e8 46%, #0457be 72%, #033d91 100%);
-  filter:
-    drop-shadow(2px 0 0 #031f55)
-    drop-shadow(-2px 0 0 #031f55)
-    drop-shadow(0 2px 0 #031f55)
-    drop-shadow(0 -2px 0 #031f55)
-    drop-shadow(3px 4px 0 #0006);
-  clip-path: polygon(48% 1%,56% 15%,68% 4%,72% 21%,91% 10%,85% 31%,100% 36%,86% 49%,98% 61%,78% 64%,84% 85%,63% 78%,54% 100%,43% 81%,25% 95%,25% 73%,3% 78%,15% 57%,0 47%,18% 37%,6% 19%,28% 24%,32% 4%,42% 17%);
-}
-
-[data-bingo-theme="planet"] .daub-preview.splat {
-  background: #126eff;
+  background: var(--actual-daub, #126eff);
   clip-path: polygon(
     50% 0%, 55% 14%, 62% 3%, 65% 17%, 74% 7%, 74% 22%,
     86% 15%, 82% 29%, 97% 26%, 87% 39%, 100% 43%, 86% 50%,
@@ -4420,17 +4373,9 @@ html[data-bingo-theme="current"] #app .app-shell.theme-light .app-footer :is(str
   z-index: 2;
 }
 
-[data-daub-design="pig"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
-[data-daub-design="duck"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
-[data-daub-design="star"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
-[data-daub-design="planet"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
-[data-daub-design="confetti"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
-[data-daub-design="firework"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
-[data-daub-design="dynamite"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
-[data-daub-design="cowboy"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
-[data-daub-design="clover"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
-[data-daub-design="diamond"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before,
-[data-daub-design="lightning"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
+[data-daub-design]:not([data-daub-design="solid"]):not([data-daub-design="splat"]):not([data-daub-design="circle"])
+  :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
+  content: var(--daub-symbol);
   position: absolute;
   z-index: 1;
   display: grid;
@@ -4440,52 +4385,6 @@ html[data-bingo-theme="current"] #app .app-shell.theme-light .app-footer :is(str
   background: transparent !important;
   font-size: 23.25pt;
   line-height: 1;
-}
-
-[data-daub-design="pig"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
-  content: "🐷";
-}
-
-[data-daub-design="duck"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
-  content: "🦆";
-}
-
-[data-daub-design="star"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
-  content: "★";
-  color: #126eff;
-  font-size: 28.5pt;
-}
-
-[data-daub-design="planet"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
-  content: "🪐";
-}
-
-[data-daub-design="confetti"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
-  content: "🎉";
-}
-
-[data-daub-design="firework"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
-  content: "🎆";
-}
-
-[data-daub-design="dynamite"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
-  content: "🧨";
-}
-
-[data-daub-design="cowboy"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
-  content: "🤠";
-}
-
-[data-daub-design="clover"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
-  content: "🍀";
-}
-
-[data-daub-design="diamond"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
-  content: "💎";
-}
-
-[data-daub-design="lightning"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
-  content: "⚡";
 }
 
 [data-daub-design="circle"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
@@ -4505,10 +4404,6 @@ html[data-bingo-theme="current"] #app .app-shell.theme-light .app-footer :is(str
 
 [data-daub-design="circle"] :is(#app, .planet-card-wall) .number-cell.free::before {
   background: var(--free-space, #f5cc4e);
-}
-
-[data-daub-design="star"] :is(#app, .planet-card-wall) .number-cell.called.off-pattern-called::before {
-  color: #7750d8;
 }
 
 [data-daub-design="solid"] :is(#app, .planet-card-wall) .number-cell.called {

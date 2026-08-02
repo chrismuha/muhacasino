@@ -17,10 +17,24 @@
     ? new BroadcastChannel("muha-bingo-incorrect-claims")
     : null;
   const themes = ["planet", "classic", "current"];
-  const daubDesigns = [
-    "solid", "splat", "pig", "duck", "star", "circle", "planet", "confetti",
-    "firework", "dynamite", "cowboy", "clover", "diamond", "lightning",
+  const daubOptions = [
+    ["solid", "Solid Color", ""], ["splat", "Splat", ""], ["circle", "Circle", ""],
+    ["pig", "Pig", "🐷"], ["duck", "Duck", "🦆"], ["star", "Star", "★"],
+    ["planet", "Planet", "🪐"], ["confetti", "Confetti", "🎉"], ["firework", "Firework", "🎆"],
+    ["dynamite", "Dynamite", "🧨"], ["cowboy", "Cowboy", "🤠"], ["clover", "Clover", "🍀"],
+    ["diamond", "Diamond", "💎"], ["lightning", "Lightning", "⚡"],
+    ["dog", "Dog", "🐶"], ["sheep", "Sheep", "🐑"], ["cat", "Cat", "🐱"],
+    ["horse", "Horse", "🐴"], ["elephant", "Elephant", "🐘"], ["butterfly", "Butterfly", "🦋"],
+    ["parrot", "Parrot", "🦜"], ["dragon", "Dragon", "🐉"], ["fish", "Fish", "🐟"],
+    ["buffalo", "Buffalo", "🦬"], ["unicorn", "Unicorn", "🦄"], ["tropical-fish", "Clownfish", "🐠"],
+    ["shark", "Shark", "🦈"], ["turtle", "Turtle", "🐢"], ["rooster", "Rooster", "🐓"],
+    ["ladybug", "Ladybug", "🐞"], ["flag", "Flag", "🇺🇸"], ["eagle", "Eagle", "🦅"],
+    ["shooting-star", "Shooting Star", "🌠"], ["seven", "Lucky Seven", "7️⃣"], ["shell", "Shell", "🐚"],
+    ["horseshoe", "Horseshoe", "∩"], ["dreamcatcher", "Dreamcatcher", "🕸️"], ["yin-yang", "Yin Yang", "☯️"],
+    ["meditation", "Meditation", "🧘"], ["mystery", "Mystery", "❓"], ["peace", "Peace", "☮️"],
+    ["bomb", "Bomb", "💣"],
   ];
+  const daubDesigns = daubOptions.map(([id]) => id);
   const defaultSolidColors = {
     pre: "#ed3d35",
     actual: "#126eff",
@@ -153,7 +167,9 @@
 
   function applyDaubDesign(design) {
     const selectedDesign = daubDesigns.includes(design) ? design : "splat";
+    const selectedOption = daubOptions.find(([id]) => id === selectedDesign);
     document.documentElement.dataset.daubDesign = selectedDesign;
+    document.documentElement.style.setProperty("--daub-symbol", JSON.stringify(selectedOption?.[2] || ""));
     document.querySelectorAll("[data-daub-design]").forEach((button) => {
       const isActive = button.dataset.daubDesign === selectedDesign;
       button.classList.toggle("active", isActive);
@@ -1264,22 +1280,10 @@
     overlay.innerHTML = `
       <section role="dialog" aria-modal="true" aria-labelledby="daub-options-title">
         <header id="daub-options-title">Choose a dauber design:</header>
-        <div class="daub-design-grid">
-          <button type="button" data-daub-design="solid"><i class="daub-preview solid"></i><span>Solid Color</span></button>
-          <button type="button" data-daub-design="splat"><i class="daub-preview splat"></i><span>Splat</span></button>
-          <button type="button" data-daub-design="pig"><i class="daub-preview">🐷</i><span>Pig</span></button>
-          <button type="button" data-daub-design="duck"><i class="daub-preview">🦆</i><span>Duck</span></button>
-          <button type="button" data-daub-design="star"><i class="daub-preview star">★</i><span>Star</span></button>
-          <button type="button" data-daub-design="circle"><i class="daub-preview circle"></i><span>Circle</span></button>
-          <button type="button" data-daub-design="planet"><i class="daub-preview">🪐</i><span>Planet</span></button>
-          <button type="button" data-daub-design="confetti"><i class="daub-preview">🎉</i><span>Confetti</span></button>
-          <button type="button" data-daub-design="firework"><i class="daub-preview">🎆</i><span>Firework</span></button>
-          <button type="button" data-daub-design="dynamite"><i class="daub-preview">🧨</i><span>Dynamite</span></button>
-          <button type="button" data-daub-design="cowboy"><i class="daub-preview">🤠</i><span>Cowboy</span></button>
-          <button type="button" data-daub-design="clover"><i class="daub-preview">🍀</i><span>Clover</span></button>
-          <button type="button" data-daub-design="diamond"><i class="daub-preview">💎</i><span>Diamond</span></button>
-          <button type="button" data-daub-design="lightning"><i class="daub-preview">⚡</i><span>Lightning</span></button>
-        </div>
+        <div class="daub-design-grid">${daubOptions.map(([id, label, symbol]) => {
+          const previewClass = ["solid", "splat", "circle"].includes(id) ? ` ${id}` : "";
+          return `<button type="button" data-daub-design="${id}"><i class="daub-preview${previewClass}">${symbol}</i><span>${label}</span></button>`;
+        }).join("")}</div>
         <div class="solid-color-panel" hidden>
           <div class="solid-color-heading">
             <button type="button" data-solid-color-back aria-label="Back to dauber designs"><i class="bi bi-arrow-left" aria-hidden="true"></i><span>Back</span></button>
