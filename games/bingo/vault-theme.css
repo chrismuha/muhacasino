@@ -1253,6 +1253,47 @@ html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout .dealer-curr
   text-shadow: none !important;
 }
 
+/* Planet Hall 2 pattern choices use dark cards with explicit readable states. */
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout .dealer-pattern-list button {
+  color: #fff !important;
+  border: 2px solid #3fc548 !important;
+  background-color: #20242c !important;
+  background-image: none !important;
+  box-shadow: inset 0 0 0 1px #73ea79 !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout .dealer-pattern-list button span {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout .dealer-pattern-list button small {
+  color: #d7dfeb !important;
+  -webkit-text-fill-color: #d7dfeb !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout .dealer-pattern-list button:hover,
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout .dealer-pattern-list button:focus-visible {
+  color: #fff !important;
+  border-color: #89ef78 !important;
+  background-color: #185f24 !important;
+}
+
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout .dealer-pattern-list button.active {
+  color: #fff !important;
+  border-color: #ff7770 !important;
+  background-color: #c62828 !important;
+  box-shadow: inset 0 0 0 2px #ff7770, 0 4px 0 #185f24 !important;
+}
+
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout .dealer-pattern-list button.active :is(span, small) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
 .planet-theme-menu {
   position: absolute;
   top: calc(100% + 8px);
