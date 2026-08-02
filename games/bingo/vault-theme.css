@@ -1229,6 +1229,30 @@ html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout :is(.btn-aut
   background-image: none !important;
 }
 
+/* Planet Hall 2 live ball keeps dark ink on its bright face. */
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout .dealer-current-ball {
+  border-color: #ed3d35 !important;
+  color: #10213d !important;
+  background-color: #fff9e8 !important;
+  background-image: none !important;
+  box-shadow: 0 0 0 5px #3fc548, 0 8px 22px rgba(0, 0, 0, .55) !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout .dealer-current-ball :is(span, small) {
+  color: #c62828 !important;
+  -webkit-text-fill-color: #c62828 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout .dealer-current-ball strong {
+  color: #10213d !important;
+  -webkit-text-fill-color: #10213d !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
 .planet-theme-menu {
   position: absolute;
   top: calc(100% + 8px);
