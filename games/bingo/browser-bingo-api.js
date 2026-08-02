@@ -3,11 +3,7 @@
 
   const STATE_KEY = "muha-bingo-live-state";
   const channel = "BroadcastChannel" in window ? new BroadcastChannel("muha-bingo-live") : null;
-  const diagnosticChannel = "BroadcastChannel" in window
-    ? new BroadcastChannel("muha-bingo-diagnostics")
-    : null;
   const listeners = new Set();
-  const parameters = new URLSearchParams(window.location.search);
   const windowId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   const navigationEntry = window.performance?.getEntriesByType?.("navigation")?.[0];
 
@@ -19,24 +15,6 @@
     }
     channel?.postMessage({ type: "round-reset", source: windowId });
   }
-
-  function windowLabel() {
-    if (parameters.has("player")) return `Player ${parameters.get("player")}`;
-    const screen = parameters.get("screen");
-    if (screen === "dealer") return "Dealer";
-    if (screen === "audience") return "Audience";
-    return window.parent === window ? "Player Hall" : "Casino Player Hall";
-  }
-
-  diagnosticChannel?.addEventListener("message", (event) => {
-    if (event.data?.type !== "presence-request") return;
-    diagnosticChannel.postMessage({
-      type: "presence",
-      requestId: event.data.requestId,
-      id: windowId,
-      label: windowLabel(),
-    });
-  });
 
   function readState() {
     try {

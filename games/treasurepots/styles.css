@@ -2627,14 +2627,6 @@ button {
   filter: drop-shadow(0 2px 1px rgba(68, 47, 28, .18));
 }
 
-.symbol-lantern { background-image: url("assets/symbols/lantern.png?v=2"); }
-.symbol-clover { background-image: url("assets/symbols/clover.png?v=2"); }
-.symbol-harp { background-image: url("assets/symbols/harp.png?v=2"); }
-.symbol-horseshoe { background-image: url("assets/symbols/horseshoe.png?v=2"); }
-.symbol-rainbow { background-image: url("assets/symbols/rainbow.png?v=2"); }
-.symbol-crown { background-image: url("assets/symbols/crown.png?v=2"); }
-.symbol-gem { background-image: url("assets/symbols/gem.png?v=2"); }
-
 .overlay-paytable .symbol-art {
   width: 40px;
   height: 40px;

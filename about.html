@@ -7,7 +7,7 @@
   <meta name="muha-build" content="20260801-bingo-schedule-and-controls">
   <meta name="description" content="Muha Casino version history and game release notes.">
   <title>About & Version History | Muha Casino</title>
-  <link rel="stylesheet" href="about.css?build=20260801-bingo-schedule-and-controls">
+  <link rel="stylesheet" href="about.css?build=20260801-sticky-version-pills">
 </head>
 <body>
   <header class="about-topbar">
@@ -22,8 +22,25 @@
     <section class="about-hero">
       <p class="eyebrow">About this release</p>
       <h1>Version history</h1>
-      <p>Major features are grouped into meaningful releases, with each update focused on improvements players can see and use.</p>
+      <p>Major features are grouped into meaningful releases, with each update focused on improvements players can see and use. Version numbers follow semantic versioning, so a feature release can move directly from v1.0.1 to v1.1.0 without creating empty v1.0.2–v1.0.9 releases.</p>
       <div class="release-badge"><span>Current casino release</span><strong>v1.1.4</strong><small>August 1, 2026</small></div>
+    </section>
+
+    <section class="release-sequence" aria-labelledby="releaseSequenceTitle">
+      <div>
+        <p class="eyebrow">Recorded releases</p>
+        <h2 id="releaseSequenceTitle">Complete release sequence</h2>
+      </div>
+      <ol aria-label="Muha Casino releases from oldest to newest">
+        <li>v1.0.0</li>
+        <li>v1.0.1</li>
+        <li>v1.1.0</li>
+        <li>v1.1.1</li>
+        <li>v1.1.2</li>
+        <li>v1.1.3</li>
+        <li aria-current="true">v1.1.4</li>
+      </ol>
+      <p><strong>No releases are missing:</strong> v1.1.0 is the feature-release successor to v1.0.1.</p>
     </section>
 
     <nav class="history-nav" aria-label="Choose version history">
@@ -35,31 +52,6 @@
       <a href="#sorry">Sorry!</a>
       <a href="#yahtzee">Yahtzee</a>
     </nav>
-
-    <section class="diagnostic-panel" aria-labelledby="diagnosticTitle">
-      <div class="diagnostic-heading">
-        <div>
-          <p class="eyebrow">System status</p>
-          <h2 id="diagnosticTitle">Casino diagnostics</h2>
-        </div>
-        <button id="refreshDiagnostics" type="button">Refresh status</button>
-      </div>
-      <div class="diagnostic-grid">
-        <article><span>Version</span><strong id="diagnosticVersion">v1.1.4</strong></article>
-        <article><span>Build</span><strong id="diagnosticBuild">Checking…</strong></article>
-        <article><span>Bingo theme</span><strong id="diagnosticTheme">Checking…</strong></article>
-        <article><span>Legacy cache</span><strong id="diagnosticCache">Checking…</strong></article>
-        <article class="diagnostic-windows">
-          <span>Connected Bingo windows</span>
-          <strong id="diagnosticWindowCount">Checking…</strong>
-          <small id="diagnosticWindowList">Waiting for responses…</small>
-        </article>
-      </div>
-      <div class="diagnostic-actions">
-        <p>Use the reset only when a saved preference or an old browser cache is causing a problem.</p>
-        <button id="clearCasinoData" class="danger-action" type="button">Clear saved data and reload</button>
-      </div>
-    </section>
 
     <section class="suite-summary">
       <div>
@@ -106,13 +98,13 @@
 
     <div class="history-grid">
       <article id="casino" class="history-card">
-        <header><span class="game-icon">M</span><div><p>Casino shell</p><h2>Muha Casino Home</h2></div><b>v1.1.4</b></header>
-        <section><h3>v1.1.4 · Current</h3><ul>
+        <header><span class="game-icon">M</span><div><p>Casino shell</p><h2>Muha Casino Home</h2></div><b>v1.1.3</b></header>
+        <section><h3>v1.1.3 · Home experience update</h3><ul>
           <li>Changed the Big Money Deluxe title accent from blue to yellow.</li>
           <li>Gave Pretty Penny a copper Home theme and matching game card.</li>
           <li>Gave Muha Bingo a green Home theme and matching game card.</li>
           <li>Kept Bingo focused on the Player Hall until Dealer controls are requested.</li>
-          <li>Updated visible version, diagnostics, and cache metadata for v1.1.4.</li>
+          <li>Updated the Home experience and cache metadata for the v1.1.3 release.</li>
         </ul></section>
         <section><h3>v1.1.2 · Casino expansion</h3><ul>
           <li>Added this About and per-game version-history screen.</li>
@@ -121,7 +113,6 @@
           <li>Organized Bingo, slots, and tabletop titles into accurate game categories.</li>
           <li>Applied point-based typography and game-specific semantic color roots across the casino shell, slots, Bingo, Sorry!, and Yahtzee.</li>
           <li>Corrected the root launcher cache reference and removed its service-worker reload loop so the casino opens reliably from Live Server.</li>
-          <li>Added live About diagnostics, connected Bingo-window reporting, and a saved-data reset control.</li>
           <li>Added visible game loading and failure screens with Reload Game and Return to Library recovery actions.</li>
         </ul></section>
         <section><h3>v1.1.0 · Unified casino</h3><ul>
@@ -190,7 +181,15 @@
 
       <article id="bingo" class="history-card featured-history">
         <header><span class="game-icon bingo">B</span><div><p>Casino Hall</p><h2>Muha Bingo</h2></div><b>v1.1.4</b></header>
-        <section><h3>v1.1.4 · Player and dealer usability</h3><ul>
+        <section><h3>v1.1.4 · Scheduling and Hall controls</h3><ul>
+          <li>Added a persistent Dealer event editor and a player-facing Bingo Schedule list.</li>
+          <li>Required every scheduled event to have a title and at least a date or time.</li>
+          <li>Redesigned Planet Hall 2 purchasing with a one-card default quantity.</li>
+          <li>Kept three cards as the default Player Hall view and restored the View action.</li>
+          <li>Removed redundant Controls/Setup and Theme actions while widening Dealer access.</li>
+          <li>Corrected the Classic light-mode House Controls heading to black.</li>
+        </ul></section>
+        <section><h3>v1.1.3 · Player and dealer usability</h3><ul>
           <li>Added a guided 1–6 card-purchase flow with unlimited test credits.</li>
           <li>Expanded the Player Hall Flashboard to fill its section in every theme.</li>
           <li>Made three cards the startup default in every theme while keeping session changes available.</li>
@@ -241,11 +240,6 @@
           <li>Removed the unnecessary subtitle from every Hall theme.</li>
           <li>Made the Player Hall 2 footer call ball substantially larger.</li>
           <li>Centered the unlimited symbol directly above the Credits label.</li>
-          <li>Added a persistent Dealer event editor and a player-facing Bingo Schedule list.</li>
-          <li>Required every scheduled event to have a title and at least a date or time.</li>
-          <li>Redesigned Planet Hall 2 purchasing with a one-card default quantity.</li>
-          <li>Removed redundant Controls/Setup and Theme actions while widening Dealer access.</li>
-          <li>Corrected the Classic light-mode House Controls heading to black.</li>
         </ul></section>
         <section><h3>v1.1.2 · Hall expansion</h3>
           <div class="release-groups">
@@ -278,10 +272,16 @@
               <li>Removed the stale in-page Dealer takeover and kept the dedicated Dealer tab on its real console.</li>
               <li>Removed stale service-worker caching and forced reused Bingo windows onto the current build.</li>
               <li>Made the theme selector mount consistently in Dealer, Audience, and player pop-outs.</li>
-              <li>Added connected-window diagnostics and launcher recovery controls without changing the v1.1.2 release number.</li>
+              <li>Added launcher recovery controls without changing the v1.1.2 release number.</li>
             </ul></div>
           </div>
         </section>
+        <section><h3>v1.1.1 · Casino integration and reliability</h3><ul>
+          <li>Integrated Muha Bingo into the shared Muha Casino launcher and game-library navigation.</li>
+          <li>Connected Player Floor, Dealer Console, Audience Display, and Card Design routing for browser play.</li>
+          <li>Added persistent Hall preferences, portable asset paths, shared session timing, and responsive browser layouts.</li>
+          <li>Improved startup, window switching, and recovery behavior before the three-theme Hall expansion.</li>
+        </ul></section>
         <section><h3>v1.1.0 · Hall operations</h3><ul>
           <li>Expanded the original Bingo application with player-floor, dealer-console, audience-display, and card-design screens.</li>
           <li>Added round setup, patterns, manual and automatic calling, winner verification, credits, prizes, player lookup, printing, and pop-out displays.</li>
@@ -326,6 +326,6 @@
 
   <footer><span>MUHA CASINO</span><a href="index.html">Return to game library</a></footer>
   <script src="interaction-lock.js?v=1.1.4"></script>
-  <script src="about-diagnostics.js?build=20260801-bingo-schedule-and-controls"></script>
+  <script src="about-history.js?build=20260801-sticky-version-pills"></script>
 </body>
 </html>
