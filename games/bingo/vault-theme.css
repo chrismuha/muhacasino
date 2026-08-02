@@ -1103,6 +1103,17 @@ html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) .planet-st
   box-shadow: 0 -8px 24px rgba(29, 65, 111, .2);
 }
 
+html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) .planet-pattern-box {
+  border-color: #557db2;
+  background: #f7fbff;
+  box-shadow: inset 0 0 0 1px #c3d7ec;
+}
+
+html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) .planet-pattern-copy .footer-pattern :is(span, strong, small) {
+  color: #10213d !important;
+  -webkit-text-fill-color: #10213d !important;
+}
+
 html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) :is(.planet-call-count, .planet-credit span) {
   color: #314b70;
 }
@@ -2715,6 +2726,46 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-sh
 .planet-status-bar section {
   display: grid;
   gap: 7px;
+}
+
+.planet-pattern-box {
+  grid-template-columns: minmax(230px, auto) minmax(160px, 1fr);
+  align-items: center;
+  gap: 18px !important;
+  min-width: 0;
+  padding: 8px 14px;
+  border: 2px solid #3a77bd;
+  border-radius: 8px;
+  background: #102442;
+  box-shadow: inset 0 0 0 1px rgba(55, 220, 255, .16);
+}
+
+.planet-pattern-copy {
+  min-width: 0;
+}
+
+.planet-pattern-copy > .footer-pattern {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.planet-pattern-copy .pattern-preview {
+  flex-basis: 88px;
+  width: 88px;
+}
+
+.planet-pattern-copy .footer-pattern :is(span, strong, small) {
+  color: #f5fbff !important;
+  -webkit-text-fill-color: #f5fbff !important;
+  opacity: 1 !important;
+}
+
+.planet-pattern-status {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
 }
 
 .planet-call-count {

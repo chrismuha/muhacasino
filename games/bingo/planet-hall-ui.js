@@ -72,6 +72,12 @@
     shell.querySelector(".planet-call-count").textContent =
       `${activeCalledNumbers(sourceCards).size} Balls Called`;
 
+    const patternCopy = shell.querySelector(".planet-pattern-copy");
+    const sourcePattern = document.querySelector("#app .footer-pattern");
+    if (patternCopy && sourcePattern) {
+      patternCopy.replaceChildren(sourcePattern.cloneNode(true));
+    }
+
     const darkMode = document.querySelector("#app .app-shell")?.classList.contains("theme-dark");
     const modeButton = shell.querySelector(".planet-mode-trigger");
     if (modeButton) {
@@ -113,9 +119,12 @@
         <aside class="planet-number-board" aria-label="Called number board"></aside>
       </section>
       <footer class="planet-status-bar">
-        <section>
-          <span class="planet-call-count">0 Balls Called</span>
-          <strong class="planet-game-name">Waiting for session</strong>
+        <section class="planet-pattern-box" aria-label="Current winning pattern">
+          <div class="planet-pattern-copy"></div>
+          <div class="planet-pattern-status">
+            <span class="planet-call-count">0 Balls Called</span>
+            <strong class="planet-game-name">Waiting for session</strong>
+          </div>
         </section>
         <div class="planet-current-ball"><small>-</small><strong>#</strong></div>
         <div class="planet-credit"><strong>∞</strong><span>CREDITS</span></div>
