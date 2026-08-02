@@ -1377,6 +1377,80 @@ html[data-bingo-theme="classic"] body #app .app-shell .dealer-layout .dealer-set
   text-shadow: none !important;
 }
 
+/* Planet Hall Card Design stays inside the brown, gold, and green Hall identity. */
+html[data-bingo-theme="classic"] body #app .app-shell .design-screen {
+  color: #fff8e6 !important;
+  background-color: #180c0b !important;
+  background-image: none !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .design-screen .design-group {
+  color: #fff8e6 !important;
+  border: 2px solid #b98032 !important;
+  background-color: #2b1714 !important;
+  background-image: none !important;
+  box-shadow: inset 0 0 0 1px #4c2b21 !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .design-screen :is(
+  .design-copy h2, .design-group h3, label, legend, strong
+) {
+  color: #fff8e6 !important;
+  -webkit-text-fill-color: #fff8e6 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .design-screen :is(
+  .design-copy > p, .design-group p, .color-field code, .design-preview > span, .eyebrow
+) {
+  color: #e6cba3 !important;
+  -webkit-text-fill-color: #e6cba3 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .design-screen .design-preview {
+  border: 2px solid #b98032 !important;
+  background-color: #3a2019 !important;
+  background-image: none !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .design-screen :is(select, .symbol-picker button) {
+  color: #fff8e6 !important;
+  border-color: #b98032 !important;
+  background-color: #160d0b !important;
+  background-image: none !important;
+}
+
+/* Planet Hall card-view chooser uses solid cabinet colors. */
+html[data-bingo-theme="classic"] body .view-choice-panel {
+  color: #fff8e6 !important;
+  border-color: #b98032 !important;
+  background-color: #180c0b !important;
+  background-image: none !important;
+}
+
+html[data-bingo-theme="classic"] body .view-choice-panel > header {
+  color: #fff !important;
+  border-color: #ffd45c !important;
+  background-color: #b72825 !important;
+  background-image: none !important;
+}
+
+html[data-bingo-theme="classic"] body .view-choice-panel > div button {
+  color: #fff !important;
+  border: 2px solid #b7ee68 !important;
+  background-color: #58a515 !important;
+  background-image: none !important;
+}
+
+html[data-bingo-theme="classic"] body .view-choice-panel footer {
+  border-color: #b98032 !important;
+  background-color: #180c0b !important;
+  background-image: none !important;
+}
+
 .planet-theme-menu {
   position: absolute;
   top: calc(100% + 8px);
