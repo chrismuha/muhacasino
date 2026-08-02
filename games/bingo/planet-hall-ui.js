@@ -72,6 +72,12 @@
     shell.querySelector(".planet-call-count").textContent =
       `${activeCalledNumbers(sourceCards).size} Balls Called`;
 
+    const patternCopy = shell.querySelector(".planet-pattern-copy");
+    const sourcePattern = document.querySelector("#app .footer-pattern");
+    if (patternCopy && sourcePattern) {
+      patternCopy.replaceChildren(sourcePattern.cloneNode(true));
+    }
+
     const darkMode = document.querySelector("#app .app-shell")?.classList.contains("theme-dark");
     const modeButton = shell.querySelector(".planet-mode-trigger");
     if (modeButton) {
@@ -101,17 +107,6 @@
         <button class="planet-mode-trigger" type="button" aria-label="Use dark mode">
           <span aria-hidden="true">☾</span> DARK
         </button>
-        <div class="planet-theme-control">
-          <button class="planet-theme-trigger" type="button" aria-expanded="false">
-            <span aria-hidden="true">🎨</span> THEME
-          </button>
-          <div class="planet-theme-menu" hidden>
-            <strong>CHOOSE A HALL</strong>
-            <button class="bingo-theme-option" type="button" data-theme="planet">Planet Hall 2</button>
-            <button class="bingo-theme-option" type="button" data-theme="classic">Planet Hall</button>
-            <button class="bingo-theme-option" type="button" data-theme="current">Classic</button>
-          </div>
-        </div>
       </header>
       <section class="planet-play-surface">
         <div class="planet-card-area">
@@ -124,9 +119,12 @@
         <aside class="planet-number-board" aria-label="Called number board"></aside>
       </section>
       <footer class="planet-status-bar">
-        <section>
-          <span class="planet-call-count">0 Balls Called</span>
-          <strong class="planet-game-name">Waiting for session</strong>
+        <section class="planet-pattern-box" aria-label="Current winning pattern">
+          <div class="planet-pattern-copy"></div>
+          <div class="planet-pattern-status">
+            <span class="planet-call-count">0 Balls Called</span>
+            <strong class="planet-game-name">Waiting for session</strong>
+          </div>
         </section>
         <div class="planet-current-ball"><small>-</small><strong>#</strong></div>
         <div class="planet-credit"><strong>∞</strong><span>CREDITS</span></div>
@@ -139,21 +137,6 @@
         queueSync();
         return;
       }
-      const themeTrigger = event.target.closest(".planet-theme-trigger");
-      const themeMenu = shell.querySelector(".planet-theme-menu");
-      if (themeTrigger) {
-        const willOpen = themeMenu.hidden;
-        themeMenu.hidden = !willOpen;
-        themeTrigger.setAttribute("aria-expanded", String(willOpen));
-        return;
-      }
-      const themeOption = event.target.closest(".planet-theme-menu [data-theme]");
-      if (themeOption) {
-        window.applyBingoTheme?.(themeOption.dataset.theme);
-        themeMenu.hidden = true;
-        shell.querySelector(".planet-theme-trigger")?.setAttribute("aria-expanded", "false");
-        return;
-      }
       const copiedCell = event.target.closest("[data-source-cell]");
       if (!copiedCell) return;
       const copiedCard = copiedCell.closest("[data-source-card]");
@@ -161,13 +144,6 @@
       sourceCards[Number(copiedCard.dataset.sourceCard)]
         ?.querySelectorAll("button.number-cell")[Number(copiedCell.dataset.sourceCell)]
         ?.click();
-    });
-    document.addEventListener("click", (event) => {
-      const control = shell.querySelector(".planet-theme-control");
-      if (control?.contains(event.target)) return;
-      const menu = shell.querySelector(".planet-theme-menu");
-      if (menu) menu.hidden = true;
-      shell.querySelector(".planet-theme-trigger")?.setAttribute("aria-expanded", "false");
     });
     document.body.append(shell);
     const footerControls = document.querySelector(".planet-footer-controls");
@@ -194,7 +170,7 @@
     const shell = document.querySelector("#app .app-shell");
     const heading = shell?.querySelector(".dealer-layout .dealer-hero .eyebrow");
     if (!heading) return;
-    const surface = heading.closest(".dealer-layout");
+    const surface = heading.closest(".dealer-hero") || heading.closest(".dealer-layout");
     const rgb = getComputedStyle(surface).backgroundColor.match(/[\d.]+/g)?.slice(0, 3).map(Number);
     const luminance = rgb?.length === 3 ? (rgb[0] * 0.299) + (rgb[1] * 0.587) + (rgb[2] * 0.114) : 0;
     const color = luminance > 140 ? "#000000" : "#ffffff";
