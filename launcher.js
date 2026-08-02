@@ -72,7 +72,6 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_VERSION = "1.1.4";
 const SITE_BUILD = "20260801-final-contrast-v15";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
@@ -92,7 +91,6 @@ const heroDots = document.querySelector("#heroDots");
 const categoryResults = document.querySelector("#categoryResults");
 const categoryTitle = document.querySelector("#categoryTitle");
 const categoryRail = document.querySelector("#categoryRail");
-const appVersion = document.querySelector("#appVersion");
 let activeSlide = 0;
 let sliderTimer;
 let activeGameId = null;
@@ -121,25 +119,6 @@ function removeLegacyCasinoCaching() {
       });
   }
 }
-
-function displayVersion(packageVersion) {
-  const match = /^(\d+)\.0\.(\d+)$/.exec(packageVersion);
-  return match ? `v${match[1]}.${match[2].padStart(2, "0")}` : `v${packageVersion}`;
-}
-
-appVersion.textContent = displayVersion(SITE_VERSION);
-
-fetch(`package.json?build=${encodeURIComponent(SITE_BUILD)}`, { cache: "no-store" })
-  .then((response) => {
-    if (!response.ok) throw new Error(`Version request failed: ${response.status}`);
-    return response.json();
-  })
-  .then((packageInfo) => {
-    if (packageInfo.version) appVersion.textContent = displayVersion(String(packageInfo.version));
-  })
-  .catch(() => {
-    // Keep the version embedded in the HTML when the site is opened without a web server.
-  });
 
 function showSlide(index) {
   activeSlide = (index + slides.length) % slides.length;

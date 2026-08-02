@@ -312,7 +312,6 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 .footer-brand { color: white; }
 .footer-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; }
 .footer-meta p { margin: 0; }
-.version { color: #aeb2c4; font-weight: 800; letter-spacing: .08em; }
 
 .game-view { position: fixed; z-index: 99; inset: 0; background: #050610; }
 .game-toolbar { display: flex; height: 56px; align-items: center; gap: 18px; padding: 0 14px; border-bottom: 1px solid rgba(255,255,255,.12); background: #0a0c19; }

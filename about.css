@@ -64,19 +64,6 @@ main { width: min(1280px, calc(100% - 48px)); margin: 0 auto; padding: 82px 0 70
 .eyebrow { margin: 0 0 14px; color: var(--cyan); font-weight: 900; letter-spacing: .18em; text-transform: uppercase; }
 h1 { margin: 0; font-size: clamp(43.2pt, 9vw, 99.6pt); letter-spacing: -.075em; line-height: .86; }
 .about-hero > p:last-of-type { max-width: 790px; margin: 30px 0 0; color: #c7cada; font-size: 13.8pt; line-height: 1.7; }
-.release-badge {
-  display: inline-grid;
-  grid-template-columns: auto auto;
-  gap: 4px 20px;
-  margin-top: 30px;
-  padding: 17px 20px;
-  border: 1px solid #4b5270;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #171b2a, #222941);
-}
-.release-badge span, .release-badge small { color: var(--muted); }
-.release-badge strong { grid-row: 1 / 3; grid-column: 2; align-self: center; color: var(--cyan); font-size: 24pt; }
-
 .history-nav {
   position: sticky;
   z-index: 10;
@@ -210,7 +197,6 @@ body > footer a { color: var(--cyan); }
   .about-brand strong { display: none; }
   .history-card > header { grid-template-columns: auto 1fr; }
   .history-card header > b { grid-column: 2; }
-  .release-badge { display: grid; }
   .release-version-nav { top: 132px; padding-inline: 12px; }
 }
 
