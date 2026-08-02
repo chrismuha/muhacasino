@@ -1294,6 +1294,57 @@ html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout .dealer-patt
   -webkit-text-fill-color: #fff !important;
 }
 
+/* Planet Hall uses a compact header instead of the taller shared Hall geometry. */
+html[data-bingo-theme="classic"] body #app .app-shell .topbar {
+  grid-template-columns: minmax(220px, 320px) minmax(0, 1fr) !important;
+  grid-template-rows: 100px 46px !important;
+  gap: 6px 12px !important;
+  padding: 6px 12px !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .topbar:not(:has(.screen-switcher)) {
+  grid-template-rows: 100px !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions {
+  grid-template-rows: 52px 42px !important;
+  gap: 6px !important;
+  height: 100px !important;
+  min-height: 100px !important;
+  max-height: 100px !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+  height: 52px !important;
+  min-height: 52px !important;
+  max-height: 52px !important;
+  padding: 4px 7px !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > :is(
+  .appearance-btn,
+  .status-pill,
+  .new-game-btn,
+  .bingo-theme-switcher.header-theme-switcher
+) {
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .bingo-theme-switcher.header-theme-switcher > .bingo-theme-trigger {
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .topbar .screen-switcher,
+html[data-bingo-theme="classic"] body #app .app-shell .topbar .screen-switcher button {
+  height: 46px !important;
+  min-height: 46px !important;
+  max-height: 46px !important;
+}
+
 .planet-theme-menu {
   position: absolute;
   top: calc(100% + 8px);
