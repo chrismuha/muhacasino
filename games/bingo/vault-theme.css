@@ -1451,6 +1451,17 @@ html[data-bingo-theme="classic"] body .view-choice-panel footer {
   background-image: none !important;
 }
 
+/* Planet Hall audience ball clears the fixed bottom controls without clipping. */
+html[data-bingo-theme="classic"] body #app .app-shell .audience-call > .audience-ball {
+  width: 320px !important;
+  height: 320px !important;
+  min-width: 320px !important;
+  min-height: 320px !important;
+  max-width: 320px !important;
+  max-height: 320px !important;
+  margin: 0 auto 12px !important;
+}
+
 .planet-theme-menu {
   position: absolute;
   top: calc(100% + 8px);
