@@ -1345,6 +1345,38 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar .screen-switcher b
   max-height: 46px !important;
 }
 
+/* Planet Hall setup steps use dark themed cards with explicit text contrast. */
+html[data-bingo-theme="classic"] body #app .app-shell .dealer-layout .dealer-setup-guide li {
+  color: #fff8e6 !important;
+  border: 2px solid #9bdc43 !important;
+  background-color: #2b211b !important;
+  background-image: none !important;
+  box-shadow: inset 0 0 0 1px #4d351f !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .dealer-layout .dealer-setup-guide li > strong {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  border: 3px solid #9bdc43 !important;
+  background-color: #b72825 !important;
+  background-image: none !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .dealer-layout .dealer-setup-guide li b {
+  color: #fff8e6 !important;
+  -webkit-text-fill-color: #fff8e6 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .dealer-layout .dealer-setup-guide li small {
+  color: #ecd5b5 !important;
+  -webkit-text-fill-color: #ecd5b5 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
 .planet-theme-menu {
   position: absolute;
   top: calc(100% + 8px);
