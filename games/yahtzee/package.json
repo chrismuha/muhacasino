@@ -1,6 +1,6 @@
 {
   "name": "yahtzee",
-  "version": "1.1.2",
+  "version": "1.0.2",
   "main": "main.js",
   "scripts": {},
   "private": true,

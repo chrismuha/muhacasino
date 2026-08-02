@@ -7,7 +7,7 @@
   <meta name="muha-build" content="20260801-bingo-schedule-and-controls">
   <meta name="description" content="Muha Casino version history and game release notes.">
   <title>About & Version History | Muha Casino</title>
-  <link rel="stylesheet" href="about.css?build=20260801-sticky-version-pills">
+  <link rel="stylesheet" href="about.css?build=20260801-categorized-pill-notes">
 </head>
 <body>
   <header class="about-topbar">
@@ -26,23 +26,6 @@
       <div class="release-badge"><span>Current casino release</span><strong>v1.1.4</strong><small>August 1, 2026</small></div>
     </section>
 
-    <section class="release-sequence" aria-labelledby="releaseSequenceTitle">
-      <div>
-        <p class="eyebrow">Recorded releases</p>
-        <h2 id="releaseSequenceTitle">Complete release sequence</h2>
-      </div>
-      <ol aria-label="Muha Casino releases from oldest to newest">
-        <li>v1.0.0</li>
-        <li>v1.0.1</li>
-        <li>v1.1.0</li>
-        <li>v1.1.1</li>
-        <li>v1.1.2</li>
-        <li>v1.1.3</li>
-        <li aria-current="true">v1.1.4</li>
-      </ol>
-      <p><strong>No releases are missing:</strong> v1.1.0 is the feature-release successor to v1.0.1.</p>
-    </section>
-
     <nav class="history-nav" aria-label="Choose version history">
       <a href="#casino">Casino Home</a>
       <a href="#big-money">Big Money</a>
@@ -52,49 +35,6 @@
       <a href="#sorry">Sorry!</a>
       <a href="#yahtzee">Yahtzee</a>
     </nav>
-
-    <section class="suite-summary">
-      <div>
-        <span>v1.1.4</span>
-        <h2>Bingo Hall experience release</h2>
-      </div>
-      <ul>
-        <li>Refreshed Big Money Deluxe, Pretty Penny, and Muha Bingo Home identities.</li>
-        <li>Made the Bingo Player Hall the default and added unlimited-credit card purchasing.</li>
-        <li>Made three cards the default across every Hall theme.</li>
-        <li>Rebuilt Dealer setup as a clearer full-screen workflow.</li>
-        <li>Added distinct, high-contrast light and dark designs across Bingo screens.</li>
-        <li>Fixed card views, sorting, pagination, controls, and responsive dialogs.</li>
-        <li>Added realistic incorrect-Bingo claims, alerts, and tracking.</li>
-        <li>Improved the Muha Bingo logo, footer ball, credits, and Flashboard presentation.</li>
-        <li>Added direct theme switching inside Planet Hall 2.</li>
-        <li>Corrected the Player Hall 2 Dealer Console ball contrast.</li>
-        <li>Enlarged Dealer winning-pattern cards for easier setup.</li>
-        <li>Removed the highlighted pattern summary and enlarged round totals.</li>
-        <li>Enlarged Call History text, totals, and number chips.</li>
-        <li>Enlarged Dealer credit and prize labels and totals.</li>
-        <li>Redesigned Bingo card headers with smoother, clearer typography.</li>
-        <li>Redesigned card footers as large, high-contrast status bands.</li>
-        <li>Corrected light-mode time-zone text and emphasized distance-to-Bingo counters.</li>
-        <li>Corrected Live Draw button contrast and disabled states.</li>
-        <li>Enlarged the complete Directed Play workflow.</li>
-        <li>Corrected Manual Draw ball and winning-pattern contrast.</li>
-        <li>Expanded the Manual Draw board to fill its Dealer section.</li>
-        <li>Made Player cards and their section taller to prevent number clipping.</li>
-        <li>Enlarged the Sort Cards label and selected method.</li>
-        <li>Made the 75-ball board fit beside the Hall controls without overflow.</li>
-        <li>Enlarged Card Design text and kept its preview clear of Hall controls.</li>
-        <li>Gave Planet Hall boards wide rows while preserving the Classic grid.</li>
-        <li>Finished Hall layout polish so side controls, bottom actions, and the time panel remain clear at shorter heights and increased zoom.</li>
-        <li>Completed the final Bingo contrast pass and stopped number calling as soon as a Bingo is reached.</li>
-        <li>Corrected Classic Auto Call and Recent Calls header contrast.</li>
-        <li>Added Dealer-managed Bingo event scheduling with required titles and date-or-time validation.</li>
-        <li>Redesigned Planet Hall 2 card purchasing and made one card the default purchase quantity.</li>
-        <li>Kept three cards as the default Player Hall view and restored the View action.</li>
-        <li>Removed the redundant Controls/Setup and Planet Hall 2 Theme buttons.</li>
-        <li>Corrected the Classic light-mode House Controls heading to black.</li>
-      </ul>
-    </section>
 
     <div class="history-grid">
       <article id="casino" class="history-card">
@@ -181,16 +121,50 @@
 
       <article id="bingo" class="history-card featured-history">
         <header><span class="game-icon bingo">B</span><div><p>Casino Hall</p><h2>Muha Bingo</h2></div><b>v1.1.4</b></header>
-        <section><h3>v1.1.4 · Scheduling and Hall controls</h3><ul>
-          <li>Added a persistent Dealer event editor and a player-facing Bingo Schedule list.</li>
-          <li>Required every scheduled event to have a title and at least a date or time.</li>
-          <li>Redesigned Planet Hall 2 purchasing with a one-card default quantity.</li>
-          <li>Kept three cards as the default Player Hall view and restored the View action.</li>
-          <li>Removed redundant Controls/Setup and Theme actions while widening Dealer access.</li>
-          <li>Corrected the Classic light-mode House Controls heading to black.</li>
-          <li>Standardized the Splat dauber across every Bingo theme and added screenshot-inspired animal, lucky-symbol, and novelty daubers.</li>
-        </ul></section>
+        <section><h3>v1.1.4 · Complete Hall experience update</h3>
+          <div class="release-groups">
+            <div class="release-group"><h4>Player Hall</h4><ul>
+              <li>Redesigned Planet Hall 2 so cards sit closer together with the Flashboard positioned beside them.</li>
+              <li>Made the Flashboard a compact five-column board that remains visible without unnecessary page scrolling.</li>
+              <li>Added the active winning-pattern panel to the Planet Hall footer and used the available footer space effectively.</li>
+              <li>Redesigned the Planet Hall 2 purchase screen after the physical hall terminal.</li>
+              <li>Made one card the default purchase quantity while keeping three cards as the default Player Hall view.</li>
+              <li>Restored the View action and retained all one-through-six-card view choices.</li>
+              <li>Removed the redundant Controls/Setup action and widened the Dealer action into its space.</li>
+              <li>Removed the redundant Planet Hall 2 Theme button from the side-control panel.</li>
+            </ul></div>
+            <div class="release-group"><h4>Dealer and Audience</h4><ul>
+              <li>Matched the Planet Hall 2 Dealer Console to the dark Hall design and added a true light presentation with white surfaces and dark text.</li>
+              <li>Corrected Dealer Console contrast across House Controls, statistics, setup steps, tabs, forms, and incorrect-call tracking.</li>
+              <li>Made the Classic light-mode House Controls heading consistently black, including after dynamic rerenders.</li>
+              <li>Added hover feedback to Dealer Console controls in both appearance modes.</li>
+              <li>Added a persistent Dealer event editor and a player-facing Bingo Schedule list.</li>
+              <li>Required every scheduled event to include a title and at least a date or time.</li>
+              <li>Added saved schedule entries with formatted dates and times plus Dealer-side deletion.</li>
+              <li>Kept the Planet Hall 2 Audience call ball fully above the footer and corrected light/dark Audience contrast.</li>
+            </ul></div>
+            <div class="release-group"><h4>Cards and Daubers</h4><ul>
+              <li>Corrected Bingo-card number contrast in Card Design and on rendered Player Hall cards.</li>
+              <li>Corrected Card Design headings, subheaders, instructions, field values, and free-space visibility.</li>
+              <li>Standardized the same compact spiked Splat shape across Planet Hall 2, Planet Hall, and Classic.</li>
+              <li>Kept Splat colors distinct for player marks, called numbers, off-pattern calls, and free spaces.</li>
+              <li>Expanded the dauber picker from 14 to 42 saved designs.</li>
+              <li>Added screenshot-inspired animals, ocean life, lucky symbols, spiritual symbols, and novelty daubers.</li>
+              <li>Simplified symbol rendering so every theme uses the same crisp, persistent dauber implementation.</li>
+            </ul></div>
+            <div class="release-group"><h4>Layout and Reliability</h4><ul>
+              <li>Rebuilt the Bingo header rows so time, theme mode, Card Design, readiness, New Game, and screen tabs no longer collide.</li>
+              <li>Contained the time-zone selector inside the header at narrower widths and increased zoom.</li>
+              <li>Restored Player Hall scrolling while keeping the header and footer controls clear of game content.</li>
+              <li>Corrected Player Cards, Current Call, waiting-state, call-history, and section-heading contrast across all themes.</li>
+              <li>Synchronized header geometry across Player Floor, Dealer Console, Audience Display, and Card Design.</li>
+              <li>Removed obsolete diagnostics, stale service-worker code, duplicate automation files, and unused game assets.</li>
+              <li>Expanded automated syntax checks to cover every active Bingo helper and release-history script.</li>
+            </ul></div>
+          </div>
+        </section>
         <section><h3>v1.1.3 · Player and dealer usability</h3><ul>
+          <li>Made the Bingo Player Hall the default screen when launching from the casino.</li>
           <li>Added a guided 1–6 card-purchase flow with unlimited test credits.</li>
           <li>Expanded the Player Hall Flashboard to fill its section in every theme.</li>
           <li>Made three cards the startup default in every theme while keeping session changes available.</li>
@@ -206,6 +180,7 @@
           <li>Made the Call History heading, count, message, and called numbers easier to read.</li>
           <li>Made credit balances, prize figures, and their labels substantially larger.</li>
           <li>Replaced blocky card-header lettering with clean, high-contrast interface type.</li>
+          <li>Redesigned card footers as large, high-contrast status bands.</li>
           <li>Made pattern, distance-to-Bingo, and card instruction text substantially clearer.</li>
           <li>Fixed light-mode time-zone contrast and made each left-to-Bingo count prominent.</li>
           <li>Made Call, Automatic Play, and Undo controls readable in every state.</li>
@@ -296,8 +271,8 @@
       </article>
 
       <article id="sorry" class="history-card">
-        <header><span class="game-icon sorry">♟</span><div><p>Tabletop game</p><h2>Sorry!</h2></div><b>v1.1.2</b></header>
-        <section><h3>v1.1.2 · Current</h3><ul>
+        <header><span class="game-icon sorry">♟</span><div><p>Tabletop game</p><h2>Sorry!</h2></div><b>v1.0.2</b></header>
+        <section><h3>v1.0.2 · Casino integration</h3><ul>
           <li>Integrated the game into the dedicated Tabletop category.</li>
           <li>Restored normal in-game scrolling after the casino scrollbar refinements.</li>
           <li>Applied casino-wide interaction, cache, and responsive launcher improvements.</li>
@@ -310,8 +285,8 @@
       </article>
 
       <article id="yahtzee" class="history-card">
-        <header><span class="game-icon yahtzee">⚄</span><div><p>Tabletop game</p><h2>Yahtzee</h2></div><b>v1.1.2</b></header>
-        <section><h3>v1.1.2 · Current</h3><ul>
+        <header><span class="game-icon yahtzee">⚄</span><div><p>Tabletop game</p><h2>Yahtzee</h2></div><b>v1.0.2</b></header>
+        <section><h3>v1.0.2 · Casino integration</h3><ul>
           <li>Integrated Yahtzee into the dedicated Tabletop category.</li>
           <li>Restored normal in-game scrolling after the casino scrollbar refinements.</li>
           <li>Applied casino-wide interaction, cache, and responsive launcher improvements.</li>
@@ -327,6 +302,6 @@
 
   <footer><span>MUHA CASINO</span><a href="index.html">Return to game library</a></footer>
   <script src="interaction-lock.js?v=1.1.4"></script>
-  <script src="about-history.js?build=20260801-sticky-version-pills"></script>
+  <script src="about-history.js?build=20260801-categorized-pill-notes"></script>
 </body>
 </html>
