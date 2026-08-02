@@ -6,6 +6,7 @@
   const CARD_COUNT_STORAGE_KEY = "muha-bingo-card-count";
   const DEALER_POPOUT_STORAGE_KEY = "muha-bingo-dealer-popout";
   const INCORRECT_BINGO_STORAGE_KEY = "muha-bingo-incorrect-claims";
+  const SCHEDULE_STORAGE_KEY = "muha-bingo-schedule";
   const UNLIMITED_CREDITS = 1_000_000_000;
   const launchParameters = new URLSearchParams(window.location.search);
   const isPopout = launchParameters.has("screen") || launchParameters.has("player");
@@ -351,6 +352,117 @@
     setup.prepend(guide);
   }
 
+  function readSchedule() {
+    try {
+      const entries = JSON.parse(window.localStorage.getItem(SCHEDULE_STORAGE_KEY) || "[]");
+      return Array.isArray(entries) ? entries.filter((entry) => entry?.title && (entry.date || entry.time)) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function writeSchedule(entries) {
+    try {
+      window.localStorage.setItem(SCHEDULE_STORAGE_KEY, JSON.stringify(entries));
+    } catch {
+      // The schedule remains available in the current rendered view.
+    }
+  }
+
+  function scheduleWhen(entry) {
+    const parts = [];
+    if (entry.date) {
+      const date = new Date(`${entry.date}T12:00:00`);
+      parts.push(Number.isNaN(date.getTime()) ? entry.date : date.toLocaleDateString(undefined, {
+        weekday: "short", month: "short", day: "numeric", year: "numeric",
+      }));
+    }
+    if (entry.time) {
+      const time = new Date(`2000-01-01T${entry.time}`);
+      parts.push(Number.isNaN(time.getTime()) ? entry.time : time.toLocaleTimeString(undefined, {
+        hour: "numeric", minute: "2-digit",
+      }));
+    }
+    return parts.join(" at ");
+  }
+
+  function scheduleListMarkup(entries, editable = false) {
+    if (!entries.length) return '<p class="bingo-schedule-empty">No Bingo events have been scheduled.</p>';
+    return `<ul class="bingo-schedule-list">${entries.map((entry) => `
+      <li>
+        <span><strong>${escapeScheduleText(entry.title)}</strong><small>${escapeScheduleText(scheduleWhen(entry))}</small></span>
+        ${editable ? `<button type="button" data-schedule-delete="${escapeScheduleText(entry.id)}" aria-label="Delete ${escapeScheduleText(entry.title)}">Delete</button>` : ""}
+      </li>`).join("")}</ul>`;
+  }
+
+  function escapeScheduleText(value) {
+    const element = document.createElement("span");
+    element.textContent = String(value || "");
+    return element.innerHTML;
+  }
+
+  function renderSchedule() {
+    const entries = readSchedule();
+    document.querySelectorAll("[data-schedule-list]").forEach((list) => {
+      list.innerHTML = scheduleListMarkup(entries, list.dataset.scheduleList === "editable");
+    });
+  }
+
+  function enhanceDealerSchedule() {
+    const layout = document.querySelector("#app .dealer-layout");
+    if (!layout || layout.querySelector(".bingo-schedule-editor")) return;
+    const editor = document.createElement("section");
+    editor.className = "dealer-card bingo-schedule-editor";
+    editor.innerHTML = `
+      <div class="bingo-schedule-heading">
+        <span class="eyebrow">EVENT SCHEDULE</span>
+        <h2>Schedule Bingo events</h2>
+        <p>Add a title and either a date, a time, or both.</p>
+      </div>
+      <form class="bingo-schedule-form" novalidate>
+        <label><span>Event title <b aria-hidden="true">*</b></span><input name="title" type="text" required maxlength="80" placeholder="Saturday Night Bingo"></label>
+        <label><span>Date</span><input name="date" type="date"></label>
+        <label><span>Time</span><input name="time" type="time"></label>
+        <button type="submit">Add event</button>
+        <p class="bingo-schedule-error" role="alert" hidden></p>
+      </form>
+      <div data-schedule-list="editable"></div>`;
+    const hero = layout.querySelector(".dealer-hero");
+    hero?.insertAdjacentElement("afterend", editor);
+    if (!hero) layout.prepend(editor);
+    editor.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-schedule-delete]");
+      if (!button) return;
+      event.stopPropagation();
+      writeSchedule(readSchedule().filter((entry) => entry.id !== button.dataset.scheduleDelete));
+      renderSchedule();
+    });
+    editor.querySelector("form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const form = event.currentTarget;
+      const data = new FormData(form);
+      const title = String(data.get("title") || "").trim();
+      const date = String(data.get("date") || "");
+      const time = String(data.get("time") || "");
+      const error = form.querySelector(".bingo-schedule-error");
+      if (!title || (!date && !time)) {
+        error.textContent = !title
+          ? "Enter an event title."
+          : "Choose a date, a time, or both.";
+        error.hidden = false;
+        return;
+      }
+      error.hidden = true;
+      const entries = readSchedule();
+      entries.push({ id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, title, date, time });
+      writeSchedule(entries);
+      form.reset();
+      renderSchedule();
+    });
+    renderSchedule();
+  }
+
   function readIncorrectBingoState() {
     try {
       return {
@@ -624,11 +736,6 @@
       return;
     }
 
-    if (action === "setup") {
-      openDealerWindow();
-      return;
-    }
-
     if (action === "dealer") {
       openDealerWindow();
       return;
@@ -657,8 +764,7 @@
     }
 
     if (action === "schedule") {
-      const game = document.querySelector(".footer-pattern strong, .pattern-panel strong")?.textContent?.trim();
-      showHallMessage("SCHEDULE", game ? `Current session pattern: ${game}.` : "Prepare a round to display the active game schedule.");
+      openScheduleOverlay();
       return;
     }
 
@@ -672,7 +778,6 @@
     const controlsMarkup = `
       <button class="hall-start-button" type="button" data-hall-action="start"><i class="bi bi-play-fill" aria-hidden="true"></i><span>PLAY SESSION</span></button>
       <button class="hall-dealer-button" type="button" data-hall-action="dealer"><i class="bi bi-person-badge-fill" aria-hidden="true"></i><span>DEALER</span></button>
-      <button class="hall-setup-button" type="button" data-hall-action="setup"><i class="bi bi-sliders" aria-hidden="true"></i><span>CONTROLS / SETUP</span></button>
       <button type="button" data-hall-action="view"><i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i><span>VIEW</span></button>
       <button type="button" data-hall-action="options"><i class="bi bi-gear-fill" aria-hidden="true"></i><span>OPTIONS</span></button>
       <button type="button" data-hall-action="trade"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>TRADE</span></button>
@@ -691,7 +796,6 @@
     planetControls.innerHTML = `
       <button class="hall-start-button" type="button" data-hall-action="start"><i class="bi bi-play-fill" aria-hidden="true"></i><span>PLAY SESSION</span></button>
       <button class="hall-dealer-button" type="button" data-hall-action="dealer"><i class="bi bi-person-badge-fill" aria-hidden="true"></i><span>DEALER</span></button>
-      <button class="hall-setup-button" type="button" data-hall-action="setup"><i class="bi bi-sliders" aria-hidden="true"></i><span>CONTROLS / SETUP</span></button>
       <button type="button" data-hall-action="view"><i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i><span>VIEW</span></button>
       <button type="button" data-hall-action="options"><i class="bi bi-gear-fill" aria-hidden="true"></i><span>OPTIONS</span></button>
       <button type="button" data-hall-action="purchase"><i class="bi bi-cart-fill" aria-hidden="true"></i><span>PURCHASE</span></button>
@@ -719,14 +823,6 @@
     universalStart.addEventListener("click", () => handleHallAction("start"));
     universalDock.append(universalStart);
 
-    const universalSetup = document.createElement("button");
-    universalSetup.className = "universal-setup-button";
-    universalSetup.type = "button";
-    universalSetup.dataset.hallAction = "setup";
-    universalSetup.innerHTML = '<i class="bi bi-sliders" aria-hidden="true"></i><span>CONTROLS</span>';
-    universalSetup.addEventListener("click", () => handleHallAction("setup"));
-    universalDock.append(universalSetup);
-
     const universalPurchase = document.createElement("button");
     universalPurchase.className = "universal-purchase-button";
     universalPurchase.type = "button";
@@ -734,7 +830,6 @@
     universalPurchase.innerHTML = '<i class="bi bi-cart-fill" aria-hidden="true"></i><span>PURCHASE</span>';
     universalPurchase.addEventListener("click", () => handleHallAction("purchase"));
     universalDock.prepend(universalPurchase);
-    universalDock.insertBefore(universalSetup, universalStart);
 
     const controlsToggle = document.createElement("button");
     controlsToggle.className = "hall-controls-toggle";
@@ -972,14 +1067,43 @@
     syncStartButtons();
     showUnlimitedCredits();
     enhanceDealerSetup();
+    enhanceDealerSchedule();
     syncIncorrectBingoClaims();
+  }
+
+  function openScheduleOverlay() {
+    const overlay = document.querySelector(".bingo-schedule-overlay");
+    if (!overlay) return;
+    renderSchedule();
+    overlay.hidden = false;
+    overlay.querySelector("[data-schedule-close]")?.focus();
+  }
+
+  function mountScheduleOverlay() {
+    if (document.querySelector(".bingo-schedule-overlay")) return;
+    const overlay = document.createElement("div");
+    overlay.className = "bingo-schedule-overlay";
+    overlay.hidden = true;
+    overlay.innerHTML = `
+      <section role="dialog" aria-modal="true" aria-labelledby="bingo-schedule-title">
+        <header>
+          <span>PLANET HALL 2</span>
+          <h2 id="bingo-schedule-title">Bingo Event Schedule</h2>
+        </header>
+        <div data-schedule-list></div>
+        <footer><button type="button" data-schedule-close>Close</button></footer>
+      </section>`;
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay || event.target.closest("[data-schedule-close]")) overlay.hidden = true;
+    });
+    document.body.append(overlay);
+    renderSchedule();
   }
 
   function openPurchaseOverlay() {
     const overlay = document.querySelector(".purchase-cards-overlay");
     if (!overlay) return;
-    const saved = savedCount(CARD_COUNT_STORAGE_KEY, 3);
-    updatePurchaseQuantity(overlay, saved);
+    updatePurchaseQuantity(overlay, 1);
     overlay.hidden = false;
   }
 
@@ -987,7 +1111,7 @@
     const count = Math.max(1, Math.min(6, Number(requestedCount) || 1));
     overlay.querySelector("[data-purchase-count]").value = String(count);
     overlay.querySelector("[data-purchase-quantity]").textContent = String(count);
-    overlay.querySelector("[data-purchase-summary]").textContent = `${count} CREDITS`;
+    overlay.querySelector("[data-purchase-summary]").textContent = `${count} CREDIT${count === 1 ? "" : "S"}`;
     overlay.querySelector("[data-purchase-minus]").disabled = count <= 1;
     overlay.querySelector("[data-purchase-plus]").disabled = count >= 6;
   }
@@ -1010,16 +1134,16 @@
           <div class="purchase-item-row">
             <strong>Planet Hall Bingo Cards</strong>
             <span>1 CREDIT</span>
-            <output data-purchase-quantity aria-live="polite">3</output>
+            <output data-purchase-quantity aria-live="polite">1</output>
             <div class="purchase-stepper">
               <button type="button" data-purchase-minus aria-label="Remove one card">−</button>
               <button type="button" data-purchase-plus aria-label="Add one card">+</button>
             </div>
           </div>
-          <input type="hidden" data-purchase-count value="3">
+          <input type="hidden" data-purchase-count value="1">
           <div class="purchase-totals">
             <span>Balance:</span><strong>∞ CREDITS</strong>
-            <span>Total:</span><strong data-purchase-summary>3 CREDITS</strong>
+            <span>Total:</span><strong data-purchase-summary>1 CREDIT</strong>
           </div>
         </div>
         <footer>
@@ -1297,6 +1421,7 @@
         mountPlayerReturnButton();
         mountPopoutToolbar();
         mountViewOverlay();
+        mountScheduleOverlay();
         restoreSavedPreferences();
         return;
       }
@@ -1304,6 +1429,7 @@
       mountViewOverlay();
       mountDaubOptions();
       mountPurchaseOverlay();
+      mountScheduleOverlay();
       mountBallTapControl();
       restoreSavedPreferences();
     }, { once: true });
@@ -1313,6 +1439,7 @@
       mountPlayerReturnButton();
       mountPopoutToolbar();
       mountViewOverlay();
+      mountScheduleOverlay();
       restoreSavedPreferences();
       return;
     }
@@ -1320,6 +1447,7 @@
     mountViewOverlay();
     mountDaubOptions();
     mountPurchaseOverlay();
+    mountScheduleOverlay();
     mountBallTapControl();
     restoreSavedPreferences();
   }

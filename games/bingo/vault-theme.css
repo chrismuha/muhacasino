@@ -3110,7 +3110,6 @@ html[data-bingo-theme="classic"] #app .topbar .header-actions > .appearance-btn 
 
 .player-hall-controls button .bi,
 .universal-start-button .bi,
-.universal-setup-button .bi,
 .universal-purchase-button .bi,
 .universal-view-button .bi,
 .bingo-theme-trigger .bi,
@@ -3222,16 +3221,9 @@ html[data-bingo-theme="classic"] #app .topbar .header-actions > .appearance-btn 
   box-shadow: inset 0 0 0 2px #88c2ff, 0 3px 0 #0a3472 !important;
 }
 
-[data-bingo-theme="classic"] .player-hall-controls .hall-setup-button,
-[data-bingo-theme="planet"] .planet-footer-controls .hall-setup-button {
-  border-color: #6d778a !important;
-  color: #fff !important;
-  background: linear-gradient(#737e92, #384052) !important;
-  box-shadow: inset 0 0 0 2px #a8b2c5, 0 3px 0 #1b202b !important;
-}
-
 [data-bingo-theme="classic"] .player-hall-controls .hall-dealer-button,
 [data-bingo-theme="planet"] .planet-footer-controls .hall-dealer-button {
+  grid-column: span 2;
   border-color: #a52520 !important;
   color: #fff !important;
   background: linear-gradient(#ec5149, #9e1a18) !important;
@@ -3458,10 +3450,6 @@ html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) .round-snapsh
   display: none;
 }
 
-.universal-setup-button {
-  display: none;
-}
-
 .universal-purchase-button {
   display: none;
 }
@@ -3510,7 +3498,6 @@ html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) .round-snapsh
 html.hall-controls-collapsed[data-bingo-theme="classic"] .player-hall-controls,
 html.hall-controls-collapsed[data-bingo-theme="current"] .universal-view-button,
 html.hall-controls-collapsed[data-bingo-theme="current"] .universal-start-button,
-html.hall-controls-collapsed[data-bingo-theme="current"] .universal-setup-button,
 html.hall-controls-collapsed[data-bingo-theme="current"] .universal-purchase-button {
   display: none !important;
 }
@@ -3519,7 +3506,7 @@ html[data-bingo-theme="current"] .universal-controls-dock {
   position: relative;
   z-index: 1100;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   width: 100%;
   padding: 10px max(14px, calc((100vw - 920px) / 2));
@@ -3547,23 +3534,6 @@ html.hall-controls-collapsed[data-bingo-theme="current"] .universal-controls-doc
   color: #fff;
   background: linear-gradient(#a669ef, #5d28b5);
   box-shadow: inset 0 0 0 2px #caa2ff, 0 3px 0 #32136d;
-  font-size: 10.5pt;
-  font-weight: 950;
-}
-
-[data-bingo-theme="current"] .universal-setup-button {
-  position: static;
-  display: flex;
-  min-width: 126px;
-  min-height: 50px;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border: 2px solid #6a7385;
-  border-radius: 9px;
-  color: #fff;
-  background: linear-gradient(#687284, #313847);
-  box-shadow: 0 5px 18px rgba(0, 0, 0, .35);
   font-size: 10.5pt;
   font-weight: 950;
 }
@@ -4579,7 +4549,7 @@ html.dealer-overlay-open #app {
 
 html.dealer-overlay-open .planet-hall-shell,
 html.dealer-overlay-open .player-hall-controls,
-html.dealer-overlay-open :is(.universal-view-button, .universal-start-button, .universal-setup-button, .universal-purchase-button, .hall-controls-toggle) {
+html.dealer-overlay-open :is(.universal-view-button, .universal-start-button, .universal-purchase-button, .hall-controls-toggle) {
   visibility: hidden !important;
   pointer-events: none !important;
 }
@@ -5598,7 +5568,6 @@ html[data-bingo-theme="planet"] #app .dealer-current-ball strong {
 
   [data-bingo-theme="current"] .universal-view-button,
   [data-bingo-theme="current"] .universal-start-button,
-  [data-bingo-theme="current"] .universal-setup-button,
   [data-bingo-theme="current"] .universal-purchase-button {
     min-width: 112px;
     min-height: 60px;
@@ -5614,10 +5583,6 @@ html[data-bingo-theme="planet"] #app .dealer-current-ball strong {
     right: 128px;
   }
 
-  [data-bingo-theme="current"] .universal-setup-button {
-    right: 248px;
-  }
-
   [data-bingo-theme="current"] .universal-purchase-button {
     right: auto;
   }
@@ -5627,7 +5592,7 @@ html[data-bingo-theme="planet"] #app .dealer-current-ball strong {
     padding: 8px;
   }
 
-  [data-bingo-theme="current"] :is(.universal-view-button, .universal-start-button, .universal-setup-button, .universal-purchase-button) .bi {
+  [data-bingo-theme="current"] :is(.universal-view-button, .universal-start-button, .universal-purchase-button) .bi {
     font-size: 19.5pt !important;
   }
 }
@@ -8798,5 +8763,179 @@ html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout > .dealer-he
 @media (max-width: 760px) {
   html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout > .dealer-hero > .edit-setup-btn {
     margin-left: 8px !important;
+  }
+}
+
+/* Dealer-managed Bingo event schedule */
+#app .dealer-layout .bingo-schedule-editor {
+  display: grid;
+  gap: 16px;
+  padding: 20px !important;
+  color: var(--dealer-text, #f5f8ff);
+  background: var(--dealer-panel, #14233b);
+}
+
+.bingo-schedule-heading h2,
+.bingo-schedule-heading p {
+  margin: 3px 0;
+  color: inherit;
+}
+
+.bingo-schedule-form {
+  display: grid;
+  grid-template-columns: minmax(240px, 2fr) minmax(150px, 1fr) minmax(130px, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.bingo-schedule-form label {
+  display: grid;
+  gap: 6px;
+  font-weight: 800;
+}
+
+.bingo-schedule-form input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  color: var(--dealer-text, #f5f8ff);
+  background: var(--dealer-input, #0d192b);
+  border: 2px solid var(--dealer-border, #4b94e6);
+  border-radius: 8px;
+  font: inherit;
+}
+
+.bingo-schedule-form button,
+.bingo-schedule-list button,
+.bingo-schedule-overlay button {
+  min-height: 48px;
+  padding: 10px 18px;
+  border: 2px solid #62dd72;
+  border-radius: 8px;
+  color: #fff;
+  background: #247f22;
+  font: 800 1rem/1 inherit;
+  cursor: pointer;
+}
+
+.bingo-schedule-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 9px 12px;
+  color: #fff;
+  background: #a91f1c;
+  border-radius: 6px;
+  font-weight: 800;
+}
+
+.bingo-schedule-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bingo-schedule-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  color: inherit;
+  background: color-mix(in srgb, currentColor 7%, transparent);
+  border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-radius: 8px;
+}
+
+.bingo-schedule-list li span {
+  display: grid;
+  gap: 3px;
+}
+
+.bingo-schedule-list small {
+  color: inherit;
+  opacity: .78;
+}
+
+.bingo-schedule-list button {
+  min-height: 38px;
+  color: #fff;
+  background: #a91f1c;
+  border-color: #ed625c;
+}
+
+.bingo-schedule-empty {
+  margin: 0;
+  padding: 16px;
+  color: inherit;
+  border: 1px dashed currentColor;
+  border-radius: 8px;
+  opacity: .8;
+}
+
+html[data-bingo-theme="planet"] #app .app-shell.theme-light .bingo-schedule-editor {
+  color: #13213a !important;
+  background: #fff !important;
+}
+
+html[data-bingo-theme="planet"] #app .app-shell.theme-light .bingo-schedule-form input {
+  color: #13213a !important;
+  background: #fff !important;
+}
+
+.bingo-schedule-overlay {
+  position: fixed;
+  z-index: 10040;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: #f5f8ff;
+  background: rgba(2, 8, 19, .78);
+}
+
+.bingo-schedule-overlay[hidden] {
+  display: none !important;
+}
+
+.bingo-schedule-overlay > section {
+  box-sizing: border-box;
+  width: min(680px, 100%);
+  max-height: min(760px, 88vh);
+  overflow: auto;
+  padding: 22px;
+  background: #101d31;
+  border: 3px solid #4b94e6;
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
+}
+
+.bingo-schedule-overlay header span {
+  color: #f5cc4e;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.bingo-schedule-overlay h2 {
+  margin: 5px 0 18px;
+  color: #fff;
+}
+
+.bingo-schedule-overlay footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+@media (max-width: 850px) {
+  .bingo-schedule-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .bingo-schedule-form label:first-child,
+  .bingo-schedule-form button {
+    grid-column: 1 / -1;
   }
 }

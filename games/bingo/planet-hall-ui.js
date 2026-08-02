@@ -173,7 +173,9 @@
     const surface = heading.closest(".dealer-hero") || heading.closest(".dealer-layout");
     const rgb = getComputedStyle(surface).backgroundColor.match(/[\d.]+/g)?.slice(0, 3).map(Number);
     const luminance = rgb?.length === 3 ? (rgb[0] * 0.299) + (rgb[1] * 0.587) + (rgb[2] * 0.114) : 0;
-    const color = luminance > 140 ? "#000000" : "#ffffff";
+    const isClassicLight = shell.classList.contains("theme-light")
+      && ["classic", "current"].includes(document.documentElement.dataset.bingoTheme);
+    const color = isClassicLight || luminance > 140 ? "#000000" : "#ffffff";
     if (heading.style.getPropertyValue("color") !== color) {
       heading.style.setProperty("color", color, "important");
       heading.style.setProperty("-webkit-text-fill-color", color, "important");
