@@ -10719,3 +10719,164 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar .screen-switcher b
   opacity: 1 !important;
   background-clip: padding-box !important;
 }
+
+/* Hall 1 footer mirrors Hall 2: complete pattern card plus a vertical legend. */
+html[data-bingo-theme="classic"] body #app .app-shell .app-footer {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: minmax(270px, 1.35fr) minmax(170px, .65fr) !important;
+  grid-template-rows: repeat(4, minmax(28px, auto)) !important;
+  align-items: center !important;
+  gap: 5px 18px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 190px !important;
+  height: auto !important;
+  padding: 14px 18px !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .app-footer > .footer-pattern {
+  grid-column: 1 !important;
+  grid-row: 1 / -1 !important;
+  display: grid !important;
+  grid-template-columns: 94px minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 14px !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 10px 18px 10px 0 !important;
+  border-right: 2px solid #c88e38 !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .app-footer .footer-pattern .pattern-preview {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(5, minmax(0, 1fr)) !important;
+  gap: 3px !important;
+  width: 94px !important;
+  min-width: 94px !important;
+  height: 94px !important;
+  min-height: 94px !important;
+  margin: 0 !important;
+  padding: 7px !important;
+  border-radius: 10px !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .app-footer .footer-pattern .pattern-preview > i {
+  box-sizing: border-box !important;
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .app-footer .footer-pattern > :not(.pattern-preview) {
+  min-width: 0 !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .app-footer .footer-pattern span {
+  font-size: clamp(8.5pt, 1.25vw, 10.5pt) !important;
+  line-height: 1.05 !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .app-footer .footer-pattern strong {
+  margin-top: 5px !important;
+  font-size: clamp(14pt, 2vw, 18pt) !important;
+  line-height: 1.08 !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .app-footer .footer-pattern small {
+  margin-top: 6px !important;
+  font-size: clamp(9.5pt, 1.35vw, 11.5pt) !important;
+  line-height: 1.25 !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .app-footer > :is(span, small) {
+  grid-column: 2 !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 3px 0 !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: clamp(9pt, 1.35vw, 11.5pt) !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .app-footer > :is(span, small):nth-child(2) { grid-row: 1 !important; }
+html[data-bingo-theme="classic"] body #app .app-shell .app-footer > :is(span, small):nth-child(3) { grid-row: 2 !important; }
+html[data-bingo-theme="classic"] body #app .app-shell .app-footer > :is(span, small):nth-child(4) { grid-row: 3 !important; }
+html[data-bingo-theme="classic"] body #app .app-shell .app-footer > :is(span, small):nth-child(5) { grid-row: 4 !important; }
+
+html[data-bingo-theme="classic"] body #app .app-shell .app-footer .legend-dot {
+  flex: 0 0 12px !important;
+  width: 12px !important;
+  height: 12px !important;
+  margin: 0 !important;
+}
+
+@media (max-width: 650px) {
+  html[data-bingo-theme="classic"] body #app .app-shell .app-footer {
+    grid-template-columns: minmax(245px, 1.4fr) minmax(145px, .6fr) !important;
+    gap: 4px 12px !important;
+    min-height: 180px !important;
+    padding: 12px !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .app-footer > .footer-pattern {
+    grid-template-columns: 82px minmax(0, 1fr) !important;
+    gap: 10px !important;
+    padding-right: 12px !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .app-footer .footer-pattern .pattern-preview {
+    width: 82px !important;
+    min-width: 82px !important;
+    height: 82px !important;
+    min-height: 82px !important;
+    gap: 2px !important;
+    padding: 6px !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .app-footer > :is(span, small) {
+    font-size: clamp(8pt, 2.7vw, 10pt) !important;
+  }
+}
+
+@media (max-width: 450px) {
+  html[data-bingo-theme="classic"] body #app .app-shell .app-footer {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: minmax(130px, auto) repeat(4, 30px) !important;
+    min-height: 280px !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .app-footer > .footer-pattern {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    height: auto !important;
+    padding: 6px 0 12px !important;
+    border-right: 0 !important;
+    border-bottom: 2px solid #c88e38 !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .app-footer > :is(span, small) {
+    grid-column: 1 !important;
+    padding-left: 4px !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .app-footer > :is(span, small):nth-child(2) { grid-row: 2 !important; }
+  html[data-bingo-theme="classic"] body #app .app-shell .app-footer > :is(span, small):nth-child(3) { grid-row: 3 !important; }
+  html[data-bingo-theme="classic"] body #app .app-shell .app-footer > :is(span, small):nth-child(4) { grid-row: 4 !important; }
+  html[data-bingo-theme="classic"] body #app .app-shell .app-footer > :is(span, small):nth-child(5) { grid-row: 5 !important; }
+}
