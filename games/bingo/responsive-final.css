@@ -1,0 +1,198 @@
+/* Loaded after the theme cascade so viewport containment stays authoritative. */
+html[data-bingo-theme="current"] body #app .app-shell .topbar {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  width: 100% !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .topbar > .brand-lockup {
+  display: none !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .topbar > .header-actions {
+  grid-column: 1 / -1 !important;
+  justify-self: stretch !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  background-image: linear-gradient(to bottom, #eaf2ff 0 94px, transparent 94px) !important;
+  background-repeat: no-repeat !important;
+  background-size: 100% 94px !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+  grid-column: 1 / -1 !important;
+  justify-self: stretch !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  grid-template-columns: minmax(112px, .8fr) minmax(185px, 1.2fr) minmax(240px, 1.35fr) !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel select {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
+  box-sizing: border-box !important;
+  flex: 0 0 148px !important;
+  display: grid !important;
+  grid-template-columns: minmax(250px, 1.15fr) 112px 72px minmax(390px, 1.8fr) !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  height: 148px !important;
+  min-height: 148px !important;
+  max-height: 148px !important;
+  gap: 7px !important;
+  padding: 7px 9px !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
+  display: grid !important;
+  grid-template-columns: minmax(104px, .9fr) minmax(108px, 1fr) !important;
+  align-items: stretch !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  padding: 5px !important;
+  gap: 6px !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview {
+  position: static !important;
+  display: grid !important;
+  flex: none !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(5, minmax(0, 1fr)) !important;
+  width: min(116px, 100%) !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  aspect-ratio: 1 !important;
+  transform: none !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview > i {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  aspect-ratio: auto !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern > :not(.pattern-preview) {
+  display: none !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-status {
+  display: grid !important;
+  align-content: center !important;
+  justify-items: center !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  gap: 7px !important;
+  text-align: center !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+  align-self: stretch !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 4px !important;
+  gap: 5px !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls button {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+  padding: 5px 7px !important;
+  gap: 5px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls button span {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 900px) {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
+    grid-template-columns: minmax(220px, 1fr) 94px minmax(300px, 1.65fr) !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-credit {
+    display: none !important;
+  }
+}
+
+@media (max-width: 620px) {
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+    grid-template-columns: minmax(84px, .72fr) minmax(140px, 1.15fr) minmax(176px, 1.35fr) !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
+    flex-basis: 144px !important;
+    grid-template-columns: 66px minmax(112px, .9fr) minmax(220px, 1.7fr) !important;
+    height: 144px !important;
+    min-height: 144px !important;
+    max-height: 144px !important;
+    gap: 4px !important;
+    padding: 5px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    grid-template-columns: minmax(62px, 1fr) minmax(48px, .75fr) !important;
+    padding: 3px !important;
+    gap: 3px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+  }
+}
