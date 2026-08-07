@@ -70,7 +70,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
   box-sizing: border-box !important;
   flex: 0 0 176px !important;
   display: grid !important;
-  grid-template-columns: minmax(400px, 1.25fr) 90px minmax(330px, 1fr) !important;
+  grid-template-columns: minmax(380px, 1.35fr) 120px minmax(300px, 360px) !important;
   align-items: stretch !important;
   width: 100% !important;
   height: 176px !important;
@@ -357,12 +357,14 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-control
   grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
   align-self: stretch !important;
   width: 100% !important;
+  max-width: 360px !important;
   height: 100% !important;
   min-width: 0 !important;
   min-height: 0 !important;
   padding: 4px !important;
   gap: 5px !important;
   overflow: hidden !important;
+  justify-self: end !important;
 }
 
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls button {
@@ -388,7 +390,11 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-control
 
 @media (max-width: 900px) {
   html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
-    grid-template-columns: minmax(380px, 1.45fr) 82px minmax(190px, .7fr) !important;
+    grid-template-columns: minmax(350px, 1.45fr) 92px minmax(180px, 260px) !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
+    max-width: 260px !important;
   }
 
   html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-credit {

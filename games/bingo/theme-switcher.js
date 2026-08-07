@@ -1089,9 +1089,10 @@
       card.classList.toggle("bingo-ready", away === 0);
       card.classList.toggle("near-bingo", away === 1 || away === 2);
       if (away == null) {
-        card.removeAttribute("data-bingo-away");
+        if (card.hasAttribute("data-bingo-away")) card.removeAttribute("data-bingo-away");
       } else {
-        card.dataset.bingoAway = String(away);
+        const awayValue = String(away);
+        if (card.dataset.bingoAway !== awayValue) card.dataset.bingoAway = awayValue;
       }
 
       let badge = card.querySelector(".bingo-proximity-badge");
