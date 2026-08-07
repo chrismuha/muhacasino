@@ -97,6 +97,24 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-credit {
   display: none !important;
 }
 
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball {
+  align-self: center !important;
+  justify-self: center !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball small {
+  left: 50% !important;
+  width: auto !important;
+  text-align: center !important;
+  transform: translateX(-50%) !important;
+  transform-origin: center !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball strong {
+  width: 100% !important;
+  text-align: center !important;
+}
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern {
   display: grid !important;
   grid-template-columns: 132px minmax(0, 1fr) !important;
@@ -397,6 +415,24 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-control
     justify-content: center !important;
     margin: 0 !important;
     font-size: clamp(20pt, 3.4vw, 30pt) !important;
+    line-height: 1 !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls button:not(.hall-start-button):not(.hall-dealer-button) .bi {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    font-size: clamp(20pt, 3.4vw, 30pt) !important;
+    line-height: 1 !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls button:not(.hall-start-button):not(.hall-dealer-button) .bi::before {
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    font-size: inherit !important;
     line-height: 1 !important;
   }
 }
