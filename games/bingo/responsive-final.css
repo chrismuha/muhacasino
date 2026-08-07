@@ -226,3 +226,174 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-control
     grid-row: 1 !important;
   }
 }
+
+/* Every theme shares the same complete Player Floor information-footer geometry. */
+html[data-bingo-theme] body #app .app-shell .app-footer {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: minmax(390px, 2fr) minmax(220px, 1fr) !important;
+  grid-template-rows: repeat(4, minmax(34px, auto)) !important;
+  align-items: center !important;
+  gap: 6px 22px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 220px !important;
+  height: auto !important;
+  padding: 16px 22px !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .app-footer > .footer-pattern {
+  grid-column: 1 !important;
+  grid-row: 1 / -1 !important;
+  display: grid !important;
+  grid-template-columns: 132px minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 20px !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 12px 24px 12px 0 !important;
+  border-right-width: 2px !important;
+  border-right-style: solid !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .app-footer .footer-pattern .pattern-preview {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(5, minmax(0, 1fr)) !important;
+  gap: 4px !important;
+  width: 132px !important;
+  min-width: 132px !important;
+  height: 132px !important;
+  min-height: 132px !important;
+  margin: 0 !important;
+  padding: 10px !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .app-footer .footer-pattern .pattern-preview > i {
+  box-sizing: border-box !important;
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .app-footer .footer-pattern > :not(.pattern-preview) {
+  min-width: 0 !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .app-footer .footer-pattern span {
+  display: block !important;
+  font-size: clamp(10pt, 1.35vw, 13pt) !important;
+  font-weight: 850 !important;
+  line-height: 1.1 !important;
+  text-transform: uppercase !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .app-footer .footer-pattern strong {
+  display: block !important;
+  margin-top: 8px !important;
+  font-size: clamp(17pt, 2.2vw, 23pt) !important;
+  line-height: 1.08 !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .app-footer .footer-pattern small {
+  display: block !important;
+  margin-top: 10px !important;
+  font-size: clamp(10.5pt, 1.5vw, 14pt) !important;
+  font-weight: 750 !important;
+  line-height: 1.3 !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small) {
+  grid-column: 2 !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 4px 0 !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: clamp(11pt, 1.65vw, 16pt) !important;
+  font-weight: 850 !important;
+  line-height: 1.1 !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small):nth-child(2) { grid-row: 1 !important; }
+html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small):nth-child(3) { grid-row: 2 !important; }
+html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small):nth-child(4) { grid-row: 3 !important; }
+html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small):nth-child(5) { grid-row: 4 !important; }
+
+html[data-bingo-theme] body #app .app-shell .app-footer .legend-dot {
+  flex: 0 0 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+  margin: 0 !important;
+}
+
+@media (max-width: 700px) {
+  html[data-bingo-theme] body #app .app-shell .app-footer {
+    grid-template-columns: minmax(310px, 1.7fr) minmax(180px, .8fr) !important;
+    min-height: 190px !important;
+    gap: 4px 14px !important;
+    padding: 12px 14px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .app-footer > .footer-pattern {
+    grid-template-columns: 96px minmax(0, 1fr) !important;
+    gap: 12px !important;
+    padding-right: 14px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .app-footer .footer-pattern .pattern-preview {
+    width: 96px !important;
+    min-width: 96px !important;
+    height: 96px !important;
+    min-height: 96px !important;
+    gap: 3px !important;
+    padding: 7px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small) {
+    gap: 8px !important;
+    font-size: clamp(9pt, 2.3vw, 12pt) !important;
+  }
+}
+
+@media (max-width: 500px) {
+  html[data-bingo-theme] body #app .app-shell .app-footer {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: minmax(150px, auto) repeat(4, 32px) !important;
+    min-height: 290px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .app-footer > .footer-pattern {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    padding: 4px 0 14px !important;
+    border-right: 0 !important;
+    border-bottom-width: 2px !important;
+    border-bottom-style: solid !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small) {
+    grid-column: 1 !important;
+    padding-left: 4px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small):nth-child(2) { grid-row: 2 !important; }
+  html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small):nth-child(3) { grid-row: 3 !important; }
+  html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small):nth-child(4) { grid-row: 4 !important; }
+  html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small):nth-child(5) { grid-row: 5 !important; }
+}
