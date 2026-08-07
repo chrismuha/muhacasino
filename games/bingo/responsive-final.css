@@ -100,6 +100,24 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-credit {
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball {
   align-self: center !important;
   justify-self: center !important;
+  width: 118px !important;
+  height: 118px !important;
+  min-width: 118px !important;
+  min-height: 118px !important;
+  max-width: 118px !important;
+  max-height: 118px !important;
+}
+
+html[data-bingo-theme] body :is(
+  .planet-current-ball,
+  #app .bingo-ball,
+  #app .dealer-current-ball,
+  #app .audience-ball
+) {
+  align-self: center !important;
+  justify-self: center !important;
+  flex: 0 0 auto !important;
+  aspect-ratio: 1 / 1 !important;
 }
 
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball small {
@@ -400,6 +418,15 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-control
   html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-credit {
     display: none !important;
   }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball {
+    width: 82px !important;
+    height: 82px !important;
+    min-width: 82px !important;
+    min-height: 82px !important;
+    max-width: 82px !important;
+    max-height: 82px !important;
+  }
 }
 
 @media (max-width: 1100px) {
@@ -455,7 +482,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-control
 
   html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
     flex-basis: 164px !important;
-    grid-template-columns: 62px minmax(210px, 1.1fr) minmax(210px, 1.1fr) !important;
+    grid-template-columns: minmax(210px, 1.1fr) 62px minmax(210px, 1.1fr) !important;
     height: 164px !important;
     min-height: 164px !important;
     max-height: 164px !important;
@@ -464,7 +491,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-control
   }
 
   html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
-    grid-column: 2 !important;
+    grid-column: 1 !important;
     grid-row: 1 !important;
     grid-template-columns: minmax(138px, 1.25fr) minmax(92px, .8fr) !important;
     padding: 3px !important;
@@ -523,8 +550,14 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-control
   }
 
   html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball {
-    grid-column: 1 !important;
+    grid-column: 2 !important;
     grid-row: 1 !important;
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+    min-height: 56px !important;
+    max-width: 56px !important;
+    max-height: 56px !important;
   }
 
   html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
