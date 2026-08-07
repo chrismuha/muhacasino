@@ -9,6 +9,7 @@
   const SCHEDULE_STORAGE_KEY = "muha-bingo-schedule";
   const CARD_SERIAL_START_STORAGE_KEY = "muha-bingo-card-serial-start";
   const CARD_SERIAL_STEP_STORAGE_KEY = "muha-bingo-card-serial-step";
+  const CARD_SERIAL_DEFAULT_VERSION_KEY = "muha-bingo-card-serial-default-version";
   const UNLIMITED_CREDITS = 1_000_000_000;
   const launchParameters = new URLSearchParams(window.location.search);
   const isPopout = launchParameters.has("screen") || launchParameters.has("player");
@@ -18,6 +19,25 @@
   const incorrectBingoChannel = "BroadcastChannel" in window
     ? new BroadcastChannel("muha-bingo-incorrect-claims")
     : null;
+
+  function migrateLegacyCardSerialDefaults() {
+    try {
+      if (window.localStorage.getItem(CARD_SERIAL_DEFAULT_VERSION_KEY) === "sequential-v1") return;
+      const savedStart = window.localStorage.getItem(CARD_SERIAL_START_STORAGE_KEY);
+      const savedStep = window.localStorage.getItem(CARD_SERIAL_STEP_STORAGE_KEY);
+      const hasNoSavedNumbering = savedStart === null && savedStep === null;
+      const usesLegacyDefaults = Number(savedStart) === 7077 && Number(savedStep) === 37;
+      if (hasNoSavedNumbering || usesLegacyDefaults) {
+        window.localStorage.setItem(CARD_SERIAL_START_STORAGE_KEY, "1");
+        window.localStorage.setItem(CARD_SERIAL_STEP_STORAGE_KEY, "1");
+      }
+      window.localStorage.setItem(CARD_SERIAL_DEFAULT_VERSION_KEY, "sequential-v1");
+    } catch {
+      // Storage can be unavailable; the sequential runtime fallbacks still apply.
+    }
+  }
+
+  migrateLegacyCardSerialDefaults();
   const themes = ["planet", "classic", "current"];
   const daubOptions = [
     ["solid", "Solid Color", ""], ["splat", "Splat", ""], ["circle", "Circle", ""],
@@ -391,8 +411,8 @@
 
   function cardSerialSettings() {
     return {
-      start: storedPositiveInteger(CARD_SERIAL_START_STORAGE_KEY, 7077),
-      step: storedPositiveInteger(CARD_SERIAL_STEP_STORAGE_KEY, 37),
+      start: storedPositiveInteger(CARD_SERIAL_START_STORAGE_KEY, 1),
+      step: storedPositiveInteger(CARD_SERIAL_STEP_STORAGE_KEY, 1),
     };
   }
 

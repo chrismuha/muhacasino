@@ -16,8 +16,8 @@
   }
 
   function cardSerial(cardIndex) {
-    const start = savedPositiveInteger(cardSerialStartKey, 7077);
-    const step = savedPositiveInteger(cardSerialStepKey, 37);
+    const start = savedPositiveInteger(cardSerialStartKey, 1);
+    const step = savedPositiveInteger(cardSerialStepKey, 1);
     return start + (cardIndex * step);
   }
 
