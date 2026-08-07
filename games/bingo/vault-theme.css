@@ -10880,3 +10880,124 @@ html[data-bingo-theme="classic"] body #app .app-shell .app-footer .legend-dot {
   html[data-bingo-theme="classic"] body #app .app-shell .app-footer > :is(span, small):nth-child(4) { grid-row: 4 !important; }
   html[data-bingo-theme="classic"] body #app .app-shell .app-footer > :is(span, small):nth-child(5) { grid-row: 5 !important; }
 }
+
+/* Classic uses the same large, complete time panel as Planet Hall 1. */
+html[data-bingo-theme="current"] body #app .app-shell .topbar {
+  grid-template-rows: 160px 54px !important;
+  row-gap: 14px !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions {
+  grid-template-rows: 94px 58px !important;
+  height: 160px !important;
+  min-height: 160px !important;
+  max-height: 160px !important;
+  gap: 8px !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+  position: relative !important;
+  inset: auto !important;
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+  justify-self: stretch !important;
+  display: grid !important;
+  grid-template-columns: minmax(120px, .8fr) minmax(205px, 1.25fr) minmax(260px, 1fr) !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 94px !important;
+  min-height: 94px !important;
+  max-height: 94px !important;
+  margin: 0 !important;
+  padding: 10px 14px !important;
+  gap: 14px !important;
+  overflow: hidden !important;
+  transform: none !important;
+  border-width: 2px !important;
+  border-radius: 14px !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > :is(div, label) {
+  position: relative !important;
+  inset: auto !important;
+  top: 0 !important;
+  align-self: center !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > div > span,
+html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel label > span {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: clamp(9pt, 1.25vw, 11pt) !important;
+  font-weight: 900 !important;
+  line-height: 1.05 !important;
+  white-space: nowrap !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > div > strong {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: clamp(13pt, 1.8vw, 16pt) !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+  white-space: nowrap !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel label,
+html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel select {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel select {
+  min-height: 52px !important;
+  height: 52px !important;
+  padding: 8px 42px 8px 14px !important;
+  border-width: 2px !important;
+  border-radius: 10px !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: clamp(12pt, 1.7vw, 15pt) !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > :is(
+  .appearance-btn,
+  .status-pill,
+  .new-game-btn,
+  .bingo-theme-switcher.header-theme-switcher
+) {
+  grid-row: 2 !important;
+  height: 58px !important;
+  min-height: 58px !important;
+  max-height: 58px !important;
+}
+
+@media (max-width: 650px) {
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+    grid-template-columns: minmax(70px, .7fr) minmax(118px, 1.15fr) minmax(160px, 1.35fr) !important;
+    gap: 8px !important;
+    padding-inline: 10px !important;
+  }
+
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > div > span,
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel label > span {
+    font-size: clamp(7.5pt, 2.5vw, 9pt) !important;
+  }
+
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > div > strong {
+    font-size: clamp(10.5pt, 3.2vw, 13pt) !important;
+  }
+
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel select {
+    font-size: clamp(8.5pt, 2.8vw, 10.5pt) !important;
+  }
+}
