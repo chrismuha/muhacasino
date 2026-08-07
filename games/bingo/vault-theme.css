@@ -1179,6 +1179,42 @@ html[data-bingo-theme="classic"] #app .app-shell.theme-dark .play-time-panel sel
   }
 }
 
+/* Classic screen navigation keeps only the individual button surfaces. */
+html[data-bingo-theme="current"] body #app .app-shell .topbar .screen-switcher {
+  border-color: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .topbar .screen-switcher button {
+  opacity: 1 !important;
+  background-clip: padding-box !important;
+}
+
+/* Reserve enough Classic header width for the complete time-zone value. */
+html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+  grid-template-columns: minmax(110px, .75fr) minmax(175px, 1.15fr) minmax(190px, 1.1fr) !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel select {
+  padding-right: 34px !important;
+  font-size: clamp(10.5pt, 1.45vw, 13pt) !important;
+  text-overflow: clip !important;
+}
+
+@media (max-width: 650px) {
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+    grid-template-columns: minmax(82px, .7fr) minmax(135px, 1.15fr) minmax(150px, 1.15fr) !important;
+  }
+
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel select {
+    padding-left: 9px !important;
+    padding-right: 28px !important;
+    font-size: clamp(8.5pt, 2.65vw, 10.5pt) !important;
+  }
+}
+
 /* Specificity lock: Ready to play has no white surface in either Hall 1 mode. */
 html[data-bingo-theme="classic"] body #app .app-shell.theme-light .topbar .header-actions > .status-pill,
 html[data-bingo-theme="classic"] body #app .app-shell.theme-dark .topbar .header-actions > .status-pill {
@@ -11082,5 +11118,41 @@ html[data-bingo-theme="current"] body #app .app-shell .caller-panel .speed-contr
     min-height: 58px !important;
     height: 58px !important;
     font-size: clamp(12pt, 4vw, 14.5pt) !important;
+  }
+}
+
+/* Final Classic navigation and time-zone containment. */
+html[data-bingo-theme="current"] body #app .app-shell .topbar .screen-switcher {
+  border-color: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .topbar .screen-switcher button {
+  opacity: 1 !important;
+  background-clip: padding-box !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+  grid-template-columns: minmax(110px, .75fr) minmax(175px, 1.15fr) minmax(190px, 1.1fr) !important;
+}
+
+html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel select {
+  padding-right: 34px !important;
+  font-size: clamp(10.5pt, 1.45vw, 13pt) !important;
+  text-overflow: clip !important;
+}
+
+@media (max-width: 650px) {
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+    grid-template-columns: minmax(82px, .7fr) minmax(135px, 1.15fr) minmax(150px, 1.15fr) !important;
+    column-gap: 7px !important;
+  }
+
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel select {
+    padding-left: 9px !important;
+    padding-right: 28px !important;
+    font-size: clamp(8.5pt, 2.65vw, 10.5pt) !important;
   }
 }
