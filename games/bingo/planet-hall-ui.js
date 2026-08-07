@@ -84,12 +84,6 @@
     shell.querySelector(".planet-current-ball strong").textContent = latestText;
     renderNumberBoard(shell.querySelector(".planet-number-board"), activeCalledNumbers(sourceCards), latestNumber);
 
-    shell.querySelector(".planet-game-name").textContent =
-      document.querySelector("#app .footer-pattern strong, #app .pattern-panel strong")?.textContent?.trim() ||
-      "Waiting for session";
-    shell.querySelector(".planet-call-count").textContent =
-      `${activeCalledNumbers(sourceCards).size} Balls Called`;
-
     const patternCopy = shell.querySelector(".planet-pattern-copy");
     const sourcePattern = document.querySelector("#app .footer-pattern");
     if (patternCopy && sourcePattern) {
@@ -173,9 +167,11 @@
       <footer class="planet-status-bar">
         <section class="planet-pattern-box" aria-label="Current winning pattern">
           <div class="planet-pattern-copy"></div>
-          <div class="planet-pattern-status">
-            <span class="planet-call-count">0 Balls Called</span>
-            <strong class="planet-game-name">Waiting for session</strong>
+          <div class="planet-pattern-legend" aria-label="Card mark legend">
+            <span><i class="legend-dot called-dot"></i>Called</span>
+            <span><i class="legend-dot marked-dot"></i>Player marked</span>
+            <span><i class="legend-dot free-dot"></i>Free space</span>
+            <small>Good luck &amp; have fun!</small>
           </div>
         </section>
         <div class="planet-current-ball"><small>-</small><strong>#</strong></div>
