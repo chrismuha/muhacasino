@@ -527,6 +527,30 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-control
   }
 }
 
+/* Live distance-to-win labels remain prominent and consistent in every theme. */
+html[data-bingo-theme] body #app .app-shell .bingo-card .card-distance strong {
+  font-size: clamp(13pt, 1.8vw, 18pt) !important;
+  font-weight: 900 !important;
+  line-height: 1.05 !important;
+  white-space: nowrap !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-wall .planet-card {
+  padding-bottom: 34px !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-wall .planet-card::after {
+  content: attr(data-card-label) "   " attr(data-card-away) !important;
+  right: 8px !important;
+  bottom: 5px !important;
+  left: 8px !important;
+  font-size: clamp(10.5pt, 1.35vw, 14pt) !important;
+  font-weight: 900 !important;
+  letter-spacing: .015em !important;
+  line-height: 1.1 !important;
+  white-space: nowrap !important;
+}
+
 /* Every theme shares the same complete Player Floor information-footer geometry. */
 html[data-bingo-theme] body #app .app-shell .app-footer {
   box-sizing: border-box !important;

@@ -31,6 +31,13 @@
     copy.classList.add("planet-card");
     copy.dataset.sourceCard = String(cardIndex);
     copy.dataset.cardLabel = `#${cardSerial(cardIndex)}`;
+    const distanceText = sourceCard.querySelector(".card-distance strong")?.textContent?.trim() || "";
+    const distanceMatch = distanceText.match(/^(\d+)\s+(?:left until Bingo|Away)$/i);
+    copy.dataset.cardAway = /^Bingo!/i.test(distanceText)
+      ? "BINGO!"
+      : distanceMatch
+        ? `${distanceMatch[1]} Away`
+        : "— Away";
     copy.querySelectorAll("button.number-cell").forEach((cell, cellIndex) => {
       cell.dataset.sourceCell = String(cellIndex);
       cell.removeAttribute("tabindex");

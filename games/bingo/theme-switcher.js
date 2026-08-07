@@ -1078,13 +1078,17 @@
     const winners = [];
 
     cards.forEach((card) => {
-      const hint = card.querySelector(".card-hint");
-      const hintText = hint?.textContent?.trim() || "";
-      const match = hintText.match(/^(\d+)\s+left until Bingo/i);
-      const away = /^Bingo!/i.test(hintText) ? 0 : match ? Number(match[1]) : null;
+      const distanceValue = card.querySelector(".card-distance strong");
+      const distanceText = distanceValue?.textContent?.trim() || "";
+      const match = distanceText.match(/^(\d+)\s+(?:left until Bingo|Away)$/i);
+      const away = /^Bingo!/i.test(distanceText) ? 0 : match ? Number(match[1]) : null;
+      const distanceLabel = away === 0 ? "BINGO!" : away == null ? "" : `${away} Away`;
+      if (distanceValue && distanceLabel && distanceValue.textContent !== distanceLabel) {
+        distanceValue.textContent = distanceLabel;
+      }
       card.classList.toggle("bingo-ready", away === 0);
       card.classList.toggle("near-bingo", away === 1 || away === 2);
-      if (away == null || away > 2) {
+      if (away == null) {
         card.removeAttribute("data-bingo-away");
       } else {
         card.dataset.bingoAway = String(away);
