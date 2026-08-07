@@ -1179,6 +1179,91 @@ html[data-bingo-theme="classic"] #app .app-shell.theme-dark .play-time-panel sel
   }
 }
 
+/* Specificity lock: Ready to play has no white surface in either Hall 1 mode. */
+html[data-bingo-theme="classic"] body #app .app-shell.theme-light .topbar .header-actions > .status-pill,
+html[data-bingo-theme="classic"] body #app .app-shell.theme-dark .topbar .header-actions > .status-pill {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  border: 3px solid #58d38e !important;
+  background-color: #08643e !important;
+  background-image: linear-gradient(#16895a, #08643e) !important;
+  box-shadow: inset 0 0 0 2px rgba(210, 255, 229, .3), 0 3px 0 #03462a !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .status-pill > * {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .status-pill::before,
+html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .status-pill::after {
+  content: none !important;
+  display: none !important;
+  background: transparent !important;
+}
+
+/* Final Hall 1 action and clock polish. */
+html[data-bingo-theme="classic"] #app .topbar .header-actions {
+  background: transparent !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .header-actions > :is(.appearance-btn, .status-pill, .new-game-btn) {
+  align-self: stretch !important;
+  justify-self: stretch !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 58px !important;
+  min-height: 58px !important;
+  max-height: 58px !important;
+  margin: 0 !important;
+  padding: 8px 10px !important;
+  border-radius: 9px !important;
+  font-size: clamp(12pt, 1.9vw, 15.5pt) !important;
+  line-height: 1.05 !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .status-pill {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  border-color: #58d38e !important;
+  background: linear-gradient(#16895a, #08643e) !important;
+  box-shadow: inset 0 0 0 2px rgba(210, 255, 229, .3), 0 3px 0 #03462a !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .68) !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .status-pill :is(span, strong) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .play-time-panel > div > span {
+  font-size: clamp(9pt, 1.25vw, 11pt) !important;
+  font-weight: 900 !important;
+  line-height: 1.05 !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .play-time-panel > div > strong {
+  font-size: clamp(13pt, 1.8vw, 16pt) !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+}
+
+@media (max-width: 650px) {
+  html[data-bingo-theme="classic"] #app .topbar .header-actions > :is(.appearance-btn, .status-pill, .new-game-btn) {
+    height: 54px !important;
+    min-height: 54px !important;
+    max-height: 54px !important;
+    font-size: clamp(11pt, 4vw, 13.5pt) !important;
+  }
+}
+
 /* Planet Hall only: fit every ball in its row without an inner scrollbar. */
 html[data-bingo-theme="classic"] #app .dealer-ball-column {
   grid-template-columns: 60px repeat(15, minmax(0, 1fr)) !important;
@@ -1260,6 +1345,98 @@ html[data-bingo-theme="current"] #app .recent-panel .section-heading > span {
 
   [data-bingo-theme] #app .sort-control select {
     min-width: 0 !important;
+  }
+}
+
+/* Final Hall 1 header geometry: full-width time content and four equal actions. */
+html[data-bingo-theme="classic"] #app .topbar {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .brand-lockup {
+  display: none !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .header-actions {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  grid-template-rows: 78px 58px !important;
+  width: 100% !important;
+  height: 144px !important;
+  min-height: 144px !important;
+  max-height: 144px !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .header-actions > .play-time-panel {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+  grid-template-columns: minmax(110px, .75fr) minmax(185px, 1.2fr) minmax(245px, 1fr) !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 78px !important;
+  min-height: 78px !important;
+  max-height: 78px !important;
+  padding: 8px 12px !important;
+  gap: 12px !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .play-time-panel > :is(div, label) {
+  top: 0 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .header-actions > :is(
+  .appearance-btn,
+  .status-pill,
+  .new-game-btn
+) {
+  grid-column: auto !important;
+  grid-row: 2 !important;
+  width: 100% !important;
+  height: 58px !important;
+  min-height: 58px !important;
+  max-height: 58px !important;
+  font-size: clamp(11.5pt, 1.8vw, 15pt) !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .screen-switcher {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+}
+
+@media (max-width: 650px) {
+  html[data-bingo-theme="classic"] #app .topbar .header-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: 122px repeat(2, 54px) !important;
+    height: 246px !important;
+    min-height: 246px !important;
+    max-height: 246px !important;
+  }
+
+  html[data-bingo-theme="classic"] #app .topbar .header-actions > .play-time-panel {
+    grid-template-columns: minmax(100px, 1fr) minmax(155px, 1.35fr) !important;
+    grid-template-rows: auto auto !important;
+    height: 122px !important;
+    min-height: 122px !important;
+    max-height: 122px !important;
+  }
+
+  html[data-bingo-theme="classic"] #app .topbar .play-time-panel label {
+    grid-column: 1 / -1 !important;
+  }
+
+  html[data-bingo-theme="classic"] #app .topbar .header-actions > :is(
+    .appearance-btn,
+    .status-pill,
+    .new-game-btn
+  ) {
+    grid-row: auto !important;
+    height: 54px !important;
+    min-height: 54px !important;
+    max-height: 54px !important;
   }
 }
 
@@ -9943,6 +10120,151 @@ html[data-bingo-theme="classic"] .player-hall-controls .hall-panel-close {
   flex: 0 0 auto !important;
 }
 
+/* Absolute final Hall 1 header layout; this must remain last in the cascade. */
+html[data-bingo-theme="classic"] #app .topbar {
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: auto 54px !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .brand-lockup {
+  display: none !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .header-actions {
+  position: static !important;
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+  justify-self: stretch !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  grid-template-rows: 78px 58px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 144px !important;
+  min-height: 144px !important;
+  max-height: 144px !important;
+  gap: 8px !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .header-actions > .play-time-panel {
+  position: static !important;
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+  justify-self: stretch !important;
+  display: grid !important;
+  grid-template-columns: minmax(120px, .8fr) minmax(205px, 1.25fr) minmax(260px, 1fr) !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 78px !important;
+  min-height: 78px !important;
+  max-height: 78px !important;
+  padding: 8px 12px !important;
+  gap: 14px !important;
+  overflow: visible !important;
+  color: #261712 !important;
+  border: 2px solid #b4712d !important;
+  border-radius: 13px !important;
+  background: #fff8e8 !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .play-time-panel > :is(div, label) {
+  position: relative !important;
+  inset: auto !important;
+  top: 0 !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .play-time-panel :is(span, strong) {
+  color: #19243a !important;
+  -webkit-text-fill-color: #19243a !important;
+  opacity: 1 !important;
+  white-space: nowrap !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .play-time-panel label > span {
+  color: #6d201c !important;
+  -webkit-text-fill-color: #6d201c !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .play-time-panel label,
+html[data-bingo-theme="classic"] #app .topbar .play-time-panel select {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .header-actions > :is(
+  .appearance-btn,
+  .status-pill,
+  .new-game-btn
+) {
+  position: relative !important;
+  inset: auto !important;
+  grid-column: auto !important;
+  grid-row: 2 !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 58px !important;
+  min-height: 58px !important;
+  max-height: 58px !important;
+  margin: 0 !important;
+  padding: 7px 10px !important;
+  overflow: hidden !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: clamp(11.5pt, 1.8vw, 15pt) !important;
+  font-weight: 850 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .screen-switcher {
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+}
+
+@media (max-width: 650px) {
+  html[data-bingo-theme="classic"] #app .topbar .header-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: 126px repeat(2, 54px) !important;
+    height: 250px !important;
+    min-height: 250px !important;
+    max-height: 250px !important;
+  }
+
+  html[data-bingo-theme="classic"] #app .topbar .header-actions > .play-time-panel {
+    grid-template-columns: minmax(105px, 1fr) minmax(170px, 1.35fr) !important;
+    grid-template-rows: auto auto !important;
+    height: 126px !important;
+    min-height: 126px !important;
+    max-height: 126px !important;
+  }
+
+  html[data-bingo-theme="classic"] #app .topbar .play-time-panel label {
+    grid-column: 1 / -1 !important;
+  }
+
+  html[data-bingo-theme="classic"] #app .topbar .header-actions > :is(
+    .appearance-btn,
+    .status-pill,
+    .new-game-btn
+  ) {
+    grid-row: auto !important;
+    height: 54px !important;
+    min-height: 54px !important;
+    max-height: 54px !important;
+  }
+}
+
 /* Hall 1 utility actions share equal columns and comfortably sized labels. */
 html[data-bingo-theme="classic"] #app .topbar .header-actions {
   grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
@@ -9998,4 +10320,402 @@ html[data-bingo-theme="classic"] #app .topbar .status-pill {
   ) {
     grid-row: auto !important;
   }
+}
+
+/* Cascade guard for Hall 1 header sizing. */
+html[data-bingo-theme="classic"] #app .topbar .header-actions {
+  grid-column: 1 / -1 !important;
+  justify-self: stretch !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  grid-template-rows: 78px 58px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 144px !important;
+  min-height: 144px !important;
+  max-height: 144px !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .header-actions > .play-time-panel {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+  grid-template-columns: minmax(120px, .8fr) minmax(205px, 1.25fr) minmax(260px, 1fr) !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 78px !important;
+  min-height: 78px !important;
+  max-height: 78px !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .header-actions > :is(.appearance-btn, .status-pill, .new-game-btn) {
+  grid-column: auto !important;
+  grid-row: 2 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 58px !important;
+  min-height: 58px !important;
+  max-height: 58px !important;
+}
+
+@media (max-width: 650px) {
+  html[data-bingo-theme="classic"] #app .topbar .header-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: 126px repeat(2, 54px) !important;
+    height: 250px !important;
+    min-height: 250px !important;
+    max-height: 250px !important;
+  }
+
+  html[data-bingo-theme="classic"] #app .topbar .header-actions > .play-time-panel {
+    grid-template-columns: minmax(105px, 1fr) minmax(170px, 1.35fr) !important;
+    grid-template-rows: auto auto !important;
+    height: 126px !important;
+    min-height: 126px !important;
+    max-height: 126px !important;
+  }
+
+  html[data-bingo-theme="classic"] #app .topbar .play-time-panel label {
+    grid-column: 1 / -1 !important;
+  }
+
+  html[data-bingo-theme="classic"] #app .topbar .header-actions > :is(.appearance-btn, .status-pill, .new-game-btn) {
+    grid-row: auto !important;
+    height: 54px !important;
+    min-height: 54px !important;
+    max-height: 54px !important;
+  }
+}
+
+/* Last-word Hall 1 action and clock styling. */
+html[data-bingo-theme="classic"] #app .topbar .header-actions {
+  background: transparent !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .header-actions > :is(.appearance-btn, .status-pill, .new-game-btn) {
+  align-self: stretch !important;
+  justify-self: stretch !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 58px !important;
+  min-height: 58px !important;
+  max-height: 58px !important;
+  margin: 0 !important;
+  padding: 8px 10px !important;
+  border-radius: 9px !important;
+  font-size: clamp(12pt, 1.9vw, 15.5pt) !important;
+  line-height: 1.05 !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .status-pill {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  border-color: #58d38e !important;
+  background: linear-gradient(#16895a, #08643e) !important;
+  box-shadow: inset 0 0 0 2px rgba(210, 255, 229, .3), 0 3px 0 #03462a !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .68) !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .status-pill :is(span, strong) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .play-time-panel > div > span {
+  font-size: clamp(9pt, 1.25vw, 11pt) !important;
+  font-weight: 900 !important;
+  line-height: 1.05 !important;
+}
+
+html[data-bingo-theme="classic"] #app .topbar .play-time-panel > div > strong {
+  font-size: clamp(13pt, 1.8vw, 16pt) !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+}
+
+@media (max-width: 650px) {
+  html[data-bingo-theme="classic"] #app .topbar .header-actions > :is(.appearance-btn, .status-pill, .new-game-btn) {
+    height: 54px !important;
+    min-height: 54px !important;
+    max-height: 54px !important;
+    font-size: clamp(11pt, 4vw, 13.5pt) !important;
+  }
+}
+
+/* Keep the white Hall 1 time surface entirely above the action row. */
+html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions {
+  grid-template-rows: 94px 58px !important;
+  height: 160px !important;
+  min-height: 160px !important;
+  max-height: 160px !important;
+  background: transparent !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+  position: relative !important;
+  z-index: 1 !important;
+  grid-row: 1 !important;
+  align-self: stretch !important;
+  box-sizing: border-box !important;
+  height: 94px !important;
+  min-height: 94px !important;
+  max-height: 94px !important;
+  margin: 0 !important;
+  padding: 10px 12px !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel > :is(div, label) {
+  position: relative !important;
+  inset: auto !important;
+  top: 0 !important;
+  bottom: auto !important;
+  align-self: center !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > :is(.appearance-btn, .status-pill, .new-game-btn) {
+  position: relative !important;
+  z-index: 2 !important;
+  grid-row: 2 !important;
+  align-self: stretch !important;
+  margin: 0 !important;
+  background-clip: padding-box !important;
+}
+
+@media (max-width: 650px) {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions {
+    grid-template-rows: 136px repeat(2, 54px) !important;
+    height: 260px !important;
+    min-height: 260px !important;
+    max-height: 260px !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+    height: 136px !important;
+    min-height: 136px !important;
+    max-height: 136px !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > :is(.appearance-btn, .status-pill, .new-game-btn) {
+    grid-row: auto !important;
+  }
+}
+
+/* Narrow Hall 1 keeps three distinct header rows without stacking over tabs. */
+@media (max-width: 650px) {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: 160px 54px !important;
+    height: 230px !important;
+    min-height: 230px !important;
+    max-height: 230px !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-template-rows: 94px 58px !important;
+    width: 100% !important;
+    height: 160px !important;
+    min-height: 160px !important;
+    max-height: 160px !important;
+    gap: 8px 6px !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+    grid-template-columns: minmax(70px, .7fr) minmax(118px, 1.15fr) minmax(160px, 1.35fr) !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+    width: 100% !important;
+    height: 94px !important;
+    min-height: 94px !important;
+    max-height: 94px !important;
+    padding: 9px 10px !important;
+    gap: 8px !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > :is(div, label) {
+    grid-column: auto !important;
+    grid-row: 1 !important;
+    align-self: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > div > span {
+    font-size: clamp(7.5pt, 2.5vw, 9pt) !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > div > strong {
+    font-size: clamp(10.5pt, 3.2vw, 13pt) !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel label > span {
+    font-size: clamp(7.5pt, 2.4vw, 9pt) !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel select {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    font-size: clamp(8.5pt, 2.8vw, 10.5pt) !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > :is(.appearance-btn, .status-pill, .new-game-btn) {
+    grid-column: auto !important;
+    grid-row: 2 !important;
+    width: 100% !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    max-height: 58px !important;
+    padding: 6px 4px !important;
+    font-size: clamp(8pt, 2.9vw, 11pt) !important;
+    white-space: normal !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .screen-switcher {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    width: 100% !important;
+    height: 54px !important;
+    min-height: 54px !important;
+    max-height: 54px !important;
+    margin: 0 !important;
+  }
+}
+
+/* Hall 1 speed selection is a large, readable control. */
+html[data-bingo-theme="classic"] body #app .app-shell .caller-panel .speed-control {
+  width: min(320px, 100%) !important;
+  margin: 24px auto 0 !important;
+  text-align: center !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .caller-panel .speed-control > span {
+  display: block !important;
+  margin: 0 0 9px !important;
+  color: #604733 !important;
+  -webkit-text-fill-color: #604733 !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: clamp(11.5pt, 1.8vw, 14pt) !important;
+  font-weight: 850 !important;
+  line-height: 1.1 !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .caller-panel .speed-control select {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  min-height: 64px !important;
+  height: 64px !important;
+  padding: 10px 42px 10px 16px !important;
+  border-width: 3px !important;
+  border-radius: 12px !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: clamp(13pt, 2vw, 16pt) !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+}
+
+/* Give the Player Floor navigation row more air above it. */
+html[data-bingo-theme="classic"] body #app .app-shell .topbar {
+  row-gap: 24px !important;
+}
+
+@media (max-width: 650px) {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar {
+    height: 254px !important;
+    min-height: 254px !important;
+    max-height: 254px !important;
+    row-gap: 24px !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .caller-panel .speed-control {
+    width: min(280px, 100%) !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .caller-panel .speed-control select {
+    min-height: 58px !important;
+    height: 58px !important;
+    font-size: clamp(12pt, 4vw, 14.5pt) !important;
+  }
+}
+
+/* Separate Hall 1's utility actions from its screen-navigation buttons. */
+html[data-bingo-theme="classic"] body #app .app-shell .topbar {
+  row-gap: 14px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .topbar .screen-switcher {
+  margin-top: 0 !important;
+}
+
+/* Hall 1 call actions use larger, clean interface lettering. */
+html[data-bingo-theme="classic"] body #app .app-shell .caller-panel :is(.btn-call, .btn-auto) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 64px !important;
+  padding: 10px 16px !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-size: clamp(13pt, 2.2vw, 17pt) !important;
+  font-weight: 850 !important;
+  font-stretch: normal !important;
+  letter-spacing: 0 !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: antialiased !important;
+  white-space: normal !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .caller-panel :is(.btn-call, .btn-auto) > * {
+  font: inherit !important;
+  line-height: inherit !important;
+  letter-spacing: inherit !important;
+}
+
+@media (max-width: 650px) {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar {
+    grid-template-rows: 160px 54px !important;
+    height: 254px !important;
+    min-height: 254px !important;
+    max-height: 254px !important;
+    row-gap: 24px !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .caller-panel :is(.btn-call, .btn-auto) {
+    min-height: 60px !important;
+    font-size: clamp(12pt, 4vw, 15pt) !important;
+  }
+}
+
+/* Hall 1 screen navigation has no shared white backing panel. */
+html[data-bingo-theme="classic"] body #app .app-shell .topbar .screen-switcher {
+  border-color: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .topbar .screen-switcher button {
+  opacity: 1 !important;
+  background-clip: padding-box !important;
 }
