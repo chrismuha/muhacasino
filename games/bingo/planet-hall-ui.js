@@ -3,6 +3,23 @@
   if (launchParameters.has("screen") || launchParameters.has("player")) return;
 
   let renderQueued = false;
+  const cardSerialStartKey = "muha-bingo-card-serial-start";
+  const cardSerialStepKey = "muha-bingo-card-serial-step";
+
+  function savedPositiveInteger(key, fallback) {
+    try {
+      const value = Number(window.localStorage.getItem(key));
+      return Number.isSafeInteger(value) && value > 0 ? value : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  function cardSerial(cardIndex) {
+    const start = savedPositiveInteger(cardSerialStartKey, 7077);
+    const step = savedPositiveInteger(cardSerialStepKey, 37);
+    return start + (cardIndex * step);
+  }
 
   function numberFromCell(cell) {
     const value = cell.querySelector("strong")?.textContent?.trim();
@@ -13,9 +30,7 @@
     const copy = sourceCard.cloneNode(true);
     copy.classList.add("planet-card");
     copy.dataset.sourceCard = String(cardIndex);
-    copy.dataset.cardLabel =
-      sourceCard.querySelector(".card-id")?.textContent?.trim() ||
-      `CARD ${String(cardIndex + 1).padStart(2, "0")}`;
+    copy.dataset.cardLabel = `#${cardSerial(cardIndex)}`;
     copy.querySelectorAll("button.number-cell").forEach((cell, cellIndex) => {
       cell.dataset.sourceCell = String(cellIndex);
       cell.removeAttribute("tabindex");
@@ -62,7 +77,10 @@
     const latestText = sourceBall?.querySelector("strong")?.textContent?.trim() || "#";
     const latestLetter = sourceBall?.querySelector("span, small")?.textContent?.trim() || "-";
     const latestNumber = /^\d+$/.test(latestText) ? Number(latestText) : null;
-    shell.querySelector(".planet-current-ball small").textContent = latestNumber ? latestLetter : "-";
+    const ballMarker = shell.querySelector(".planet-current-ball small");
+    ballMarker.textContent = latestNumber ? latestLetter : "-";
+    ballMarker.classList.toggle("is-placeholder", !latestNumber);
+    ballMarker.closest(".planet-current-ball")?.classList.toggle("has-placeholder", !latestNumber);
     shell.querySelector(".planet-current-ball strong").textContent = latestText;
     renderNumberBoard(shell.querySelector(".planet-number-board"), activeCalledNumbers(sourceCards), latestNumber);
 
@@ -92,6 +110,40 @@
     if (renderQueued) return;
     renderQueued = true;
     window.requestAnimationFrame(syncPlanetHall);
+  }
+
+  function fitTextToWidth(element, availableWidth, maximumSize, minimumSize) {
+    if (!element || availableWidth <= 0) return;
+    let size = maximumSize;
+    element.style.fontSize = `${size}px`;
+    while (size > minimumSize && element.scrollWidth > availableWidth) {
+      size -= 0.5;
+      element.style.fontSize = `${size}px`;
+    }
+  }
+
+  function fitPlanetHallText() {
+    const shell = document.querySelector(".planet-hall-shell");
+    if (!shell) return;
+    shell.querySelectorAll(".planet-footer-controls button").forEach((button) => {
+      const label = button.querySelector("span");
+      if (!label) return;
+      const icon = button.querySelector(".bi");
+      const style = getComputedStyle(button);
+      const horizontalPadding = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+      const gap = icon ? parseFloat(style.columnGap || style.gap || 0) : 0;
+      const iconWidth = icon?.getBoundingClientRect().width || 0;
+      const available = button.clientWidth - horizontalPadding - gap - iconWidth - 2;
+      const isPrimary = button.matches(".hall-start-button, .hall-dealer-button");
+      fitTextToWidth(label, available, isPrimary ? 20 : 16, 6);
+    });
+
+    const ball = shell.querySelector(".planet-current-ball");
+    const number = ball?.querySelector("strong");
+    if (ball && number) {
+      const maximum = Math.min(48, Math.max(22, ball.clientHeight * 0.46));
+      fitTextToWidth(number, ball.clientWidth * 0.72, maximum, 20);
+    }
   }
 
   function mountPlanetHall() {
@@ -149,9 +201,21 @@
     const footerControls = document.querySelector(".planet-footer-controls");
     if (footerControls) shell.querySelector(".planet-status-bar").append(footerControls);
 
+    const hallResizeObserver = new ResizeObserver(() => window.requestAnimationFrame(fitPlanetHallText));
+    hallResizeObserver.observe(shell);
+    new MutationObserver(() => window.requestAnimationFrame(fitPlanetHallText)).observe(shell, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+    window.addEventListener("storage", (event) => {
+      if ([cardSerialStartKey, cardSerialStepKey].includes(event.key)) queueSync();
+    });
+
     const sourceApp = document.querySelector("#app");
     if (sourceApp) new MutationObserver(queueSync).observe(sourceApp, { childList: true, subtree: true, attributes: true });
     queueSync();
+    window.requestAnimationFrame(fitPlanetHallText);
   }
 
   if (document.readyState === "loading") {

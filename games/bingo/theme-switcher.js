@@ -7,6 +7,8 @@
   const DEALER_POPOUT_STORAGE_KEY = "muha-bingo-dealer-popout";
   const INCORRECT_BINGO_STORAGE_KEY = "muha-bingo-incorrect-claims";
   const SCHEDULE_STORAGE_KEY = "muha-bingo-schedule";
+  const CARD_SERIAL_START_STORAGE_KEY = "muha-bingo-card-serial-start";
+  const CARD_SERIAL_STEP_STORAGE_KEY = "muha-bingo-card-serial-step";
   const UNLIMITED_CREDITS = 1_000_000_000;
   const launchParameters = new URLSearchParams(window.location.search);
   const isPopout = launchParameters.has("screen") || launchParameters.has("player");
@@ -356,16 +358,67 @@
 
   function enhanceDealerSetup() {
     const setup = document.querySelector("#app .game-setup-panel");
-    if (!setup || setup.querySelector(".dealer-setup-guide")) return;
-    const guide = document.createElement("ol");
-    guide.className = "dealer-setup-guide";
-    guide.setAttribute("aria-label", "Dealer setup steps");
-    guide.innerHTML = `
-      <li><strong>1</strong><span><b>Set up</b><small>Choose players, cards, and winners.</small></span></li>
-      <li><strong>2</strong><span><b>Prepare cards</b><small>Create the Player Hall cards.</small></span></li>
-      <li><strong>3</strong><span><b>Start calling</b><small>Begin the session when players are ready.</small></span></li>
-    `;
-    setup.prepend(guide);
+    if (!setup) return;
+    if (!setup.querySelector(".dealer-setup-guide")) {
+      const guide = document.createElement("ol");
+      guide.className = "dealer-setup-guide";
+      guide.setAttribute("aria-label", "Dealer setup steps");
+      guide.innerHTML = `
+        <li><strong>1</strong><span><b>Set up</b><small>Choose players, cards, and winners.</small></span></li>
+        <li><strong>2</strong><span><b>Prepare cards</b><small>Create the Player Hall cards.</small></span></li>
+        <li><strong>3</strong><span><b>Start calling</b><small>Begin the session when players are ready.</small></span></li>
+      `;
+      setup.prepend(guide);
+    }
+    const fields = setup.querySelector(".setup-fields");
+    if (fields && !fields.querySelector("[data-card-serial-start]")) {
+      const { start, step } = cardSerialSettings();
+      fields.insertAdjacentHTML("beforeend", `
+        <label><span>First card number</span><input type="number" min="1" max="999999" step="1" value="${start}" data-card-serial-start></label>
+        <label><span>Card number increment</span><input type="number" min="1" max="9999" step="1" value="${step}" data-card-serial-step></label>
+      `);
+    }
+  }
+
+  function storedPositiveInteger(key, fallback) {
+    try {
+      const value = Number(window.localStorage.getItem(key));
+      return Number.isSafeInteger(value) && value > 0 ? value : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  function cardSerialSettings() {
+    return {
+      start: storedPositiveInteger(CARD_SERIAL_START_STORAGE_KEY, 7077),
+      step: storedPositiveInteger(CARD_SERIAL_STEP_STORAGE_KEY, 37),
+    };
+  }
+
+  function syncCardSerials() {
+    const { start, step } = cardSerialSettings();
+    document.querySelectorAll("#app .bingo-card:not(.preview-card):not(.verification-full-card)").forEach((card, index) => {
+      const cardId = card.querySelector(".card-id");
+      const serial = `#${start + (index * step)}`;
+      if (cardId && cardId.textContent !== serial) cardId.textContent = serial;
+    });
+  }
+
+  function saveCardSerialSetting(event) {
+    const input = event.target.closest("[data-card-serial-start], [data-card-serial-step]");
+    if (!input) return;
+    const value = Math.max(1, Math.trunc(Number(input.value) || 1));
+    input.value = String(value);
+    const key = input.matches("[data-card-serial-start]")
+      ? CARD_SERIAL_START_STORAGE_KEY
+      : CARD_SERIAL_STEP_STORAGE_KEY;
+    try {
+      window.localStorage.setItem(key, String(value));
+    } catch {
+      // The dealer's value remains active in the current rendered setup.
+    }
+    syncCardSerials();
   }
 
   function readSchedule() {
@@ -572,6 +625,10 @@
   });
 
   window.addEventListener("storage", (event) => {
+    if ([CARD_SERIAL_START_STORAGE_KEY, CARD_SERIAL_STEP_STORAGE_KEY].includes(event.key)) {
+      syncCardSerials();
+      return;
+    }
     if (event.key !== INCORRECT_BINGO_STORAGE_KEY || !event.newValue) return;
     try {
       renderIncorrectBingoTally(JSON.parse(event.newValue));
@@ -804,7 +861,28 @@
     const classicControls = document.createElement("nav");
     classicControls.className = "player-hall-controls classic-hall-controls";
     classicControls.setAttribute("aria-label", "Planet Hall controls");
-    classicControls.innerHTML = controlsMarkup;
+    classicControls.innerHTML = `
+      <button class="hall-panel-close" type="button" aria-label="Hide Hall controls">
+        <i class="bi bi-caret-right-fill" aria-hidden="true"></i><span>HIDE CONTROLS</span>
+      </button>
+      ${controlsMarkup}
+    `;
+    classicControls.querySelector(".hall-panel-close")?.addEventListener("click", () => {
+      setHallControlsCollapsed(true);
+    });
+
+    const positionClassicControls = () => {
+      const header = document.querySelector("#app .topbar");
+      const headerBottom = Math.max(12, Math.ceil(header?.getBoundingClientRect().bottom || 0) + 10);
+      classicControls.style.setProperty("--hall-controls-safe-top", `${headerBottom}px`);
+    };
+    window.addEventListener("resize", positionClassicControls, { passive: true });
+    if (window.ResizeObserver) {
+      const headerResizeObserver = new ResizeObserver(positionClassicControls);
+      const header = document.querySelector("#app .topbar");
+      if (header) headerResizeObserver.observe(header);
+    }
+    window.requestAnimationFrame(positionClassicControls);
 
     const planetControls = document.createElement("nav");
     planetControls.className = "player-hall-controls planet-footer-controls";
@@ -1083,6 +1161,7 @@
     syncStartButtons();
     showUnlimitedCredits();
     enhanceDealerSetup();
+    syncCardSerials();
     enhanceDealerSchedule();
     syncIncorrectBingoClaims();
   }
@@ -1414,6 +1493,7 @@
 
   document.addEventListener("input", saveCardCount, true);
   document.addEventListener("change", saveCardCount, true);
+  document.addEventListener("change", saveCardSerialSetting, true);
   document.addEventListener("click", saveNativeCardView, true);
   document.addEventListener("click", recordManualClaimDecision, true);
   document.addEventListener("keydown", blockCallingShortcutAfterBingo, true);
