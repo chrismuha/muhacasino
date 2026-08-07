@@ -3080,19 +3080,32 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-sh
   position: absolute;
   z-index: 1;
   inset: 2px;
-  border-radius: 0;
+  border-radius: 48% 52% 44% 56% / 55% 43% 57% 45%;
   background: var(--splat-ink);
-  clip-path: polygon(
-    50% 0%, 55% 14%, 62% 3%, 65% 17%, 74% 7%, 74% 22%,
-    86% 15%, 82% 29%, 97% 26%, 87% 39%, 100% 43%, 86% 50%,
-    98% 58%, 83% 60%, 92% 73%, 77% 69%, 79% 85%, 67% 76%,
-    63% 96%, 55% 81%, 48% 100%, 43% 81%, 33% 96%, 33% 77%,
-    19% 88%, 24% 70%, 7% 76%, 17% 61%, 0% 59%, 14% 50%,
-    1% 42%, 16% 39%, 4% 27%, 20% 29%, 14% 14%, 29% 23%,
-    28% 6%, 40% 17%
-  );
+  clip-path: none;
+  -webkit-mask-image:
+    radial-gradient(circle at 50% 50%, #000 0 42%, transparent 43%),
+    radial-gradient(circle at 50% 9%, #000 0 15%, transparent 16%),
+    radial-gradient(circle at 78% 19%, #000 0 14%, transparent 15%),
+    radial-gradient(circle at 91% 49%, #000 0 15%, transparent 16%),
+    radial-gradient(circle at 77% 81%, #000 0 14%, transparent 15%),
+    radial-gradient(circle at 48% 91%, #000 0 15%, transparent 16%),
+    radial-gradient(circle at 20% 80%, #000 0 14%, transparent 15%),
+    radial-gradient(circle at 9% 48%, #000 0 15%, transparent 16%),
+    radial-gradient(circle at 22% 18%, #000 0 14%, transparent 15%);
+  mask-image:
+    radial-gradient(circle at 50% 50%, #000 0 42%, transparent 43%),
+    radial-gradient(circle at 50% 9%, #000 0 15%, transparent 16%),
+    radial-gradient(circle at 78% 19%, #000 0 14%, transparent 15%),
+    radial-gradient(circle at 91% 49%, #000 0 15%, transparent 16%),
+    radial-gradient(circle at 77% 81%, #000 0 14%, transparent 15%),
+    radial-gradient(circle at 48% 91%, #000 0 15%, transparent 16%),
+    radial-gradient(circle at 20% 80%, #000 0 14%, transparent 15%),
+    radial-gradient(circle at 9% 48%, #000 0 15%, transparent 16%),
+    radial-gradient(circle at 22% 18%, #000 0 14%, transparent 15%);
   filter: none;
   opacity: 1;
+  transform: rotate(-6deg) scale(.92);
 }
 
 [data-daub-design="splat"] :is(#app, .planet-card-wall) .number-cell.marked:not(.called)::before {
@@ -4001,6 +4014,151 @@ html[data-bingo-theme="current"] .universal-controls-dock {
   box-shadow: 0 -5px 18px rgba(0, 0, 0, .25);
 }
 
+/* Classic uses the complete Hall control panel instead of the incomplete legacy dock. */
+html[data-bingo-theme="current"] .universal-controls-dock {
+  display: none !important;
+}
+
+html[data-bingo-theme="current"] .classic-hall-controls {
+  position: fixed;
+  z-index: 1200;
+  top: 50%;
+  right: auto;
+  bottom: auto;
+  left: 50%;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: min(560px, calc(100vw - 28px));
+  max-height: calc(100dvh - 28px);
+  padding: 12px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 3px solid #526b9f;
+  border-radius: 14px;
+  background: rgba(9, 16, 30, .97);
+  box-shadow: inset 0 0 0 2px #142546, 0 18px 48px rgba(0, 0, 0, .68);
+  transform: translate(-50%, -50%);
+}
+
+html.hall-controls-collapsed[data-bingo-theme="current"] .classic-hall-controls {
+  display: none !important;
+}
+
+html[data-bingo-theme="current"]:not(.hall-controls-collapsed) .hall-controls-toggle {
+  display: none !important;
+}
+
+html[data-bingo-theme="current"] .classic-hall-controls button {
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: 62px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 3px solid #526b9f;
+  border-radius: 11px;
+  color: #fff;
+  background: linear-gradient(#315ca8, #172a52);
+  box-shadow: inset 0 0 0 2px rgba(137, 183, 255, .24), 0 3px 0 #081226;
+  font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+  font-size: clamp(12pt, 2vw, 17pt);
+  font-weight: 900;
+  line-height: 1.05;
+  text-align: center;
+}
+
+html[data-bingo-theme="current"] .classic-hall-controls button > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+html[data-bingo-theme="current"] .classic-hall-controls button .bi {
+  flex: 0 0 auto;
+  font-size: clamp(20pt, 3vw, 29pt);
+}
+
+html[data-bingo-theme="current"] .classic-hall-controls :is(.hall-panel-close, .hall-start-button, .hall-dealer-button) {
+  grid-column: 1 / -1;
+}
+
+html[data-bingo-theme="current"] .classic-hall-controls .hall-panel-close {
+  min-height: 44px;
+  border-color: #6683ae;
+  background: linear-gradient(#263d67, #142440);
+}
+
+html[data-bingo-theme="current"] .classic-hall-controls .hall-start-button {
+  border-color: #1558a8;
+  background: linear-gradient(#4b9aff, #1760c5);
+  box-shadow: inset 0 0 0 2px #88c2ff, 0 3px 0 #0a3472;
+}
+
+html[data-bingo-theme="current"] .classic-hall-controls .hall-dealer-button {
+  border-color: #a52520;
+  background: linear-gradient(#ec5149, #9e1a18);
+  box-shadow: inset 0 0 0 2px #ff8b82, 0 3px 0 #570c0b;
+}
+
+html[data-bingo-theme="current"] .classic-hall-controls [data-hall-action="view"] {
+  border-color: #6540ae;
+  background: linear-gradient(#a669ef, #5d28b5);
+  box-shadow: inset 0 0 0 2px #caa2ff, 0 3px 0 #32136d;
+}
+
+html[data-bingo-theme="current"] .classic-hall-controls [data-hall-action="options"] {
+  border-color: #b37614;
+  background: linear-gradient(#ffbd3d, #df740b);
+  box-shadow: inset 0 0 0 2px #ffe179, 0 3px 0 #713806;
+}
+
+html[data-bingo-theme="current"] .classic-hall-controls [data-hall-action="trade"] {
+  border-color: #a21d62;
+  background: linear-gradient(#f05a9e, #ac1c65);
+  box-shadow: inset 0 0 0 2px #ff9bc7, 0 3px 0 #5f0b35;
+}
+
+html[data-bingo-theme="current"] .classic-hall-controls [data-hall-action="schedule"] {
+  border-color: #0875a9;
+  background: linear-gradient(#34c9ff, #0789d1);
+  box-shadow: inset 0 0 0 2px #83e4ff, 0 3px 0 #064f7d;
+}
+
+html[data-bingo-theme="current"] .classic-hall-controls [data-hall-action="purchase"] {
+  border-color: #5f8d20;
+  background: linear-gradient(#a4ed42, #58a515);
+  box-shadow: inset 0 0 0 2px #caff74, 0 3px 0 #274d0b;
+}
+
+html[data-bingo-theme="current"] .classic-hall-controls [data-hall-action="next"] {
+  border-color: #0875a9;
+  background: linear-gradient(#34c9ff, #0789d1);
+  box-shadow: inset 0 0 0 2px #83e4ff, 0 3px 0 #064f7d;
+}
+
+@media (max-width: 430px), (max-height: 620px) {
+  html[data-bingo-theme="current"] .classic-hall-controls {
+    grid-template-columns: minmax(0, 1fr);
+    width: min(360px, calc(100vw - 20px));
+    max-height: calc(100dvh - 20px);
+    gap: 7px;
+    padding: 9px;
+  }
+
+  html[data-bingo-theme="current"] .classic-hall-controls :is(.hall-panel-close, .hall-start-button, .hall-dealer-button) {
+    grid-column: 1;
+  }
+
+  html[data-bingo-theme="current"] .classic-hall-controls button {
+    min-height: 46px;
+    font-size: 12pt;
+  }
+}
+
 html.hall-controls-collapsed[data-bingo-theme="current"] .universal-controls-dock {
   display: none;
 }
@@ -4834,16 +4992,30 @@ html[data-bingo-theme="current"] #app .app-shell.theme-light .app-footer :is(str
 
 .daub-preview.splat {
   background: var(--actual-daub, #126eff);
-  clip-path: polygon(
-    50% 0%, 55% 14%, 62% 3%, 65% 17%, 74% 7%, 74% 22%,
-    86% 15%, 82% 29%, 97% 26%, 87% 39%, 100% 43%, 86% 50%,
-    98% 58%, 83% 60%, 92% 73%, 77% 69%, 79% 85%, 67% 76%,
-    63% 96%, 55% 81%, 48% 100%, 43% 81%, 33% 96%, 33% 77%,
-    19% 88%, 24% 70%, 7% 76%, 17% 61%, 0% 59%, 14% 50%,
-    1% 42%, 16% 39%, 4% 27%, 20% 29%, 14% 14%, 29% 23%,
-    28% 6%, 40% 17%
-  );
+  border-radius: 48% 52% 44% 56% / 55% 43% 57% 45%;
+  clip-path: none;
+  -webkit-mask-image:
+    radial-gradient(circle at 50% 50%, #000 0 42%, transparent 43%),
+    radial-gradient(circle at 50% 9%, #000 0 15%, transparent 16%),
+    radial-gradient(circle at 78% 19%, #000 0 14%, transparent 15%),
+    radial-gradient(circle at 91% 49%, #000 0 15%, transparent 16%),
+    radial-gradient(circle at 77% 81%, #000 0 14%, transparent 15%),
+    radial-gradient(circle at 48% 91%, #000 0 15%, transparent 16%),
+    radial-gradient(circle at 20% 80%, #000 0 14%, transparent 15%),
+    radial-gradient(circle at 9% 48%, #000 0 15%, transparent 16%),
+    radial-gradient(circle at 22% 18%, #000 0 14%, transparent 15%);
+  mask-image:
+    radial-gradient(circle at 50% 50%, #000 0 42%, transparent 43%),
+    radial-gradient(circle at 50% 9%, #000 0 15%, transparent 16%),
+    radial-gradient(circle at 78% 19%, #000 0 14%, transparent 15%),
+    radial-gradient(circle at 91% 49%, #000 0 15%, transparent 16%),
+    radial-gradient(circle at 77% 81%, #000 0 14%, transparent 15%),
+    radial-gradient(circle at 48% 91%, #000 0 15%, transparent 16%),
+    radial-gradient(circle at 20% 80%, #000 0 14%, transparent 15%),
+    radial-gradient(circle at 9% 48%, #000 0 15%, transparent 16%),
+    radial-gradient(circle at 22% 18%, #000 0 14%, transparent 15%);
   filter: none;
+  transform: rotate(-6deg) scale(.92);
 }
 
 .daub-preview.solid {
@@ -9462,6 +9634,196 @@ html[data-bingo-theme="planet"] .planet-number-board {
 html[data-bingo-theme="planet"] .planet-number-board span {
   min-width: 0 !important;
   min-height: 0 !important;
+}
+
+/* Planet Hall 2 uses the full card stage as a flashboard until the Dealer starts play. */
+html[data-bingo-theme="planet"] .planet-idle-flashboard[hidden] {
+  display: none !important;
+}
+
+html[data-bingo-theme="planet"] .planet-hall-shell.planet-round-idle .planet-card-area,
+html[data-bingo-theme="planet"] .planet-hall-shell.planet-round-idle > .planet-play-surface > .planet-number-board {
+  display: none !important;
+}
+
+html[data-bingo-theme="planet"] .planet-hall-shell.planet-round-idle .planet-play-surface {
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-items: stretch !important;
+}
+
+html[data-bingo-theme="planet"] .planet-idle-flashboard {
+  box-sizing: border-box;
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-rows: minmax(112px, 25%) minmax(0, 1fr);
+  align-self: stretch;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border: 3px solid #304b82;
+  background:
+    radial-gradient(circle at 50% 0, rgba(69, 92, 170, .36), transparent 42%),
+    linear-gradient(145deg, #22101a, #090b14 55%, #171022);
+  box-shadow: inset 0 0 0 3px #111a31, inset 0 0 34px rgba(0, 0, 0, .85);
+}
+
+html[data-bingo-theme="planet"] .planet-idle-flashboard > header {
+  display: grid;
+  grid-template-columns: clamp(120px, 20%, 230px) minmax(0, 1fr) clamp(120px, 20%, 230px);
+  align-items: stretch;
+  gap: clamp(8px, 1.5vw, 20px);
+  min-height: 0;
+  padding: clamp(8px, 1.2vw, 16px);
+  border-bottom: 3px solid #304b82;
+}
+
+html[data-bingo-theme="planet"] .planet-idle-feature {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  padding: 8px;
+  border: 3px solid #73d9ff;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #1597e7, #12377c);
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .15), 0 0 14px rgba(38, 178, 255, .45);
+  color: #fff;
+  text-align: center;
+}
+
+html[data-bingo-theme="planet"] .planet-idle-feature.hot-ball {
+  border-color: #ff625a;
+  background: linear-gradient(145deg, #f1473f, #7c171b);
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .15), 0 0 14px rgba(255, 59, 50, .42);
+}
+
+html[data-bingo-theme="planet"] .planet-idle-ball {
+  display: grid;
+  width: min(68px, 8vh);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 4px solid rgba(255, 255, 255, .9);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff, #d8e4f7 58%, #8198bb);
+  color: #233653;
+  font-size: clamp(18pt, 3vh, 30pt);
+  font-weight: 950;
+}
+
+html[data-bingo-theme="planet"] .planet-idle-feature > strong {
+  font-size: clamp(10pt, 1.35vw, 16pt);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+html[data-bingo-theme="planet"] .planet-idle-message {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(5px, 1vh, 10px);
+  color: #fff;
+  text-align: center;
+}
+
+html[data-bingo-theme="planet"] .planet-idle-message > strong {
+  width: min(100%, 720px);
+  padding: clamp(7px, 1vh, 12px);
+  border: 2px solid #49669c;
+  background: rgba(9, 14, 28, .86);
+  font-size: clamp(12pt, 2vw, 25pt);
+  line-height: 1.1;
+}
+
+html[data-bingo-theme="planet"] .planet-idle-message > span {
+  color: #c4d5f1;
+  font-size: clamp(9pt, 1.1vw, 13pt);
+  font-weight: 800;
+}
+
+html[data-bingo-theme="planet"] .planet-idle-number-board {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(15, minmax(0, 1fr));
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  gap: clamp(2px, .35vw, 6px);
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(8px, 1.2vw, 18px);
+}
+
+html[data-bingo-theme="planet"] .planet-idle-number-board > span {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  place-items: center;
+  border: 2px solid #446399;
+  background: linear-gradient(#111a2e, #090d18);
+  color: #eef7ff;
+  font-size: clamp(10pt, min(1.8vw, 2.8vh), 22pt);
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 2px 2px #000;
+}
+
+html[data-bingo-theme="planet"] .planet-idle-number-board > span.called {
+  border-color: #6fe6ff;
+  background: linear-gradient(#20aeea, #1259b5);
+  box-shadow: 0 0 10px rgba(56, 207, 255, .7);
+  color: #fff;
+}
+
+html[data-bingo-theme="planet"] .planet-idle-number-board > span.latest {
+  border-color: #ffd84a;
+  background: linear-gradient(#ffdb3d, #e5800a);
+  color: #17120a;
+  text-shadow: none;
+}
+
+@media (max-width: 700px) {
+  html[data-bingo-theme="planet"] .planet-idle-flashboard {
+    grid-template-rows: minmax(96px, 28%) minmax(0, 1fr);
+  }
+
+  html[data-bingo-theme="planet"] .planet-idle-flashboard > header {
+    grid-template-columns: 76px minmax(0, 1fr) 76px;
+    gap: 5px;
+    padding: 5px;
+  }
+
+  html[data-bingo-theme="planet"] .planet-idle-feature {
+    padding: 4px;
+  }
+
+  html[data-bingo-theme="planet"] .planet-idle-ball {
+    width: 42px;
+    border-width: 3px;
+  }
+
+  html[data-bingo-theme="planet"] .planet-idle-feature > strong {
+    font-size: 7pt;
+    white-space: normal;
+  }
+
+  html[data-bingo-theme="planet"] .planet-idle-message .muha-bingo-logo,
+  html[data-bingo-theme="planet"] .planet-idle-message > span {
+    display: none;
+  }
+
+  html[data-bingo-theme="planet"] .planet-idle-number-board {
+    gap: 2px;
+    padding: 5px;
+  }
+
+  html[data-bingo-theme="planet"] .planet-idle-number-board > span {
+    border-width: 1px;
+    font-size: clamp(7pt, 2.5vw, 10pt);
+  }
 }
 
 html[data-bingo-theme="planet"] .planet-status-bar {

@@ -880,7 +880,7 @@
     `;
     const classicControls = document.createElement("nav");
     classicControls.className = "player-hall-controls classic-hall-controls";
-    classicControls.setAttribute("aria-label", "Planet Hall controls");
+    classicControls.setAttribute("aria-label", "Bingo Hall controls");
     classicControls.innerHTML = `
       <button class="hall-panel-close" type="button" aria-label="Hide Hall controls">
         <i class="bi bi-caret-right-fill" aria-hidden="true"></i><span>HIDE CONTROLS</span>

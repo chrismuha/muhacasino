@@ -78,6 +78,11 @@
     wall.replaceChildren(...sourceCards.map(cardCopy));
     empty.hidden = sourceCards.length > 0;
 
+    const roundActive = document.documentElement.classList.contains("dealer-round-active");
+    const idleFlashboard = shell.querySelector(".planet-idle-flashboard");
+    shell.classList.toggle("planet-round-idle", !roundActive);
+    if (idleFlashboard) idleFlashboard.hidden = roundActive;
+
     const sourceBall = document.querySelector(
       "#app .bingo-ball, #app .dealer-current-ball, #app .audience-ball"
     );
@@ -90,6 +95,7 @@
     ballMarker.closest(".planet-current-ball")?.classList.toggle("has-placeholder", !latestNumber);
     shell.querySelector(".planet-current-ball strong").textContent = latestText;
     renderNumberBoard(shell.querySelector(".planet-number-board"), activeCalledNumbers(sourceCards), latestNumber);
+    renderNumberBoard(shell.querySelector(".planet-idle-number-board"), activeCalledNumbers(sourceCards), latestNumber);
 
     const patternCopy = shell.querySelector(".planet-pattern-copy");
     const sourcePattern = document.querySelector("#app .footer-pattern");
@@ -162,6 +168,27 @@
         </button>
       </header>
       <section class="planet-play-surface">
+        <section class="planet-idle-flashboard" aria-label="Waiting for dealer flashboard">
+          <header>
+            <div class="planet-idle-feature hot-ball">
+              <span class="planet-idle-ball" aria-hidden="true">—</span>
+              <strong>HOT BALL</strong>
+            </div>
+            <div class="planet-idle-message">
+              <div class="muha-bingo-logo" role="img" aria-label="Muha Bingo">
+                <span class="muha-bingo-mark" aria-hidden="true">M</span>
+                <span class="muha-bingo-words"><b>MUHA</b><span>BINGO</span></span>
+              </div>
+              <strong>WAITING FOR DEALER TO START GAME</strong>
+              <span>The full flashboard will update when calling begins.</span>
+            </div>
+            <div class="planet-idle-feature birthday-ball">
+              <span class="planet-idle-ball" aria-hidden="true">—</span>
+              <strong>BIRTHDAY BALL</strong>
+            </div>
+          </header>
+          <div class="planet-idle-number-board" aria-label="Bingo numbers 1 through 75"></div>
+        </section>
         <div class="planet-card-area">
           <div class="planet-card-wall"></div>
           <div class="planet-empty">
@@ -217,6 +244,10 @@
 
     const sourceApp = document.querySelector("#app");
     if (sourceApp) new MutationObserver(queueSync).observe(sourceApp, { childList: true, subtree: true, attributes: true });
+    new MutationObserver(queueSync).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
     queueSync();
     window.requestAnimationFrame(fitPlanetHallText);
   }
