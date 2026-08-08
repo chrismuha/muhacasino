@@ -4170,6 +4170,20 @@ html[data-bingo-theme="current"] .classic-hall-controls [data-hall-action="prize
   box-shadow: inset 0 0 0 2px #ffeda1, 0 3px 0 #613503 !important;
 }
 
+[data-bingo-theme="planet"] .planet-footer-controls [data-hall-action="trade"] {
+  border-color: #a21d62 !important;
+  color: #fff !important;
+  background: linear-gradient(#f05a9e, #ac1c65) !important;
+  box-shadow: inset 0 0 0 2px #ff9bc7, 0 3px 0 #5f0b35 !important;
+}
+
+[data-bingo-theme="planet"] .planet-footer-controls [data-hall-action="next"] {
+  border-color: #236ec1 !important;
+  color: #fff !important;
+  background: linear-gradient(#4e9cff, #1859b4) !important;
+  box-shadow: inset 0 0 0 2px #98caff, 0 3px 0 #0c326e !important;
+}
+
 html[data-bingo-theme="current"] .classic-hall-controls [data-hall-action="purchase"] {
   border-color: #5f8d20;
   background: linear-gradient(#a4ed42, #58a515);
@@ -9427,9 +9441,25 @@ html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout > .dealer-he
 
 .bingo-schedule-form {
   display: grid;
-  grid-template-columns: minmax(240px, 2fr) minmax(150px, 1fr) minmax(130px, 1fr) auto;
+  grid-template-columns: minmax(220px, 2fr) minmax(140px, 1fr) minmax(125px, 1fr) minmax(150px, auto) auto;
   gap: 12px;
   align-items: end;
+}
+
+.bingo-schedule-form .bingo-schedule-check {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 2px solid var(--dealer-border, #4b94e6);
+  border-radius: 8px;
+}
+
+.bingo-schedule-form .bingo-schedule-check input {
+  width: 22px;
+  min-height: 22px;
+  margin: 0;
 }
 
 .bingo-schedule-form label {
@@ -9571,6 +9601,7 @@ html[data-bingo-theme="planet"] #app .app-shell.theme-light .bingo-schedule-form
   display: flex;
   justify-content: flex-end;
   margin-top: 18px;
+  gap: 10px;
 }
 
 @media (max-width: 850px) {
@@ -9601,7 +9632,7 @@ html[data-bingo-theme="planet"] #app .app-shell.theme-light .bingo-schedule-form
 
 .bingo-prizes-form {
   display: grid;
-  grid-template-columns: minmax(240px, 2fr) minmax(150px, 1fr) minmax(130px, 1fr) auto;
+  grid-template-columns: minmax(210px, 2fr) repeat(3, minmax(120px, 1fr)) auto;
   gap: 12px;
   align-items: end;
 }
@@ -9745,6 +9776,7 @@ html[data-bingo-theme="planet"] #app .app-shell.theme-light .bingo-prizes-form i
   display: flex;
   justify-content: flex-end;
   margin-top: 18px;
+  gap: 10px;
 }
 
 @media (max-width: 850px) {
@@ -12131,15 +12163,16 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel s
   }
 }
 
-/* Final Hall 2 seven-action grid, kept after every theme override. */
+/* Final Hall 2 nine-action grid, kept after every theme override. */
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
-  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
 }
 
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls .hall-start-button {
-  grid-column: span 3 !important;
+  grid-column: span 1 !important;
 }
 
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls .hall-dealer-button {
-  grid-column: span 2 !important;
+  grid-column: span 1 !important;
 }

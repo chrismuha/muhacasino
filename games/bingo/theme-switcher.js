@@ -8,6 +8,8 @@
   const INCORRECT_BINGO_STORAGE_KEY = "muha-bingo-incorrect-claims";
   const SCHEDULE_STORAGE_KEY = "muha-bingo-schedule";
   const PRIZES_STORAGE_KEY = "muha-bingo-prizes";
+  const SCHEDULE_STARTED_STORAGE_KEY = "muha-bingo-schedule-started";
+  const DEALER_SECTION_STORAGE_KEY = "muha-bingo-dealer-section";
   const CARD_SERIAL_START_STORAGE_KEY = "muha-bingo-card-serial-start";
   const CARD_SERIAL_STEP_STORAGE_KEY = "muha-bingo-card-serial-step";
   const CARD_SERIAL_DEFAULT_VERSION_KEY = "muha-bingo-card-serial-default-version";
@@ -466,12 +468,14 @@
 
   window.bingoSpecialBallPrizeForCard = (cardId, basePrize, cards = []) => {
     const card = cards.find((candidate) => Number(candidate?.id) === Number(cardId));
-    if (!card) return Number(basePrize) || 0;
+    const assignedPrize = readPrizes().find((prize) => Number(prize.cardNumber) === Number(cardId));
+    const configuredBasePrize = assignedPrize ? prizeAmount(assignedPrize) : Number(basePrize) || 0;
+    if (!card) return configuredBasePrize;
     const cardNumbers = new Set((card.cells || []).map((cell) => Number(cell?.number)).filter(Boolean));
     const multiplier = activeSpecialBalls()
       .filter((ball) => cardNumbers.has(ball.number))
       .reduce((highest, ball) => Math.max(highest, ball.multiplier), 1);
-    return (Number(basePrize) || 0) * multiplier;
+    return configuredBasePrize * multiplier;
   };
 
   function specialBallStatusText(settings = specialBallSettings()) {
@@ -783,7 +787,7 @@
     if (!entries.length) return '<p class="bingo-schedule-empty">No Bingo events have been scheduled.</p>';
     return `<ul class="bingo-schedule-list">${entries.map((entry) => `
       <li>
-        <span><strong>${escapeScheduleText(entry.title)}</strong><small>${escapeScheduleText(scheduleWhen(entry))}</small></span>
+        <span><strong>${escapeScheduleText(entry.title)}</strong><small>${escapeScheduleText(scheduleWhen(entry))}${entry.autoStart ? " · Automatic start" : ""}</small></span>
         ${editable ? `<button type="button" data-schedule-delete="${escapeScheduleText(entry.id)}" aria-label="Delete ${escapeScheduleText(entry.title)}">Delete</button>` : ""}
       </li>`).join("")}</ul>`;
   }
@@ -810,12 +814,13 @@
       <div class="bingo-schedule-heading">
         <span class="eyebrow">EVENT SCHEDULE</span>
         <h2>Schedule Bingo events</h2>
-        <p>Add a title and either a date, a time, or both.</p>
+        <p>Set when each game begins and choose whether the Dealer starts it automatically.</p>
       </div>
       <form class="bingo-schedule-form" novalidate>
         <label><span>Event title <b aria-hidden="true">*</b></span><input name="title" type="text" required maxlength="80" placeholder="Saturday Night Bingo"></label>
         <label><span>Date</span><input name="date" type="date"></label>
         <label><span>Time</span><input name="time" type="time"></label>
+        <label class="bingo-schedule-check"><input name="autoStart" type="checkbox"><span>Start automatically</span></label>
         <button type="submit">Add event</button>
         <p class="bingo-schedule-error" role="alert" hidden></p>
       </form>
@@ -838,17 +843,20 @@
       const title = String(data.get("title") || "").trim();
       const date = String(data.get("date") || "");
       const time = String(data.get("time") || "");
+      const autoStart = data.get("autoStart") === "on";
       const error = form.querySelector(".bingo-schedule-error");
-      if (!title || (!date && !time)) {
+      if (!title || (!date && !time) || (autoStart && (!date || !time))) {
         error.textContent = !title
           ? "Enter an event title."
-          : "Choose a date, a time, or both.";
+          : autoStart && (!date || !time)
+            ? "Automatic starts require both a date and time."
+            : "Choose a date, a time, or both.";
         error.hidden = false;
         return;
       }
       error.hidden = true;
       const entries = readSchedule();
-      entries.push({ id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, title, date, time });
+      entries.push({ id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, title, date, time, autoStart });
       writeSchedule(entries);
       form.reset();
       renderSchedule();
@@ -859,7 +867,9 @@
   function readPrizes() {
     try {
       const prizes = JSON.parse(window.localStorage.getItem(PRIZES_STORAGE_KEY) || "[]");
-      return Array.isArray(prizes) ? prizes.filter((prize) => prize?.title && (prize.date || prize.time)) : [];
+      return Array.isArray(prizes) ? prizes.filter((prize) =>
+        prize?.title && Number(prize.winner) > 0 && Number(prize.cardNumber) > 0
+      ) : [];
     } catch {
       return [];
     }
@@ -873,21 +883,11 @@
     }
   }
 
-  function prizeWhen(prize) {
-    const details = [];
-    if (prize.date) {
-      const date = new Date(`${prize.date}T12:00:00`);
-      details.push(Number.isNaN(date.getTime()) ? prize.date : date.toLocaleDateString(undefined, {
-        weekday: "short", month: "short", day: "numeric", year: "numeric",
-      }));
-    }
-    if (prize.time) {
-      const time = new Date(`2000-01-01T${prize.time}`);
-      details.push(Number.isNaN(time.getTime()) ? prize.time : time.toLocaleTimeString(undefined, {
-        hour: "numeric", minute: "2-digit",
-      }));
-    }
-    return details.join(" at ");
+  function prizeAssignment(prize) {
+    const details = [`Winner ${Number(prize.winner)}`];
+    details.push(`Card #${Number(prize.cardNumber)}`);
+    if (Number(prize.amount) > 0) details.push(`${Number(prize.amount)} credits`);
+    return details.join(" · ");
   }
 
   function escapePrizeText(value) {
@@ -897,10 +897,10 @@
   }
 
   function prizeListMarkup(prizes, editable = false) {
-    if (!prizes.length) return '<p class="bingo-prizes-empty">No Bingo prizes have been scheduled.</p>';
+    if (!prizes.length) return '<p class="bingo-prizes-empty">No prizes have been assigned to winners.</p>';
     return `<ul class="bingo-prizes-list">${prizes.map((prize) => `
       <li>
-        <span><strong>${escapePrizeText(prize.title)}</strong><small>${escapePrizeText(prizeWhen(prize))}</small></span>
+        <span><strong>${escapePrizeText(prize.title)}</strong><small>${escapePrizeText(prizeAssignment(prize))}</small></span>
         ${editable ? `<button type="button" data-prize-delete="${escapePrizeText(prize.id)}" aria-label="Delete ${escapePrizeText(prize.title)}">Delete</button>` : ""}
       </li>`).join("")}</ul>`;
   }
@@ -912,6 +912,21 @@
     });
   }
 
+  window.bingoPrizeForWinner = (winnerNumber, cardNumber, fallbackPrize = 0) => {
+    const winner = Math.max(1, Math.trunc(Number(winnerNumber) || 1));
+    const card = Math.max(0, Math.trunc(Number(cardNumber) || 0));
+    const configured = readPrizes().find((prize) =>
+      Number(prize.winner) === winner && (!Number(prize.cardNumber) || Number(prize.cardNumber) === card)
+    );
+    return configured && Number(prizeAmount(configured)) >= 0
+      ? prizeAmount(configured)
+      : Number(fallbackPrize) || 0;
+  };
+
+  function prizeAmount(prize) {
+    return Math.max(0, Math.trunc(Number(prize?.amount) || 0));
+  }
+
   function enhanceDealerPrizes() {
     const layout = document.querySelector("#app .dealer-layout");
     if (!layout || layout.querySelector(".bingo-prizes-editor")) return;
@@ -920,13 +935,14 @@
     editor.innerHTML = `
       <div class="bingo-prizes-heading">
         <span class="eyebrow">PRIZE SCHEDULE</span>
-        <h2>Schedule Bingo prizes</h2>
-        <p>Add a prize and either a date, a time, or both.</p>
+        <h2>Assign prizes to winners</h2>
+        <p>Give each winner an individual prize and assign the exact card number that receives it.</p>
       </div>
       <form class="bingo-prizes-form" novalidate>
         <label><span>Prize title <b aria-hidden="true">*</b></span><input name="title" type="text" required maxlength="80" placeholder="Grand prize drawing"></label>
-        <label><span>Date</span><input name="date" type="date"></label>
-        <label><span>Time</span><input name="time" type="time"></label>
+        <label><span>Winner number</span><input name="winner" type="number" min="1" max="100" step="1" value="1" required></label>
+        <label><span>Winning card number</span><input name="cardNumber" type="number" min="1" max="999999" step="1" required></label>
+        <label><span>Prize credits</span><input name="amount" type="number" min="0" max="999999" step="1" value="100"></label>
         <button type="submit">Add prize</button>
         <p class="bingo-prizes-error" role="alert" hidden></p>
       </form>
@@ -947,22 +963,110 @@
       const form = event.currentTarget;
       const data = new FormData(form);
       const title = String(data.get("title") || "").trim();
-      const date = String(data.get("date") || "");
-      const time = String(data.get("time") || "");
+      const winner = Math.max(1, Math.trunc(Number(data.get("winner")) || 1));
+      const cardNumber = Math.max(0, Math.trunc(Number(data.get("cardNumber")) || 0));
+      const amount = Math.max(0, Math.trunc(Number(data.get("amount")) || 0));
       const error = form.querySelector(".bingo-prizes-error");
-      if (!title || (!date && !time)) {
-        error.textContent = !title ? "Enter a prize title." : "Choose a date, a time, or both.";
+      if (!title || !cardNumber) {
+        error.textContent = !title ? "Enter a prize title." : "Enter the winning card number.";
         error.hidden = false;
         return;
       }
       error.hidden = true;
       const prizes = readPrizes();
-      prizes.push({ id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, title, date, time });
+      prizes.push({ id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, title, winner, cardNumber, amount });
       writePrizes(prizes);
       form.reset();
       renderPrizes();
     });
     renderPrizes();
+  }
+
+  function requestedDealerSection() {
+    try {
+      return window.localStorage.getItem(DEALER_SECTION_STORAGE_KEY) || "";
+    } catch {
+      return "";
+    }
+  }
+
+  function revealRequestedDealerSection() {
+    const selector = requestedDealerSection();
+    const section = selector ? document.querySelector(selector) : null;
+    if (!section) return false;
+    try {
+      window.localStorage.removeItem(DEALER_SECTION_STORAGE_KEY);
+    } catch {
+      // Scrolling still works when storage is unavailable.
+    }
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
+    section.querySelector("input, button")?.focus({ preventScroll: true });
+    return true;
+  }
+
+  function openDealerSection(selector) {
+    try {
+      window.localStorage.setItem(DEALER_SECTION_STORAGE_KEY, selector);
+    } catch {
+      // The current window can still reveal its Dealer section.
+    }
+    const opened = openDealerWindow();
+    if (!opened) return;
+    let attempts = 0;
+    const reveal = () => {
+      attempts += 1;
+      if (!revealRequestedDealerSection() && attempts < 30) window.setTimeout(reveal, 100);
+    };
+    window.setTimeout(reveal, 100);
+  }
+
+  function scheduledStartTimestamp(entry) {
+    if (!entry.autoStart || !entry.date || !entry.time) return Number.NaN;
+    return new Date(`${entry.date}T${entry.time}`).getTime();
+  }
+
+  function readStartedSchedules() {
+    try {
+      const ids = JSON.parse(window.localStorage.getItem(SCHEDULE_STARTED_STORAGE_KEY) || "[]");
+      return new Set(Array.isArray(ids) ? ids : []);
+    } catch {
+      return new Set();
+    }
+  }
+
+  function writeStartedSchedules(ids) {
+    try {
+      window.localStorage.setItem(SCHEDULE_STARTED_STORAGE_KEY, JSON.stringify([...ids]));
+    } catch {
+      // This window still prevents repeat starts during the current check.
+    }
+  }
+
+  async function startDueScheduledGame() {
+    if (isPopout || calledNumbers().size > 0) return;
+    const cardsExist = Boolean(document.querySelector("#app .bingo-card:not(.preview-card):not(.verification-full-card)"));
+    if (!cardsExist) return;
+    const now = Date.now();
+    const started = readStartedSchedules();
+    const due = readSchedule().find((entry) => {
+      const timestamp = scheduledStartTimestamp(entry);
+      return Number.isFinite(timestamp) && timestamp <= now && now - timestamp < 86_400_000 && !started.has(entry.id);
+    });
+    if (!due) return;
+    started.add(due.id);
+    writeStartedSchedules(started);
+    const didStart = await startOrPausePreparedRound();
+    if (!didStart) {
+      started.delete(due.id);
+      writeStartedSchedules(started);
+    }
+  }
+
+  function monitorScheduledStarts() {
+    if (document.documentElement.dataset.scheduleMonitor === "true") return;
+    document.documentElement.dataset.scheduleMonitor = "true";
+    startDueScheduledGame();
+    window.setInterval(startDueScheduledGame, 15_000);
   }
 
   function readIncorrectBingoState() {
@@ -1291,10 +1395,10 @@
       <button class="hall-dealer-button" type="button" data-hall-action="dealer"><i class="bi bi-person-badge-fill" aria-hidden="true"></i><span>DEALER</span></button>
       <button type="button" data-hall-action="view"><i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i><span>VIEW</span></button>
       <button type="button" data-hall-action="options"><i class="bi bi-gear-fill" aria-hidden="true"></i><span>OPTIONS</span></button>
-      <button type="button" data-hall-action="trade"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>TRADE</span></button>
+      <button type="button" data-hall-action="purchase"><i class="bi bi-cart-fill" aria-hidden="true"></i><span>PURCHASE</span></button>
       <button type="button" data-hall-action="schedule"><i class="bi bi-calendar3" aria-hidden="true"></i><span>SCHEDULE</span></button>
       <button type="button" data-hall-action="prizes"><i class="bi bi-trophy-fill" aria-hidden="true"></i><span>PRIZES</span></button>
-      <button type="button" data-hall-action="purchase"><i class="bi bi-cart-fill" aria-hidden="true"></i><span>PURCHASE</span></button>
+      <button type="button" data-hall-action="trade"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>TRADE</span></button>
       <button type="button" data-hall-action="next"><span>NEXT</span><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
     `;
     const classicControls = document.createElement("nav");
@@ -1334,6 +1438,8 @@
       <button type="button" data-hall-action="purchase"><i class="bi bi-cart-fill" aria-hidden="true"></i><span>PURCHASE</span></button>
       <button type="button" data-hall-action="schedule"><i class="bi bi-calendar3" aria-hidden="true"></i><span>SCHEDULE</span></button>
       <button type="button" data-hall-action="prizes"><i class="bi bi-trophy-fill" aria-hidden="true"></i><span>PRIZES</span></button>
+      <button type="button" data-hall-action="trade"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>TRADE</span></button>
+      <button type="button" data-hall-action="next"><span>NEXT</span><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
     `;
 
     [classicControls, planetControls].forEach((controls) => {
@@ -1616,6 +1722,8 @@
     syncCardSerials();
     enhanceDealerSchedule();
     enhanceDealerPrizes();
+    revealRequestedDealerSection();
+    monitorScheduledStarts();
     syncIncorrectBingoClaims();
   }
 
@@ -1639,10 +1747,13 @@
           <h2 id="bingo-schedule-title">Bingo Event Schedule</h2>
         </header>
         <div data-schedule-list></div>
-        <footer><button type="button" data-schedule-close>Close</button></footer>
+        <footer><button type="button" data-schedule-dealer>Dealer schedule settings</button><button type="button" data-schedule-close>Close</button></footer>
       </section>`;
     overlay.addEventListener("click", (event) => {
-      if (event.target === overlay || event.target.closest("[data-schedule-close]")) overlay.hidden = true;
+      if (event.target.closest("[data-schedule-dealer]")) {
+        overlay.hidden = true;
+        openDealerSection(".bingo-schedule-editor");
+      } else if (event.target === overlay || event.target.closest("[data-schedule-close]")) overlay.hidden = true;
     });
     document.body.append(overlay);
     renderSchedule();
@@ -1668,10 +1779,13 @@
           <h2 id="bingo-prizes-title">Bingo Prize Schedule</h2>
         </header>
         <div data-prizes-list></div>
-        <footer><button type="button" data-prizes-close>Close</button></footer>
+        <footer><button type="button" data-prizes-dealer>Dealer prize settings</button><button type="button" data-prizes-close>Close</button></footer>
       </section>`;
     overlay.addEventListener("click", (event) => {
-      if (event.target === overlay || event.target.closest("[data-prizes-close]")) overlay.hidden = true;
+      if (event.target.closest("[data-prizes-dealer]")) {
+        overlay.hidden = true;
+        openDealerSection(".bingo-prizes-editor");
+      } else if (event.target === overlay || event.target.closest("[data-prizes-close]")) overlay.hidden = true;
     });
     document.body.append(overlay);
     renderPrizes();
@@ -1987,11 +2101,19 @@
   }, true);
   document.addEventListener("keydown", blockCallingShortcutAfterBingo, true);
   window.addEventListener("storage", (event) => {
-    if (event.key !== SPECIAL_BALL_STORAGE_KEY) return;
-    enhanceSpecialBallSettings();
-    queueSpecialBallSync();
-    syncOtherThemeWaitingFlashboard();
-    window.dispatchEvent(new CustomEvent("muha-bingo-special-balls-changed"));
+    if (event.key === SPECIAL_BALL_STORAGE_KEY) {
+      enhanceSpecialBallSettings();
+      queueSpecialBallSync();
+      syncOtherThemeWaitingFlashboard();
+      window.dispatchEvent(new CustomEvent("muha-bingo-special-balls-changed"));
+      return;
+    }
+    if (event.key === SCHEDULE_STORAGE_KEY) {
+      renderSchedule();
+      startDueScheduledGame();
+      return;
+    }
+    if (event.key === PRIZES_STORAGE_KEY) renderPrizes();
   });
 
   if (document.readyState === "loading") {

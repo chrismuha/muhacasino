@@ -761,15 +761,16 @@ html[data-bingo-theme] body #app .app-shell .app-footer .legend-dot {
   html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small):nth-child(5) { grid-row: 5 !important; }
 }
 
-/* Final Hall 2 action-grid authority. */
+/* Final Hall 2 3-by-3 action-grid authority. */
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
-  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
 }
 
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls .hall-start-button {
-  grid-column: span 3 !important;
+  grid-column: span 1 !important;
 }
 
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls .hall-dealer-button {
-  grid-column: span 2 !important;
+  grid-column: span 1 !important;
 }
