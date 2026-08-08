@@ -5,6 +5,7 @@
       -webkit-user-select: none !important;
       user-select: none !important;
       -webkit-touch-callout: none !important;
+      touch-action: manipulation;
     }
 
     img, svg {

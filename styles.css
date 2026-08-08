@@ -322,13 +322,15 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 .game-view { position: fixed; z-index: 99; inset: 0; background: #050610; }
 .game-toolbar { display: flex; height: 56px; align-items: center; gap: 18px; padding: 0 14px; border-bottom: 1px solid rgba(255,255,255,.12); background: #0a0c19; }
 .game-toolbar strong { overflow: hidden; color: #fff !important; -webkit-text-fill-color: #fff !important; text-overflow: ellipsis; white-space: nowrap; }
+.game-identity { display: flex; min-width: 0; align-items: baseline; gap: 7px; }
+.game-identity > strong { min-width: 0; }
 #currentGame { color: #fff !important; -webkit-text-fill-color: #fff !important; opacity: 1 !important; }
 .toolbar-theme-picker {
   display: flex;
   min-width: 0;
   align-items: center;
   gap: 8px;
-  margin-left: 0;
+  margin-left: auto;
   color: #9da4bb;
   font-size: 9pt;
   font-weight: 850;
@@ -353,7 +355,7 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 .back-button { display: inline-flex; align-items: center; gap: 7px; padding: 9px 14px; border: 1px solid rgba(255,255,255,.22); border-radius: 999px; background: #22263c; font-weight: 800; cursor: pointer; }
 .back-button b { font: inherit; }
 .back-button:hover, .back-button:focus-visible { background: #343b5c; outline: 2px solid var(--cyan); }
-.game-version { flex: 0 0 auto; margin-left: auto; color: #aeb6cc; font-size: 9pt; font-weight: 850; letter-spacing: .05em; white-space: nowrap; }
+.game-version { flex: 0 0 auto; color: #aeb6cc; font-size: 9pt; font-weight: 850; letter-spacing: .05em; white-space: nowrap; }
 #gameFrame { display: block; width: 100%; height: calc(100vh - 56px); border: 0; background: #090b18; }
 .game-load-state {
   position: absolute;
@@ -478,10 +480,11 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   .game-toolbar { box-sizing: border-box; height: auto; min-height: 56px; gap: 7px; padding: 6px 8px; }
   .back-button { flex: 0 0 42px; width: 42px; height: 42px; justify-content: center; box-sizing: border-box; padding: 0; font-size: 20pt; line-height: 1; }
   .back-button b { display: none; }
-  .game-toolbar > strong { flex: 1 1 auto; min-width: 0; font-size: 9pt; text-overflow: ellipsis; }
+  .game-identity { flex: 1 1 auto; gap: 5px; }
+  .game-identity > strong { font-size: 9pt; text-overflow: ellipsis; }
   .toolbar-theme-picker { flex: 0 1 36%; min-width: 0; }
   .toolbar-theme-picker select { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; padding-inline: 10px 25px; font-size: 8.5pt; }
-  .game-version { margin-left: 0; font-size: 8pt; }
+  .game-version { font-size: 8pt; }
   .game-load-state { inset-block-start: 68px; }
   #gameFrame { height: calc(100dvh - 68px); }
   .game-rail { grid-auto-columns: min(340px, calc(100vw - 42px)); scroll-padding-inline: 2px; }

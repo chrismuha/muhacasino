@@ -232,16 +232,15 @@ document.querySelectorAll(".game-rail").forEach((rail) => {
   }, { passive: false });
 });
 
-function showLauncher() {
+function showLauncher(updateHistory = true) {
   window.clearTimeout(gameLoadTimer);
   activeGameId = null;
   gameLoadState.hidden = true;
-  gameFrame.src = "about:blank";
   gameView.hidden = true;
   launcher.hidden = false;
   bingoThemeToolbar.hidden = true;
   document.title = "Muha Casino";
-  history.replaceState(null, "", window.location.pathname);
+  if (updateHistory) history.replaceState(null, "", window.location.pathname);
   restartSlider();
 }
 
@@ -426,7 +425,7 @@ returnToLibraryFromError.addEventListener("click", showLauncher);
 window.addEventListener("popstate", () => {
   const gameId = window.location.hash.slice(1);
   if (games[gameId]) launchGame(gameId, false);
-  else showLauncher();
+  else showLauncher(false);
 });
 
 showSlide(0);

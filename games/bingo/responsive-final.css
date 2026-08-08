@@ -983,6 +983,9 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
   html[data-bingo-theme] body #app .app-shell .audience-call { min-height: 390px !important; height: auto !important; }
   html[data-bingo-theme] body #app .app-shell .audience-call > .audience-ball { width: min(72vw, 280px) !important; height: min(72vw, 280px) !important; min-width: 0 !important; min-height: 0 !important; max-width: 280px !important; max-height: 280px !important; }
   html[data-bingo-theme] body #app .app-shell .audience-side { grid-template-rows: none !important; grid-auto-rows: minmax(92px, auto) !important; width: 100% !important; overflow: visible !important; }
+  html[data-bingo-theme] body #app .app-shell .audience-side { display: contents !important; }
+  html[data-bingo-theme] body #app .app-shell .audience-side > .audience-pattern { order: -2 !important; grid-template-columns: 96px minmax(0, 1fr) !important; width: 100% !important; }
+  html[data-bingo-theme] body #app .app-shell .audience-call { order: -1 !important; }
   html[data-bingo-theme] body #app .app-shell .dealer-layout { width: calc(100% - 12px) !important; margin-inline: 6px !important; padding-inline: 6px !important; overflow-x: clip !important; }
   html[data-bingo-theme] body #app .dealer-layout .dealer-hero h2 { font-size: clamp(27pt, 12vw, 43pt) !important; overflow-wrap: anywhere !important; }
   html[data-bingo-theme] body #app .dealer-layout :is(.dealer-card h2, .dealer-card h3, .special-ball-heading h2) { max-width: 100% !important; margin-top: 0 !important; font-size: clamp(18pt, 7vw, 25pt) !important; line-height: 1.08 !important; overflow-wrap: anywhere !important; }
@@ -998,6 +1001,7 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
   html[data-bingo-theme] body #app .app-shell .audience-side > .audience-pattern { display: grid !important; visibility: visible !important; opacity: 1 !important; min-width: 0 !important; min-height: 120px !important; overflow: visible !important; }
   html[data-bingo-theme] body #app .app-shell :is(.footer-pattern, .audience-pattern) > .pattern-preview { display: grid !important; grid-template-columns: repeat(5, minmax(0, 1fr)) !important; grid-template-rows: repeat(5, minmax(0, 1fr)) !important; visibility: visible !important; opacity: 1 !important; width: 96px !important; min-width: 96px !important; height: 96px !important; min-height: 96px !important; }
   html[data-bingo-theme] body #app .app-shell :is(.footer-pattern, .audience-pattern) > .pattern-preview > i { display: block !important; visibility: visible !important; opacity: 1 !important; min-width: 0 !important; min-height: 0 !important; }
+  html[data-bingo-theme] body #app .app-shell :is(.footer-pattern, .audience-pattern) > .pattern-preview > i.active { background: #e9424a !important; box-shadow: inset 0 0 0 1px rgba(255,255,255,.45) !important; }
   html[data-bingo-theme="planet"] body > .planet-hall-shell { box-sizing: border-box !important; width: 100% !important; min-width: 0 !important; padding-inline: 6px !important; overflow-x: hidden !important; }
   html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar { grid-template-columns: minmax(0, 1fr) 58px minmax(0, 1fr) !important; width: 100% !important; min-width: 0 !important; }
   html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box { grid-template-columns: minmax(0, 1fr) !important; }
