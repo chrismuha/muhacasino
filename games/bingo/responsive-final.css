@@ -1008,6 +1008,51 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
   html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls { width: 100% !important; min-width: 0 !important; max-width: 100% !important; }
 }
 
+/* Keep Safari scrolling inside Bingo content instead of beyond the document. */
+@media (max-width: 600px) {
+  html[data-bingo-theme],
+  html[data-bingo-theme] body {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+  }
+
+  html[data-bingo-theme] body > #app,
+  html[data-bingo-theme] body > #app > .app-shell,
+  html[data-bingo-theme="planet"] body > .planet-hall-shell {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell :is(.game-layout, .dealer-layout, .audience-screen, .design-screen) {
+    flex: 1 1 0 !important;
+    height: 0 !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell :is(.planet-play-surface, .planet-card-area, .planet-card-wall) {
+    min-height: 0 !important;
+    overscroll-behavior-y: contain !important;
+  }
+}
+
 /* Final iPhone authority for fieldsets, Hall 2 pattern, and game/dealer workspaces. */
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .special-ball-card {
@@ -1051,12 +1096,14 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
-    height: auto !important;
+    flex: 1 1 0 !important;
+    height: 0 !important;
     min-height: 0 !important;
     margin: 0 !important;
-    padding: 10px 8px max(72px, env(safe-area-inset-bottom)) !important;
+    padding: 10px 8px max(16px, env(safe-area-inset-bottom)) !important;
     overflow-x: hidden !important;
     overflow-y: auto !important;
+    overscroll-behavior-y: contain !important;
     transform: none !important;
   }
 
