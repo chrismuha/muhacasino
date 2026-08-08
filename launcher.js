@@ -1,7 +1,7 @@
 const games = {
   "big-money-deluxe": {
     title: "Big Money Deluxe",
-    version: "v1.1.2",
+    version: "v1.1.3",
     subtitle: "Classic Cash",
     path: "games/big-money-deluxe/index.html",
     className: "card-money",
@@ -11,7 +11,7 @@ const games = {
   },
   "neon-slots": {
     title: "Neon Slots",
-    version: "v1.1.2",
+    version: "v1.1.3",
     subtitle: "Electric Casino",
     path: "games/neon-slots/index.html",
     className: "card-neon",
@@ -21,7 +21,7 @@ const games = {
   },
   "pretty-penny": {
     title: "Pretty Penny",
-    version: "v1.1.2",
+    version: "v1.1.3",
     subtitle: "Feature Game",
     path: "games/pretty-penny/index.html",
     className: "card-penny",
@@ -31,7 +31,7 @@ const games = {
   },
   treasurepots: {
     title: "TreasurePots",
-    version: "v1.1.2",
+    version: "v1.1.3",
     subtitle: "Hold & Link",
     path: "games/treasurepots/index.html",
     className: "card-treasure",
@@ -79,7 +79,7 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_BUILD = "20260801-stable-release-v16";
+const SITE_BUILD = "20260808-slot-bonuses-v17";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");

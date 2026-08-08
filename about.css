@@ -120,6 +120,7 @@ h1 { margin: 0; font-size: clamp(43.2pt, 9vw, 99.6pt); letter-spacing: -.075em; 
 .game-icon.money { background: linear-gradient(145deg, #ffe267, #a46d0b); }
 .game-icon.neon { color: #fff; background: linear-gradient(145deg, #ff44de, #3a2cc5); }
 .game-icon.penny { background: linear-gradient(145deg, #ffd1df, #d24e83); }
+.game-icon.treasure { color: #fff; background: linear-gradient(145deg, #31a96f, #76570d); }
 .game-icon.bingo { color: #fff; background: linear-gradient(145deg, #358fff, #123c90); }
 .game-icon.sorry { color: #fff; background: linear-gradient(145deg, #ff6b67, #a2121b); }
 .game-icon.yahtzee { color: #fff; background: linear-gradient(145deg, #48c77d, #17623c); }

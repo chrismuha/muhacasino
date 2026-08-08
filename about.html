@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#070811">
-  <meta name="muha-build" content="20260801-stable-release-v16">
+  <meta name="muha-build" content="20260808-slot-bonuses-v17">
   <meta name="description" content="Muha Casino version history and game release notes.">
   <title>About & Version History | Muha Casino</title>
-  <link rel="stylesheet" href="about.css?build=20260801-stable-release-v16">
+  <link rel="stylesheet" href="about.css?build=20260808-slot-bonuses-v17">
 </head>
 <body>
   <header class="about-topbar">
@@ -29,6 +29,7 @@
       <a href="#big-money">Big Money</a>
       <a href="#neon">Neon Slots</a>
       <a href="#pretty-penny">Pretty Penny</a>
+      <a href="#treasurepots">TreasurePots</a>
       <a href="#bingo">Bingo</a>
       <a href="#sorry">Sorry!</a>
       <a href="#yahtzee">Yahtzee</a>
@@ -36,8 +37,13 @@
 
     <div class="history-grid">
       <article id="big-money" class="history-card">
-        <header><span class="game-icon money">7</span><div><p>Slot game</p><h2>Big Money Deluxe</h2></div><b>v1.1.2</b></header>
-        <section><h3>v1.1.2 · Current</h3><ul>
+        <header><span class="game-icon money">7</span><div><p>Slot game</p><h2>Big Money Deluxe</h2></div><b>v1.1.3</b></header>
+        <section><h3>v1.1.3 · Match &amp; Win bonus</h3><ul>
+          <li>Added Match &amp; Win as a second Bonus Plays game with a 3×3 jackpot-value reveal board.</li>
+          <li>Based Match &amp; Win awards and tier likelihoods on the current Mini, Minor, Major, and Grand jackpot settings.</li>
+          <li>Fixed Pick a Dollar Bill prizes staying in predictable positions by properly reshuffling them every round.</li>
+        </ul></section>
+        <section><h3>v1.1.2 · Playtime and interface update</h3><ul>
           <li>Added cumulative active-spin elapsed time for manual and automatic play.</li>
           <li>Elapsed time pauses between spins and stays outside the win/loss outline.</li>
           <li>Long result messages now wrap without clipping on smaller screens.</li>
@@ -56,8 +62,13 @@
       </article>
 
       <article id="neon" class="history-card">
-        <header><span class="game-icon neon">ϟ</span><div><p>Slot game</p><h2>Neon Slots</h2></div><b>v1.1.2</b></header>
-        <section><h3>v1.1.2 · Current</h3><ul>
+        <header><span class="game-icon neon">ϟ</span><div><p>Slot game</p><h2>Neon Slots</h2></div><b>v1.1.3</b></header>
+        <section><h3>v1.1.3 · Match &amp; Win bonus</h3><ul>
+          <li>Added Match &amp; Win as a second Bonus Plays game with a 3×3 jackpot-value reveal board.</li>
+          <li>Based Match &amp; Win awards and tier likelihoods on the current Mini, Minor, Major, and Grand jackpot settings.</li>
+          <li>Fixed Neon Vault prizes staying in predictable positions by properly reshuffling them every round.</li>
+        </ul></section>
+        <section><h3>v1.1.2 · Playtime and interface update</h3><ul>
           <li>Added cumulative active-spin elapsed time with pause and resume behavior.</li>
           <li>Separated elapsed time from the result outline and fixed responsive message clipping.</li>
           <li>Added shared session tracking and improved cached-release loading.</li>
@@ -76,8 +87,13 @@
       </article>
 
       <article id="pretty-penny" class="history-card">
-        <header><span class="game-icon penny">¢</span><div><p>Feature slot</p><h2>Pretty Penny</h2></div><b>v1.1.2</b></header>
-        <section><h3>v1.1.2 · Current</h3><ul>
+        <header><span class="game-icon penny">¢</span><div><p>Feature slot</p><h2>Pretty Penny</h2></div><b>v1.1.3</b></header>
+        <section><h3>v1.1.3 · Match &amp; Win bonus</h3><ul>
+          <li>Added Match &amp; Win alongside the Reserve Wheel, selected randomly whenever the bonus triggers.</li>
+          <li>Added a 3×3 reveal board whose jackpot values scale with the triggering wager and whose tier likelihoods follow the current Jackpot Odds settings.</li>
+          <li>Kept Reserve Wheel probabilities independent from the configurable reel and Match &amp; Win jackpot odds.</li>
+        </ul></section>
+        <section><h3>v1.1.2 · Playtime and interface update</h3><ul>
           <li>Added cumulative active-spin elapsed time across manual and automatic play.</li>
           <li>Kept result messages readable and elapsed time outside the status outline.</li>
           <li>Reworked jackpot and link symbols to fill reel cards cleanly without animation.</li>
@@ -89,6 +105,22 @@
           <li>Improved wheel visibility and controls for short and mobile screens before Muha Casino integration.</li>
         </ul></section>
         <section><h3>v1.0.0 · Initial release</h3><p>Released the savings-themed feature slot with three banks, link prizes, jackpots, and a bonus wheel.</p></section>
+      </article>
+
+      <article id="treasurepots" class="history-card">
+        <header><span class="game-icon treasure">♦</span><div><p>Feature slot</p><h2>TreasurePots</h2></div><b>v1.1.3</b></header>
+        <section><h3>v1.1.3 · Match &amp; Win bonus</h3><ul>
+          <li>Added Match &amp; Win alongside the TreasurePots Wheel, selected randomly whenever the bonus triggers.</li>
+          <li>Added a 3×3 reveal board whose jackpot values scale with the triggering wager and whose tier likelihoods follow the current Jackpot Odds settings.</li>
+          <li>Kept TreasurePots Wheel probabilities independent from the configurable reel and Match &amp; Win jackpot odds.</li>
+        </ul></section>
+        <section><h3>v1.1.2 · Casino integration and Emerald Vault redesign</h3><ul>
+          <li>Added TreasurePots to the casino library and featured-game slider with a dedicated green-and-gold presentation.</li>
+          <li>Redesigned the reels, jackpots, savings pots, Hold &amp; Link values, controls, symbols, and responsive layouts around the Emerald Vault theme.</li>
+          <li>Added three savings pots that advance after paid-spin LINK wins and award fixed $5, $25, and $100 prizes when full.</li>
+          <li>Added wager-scaled Mini, Minor, Major, and Grand jackpots plus a player-spun wheel with fixed coin and jackpot outcomes.</li>
+        </ul></section>
+        <section><h3>v1.0.0 · Initial release</h3><p>Released the emerald feature slot with savings pots, linked values, wager-scaled jackpots, free spins, and the TreasurePots bonus wheel.</p></section>
       </article>
 
       <article id="bingo" class="history-card featured-history">
@@ -398,6 +430,6 @@
 
   <footer><span>MUHA CASINO</span><a href="index.html">RETURN TO GAME LIBRARY</a></footer>
   <script src="interaction-lock.js?build=20260808-no-double-tap"></script>
-  <script src="about-history.js?build=20260801-stable-release-v16"></script>
+  <script src="about-history.js?build=20260808-slot-bonuses-v17"></script>
 </body>
 </html>
