@@ -471,3 +471,12 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   html { scroll-behavior: auto; }
   .hero-slide, .game-card, .category-card { transition: none; }
 }
+
+@media (max-width: 600px) {
+  .game-toolbar { box-sizing: border-box; height: auto; min-height: 56px; gap: 7px; padding: 6px 8px; }
+  .back-button { flex: 0 1 44%; min-width: 0; padding: 8px 9px; font-size: clamp(8pt, 3vw, 10pt); line-height: 1.12; white-space: normal; }
+  .game-toolbar > strong { flex: 1 1 auto; min-width: 0; font-size: 9pt; }
+  .toolbar-theme-picker { flex: 0 1 36%; min-width: 0; }
+  .toolbar-theme-picker select { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; padding-inline: 10px 25px; font-size: 8.5pt; }
+  #gameFrame { height: calc(100dvh - 68px); }
+}
