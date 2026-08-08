@@ -1394,8 +1394,8 @@
       <button type="button" data-hall-action="purchase"><i class="bi bi-cart-fill" aria-hidden="true"></i><span>PURCHASE</span></button>
       <button type="button" data-hall-action="schedule"><i class="bi bi-calendar3" aria-hidden="true"></i><span>SCHEDULE</span></button>
       <button type="button" data-hall-action="prizes"><i class="bi bi-trophy-fill" aria-hidden="true"></i><span>PRIZES</span></button>
-      <button type="button" data-hall-action="trade"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>TRADE</span></button>
-      <button type="button" data-hall-action="next"><span>NEXT</span><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+      <button type="button" data-hall-action="trade" disabled aria-label="Bonanza Trade unavailable" title="Coming soon"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>BONANZA TRADE</span></button>
+      <button type="button" data-hall-action="next" disabled aria-label="Next unavailable" title="Coming soon"><span>NEXT</span><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
     `;
     const classicControls = document.createElement("nav");
     classicControls.className = "player-hall-controls classic-hall-controls";
@@ -1434,8 +1434,8 @@
       <button type="button" data-hall-action="purchase"><i class="bi bi-cart-fill" aria-hidden="true"></i><span>PURCHASE</span></button>
       <button type="button" data-hall-action="schedule"><i class="bi bi-calendar3" aria-hidden="true"></i><span>SCHEDULE</span></button>
       <button type="button" data-hall-action="prizes"><i class="bi bi-trophy-fill" aria-hidden="true"></i><span>PRIZES</span></button>
-      <button type="button" data-hall-action="trade"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>TRADE</span></button>
-      <button type="button" data-hall-action="next"><span>NEXT</span><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+      <button type="button" data-hall-action="trade" disabled aria-label="Bonanza Trade unavailable" title="Coming soon"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>BONANZA TRADE</span></button>
+      <button type="button" data-hall-action="next" disabled aria-label="Next unavailable" title="Coming soon"><span>NEXT</span><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
     `;
 
     [classicControls, planetControls].forEach((controls) => {

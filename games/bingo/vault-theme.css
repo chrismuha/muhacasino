@@ -12176,3 +12176,18 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-control
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls .hall-dealer-button {
   grid-column: span 1 !important;
 }
+
+/* Unfinished Hall actions remain visible but unmistakably unavailable. */
+html[data-bingo-theme] body .player-hall-controls :is([data-hall-action="trade"], [data-hall-action="next"]):disabled {
+  border-color: #626a76 !important;
+  color: #d1d5db !important;
+  background: linear-gradient(#777f8b, #444a54) !important;
+  box-shadow: inset 0 0 0 2px #9299a3, 0 3px 0 #252930 !important;
+  filter: grayscale(1) !important;
+  opacity: .72 !important;
+  cursor: not-allowed !important;
+}
+
+html[data-bingo-theme] body .player-hall-controls :is([data-hall-action="trade"], [data-hall-action="next"]):disabled * {
+  cursor: not-allowed !important;
+}
