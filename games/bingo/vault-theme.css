@@ -3120,6 +3120,39 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-sh
   --splat-ink: var(--free-space, #f5cc4e);
 }
 
+[data-daub-design="sharp-splat"] :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
+  --splat-ink: var(--actual-daub, #126eff);
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 2px;
+  border-radius: 0;
+  background: var(--splat-ink);
+  clip-path: polygon(
+    50% 0%, 55% 14%, 62% 3%, 65% 17%, 74% 7%, 74% 22%,
+    86% 15%, 82% 29%, 97% 26%, 87% 39%, 100% 43%, 86% 50%,
+    98% 58%, 83% 60%, 92% 73%, 77% 69%, 79% 85%, 67% 76%,
+    63% 96%, 55% 81%, 48% 100%, 43% 81%, 33% 96%, 33% 77%,
+    19% 88%, 24% 70%, 7% 76%, 17% 61%, 0% 59%, 14% 50%,
+    1% 42%, 16% 39%, 4% 27%, 20% 29%, 14% 14%, 29% 23%,
+    28% 6%, 40% 17%
+  );
+  filter: none;
+  opacity: 1;
+}
+
+[data-daub-design="sharp-splat"] :is(#app, .planet-card-wall) .number-cell.marked:not(.called)::before {
+  --splat-ink: var(--pre-daub, #ed3d35);
+}
+
+[data-daub-design="sharp-splat"] :is(#app, .planet-card-wall) .number-cell.called.off-pattern-called::before {
+  --splat-ink: #7750d8;
+}
+
+[data-daub-design="sharp-splat"] :is(#app, .planet-card-wall) .number-cell.free::before {
+  --splat-ink: var(--free-space, #f5cc4e);
+}
+
 .planet-card-wall .number-cell.free {
   color: #664c00;
   border-color: #d4cfc0;
@@ -5018,6 +5051,21 @@ html[data-bingo-theme="current"] #app .app-shell.theme-light .app-footer :is(str
   transform: rotate(-6deg) scale(.92);
 }
 
+.daub-preview.sharp-splat {
+  border-radius: 0;
+  background: var(--actual-daub, #126eff);
+  clip-path: polygon(
+    50% 0%, 55% 14%, 62% 3%, 65% 17%, 74% 7%, 74% 22%,
+    86% 15%, 82% 29%, 97% 26%, 87% 39%, 100% 43%, 86% 50%,
+    98% 58%, 83% 60%, 92% 73%, 77% 69%, 79% 85%, 67% 76%,
+    63% 96%, 55% 81%, 48% 100%, 43% 81%, 33% 96%, 33% 77%,
+    19% 88%, 24% 70%, 7% 76%, 17% 61%, 0% 59%, 14% 50%,
+    1% 42%, 16% 39%, 4% 27%, 20% 29%, 14% 14%, 29% 23%,
+    28% 6%, 40% 17%
+  );
+  filter: none;
+}
+
 .daub-preview.solid {
   border: 4px solid color-mix(in srgb, var(--actual-daub, #126eff), #001d50 35%);
   border-radius: 12px;
@@ -5065,7 +5113,7 @@ html[data-bingo-theme="current"] #app .app-shell.theme-light .app-footer :is(str
   z-index: 2;
 }
 
-[data-daub-design]:not([data-daub-design="solid"]):not([data-daub-design="splat"]):not([data-daub-design="circle"])
+[data-daub-design]:not([data-daub-design="solid"]):not([data-daub-design="splat"]):not([data-daub-design="sharp-splat"]):not([data-daub-design="circle"])
   :is(#app, .planet-card-wall) .number-cell:is(.called, .marked, .free)::before {
   content: var(--daub-symbol);
   position: absolute;
@@ -9681,7 +9729,7 @@ html[data-bingo-theme="planet"] .planet-idle-flashboard > header {
 
 html[data-bingo-theme="planet"] .planet-idle-feature {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) auto auto;
   place-items: center;
   min-width: 0;
   min-height: 0;
@@ -9692,12 +9740,6 @@ html[data-bingo-theme="planet"] .planet-idle-feature {
   box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .15), 0 0 14px rgba(38, 178, 255, .45);
   color: #fff;
   text-align: center;
-}
-
-html[data-bingo-theme="planet"] .planet-idle-feature.hot-ball {
-  border-color: #ff625a;
-  background: linear-gradient(145deg, #f1473f, #7c171b);
-  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .15), 0 0 14px rgba(255, 59, 50, .42);
 }
 
 html[data-bingo-theme="planet"] .planet-idle-ball {
@@ -9717,6 +9759,19 @@ html[data-bingo-theme="planet"] .planet-idle-feature > strong {
   font-size: clamp(10pt, 1.35vw, 16pt);
   line-height: 1.1;
   white-space: nowrap;
+}
+
+html[data-bingo-theme="planet"] .planet-idle-feature > small {
+  margin-top: 4px;
+  color: #dbe9ff;
+  font-size: clamp(7pt, .9vw, 10pt);
+  font-weight: 900;
+  line-height: 1.05;
+  text-align: center;
+}
+
+html[data-bingo-theme="planet"] .planet-idle-feature:not(.is-active) {
+  filter: saturate(.55);
 }
 
 html[data-bingo-theme="planet"] .planet-idle-message {
@@ -9783,6 +9838,356 @@ html[data-bingo-theme="planet"] .planet-idle-number-board > span.latest {
   background: linear-gradient(#ffdb3d, #e5800a);
   color: #17120a;
   text-shadow: none;
+}
+
+/* Dealer-configured special balls are true auto-stamps shared by every theme. */
+[data-bingo-theme] #app .number-cell:is(.hot-ball-stamp, .birthday-ball-stamp) {
+  outline: 3px solid #ffbe24 !important;
+  outline-offset: -4px !important;
+}
+
+[data-bingo-theme] #app .number-cell:is(.hot-ball-stamp, .birthday-ball-stamp)::after,
+[data-bingo-theme] .planet-card-wall .number-cell:is(.hot-ball-stamp, .birthday-ball-stamp)::after {
+  content: "H";
+  position: absolute;
+  z-index: 4;
+  top: 2px;
+  right: 2px;
+  display: grid;
+  width: 16px;
+  height: 16px;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: #bd251f;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .55);
+  font-size: 7pt;
+  font-weight: 950;
+  line-height: 1;
+}
+
+[data-bingo-theme] #app .number-cell.birthday-ball-stamp::after,
+[data-bingo-theme] .planet-card-wall .number-cell.birthday-ball-stamp::after {
+  content: "B";
+  background: #1769e0;
+}
+
+[data-bingo-theme] #app .number-cell.hot-ball-stamp.birthday-ball-stamp::after,
+[data-bingo-theme] .planet-card-wall .number-cell.hot-ball-stamp.birthday-ball-stamp::after {
+  content: "HB";
+  width: 20px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #bd251f 0 50%, #1769e0 50%);
+  font-size: 6pt;
+}
+
+[data-bingo-theme] #app .special-ball-settings {
+  display: grid;
+  gap: 16px;
+}
+
+[data-bingo-theme] #app .special-ball-heading {
+  display: grid;
+  gap: 5px;
+}
+
+[data-bingo-theme] #app .special-ball-heading :is(h2, p) {
+  margin: 0;
+}
+
+[data-bingo-theme] #app .other-theme-flashboard-setting {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-top: 8px;
+  padding: 12px;
+  border: 2px solid var(--dealer-line);
+  border-radius: 10px;
+  background: var(--dealer-panel-alt);
+}
+
+[data-bingo-theme] #app .other-theme-flashboard-setting input {
+  flex: 0 0 auto;
+  width: 25px;
+  height: 25px;
+  accent-color: var(--dealer-accent);
+}
+
+[data-bingo-theme] #app .other-theme-flashboard-setting > span {
+  display: grid;
+  gap: 3px;
+}
+
+[data-bingo-theme] #app .other-theme-flashboard-setting small {
+  color: var(--dealer-muted) !important;
+  font-size: 9.5pt !important;
+}
+
+[data-bingo-theme] #app .special-ball-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+[data-bingo-theme] #app .special-ball-card {
+  display: grid;
+  min-width: 0;
+  gap: 12px;
+  margin: 0;
+  padding: 16px;
+  border: 2px solid var(--dealer-line);
+  border-radius: 12px;
+  color: var(--dealer-text);
+  background: var(--dealer-panel-alt);
+}
+
+[data-bingo-theme] #app .special-ball-card legend {
+  padding: 0 8px;
+  color: var(--dealer-text);
+  font-size: 14pt;
+  font-weight: 950;
+}
+
+[data-bingo-theme] #app .special-ball-card > label:not(.special-ball-switch) {
+  display: grid;
+  grid-template-columns: minmax(120px, .8fr) minmax(130px, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+
+[data-bingo-theme] #app .special-ball-card :is(input[type="number"], input[type="date"], select) {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 8px 10px;
+  font-size: 12pt;
+  font-weight: 800;
+}
+
+[data-bingo-theme] #app .special-ball-switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12pt;
+  font-weight: 900;
+}
+
+[data-bingo-theme] #app .special-ball-switch input {
+  width: 24px;
+  height: 24px;
+  accent-color: var(--dealer-accent);
+}
+
+[data-bingo-theme] #app .special-ball-card > small {
+  min-height: 1.4em;
+  font-size: 10pt !important;
+  line-height: 1.35;
+}
+
+@media (max-width: 780px) {
+  [data-bingo-theme] #app .special-ball-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  [data-bingo-theme] #app .special-ball-card > label:not(.special-ball-switch) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Planet Hall and Classic can opt into the complete pre-game flashboard. */
+.other-theme-waiting-flashboard[hidden] {
+  display: none !important;
+}
+
+html[data-bingo-theme="classic"] {
+  --waiting-board-bg: #24100d;
+  --waiting-board-panel: #3a1b14;
+  --waiting-board-line: #b98032;
+  --waiting-board-cell: #fff8e9;
+  --waiting-board-ink: #3a2117;
+  --waiting-board-accent: #b52b25;
+}
+
+html[data-bingo-theme="current"] {
+  --waiting-board-bg: #dfeaf8;
+  --waiting-board-panel: #edf4fd;
+  --waiting-board-line: #6f91c1;
+  --waiting-board-cell: #f8fbff;
+  --waiting-board-ink: #17243a;
+  --waiting-board-accent: #1769e0;
+}
+
+.other-theme-waiting-flashboard {
+  position: fixed;
+  z-index: 900;
+  top: var(--other-flashboard-top, 110px);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: minmax(118px, 24%) minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(8px, 1vw, 14px);
+  overflow: hidden;
+  border-top: 3px solid var(--waiting-board-line);
+  color: var(--waiting-board-ink);
+  background: var(--waiting-board-bg);
+  box-shadow: inset 0 0 28px color-mix(in srgb, var(--waiting-board-line) 22%, transparent);
+}
+
+.other-theme-waiting-flashboard > header {
+  display: grid;
+  grid-template-columns: clamp(120px, 20%, 230px) minmax(0, 1fr) clamp(120px, 20%, 230px);
+  align-items: stretch;
+  gap: clamp(8px, 1.4vw, 18px);
+  min-height: 0;
+  padding-bottom: clamp(8px, 1vw, 14px);
+}
+
+.special-waiting-feature {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  padding: 8px;
+  border: 3px solid var(--waiting-board-line);
+  border-radius: 12px;
+  background: var(--waiting-board-panel);
+  box-shadow: inset 0 0 0 3px color-mix(in srgb, #fff 18%, transparent), 0 6px 14px rgba(0, 0, 0, .24);
+  text-align: center;
+}
+
+.special-waiting-feature:not(.is-active) {
+  filter: saturate(.55);
+}
+
+.special-waiting-ball {
+  display: grid;
+  width: min(72px, 8vh);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 4px solid var(--waiting-board-line);
+  border-radius: 50%;
+  color: var(--waiting-board-ink);
+  background: var(--waiting-board-cell);
+  box-shadow: inset 0 0 8px color-mix(in srgb, var(--waiting-board-line) 25%, transparent);
+  font-size: clamp(19pt, 3vh, 31pt);
+  font-weight: 950;
+}
+
+.special-waiting-feature > strong {
+  font-size: clamp(10pt, 1.4vw, 16pt);
+  line-height: 1.05;
+  white-space: nowrap;
+}
+
+.special-waiting-feature > small {
+  margin-top: 4px;
+  color: inherit;
+  font-size: clamp(7pt, .9vw, 10pt);
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.other-waiting-message {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.other-waiting-message > strong {
+  width: min(100%, 760px);
+  padding: clamp(10px, 1.4vh, 16px);
+  border: 2px solid var(--waiting-board-line);
+  border-radius: 10px;
+  color: var(--waiting-board-ink);
+  background: var(--waiting-board-panel);
+  font-size: clamp(14pt, 2.2vw, 28pt);
+  line-height: 1.1;
+}
+
+.other-waiting-message > span {
+  font-size: clamp(9pt, 1.15vw, 13pt);
+  font-weight: 800;
+}
+
+.other-theme-number-board {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(15, minmax(0, 1fr));
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  gap: clamp(2px, .35vw, 6px);
+  min-width: 0;
+  min-height: 0;
+}
+
+.other-theme-number-board > span {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  place-items: center;
+  border: 2px solid var(--waiting-board-line);
+  border-radius: 5px;
+  color: var(--waiting-board-ink);
+  background: var(--waiting-board-cell);
+  font-size: clamp(10pt, min(1.8vw, 2.8vh), 22pt);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.other-theme-number-board > span.called {
+  border-color: color-mix(in srgb, var(--waiting-board-accent) 72%, #fff);
+  color: #fff;
+  background: var(--waiting-board-accent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--waiting-board-accent) 55%, transparent);
+}
+
+@media (max-width: 700px) {
+  .other-theme-waiting-flashboard {
+    grid-template-rows: minmax(96px, 28%) minmax(0, 1fr);
+    padding: 5px;
+  }
+
+  .other-theme-waiting-flashboard > header {
+    grid-template-columns: 76px minmax(0, 1fr) 76px;
+    gap: 5px;
+    padding-bottom: 5px;
+  }
+
+  .special-waiting-feature {
+    padding: 4px;
+  }
+
+  .special-waiting-ball {
+    width: 42px;
+    border-width: 3px;
+  }
+
+  .special-waiting-feature > strong {
+    font-size: 7pt;
+    white-space: normal;
+  }
+
+  .other-waiting-message > span {
+    display: none;
+  }
+
+  .other-theme-number-board {
+    gap: 2px;
+  }
+
+  .other-theme-number-board > span {
+    border-width: 1px;
+    font-size: clamp(7pt, 2.5vw, 10pt);
+  }
 }
 
 @media (max-width: 700px) {

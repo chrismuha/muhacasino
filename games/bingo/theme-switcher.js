@@ -10,6 +10,7 @@
   const CARD_SERIAL_START_STORAGE_KEY = "muha-bingo-card-serial-start";
   const CARD_SERIAL_STEP_STORAGE_KEY = "muha-bingo-card-serial-step";
   const CARD_SERIAL_DEFAULT_VERSION_KEY = "muha-bingo-card-serial-default-version";
+  const SPECIAL_BALL_STORAGE_KEY = "muha-bingo-special-ball-settings";
   const UNLIMITED_CREDITS = 1_000_000_000;
   const launchParameters = new URLSearchParams(window.location.search);
   const isPopout = launchParameters.has("screen") || launchParameters.has("player");
@@ -40,7 +41,8 @@
   migrateLegacyCardSerialDefaults();
   const themes = ["planet", "classic", "current"];
   const daubOptions = [
-    ["solid", "Solid Color", ""], ["splat", "Splat", ""], ["circle", "Circle", ""],
+    ["solid", "Solid Color", ""], ["splat", "Splat (Solid Color)", ""],
+    ["sharp-splat", "Sharp Splat (Solid Color)", ""], ["circle", "Circle (Solid Color)", ""],
     ["pig", "Pig", "🐷"], ["duck", "Duck", "🦆"], ["star", "Star", "★"],
     ["planet", "Planet", "🪐"], ["confetti", "Confetti", "🎉"], ["firework", "Firework", "🎆"],
     ["dynamite", "Dynamite", "🧨"], ["cowboy", "Cowboy", "🤠"], ["clover", "Clover", "🍀"],
@@ -57,12 +59,48 @@
     ["bomb", "Bomb", "💣"],
   ];
   const daubDesigns = daubOptions.map(([id]) => id);
+  const solidColorDaubDesigns = new Set(["solid", "circle", "splat", "sharp-splat"]);
   const defaultSolidColors = {
     pre: "#ed3d35",
     actual: "#126eff",
     free: "#f5cc4e",
   };
   let currentViewCount = 3;
+  let specialBallSyncFrame = 0;
+
+  const defaultSpecialBallSettings = {
+    hotEnabled: false,
+    hotNumber: 1,
+    hotMultiplier: 2,
+    birthdayEnabled: false,
+    birthdayNumber: 1,
+    birthdayDate: "",
+    birthdayMultiplier: 2,
+    showOtherThemesFlashboard: false,
+  };
+
+  function specialBallSettings() {
+    try {
+      return {
+        ...defaultSpecialBallSettings,
+        ...JSON.parse(window.localStorage.getItem(SPECIAL_BALL_STORAGE_KEY) || "{}"),
+      };
+    } catch {
+      return { ...defaultSpecialBallSettings };
+    }
+  }
+
+  function localMonthDay(date = new Date()) {
+    return `${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  }
+
+  function birthdayBallIsActive(settings = specialBallSettings()) {
+    return Boolean(
+      settings.birthdayEnabled
+      && /^\d{4}-\d{2}-\d{2}$/.test(settings.birthdayDate)
+      && settings.birthdayDate.slice(5) === localMonthDay()
+    );
+  }
 
   function savedSolidColors() {
     try {
@@ -129,6 +167,7 @@
       setHallControlsCollapsed(false);
     }
     document.documentElement.dataset.bingoTheme = selectedTheme;
+    window.requestAnimationFrame(syncOtherThemeWaitingFlashboard);
     const app = document.querySelector("#app");
     if (app) {
       app.style.removeProperty("left");
@@ -202,7 +241,7 @@
     } catch {
       // The selected dauber still works when storage is unavailable.
     }
-    if (selectedDesign === "solid" || selectedDesign === "circle") applySolidColors();
+    if (solidColorDaubDesigns.has(selectedDesign)) applySolidColors();
   }
 
   function mountThemeSwitcher() {
@@ -398,6 +437,270 @@
         <label><span>Card number increment</span><input type="number" min="1" max="9999" step="1" value="${step}" data-card-serial-step></label>
       `);
     }
+  }
+
+  function activeSpecialBalls(settings = specialBallSettings()) {
+    const balls = [];
+    if (settings.hotEnabled) {
+      balls.push({
+        kind: "hot",
+        label: "Hot Ball",
+        number: Math.max(1, Math.min(75, Number(settings.hotNumber) || 1)),
+        multiplier: Math.max(2, Math.min(10, Number(settings.hotMultiplier) || 2)),
+      });
+    }
+    if (birthdayBallIsActive(settings)) {
+      balls.push({
+        kind: "birthday",
+        label: "Birthday Ball",
+        number: Math.max(1, Math.min(75, Number(settings.birthdayNumber) || 1)),
+        multiplier: Math.max(2, Math.min(10, Number(settings.birthdayMultiplier) || 2)),
+      });
+    }
+    return balls;
+  }
+
+  window.bingoSpecialBallIsFree = (number) => activeSpecialBalls()
+    .some((ball) => ball.number === Number(number));
+
+  window.bingoSpecialBallPrizeForCard = (cardId, basePrize, cards = []) => {
+    const card = cards.find((candidate) => Number(candidate?.id) === Number(cardId));
+    if (!card) return Number(basePrize) || 0;
+    const cardNumbers = new Set((card.cells || []).map((cell) => Number(cell?.number)).filter(Boolean));
+    const multiplier = activeSpecialBalls()
+      .filter((ball) => cardNumbers.has(ball.number))
+      .reduce((highest, ball) => Math.max(highest, ball.multiplier), 1);
+    return (Number(basePrize) || 0) * multiplier;
+  };
+
+  function specialBallStatusText(settings = specialBallSettings()) {
+    if (!settings.birthdayEnabled) return "Birthday Ball is off.";
+    if (!settings.birthdayDate) return "Choose the birthday month and day.";
+    const selected = new Date(`${settings.birthdayDate}T12:00:00`);
+    const dateText = Number.isNaN(selected.getTime())
+      ? settings.birthdayDate
+      : selected.toLocaleDateString(undefined, { month: "long", day: "numeric" });
+    return birthdayBallIsActive(settings)
+      ? `Active today · ${dateText}`
+      : `Activates annually on ${dateText}`;
+  }
+
+  function enhanceSpecialBallSettings() {
+    const layout = document.querySelector("#app .dealer-layout");
+    if (!layout) return;
+    let panel = layout.querySelector(".special-ball-settings");
+    const settings = specialBallSettings();
+    if (!panel) {
+      panel = document.createElement("section");
+      panel.className = "dealer-card special-ball-settings";
+      panel.innerHTML = `
+        <div class="special-ball-heading">
+          <span class="eyebrow">SPECIAL BALL SETTINGS</span>
+          <h2>Hot Ball and Birthday Ball</h2>
+          <p>Matching card squares stamp automatically and count like Free Space. Bonus multipliers appear with winning results.</p>
+          <label class="other-theme-flashboard-setting"><input type="checkbox" data-special-ball-setting="showOtherThemesFlashboard"><span><strong>Show waiting flashboard in Planet Hall and Classic</strong><small>Leave this off to keep their existing pre-game screens.</small></span></label>
+        </div>
+        <div class="special-ball-grid">
+          <fieldset class="special-ball-card hot-ball-settings">
+            <legend>Hot Ball</legend>
+            <label class="special-ball-switch"><input type="checkbox" data-special-ball-setting="hotEnabled"><span>Enable Hot Ball</span></label>
+            <label><span>Ball number</span><input type="number" min="1" max="75" step="1" data-special-ball-setting="hotNumber"></label>
+            <label><span>Prize multiplier</span><select data-special-ball-setting="hotMultiplier"><option value="2">2× prize</option><option value="3">3× prize</option><option value="4">4× prize</option><option value="5">5× prize</option><option value="10">10× prize</option></select></label>
+            <small>Every matching square is automatically stamped for the full game.</small>
+          </fieldset>
+          <fieldset class="special-ball-card birthday-ball-settings">
+            <legend>Birthday Ball</legend>
+            <label class="special-ball-switch"><input type="checkbox" data-special-ball-setting="birthdayEnabled"><span>Enable Birthday Ball</span></label>
+            <label><span>Ball number</span><input type="number" min="1" max="75" step="1" data-special-ball-setting="birthdayNumber"></label>
+            <label><span>Birthday date</span><input type="date" data-special-ball-setting="birthdayDate"></label>
+            <label><span>Prize multiplier</span><select data-special-ball-setting="birthdayMultiplier"><option value="2">2× prize</option><option value="3">3× prize</option><option value="4">4× prize</option><option value="5">5× prize</option><option value="10">10× prize</option></select></label>
+            <small data-birthday-ball-status></small>
+          </fieldset>
+        </div>`;
+      const setup = layout.querySelector(".game-setup-panel");
+      if (setup) setup.insertAdjacentElement("afterend", panel);
+      else layout.append(panel);
+      panel.addEventListener("input", saveSpecialBallSetting);
+      panel.addEventListener("change", saveSpecialBallSetting);
+    }
+
+    panel.querySelectorAll("[data-special-ball-setting]").forEach((input) => {
+      const key = input.dataset.specialBallSetting;
+      if (input.type === "checkbox") input.checked = Boolean(settings[key]);
+      else if (document.activeElement !== input) input.value = String(settings[key] ?? "");
+    });
+    const birthdayStatus = panel.querySelector("[data-birthday-ball-status]");
+    const nextStatus = specialBallStatusText(settings);
+    if (birthdayStatus.textContent !== nextStatus) birthdayStatus.textContent = nextStatus;
+  }
+
+  function saveSpecialBallSetting(event) {
+    const input = event.target.closest("[data-special-ball-setting]");
+    if (!input) return;
+    const settings = specialBallSettings();
+    const key = input.dataset.specialBallSetting;
+    if (input.type === "checkbox") settings[key] = input.checked;
+    else if (input.type === "number") settings[key] = Math.max(
+      Number(input.min || 1),
+      Math.min(Number(input.max || 75), Math.trunc(Number(input.value) || Number(input.min || 1)))
+    );
+    else settings[key] = input.value;
+    try {
+      window.localStorage.setItem(SPECIAL_BALL_STORAGE_KEY, JSON.stringify(settings));
+    } catch {
+      // The special-ball settings remain active in this window.
+    }
+    enhanceSpecialBallSettings();
+    queueSpecialBallSync();
+    syncOtherThemeWaitingFlashboard();
+    window.dispatchEvent(new CustomEvent("muha-bingo-special-balls-changed", { detail: settings }));
+  }
+
+  function numberCellValue(cell) {
+    const value = Number(cell.querySelector("strong")?.textContent?.trim());
+    return value >= 1 && value <= 75 ? value : null;
+  }
+
+  function syncSpecialBallStamps() {
+    specialBallSyncFrame = 0;
+    const activeBalls = activeSpecialBalls();
+    const activeNumbers = new Map();
+    activeBalls.forEach((ball) => {
+      const matches = activeNumbers.get(ball.number) || [];
+      matches.push(ball);
+      activeNumbers.set(ball.number, matches);
+    });
+    const cards = document.querySelectorAll("#app .bingo-card:not(.preview-card):not(.verification-full-card)");
+
+    cards.forEach((card) => {
+      card.querySelectorAll(".number-cell").forEach((cell) => {
+        const balls = activeNumbers.get(numberCellValue(cell)) || [];
+        const wasAutomatic = cell.classList.contains("special-ball-auto-stamped");
+        if (!balls.length) {
+          if (wasAutomatic && cell.classList.contains("marked") && !cell.classList.contains("called")) cell.click();
+          cell.classList.remove("special-ball-auto-stamped", "hot-ball-stamp", "birthday-ball-stamp");
+          cell.removeAttribute("data-special-ball-prize");
+          if (cell.dataset.specialBallOriginalAria != null) {
+            if (cell.dataset.specialBallOriginalAria) cell.setAttribute("aria-label", cell.dataset.specialBallOriginalAria);
+            else cell.removeAttribute("aria-label");
+            delete cell.dataset.specialBallOriginalAria;
+          }
+          return;
+        }
+
+        cell.classList.toggle("hot-ball-stamp", balls.some((ball) => ball.kind === "hot"));
+        cell.classList.toggle("birthday-ball-stamp", balls.some((ball) => ball.kind === "birthday"));
+        cell.dataset.specialBallPrize = balls.map((ball) => `${ball.label} · ${ball.multiplier}× prize`).join(" + ");
+        if (cell.dataset.specialBallOriginalAria == null) {
+          cell.dataset.specialBallOriginalAria = cell.getAttribute("aria-label") || "";
+        }
+        cell.setAttribute("aria-label", balls.map((ball) =>
+          `${ball.label} ${ball.number}, automatically stamped, ${ball.multiplier} times prize`
+        ).join("; "));
+        if (!cell.matches(".marked, .called, .free")) {
+          cell.classList.add("special-ball-auto-stamped");
+          cell.click();
+        }
+      });
+    });
+  }
+
+  function queueSpecialBallSync() {
+    if (specialBallSyncFrame) return;
+    specialBallSyncFrame = window.requestAnimationFrame(syncSpecialBallStamps);
+  }
+
+  function observeSpecialBalls() {
+    const app = document.querySelector("#app");
+    if (app && app.dataset.specialBallObserver !== "true") {
+      app.dataset.specialBallObserver = "true";
+      new MutationObserver(() => {
+        enhanceSpecialBallSettings();
+        queueSpecialBallSync();
+        syncStartButtons();
+      }).observe(app, { childList: true, subtree: true });
+    }
+    window.setInterval(() => {
+      enhanceSpecialBallSettings();
+      queueSpecialBallSync();
+      syncOtherThemeWaitingFlashboard();
+      window.dispatchEvent(new CustomEvent("muha-bingo-special-balls-changed"));
+    }, 60000);
+    queueSpecialBallSync();
+  }
+
+  function renderOtherThemeNumberBoard(board) {
+    if (!board) return;
+    const called = calledNumbers();
+    board.replaceChildren();
+    for (let number = 1; number <= 75; number += 1) {
+      const cell = document.createElement("span");
+      cell.textContent = String(number);
+      cell.classList.toggle("called", called.has(number));
+      board.append(cell);
+    }
+  }
+
+  function syncOtherThemeWaitingFlashboard() {
+    const board = document.querySelector(".other-theme-waiting-flashboard");
+    if (!board) return;
+    const settings = specialBallSettings();
+    const selectedTheme = document.documentElement.dataset.bingoTheme;
+    const shouldShow = !isPopout
+      && settings.showOtherThemesFlashboard
+      && ["classic", "current"].includes(selectedTheme)
+      && !document.documentElement.classList.contains("dealer-round-active")
+      && !document.documentElement.classList.contains("dealer-overlay-open");
+    board.hidden = !shouldShow;
+    if (!shouldShow) return;
+
+    const headerBottom = Math.max(0, Math.ceil(document.querySelector("#app .topbar")?.getBoundingClientRect().bottom || 0));
+    board.style.setProperty("--other-flashboard-top", `${headerBottom}px`);
+    const activeBirthday = birthdayBallIsActive(settings);
+    const hot = board.querySelector(".other-hot-ball");
+    const birthday = board.querySelector(".other-birthday-ball");
+    hot.querySelector(".special-waiting-ball").textContent = settings.hotEnabled ? String(settings.hotNumber) : "—";
+    hot.querySelector("small").textContent = settings.hotEnabled ? `${settings.hotMultiplier}× PRIZE` : "OFF";
+    hot.classList.toggle("is-active", Boolean(settings.hotEnabled));
+    birthday.querySelector(".special-waiting-ball").textContent = activeBirthday ? String(settings.birthdayNumber) : "—";
+    birthday.querySelector("small").textContent = activeBirthday
+      ? `${settings.birthdayMultiplier}× PRIZE · ACTIVE TODAY`
+      : settings.birthdayEnabled ? "SCHEDULED" : "OFF";
+    birthday.classList.toggle("is-active", activeBirthday);
+    renderOtherThemeNumberBoard(board.querySelector(".other-theme-number-board"));
+  }
+
+  function mountOtherThemeWaitingFlashboard() {
+    if (isPopout || document.querySelector(".other-theme-waiting-flashboard")) return;
+    const board = document.createElement("section");
+    board.className = "other-theme-waiting-flashboard";
+    board.hidden = true;
+    board.setAttribute("aria-label", "Waiting for Dealer flashboard");
+    board.innerHTML = `
+      <header>
+        <div class="special-waiting-feature other-hot-ball">
+          <span class="special-waiting-ball" aria-hidden="true">—</span>
+          <strong>HOT BALL</strong>
+          <small>OFF</small>
+        </div>
+        <div class="other-waiting-message">
+          <div class="muha-bingo-logo" role="img" aria-label="Muha Bingo">
+            <span class="muha-bingo-mark" aria-hidden="true">M</span>
+            <span class="muha-bingo-words"><b>MUHA</b><span>BINGO</span></span>
+          </div>
+          <strong>WAITING FOR DEALER TO START GAME</strong>
+          <span>The flashboard will update when number calling begins.</span>
+        </div>
+        <div class="special-waiting-feature other-birthday-ball">
+          <span class="special-waiting-ball" aria-hidden="true">—</span>
+          <strong>BIRTHDAY BALL</strong>
+          <small>OFF</small>
+        </div>
+      </header>
+      <div class="other-theme-number-board" aria-label="Bingo numbers 1 through 75"></div>`;
+    document.body.append(board);
+    window.addEventListener("resize", syncOtherThemeWaitingFlashboard, { passive: true });
+    syncOtherThemeWaitingFlashboard();
   }
 
   function storedPositiveInteger(key, fallback) {
@@ -1109,7 +1412,12 @@
       }
 
       if (away === 0) {
-        winners.push(card.querySelector(".card-id")?.textContent?.trim() || `Card ${cards.indexOf(card) + 1}`);
+        const cardName = card.querySelector(".card-id")?.textContent?.trim() || `Card ${cards.indexOf(card) + 1}`;
+        const cardNumbers = new Set([...card.querySelectorAll(".number-cell")].map(numberCellValue).filter(Boolean));
+        const bonuses = activeSpecialBalls()
+          .filter((ball) => cardNumbers.has(ball.number))
+          .map((ball) => `${ball.label} ${ball.multiplier}× PRIZE`);
+        winners.push(bonuses.length ? `${cardName} · ${bonuses.join(" + ")}` : cardName);
       }
     });
 
@@ -1173,6 +1481,7 @@
       "dealer-round-active",
       isRunning || calledNumbers().size > 0
     );
+    syncOtherThemeWaitingFlashboard();
     document.querySelectorAll("[data-hall-action='start'] span").forEach((span) => {
       if (span.textContent !== label) span.textContent = label;
     });
@@ -1186,6 +1495,7 @@
     syncStartButtons();
     showUnlimitedCredits();
     enhanceDealerSetup();
+    enhanceSpecialBallSettings();
     syncCardSerials();
     enhanceDealerSchedule();
     syncIncorrectBingoClaims();
@@ -1385,7 +1695,7 @@
       <section role="dialog" aria-modal="true" aria-labelledby="daub-options-title">
         <header id="daub-options-title">Choose a dauber design:</header>
         <div class="daub-design-grid">${daubOptions.map(([id, label, symbol]) => {
-          const previewClass = ["solid", "splat", "circle"].includes(id) ? ` ${id}` : "";
+          const previewClass = solidColorDaubDesigns.has(id) ? ` ${id}` : "";
           return `<button type="button" data-daub-design="${id}"><i class="daub-preview${previewClass}">${symbol}</i><span>${label}</span></button>`;
         }).join("")}</div>
         <div class="solid-color-panel" hidden>
@@ -1415,12 +1725,12 @@
       const designButton = event.target.closest("[data-daub-design]");
       if (designButton) {
         applyDaubDesign(designButton.dataset.daubDesign);
-        if (designButton.dataset.daubDesign === "solid" || designButton.dataset.daubDesign === "circle") {
-          const panelName = designButton.dataset.daubDesign === "circle" ? "Circle" : "Solid Color";
+        if (solidColorDaubDesigns.has(designButton.dataset.daubDesign)) {
+          const designName = daubOptions.find(([id]) => id === designButton.dataset.daubDesign)?.[1] || "Solid Color";
           overlay.querySelector(".daub-design-grid").hidden = true;
           overlay.querySelector(".solid-color-panel").hidden = false;
-          overlay.querySelector("[data-color-panel-title]").textContent = panelName;
-          overlay.querySelector("header").textContent = `Customize ${panelName.toLowerCase()} colors:`;
+          overlay.querySelector("[data-color-panel-title]").textContent = designName;
+          overlay.querySelector("header").textContent = `Customize ${designName.replace(" (Solid Color)", "").toLowerCase()} colors:`;
         }
       }
       if (event.target.closest("[data-solid-color-back]")) {
@@ -1521,7 +1831,21 @@
   document.addEventListener("change", saveCardSerialSetting, true);
   document.addEventListener("click", saveNativeCardView, true);
   document.addEventListener("click", recordManualClaimDecision, true);
+  document.addEventListener("click", (event) => {
+    if (event.target.closest("#app .number-cell")) window.setTimeout(queueSpecialBallSync, 0);
+    if (event.target.closest("#app button")) {
+      window.setTimeout(syncStartButtons, 50);
+      window.setTimeout(syncStartButtons, 500);
+    }
+  }, true);
   document.addEventListener("keydown", blockCallingShortcutAfterBingo, true);
+  window.addEventListener("storage", (event) => {
+    if (event.key !== SPECIAL_BALL_STORAGE_KEY) return;
+    enhanceSpecialBallSettings();
+    queueSpecialBallSync();
+    syncOtherThemeWaitingFlashboard();
+    window.dispatchEvent(new CustomEvent("muha-bingo-special-balls-changed"));
+  });
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
@@ -1531,6 +1855,7 @@
         mountPopoutToolbar();
         mountViewOverlay();
         mountScheduleOverlay();
+        observeSpecialBalls();
         restoreSavedPreferences();
         return;
       }
@@ -1540,6 +1865,8 @@
       mountPurchaseOverlay();
       mountScheduleOverlay();
       mountBallTapControl();
+      mountOtherThemeWaitingFlashboard();
+      observeSpecialBalls();
       restoreSavedPreferences();
     }, { once: true });
   } else {
@@ -1549,6 +1876,7 @@
       mountPopoutToolbar();
       mountViewOverlay();
       mountScheduleOverlay();
+      observeSpecialBalls();
       restoreSavedPreferences();
       return;
     }
@@ -1558,6 +1886,8 @@
     mountPurchaseOverlay();
     mountScheduleOverlay();
     mountBallTapControl();
+    mountOtherThemeWaitingFlashboard();
+    observeSpecialBalls();
     restoreSavedPreferences();
   }
 })();

@@ -5,6 +5,45 @@
   let renderQueued = false;
   const cardSerialStartKey = "muha-bingo-card-serial-start";
   const cardSerialStepKey = "muha-bingo-card-serial-step";
+  const specialBallStorageKey = "muha-bingo-special-ball-settings";
+
+  function specialBallDisplaySettings() {
+    try {
+      return {
+        hotEnabled: false,
+        hotNumber: 1,
+        hotMultiplier: 2,
+        birthdayEnabled: false,
+        birthdayNumber: 1,
+        birthdayDate: "",
+        birthdayMultiplier: 2,
+        ...JSON.parse(window.localStorage.getItem(specialBallStorageKey) || "{}"),
+      };
+    } catch {
+      return {};
+    }
+  }
+
+  function birthdayDisplayIsActive(settings) {
+    const today = new Date();
+    const monthDay = `${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    return Boolean(settings.birthdayEnabled && settings.birthdayDate?.slice(5) === monthDay);
+  }
+
+  function syncSpecialBallDisplay(shell) {
+    const settings = specialBallDisplaySettings();
+    const hotFeature = shell.querySelector(".planet-idle-feature.hot-ball");
+    const birthdayFeature = shell.querySelector(".planet-idle-feature.birthday-ball");
+    const birthdayActive = birthdayDisplayIsActive(settings);
+    hotFeature.querySelector(".planet-idle-ball").textContent = settings.hotEnabled ? String(settings.hotNumber) : "—";
+    hotFeature.querySelector("small").textContent = settings.hotEnabled ? `${settings.hotMultiplier}× PRIZE` : "OFF";
+    hotFeature.classList.toggle("is-active", Boolean(settings.hotEnabled));
+    birthdayFeature.querySelector(".planet-idle-ball").textContent = birthdayActive ? String(settings.birthdayNumber) : "—";
+    birthdayFeature.querySelector("small").textContent = birthdayActive
+      ? `${settings.birthdayMultiplier}× PRIZE · ACTIVE TODAY`
+      : settings.birthdayEnabled ? "SCHEDULED" : "OFF";
+    birthdayFeature.classList.toggle("is-active", birthdayActive);
+  }
 
   function savedPositiveInteger(key, fallback) {
     try {
@@ -82,6 +121,7 @@
     const idleFlashboard = shell.querySelector(".planet-idle-flashboard");
     shell.classList.toggle("planet-round-idle", !roundActive);
     if (idleFlashboard) idleFlashboard.hidden = roundActive;
+    syncSpecialBallDisplay(shell);
 
     const sourceBall = document.querySelector(
       "#app .bingo-ball, #app .dealer-current-ball, #app .audience-ball"
@@ -173,6 +213,7 @@
             <div class="planet-idle-feature hot-ball">
               <span class="planet-idle-ball" aria-hidden="true">—</span>
               <strong>HOT BALL</strong>
+              <small>OFF</small>
             </div>
             <div class="planet-idle-message">
               <div class="muha-bingo-logo" role="img" aria-label="Muha Bingo">
@@ -185,6 +226,7 @@
             <div class="planet-idle-feature birthday-ball">
               <span class="planet-idle-ball" aria-hidden="true">—</span>
               <strong>BIRTHDAY BALL</strong>
+              <small>OFF</small>
             </div>
           </header>
           <div class="planet-idle-number-board" aria-label="Bingo numbers 1 through 75"></div>
@@ -239,8 +281,9 @@
       characterData: true,
     });
     window.addEventListener("storage", (event) => {
-      if ([cardSerialStartKey, cardSerialStepKey].includes(event.key)) queueSync();
+      if ([cardSerialStartKey, cardSerialStepKey, specialBallStorageKey].includes(event.key)) queueSync();
     });
+    window.addEventListener("muha-bingo-special-balls-changed", queueSync);
 
     const sourceApp = document.querySelector("#app");
     if (sourceApp) new MutationObserver(queueSync).observe(sourceApp, { childList: true, subtree: true, attributes: true });
