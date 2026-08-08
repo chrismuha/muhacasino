@@ -3146,3 +3146,18 @@ label {
   overflow-wrap: anywhere;
   white-space: normal;
 }
+
+/* Match & Win jackpot bonus */
+.match-win-dialog { width: min(92vw, 560px); text-align: center; }
+.match-win-grid { display: grid; grid-template-columns: repeat(3, minmax(74px, 1fr)); gap: 12px; margin: 20px auto; max-width: 440px; }
+.match-win-grid button { min-height: 92px; border: 2px solid rgba(255,255,255,.4); border-radius: 14px; background: rgba(10,16,30,.9); color: #fff; font-size: 1.7rem; cursor: pointer; }
+.match-win-grid button:disabled { opacity: 1; cursor: default; }
+.match-win-grid button strong, .match-win-grid button span { display: block; }
+.match-win-grid button strong { font-size: 1rem; text-transform: uppercase; }
+.match-win-grid button span { margin-top: 5px; font-size: .9rem; }
+.match-win-grid .jackpot-mini { background: #8a4d22; }
+.match-win-grid .jackpot-minor { background: #65717a; }
+.match-win-grid .jackpot-major { background: #8f2434; }
+.match-win-grid .jackpot-grand { background: #876500; }
+.match-win-result { min-height: 1.5em; font-weight: 800; }
+@media (max-width: 480px) { .match-win-grid { gap: 8px; } .match-win-grid button { min-height: 76px; padding: 6px; } }

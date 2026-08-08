@@ -13,12 +13,14 @@ Current feature rules:
   Penny 1x bet (35%), Lucky Nickel 2x (25%), Shiny Dime 5x (18%), or Golden
   Quarter 10x (12%). Jackpot outcomes total 10%: Mini 7%, Minor 2%, Major
   0.8%, and Grand 0.2%.
-- The wheel opens when 3, 4, or 5 Reserve Wheel trigger chips land from the
-  left on an active payline.
+- The bonus opens when 3, 4, or 5 Reserve Wheel trigger chips land from the
+  left on an active payline, then randomly selects the Reserve Wheel or Match
+  & Win. Match & Win uses the current scaled jackpot values and Jackpot Odds
+  settings to determine its award and tier likelihoods.
 - Settings include separate controls for winning LINK-chain frequency and
   non-paying Not Connected LINK display frequency. Defaults are 28% of
   eligible winning spins and 9% of spins without a winning LINK.
-- Reel Jackpot Odds settings apply only to jackpots appearing directly on the
-  reels and do not change the bonus-wheel probabilities.
+- Reel Jackpot Odds settings apply to jackpots appearing directly on the reels
+  and to Match & Win, but do not change the Reserve Wheel probabilities.
 
 NO REAL MONEY.

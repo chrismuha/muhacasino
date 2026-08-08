@@ -1,13 +1,15 @@
 # Release Log
 
-## Unreleased — 2026-08-01
+## Unreleased — 2026-08-08
 
 ### Added
 
+- Added Match & Win as a second bonus game in Big Money Deluxe, Muha Slots, Pretty Penny, and TreasurePots. Players reveal a 3×3 board and win the displayed jackpot by matching three values; awards and tier likelihoods use each game's current jackpot settings.
 - Added TreasurePots to the featured-game slider with a dedicated green-and-gold hero design, slider navigation, automatic rotation, and direct Play button.
 
 ### Fixed
 
+- Fixed Big Money Deluxe and Muha Slots pick-bonus prizes staying in predictable positions by replacing the random-sort approach with a proper per-round shuffle.
 - Centered and reduced TreasurePots reel symbols so they remain fully visible without clipping.
 - Redesigned the TreasurePots interface with a distinct Emerald Vault palette, green reel glass, antique-gold controls, and teal accents.
 - Enlarged all TreasurePots reel chips into oversized, edge-to-edge pills with substantially taller rows and prominent labels.

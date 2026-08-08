@@ -548,7 +548,74 @@ function chooseBonusWheelSegment() {
     return BONUS_WHEEL_SEGMENTS.find((segment) => roll < segment.end) || BONUS_WHEEL_SEGMENTS[0];
 }
 
-function playBonusGame(totalBetUSD) {
+function shuffledCopy(values) {
+    const shuffled = [...values];
+    for (let index = shuffled.length - 1; index > 0; index--) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+    }
+    return shuffled;
+}
+
+function chooseMatchJackpot() {
+    const weightedTiers = JACKPOT_TIERS.map((tier) => ({ tier, weight: getTargetJackpotRate(tier) }));
+    const totalWeight = weightedTiers.reduce((sum, item) => sum + item.weight, 0);
+    if (totalWeight <= 0 || Math.random() >= Math.min(1, totalWeight)) return null;
+    let roll = Math.random() * totalWeight;
+    for (const item of weightedTiers) {
+        roll -= item.weight;
+        if (roll <= 0) return item.tier;
+    }
+    return weightedTiers.at(-1)?.tier || null;
+}
+
+function playMatchAndWinBonus(totalBetUSD) {
+    const winningTier = chooseMatchJackpot();
+    const symbols = winningTier
+        ? [winningTier, winningTier, winningTier, ...JACKPOT_TIERS.filter((tier) => tier !== winningTier).flatMap((tier) => [tier, tier])]
+        : [...JACKPOT_TIERS.flatMap((tier) => [tier, tier]), { name: "Blank", amountUSD: 0 }];
+    const board = shuffledCopy(symbols).slice(0, 9);
+    const overlay = document.createElement("div");
+    overlay.className = "feature-overlay match-win-overlay";
+    overlay.innerHTML = `<div class="feature-dialog match-win-dialog" role="dialog" aria-modal="true" aria-labelledby="matchWinTitle"><h2 id="matchWinTitle">Match & Win</h2><p>Reveal the cards. Match three jackpot values to win that jackpot!</p><div class="match-win-grid"></div><p class="match-win-result" aria-live="polite">Pick a card to begin.</p></div>`;
+    document.body.appendChild(overlay);
+    const grid = overlay.querySelector(".match-win-grid");
+    const result = overlay.querySelector(".match-win-result");
+    const counts = new Map();
+    let finished = false;
+    return new Promise((resolve) => {
+        board.forEach((tier) => {
+            const amountUSD = getScaledJackpotAmount(tier, totalBetUSD);
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = "?";
+            button.setAttribute("aria-label", "Hidden jackpot card");
+            button.onclick = () => {
+                if (finished || button.disabled) return;
+                button.disabled = true;
+                button.className = `jackpot-${tier.name.toLowerCase()}`;
+                button.innerHTML = `<strong>${tier.name}</strong><span>${fmtUSD(amountUSD)}</span>`;
+                const count = (counts.get(tier.name) || 0) + 1;
+                counts.set(tier.name, count);
+                const remaining = grid.querySelectorAll("button:not(:disabled)").length;
+                if (count === 3) {
+                    finished = true;
+                    grid.querySelectorAll("button").forEach((card) => { card.disabled = true; });
+                    result.textContent = `${tier.name.toUpperCase()} JACKPOT — ${fmtUSD(amountUSD)}`;
+                    setTimeout(() => { overlay.remove(); resolve({ winUSD: amountUSD, label: `MATCH & WIN ${tier.name.toUpperCase()} JACKPOT` }); }, 1400);
+                } else if (remaining === 0) {
+                    finished = true;
+                    result.textContent = "No three-of-a-kind this time.";
+                    setTimeout(() => { overlay.remove(); resolve({ winUSD: 0, label: "MATCH & WIN" }); }, 1400);
+                }
+            };
+            grid.appendChild(button);
+        });
+        grid.querySelector("button")?.focus();
+    });
+}
+
+function playWheelBonusGame(totalBetUSD) {
     if (!bonusOverlayEl) return Promise.resolve(0);
     bonusOverlayEl.hidden = false;
     const wheel = bonusOverlayEl.querySelector(".bonus-wheel");
@@ -596,6 +663,10 @@ function playBonusGame(totalBetUSD) {
         };
         spinButton.focus();
     });
+}
+
+function playBonusGame(totalBetUSD) {
+    return Math.random() < 0.5 ? playWheelBonusGame(totalBetUSD) : playMatchAndWinBonus(totalBetUSD);
 }
 
 function getCreditStatusMessage(totalBetOverrideUSD = totalBetDisplayOverrideUSD) {
