@@ -114,7 +114,7 @@ a { color: inherit; text-decoration: none; }
   min-width: 0;
   min-height: 430px;
 }
-.money-slide .hero-content { transform: translateY(-18px); }
+.money-slide .hero-content { transform: none; }
 .eyebrow, .section-kicker { margin: 0 0 13px; color: var(--cyan); font-size: 9pt; font-weight: 950; letter-spacing: .22em; text-transform: uppercase; }
 
 .hero h1 {
@@ -486,4 +486,19 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   #gameFrame { height: calc(100dvh - 68px); }
   .game-rail { grid-auto-columns: min(340px, calc(100vw - 42px)); scroll-padding-inline: 2px; }
   .card-money .card-details strong { font-size: 13.25pt; }
+  .hero-content {
+    display: grid;
+    grid-template-rows: auto 190px 108px auto;
+    align-content: start;
+  }
+  .hero-content .eyebrow { align-self: start; }
+  .hero-content h1 { align-self: start; }
+  .hero-content > p:not(.eyebrow) {
+    align-self: start;
+    box-sizing: border-box;
+    min-height: 108px;
+    margin: 0;
+    padding-top: 18px;
+  }
+  .hero-actions { align-self: start; }
 }
