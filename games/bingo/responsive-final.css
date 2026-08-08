@@ -774,3 +774,194 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-control
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls .hall-dealer-button {
   grid-column: span 1 !important;
 }
+
+/* Shared Dealer Console containment for every Bingo theme and window mode. */
+html[data-bingo-theme] body #app .app-shell .dealer-layout {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-content: start !important;
+  width: 100% !important;
+  max-width: 1680px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin-inline: auto !important;
+  padding: clamp(12px, 2vw, 32px) clamp(10px, 2.5vw, 40px) max(72px, env(safe-area-inset-bottom)) !important;
+  gap: clamp(12px, 1.6vw, 20px) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout > *,
+html[data-bingo-theme] body #app .dealer-layout :is(
+  .dealer-card,
+  .dealer-grid,
+  .dealer-hero,
+  .dealer-stats,
+  .dealer-command-bar,
+  .dealer-primary-actions,
+  .dealer-tabs,
+  .game-setup-panel,
+  .setup-fields,
+  .setup-actions,
+  .dealer-ball-board,
+  .special-ball-grid,
+  .bingo-schedule-form,
+  .bingo-prizes-form,
+  .target-summary,
+  .credit-summary
+) {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-hero {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-stats {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
+  gap: 8px !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-tabs {
+  position: sticky !important;
+  z-index: 35 !important;
+  top: 0 !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 6px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: thin;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-tabs button {
+  flex: 1 0 max(120px, 18%) !important;
+  min-width: 120px !important;
+  min-height: 46px !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout :is(.setup-fields, .dealer-command-bar, .dealer-primary-actions, .setup-actions) {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+  align-items: stretch !important;
+  gap: 10px !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout :is(.setup-fields, .bingo-schedule-form, .bingo-prizes-form) :is(label, input, select, button) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout :is(.dealer-command-bar, .dealer-primary-actions, .setup-actions) button {
+  width: 100% !important;
+  min-height: 48px !important;
+  white-space: normal !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout :is(.bingo-schedule-form, .bingo-prizes-form) {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout :is(.bingo-schedule-error, .bingo-prizes-error) {
+  grid-column: 1 / -1 !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .verification-overlay {
+  box-sizing: border-box !important;
+  padding: clamp(8px, 2vw, 24px) !important;
+  overflow: auto !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
+  box-sizing: border-box !important;
+  width: min(900px, 100%) !important;
+  max-width: 100% !important;
+  max-height: calc(100dvh - 24px) !important;
+  overflow: auto !important;
+}
+
+@media (max-width: 900px) {
+  html[data-bingo-theme] body #app .dealer-layout :is(.dealer-grid, .special-ball-grid) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .dealer-pattern-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .dealer-ball-board {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .dealer-ball-column {
+    grid-template-columns: repeat(15, minmax(30px, 1fr)) !important;
+    overflow-x: auto !important;
+    overscroll-behavior-inline: contain;
+  }
+}
+
+@media (max-width: 620px) {
+  html[data-bingo-theme] body #app .app-shell .dealer-layout {
+    padding: 8px 8px max(64px, env(safe-area-inset-bottom)) !important;
+    gap: 9px !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .dealer-hero {
+    grid-template-columns: minmax(0, 1fr) !important;
+    align-items: stretch !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .dealer-hero > .edit-setup-btn {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout :is(.setup-fields, .dealer-command-bar, .dealer-primary-actions, .setup-actions, .bingo-schedule-form, .bingo-prizes-form) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .dealer-pattern-list {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout :is(.dealer-card, .game-setup-panel, .bingo-schedule-editor, .bingo-prizes-editor, .special-ball-settings) {
+    padding: 12px !important;
+    border-radius: 10px !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .dealer-ball-column {
+    grid-template-columns: repeat(5, minmax(36px, 1fr)) !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .target-summary {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout :is(input, select, textarea, button) {
+    font-size: max(16px, 10.5pt) !important;
+  }
+}
+
+@media (max-height: 620px) and (min-width: 621px) {
+  html[data-bingo-theme] body #app .app-shell .dealer-layout {
+    padding-top: 8px !important;
+    gap: 8px !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout :is(.dealer-card, .game-setup-panel) {
+    padding-block: 12px !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .dealer-tabs button {
+    min-height: 40px !important;
+  }
+}
