@@ -760,3 +760,16 @@ html[data-bingo-theme] body #app .app-shell .app-footer .legend-dot {
   html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small):nth-child(4) { grid-row: 4 !important; }
   html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small):nth-child(5) { grid-row: 5 !important; }
 }
+
+/* Final Hall 2 action-grid authority. */
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls .hall-start-button {
+  grid-column: span 3 !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls .hall-dealer-button {
+  grid-column: span 2 !important;
+}

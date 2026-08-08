@@ -4161,6 +4161,15 @@ html[data-bingo-theme="current"] .classic-hall-controls [data-hall-action="sched
   box-shadow: inset 0 0 0 2px #83e4ff, 0 3px 0 #064f7d;
 }
 
+html[data-bingo-theme="current"] .classic-hall-controls [data-hall-action="prizes"],
+[data-bingo-theme="classic"] .player-hall-controls [data-hall-action="prizes"],
+[data-bingo-theme="planet"] .planet-footer-controls [data-hall-action="prizes"] {
+  border-color: #8f5708 !important;
+  color: #fff !important;
+  background: linear-gradient(#ffd65a, #b86a04) !important;
+  box-shadow: inset 0 0 0 2px #ffeda1, 0 3px 0 #613503 !important;
+}
+
 html[data-bingo-theme="current"] .classic-hall-controls [data-hall-action="purchase"] {
   border-color: #5f8d20;
   background: linear-gradient(#a4ed42, #58a515);
@@ -9575,6 +9584,180 @@ html[data-bingo-theme="planet"] #app .app-shell.theme-light .bingo-schedule-form
   }
 }
 
+/* Dealer-managed prizes intentionally use independent presentation hooks. */
+#app .dealer-layout .bingo-prizes-editor {
+  display: grid;
+  gap: 16px;
+  padding: 20px !important;
+  color: var(--dealer-text, #f5f8ff);
+  background: var(--dealer-panel, #14233b);
+}
+
+.bingo-prizes-heading h2,
+.bingo-prizes-heading p {
+  margin: 3px 0;
+  color: inherit;
+}
+
+.bingo-prizes-form {
+  display: grid;
+  grid-template-columns: minmax(240px, 2fr) minmax(150px, 1fr) minmax(130px, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.bingo-prizes-form label {
+  display: grid;
+  gap: 6px;
+  font-weight: 800;
+}
+
+.bingo-prizes-form input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  color: var(--dealer-text, #f5f8ff);
+  background: var(--dealer-input, #0d192b);
+  border: 2px solid var(--dealer-border, #d99b2b);
+  border-radius: 8px;
+  font: inherit;
+}
+
+.bingo-prizes-form button,
+.bingo-prizes-list button,
+.bingo-prizes-overlay button {
+  min-height: 48px;
+  padding: 10px 18px;
+  border: 2px solid #ffd65a;
+  border-radius: 8px;
+  color: #fff;
+  background: #9a5b08;
+  font: 800 1rem/1 inherit;
+  cursor: pointer;
+}
+
+.bingo-prizes-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 9px 12px;
+  color: #fff;
+  background: #a91f1c;
+  border-radius: 6px;
+  font-weight: 800;
+}
+
+.bingo-prizes-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bingo-prizes-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  color: inherit;
+  background: color-mix(in srgb, currentColor 7%, transparent);
+  border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-radius: 8px;
+}
+
+.bingo-prizes-list li span {
+  display: grid;
+  gap: 3px;
+}
+
+.bingo-prizes-list small {
+  color: inherit;
+  opacity: .78;
+}
+
+.bingo-prizes-list button {
+  min-height: 38px;
+  color: #fff;
+  background: #a91f1c;
+  border-color: #ed625c;
+}
+
+.bingo-prizes-empty {
+  margin: 0;
+  padding: 16px;
+  color: inherit;
+  border: 1px dashed currentColor;
+  border-radius: 8px;
+  opacity: .8;
+}
+
+html[data-bingo-theme="planet"] #app .app-shell.theme-light .bingo-prizes-editor {
+  color: #13213a !important;
+  background: #fff !important;
+}
+
+html[data-bingo-theme="planet"] #app .app-shell.theme-light .bingo-prizes-form input {
+  color: #13213a !important;
+  background: #fff !important;
+}
+
+.bingo-prizes-overlay {
+  position: fixed;
+  z-index: 10041;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: #fff9e8;
+  background: rgba(16, 9, 1, .82);
+}
+
+.bingo-prizes-overlay[hidden] {
+  display: none !important;
+}
+
+.bingo-prizes-overlay > section {
+  box-sizing: border-box;
+  width: min(680px, 100%);
+  max-height: min(760px, 88vh);
+  overflow: auto;
+  padding: 22px;
+  background: #291b09;
+  border: 3px solid #d99b2b;
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .6);
+}
+
+.bingo-prizes-overlay header span {
+  color: #ffd65a;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.bingo-prizes-overlay h2 {
+  margin: 5px 0 18px;
+  color: #fff;
+}
+
+.bingo-prizes-overlay footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+@media (max-width: 850px) {
+  .bingo-prizes-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .bingo-prizes-form label:first-child,
+  .bingo-prizes-form button {
+    grid-column: 1 / -1;
+  }
+}
+
 /* Planet Hall must remain a viewport-sized console inside the casino iframe. */
 html[data-bingo-theme="planet"],
 html[data-bingo-theme="planet"] body {
@@ -9740,6 +9923,18 @@ html[data-bingo-theme="planet"] .planet-idle-feature {
   box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .15), 0 0 14px rgba(38, 178, 255, .45);
   color: #fff;
   text-align: center;
+}
+
+html[data-bingo-theme="planet"] .planet-idle-feature.hot-ball {
+  border-color: #c84848;
+  background: linear-gradient(145deg, #781c24, #31090e);
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .13), 0 0 14px rgba(190, 37, 46, .48);
+}
+
+html[data-bingo-theme="planet"] .planet-idle-feature.birthday-ball {
+  border-color: #4d91da;
+  background: linear-gradient(145deg, #17437f, #071a3e);
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .13), 0 0 14px rgba(40, 111, 199, .48);
 }
 
 html[data-bingo-theme="planet"] .planet-idle-ball {
@@ -10059,6 +10254,18 @@ html[data-bingo-theme="current"] {
   background: var(--waiting-board-panel);
   box-shadow: inset 0 0 0 3px color-mix(in srgb, #fff 18%, transparent), 0 6px 14px rgba(0, 0, 0, .24);
   text-align: center;
+}
+
+.special-waiting-feature.other-hot-ball {
+  border-color: #c84848;
+  color: #fff;
+  background: linear-gradient(145deg, #781c24, #31090e);
+}
+
+.special-waiting-feature.other-birthday-ball {
+  border-color: #4d91da;
+  color: #fff;
+  background: linear-gradient(145deg, #17437f, #071a3e);
 }
 
 .special-waiting-feature:not(.is-active) {
@@ -11922,4 +12129,17 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel s
     padding-right: 28px !important;
     font-size: clamp(8.5pt, 2.65vw, 10.5pt) !important;
   }
+}
+
+/* Final Hall 2 seven-action grid, kept after every theme override. */
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls .hall-start-button {
+  grid-column: span 3 !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls .hall-dealer-button {
+  grid-column: span 2 !important;
 }

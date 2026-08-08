@@ -7,6 +7,7 @@
   const DEALER_POPOUT_STORAGE_KEY = "muha-bingo-dealer-popout";
   const INCORRECT_BINGO_STORAGE_KEY = "muha-bingo-incorrect-claims";
   const SCHEDULE_STORAGE_KEY = "muha-bingo-schedule";
+  const PRIZES_STORAGE_KEY = "muha-bingo-prizes";
   const CARD_SERIAL_START_STORAGE_KEY = "muha-bingo-card-serial-start";
   const CARD_SERIAL_STEP_STORAGE_KEY = "muha-bingo-card-serial-step";
   const CARD_SERIAL_DEFAULT_VERSION_KEY = "muha-bingo-card-serial-default-version";
@@ -855,6 +856,115 @@
     renderSchedule();
   }
 
+  function readPrizes() {
+    try {
+      const prizes = JSON.parse(window.localStorage.getItem(PRIZES_STORAGE_KEY) || "[]");
+      return Array.isArray(prizes) ? prizes.filter((prize) => prize?.title && (prize.date || prize.time)) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function writePrizes(prizes) {
+    try {
+      window.localStorage.setItem(PRIZES_STORAGE_KEY, JSON.stringify(prizes));
+    } catch {
+      // Prize details remain available in the current rendered view.
+    }
+  }
+
+  function prizeWhen(prize) {
+    const details = [];
+    if (prize.date) {
+      const date = new Date(`${prize.date}T12:00:00`);
+      details.push(Number.isNaN(date.getTime()) ? prize.date : date.toLocaleDateString(undefined, {
+        weekday: "short", month: "short", day: "numeric", year: "numeric",
+      }));
+    }
+    if (prize.time) {
+      const time = new Date(`2000-01-01T${prize.time}`);
+      details.push(Number.isNaN(time.getTime()) ? prize.time : time.toLocaleTimeString(undefined, {
+        hour: "numeric", minute: "2-digit",
+      }));
+    }
+    return details.join(" at ");
+  }
+
+  function escapePrizeText(value) {
+    const safeText = document.createElement("span");
+    safeText.textContent = String(value || "");
+    return safeText.innerHTML;
+  }
+
+  function prizeListMarkup(prizes, editable = false) {
+    if (!prizes.length) return '<p class="bingo-prizes-empty">No Bingo prizes have been scheduled.</p>';
+    return `<ul class="bingo-prizes-list">${prizes.map((prize) => `
+      <li>
+        <span><strong>${escapePrizeText(prize.title)}</strong><small>${escapePrizeText(prizeWhen(prize))}</small></span>
+        ${editable ? `<button type="button" data-prize-delete="${escapePrizeText(prize.id)}" aria-label="Delete ${escapePrizeText(prize.title)}">Delete</button>` : ""}
+      </li>`).join("")}</ul>`;
+  }
+
+  function renderPrizes() {
+    const prizes = readPrizes();
+    document.querySelectorAll("[data-prizes-list]").forEach((list) => {
+      list.innerHTML = prizeListMarkup(prizes, list.dataset.prizesList === "editable");
+    });
+  }
+
+  function enhanceDealerPrizes() {
+    const layout = document.querySelector("#app .dealer-layout");
+    if (!layout || layout.querySelector(".bingo-prizes-editor")) return;
+    const editor = document.createElement("section");
+    editor.className = "dealer-card bingo-prizes-editor";
+    editor.innerHTML = `
+      <div class="bingo-prizes-heading">
+        <span class="eyebrow">PRIZE SCHEDULE</span>
+        <h2>Schedule Bingo prizes</h2>
+        <p>Add a prize and either a date, a time, or both.</p>
+      </div>
+      <form class="bingo-prizes-form" novalidate>
+        <label><span>Prize title <b aria-hidden="true">*</b></span><input name="title" type="text" required maxlength="80" placeholder="Grand prize drawing"></label>
+        <label><span>Date</span><input name="date" type="date"></label>
+        <label><span>Time</span><input name="time" type="time"></label>
+        <button type="submit">Add prize</button>
+        <p class="bingo-prizes-error" role="alert" hidden></p>
+      </form>
+      <div data-prizes-list="editable"></div>`;
+    const scheduleEditor = layout.querySelector(".bingo-schedule-editor");
+    if (scheduleEditor) scheduleEditor.insertAdjacentElement("afterend", editor);
+    else layout.prepend(editor);
+    editor.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-prize-delete]");
+      if (!button) return;
+      event.stopPropagation();
+      writePrizes(readPrizes().filter((prize) => prize.id !== button.dataset.prizeDelete));
+      renderPrizes();
+    });
+    editor.querySelector("form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const form = event.currentTarget;
+      const data = new FormData(form);
+      const title = String(data.get("title") || "").trim();
+      const date = String(data.get("date") || "");
+      const time = String(data.get("time") || "");
+      const error = form.querySelector(".bingo-prizes-error");
+      if (!title || (!date && !time)) {
+        error.textContent = !title ? "Enter a prize title." : "Choose a date, a time, or both.";
+        error.hidden = false;
+        return;
+      }
+      error.hidden = true;
+      const prizes = readPrizes();
+      prizes.push({ id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, title, date, time });
+      writePrizes(prizes);
+      form.reset();
+      renderPrizes();
+    });
+    renderPrizes();
+  }
+
   function readIncorrectBingoState() {
     try {
       return {
@@ -1164,6 +1274,11 @@
       return;
     }
 
+    if (action === "prizes") {
+      openPrizesOverlay();
+      return;
+    }
+
     if (action === "trade") {
       showHallMessage("BONANZA TRADE", "Card trading opens after cards are prepared and before number calling begins.");
     }
@@ -1178,6 +1293,7 @@
       <button type="button" data-hall-action="options"><i class="bi bi-gear-fill" aria-hidden="true"></i><span>OPTIONS</span></button>
       <button type="button" data-hall-action="trade"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>TRADE</span></button>
       <button type="button" data-hall-action="schedule"><i class="bi bi-calendar3" aria-hidden="true"></i><span>SCHEDULE</span></button>
+      <button type="button" data-hall-action="prizes"><i class="bi bi-trophy-fill" aria-hidden="true"></i><span>PRIZES</span></button>
       <button type="button" data-hall-action="purchase"><i class="bi bi-cart-fill" aria-hidden="true"></i><span>PURCHASE</span></button>
       <button type="button" data-hall-action="next"><span>NEXT</span><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
     `;
@@ -1217,6 +1333,7 @@
       <button type="button" data-hall-action="options"><i class="bi bi-gear-fill" aria-hidden="true"></i><span>OPTIONS</span></button>
       <button type="button" data-hall-action="purchase"><i class="bi bi-cart-fill" aria-hidden="true"></i><span>PURCHASE</span></button>
       <button type="button" data-hall-action="schedule"><i class="bi bi-calendar3" aria-hidden="true"></i><span>SCHEDULE</span></button>
+      <button type="button" data-hall-action="prizes"><i class="bi bi-trophy-fill" aria-hidden="true"></i><span>PRIZES</span></button>
     `;
 
     [classicControls, planetControls].forEach((controls) => {
@@ -1498,6 +1615,7 @@
     enhanceSpecialBallSettings();
     syncCardSerials();
     enhanceDealerSchedule();
+    enhanceDealerPrizes();
     syncIncorrectBingoClaims();
   }
 
@@ -1528,6 +1646,35 @@
     });
     document.body.append(overlay);
     renderSchedule();
+  }
+
+  function openPrizesOverlay() {
+    const overlay = document.querySelector(".bingo-prizes-overlay");
+    if (!overlay) return;
+    renderPrizes();
+    overlay.hidden = false;
+    overlay.querySelector("[data-prizes-close]")?.focus();
+  }
+
+  function mountPrizesOverlay() {
+    if (document.querySelector(".bingo-prizes-overlay")) return;
+    const overlay = document.createElement("div");
+    overlay.className = "bingo-prizes-overlay";
+    overlay.hidden = true;
+    overlay.innerHTML = `
+      <section role="dialog" aria-modal="true" aria-labelledby="bingo-prizes-title">
+        <header>
+          <span>BINGO PRIZES</span>
+          <h2 id="bingo-prizes-title">Bingo Prize Schedule</h2>
+        </header>
+        <div data-prizes-list></div>
+        <footer><button type="button" data-prizes-close>Close</button></footer>
+      </section>`;
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay || event.target.closest("[data-prizes-close]")) overlay.hidden = true;
+    });
+    document.body.append(overlay);
+    renderPrizes();
   }
 
   function openPurchaseOverlay() {
@@ -1855,6 +2002,7 @@
         mountPopoutToolbar();
         mountViewOverlay();
         mountScheduleOverlay();
+        mountPrizesOverlay();
         observeSpecialBalls();
         restoreSavedPreferences();
         return;
@@ -1864,6 +2012,7 @@
       mountDaubOptions();
       mountPurchaseOverlay();
       mountScheduleOverlay();
+      mountPrizesOverlay();
       mountBallTapControl();
       mountOtherThemeWaitingFlashboard();
       observeSpecialBalls();
@@ -1876,6 +2025,7 @@
       mountPopoutToolbar();
       mountViewOverlay();
       mountScheduleOverlay();
+      mountPrizesOverlay();
       observeSpecialBalls();
       restoreSavedPreferences();
       return;
@@ -1885,6 +2035,7 @@
     mountDaubOptions();
     mountPurchaseOverlay();
     mountScheduleOverlay();
+    mountPrizesOverlay();
     mountBallTapControl();
     mountOtherThemeWaitingFlashboard();
     observeSpecialBalls();
