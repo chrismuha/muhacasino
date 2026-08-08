@@ -10,13 +10,17 @@
   function hasVisibleGame() {
     const theme = document.documentElement.dataset.bingoTheme || "planet";
     const isPopout = document.documentElement.classList.contains("bingo-popout-window");
-    const target = !isPopout && theme === "planet"
+    const app = document.querySelector("#app");
+    const themedShell = !isPopout && theme === "planet"
       ? document.querySelector(".planet-hall-shell")
-      : document.querySelector("#app");
-    if (!target || !target.children.length) return false;
-    const style = window.getComputedStyle(target);
-    return style.display !== "none" && style.visibility !== "hidden" &&
-      target.getBoundingClientRect().height > 40;
+      : null;
+    const targets = [themedShell, app].filter(Boolean);
+    return targets.some((target) => {
+      if (!target.children.length) return false;
+      const style = window.getComputedStyle(target);
+      return style.display !== "none" && style.visibility !== "hidden" &&
+        target.getBoundingClientRect().height > 40;
+    });
   }
 
   function showFailure(reason) {

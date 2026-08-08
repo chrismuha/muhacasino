@@ -93,6 +93,7 @@ const categoryTitle = document.querySelector("#categoryTitle");
 const categoryRail = document.querySelector("#categoryRail");
 let activeSlide = 0;
 let sliderTimer;
+let lastHeroWheelAt = 0;
 let activeGameId = null;
 let gameLoadTimer = 0;
 const bingoThemeChannel = "BroadcastChannel" in window
@@ -154,6 +155,73 @@ document.querySelector("#heroPrevious").addEventListener("click", () => {
 document.querySelector("#heroNext").addEventListener("click", () => {
   showSlide(activeSlide + 1);
   restartSlider();
+});
+
+function addHorizontalSwipe(element, onSwipe, { dragScroll = false } = {}) {
+  let pointerId = null;
+  let startX = 0;
+  let startY = 0;
+  let startScrollLeft = 0;
+  let dragged = false;
+
+  element.style.touchAction = "pan-y pinch-zoom";
+  element.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    pointerId = event.pointerId;
+    startX = event.clientX;
+    startY = event.clientY;
+    startScrollLeft = element.scrollLeft;
+    dragged = false;
+    element.setPointerCapture?.(pointerId);
+  });
+  element.addEventListener("pointermove", (event) => {
+    if (event.pointerId !== pointerId) return;
+    const deltaX = event.clientX - startX;
+    const deltaY = event.clientY - startY;
+    if (Math.abs(deltaX) < 8 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+    dragged = true;
+    if (dragScroll) element.scrollLeft = startScrollLeft - deltaX;
+  });
+  element.addEventListener("pointerup", (event) => {
+    if (event.pointerId !== pointerId) return;
+    const deltaX = event.clientX - startX;
+    const deltaY = event.clientY - startY;
+    element.releasePointerCapture?.(pointerId);
+    pointerId = null;
+    if (!dragScroll && Math.abs(deltaX) >= 48 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      onSwipe(deltaX < 0 ? 1 : -1);
+    }
+  });
+  element.addEventListener("pointercancel", () => { pointerId = null; });
+  element.addEventListener("click", (event) => {
+    if (!dragged) return;
+    event.preventDefault();
+    event.stopPropagation();
+    dragged = false;
+  }, true);
+}
+
+addHorizontalSwipe(document.querySelector("#heroTrack"), (direction) => {
+  showSlide(activeSlide + direction);
+  restartSlider();
+});
+
+document.querySelector("#heroTrack").addEventListener("wheel", (event) => {
+  if (Math.abs(event.deltaX) < 24 || Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
+  event.preventDefault();
+  if (Date.now() - lastHeroWheelAt < 500) return;
+  lastHeroWheelAt = Date.now();
+  showSlide(activeSlide + (event.deltaX > 0 ? 1 : -1));
+  restartSlider();
+}, { passive: false });
+
+document.querySelectorAll(".game-rail").forEach((rail) => {
+  addHorizontalSwipe(rail, () => {}, { dragScroll: true });
+  rail.addEventListener("wheel", (event) => {
+    if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
+    event.preventDefault();
+    rail.scrollLeft += event.deltaX;
+  }, { passive: false });
 });
 
 function showLauncher() {

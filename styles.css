@@ -287,7 +287,7 @@ a { color: inherit; text-decoration: none; }
   padding: 70px 66px 20px 21px;
   background: linear-gradient(transparent, rgba(8,9,15,.92) 62%);
 }
-.card-details strong { display: block; margin-bottom: 6px; overflow-wrap: anywhere; font-size: 14.16pt; line-height: 1.25; }
+.card-details strong { display: flex; min-height: 2.5em; align-items: flex-end; margin-bottom: 6px; overflow-wrap: anywhere; font-size: 14.16pt; line-height: 1.25; }
 .card-details small { color: #8d91a6; font-weight: 650; }
 .card-play { position: absolute; z-index: 3; right: 18px; bottom: 24px; display: grid; width: 38px; height: 38px; place-items: center; border-radius: 50%; background: white; color: #111; font-size: 9pt; }
 
@@ -479,4 +479,6 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   .toolbar-theme-picker { flex: 0 1 36%; min-width: 0; }
   .toolbar-theme-picker select { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; padding-inline: 10px 25px; font-size: 8.5pt; }
   #gameFrame { height: calc(100dvh - 68px); }
+  .game-rail { grid-auto-columns: min(340px, calc(100vw - 42px)); scroll-padding-inline: 2px; }
+  .card-money .card-details strong { font-size: 13.25pt; }
 }
