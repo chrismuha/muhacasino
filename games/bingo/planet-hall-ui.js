@@ -216,10 +216,6 @@
               <small>OFF</small>
             </div>
             <div class="planet-idle-message">
-              <div class="muha-bingo-logo" role="img" aria-label="Muha Bingo">
-                <span class="muha-bingo-mark" aria-hidden="true">M</span>
-                <span class="muha-bingo-words"><b>MUHA</b><span>BINGO</span></span>
-              </div>
               <strong>WAITING FOR DEALER TO START GAME</strong>
               <span>The full flashboard will update when calling begins.</span>
             </div>

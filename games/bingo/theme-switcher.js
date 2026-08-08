@@ -689,10 +689,6 @@
           <small>OFF</small>
         </div>
         <div class="other-waiting-message">
-          <div class="muha-bingo-logo" role="img" aria-label="Muha Bingo">
-            <span class="muha-bingo-mark" aria-hidden="true">M</span>
-            <span class="muha-bingo-words"><b>MUHA</b><span>BINGO</span></span>
-          </div>
           <strong>WAITING FOR DEALER TO START GAME</strong>
           <span>The flashboard will update when number calling begins.</span>
         </div>
