@@ -1842,8 +1842,125 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
   html[data-bingo-theme] body #app .app-shell .dealer-layout :is(.dealer-grid, .dealer-card, .player-cards-section) { height: auto !important; max-height: none !important; min-height: 0 !important; overflow: visible !important; }
 }
 
+/* Shared desktop geometry; themes retain their own colors and typography. */
+@media (min-width: 601px) {
+  html[data-bingo-theme] body #app .app-shell .topbar,
+  html[data-bingo-theme] body #app .app-shell .header-actions,
+  html[data-bingo-theme] body #app .app-shell .play-time-panel {
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .header-actions > .play-time-panel {
+    display: grid !important;
+    grid-template-columns: minmax(0, .78fr) minmax(0, 1.1fr) minmax(160px, 1.2fr) !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    column-gap: clamp(7px, 1vw, 14px) !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .play-time-panel > :is(div, label) {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .play-time-panel :is(span, strong) {
+    display: block !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .play-time-panel select {
+    box-sizing: border-box !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+}
+
 /* v1.1.9 cascade-final iPhone authority. */
 @media (max-width: 600px) {
+  html[data-bingo-theme] body #app .app-shell .cards-stage .stage-toolbar {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    gap: 10px !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .cards-stage .stage-toolbar > *,
+  html[data-bingo-theme] body #app .app-shell .cards-stage .card-view-tools,
+  html[data-bingo-theme] body #app .app-shell .cards-stage .sort-control,
+  html[data-bingo-theme] body #app .app-shell .cards-stage .card-pager {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .cards-stage .card-view-tools {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .cards-stage .sort-control {
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .cards-stage .sort-control select {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .cards-stage .card-pager {
+    display: grid !important;
+    grid-template-columns: 44px minmax(0, 1fr) 44px !important;
+    align-items: center !important;
+    padding: 4px !important;
+    gap: 5px !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .cards-stage .card-pager button {
+    box-sizing: border-box !important;
+    display: grid !important;
+    place-items: center !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    max-height: 44px !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .cards-stage .card-pager strong {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-align: center !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
   html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel,
   html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
     grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr) !important;
