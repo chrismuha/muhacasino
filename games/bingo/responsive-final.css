@@ -184,6 +184,143 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   }
 }
 
+/* Cascade-final Dealer sizing: Find Card and Edit Game Setup match every full-width section. */
+@media (max-width: 600px) {
+  html[data-bingo-theme] body #app .dealer-layout .dealer-hero > :is(.dealer-search, .edit-setup-btn) {
+    box-sizing: border-box !important;
+    justify-self: stretch !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-inline: 0 !important;
+  }
+}
+
+/* Treat the B-I-N-G-O letters as the visual header of every player card. */
+html[data-bingo-theme] body #app .bingo-card .bingo-letters,
+html[data-bingo-theme="planet"] body .planet-card-wall .bingo-letters {
+  position: relative !important;
+  margin-bottom: 5px !important;
+  padding-bottom: 5px !important;
+}
+
+html[data-bingo-theme] body #app .bingo-card .bingo-letters::after,
+html[data-bingo-theme="planet"] body .planet-card-wall .bingo-letters::after {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 2 !important;
+  right: 4px !important;
+  bottom: 0 !important;
+  left: 4px !important;
+  height: 3px !important;
+  border-radius: 999px !important;
+  background: currentColor !important;
+  opacity: .48 !important;
+  pointer-events: none !important;
+}
+
+/* Narrow-screen timezone authority: one label row, one bounded native control, one arrow. */
+@media (max-width: 600px) {
+  html[data-bingo-theme] body #app .app-shell .topbar .header-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: minmax(126px, auto) repeat(2, 54px) !important;
+    height: auto !important;
+    min-height: 250px !important;
+    max-height: none !important;
+    align-content: start !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .header-actions > .play-time-panel {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+    align-self: stretch !important;
+    height: 126px !important;
+    min-height: 126px !important;
+    max-height: none !important;
+    padding: 10px 12px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .header-actions > :is(
+    .appearance-btn,
+    .status-pill,
+    .new-game-btn,
+    .bingo-theme-switcher.header-theme-switcher
+  ) {
+    grid-row: auto !important;
+    min-height: 54px !important;
+    max-height: 54px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto minmax(44px, auto) !important;
+    align-content: start !important;
+    gap: 4px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label > span {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label > select {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    grid-column: 1 !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    max-height: 44px !important;
+    margin: 0 !important;
+    padding: 7px 38px 7px 10px !important;
+    font-size: clamp(9pt, 3.4vw, 12pt) !important;
+    line-height: 1.15 !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    background-position: calc(100% - 16px) 50%, calc(100% - 11px) 50% !important;
+    background-size: 6px 6px, 6px 6px !important;
+    background-repeat: no-repeat !important;
+  }
+
+  /* Dealer hero controls use the same inner gutter as the cards below them. */
+  html[data-bingo-theme] body #app .dealer-layout .dealer-hero > :is(
+    .dealer-search,
+    .edit-setup-btn,
+    .popout-btn
+  ) {
+    box-sizing: border-box !important;
+    width: calc(100% - 24px) !important;
+    min-width: 0 !important;
+    max-width: calc(100% - 24px) !important;
+    margin-inline: 12px !important;
+  }
+}
+
 /* Cascade-final overrides for the fixes above. */
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .app-shell .play-time-panel :is(span, strong) { font-size: clamp(6.5pt, 2.25vw, 8.5pt) !important; }
@@ -1904,8 +2041,143 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
   }
 }
 
+/* Classic footer legend stays compact beside the winning-pattern card. */
+@media (min-width: 451px) {
+  html[data-bingo-theme="current"] body #app .app-shell .app-footer {
+    grid-template-rows: repeat(4, 26px) !important;
+    align-content: center !important;
+    row-gap: 2px !important;
+  }
+
+  html[data-bingo-theme="current"] body #app .app-shell .app-footer > :is(span, small) {
+    align-self: center !important;
+    height: 26px !important;
+    min-height: 0 !important;
+    margin-block: 0 !important;
+    padding-block: 0 !important;
+  }
+}
+
+/* Special-ball titles sit above their bordered settings boxes in every theme. */
+html[data-bingo-theme] body #app .dealer-layout .special-ball-card {
+  position: relative !important;
+  margin-top: 38px !important;
+  padding-top: 18px !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .special-ball-card > legend {
+  position: absolute !important;
+  z-index: 2 !important;
+  bottom: 100% !important;
+  left: 0 !important;
+  float: none !important;
+  width: auto !important;
+  max-width: 100% !important;
+  margin: 0 0 8px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-size: clamp(16pt, 2.2vw, 20pt) !important;
+  line-height: 1.1 !important;
+}
+
 /* v1.1.9 cascade-final iPhone authority. */
 @media (max-width: 600px) {
+  html[data-bingo-theme] body #app .app-shell .topbar {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .header-actions > .play-time-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: auto auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel select {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    min-height: 44px !important;
+    padding: 7px 38px 7px 10px !important;
+    font-size: 16px !important;
+    text-overflow: ellipsis !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout :is(.dealer-command-bar, .dealer-primary-actions, .setup-actions) {
+    box-sizing: border-box !important;
+    width: calc(100% - 12px) !important;
+    max-width: calc(100% - 12px) !important;
+    margin-inline: 6px !important;
+    padding: 6px !important;
+    gap: 8px !important;
+  }
+
+  /* Pop-out controls are direct dealer-hero children, so give them their own inset. */
+  html[data-bingo-theme] body #app .dealer-layout .dealer-hero > .popout-btn {
+    box-sizing: border-box !important;
+    width: calc(100% - 12px) !important;
+    max-width: calc(100% - 12px) !important;
+    margin-inline: 6px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
+    height: 48px !important;
+    gap: 4px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > span {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    font-size: clamp(8.5pt, 2.9vw, 10.5pt) !important;
+    font-weight: 850 !important;
+    line-height: 1.05 !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .legend-dot {
+    flex: 0 0 17px !important;
+    width: 17px !important;
+    min-width: 17px !important;
+    height: 17px !important;
+    min-height: 17px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-area {
+    border-bottom: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .special-ball-card {
+    margin-top: 42px !important;
+    padding: 16px 12px 14px !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .special-ball-card > legend {
+    max-width: 100% !important;
+    margin-bottom: 8px !important;
+    font-size: 17pt !important;
+  }
+
   html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     grid-template-rows: 42px repeat(4, minmax(0, 1fr)) !important;
@@ -2039,4 +2311,123 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
     height: 72px !important;
     min-height: 72px !important;
   }
+}
+
+/* Absolute final sizing for the two Dealer hero controls that form full-width rows. */
+@media (max-width: 600px) {
+  html[data-bingo-theme] body #app .dealer-layout .dealer-hero > :is(.dealer-search, .edit-setup-btn) {
+    box-sizing: border-box !important;
+    justify-self: stretch !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-inline: 0 !important;
+  }
+}
+
+/* B-I-N-G-O is the card header; the divider separates it from the number field. */
+html[data-bingo-theme] body #app .bingo-card .bingo-letters,
+html[data-bingo-theme="planet"] body .planet-card-wall .bingo-letters {
+  position: relative !important;
+  margin-bottom: 5px !important;
+  padding-bottom: 5px !important;
+}
+
+html[data-bingo-theme] body #app .bingo-card .bingo-letters::after,
+html[data-bingo-theme="planet"] body .planet-card-wall .bingo-letters::after {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 2 !important;
+  right: 4px !important;
+  bottom: 0 !important;
+  left: 4px !important;
+  height: 3px !important;
+  border-radius: 999px !important;
+  background: currentColor !important;
+  opacity: .48 !important;
+  pointer-events: none !important;
+}
+
+/* Mobile Hall 1 and Classic topbars reserve real rows for controls and screen tabs. */
+@media (max-width: 600px) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar:has(.screen-switcher) {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: minmax(250px, auto) 61px !important;
+    align-content: start !important;
+    box-sizing: border-box !important;
+    height: auto !important;
+    min-height: 311px !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar > .header-actions {
+    position: relative !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    align-self: start !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 250px !important;
+    max-height: none !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar > .screen-switcher {
+    position: relative !important;
+    z-index: 2 !important;
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    align-self: stretch !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 54px !important;
+    min-height: 54px !important;
+    max-height: 54px !important;
+    margin: 7px 0 0 !important;
+  }
+}
+
+/* Full Bingo cards use the same letter-header treatment on every Dealer Console. */
+html[data-bingo-theme] body #app .dealer-layout .bingo-letters {
+  position: relative !important;
+  margin-bottom: 5px !important;
+  padding-bottom: 5px !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .bingo-letters::after {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 2 !important;
+  right: 4px !important;
+  bottom: 0 !important;
+  left: 4px !important;
+  height: 3px !important;
+  border-radius: 999px !important;
+  background: currentColor !important;
+  opacity: .48 !important;
+  pointer-events: none !important;
+}
+
+/* Every theme uses the same readable footer-key sizing while retaining theme colors. */
+html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small) {
+  column-gap: 10px !important;
+  font-size: clamp(10pt, 1.55vw, 14pt) !important;
+  line-height: 1.15 !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .app-footer .legend-dot,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .legend-dot {
+  flex: 0 0 18px !important;
+  width: 18px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  min-height: 18px !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > span {
+  font-size: clamp(9.5pt, 1.5vw, 13pt) !important;
+  line-height: 1.1 !important;
 }
