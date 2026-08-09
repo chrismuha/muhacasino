@@ -4959,3 +4959,118 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-wall .bin
   text-shadow: none !important;
   filter: none !important;
 }
+
+/* Planet Hall 1 desktop navigation sizes from its content so no breakpoint creates a void. */
+@media (min-width: 501px) {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar:has(.screen-switcher) {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto 58px !important;
+    align-content: start !important;
+    box-sizing: border-box !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 27px 18px 14px !important;
+    row-gap: 8px !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar > .header-actions {
+    position: relative !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-template-rows: 112px 56px !important;
+    align-content: start !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 176px !important;
+    min-height: 176px !important;
+    max-height: 176px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 8px !important;
+    transform: none !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+    grid-template-columns: minmax(0, .72fr) minmax(0, .82fr) minmax(0, 1.46fr) !important;
+    align-items: start !important;
+    box-sizing: border-box !important;
+    justify-self: stretch !important;
+    width: 100% !important;
+    height: 112px !important;
+    min-height: 112px !important;
+    max-height: 112px !important;
+    padding: 10px 16px !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > label {
+    order: 3 !important;
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > div:first-child {
+    order: 1 !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > div:nth-child(2) {
+    order: 2 !important;
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > :is(div, label) {
+    align-self: start !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > label > select {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-top: 4px !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > :is(
+    .appearance-btn,
+    .status-pill,
+    .new-game-btn,
+    .bingo-theme-switcher.header-theme-switcher
+  ) {
+    grid-row: 2 !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 56px !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar > .screen-switcher {
+    position: relative !important;
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    align-self: stretch !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    max-height: 58px !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+}
