@@ -5,6 +5,144 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   width: 100% !important;
 }
 
+/* v1.1.9 mobile viewport and Planet Hall footer correction. */
+@media (max-width: 600px) {
+  html[data-bingo-theme],
+  html[data-bingo-theme] body {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell {
+    position: fixed !important;
+    inset: 0 !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    max-height: 100dvh !important;
+    padding: 3px !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-play-surface {
+    display: grid !important;
+    flex: 1 1 0 !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 3px !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-area {
+    box-sizing: border-box !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
+    flex: 0 0 96px !important;
+    grid-template-columns: 66px 42px minmax(0, 1fr) !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 96px !important;
+    min-height: 96px !important;
+    max-height: 96px !important;
+    padding: 3px !important;
+    gap: 3px !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
+    grid-template-rows: minmax(0, 1fr) !important;
+    width: 66px !important;
+    height: 90px !important;
+    min-height: 0 !important;
+    padding: 2px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
+    display: none !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy {
+    grid-row: 1 !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview {
+    width: 58px !important;
+    min-width: 58px !important;
+    max-width: 58px !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    max-height: 58px !important;
+    padding: 3px !important;
+    gap: 1px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball {
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
+    grid-column: 3 !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 90px !important;
+    min-height: 0 !important;
+    max-height: 90px !important;
+    padding: 1px !important;
+    gap: 2px !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls button {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 2px !important;
+    gap: 1px !important;
+    line-height: 1 !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label > span {
+    display: none !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel select {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    min-height: 44px !important;
+    padding: 6px 38px 6px 10px !important;
+    font-size: 16px !important;
+    text-overflow: ellipsis !important;
+  }
+}
+
 /* v1.1.9 iPhone containment foundations. */
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel,
@@ -140,6 +278,23 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
     height: 72px !important;
     min-height: 72px !important;
   }
+}
+
+/* Absolute final authority for the v1.1.9 Planet Hall mobile viewport. */
+@media (max-width: 600px) {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell { position: fixed !important; inset: 0 !important; box-sizing: border-box !important; width: 100% !important; height: 100dvh !important; min-height: 0 !important; max-height: 100dvh !important; padding: 3px !important; overflow: hidden !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-play-surface { display: grid !important; flex: 1 1 0 !important; grid-template-columns: minmax(0, 1fr) !important; grid-template-rows: minmax(0, 1fr) !important; box-sizing: border-box !important; width: 100% !important; height: 0 !important; min-height: 0 !important; max-height: none !important; padding: 3px !important; overflow: hidden !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-area { box-sizing: border-box !important; height: 100% !important; min-height: 0 !important; max-height: 100% !important; padding: 0 !important; overflow-x: hidden !important; overflow-y: auto !important; overscroll-behavior: contain !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar { flex: 0 0 96px !important; grid-template-columns: 66px 42px minmax(0, 1fr) !important; box-sizing: border-box !important; width: 100% !important; height: 96px !important; min-height: 96px !important; max-height: 96px !important; padding: 3px !important; gap: 3px !important; overflow: hidden !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box { grid-template-rows: minmax(0, 1fr) !important; width: 66px !important; height: 90px !important; min-height: 0 !important; padding: 2px !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend { display: none !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy { grid-row: 1 !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview { width: 58px !important; min-width: 58px !important; max-width: 58px !important; height: 58px !important; min-height: 58px !important; max-height: 58px !important; padding: 3px !important; gap: 1px !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball { width: 40px !important; min-width: 40px !important; max-width: 40px !important; height: 40px !important; min-height: 40px !important; max-height: 40px !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls { grid-column: 3 !important; display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; grid-template-rows: repeat(3, minmax(0, 1fr)) !important; box-sizing: border-box !important; width: 100% !important; height: 90px !important; min-height: 0 !important; max-height: 90px !important; padding: 1px !important; gap: 2px !important; overflow: hidden !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls button { min-width: 0 !important; min-height: 0 !important; padding: 2px !important; gap: 1px !important; line-height: 1 !important; overflow: hidden !important; }
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label > span { display: none !important; }
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel select { box-sizing: border-box !important; width: 100% !important; min-width: 0 !important; max-width: 100% !important; min-height: 44px !important; padding: 6px 38px 6px 10px !important; font-size: 16px !important; text-overflow: ellipsis !important; }
 }
 
 /* Cascade-final overrides for the fixes above. */
@@ -1802,6 +1957,19 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
 
 /* v1.1.9 cascade-final iPhone authority. */
 @media (max-width: 600px) {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell { position: fixed !important; inset: 0 !important; box-sizing: border-box !important; width: 100% !important; height: 100dvh !important; min-height: 0 !important; max-height: 100dvh !important; padding: 3px !important; overflow: hidden !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-play-surface { display: grid !important; flex: 1 1 0 !important; grid-template-columns: minmax(0, 1fr) !important; grid-template-rows: minmax(0, 1fr) !important; box-sizing: border-box !important; width: 100% !important; height: 0 !important; min-height: 0 !important; max-height: none !important; padding: 3px !important; overflow: hidden !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-area { box-sizing: border-box !important; height: 100% !important; min-height: 0 !important; max-height: 100% !important; padding: 0 !important; overflow-x: hidden !important; overflow-y: auto !important; overscroll-behavior: contain !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar { flex: 0 0 96px !important; grid-template-columns: 66px 42px minmax(0, 1fr) !important; box-sizing: border-box !important; width: 100% !important; height: 96px !important; min-height: 96px !important; max-height: 96px !important; padding: 3px !important; gap: 3px !important; overflow: hidden !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box { grid-template-rows: minmax(0, 1fr) !important; width: 66px !important; height: 90px !important; min-height: 0 !important; padding: 2px !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend { display: none !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy { grid-row: 1 !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview { width: 58px !important; min-width: 58px !important; max-width: 58px !important; height: 58px !important; min-height: 58px !important; max-height: 58px !important; padding: 3px !important; gap: 1px !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball { width: 40px !important; min-width: 40px !important; max-width: 40px !important; height: 40px !important; min-height: 40px !important; max-height: 40px !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls { grid-column: 3 !important; display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; grid-template-rows: repeat(3, minmax(0, 1fr)) !important; box-sizing: border-box !important; width: 100% !important; height: 90px !important; min-height: 0 !important; max-height: 90px !important; padding: 1px !important; gap: 2px !important; overflow: hidden !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls button { min-width: 0 !important; min-height: 0 !important; padding: 2px !important; gap: 1px !important; line-height: 1 !important; overflow: hidden !important; }
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label > span { display: none !important; }
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel select { box-sizing: border-box !important; width: 100% !important; min-width: 0 !important; max-width: 100% !important; min-height: 44px !important; padding: 6px 38px 6px 10px !important; font-size: 16px !important; text-overflow: ellipsis !important; }
   html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel,
   html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
     grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr) !important;
