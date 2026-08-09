@@ -48,6 +48,14 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   }
 }
 
+@media (min-width: 1451px) {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
+    grid-template-columns: repeat(3, max-content) !important;
+    justify-content: center !important;
+    column-gap: clamp(18px, 1.6vw, 34px) !important;
+  }
+}
+
 /* Keep the dauber dialog controls optically centered and Classic's surface rounded. */
 .daub-options-x {
   display: inline-flex !important;
