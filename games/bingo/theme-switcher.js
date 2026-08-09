@@ -1951,6 +1951,7 @@
     overlay.innerHTML = `
       <section role="dialog" aria-modal="true" aria-labelledby="daub-options-title">
         <header id="daub-options-title">Choose a dauber design:</header>
+        <button type="button" class="daub-options-x" data-daub-options-x aria-label="Close dauber design">&times;</button>
         <div class="daub-design-grid">${daubOptions.map(([id, label, symbol]) => {
           const previewClass = solidColorDaubDesigns.has(id) ? ` ${id}` : "";
           return `<button type="button" data-daub-design="${id}"><i class="daub-preview${previewClass}">${symbol}</i><span>${label}</span></button>`;
@@ -1976,11 +1977,34 @@
           <span><strong>Open Dealer in a separate window</strong><small>Disabled by default. Enable this to use a separate Dealer tab instead of the full-screen overlay.</small></span>
         </label>
         <footer><button type="button" data-daub-options-close>CONFIRM</button></footer>
+        <div class="daub-discard-prompt" data-daub-discard-prompt hidden role="alertdialog" aria-modal="true" aria-labelledby="daub-discard-title">
+          <section>
+            <strong id="daub-discard-title">Discard unsaved changes?</strong>
+            <p>Your dauber design changes will be returned to the choices you had before opening this window.</p>
+            <div><button type="button" data-daub-keep>KEEP EDITING</button><button type="button" data-daub-discard>DISCARD</button></div>
+          </section>
+        </div>
       </section>
     `;
+    let openingState = null;
+    let dirty = false;
+    const captureState = () => ({
+      design: savedDaubDesign(),
+      colors: savedSolidColors(),
+      dealerPopout: overlay.querySelector("[data-dealer-popout]")?.checked || false,
+    });
+    const closeDaubOptions = (confirmed = false) => {
+      if (!confirmed && dirty) {
+        overlay.querySelector("[data-daub-discard-prompt]").hidden = false;
+        return;
+      }
+      dirty = false;
+      overlay.hidden = true;
+    };
     overlay.addEventListener("click", (event) => {
       const designButton = event.target.closest("[data-daub-design]");
       if (designButton) {
+        dirty = true;
         applyDaubDesign(designButton.dataset.daubDesign);
         if (solidColorDaubDesigns.has(designButton.dataset.daubDesign)) {
           const designName = daubOptions.find(([id]) => id === designButton.dataset.daubDesign)?.[1] || "Solid Color";
@@ -1995,9 +2019,23 @@
         overlay.querySelector(".solid-color-panel").hidden = true;
         overlay.querySelector("header").textContent = "Choose a dauber design:";
       }
-      if (event.target.closest("[data-daub-options-close]") || event.target === overlay) overlay.hidden = true;
+      if (event.target.closest("[data-daub-options-close]")) closeDaubOptions(true);
+      if (event.target.closest("[data-daub-options-x]") || event.target === overlay) closeDaubOptions();
+      if (event.target.closest("[data-daub-keep]")) overlay.querySelector("[data-daub-discard-prompt]").hidden = true;
+      if (event.target.closest("[data-daub-discard]")) {
+        if (openingState) {
+          applyDaubDesign(openingState.design);
+          applySolidColors(openingState.colors);
+          overlay.querySelector("[data-dealer-popout]").checked = openingState.dealerPopout;
+          try { window.localStorage.setItem(DEALER_POPOUT_STORAGE_KEY, String(openingState.dealerPopout)); } catch {}
+        }
+        overlay.querySelector("[data-daub-discard-prompt]").hidden = true;
+        dirty = false;
+        overlay.hidden = true;
+      }
     });
     overlay.addEventListener("input", (event) => {
+      dirty = true;
       if (event.target.matches("[data-dealer-popout]")) {
         try {
           window.localStorage.setItem(DEALER_POPOUT_STORAGE_KEY, String(event.target.checked));
@@ -2020,6 +2058,13 @@
     }
     applySolidColors();
     applyDaubDesign(savedDaubDesign());
+    const originalOpen = openDaubOptions;
+    openDaubOptions = function openDaubOptionsWithSnapshot() {
+      openingState = captureState();
+      dirty = false;
+      overlay.querySelector("[data-daub-discard-prompt]").hidden = true;
+      originalOpen();
+    };
   }
 
   function mountBallTapControl() {

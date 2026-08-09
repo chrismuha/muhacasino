@@ -5,6 +5,239 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   width: 100% !important;
 }
 
+/* Cascade-final overrides for the fixes above. */
+@media (max-width: 600px) {
+  html[data-bingo-theme] body #app .app-shell .play-time-panel :is(span, strong) { font-size: clamp(6.5pt, 2.25vw, 8.5pt) !important; }
+  html[data-bingo-theme] body #app .app-shell .header-actions { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 7px !important; }
+  html[data-bingo-theme] body #app .app-shell .header-actions > :is(.play-time-panel, .screen-switcher) { grid-column: 1 / -1 !important; }
+  html[data-bingo-theme] body #app .app-shell .header-actions > button { width: 100% !important; min-width: 0 !important; min-height: 48px !important; padding: 7px !important; border-radius: 10px !important; white-space: normal !important; }
+  html[data-bingo-theme] body #app .app-shell .app-footer { grid-template-rows: minmax(116px, auto) repeat(4, 26px) !important; min-height: 230px !important; padding: 8px 12px max(10px, env(safe-area-inset-bottom)) !important; }
+  html[data-bingo-theme] body #app .app-shell .app-footer > .footer-pattern { min-height: 108px !important; padding-bottom: 8px !important; }
+  html[data-bingo-theme] body #app .app-shell .game-layout :is(.cards-stage, .cards-grid),
+  html[data-bingo-theme] body #app .app-shell .dealer-layout :is(.dealer-grid, .dealer-card, .player-cards-section) { height: auto !important; max-height: none !important; min-height: 0 !important; overflow: visible !important; }
+}
+
+/* 2026-08 responsive/accessibility consolidation. Keep last in the cascade. */
+html[data-bingo-theme] body #app .app-shell .design-screen {
+  color: #132039 !important;
+  background: #f3f7fd !important;
+}
+
+html[data-bingo-theme] body #app .app-shell.theme-dark .design-screen {
+  color: #f4f7ff !important;
+  background: #090d16 !important;
+}
+
+html[data-bingo-theme] body #app .design-screen :is(.design-copy, .design-group) :is(h1, h2, h3, p, label, span, strong, small) {
+  color: inherit !important;
+  -webkit-text-fill-color: currentColor !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme] body #app .design-screen .design-group {
+  border-color: #287a4b !important;
+  background: #fff !important;
+}
+
+html[data-bingo-theme] body #app .app-shell.theme-dark .design-screen .design-group {
+  border-color: #35c96f !important;
+  background: #101722 !important;
+}
+
+html[data-bingo-theme] body #app :is(.design-screen, .dealer-layout) input[type="checkbox"],
+.daub-options-overlay input[type="checkbox"] {
+  appearance: none !important;
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  border: 2px solid #287a4b !important;
+  border-radius: 5px !important;
+  background: #fff !important;
+}
+
+html[data-bingo-theme] body #app .app-shell.theme-dark :is(.design-screen, .dealer-layout) input[type="checkbox"],
+.daub-options-overlay input[type="checkbox"] {
+  background: #05070b !important;
+}
+
+html[data-bingo-theme] body #app input[type="checkbox"]:checked,
+.daub-options-overlay input[type="checkbox"]:checked {
+  background-color: #fff !important;
+  background-image: linear-gradient(135deg, transparent 43%, #20a85b 43% 56%, transparent 56%), linear-gradient(45deg, transparent 52%, #20a85b 52% 65%, transparent 65%) !important;
+}
+
+html[data-bingo-theme] body #app .app-shell.theme-dark input[type="checkbox"]:checked,
+.daub-options-overlay input[type="checkbox"]:checked {
+  background-color: #05070b !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .app-footer {
+  min-height: 164px !important;
+  padding-block: 10px !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy :is(.footer-pattern, .planet-pattern-footer) {
+  border-right: 0 !important;
+}
+
+.purchase-cards-overlay { z-index: 32000 !important; }
+.daub-options-overlay { z-index: 32000 !important; }
+.daub-options-overlay > section { position: relative !important; }
+.daub-options-x {
+  position: absolute; z-index: 3; top: 14px; right: 14px; display: grid; place-items: center;
+  width: 44px; height: 44px; padding: 0; border: 2px solid #fff; border-radius: 50%;
+  color: #fff; background: #8f1616; font-size: 25px; font-weight: 900;
+}
+.daub-discard-prompt[hidden] { display: none !important; }
+.daub-discard-prompt { position: absolute; z-index: 10; inset: 0; display: grid; place-items: center; padding: 16px; background: rgba(0,0,0,.82); }
+.daub-discard-prompt > section { width: min(430px, 100%); padding: 22px; border: 2px solid #4f6fa6; border-radius: 14px; color: #f4f7ff; background: #111a29; box-shadow: 0 18px 60px #000; }
+.daub-discard-prompt strong { font-size: 18pt; }
+.daub-discard-prompt p { line-height: 1.45; }
+.daub-discard-prompt div { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.daub-discard-prompt button { min-height: 48px; border: 2px solid #6080b8; border-radius: 9px; color: #fff; background: #263956; font-weight: 900; }
+.daub-discard-prompt [data-daub-discard] { border-color: #a83d3d; background: #8f1616; }
+
+@media (max-width: 600px) {
+  html[data-bingo-theme] body #app .app-shell .play-time-panel :is(span, strong) {
+    font-size: clamp(6.5pt, 2.25vw, 8.5pt) !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .play-time-panel select {
+    font-size: 16px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .header-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .header-actions > .play-time-panel,
+  html[data-bingo-theme] body #app .app-shell .header-actions > .screen-switcher {
+    grid-column: 1 / -1 !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .header-actions > button {
+    min-width: 0 !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    padding: 7px !important;
+    border-radius: 10px !important;
+    white-space: normal !important;
+    line-height: 1.05 !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .design-screen {
+    padding: 18px 14px max(20px, env(safe-area-inset-bottom)) !important;
+  }
+
+  html[data-bingo-theme] body #app .design-screen .design-copy {
+    margin-bottom: 18px !important;
+  }
+
+  html[data-bingo-theme] body #app .design-screen .design-copy h1 {
+    font-size: clamp(25pt, 10vw, 36pt) !important;
+    line-height: 1.02 !important;
+  }
+
+  html[data-bingo-theme] body #app .design-screen .design-copy p {
+    font-size: 12pt !important;
+    line-height: 1.45 !important;
+  }
+
+  html[data-bingo-theme] body #app .design-screen .design-group {
+    position: relative !important;
+    margin-top: 34px !important;
+    padding: 22px 14px 14px !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme] body #app .design-screen .design-group > :is(h2, h3):first-child {
+    position: absolute !important;
+    bottom: 100% !important;
+    left: 8px !important;
+    margin: 0 0 7px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    font-size: 17pt !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .app-footer {
+    grid-template-rows: minmax(116px, auto) repeat(4, 26px) !important;
+    min-height: 230px !important;
+    padding: 8px 12px max(10px, env(safe-area-inset-bottom)) !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .app-footer > .footer-pattern {
+    min-height: 108px !important;
+    padding-bottom: 8px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .game-layout :is(.cards-stage, .cards-grid),
+  html[data-bingo-theme] body #app .app-shell .dealer-layout :is(.dealer-grid, .dealer-card, .player-cards-section) {
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  [data-bingo-theme="planet"] .planet-purchase-terminal {
+    place-items: center !important;
+    padding: 10px !important;
+    overflow: auto !important;
+  }
+
+  [data-bingo-theme="planet"] .planet-purchase-terminal > section {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 460px !important;
+    max-height: calc(100dvh - 20px) !important;
+    padding: 12px !important;
+    border-width: 3px !important;
+    border-radius: 12px !important;
+    overflow-y: auto !important;
+  }
+
+  [data-bingo-theme="planet"] .planet-purchase-terminal header { margin: 0 0 10px !important; padding: 9px !important; }
+  [data-bingo-theme="planet"] .planet-purchase-terminal h2 { font-size: 18pt !important; }
+  [data-bingo-theme="planet"] .purchase-table { padding: 10px !important; }
+  [data-bingo-theme="planet"] :is(.purchase-table-head, .purchase-item-row) { grid-template-columns: minmax(0, 1fr) 96px !important; gap: 8px !important; }
+  [data-bingo-theme="planet"] .purchase-item-row > strong { font-size: 11.5pt !important; }
+  [data-bingo-theme="planet"] .purchase-totals { grid-template-columns: auto minmax(0, 1fr) !important; font-size: 12pt !important; }
+  [data-bingo-theme="planet"] .planet-purchase-terminal footer { grid-template-columns: 1fr 1fr !important; }
+  [data-bingo-theme="planet"] .planet-purchase-terminal footer button { min-width: 0 !important; padding: 8px 5px !important; font-size: 10pt !important; }
+
+  .daub-options-overlay { padding: 8px !important; }
+  .daub-options-overlay > section { box-sizing: border-box; width: 100%; max-height: calc(100dvh - 16px); border-radius: 12px; }
+  .daub-options-overlay header { min-height: 56px; padding: 15px 54px 15px 12px; font-size: 16pt; }
+  .daub-options-x { top: 14px; right: 14px; width: 40px; height: 40px; }
+  .daub-design-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 10px; }
+  .daub-discard-prompt div { grid-template-columns: 1fr; }
+
+  html[data-bingo-theme] body #app .app-prompt-backdrop,
+  html[data-bingo-theme] body #app .verification-overlay {
+    box-sizing: border-box !important;
+    align-items: center !important;
+    padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom)) !important;
+    overflow: auto !important;
+  }
+
+  html[data-bingo-theme] body #app .app-prompt,
+  html[data-bingo-theme] body #app .verification-dialog {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 460px !important;
+    max-height: calc(100dvh - 20px) !important;
+    margin: auto !important;
+    padding: 16px !important;
+    border-radius: 14px !important;
+    overflow-y: auto !important;
+  }
+
+  html[data-bingo-theme] body #app .app-prompt h2 { font-size: 18pt !important; line-height: 1.15 !important; }
+  html[data-bingo-theme] body #app .app-prompt p { font-size: 11pt !important; line-height: 1.45 !important; }
+  html[data-bingo-theme] body #app .app-prompt button { min-width: 0 !important; min-height: 48px !important; padding: 8px 12px !important; font-size: 11pt !important; white-space: normal !important; }
+}
+
 /* 2026-08 iPhone final authority.
    Keep this block last: the theme file contains older mobile experiments. */
 @media (max-width: 600px) {
@@ -1416,4 +1649,16 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
     display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
     width: 100% !important; height: 100% !important; min-height: 0 !important; max-height: 100% !important; padding: 3px !important; gap: 3px !important; overflow: hidden !important;
   }
+}
+
+/* True cascade-final mobile sizing. */
+@media (max-width: 600px) {
+  html[data-bingo-theme] body #app .app-shell .play-time-panel :is(span, strong) { font-size: clamp(6.5pt, 2.25vw, 8.5pt) !important; }
+  html[data-bingo-theme] body #app .app-shell .header-actions { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 7px !important; }
+  html[data-bingo-theme] body #app .app-shell .header-actions > :is(.play-time-panel, .screen-switcher) { grid-column: 1 / -1 !important; }
+  html[data-bingo-theme] body #app .app-shell .header-actions > button { width: 100% !important; min-width: 0 !important; min-height: 48px !important; padding: 7px !important; border-radius: 10px !important; white-space: normal !important; }
+  html[data-bingo-theme] body #app .app-shell .app-footer { grid-template-rows: minmax(116px, auto) repeat(4, 26px) !important; min-height: 230px !important; padding: 8px 12px max(10px, env(safe-area-inset-bottom)) !important; }
+  html[data-bingo-theme] body #app .app-shell .app-footer > .footer-pattern { min-height: 108px !important; padding-bottom: 8px !important; }
+  html[data-bingo-theme] body #app .app-shell .game-layout :is(.cards-stage, .cards-grid),
+  html[data-bingo-theme] body #app .app-shell .dealer-layout :is(.dealer-grid, .dealer-card, .player-cards-section) { height: auto !important; max-height: none !important; min-height: 0 !important; overflow: visible !important; }
 }
