@@ -260,7 +260,7 @@
       <div id="bingo-theme-menu" class="bingo-theme-menu" hidden>
         <strong>Choose a theme</strong>
         <button class="bingo-theme-option" type="button" data-theme="planet">Planet Hall 2</button>
-        <button class="bingo-theme-option" type="button" data-theme="classic">Planet Hall</button>
+        <button class="bingo-theme-option" type="button" data-theme="classic">Planet Hall 1</button>
         <button class="bingo-theme-option" type="button" data-theme="current">Classic</button>
       </div>
     `;

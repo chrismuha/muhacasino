@@ -320,7 +320,6 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 }
 
 .game-view { position: fixed; z-index: 99; inset: 0; background: #050610; }
-.game-view[hidden] { display: none !important; pointer-events: none !important; }
 .game-toolbar { display: flex; height: 56px; align-items: center; gap: 18px; padding: 0 14px; border-bottom: 1px solid rgba(255,255,255,.12); background: #0a0c19; }
 .game-toolbar strong { overflow: hidden; color: #fff !important; -webkit-text-fill-color: #fff !important; text-overflow: ellipsis; white-space: nowrap; }
 .game-identity { display: flex; min-width: 0; align-items: baseline; gap: 7px; }
