@@ -2768,3 +2768,28 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]):not(.hall-co
   overflow-y: auto !important;
   transform: translateY(-50%) !important;
 }
+
+/* Hall 1 uses the same complete controls-panel outline and surface as Classic. */
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
+  border: 3px solid #526b9f !important;
+  border-radius: 14px !important;
+  background: rgba(9, 16, 30, .97) !important;
+  box-shadow: inset 0 0 0 2px #142546, 0 18px 48px rgba(0, 0, 0, .68) !important;
+}
+
+/* Mobile hides Next, so only four action rows belong in the controls grid. */
+@media (max-width: 600px) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]):not(.hall-controls-collapsed) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
+    grid-template-rows: 52px repeat(4, minmax(72px, 1fr)) !important;
+    height: min(460px, calc(100dvh - 94px)) !important;
+    min-height: min(396px, calc(100dvh - 94px)) !important;
+  }
+}
+
+/* Hall 2 pattern information sits directly in the footer without a separator box. */
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
