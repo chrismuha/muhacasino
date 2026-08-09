@@ -2129,14 +2129,17 @@
   }
 
   function normalizeMobileTimezoneControl() {
-    if (!window.matchMedia("(max-width: 600px)").matches) return;
+    if (!window.matchMedia("(max-width: 600px)").matches) return false;
     const select = document.querySelector('#app .play-time-panel select[aria-label="Time zone"]');
-    if (!select) return;
+    if (!select) return false;
     const deviceOption = select.querySelector('option[value=""]');
-    if (deviceOption) deviceOption.textContent = "Device";
+    if (deviceOption && deviceOption.textContent !== "Device") deviceOption.textContent = "Device";
+    return true;
   }
 
-  const mobileTimezoneObserver = new MutationObserver(normalizeMobileTimezoneControl);
+  const mobileTimezoneObserver = new MutationObserver(() => {
+    if (normalizeMobileTimezoneControl()) mobileTimezoneObserver.disconnect();
+  });
   mobileTimezoneObserver.observe(document.documentElement, { childList: true, subtree: true });
   window.addEventListener("resize", normalizeMobileTimezoneControl, { passive: true });
 
