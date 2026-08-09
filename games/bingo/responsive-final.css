@@ -3331,6 +3331,16 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .a
   text-shadow: none !important;
 }
 
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > span > .legend-label,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > span:has(.free-dot) > .legend-label {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  font: inherit !important;
+  white-space: nowrap !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .play-time-panel :is(
   div,
   label,
