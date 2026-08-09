@@ -168,7 +168,7 @@
     const previousTheme = document.documentElement.dataset.bingoTheme;
     document.documentElement.classList.remove("hall-native-controls-open");
     document.querySelector(".hall-overlay-background")?.remove();
-    setHallControlsCollapsed(selectedTheme === "planet");
+    setHallControlsCollapsed(true);
     document.documentElement.dataset.bingoTheme = selectedTheme;
     window.requestAnimationFrame(syncOtherThemeWaitingFlashboard);
     const app = document.querySelector("#app");
