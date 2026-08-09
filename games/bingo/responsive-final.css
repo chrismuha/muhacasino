@@ -3949,13 +3949,31 @@ html.bingo-popout-window .bingo-popout-toolbar .bingo-theme-trigger::after {
     min-width: 48px !important;
     height: 48px !important;
     min-height: 48px !important;
-    padding: 7px !important;
+    gap: 0 !important;
+    padding: 0 !important;
     overflow: hidden !important;
     font-size: 0 !important;
   }
 
   html.bingo-popout-window .bingo-popout-toolbar > .appearance-btn > span[aria-hidden] {
+    display: grid !important;
+    place-items: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
     font-size: 15pt !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    transform: none !important;
+  }
+
+  html.bingo-popout-window:is([data-bingo-theme="current"], [data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app .topbar .play-time-panel select {
+    padding-right: 24px !important;
+    font-size: 9px !important;
+    letter-spacing: -.01em !important;
+    line-height: 1.1 !important;
+    white-space: nowrap !important;
   }
 
   /* Only Planet Hall 1's routed Dealer header needs the compact time row. */
@@ -4029,14 +4047,88 @@ html.bingo-popout-window .bingo-popout-toolbar .bingo-theme-trigger::after {
   }
 
   html.bingo-popout-window[data-bingo-theme="current"] body #app > .app-shell > .dealer-layout {
-    margin-top: 12px !important;
+    margin-top: 0 !important;
   }
 
   html.bingo-popout-window[data-bingo-theme="current"] body #app > .app-shell > .topbar,
   html.bingo-popout-window[data-bingo-theme="current"] body #app > .app-shell > .topbar > .header-actions {
-    height: 160px !important;
-    min-height: 160px !important;
-    max-height: 160px !important;
+    height: 146px !important;
+    min-height: 146px !important;
+    max-height: 146px !important;
+    border-radius: 0 !important;
+  }
+
+  html.bingo-popout-window[data-bingo-theme="current"] body #app > .app-shell > .topbar > .header-actions {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-rows: 94px 44px !important;
+    gap: 8px !important;
+  }
+
+  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, .7fr) minmax(0, 1.1fr) !important;
+    grid-template-rows: 1fr !important;
+    align-items: center !important;
+    height: 94px !important;
+    min-height: 94px !important;
+    max-height: 94px !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel::before,
+  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel::after {
+    border-radius: 0 !important;
+  }
+
+  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions,
+  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions::before,
+  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions::after {
+    border-radius: 0 !important;
+  }
+
+  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > label {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+
+  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > div:first-child {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+  }
+
+  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > div:nth-child(2) {
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+  }
+
+  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > :is(
+    .appearance-btn,
+    .status-pill,
+    .new-game-btn
+  ) {
+    position: relative !important;
+    inset: auto !important;
+    grid-row: 2 !important;
+    display: flex !important;
+    width: 100% !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    max-height: 44px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 6px 10px !important;
+    line-height: 1.05 !important;
+    text-align: center !important;
+    transform: translateY(-6px) !important;
+    white-space: nowrap !important;
+  }
+
+  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .appearance-btn[aria-label^="Use "] {
+    display: none !important;
   }
 
   html.bingo-popout-window[data-bingo-theme="planet"] body #app .app-shell .topbar .header-actions {
@@ -4069,6 +4161,14 @@ html.bingo-popout-window .bingo-popout-toolbar .bingo-theme-trigger::after {
   html.bingo-popout-window[data-bingo-theme="planet"] body #app .app-shell .topbar .play-time-panel > div:nth-child(2) {
     grid-column: 3 !important;
     grid-row: 1 !important;
+  }
+
+  html.bingo-popout-window:is([data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app .app-shell .topbar .header-actions > :is(
+    .appearance-btn,
+    .status-pill,
+    .new-game-btn
+  ) {
+    transform: translateY(-6px) !important;
   }
 }
 
