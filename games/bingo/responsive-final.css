@@ -1,4 +1,7 @@
-/* Loaded after the theme cascade so viewport containment stays authoritative. */
+/* Loaded after the theme cascade so viewport containment stays authoritative.
+   Canonical names for new selectors live in data-bingo-theme-name:
+   planet-hall-2, planet-hall-1, and classic. The older data-bingo-theme values
+   planet, classic, and current remain only for saved-setting compatibility. */
 html[data-bingo-theme="current"] body #app .app-shell .topbar {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) !important;
@@ -3471,22 +3474,22 @@ html[data-bingo-theme] body .daub-options-x::after {
 }
 
 /* Classic's structural caller wrapper must not show square white corners. */
-html[data-bingo-theme="current"] body #app .app-shell .caller-panel {
+html:is([data-bingo-theme-name="classic"], [data-bingo-theme="current"]) body #app .app-shell .caller-panel {
   border: 0 !important;
   border-radius: 28px !important;
   background-image: none !important;
   box-shadow: none !important;
 }
 
-html[data-bingo-theme="current"] body #app .app-shell.theme-light .caller-panel {
+html:is([data-bingo-theme-name="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-light .caller-panel {
   background-color: #fff !important;
 }
 
-html[data-bingo-theme="current"] body #app .app-shell.theme-dark .caller-panel {
+html:is([data-bingo-theme-name="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .caller-panel {
   background-color: #111d2c !important;
 }
 
-html[data-bingo-theme="current"] body #app .app-shell .current-call-panel {
+html:is([data-bingo-theme-name="classic"], [data-bingo-theme="current"]) body #app .app-shell .current-call-panel {
   border-radius: 28px !important;
   overflow: hidden !important;
 }

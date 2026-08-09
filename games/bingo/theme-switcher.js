@@ -42,7 +42,17 @@
   }
 
   migrateLegacyCardSerialDefaults();
-  const themes = ["planet", "classic", "current"];
+  // Legacy IDs remain in storage and data-bingo-theme for compatibility.
+  // Use each definition's name (and data-bingo-theme-name) for new UI targeting.
+  const THEME_DEFINITIONS = Object.freeze([
+    { id: "planet", name: "planet-hall-2", label: "Planet Hall 2" },
+    { id: "classic", name: "planet-hall-1", label: "Planet Hall 1" },
+    { id: "current", name: "classic", label: "Classic" },
+  ]);
+  const themes = THEME_DEFINITIONS.map(({ id }) => id);
+  const themeDefinitionById = Object.fromEntries(
+    THEME_DEFINITIONS.map((definition) => [definition.id, definition])
+  );
   const daubOptions = [
     ["solid", "Solid Color", ""], ["splat", "Splat (Solid Color)", ""],
     ["sharp-splat", "Sharp Splat (Solid Color)", ""], ["circle", "Circle (Solid Color)", ""],
@@ -170,6 +180,7 @@
     document.querySelector(".hall-overlay-background")?.remove();
     setHallControlsCollapsed(true);
     document.documentElement.dataset.bingoTheme = selectedTheme;
+    document.documentElement.dataset.bingoThemeName = themeDefinitionById[selectedTheme].name;
     window.requestAnimationFrame(syncOtherThemeWaitingFlashboard);
     const app = document.querySelector("#app");
     if (app) {
@@ -259,9 +270,9 @@
       </button>
       <div id="bingo-theme-menu" class="bingo-theme-menu" hidden>
         <strong>Choose a theme</strong>
-        <button class="bingo-theme-option" type="button" data-theme="planet">Planet Hall 2</button>
-        <button class="bingo-theme-option" type="button" data-theme="classic">Planet Hall 1</button>
-        <button class="bingo-theme-option" type="button" data-theme="current">Classic</button>
+        ${THEME_DEFINITIONS.map(({ id, label }) =>
+          `<button class="bingo-theme-option" type="button" data-theme="${id}">${label}</button>`
+        ).join("")}
       </div>
     `;
     switcher.addEventListener("click", (event) => {
