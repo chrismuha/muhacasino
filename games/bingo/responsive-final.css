@@ -3770,3 +3770,16 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature >
     font-size: clamp(9pt, 1vw, 11.5pt) !important;
   }
 }
+
+/* Hall 2 normally replaces #app, but Dealer Console must reveal it above the hall. */
+html[data-bingo-theme="planet"].dealer-overlay-open:not(.bingo-popout-window) body > #app {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+html[data-bingo-theme="planet"].dealer-overlay-open body > .planet-hall-shell {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
