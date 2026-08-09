@@ -4147,6 +4147,17 @@ html[data-bingo-theme="current"] body #app .app-shell.theme-dark .topbar .screen
   background: #192b45 !important;
 }
 
+/* Final Classic routed override: never inherit the native 16px select minimum here. */
+html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel label > select {
+  padding: 7px 30px 7px 10px !important;
+  font: 800 13px/1.1 Inter, ui-sans-serif, system-ui, sans-serif !important;
+  letter-spacing: 0 !important;
+  text-overflow: clip !important;
+  white-space: nowrap !important;
+  -webkit-text-size-adjust: none !important;
+  text-size-adjust: none !important;
+}
+
 /* Every routed Audience theme accounts for the external toolbar in its scroll range. */
 html.bingo-popout-window body > #app,
 html.bingo-popout-window body > #app > .app-shell:has(> .audience-screen) {
@@ -4169,6 +4180,15 @@ html.bingo-popout-window body #app > .app-shell:has(> .audience-screen) > .audie
 
 /* Routed Audience windows reflow at narrower desktop widths. */
 @media (max-width: 1400px) {
+  html.bingo-popout-window[data-bingo-theme="current"] body #app .topbar .play-time-panel select {
+    padding: 7px 32px 7px 12px !important;
+    font-size: 9px !important;
+    letter-spacing: -.01em !important;
+    line-height: 1.1 !important;
+    text-overflow: clip !important;
+    white-space: nowrap !important;
+  }
+
   html.bingo-popout-window body > #app,
   html.bingo-popout-window body > #app > .app-shell:has(> .audience-screen) {
     box-sizing: border-box !important;
@@ -4249,6 +4269,11 @@ html.bingo-popout-window body #app > .app-shell:has(> .audience-screen) > .audie
 }
 
 @media (max-width: 600px) {
+  html.bingo-popout-window[data-bingo-theme="current"] body #app .topbar .play-time-panel select {
+    padding-right: 24px !important;
+    font-size: 9px !important;
+  }
+
   html.bingo-popout-window body > #app,
   html.bingo-popout-window body > #app > .app-shell:has(> .audience-screen) {
     height: calc(100dvh - 58px) !important;
