@@ -8,10 +8,10 @@
   let settled = false;
 
   function hasVisibleGame() {
-    const theme = document.documentElement.dataset.bingoTheme || "planet-hall-2";
+    const theme = document.documentElement.dataset.bingoTheme || "planet";
     const isPopout = document.documentElement.classList.contains("bingo-popout-window");
     const app = document.querySelector("#app");
-    const themedShell = !isPopout && theme === "planet-hall-2"
+    const themedShell = !isPopout && theme === "planet"
       ? document.querySelector(".planet-hall-shell")
       : null;
     const targets = [themedShell, app].filter(Boolean);

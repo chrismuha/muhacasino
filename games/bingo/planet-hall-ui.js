@@ -311,7 +311,7 @@
     const rgb = getComputedStyle(surface).backgroundColor.match(/[\d.]+/g)?.slice(0, 3).map(Number);
     const luminance = rgb?.length === 3 ? (rgb[0] * 0.299) + (rgb[1] * 0.587) + (rgb[2] * 0.114) : 0;
     const isClassicLight = shell.classList.contains("theme-light")
-      && ["planet-hall-1", "classic"].includes(document.documentElement.dataset.bingoTheme);
+      && ["classic", "current"].includes(document.documentElement.dataset.bingoTheme);
     const color = isClassicLight || luminance > 140 ? "#000000" : "#ffffff";
     if (heading.style.getPropertyValue("color") !== color) {
       heading.style.setProperty("color", color, "important");

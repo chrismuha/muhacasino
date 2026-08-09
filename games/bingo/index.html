@@ -28,27 +28,26 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script>
       try {
-        const legacyBingoThemeIds = {
-          planet: "planet-hall-2",
-          classic: "planet-hall-1",
-          current: "classic",
-          vault: "planet-hall-1",
+        const canonicalBingoThemeIds = {
+          "planet-hall-2": "planet",
+          "planet-hall-1": "classic",
+          classic: "current",
         };
         const savedBingoTheme = localStorage.getItem("muha-bingo-theme");
-        const bingoThemeIdsMigrated = localStorage.getItem("muha-bingo-theme-id-version") === "canonical-v1";
-        const migratedBingoTheme = bingoThemeIdsMigrated
-          ? savedBingoTheme
-          : (legacyBingoThemeIds[savedBingoTheme] || savedBingoTheme);
-        const validBingoThemes = ["planet-hall-2", "planet-hall-1", "classic"];
+        const bingoThemeIdVersion = localStorage.getItem("muha-bingo-theme-id-version");
+        const migratedBingoTheme = bingoThemeIdVersion === "canonical-v1"
+          ? (canonicalBingoThemeIds[savedBingoTheme] || savedBingoTheme)
+          : savedBingoTheme;
+        const validBingoThemes = ["planet", "classic", "current"];
         document.documentElement.dataset.bingoTheme = validBingoThemes.includes(migratedBingoTheme)
           ? migratedBingoTheme
-          : "planet-hall-2";
+          : "planet";
         if (savedBingoTheme !== document.documentElement.dataset.bingoTheme) {
           localStorage.setItem("muha-bingo-theme", document.documentElement.dataset.bingoTheme);
         }
-        localStorage.setItem("muha-bingo-theme-id-version", "canonical-v1");
+        localStorage.setItem("muha-bingo-theme-id-version", "legacy-restored-v1");
       } catch {
-        document.documentElement.dataset.bingoTheme = "planet-hall-2";
+        document.documentElement.dataset.bingoTheme = "planet";
       }
       const bingoLaunchParameters = new URLSearchParams(location.search);
       if (bingoLaunchParameters.has("screen") || bingoLaunchParameters.has("player")) {
@@ -60,8 +59,8 @@
     <script src="./browser-bingo-api.js?build=20260801-remove-diagnostics"></script>
     <script type="module" crossorigin src="./assets/index-DsHWgouX.js?build=20260807-v117-special-ball-engine"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-BIJKjhW9.css?build=20260731-classic-header-final">
-    <link rel="stylesheet" href="./vault-theme.css?build=20260809-v119-separate-classic-hall2">
-    <link rel="stylesheet" href="./responsive-final.css?build=20260809-v119-separated-footer-keys">
+    <link rel="stylesheet" href="./vault-theme.css?build=20260809-v119-restored-runtime-theme-ids">
+    <link rel="stylesheet" href="./responsive-final.css?build=20260809-v119-restored-runtime-theme-ids">
   </head>
   <body>
     <div id="app"></div>
@@ -76,8 +75,8 @@
       </section>
     </div>
     <script src="../../interaction-lock.js?build=20260808-no-double-tap"></script>
-    <script src="./theme-switcher.js?build=20260809-v119-exclusive-theme-surfaces"></script>
-    <script src="./planet-hall-ui.js?build=20260809-v119-correct-theme-ids"></script>
-    <script src="./runtime-guard.js?build=20260809-v119-correct-theme-ids"></script>
+    <script src="./theme-switcher.js?build=20260809-v119-restored-runtime-theme-ids"></script>
+    <script src="./planet-hall-ui.js?build=20260809-v119-restored-runtime-theme-ids"></script>
+    <script src="./runtime-guard.js?build=20260809-v119-restored-runtime-theme-ids"></script>
   </body>
 </html>

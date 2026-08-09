@@ -1,6 +1,6 @@
 /* Loaded after the theme cascade so viewport containment stays authoritative.
-   The only active theme IDs are planet-hall-2, planet-hall-1, and classic. */
-html[data-bingo-theme="classic"] body #app .app-shell .topbar {
+   Runtime IDs: planet = Hall 2, classic = Hall 1, current = Classic UI. */
+html[data-bingo-theme="current"] body #app .app-shell .topbar {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) !important;
   width: 100% !important;
@@ -8,7 +8,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar {
 
 /* Mobile Player Floor uses one page scroll; the footer remains separate. */
 @media (max-width: 600px) {
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app > .app-shell:has(.game-layout) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app > .app-shell:has(.game-layout) {
     display: flex !important;
     flex-direction: column !important;
     box-sizing: border-box !important;
@@ -21,8 +21,8 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar {
     -webkit-overflow-scrolling: touch;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell:has(.game-layout) > .topbar,
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell:has(.game-layout) > .game-layout {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(.game-layout) > .topbar,
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(.game-layout) > .game-layout {
     flex: 0 0 auto !important;
     height: auto !important;
     min-height: 0 !important;
@@ -30,7 +30,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar {
     overflow: visible !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell .game-layout :is(.cards-stage, .cards-grid) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .game-layout :is(.cards-stage, .cards-grid) {
     display: grid !important;
     flex: none !important;
     height: auto !important;
@@ -40,7 +40,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar {
     overscroll-behavior: auto !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell:has(.game-layout) > .app-footer {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(.game-layout) > .app-footer {
     position: sticky !important;
     z-index: 50 !important;
     bottom: 0 !important;
@@ -57,7 +57,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar {
   text-align: center !important;
 }
 
-html[data-bingo-theme="planet-hall-1"] body .daub-options-overlay > section {
+html[data-bingo-theme="classic"] body .daub-options-overlay > section {
   border-radius: 18px !important;
   overflow: auto !important;
 }
@@ -65,7 +65,7 @@ html[data-bingo-theme="planet-hall-1"] body .daub-options-overlay > section {
 /* v1.1.9 iPhone containment foundations. */
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel,
-  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
     display: grid !important;
     grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr) !important;
     grid-auto-rows: auto !important;
@@ -213,14 +213,14 @@ html[data-bingo-theme="planet-hall-1"] body .daub-options-overlay > section {
 
 /* Treat the B-I-N-G-O letters as the visual header of every player card. */
 html[data-bingo-theme] body #app .bingo-card .bingo-letters,
-html[data-bingo-theme="planet-hall-2"] body .planet-card-wall .bingo-letters {
+html[data-bingo-theme="planet"] body .planet-card-wall .bingo-letters {
   position: relative !important;
   margin-bottom: 5px !important;
   padding-bottom: 5px !important;
 }
 
 html[data-bingo-theme] body #app .bingo-card .bingo-letters::after,
-html[data-bingo-theme="planet-hall-2"] body .planet-card-wall .bingo-letters::after {
+html[data-bingo-theme="planet"] body .planet-card-wall .bingo-letters::after {
   content: "" !important;
   position: absolute !important;
   z-index: 2 !important;
@@ -407,7 +407,7 @@ html[data-bingo-theme] body #app .app-shell .app-footer {
   padding-block: 10px !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy :is(.footer-pattern, .planet-pattern-footer) {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy :is(.footer-pattern, .planet-pattern-footer) {
   border-right: 0 !important;
 }
 
@@ -511,13 +511,13 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
     overflow: visible !important;
   }
 
-  [data-bingo-theme="planet-hall-2"] .planet-purchase-terminal {
+  [data-bingo-theme="planet"] .planet-purchase-terminal {
     place-items: center !important;
     padding: 10px !important;
     overflow: auto !important;
   }
 
-  [data-bingo-theme="planet-hall-2"] .planet-purchase-terminal > section {
+  [data-bingo-theme="planet"] .planet-purchase-terminal > section {
     box-sizing: border-box !important;
     width: 100% !important;
     max-width: 460px !important;
@@ -528,14 +528,14 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
     overflow-y: auto !important;
   }
 
-  [data-bingo-theme="planet-hall-2"] .planet-purchase-terminal header { margin: 0 0 10px !important; padding: 9px !important; }
-  [data-bingo-theme="planet-hall-2"] .planet-purchase-terminal h2 { font-size: 18pt !important; }
-  [data-bingo-theme="planet-hall-2"] .purchase-table { padding: 10px !important; }
-  [data-bingo-theme="planet-hall-2"] :is(.purchase-table-head, .purchase-item-row) { grid-template-columns: minmax(0, 1fr) 96px !important; gap: 8px !important; }
-  [data-bingo-theme="planet-hall-2"] .purchase-item-row > strong { font-size: 11.5pt !important; }
-  [data-bingo-theme="planet-hall-2"] .purchase-totals { grid-template-columns: auto minmax(0, 1fr) !important; font-size: 12pt !important; }
-  [data-bingo-theme="planet-hall-2"] .planet-purchase-terminal footer { grid-template-columns: 1fr 1fr !important; }
-  [data-bingo-theme="planet-hall-2"] .planet-purchase-terminal footer button { min-width: 0 !important; padding: 8px 5px !important; font-size: 10pt !important; }
+  [data-bingo-theme="planet"] .planet-purchase-terminal header { margin: 0 0 10px !important; padding: 9px !important; }
+  [data-bingo-theme="planet"] .planet-purchase-terminal h2 { font-size: 18pt !important; }
+  [data-bingo-theme="planet"] .purchase-table { padding: 10px !important; }
+  [data-bingo-theme="planet"] :is(.purchase-table-head, .purchase-item-row) { grid-template-columns: minmax(0, 1fr) 96px !important; gap: 8px !important; }
+  [data-bingo-theme="planet"] .purchase-item-row > strong { font-size: 11.5pt !important; }
+  [data-bingo-theme="planet"] .purchase-totals { grid-template-columns: auto minmax(0, 1fr) !important; font-size: 12pt !important; }
+  [data-bingo-theme="planet"] .planet-purchase-terminal footer { grid-template-columns: 1fr 1fr !important; }
+  [data-bingo-theme="planet"] .planet-purchase-terminal footer button { min-width: 0 !important; padding: 8px 5px !important; font-size: 10pt !important; }
 
   .daub-options-overlay { padding: 8px !important; }
   .daub-options-overlay > section { box-sizing: border-box; width: 100%; max-height: calc(100dvh - 16px); border-radius: 12px; }
@@ -573,7 +573,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
    Keep this block last: the theme file contains older mobile experiments. */
 @media (max-width: 600px) {
   /* Hall 1 / Classic controls fill the usable area below the app header. */
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body > .classic-hall-controls {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls {
     position: fixed !important;
     z-index: 10000 !important;
     inset: var(--hall-controls-safe-top, 210px) 6px max(6px, env(safe-area-inset-bottom)) 6px !important;
@@ -591,7 +591,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
     transform: none !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body > .classic-hall-controls > button {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls > button {
     box-sizing: border-box !important;
     width: 100% !important;
     min-width: 0 !important;
@@ -603,11 +603,11 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
     overflow: hidden !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body > .classic-hall-controls > :is(.hall-panel-close, .hall-start-button) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls > :is(.hall-panel-close, .hall-start-button) {
     grid-column: 1 / -1 !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body > .classic-hall-controls .hall-panel-close {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls .hall-panel-close {
     position: static !important;
     min-height: 0 !important;
   }
@@ -634,7 +634,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
   }
 
   /* Hall 2 itself is a fixed, full-screen surface; only the card well may scroll. */
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell {
     display: flex !important;
     flex-direction: column !important;
     height: 100dvh !important;
@@ -643,20 +643,20 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
     overflow: hidden !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell > .planet-play-surface {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-play-surface {
     flex: 1 1 0 !important;
     min-height: 0 !important;
     overflow: hidden !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-card-area {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-area {
     min-height: 0 !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
   }
 
   /* Daub meanings sit above the winning-pattern preview on iPhone. */
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell > .planet-status-bar {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
     flex: 0 0 154px !important;
     height: 154px !important;
     min-height: 154px !important;
@@ -667,7 +667,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
     overflow: hidden !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-box {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
     grid-template-rows: 40px minmax(0, 1fr) !important;
@@ -676,7 +676,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
     padding: 3px !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
     grid-row: 1 !important;
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
@@ -688,7 +688,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
     overflow: visible !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend > span {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > span {
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
@@ -700,21 +700,21 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
     white-space: normal !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend > small {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > small {
     display: none !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend .legend-dot {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .legend-dot {
     flex: 0 0 11px !important;
     width: 11px !important;
     height: 11px !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy {
     grid-row: 2 !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview {
     width: 88px !important;
     min-width: 88px !important;
     max-width: 88px !important;
@@ -725,7 +725,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
     gap: 2px !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-controls {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
@@ -739,11 +739,11 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
   }
 }
 
-html[data-bingo-theme="classic"] body #app .app-shell .topbar > .brand-lockup {
+html[data-bingo-theme="current"] body #app .app-shell .topbar > .brand-lockup {
   display: none !important;
 }
 
-html[data-bingo-theme="classic"] body #app .app-shell .topbar > .header-actions {
+html[data-bingo-theme="current"] body #app .app-shell .topbar > .header-actions {
   position: relative !important;
   grid-column: 1 / -1 !important;
   justify-self: stretch !important;
@@ -755,7 +755,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar > .header-actions 
   background: transparent !important;
 }
 
-html[data-bingo-theme="classic"] body #app .app-shell .topbar > .header-actions::before {
+html[data-bingo-theme="current"] body #app .app-shell .topbar > .header-actions::before {
   content: "" !important;
   position: absolute !important;
   z-index: 0 !important;
@@ -770,7 +770,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar > .header-actions:
   pointer-events: none !important;
 }
 
-html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
   position: relative !important;
   z-index: 1 !important;
   grid-column: 1 / -1 !important;
@@ -786,13 +786,13 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > 
   overflow: visible !important;
 }
 
-html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > div:first-child > span {
+html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > div:first-child > span {
   font-size: clamp(9pt, 1.2vw, 12pt) !important;
   letter-spacing: .03em !important;
   overflow: visible !important;
 }
 
-html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel select {
+html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel select {
   width: 100% !important;
   min-width: 0 !important;
   max-width: none !important;
@@ -800,7 +800,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel s
   text-overflow: clip !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell > .planet-status-bar {
+html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
   box-sizing: border-box !important;
   flex: 0 0 176px !important;
   display: grid !important;
@@ -815,7 +815,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell > .planet-statu
   overflow: hidden !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-box {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
   display: grid !important;
   grid-template-columns: minmax(250px, 1.55fr) minmax(145px, .85fr) !important;
   align-items: stretch !important;
@@ -826,12 +826,12 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
   overflow: hidden !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-status,
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-credit {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-status,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-credit {
   display: none !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-current-ball {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball {
   align-self: center !important;
   justify-self: center !important;
   width: 118px !important;
@@ -854,7 +854,7 @@ html[data-bingo-theme] body :is(
   aspect-ratio: 1 / 1 !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-current-ball small {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball small {
   left: 50% !important;
   width: auto !important;
   text-align: center !important;
@@ -862,12 +862,12 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-current
   transform-origin: center !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-current-ball strong {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball strong {
   width: 100% !important;
   text-align: center !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern {
   display: grid !important;
   grid-template-columns: 132px minmax(0, 1fr) !important;
   align-items: center !important;
@@ -883,7 +883,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
   overflow: hidden !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern .pattern-preview {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern .pattern-preview {
   position: static !important;
   display: grid !important;
   grid-template-columns: repeat(5, 1fr) !important;
@@ -903,7 +903,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
   overflow: hidden !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern .pattern-preview > i {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern .pattern-preview > i {
   box-sizing: border-box !important;
   display: block !important;
   width: 100% !important;
@@ -916,36 +916,36 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
   background: #dce5f0 !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern .pattern-preview > i.active {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern .pattern-preview > i.active {
   background: #e9424a !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern > div:last-child {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern > div:last-child {
   display: block !important;
   min-width: 0 !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern span {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern span {
   display: block !important;
   font-size: clamp(8pt, 1vw, 10pt) !important;
   line-height: 1.05 !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern strong {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern strong {
   display: block !important;
   margin-top: 5px !important;
   font-size: clamp(13pt, 1.6vw, 17pt) !important;
   line-height: 1.05 !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern small {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern small {
   display: block !important;
   margin-top: 6px !important;
   font-size: clamp(8pt, 1vw, 10pt) !important;
   line-height: 1.15 !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
   display: grid !important;
   grid-template-rows: repeat(4, minmax(0, 1fr)) !important;
   align-items: center !important;
@@ -955,7 +955,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
   overflow: hidden !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend > :is(span, small) {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > :is(span, small) {
   display: flex !important;
   align-items: center !important;
   gap: 7px !important;
@@ -967,18 +967,18 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
   white-space: nowrap !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend > small {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > small {
   letter-spacing: -.015em !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend .legend-dot {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .legend-dot {
   flex: 0 0 11px !important;
   width: 11px !important;
   height: 11px !important;
   margin: 0 !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) !important;
   grid-template-rows: minmax(0, 1fr) !important;
@@ -994,7 +994,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
   overflow: hidden !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > .footer-pattern {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > .footer-pattern {
   grid-column: 1 !important;
   grid-row: 1 / -1 !important;
   display: grid !important;
@@ -1011,7 +1011,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
   overflow: hidden !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview {
   position: static !important;
   display: grid !important;
   flex: none !important;
@@ -1030,7 +1030,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
   overflow: hidden !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview > i {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview > i {
   box-sizing: border-box !important;
   width: 100% !important;
   height: 100% !important;
@@ -1041,31 +1041,31 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
   justify-self: stretch !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern > :not(.pattern-preview) {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern > :not(.pattern-preview) {
   display: block !important;
   min-width: 0 !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern span {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern span {
   font-size: clamp(7.5pt, 1vw, 9.5pt) !important;
   line-height: 1.05 !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern strong {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern strong {
   display: block !important;
   margin-top: 4px !important;
   font-size: clamp(11pt, 1.4vw, 15pt) !important;
   line-height: 1.05 !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern small {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern small {
   display: block !important;
   margin-top: 5px !important;
   font-size: clamp(7.5pt, .9vw, 9pt) !important;
   line-height: 1.15 !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > :is(span, small) {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > :is(span, small) {
   grid-column: 2 !important;
   display: flex !important;
   align-items: center !important;
@@ -1079,19 +1079,19 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
   white-space: nowrap !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > :is(span, small):nth-child(2) { grid-row: 1 !important; }
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > :is(span, small):nth-child(3) { grid-row: 2 !important; }
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > :is(span, small):nth-child(4) { grid-row: 3 !important; }
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > :is(span, small):nth-child(5) { grid-row: 4 !important; }
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > :is(span, small):nth-child(2) { grid-row: 1 !important; }
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > :is(span, small):nth-child(3) { grid-row: 2 !important; }
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > :is(span, small):nth-child(4) { grid-row: 3 !important; }
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > :is(span, small):nth-child(5) { grid-row: 4 !important; }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .legend-dot {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .legend-dot {
   flex: 0 0 11px !important;
   width: 11px !important;
   height: 11px !important;
   margin: 0 !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-status {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-status {
   display: grid !important;
   align-content: center !important;
   justify-items: center !important;
@@ -1102,7 +1102,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
   overflow: hidden !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-controls {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
   box-sizing: border-box !important;
   display: grid !important;
   grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
@@ -1119,7 +1119,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-
   justify-self: end !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-controls button {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls button {
   box-sizing: border-box !important;
   width: 100% !important;
   height: 100% !important;
@@ -1132,7 +1132,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-
   white-space: nowrap !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-controls button span {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls button span {
   min-width: 0 !important;
   max-width: 100% !important;
   overflow: hidden !important;
@@ -1141,19 +1141,19 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-
 }
 
 @media (max-width: 900px) {
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell > .planet-status-bar {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
     grid-template-columns: minmax(350px, 1.45fr) 92px minmax(180px, 260px) !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-controls {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
     max-width: 260px !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-credit {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-credit {
     display: none !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-current-ball {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball {
     width: 82px !important;
     height: 82px !important;
     min-width: 82px !important;
@@ -1164,7 +1164,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-
 }
 
 @media (max-width: 1100px) {
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-controls button {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls button {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1172,11 +1172,11 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-
     gap: 0 !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-controls button > span:not(.bi) {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls button > span:not(.bi) {
     display: none !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-controls button .bi {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls button .bi {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1185,7 +1185,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-
     line-height: 1 !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-controls button:not(.hall-start-button):not(.hall-dealer-button) .bi {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls button:not(.hall-start-button):not(.hall-dealer-button) .bi {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1194,7 +1194,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-
     line-height: 1 !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-controls button:not(.hall-start-button):not(.hall-dealer-button) .bi::before {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls button:not(.hall-start-button):not(.hall-dealer-button) .bi::before {
     display: block !important;
     width: auto !important;
     height: auto !important;
@@ -1205,16 +1205,16 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-
 }
 
 @media (max-width: 620px) {
-  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
     grid-template-columns: minmax(112px, .82fr) minmax(145px, 1.15fr) minmax(176px, 1.35fr) !important;
   }
 
-  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > div:first-child > span {
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > div:first-child > span {
     font-size: clamp(7.5pt, 2.4vw, 9pt) !important;
     letter-spacing: 0 !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell > .planet-status-bar {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
     flex-basis: 164px !important;
     grid-template-columns: minmax(210px, 1.1fr) 62px minmax(210px, 1.1fr) !important;
     height: 164px !important;
@@ -1224,7 +1224,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-
     padding: 5px !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-box {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
     grid-column: 1 !important;
     grid-row: 1 !important;
     grid-template-columns: minmax(138px, 1.25fr) minmax(92px, .8fr) !important;
@@ -1232,13 +1232,13 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-
     gap: 3px !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern {
     grid-template-columns: 76px minmax(0, 1fr) !important;
     gap: 5px !important;
     padding-right: 5px !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern .pattern-preview {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern .pattern-preview {
     width: 74px !important;
     min-width: 74px !important;
     height: 74px !important;
@@ -1249,41 +1249,41 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-
     padding: 5px !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern small {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern small {
     display: none !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend > :is(span, small) {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > :is(span, small) {
     font-size: clamp(6.5pt, 2vw, 8pt) !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend > small {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > small {
     white-space: normal !important;
     line-height: 1.05 !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer {
     grid-template-columns: minmax(130px, 1.25fr) minmax(74px, .75fr) !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > .footer-pattern {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > .footer-pattern {
     grid-template-columns: 76px minmax(0, 1fr) !important;
     gap: 5px !important;
     padding-right: 5px !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview {
     width: 74px !important;
     min-width: 74px !important;
     height: 74px !important;
     min-height: 74px !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern small {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern small {
     display: none !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-current-ball {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball {
     grid-column: 2 !important;
     grid-row: 1 !important;
     width: 56px !important;
@@ -1294,7 +1294,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-
     max-height: 56px !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-controls {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
     grid-column: 3 !important;
     grid-row: 1 !important;
   }
@@ -1308,11 +1308,11 @@ html[data-bingo-theme] body #app .app-shell .bingo-card .card-distance strong {
   white-space: nowrap !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-card-wall .planet-card {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-wall .planet-card {
   padding-bottom: 34px !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-card-wall .planet-card::after {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-wall .planet-card::after {
   content: attr(data-card-label) "   " attr(data-card-away) !important;
   right: 8px !important;
   bottom: 5px !important;
@@ -1496,16 +1496,16 @@ html[data-bingo-theme] body #app .app-shell .app-footer .legend-dot {
 }
 
 /* Final Hall 2 3-by-3 action-grid authority. */
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-controls {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-controls .hall-start-button {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls .hall-start-button {
   grid-column: span 1 !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-controls .hall-dealer-button {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls .hall-dealer-button {
   grid-column: span 1 !important;
 }
 
@@ -1705,7 +1705,7 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
   html[data-bingo-theme] body #app .app-shell :is(.topbar, .header-actions, .screen-switcher, .play-time-panel) { box-sizing: border-box !important; width: 100% !important; min-width: 0 !important; max-width: 100% !important; overflow: hidden !important; }
   html[data-bingo-theme] body #app .app-shell .topbar .header-actions { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; padding-inline: 8px !important; }
   html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel,
-  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel { grid-template-columns: minmax(0, .8fr) minmax(0, 1.25fr) minmax(0, 1.35fr) !important; column-gap: 6px !important; padding-inline: 8px !important; }
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel { grid-template-columns: minmax(0, .8fr) minmax(0, 1.25fr) minmax(0, 1.35fr) !important; column-gap: 6px !important; padding-inline: 8px !important; }
   html[data-bingo-theme] body #app .app-shell .play-time-panel > :is(div, label) { min-width: 0 !important; max-width: 100% !important; overflow: hidden !important; }
   html[data-bingo-theme] body #app .app-shell .play-time-panel :is(span, strong) { max-width: 100% !important; font-size: clamp(7.5pt, 2.75vw, 10pt) !important; letter-spacing: 0 !important; white-space: nowrap !important; }
   html[data-bingo-theme] body #app .app-shell .play-time-panel select { box-sizing: border-box !important; width: 100% !important; min-width: 0 !important; max-width: 100% !important; padding: 7px 25px 7px 8px !important; font-size: max(16px, 8.5pt) !important; text-overflow: ellipsis !important; }
@@ -1736,10 +1736,10 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
   html[data-bingo-theme] body #app .app-shell :is(.footer-pattern, .audience-pattern) > .pattern-preview { display: grid !important; grid-template-columns: repeat(5, minmax(0, 1fr)) !important; grid-template-rows: repeat(5, minmax(0, 1fr)) !important; visibility: visible !important; opacity: 1 !important; width: 96px !important; min-width: 96px !important; height: 96px !important; min-height: 96px !important; }
   html[data-bingo-theme] body #app .app-shell :is(.footer-pattern, .audience-pattern) > .pattern-preview > i { display: block !important; visibility: visible !important; opacity: 1 !important; min-width: 0 !important; min-height: 0 !important; }
   html[data-bingo-theme] body #app .app-shell :is(.footer-pattern, .audience-pattern) > .pattern-preview > i.active { background: #e9424a !important; box-shadow: inset 0 0 0 1px rgba(255,255,255,.45) !important; }
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell { box-sizing: border-box !important; width: 100% !important; min-width: 0 !important; padding-inline: 6px !important; overflow-x: hidden !important; }
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell > .planet-status-bar { grid-template-columns: minmax(0, 1fr) 58px minmax(0, 1fr) !important; width: 100% !important; min-width: 0 !important; }
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-box { grid-template-columns: minmax(0, 1fr) !important; }
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-controls { width: 100% !important; min-width: 0 !important; max-width: 100% !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell { box-sizing: border-box !important; width: 100% !important; min-width: 0 !important; padding-inline: 6px !important; overflow-x: hidden !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar { grid-template-columns: minmax(0, 1fr) 58px minmax(0, 1fr) !important; width: 100% !important; min-width: 0 !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box { grid-template-columns: minmax(0, 1fr) !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls { width: 100% !important; min-width: 0 !important; max-width: 100% !important; }
 }
 
 /* Keep Safari scrolling inside Bingo content instead of beyond the document. */
@@ -1758,7 +1758,7 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
 
   html[data-bingo-theme] body > #app,
   html[data-bingo-theme] body > #app > .app-shell,
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell {
     box-sizing: border-box !important;
     width: 100% !important;
     max-width: 100% !important;
@@ -1781,7 +1781,7 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
     -webkit-overflow-scrolling: touch;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell :is(.planet-play-surface, .planet-card-area, .planet-card-wall) {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell :is(.planet-play-surface, .planet-card-area, .planet-card-wall) {
     min-height: 0 !important;
     overscroll-behavior-y: contain !important;
   }
@@ -1862,11 +1862,11 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
     overflow-x: hidden !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell > .planet-status-bar {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
     grid-template-columns: minmax(116px, 1fr) 64px minmax(142px, 1.15fr) !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-box {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
     place-items: center !important;
@@ -1874,12 +1874,12 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
     overflow: hidden !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
     display: none !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy,
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy,
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern {
     position: static !important;
     display: grid !important;
     place-items: center !important;
@@ -1890,11 +1890,11 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
     transform: none !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern > :not(.pattern-preview) {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern > :not(.pattern-preview) {
     display: none !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview {
     position: static !important;
     inset: auto !important;
     display: grid !important;
@@ -1917,7 +1917,7 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
 
 /* Cascade-final iPhone corrections. */
 @media (max-width: 600px) {
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body > .classic-hall-controls {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls {
     position: fixed !important;
     z-index: 10000 !important;
     inset: var(--hall-controls-safe-top, 210px) 6px max(6px, env(safe-area-inset-bottom)) 6px !important;
@@ -1934,7 +1934,7 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
     overflow: hidden !important;
     transform: none !important;
   }
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body > .classic-hall-controls > button {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls > button {
     box-sizing: border-box !important;
     width: 100% !important;
     min-width: 0 !important;
@@ -1945,38 +1945,38 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
     font-size: clamp(9pt, 3.2vw, 12pt) !important;
     overflow: hidden !important;
   }
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body > .classic-hall-controls > :is(.hall-panel-close, .hall-start-button) { grid-column: 1 / -1 !important; }
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body > .classic-hall-controls .hall-panel-close { position: static !important; min-height: 0 !important; }
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls > :is(.hall-panel-close, .hall-start-button) { grid-column: 1 / -1 !important; }
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls .hall-panel-close { position: static !important; min-height: 0 !important; }
   html[data-bingo-theme] body #app .app-shell .dealer-layout { align-content: start !important; grid-auto-rows: max-content !important; gap: 10px !important; -webkit-overflow-scrolling: touch !important; }
   html[data-bingo-theme] body #app .dealer-layout :is(.dealer-hero, .dealer-grid, .dealer-card, .dealer-stats, .dealer-tabs, .dealer-command-bar, .dealer-primary-actions, .game-setup-panel, .special-ball-settings, .bingo-schedule-editor, .bingo-prizes-editor) {
     box-sizing: border-box !important; width: 100% !important; min-width: 0 !important; max-width: 100% !important; height: auto !important; max-height: none !important;
   }
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell { display: flex !important; flex-direction: column !important; height: 100dvh !important; max-height: 100dvh !important; padding: 4px !important; overflow: hidden !important; }
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell > .planet-play-surface { flex: 1 1 0 !important; min-height: 0 !important; overflow: hidden !important; }
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-card-area { min-height: 0 !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell > .planet-status-bar {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell { display: flex !important; flex-direction: column !important; height: 100dvh !important; max-height: 100dvh !important; padding: 4px !important; overflow: hidden !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-play-surface { flex: 1 1 0 !important; min-height: 0 !important; overflow: hidden !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-area { min-height: 0 !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
     flex: 0 0 154px !important; height: 154px !important; min-height: 154px !important; max-height: 154px !important;
     grid-template-columns: minmax(132px, 1fr) 58px minmax(138px, 1fr) !important; gap: 4px !important; padding: 4px !important; overflow: hidden !important;
   }
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-box {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
     display: grid !important; grid-template-columns: minmax(0, 1fr) !important; grid-template-rows: 40px minmax(0, 1fr) !important;
     align-items: stretch !important; gap: 3px !important; padding: 3px !important;
   }
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
     grid-row: 1 !important; display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; grid-template-rows: minmax(0, 1fr) !important;
     width: 100% !important; height: 40px !important; padding: 0 !important; gap: 2px !important; overflow: visible !important;
   }
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend > span {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > span {
     display: flex !important; flex-direction: column !important; justify-content: center !important; gap: 2px !important; min-width: 0 !important;
     font-size: 6.5pt !important; line-height: 1 !important; text-align: center !important; white-space: normal !important;
   }
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend > small { display: none !important; }
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend .legend-dot { flex: 0 0 11px !important; width: 11px !important; height: 11px !important; }
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy { grid-row: 2 !important; }
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > small { display: none !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .legend-dot { flex: 0 0 11px !important; width: 11px !important; height: 11px !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy { grid-row: 2 !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview {
     width: 88px !important; min-width: 88px !important; max-width: 88px !important; height: 88px !important; min-height: 88px !important; max-height: 88px !important; padding: 6px !important; gap: 2px !important;
   }
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-footer-controls {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
     display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
     width: 100% !important; height: 100% !important; min-height: 0 !important; max-height: 100% !important; padding: 3px !important; gap: 3px !important; overflow: hidden !important;
   }
@@ -2058,13 +2058,13 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
 
 /* Classic footer legend stays compact beside the winning-pattern card. */
 @media (min-width: 451px) {
-  html[data-bingo-theme="classic"] body #app .app-shell .app-footer {
+  html[data-bingo-theme="current"] body #app .app-shell .app-footer {
     grid-template-rows: repeat(4, 26px) !important;
     align-content: center !important;
     row-gap: 2px !important;
   }
 
-  html[data-bingo-theme="classic"] body #app .app-shell .app-footer > :is(span, small) {
+  html[data-bingo-theme="current"] body #app .app-shell .app-footer > :is(span, small) {
     align-self: center !important;
     height: 26px !important;
     min-height: 0 !important;
@@ -2153,12 +2153,12 @@ html[data-bingo-theme] body #app .dealer-layout .special-ball-card > legend {
     margin-inline: 6px !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
     height: 48px !important;
     gap: 4px !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend > span {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > span {
     flex-direction: row !important;
     align-items: center !important;
     justify-content: center !important;
@@ -2168,7 +2168,7 @@ html[data-bingo-theme] body #app .dealer-layout .special-ball-card > legend {
     line-height: 1.05 !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend .legend-dot {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .legend-dot {
     flex: 0 0 17px !important;
     width: 17px !important;
     min-width: 17px !important;
@@ -2176,7 +2176,7 @@ html[data-bingo-theme] body #app .dealer-layout .special-ball-card > legend {
     min-height: 17px !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-card-area {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-area {
     border-bottom: 0 !important;
     background: transparent !important;
     box-shadow: none !important;
@@ -2193,20 +2193,20 @@ html[data-bingo-theme] body #app .dealer-layout .special-ball-card > legend {
     font-size: 17pt !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body > .classic-hall-controls {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     grid-template-rows: 42px repeat(4, minmax(0, 1fr)) !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body > .classic-hall-controls > .hall-panel-close {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls > .hall-panel-close {
     grid-column: 1 / -1 !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body > .classic-hall-controls > :is(.hall-start-button, .hall-dealer-button) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls > :is(.hall-start-button, .hall-dealer-button) {
     grid-column: span 1 !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body > .classic-hall-controls > [data-hall-action="next"] {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls > [data-hall-action="next"] {
     display: none !important;
   }
   html[data-bingo-theme] body #app .app-shell .cards-stage .stage-toolbar {
@@ -2279,7 +2279,7 @@ html[data-bingo-theme] body #app .dealer-layout .special-ball-card > legend {
     white-space: nowrap !important;
   }
   html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel,
-  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
     grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr) !important;
     grid-auto-rows: auto !important;
     padding: 8px !important;
@@ -2342,14 +2342,14 @@ html[data-bingo-theme] body #app .dealer-layout .special-ball-card > legend {
 
 /* B-I-N-G-O is the card header; the divider separates it from the number field. */
 html[data-bingo-theme] body #app .bingo-card .bingo-letters,
-html[data-bingo-theme="planet-hall-2"] body .planet-card-wall .bingo-letters {
+html[data-bingo-theme="planet"] body .planet-card-wall .bingo-letters {
   position: relative !important;
   margin-bottom: 5px !important;
   padding-bottom: 5px !important;
 }
 
 html[data-bingo-theme] body #app .bingo-card .bingo-letters::after,
-html[data-bingo-theme="planet-hall-2"] body .planet-card-wall .bingo-letters::after {
+html[data-bingo-theme="planet"] body .planet-card-wall .bingo-letters::after {
   content: "" !important;
   position: absolute !important;
   z-index: 2 !important;
@@ -2365,7 +2365,7 @@ html[data-bingo-theme="planet-hall-2"] body .planet-card-wall .bingo-letters::af
 
 /* Mobile Hall 1 and Classic topbars reserve real rows for controls and screen tabs. */
 @media (max-width: 600px) {
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell .topbar:has(.screen-switcher) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar:has(.screen-switcher) {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
     grid-template-rows: minmax(250px, auto) 61px !important;
@@ -2377,7 +2377,7 @@ html[data-bingo-theme="planet-hall-2"] body .planet-card-wall .bingo-letters::af
     overflow: visible !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell .topbar > .header-actions {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar > .header-actions {
     position: relative !important;
     grid-column: 1 !important;
     grid-row: 1 !important;
@@ -2390,7 +2390,7 @@ html[data-bingo-theme="planet-hall-2"] body .planet-card-wall .bingo-letters::af
     overflow: visible !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell .topbar > .screen-switcher {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar > .screen-switcher {
     position: relative !important;
     z-index: 2 !important;
     grid-column: 1 !important;
@@ -2434,7 +2434,7 @@ html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small) {
 }
 
 html[data-bingo-theme] body #app .app-shell .app-footer .legend-dot,
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend .legend-dot {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .legend-dot {
   flex: 0 0 18px !important;
   width: 18px !important;
   min-width: 18px !important;
@@ -2442,24 +2442,24 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
   min-height: 18px !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend > span {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > span {
   font-size: clamp(9.5pt, 1.5vw, 13pt) !important;
   line-height: 1.1 !important;
 }
 
 /* Keep the complete timezone field inside the mobile time-panel border. */
 @media (max-width: 600px) {
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell .topbar:has(.screen-switcher) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar:has(.screen-switcher) {
     grid-template-rows: minmax(282px, auto) 61px !important;
     min-height: 343px !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell .topbar > .header-actions {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar > .header-actions {
     grid-template-rows: minmax(160px, auto) repeat(2, 54px) !important;
     min-height: 282px !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell .topbar .header-actions > .play-time-panel {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .header-actions > .play-time-panel {
     box-sizing: border-box !important;
     height: 160px !important;
     min-height: 160px !important;
@@ -2493,7 +2493,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
 
 /* Tablet and narrow-window headers must size from their contents, not legacy fixed rows. */
 @media (max-width: 1050px) {
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell .topbar:has(.screen-switcher) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar:has(.screen-switcher) {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
     grid-template-rows: auto 61px !important;
@@ -2505,7 +2505,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
     overflow: visible !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell .topbar > .header-actions {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar > .header-actions {
     position: relative !important;
     grid-column: 1 !important;
     grid-row: 1 !important;
@@ -2521,7 +2521,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
     overflow: visible !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell .topbar .header-actions > .play-time-panel {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .header-actions > .play-time-panel {
     grid-column: 1 / -1 !important;
     grid-row: 1 !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -2536,7 +2536,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
     overflow: hidden !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell .topbar .play-time-panel > label {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .play-time-panel > label {
     grid-column: 1 / -1 !important;
     grid-row: 2 !important;
     align-self: start !important;
@@ -2547,7 +2547,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
     margin: 0 !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell .topbar .play-time-panel > label > select {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .play-time-panel > label > select {
     box-sizing: border-box !important;
     width: 100% !important;
     min-width: 0 !important;
@@ -2555,7 +2555,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
     margin: 4px 0 0 !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell .topbar > .screen-switcher {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar > .screen-switcher {
     position: relative !important;
     z-index: 2 !important;
     grid-column: 1 !important;
@@ -2572,7 +2572,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
 
 /* Hall 1 has room for a compact single-row time panel outside portrait widths. */
 @media (min-width: 601px) and (max-width: 1050px) {
-  html[data-bingo-theme="planet-hall-1"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
     grid-template-columns: minmax(230px, 1.25fr) minmax(120px, .8fr) minmax(190px, 1.2fr) !important;
     grid-template-rows: minmax(82px, auto) !important;
     align-items: center !important;
@@ -2583,19 +2583,19 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
     gap: 12px !important;
   }
 
-  html[data-bingo-theme="planet-hall-1"] body #app .app-shell .topbar .play-time-panel > div:first-child {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > div:first-child {
     order: 2 !important;
     grid-column: 2 !important;
     grid-row: 1 !important;
   }
 
-  html[data-bingo-theme="planet-hall-1"] body #app .app-shell .topbar .play-time-panel > div:nth-child(2) {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > div:nth-child(2) {
     order: 3 !important;
     grid-column: 3 !important;
     grid-row: 1 !important;
   }
 
-  html[data-bingo-theme="planet-hall-1"] body #app .app-shell .topbar .play-time-panel > label {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > label {
     order: 1 !important;
     grid-column: 1 !important;
     grid-row: 1 !important;
@@ -2604,7 +2604,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
 }
 
 /* The collapsed-controls handle must float above every game-content layer. */
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body .hall-controls-toggle {
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body .hall-controls-toggle {
   position: fixed !important;
   z-index: 20000 !important;
   isolation: isolate !important;
@@ -2613,7 +2613,7 @@ html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body .
 
 /* Classic keeps its stacked timezone field wholly inside the time-panel border. */
 @media (max-width: 1050px) {
-  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     grid-template-rows: minmax(48px, auto) minmax(86px, auto) !important;
     align-items: start !important;
@@ -2626,7 +2626,7 @@ html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body .
     overflow: hidden !important;
   }
 
-  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > label {
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > label {
     display: grid !important;
     grid-column: 1 / -1 !important;
     grid-row: 2 !important;
@@ -2642,7 +2642,7 @@ html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body .
     overflow: hidden !important;
   }
 
-  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > label > select {
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > label > select {
     box-sizing: border-box !important;
     width: 100% !important;
     min-width: 0 !important;
@@ -2656,7 +2656,7 @@ html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body .
 
 /* Classic's visible blue time surface follows the complete stacked panel height. */
 @media (max-width: 1050px) {
-  html[data-bingo-theme="classic"] body #app .app-shell .topbar > .header-actions::before {
+  html[data-bingo-theme="current"] body #app .app-shell .topbar > .header-actions::before {
     width: 100% !important;
     height: 170px !important;
     min-height: 170px !important;
@@ -2667,7 +2667,7 @@ html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body .
 
 /* Classic uses the same large full-screen controls experience as Hall 1. */
 @media (max-width: 1050px) {
-  html[data-bingo-theme="classic"]:not(.hall-controls-collapsed) body .classic-hall-controls {
+  html[data-bingo-theme="current"]:not(.hall-controls-collapsed) body .classic-hall-controls {
     position: fixed !important;
     z-index: 21000 !important;
     inset: 82px 6px max(6px, env(safe-area-inset-bottom)) 6px !important;
@@ -2689,29 +2689,29 @@ html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body .
     transform: none !important;
   }
 
-  html[data-bingo-theme="classic"] body .classic-hall-controls > .hall-panel-close {
+  html[data-bingo-theme="current"] body .classic-hall-controls > .hall-panel-close {
     grid-column: 1 / -1 !important;
     grid-row: 1 !important;
     min-height: 48px !important;
   }
 
-  html[data-bingo-theme="classic"] body .classic-hall-controls > :is(.hall-start-button, .hall-dealer-button) {
+  html[data-bingo-theme="current"] body .classic-hall-controls > :is(.hall-start-button, .hall-dealer-button) {
     grid-column: span 1 !important;
   }
 
-  html[data-bingo-theme="classic"] body .classic-hall-controls button {
+  html[data-bingo-theme="current"] body .classic-hall-controls button {
     min-height: 64px !important;
     padding: 12px !important;
     font-size: clamp(13pt, 3vw, 18pt) !important;
   }
 
-  html.hall-controls-collapsed[data-bingo-theme="classic"] body .classic-hall-controls {
+  html.hall-controls-collapsed[data-bingo-theme="current"] body .classic-hall-controls {
     display: none !important;
   }
 }
 
 /* Hall 1 and Classic View Controls fill the usable viewport below the app navbar. */
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]):not(.hall-controls-collapsed) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]):not(.hall-controls-collapsed) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
   position: fixed !important;
   z-index: 21000 !important;
   top: var(--hall-controls-safe-top, 82px) !important;
@@ -2736,22 +2736,22 @@ html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]):not(.h
   transform: none !important;
 }
 
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) > .hall-panel-close {
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) > .hall-panel-close {
   position: relative !important;
   grid-column: 1 / -1 !important;
   grid-row: 1 !important;
   min-height: 0 !important;
 }
 
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) > :is(.hall-start-button, .hall-dealer-button) {
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) > :is(.hall-start-button, .hall-dealer-button) {
   grid-column: span 1 !important;
 }
 
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) > [data-hall-action="next"] {
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) > [data-hall-action="next"] {
   grid-column: 1 / -1 !important;
 }
 
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) > button {
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) > button {
   box-sizing: border-box !important;
   width: 100% !important;
   min-width: 0 !important;
@@ -2764,12 +2764,12 @@ html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body :
   font-size: clamp(12pt, 2.2vw, 20pt) !important;
 }
 
-html.hall-controls-collapsed:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
+html.hall-controls-collapsed:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
   display: none !important;
 }
 
 /* Final controls height: navbar excluded, every required action row visible. */
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]):not(.hall-controls-collapsed) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]):not(.hall-controls-collapsed) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
   top: calc(50dvh + 41px) !important;
   right: 6px !important;
   bottom: auto !important;
@@ -2785,7 +2785,7 @@ html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]):not(.h
 }
 
 /* Hall 1 uses the same complete controls-panel outline and surface as Classic. */
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
   border: 3px solid #526b9f !important;
   border-radius: 14px !important;
   background: rgba(9, 16, 30, .97) !important;
@@ -2794,7 +2794,7 @@ html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body :
 
 /* Mobile hides Next, so only four action rows belong in the controls grid. */
 @media (max-width: 600px) {
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]):not(.hall-controls-collapsed) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]):not(.hall-controls-collapsed) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
     grid-template-rows: 52px repeat(4, minmax(72px, 1fr)) !important;
     height: min(460px, calc(100dvh - 94px)) !important;
     min-height: min(396px, calc(100dvh - 94px)) !important;
@@ -2802,7 +2802,7 @@ html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body :
 }
 
 /* Hall 2 pattern information sits directly in the footer without a separator box. */
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-box {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
   border: 0 !important;
   border-radius: 0 !important;
   background: transparent !important;
@@ -2810,19 +2810,19 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
 }
 
 /* Open Hall 1 / Classic controls visually and interactively suspend the game behind them. */
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]):not(.hall-controls-collapsed) body #app {
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]):not(.hall-controls-collapsed) body #app {
   pointer-events: none !important;
   user-select: none !important;
   filter: blur(6px) brightness(.62) !important;
   transition: filter 140ms ease !important;
 }
 
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]).hall-controls-collapsed body #app {
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]).hall-controls-collapsed body #app {
   filter: none !important;
 }
 
 /* Hall 2's card region has no black divider strip before its footer. */
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-card-area {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-area {
   border: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
@@ -2830,7 +2830,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-card-ar
 
 /* Hall 1 / Classic Dealer summaries remain readable in narrow and tablet windows. */
 @media (max-width: 1050px) {
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .dealer-layout .fixed-dealer-status {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .fixed-dealer-status {
     display: grid !important;
     grid-template-columns: auto minmax(0, 1fr) !important;
     grid-template-rows: auto auto !important;
@@ -2842,7 +2842,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-card-ar
     padding: 14px 20px !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .dealer-layout .fixed-dealer-status > small {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .fixed-dealer-status > small {
     grid-column: 1 / -1 !important;
     display: block !important;
     box-sizing: border-box !important;
@@ -2858,36 +2858,36 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-card-ar
     scrollbar-width: thin !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .dealer-layout .fixed-dealer-status > small kbd {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .fixed-dealer-status > small kbd {
     margin-inline: 10px 5px !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .dealer-layout .dealer-stats {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .dealer-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     grid-template-rows: repeat(2, minmax(110px, auto)) !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .dealer-layout .dealer-stats > div {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .dealer-stats > div {
     min-width: 0 !important;
     padding: 14px 18px !important;
     overflow: hidden !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .dealer-layout .dealer-stats > div :is(span, strong, small, p) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .dealer-stats > div :is(span, strong, small, p) {
     max-width: 100% !important;
     overflow-wrap: anywhere !important;
     white-space: normal !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .dealer-layout .bingo-schedule-editor {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .bingo-schedule-editor {
     box-sizing: border-box !important;
     min-width: 0 !important;
     max-width: 100% !important;
     overflow-x: hidden !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .dealer-layout .bingo-schedule-heading,
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .dealer-layout .bingo-schedule-heading > * {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .bingo-schedule-heading,
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .bingo-schedule-heading > * {
     box-sizing: border-box !important;
     min-width: 0 !important;
     max-width: 100% !important;
@@ -2895,12 +2895,12 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-card-ar
     white-space: normal !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .dealer-layout .bingo-schedule-heading h2 {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .bingo-schedule-heading h2 {
     font-size: clamp(23pt, 5vw, 36pt) !important;
     line-height: 1.08 !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .dealer-layout .bingo-schedule-heading p {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .bingo-schedule-heading p {
     font-size: clamp(12pt, 2.8vw, 18pt) !important;
     line-height: 1.35 !important;
   }
@@ -2908,7 +2908,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-card-ar
 
 /* Hall 1 keeps a compact header even when the portrait breakpoint is active. */
 @media (max-width: 1050px) {
-  html[data-bingo-theme="planet-hall-1"] body #app .app-shell .topbar .header-actions {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     grid-template-rows: 110px repeat(2, 48px) !important;
     height: auto !important;
@@ -2917,7 +2917,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-card-ar
     gap: 7px !important;
   }
 
-  html[data-bingo-theme="planet-hall-1"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
     grid-column: 1 / -1 !important;
     grid-row: 1 !important;
     grid-template-columns: minmax(210px, 1.25fr) minmax(105px, .72fr) minmax(175px, 1.05fr) !important;
@@ -2933,19 +2933,19 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-card-ar
     overflow: hidden !important;
   }
 
-  html[data-bingo-theme="planet-hall-1"] body #app .app-shell .topbar .play-time-panel > div:first-child {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > div:first-child {
     order: 2 !important;
     grid-column: 2 !important;
     grid-row: 1 !important;
   }
 
-  html[data-bingo-theme="planet-hall-1"] body #app .app-shell .topbar .play-time-panel > div:nth-child(2) {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > div:nth-child(2) {
     order: 3 !important;
     grid-column: 3 !important;
     grid-row: 1 !important;
   }
 
-  html[data-bingo-theme="planet-hall-1"] body #app .app-shell .topbar .play-time-panel > label {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > label {
     order: 1 !important;
     grid-column: 1 !important;
     grid-row: 1 !important;
@@ -2953,13 +2953,13 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-card-ar
     overflow: hidden !important;
   }
 
-  html[data-bingo-theme="planet-hall-1"] body #app .app-shell .topbar .play-time-panel > label > select {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > label > select {
     height: 50px !important;
     min-height: 50px !important;
     max-height: 50px !important;
   }
 
-  html[data-bingo-theme="planet-hall-1"] body #app .app-shell .topbar .header-actions > :is(
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > :is(
     .appearance-btn,
     .status-pill,
     .new-game-btn,
@@ -2970,12 +2970,12 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-card-ar
     max-height: 48px !important;
   }
 
-  html[data-bingo-theme="planet-hall-1"] body #app .dealer-layout .dealer-hero :is(.eyebrow, h2) {
+  html[data-bingo-theme="classic"] body #app .dealer-layout .dealer-hero :is(.eyebrow, h2) {
     max-width: 100% !important;
     overflow-wrap: anywhere !important;
   }
 
-  html[data-bingo-theme="planet-hall-1"] body #app .dealer-layout .dealer-hero h2 {
+  html[data-bingo-theme="classic"] body #app .dealer-layout .dealer-hero h2 {
     margin-block: 4px 12px !important;
     font-size: clamp(27pt, 6vw, 38pt) !important;
     line-height: 1.05 !important;
@@ -3010,18 +3010,18 @@ html[data-bingo-theme] body #app :is(.dealer-layout, .design-screen) :is(.bingo-
 }
 
 @media (max-width: 600px) {
-  html[data-bingo-theme="planet-hall-1"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
     grid-template-columns: minmax(0, 1.25fr) minmax(0, .72fr) minmax(0, 1.05fr) !important;
     gap: 7px !important;
     padding-inline: 9px !important;
   }
 
-  html[data-bingo-theme="planet-hall-1"] body #app .app-shell .topbar .play-time-panel > label > select {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > label > select {
     padding-inline: 8px 28px !important;
     font-size: clamp(9pt, 2.8vw, 11pt) !important;
   }
 
-  html[data-bingo-theme="planet-hall-1"] body #app .app-shell .topbar .play-time-panel > div > strong {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > div > strong {
     font-size: clamp(9.5pt, 3.1vw, 12pt) !important;
   }
 }
@@ -3240,7 +3240,7 @@ html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-sect
 }
 
 /* Hall 1 and Hall 2 use Classic's full-width B-I-N-G-O Manual Draw structure. */
-html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="planet-hall-1"]) body #app .dealer-layout .ball-board-panel > .dealer-ball-board {
+html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .dealer-layout .ball-board-panel > .dealer-ball-board {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) !important;
   align-items: stretch !important;
@@ -3254,7 +3254,7 @@ html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="planet-hall-1"]) 
   overflow: visible !important;
 }
 
-html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="planet-hall-1"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column {
+html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column {
   display: grid !important;
   grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
   align-items: stretch !important;
@@ -3268,7 +3268,7 @@ html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="planet-hall-1"]) 
   overflow: visible !important;
 }
 
-html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="planet-hall-1"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column > strong {
+html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column > strong {
   display: grid !important;
   grid-column: 1 / -1 !important;
   grid-row: auto !important;
@@ -3284,7 +3284,7 @@ html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="planet-hall-1"]) 
   text-align: center !important;
 }
 
-html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="planet-hall-1"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column > button {
+html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column > button {
   box-sizing: border-box !important;
   width: 100% !important;
   min-width: 0 !important;
@@ -3299,29 +3299,29 @@ html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="planet-hall-1"]) 
 }
 
 @media (max-width: 600px) {
-  html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="planet-hall-1"]) body #app .dealer-layout .ball-board-panel > .dealer-ball-board {
+  html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .dealer-layout .ball-board-panel > .dealer-ball-board {
     padding: 7px !important;
     gap: 10px !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="planet-hall-1"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column {
+  html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column {
     padding: 6px !important;
     gap: 6px !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="planet-hall-1"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column > strong {
+  html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column > strong {
     min-height: 48px !important;
     font-size: clamp(24px, 8vw, 34px) !important;
   }
 
-  html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="planet-hall-1"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column > button {
+  html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column > button {
     min-height: 44px !important;
     font-size: clamp(16px, 5vw, 22px) !important;
   }
 }
 
 /* Hall 1 and Classic keep the light time panel—and black ink—in dark mode. */
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell.theme-dark .play-time-panel {
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .play-time-panel {
   --timezone-arrow: #000 !important;
   color: #17243a !important;
   -webkit-text-fill-color: #17243a !important;
@@ -3331,7 +3331,7 @@ html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #
   text-shadow: none !important;
 }
 
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell.theme-dark .play-time-panel :is(
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .play-time-panel :is(
   div,
   label,
   span,
@@ -3343,12 +3343,12 @@ html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #
   text-shadow: none !important;
 }
 
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell.theme-dark .play-time-panel label > span {
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .play-time-panel label > span {
   color: #40536f !important;
   -webkit-text-fill-color: #40536f !important;
 }
 
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell.theme-dark .play-time-panel select {
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .play-time-panel select {
   color: #17243a !important;
   -webkit-text-fill-color: #17243a !important;
   border-color: #7897c0 !important;
@@ -3360,12 +3360,12 @@ html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #
   text-shadow: none !important;
 }
 
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell.theme-dark .play-time-panel label::after {
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .play-time-panel label::after {
   border-top-color: #000 !important;
 }
 
 /* Dark Dealer surfaces never inherit dark helper copy from their light palettes. */
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell.theme-dark .dealer-layout :is(
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .dealer-layout :is(
   .dealer-hero,
   .dealer-card,
   .dealer-stats,
@@ -3376,7 +3376,7 @@ html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #
   color: #f7faff !important;
 }
 
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #app .app-shell.theme-dark .dealer-layout :is(
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .dealer-layout :is(
   .dealer-hero .eyebrow,
   .dealer-hero h2,
   .dealer-section-title .eyebrow,
@@ -3397,7 +3397,7 @@ html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body #
 }
 
 /* Hall 2 footer card and controls share one surface without a splitter bar. */
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell :is(
+html[data-bingo-theme="planet"] body > .planet-hall-shell :is(
   .planet-pattern-copy,
   .planet-pattern-legend,
   .planet-footer-controls
@@ -3407,9 +3407,9 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell :is(
   outline: 0 !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern,
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy > .planet-pattern-footer,
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > .footer-pattern {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .planet-pattern-footer,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > .footer-pattern {
   border: 0 !important;
   border-right-width: 0 !important;
   border-right-style: none !important;
@@ -3420,7 +3420,7 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
 }
 
 /* Hall 1 and Classic keep the disabled Next action visible on every viewport. */
-html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body :is(
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(
   .classic-hall-controls,
   .player-hall-controls:not(.planet-footer-controls)
 ) > [data-hall-action="next"] {
@@ -3430,7 +3430,7 @@ html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]) body :
 }
 
 @media (max-width: 600px) {
-  html:is([data-bingo-theme="planet-hall-1"], [data-bingo-theme="classic"]):not(.hall-controls-collapsed) body :is(
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]):not(.hall-controls-collapsed) body :is(
     .classic-hall-controls,
     .player-hall-controls:not(.planet-footer-controls)
   ) {
@@ -3472,29 +3472,29 @@ html[data-bingo-theme] body .daub-options-x::after {
 }
 
 /* Classic's structural caller wrapper must not show square white corners. */
-html[data-bingo-theme="classic"] body #app .app-shell .caller-panel {
+html[data-bingo-theme="current"] body #app .app-shell .caller-panel {
   border: 0 !important;
   border-radius: 28px !important;
   background-image: none !important;
   box-shadow: none !important;
 }
 
-html[data-bingo-theme="classic"] body #app .app-shell.theme-light .caller-panel {
+html[data-bingo-theme="current"] body #app .app-shell.theme-light .caller-panel {
   background-color: #fff !important;
 }
 
-html[data-bingo-theme="classic"] body #app .app-shell.theme-dark .caller-panel {
+html[data-bingo-theme="current"] body #app .app-shell.theme-dark .caller-panel {
   background-color: #111d2c !important;
 }
 
-html[data-bingo-theme="classic"] body #app .app-shell .current-call-panel {
+html[data-bingo-theme="current"] body #app .app-shell .current-call-panel {
   border-radius: 28px !important;
   overflow: hidden !important;
 }
 
 /* Footer legend labels stay on one line in every theme and viewport. */
 html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small),
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend > :is(span, small) {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > :is(span, small) {
   flex-flow: row nowrap !important;
   white-space: nowrap !important;
   word-break: keep-all !important;
@@ -3502,64 +3502,67 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
 }
 
 html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small) > *,
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend > :is(span, small) > * {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > :is(span, small) > * {
   white-space: nowrap !important;
   word-break: keep-all !important;
   overflow-wrap: normal !important;
 }
 
 @media (max-width: 600px) {
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend > span {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > span {
     gap: 4px !important;
     font-size: clamp(7.5pt, 2.45vw, 10pt) !important;
   }
 }
 
 /* Classic and Hall 2 never display Hall 1's optional waiting flashboard. */
-html:not([data-bingo-theme="planet-hall-1"]) body > .other-theme-waiting-flashboard {
+html:not([data-bingo-theme="classic"]) body > .other-theme-waiting-flashboard {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
 }
 
 /* Give each Hall 2 footer key a distinct, readable group. */
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
   grid-template-columns: repeat(3, max-content) !important;
   justify-content: space-between !important;
   column-gap: clamp(10px, 2.6vw, 22px) !important;
   padding-inline: clamp(4px, 1.4vw, 12px) !important;
 }
 
-html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend > span {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > span {
   gap: clamp(5px, 1.2vw, 9px) !important;
   padding-inline: 2px !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  text-shadow: none !important;
 }
 
 /* Theme-surface routing is exclusive: Classic and Hall 1 never render Hall 2. */
-html:is([data-bingo-theme="classic"], [data-bingo-theme="planet-hall-1"]) body > .planet-hall-shell {
+html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body > .planet-hall-shell {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
 }
 
-html:is([data-bingo-theme="classic"], [data-bingo-theme="planet-hall-1"]) body > #app {
+html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body > #app {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
   pointer-events: auto !important;
 }
 
-html[data-bingo-theme="planet-hall-2"]:not(.bingo-popout-window) body > #app {
+html[data-bingo-theme="planet"]:not(.bingo-popout-window) body > #app {
   display: none !important;
 }
 
 @media (max-width: 390px) {
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
     column-gap: 6px !important;
     padding-inline: 2px !important;
   }
 
-  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend > span {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > span {
     gap: 3px !important;
     padding-inline: 0 !important;
     font-size: 7.5pt !important;
