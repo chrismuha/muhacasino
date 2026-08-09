@@ -3012,38 +3012,13 @@ html[data-bingo-theme] body #app :is(.dealer-layout, .design-screen) :is(.bingo-
 }
 
 @media (max-width: 600px) {
-  /* Hall 2 uses one mobile scroll surface, so its header leaves with the content. */
-  html[data-bingo-theme="planet"] body > .planet-hall-shell {
-    height: 100dvh !important;
-    max-height: 100dvh !important;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    overscroll-behavior-y: contain !important;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-terminal-header {
+  /* Only Hall 2's time/header region should scroll normally on mobile. */
+  html[data-bingo-theme="planet"] body #app .app-shell > .topbar,
+  html[data-bingo-theme="planet"] body #app .app-shell > .topbar .header-actions,
+  html[data-bingo-theme="planet"] body #app .app-shell > .topbar .play-time-panel {
     position: relative !important;
     inset: auto !important;
     flex: 0 0 auto !important;
-  }
-
-  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-play-surface {
-    flex: 0 0 auto !important;
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    padding-bottom: calc(166px + env(safe-area-inset-bottom)) !important;
-    overflow: visible !important;
-  }
-
-  html[data-bingo-theme="planet"] body > .planet-hall-shell :is(.planet-card-area, .planet-card-wall) {
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    overflow: visible !important;
-    overscroll-behavior-y: auto !important;
-    scrollbar-gutter: auto !important;
   }
 
   /* Dealer hero controls retain the same inset as the cards below them. */
