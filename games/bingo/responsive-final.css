@@ -50,13 +50,24 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
 
 /* View and Flashboard dialogs must sit above every Hall control surface. */
 html[data-bingo-theme] body > .bingo-view-overlay:not([hidden]) {
-  z-index: 20000 !important;
+  z-index: 30000 !important;
   box-sizing: border-box !important;
   display: grid !important;
   place-items: center !important;
   width: 100vw !important;
   height: 100dvh !important;
   padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom)) !important;
+}
+
+/* View and Flashboard own the interaction layer while open in every theme. */
+html.view-overlay-open body > :is(
+  .player-hall-controls,
+  .universal-controls-dock,
+  .hall-controls-toggle
+),
+html.view-overlay-open body > .planet-hall-shell .planet-footer-controls {
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 html[data-bingo-theme] body > .bingo-view-overlay[hidden],

@@ -81,6 +81,7 @@
     free: "#f5cc4e",
   };
   let currentViewCount = 3;
+  let viewControlsWereCollapsed = true;
   let specialBallSyncFrame = 0;
 
   const defaultSpecialBallSettings = {
@@ -1556,7 +1557,14 @@
     } catch {
       // Card view remains usable when storage is unavailable.
     }
-    document.querySelector(".bingo-view-overlay").hidden = true;
+    closeViewOverlay();
+  }
+
+  function closeViewOverlay() {
+    const overlay = document.querySelector(".bingo-view-overlay");
+    if (overlay) overlay.hidden = true;
+    document.documentElement.classList.remove("view-overlay-open");
+    setHallControlsCollapsed(viewControlsWereCollapsed);
   }
 
   function savedCount(key, fallback = 3) {
@@ -1908,6 +1916,9 @@
   function openViewOverlay() {
     const overlay = document.querySelector(".bingo-view-overlay");
     if (!overlay) return;
+    viewControlsWereCollapsed = document.documentElement.classList.contains("hall-controls-collapsed");
+    setHallControlsCollapsed(true);
+    document.documentElement.classList.add("view-overlay-open");
     overlay.querySelectorAll("[data-card-count]").forEach((button) => {
       const isActive = Number(button.dataset.cardCount) === currentViewCount;
       button.classList.toggle("active", isActive);
@@ -1965,7 +1976,9 @@
         overlay.querySelector(".view-choice-panel").hidden = false;
         overlay.querySelector(".view-flashboard-panel").hidden = true;
       }
-      if (event.target.closest("[data-view-close]") || event.target === overlay) overlay.hidden = true;
+      if (event.target.closest("[data-view-close]") || event.target === overlay) {
+        closeViewOverlay();
+      }
     });
     document.body.append(overlay);
     restoreCardView();
