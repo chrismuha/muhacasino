@@ -3403,3 +3403,27 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .
   outline: 0 !important;
   box-shadow: none !important;
 }
+
+/* Hall 1 and Classic keep the disabled Next action visible on every viewport. */
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(
+  .classic-hall-controls,
+  .player-hall-controls:not(.planet-footer-controls)
+) > [data-hall-action="next"] {
+  display: flex !important;
+  visibility: visible !important;
+  grid-column: 1 / -1 !important;
+}
+
+@media (max-width: 600px) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]):not(.hall-controls-collapsed) body :is(
+    .classic-hall-controls,
+    .player-hall-controls:not(.planet-footer-controls)
+  ) {
+    grid-template-rows: 52px repeat(5, minmax(64px, 1fr)) !important;
+    height: min(540px, calc(100dvh - 94px)) !important;
+    min-height: min(440px, calc(100dvh - 94px)) !important;
+    max-height: calc(100dvh - 94px) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+}
