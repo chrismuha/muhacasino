@@ -2793,3 +2793,22 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
   background: transparent !important;
   box-shadow: none !important;
 }
+
+/* Open Hall 1 / Classic controls visually and interactively suspend the game behind them. */
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]):not(.hall-controls-collapsed) body #app {
+  pointer-events: none !important;
+  user-select: none !important;
+  filter: blur(6px) brightness(.62) !important;
+  transition: filter 140ms ease !important;
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]).hall-controls-collapsed body #app {
+  filter: none !important;
+}
+
+/* Hall 2's card region has no black divider strip before its footer. */
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-area {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}

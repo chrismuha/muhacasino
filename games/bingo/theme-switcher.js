@@ -149,6 +149,8 @@
 
   function setHallControlsCollapsed(collapsed) {
     document.documentElement.classList.toggle("hall-controls-collapsed", collapsed);
+    const app = document.querySelector("#app");
+    if (app) app.inert = !collapsed;
     const controlsToggle = document.querySelector(".hall-controls-toggle");
     if (!controlsToggle) return;
     controlsToggle.innerHTML = collapsed
@@ -166,9 +168,7 @@
     const previousTheme = document.documentElement.dataset.bingoTheme;
     document.documentElement.classList.remove("hall-native-controls-open");
     document.querySelector(".hall-overlay-background")?.remove();
-    if (selectedTheme !== "planet") {
-      setHallControlsCollapsed(false);
-    }
+    setHallControlsCollapsed(selectedTheme === "planet");
     document.documentElement.dataset.bingoTheme = selectedTheme;
     window.requestAnimationFrame(syncOtherThemeWaitingFlashboard);
     const app = document.querySelector("#app");
