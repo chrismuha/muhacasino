@@ -3524,6 +3524,8 @@ html:not([data-bingo-theme="planet-hall-1"]) body > .other-theme-waiting-flashbo
 
 /* Give each Hall 2 footer key a distinct, readable group. */
 html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend {
+  grid-template-columns: repeat(3, max-content) !important;
+  justify-content: space-between !important;
   column-gap: clamp(10px, 2.6vw, 22px) !important;
   padding-inline: clamp(4px, 1.4vw, 12px) !important;
 }
@@ -3549,4 +3551,17 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="planet-hall-1"]) body >
 
 html[data-bingo-theme="planet-hall-2"]:not(.bingo-popout-window) body > #app {
   display: none !important;
+}
+
+@media (max-width: 390px) {
+  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend {
+    column-gap: 6px !important;
+    padding-inline: 2px !important;
+  }
+
+  html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern-legend > span {
+    gap: 3px !important;
+    padding-inline: 0 !important;
+    font-size: 7.5pt !important;
+  }
 }

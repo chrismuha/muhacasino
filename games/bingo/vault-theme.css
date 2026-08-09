@@ -7220,29 +7220,29 @@ html[data-bingo-theme="planet-hall-2"] body #app .app-shell .called-history-fram
 }
 
 /* Planet Hall 2 footer pattern uses dark ink on its light footer surface. */
-html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="classic"]) body #app .app-shell .app-footer {
+html[data-bingo-theme="planet-hall-2"] body #app .app-shell .app-footer {
   color: #31445f !important;
   border-color: #8da9cf !important;
   background: #f7f9fc !important;
   opacity: 1 !important;
 }
 
-html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="classic"]) body #app .app-shell .footer-pattern span,
-html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="classic"]) body #app .app-shell .footer-pattern small {
+html[data-bingo-theme="planet-hall-2"] body #app .app-shell .footer-pattern span,
+html[data-bingo-theme="planet-hall-2"] body #app .app-shell .footer-pattern small {
   color: #40536d !important;
   -webkit-text-fill-color: #40536d !important;
   text-shadow: none !important;
   opacity: 1 !important;
 }
 
-html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="classic"]) body #app .app-shell .footer-pattern strong {
+html[data-bingo-theme="planet-hall-2"] body #app .app-shell .footer-pattern strong {
   color: #132039 !important;
   -webkit-text-fill-color: #132039 !important;
   text-shadow: none !important;
   opacity: 1 !important;
 }
 
-html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="classic"]) body #app .app-shell .app-footer > small {
+html[data-bingo-theme="planet-hall-2"] body #app .app-shell .app-footer > small {
   color: #31445f !important;
   -webkit-text-fill-color: #31445f !important;
   font-weight: 800 !important;
@@ -8057,36 +8057,36 @@ html[data-bingo-theme] #app .topbar .header-actions > .play-time-panel {
 }
 
 /* Time-zone panels retain their full control height inside the separated header. */
-html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="classic"]) #app .topbar {
+html[data-bingo-theme="planet-hall-2"] #app .topbar {
   grid-template-rows: minmax(124px, auto) 54px !important;
 }
 
-html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="classic"]) #app .topbar .header-actions {
+html[data-bingo-theme="planet-hall-2"] #app .topbar .header-actions {
   grid-template-rows: 68px 48px !important;
   height: 124px !important;
   min-height: 124px !important;
   max-height: 124px !important;
 }
 
-html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="classic"]) #app .topbar .header-actions > .play-time-panel {
+html[data-bingo-theme="planet-hall-2"] #app .topbar .header-actions > .play-time-panel {
   height: 68px !important;
   min-height: 68px !important;
   max-height: 68px !important;
   overflow: visible !important;
 }
 
-html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="classic"]) #app .topbar .play-time-panel select {
+html[data-bingo-theme="planet-hall-2"] #app .topbar .play-time-panel select {
   box-sizing: border-box !important;
   max-height: 42px !important;
 }
 
 /* Raise the complete clock/time-zone group together inside its header panel. */
-html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="classic"]) #app .topbar .play-time-panel > :is(div, label) {
+html[data-bingo-theme="planet-hall-2"] #app .topbar .play-time-panel > :is(div, label) {
   position: relative !important;
   top: -4px !important;
 }
 
-html:is([data-bingo-theme="planet-hall-2"], [data-bingo-theme="classic"]) #app .topbar .play-time-panel label > select {
+html[data-bingo-theme="planet-hall-2"] #app .topbar .play-time-panel label > select {
   box-sizing: border-box !important;
   height: 34px !important;
   min-height: 34px !important;
