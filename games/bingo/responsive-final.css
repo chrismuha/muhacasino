@@ -5,6 +5,48 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   width: 100% !important;
 }
 
+/* Mobile Player Floor uses one page scroll; the footer remains separate. */
+@media (max-width: 600px) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app > .app-shell:has(.game-layout) {
+    display: flex !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    max-height: 100dvh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(.game-layout) > .topbar,
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(.game-layout) > .game-layout {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .game-layout :is(.cards-stage, .cards-grid) {
+    display: grid !important;
+    flex: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    overscroll-behavior: auto !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(.game-layout) > .app-footer {
+    position: sticky !important;
+    z-index: 50 !important;
+    bottom: 0 !important;
+    flex: 0 0 auto !important;
+  }
+}
+
 /* v1.1.9 iPhone containment foundations. */
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel,
