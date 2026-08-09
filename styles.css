@@ -436,8 +436,8 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   .brand { grid-column: 1; justify-self: center; font-size: clamp(12.5pt, 5vw, 14pt); }
   .nav-links {
     grid-column: 1;
-    gap: clamp(8px, 3.5vw, 18px);
-    justify-content: space-between;
+    gap: clamp(8px, 2.6vw, 13px);
+    justify-content: center;
     font-size: clamp(10.25pt, 3.8vw, 11.5pt);
   }
   .nav-links a { padding: 8px 2px; }
@@ -456,9 +456,17 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   }
   .hero h1 { left: 0; font-size: clamp(36pt, 14vw, 56.4pt); line-height: .92; }
   .hero-content > p:not(.eyebrow) { width: 100%; max-width: 100%; overflow-wrap: anywhere; white-space: normal; }
-  .hero-arrow { top: auto; bottom: 26px; }
-  .hero-arrow.previous { left: 6px; }
-  .hero-arrow.next { right: 6px; }
+  .hero-arrow {
+    top: auto;
+    bottom: 20px;
+    width: 54px;
+    height: 72px;
+    font-size: 42pt;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .hero-arrow.previous { left: 2px; }
+  .hero-arrow.next { right: 2px; }
   .hero-dots { bottom: 48px; }
   .content-section { width: calc(100% - 28px); padding-top: 55px; }
   .rail-controls { display: none; }

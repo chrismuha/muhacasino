@@ -5,6 +5,176 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   width: 100% !important;
 }
 
+/* 2026-08 iPhone final authority.
+   Keep this block last: the theme file contains older mobile experiments. */
+@media (max-width: 600px) {
+  /* Hall 1 / Classic controls fill the usable area below the app header. */
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls {
+    position: fixed !important;
+    z-index: 10000 !important;
+    inset: var(--hall-controls-safe-top, 210px) 6px max(6px, env(safe-area-inset-bottom)) 6px !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(5, minmax(0, 1fr)) !important;
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 7px !important;
+    gap: 7px !important;
+    overflow: hidden !important;
+    transform: none !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls > button {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 5px !important;
+    font-size: clamp(9pt, 3.2vw, 12pt) !important;
+    overflow: hidden !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls > :is(.hall-panel-close, .hall-start-button) {
+    grid-column: 1 / -1 !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls .hall-panel-close {
+    position: static !important;
+    min-height: 0 !important;
+  }
+
+  /* Dealer screens are one readable column with exactly one internal scroller. */
+  html[data-bingo-theme] body #app .app-shell .dealer-layout {
+    align-content: start !important;
+    grid-auto-rows: max-content !important;
+    gap: 10px !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout :is(
+    .dealer-hero, .dealer-grid, .dealer-card, .dealer-stats, .dealer-tabs,
+    .dealer-command-bar, .dealer-primary-actions, .game-setup-panel,
+    .special-ball-settings, .bingo-schedule-editor, .bingo-prizes-editor
+  ) {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  /* Hall 2 itself is a fixed, full-screen surface; only the card well may scroll. */
+  html[data-bingo-theme="planet"] body > .planet-hall-shell {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    padding: 4px !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-play-surface {
+    flex: 1 1 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-area {
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Daub meanings sit above the winning-pattern preview on iPhone. */
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
+    flex: 0 0 154px !important;
+    height: 154px !important;
+    min-height: 154px !important;
+    max-height: 154px !important;
+    grid-template-columns: minmax(132px, 1fr) 58px minmax(138px, 1fr) !important;
+    gap: 4px !important;
+    padding: 4px !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: 40px minmax(0, 1fr) !important;
+    align-items: stretch !important;
+    gap: 3px !important;
+    padding: 3px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
+    grid-row: 1 !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+    width: 100% !important;
+    height: 40px !important;
+    padding: 0 !important;
+    gap: 2px !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > span {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    min-width: 0 !important;
+    font-size: 6.5pt !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    white-space: normal !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > small {
+    display: none !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .legend-dot {
+    flex: 0 0 11px !important;
+    width: 11px !important;
+    height: 11px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy {
+    grid-row: 2 !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview {
+    width: 88px !important;
+    min-width: 88px !important;
+    max-width: 88px !important;
+    height: 88px !important;
+    min-height: 88px !important;
+    max-height: 88px !important;
+    padding: 6px !important;
+    gap: 2px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    padding: 3px !important;
+    gap: 3px !important;
+    overflow: hidden !important;
+  }
+}
+
 html[data-bingo-theme="current"] body #app .app-shell .topbar > .brand-lockup {
   display: none !important;
 }
@@ -1178,5 +1348,72 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
     visibility: visible !important;
     opacity: 1 !important;
     transform: none !important;
+  }
+}
+
+/* Cascade-final iPhone corrections. */
+@media (max-width: 600px) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls {
+    position: fixed !important;
+    z-index: 10000 !important;
+    inset: var(--hall-controls-safe-top, 210px) 6px max(6px, env(safe-area-inset-bottom)) 6px !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(5, minmax(0, 1fr)) !important;
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 7px !important;
+    gap: 7px !important;
+    overflow: hidden !important;
+    transform: none !important;
+  }
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls > button {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 5px !important;
+    font-size: clamp(9pt, 3.2vw, 12pt) !important;
+    overflow: hidden !important;
+  }
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls > :is(.hall-panel-close, .hall-start-button) { grid-column: 1 / -1 !important; }
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls .hall-panel-close { position: static !important; min-height: 0 !important; }
+  html[data-bingo-theme] body #app .app-shell .dealer-layout { align-content: start !important; grid-auto-rows: max-content !important; gap: 10px !important; -webkit-overflow-scrolling: touch !important; }
+  html[data-bingo-theme] body #app .dealer-layout :is(.dealer-hero, .dealer-grid, .dealer-card, .dealer-stats, .dealer-tabs, .dealer-command-bar, .dealer-primary-actions, .game-setup-panel, .special-ball-settings, .bingo-schedule-editor, .bingo-prizes-editor) {
+    box-sizing: border-box !important; width: 100% !important; min-width: 0 !important; max-width: 100% !important; height: auto !important; max-height: none !important;
+  }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell { display: flex !important; flex-direction: column !important; height: 100dvh !important; max-height: 100dvh !important; padding: 4px !important; overflow: hidden !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-play-surface { flex: 1 1 0 !important; min-height: 0 !important; overflow: hidden !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-area { min-height: 0 !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
+    flex: 0 0 154px !important; height: 154px !important; min-height: 154px !important; max-height: 154px !important;
+    grid-template-columns: minmax(132px, 1fr) 58px minmax(138px, 1fr) !important; gap: 4px !important; padding: 4px !important; overflow: hidden !important;
+  }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
+    display: grid !important; grid-template-columns: minmax(0, 1fr) !important; grid-template-rows: 40px minmax(0, 1fr) !important;
+    align-items: stretch !important; gap: 3px !important; padding: 3px !important;
+  }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
+    grid-row: 1 !important; display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; grid-template-rows: minmax(0, 1fr) !important;
+    width: 100% !important; height: 40px !important; padding: 0 !important; gap: 2px !important; overflow: visible !important;
+  }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > span {
+    display: flex !important; flex-direction: column !important; justify-content: center !important; gap: 2px !important; min-width: 0 !important;
+    font-size: 6.5pt !important; line-height: 1 !important; text-align: center !important; white-space: normal !important;
+  }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > small { display: none !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .legend-dot { flex: 0 0 11px !important; width: 11px !important; height: 11px !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy { grid-row: 2 !important; }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview {
+    width: 88px !important; min-width: 88px !important; max-width: 88px !important; height: 88px !important; min-height: 88px !important; max-height: 88px !important; padding: 6px !important; gap: 2px !important;
+  }
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
+    display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
+    width: 100% !important; height: 100% !important; min-height: 0 !important; max-height: 100% !important; padding: 3px !important; gap: 3px !important; overflow: hidden !important;
   }
 }
