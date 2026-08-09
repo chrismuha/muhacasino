@@ -5,6 +5,143 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   width: 100% !important;
 }
 
+/* v1.1.9 iPhone containment foundations. */
+@media (max-width: 600px) {
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel,
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+    display: grid !important;
+    grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr) !important;
+    grid-auto-rows: auto !important;
+    padding: 8px !important;
+    gap: 7px !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label {
+    grid-column: 1 / -1 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > :is(div, label),
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel select {
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel :is(span, strong) {
+    display: block !important;
+    font-size: clamp(7pt, 2.7vw, 9pt) !important;
+    line-height: 1.15 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel select {
+    width: 100% !important;
+    min-height: 42px !important;
+    padding: 7px 34px 7px 10px !important;
+    font-size: 16px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .header-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .header-actions > :is(.play-time-panel, .screen-switcher) {
+    grid-column: 1 / -1 !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .header-actions > :is(button, .header-theme-switcher, .status-pill),
+  html[data-bingo-theme] body #app .app-shell .topbar .header-theme-switcher > button {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .header-actions > button,
+  html[data-bingo-theme] body #app .app-shell .topbar .header-theme-switcher > button,
+  html[data-bingo-theme] body #app .app-shell .topbar .status-pill {
+    min-height: 48px !important;
+    padding: 6px 4px !important;
+    font-size: clamp(9pt, 3.25vw, 11pt) !important;
+    line-height: 1.05 !important;
+    white-space: normal !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .bingo-schedule-editor,
+  html[data-bingo-theme] body #app .dealer-layout .bingo-schedule-form,
+  html[data-bingo-theme] body #app .dealer-layout .bingo-schedule-form > * {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .bingo-schedule-form {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .bingo-schedule-form :is(input, select, button) {
+    display: block !important;
+    inline-size: 100% !important;
+    min-inline-size: 0 !important;
+    max-inline-size: 100% !important;
+    -webkit-appearance: none;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .bingo-schedule-check {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .bingo-schedule-check input[type="checkbox"] {
+    flex: 0 0 24px !important;
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .game-layout .cards-stage {
+    padding: 12px 8px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .game-layout .cards-stage :is(h1, h2, h3) {
+    position: static !important;
+    max-width: 100% !important;
+    margin: 0 0 10px !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .app-footer {
+    grid-template-rows: minmax(82px, auto) repeat(4, 18px) !important;
+    min-height: 158px !important;
+    max-height: 180px !important;
+    padding: 7px 10px max(8px, env(safe-area-inset-bottom)) !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .app-footer > .footer-pattern {
+    min-height: 82px !important;
+    padding-bottom: 4px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .app-footer .footer-pattern > .pattern-preview {
+    width: 72px !important;
+    min-width: 72px !important;
+    height: 72px !important;
+    min-height: 72px !important;
+  }
+}
+
 /* Cascade-final overrides for the fixes above. */
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .app-shell .play-time-panel :is(span, strong) { font-size: clamp(6.5pt, 2.25vw, 8.5pt) !important; }
@@ -1661,4 +1798,56 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
   html[data-bingo-theme] body #app .app-shell .app-footer > .footer-pattern { min-height: 108px !important; padding-bottom: 8px !important; }
   html[data-bingo-theme] body #app .app-shell .game-layout :is(.cards-stage, .cards-grid),
   html[data-bingo-theme] body #app .app-shell .dealer-layout :is(.dealer-grid, .dealer-card, .player-cards-section) { height: auto !important; max-height: none !important; min-height: 0 !important; overflow: visible !important; }
+}
+
+/* v1.1.9 cascade-final iPhone authority. */
+@media (max-width: 600px) {
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel,
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+    grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr) !important;
+    grid-auto-rows: auto !important;
+    padding: 8px !important;
+    gap: 7px !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel :is(span, strong) {
+    font-size: clamp(7pt, 2.7vw, 9pt) !important;
+    line-height: 1.15 !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .header-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .header-actions > :is(.play-time-panel, .screen-switcher) {
+    grid-column: 1 / -1 !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .app-footer {
+    grid-template-rows: minmax(82px, auto) repeat(4, 18px) !important;
+    min-height: 158px !important;
+    max-height: 180px !important;
+    padding: 7px 10px max(8px, env(safe-area-inset-bottom)) !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .app-footer > .footer-pattern {
+    min-height: 82px !important;
+    padding-bottom: 4px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .app-footer .footer-pattern > .pattern-preview {
+    width: 72px !important;
+    min-width: 72px !important;
+    height: 72px !important;
+    min-height: 72px !important;
+  }
 }

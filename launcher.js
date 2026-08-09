@@ -41,7 +41,7 @@ const games = {
   },
   bingo: {
     title: "Muha Bingo",
-    version: "v1.1.8",
+    version: "v1.1.9",
     subtitle: "75-Ball Bingo",
     path: "games/bingo/index.html",
     className: "card-bingo",
