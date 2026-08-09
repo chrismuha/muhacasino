@@ -2812,3 +2812,81 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-area {
   background: transparent !important;
   box-shadow: none !important;
 }
+
+/* Hall 1 / Classic Dealer summaries remain readable in narrow and tablet windows. */
+@media (max-width: 1050px) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .fixed-dealer-status {
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    gap: 10px 18px !important;
+    padding: 14px 20px !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .fixed-dealer-status > small {
+    grid-column: 1 / -1 !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    font-size: clamp(9pt, 1.45vw, 12pt) !important;
+    line-height: 1.6 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    scrollbar-width: thin !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .fixed-dealer-status > small kbd {
+    margin-inline: 10px 5px !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .dealer-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(2, minmax(110px, auto)) !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .dealer-stats > div {
+    min-width: 0 !important;
+    padding: 14px 18px !important;
+    overflow: hidden !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .dealer-stats > div :is(span, strong, small, p) {
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+    white-space: normal !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .bingo-schedule-editor {
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .bingo-schedule-heading,
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .bingo-schedule-heading > * {
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+    white-space: normal !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .bingo-schedule-heading h2 {
+    font-size: clamp(23pt, 5vw, 36pt) !important;
+    line-height: 1.08 !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .bingo-schedule-heading p {
+    font-size: clamp(12pt, 2.8vw, 18pt) !important;
+    line-height: 1.35 !important;
+  }
+}
