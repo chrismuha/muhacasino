@@ -2431,3 +2431,324 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend
   font-size: clamp(9.5pt, 1.5vw, 13pt) !important;
   line-height: 1.1 !important;
 }
+
+/* Keep the complete timezone field inside the mobile time-panel border. */
+@media (max-width: 600px) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar:has(.screen-switcher) {
+    grid-template-rows: minmax(282px, auto) 61px !important;
+    min-height: 343px !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar > .header-actions {
+    grid-template-rows: minmax(160px, auto) repeat(2, 54px) !important;
+    min-height: 282px !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .header-actions > .play-time-panel {
+    box-sizing: border-box !important;
+    height: 160px !important;
+    min-height: 160px !important;
+    max-height: none !important;
+    padding: 12px !important;
+    overflow: hidden !important;
+  }
+}
+
+/* In two-column footers, legend rows form one compact group beside the pattern. */
+@media (min-width: 501px) {
+  html[data-bingo-theme] body #app .app-shell .app-footer {
+    grid-template-rows: repeat(4, 30px) !important;
+    align-content: center !important;
+    row-gap: 3px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small) {
+    align-self: center !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    margin: 0 !important;
+    padding-block: 0 !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small):nth-child(2) { grid-row: 1 !important; }
+  html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small):nth-child(3) { grid-row: 2 !important; }
+  html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small):nth-child(4) { grid-row: 3 !important; }
+  html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small):nth-child(5) { grid-row: 4 !important; }
+}
+
+/* Tablet and narrow-window headers must size from their contents, not legacy fixed rows. */
+@media (max-width: 1050px) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar:has(.screen-switcher) {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto 61px !important;
+    align-content: start !important;
+    box-sizing: border-box !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar > .header-actions {
+    position: relative !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: auto repeat(2, minmax(72px, auto)) !important;
+    align-content: start !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .header-actions > .play-time-panel {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: auto auto !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 190px !important;
+    max-height: none !important;
+    padding: 14px 16px !important;
+    gap: 10px 14px !important;
+    overflow: hidden !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .play-time-panel > label {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    align-self: start !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .play-time-panel > label > select {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 4px 0 0 !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar > .screen-switcher {
+    position: relative !important;
+    z-index: 2 !important;
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    align-self: stretch !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 54px !important;
+    min-height: 54px !important;
+    max-height: 54px !important;
+    margin: 7px 0 0 !important;
+  }
+}
+
+/* Hall 1 has room for a compact single-row time panel outside portrait widths. */
+@media (min-width: 601px) and (max-width: 1050px) {
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+    grid-template-columns: minmax(230px, 1.25fr) minmax(120px, .8fr) minmax(190px, 1.2fr) !important;
+    grid-template-rows: minmax(82px, auto) !important;
+    align-items: center !important;
+    height: auto !important;
+    min-height: 110px !important;
+    max-height: none !important;
+    padding: 10px 14px !important;
+    gap: 12px !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > div:first-child {
+    order: 2 !important;
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > div:nth-child(2) {
+    order: 3 !important;
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > label {
+    order: 1 !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    align-self: center !important;
+  }
+}
+
+/* The collapsed-controls handle must float above every game-content layer. */
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body .hall-controls-toggle {
+  position: fixed !important;
+  z-index: 20000 !important;
+  isolation: isolate !important;
+  pointer-events: auto !important;
+}
+
+/* Classic keeps its stacked timezone field wholly inside the time-panel border. */
+@media (max-width: 1050px) {
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: minmax(48px, auto) minmax(86px, auto) !important;
+    align-items: start !important;
+    box-sizing: border-box !important;
+    height: 170px !important;
+    min-height: 170px !important;
+    max-height: none !important;
+    padding: 10px 16px !important;
+    gap: 8px 14px !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > label {
+    display: grid !important;
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto 54px !important;
+    align-content: start !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    gap: 4px !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > label > select {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 54px !important;
+    min-height: 54px !important;
+    max-height: 54px !important;
+    margin: 0 !important;
+  }
+}
+
+/* Classic's visible blue time surface follows the complete stacked panel height. */
+@media (max-width: 1050px) {
+  html[data-bingo-theme="current"] body #app .app-shell .topbar > .header-actions::before {
+    width: 100% !important;
+    height: 170px !important;
+    min-height: 170px !important;
+    max-height: 170px !important;
+    border-radius: 22px !important;
+  }
+}
+
+/* Classic uses the same large full-screen controls experience as Hall 1. */
+@media (max-width: 1050px) {
+  html[data-bingo-theme="current"]:not(.hall-controls-collapsed) body .classic-hall-controls {
+    position: fixed !important;
+    z-index: 21000 !important;
+    inset: 82px 6px max(6px, env(safe-area-inset-bottom)) 6px !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: 48px repeat(5, minmax(72px, 1fr)) !important;
+    box-sizing: border-box !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 10px !important;
+    gap: 9px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    transform: none !important;
+  }
+
+  html[data-bingo-theme="current"] body .classic-hall-controls > .hall-panel-close {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+    min-height: 48px !important;
+  }
+
+  html[data-bingo-theme="current"] body .classic-hall-controls > :is(.hall-start-button, .hall-dealer-button) {
+    grid-column: span 1 !important;
+  }
+
+  html[data-bingo-theme="current"] body .classic-hall-controls button {
+    min-height: 64px !important;
+    padding: 12px !important;
+    font-size: clamp(13pt, 3vw, 18pt) !important;
+  }
+
+  html.hall-controls-collapsed[data-bingo-theme="current"] body .classic-hall-controls {
+    display: none !important;
+  }
+}
+
+/* Hall 1 and Classic View Controls fill the usable viewport below the app navbar. */
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]):not(.hall-controls-collapsed) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
+  position: fixed !important;
+  z-index: 21000 !important;
+  top: var(--hall-controls-safe-top, 82px) !important;
+  right: 6px !important;
+  bottom: auto !important;
+  left: 6px !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-rows: 52px repeat(5, minmax(64px, 1fr)) !important;
+  box-sizing: border-box !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: min(620px, calc(100dvh - var(--hall-controls-safe-top, 82px) - 8px)) !important;
+  min-height: min(430px, calc(100dvh - var(--hall-controls-safe-top, 82px) - 8px)) !important;
+  max-height: calc(100dvh - var(--hall-controls-safe-top, 82px) - 8px) !important;
+  margin: 0 !important;
+  padding: 10px !important;
+  gap: 9px !important;
+  overflow: hidden !important;
+  border-radius: 14px !important;
+  transform: none !important;
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) > .hall-panel-close {
+  position: relative !important;
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+  min-height: 0 !important;
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) > :is(.hall-start-button, .hall-dealer-button) {
+  grid-column: span 1 !important;
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) > [data-hall-action="next"] {
+  grid-column: 1 / -1 !important;
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) > button {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: clamp(8px, 1.8vh, 18px) !important;
+  font-size: clamp(12pt, 2.2vw, 20pt) !important;
+}
+
+html.hall-controls-collapsed:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
+  display: none !important;
+}
