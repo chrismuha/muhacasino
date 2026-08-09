@@ -1890,6 +1890,20 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
   }
 }
 
+@media (min-width: 701px) {
+  html[data-bingo-theme] body #app .app-shell .app-footer {
+    grid-template-rows: repeat(4, 30px) !important;
+    align-content: center !important;
+    row-gap: 4px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small) {
+    align-self: center !important;
+    min-height: 0 !important;
+    padding-block: 2px !important;
+  }
+}
+
 /* v1.1.9 cascade-final iPhone authority. */
 @media (max-width: 600px) {
   html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls {
