@@ -3722,7 +3722,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature >
     grid-template-columns: minmax(0, 1fr) !important;
     grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
     align-content: stretch !important;
-    row-gap: 5px !important;
+    row-gap: 8px !important;
     padding-block: 3px !important;
   }
 
@@ -3732,5 +3732,20 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature >
     width: 100% !important;
     gap: clamp(7px, .8vw, 10px) !important;
     font-size: clamp(9px, 1.15vw, 15px) !important;
+  }
+}
+
+@media (max-width: 600px) {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
+    row-gap: 5px !important;
+    padding-block: 0 !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .planet-legend-swatch {
+    flex-basis: 10px !important;
+    width: 10px !important;
+    min-width: 10px !important;
+    height: 10px !important;
+    min-height: 10px !important;
   }
 }
