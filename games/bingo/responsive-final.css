@@ -4960,6 +4960,18 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-wall .bin
   filter: none !important;
 }
 
+/* The casino toolbar owns branding and theme navigation while Bingo is embedded. */
+html.bingo-embedded-window body #app .app-shell .topbar > .brand-lockup,
+html.bingo-embedded-window[data-bingo-theme] body #app .app-shell .topbar .bingo-theme-switcher.header-theme-switcher,
+html.bingo-embedded-window[data-bingo-theme] body > .bingo-theme-switcher,
+html.bingo-embedded-window body > .planet-hall-shell .planet-terminal-header .muha-bingo-logo {
+  display: none !important;
+}
+
+html.bingo-embedded-window body > .planet-hall-shell .planet-terminal-header {
+  justify-content: flex-end !important;
+}
+
 /* Planet Hall 1 desktop navigation sizes from its content so no breakpoint creates a void. */
 @media (min-width: 501px) {
   html[data-bingo-theme="classic"] body #app .app-shell .topbar:has(.screen-switcher) {
