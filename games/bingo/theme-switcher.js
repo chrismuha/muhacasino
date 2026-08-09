@@ -2128,21 +2128,6 @@
     if (themeSwitcher && themeSwitcher.parentElement !== toolbar) toolbar.append(themeSwitcher);
   }
 
-  function normalizeMobileTimezoneControl() {
-    if (!window.matchMedia("(max-width: 600px)").matches) return false;
-    const select = document.querySelector('#app .play-time-panel select[aria-label="Time zone"]');
-    if (!select) return false;
-    const deviceOption = select.querySelector('option[value=""]');
-    if (deviceOption && deviceOption.textContent !== "Device") deviceOption.textContent = "Device";
-    return true;
-  }
-
-  const mobileTimezoneObserver = new MutationObserver(() => {
-    if (normalizeMobileTimezoneControl()) mobileTimezoneObserver.disconnect();
-  });
-  mobileTimezoneObserver.observe(document.documentElement, { childList: true, subtree: true });
-  window.addEventListener("resize", normalizeMobileTimezoneControl, { passive: true });
-
   document.addEventListener("input", saveCardCount, true);
   document.addEventListener("change", saveCardCount, true);
   document.addEventListener("change", saveCardSerialSetting, true);
@@ -2186,7 +2171,6 @@
         return;
       }
       mountThemeSwitcher();
-      normalizeMobileTimezoneControl();
       mountViewOverlay();
       mountDaubOptions();
       mountPurchaseOverlay();
@@ -2210,7 +2194,6 @@
       return;
     }
     mountThemeSwitcher();
-    normalizeMobileTimezoneControl();
     mountViewOverlay();
     mountDaubOptions();
     mountPurchaseOverlay();
