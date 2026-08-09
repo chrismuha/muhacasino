@@ -522,7 +522,7 @@
           <span class="eyebrow">SPECIAL BALL SETTINGS</span>
           <h2>Hot Ball and Birthday Ball</h2>
           <p>Matching card squares stamp automatically and count like Free Space. Bonus multipliers appear with winning results.</p>
-          <label class="other-theme-flashboard-setting"><input type="checkbox" data-special-ball-setting="showOtherThemesFlashboard"><span><strong>Show waiting flashboard in Planet Hall and Classic</strong><small>Leave this off to keep their existing pre-game screens.</small></span></label>
+          <label class="other-theme-flashboard-setting"><input type="checkbox" data-special-ball-setting="showOtherThemesFlashboard"><span><strong>Show waiting flashboard in Planet Hall 1</strong><small>Classic keeps its own pre-game screen.</small></span></label>
         </div>
         <div class="special-ball-grid">
           <fieldset class="special-ball-card hot-ball-settings">
@@ -672,7 +672,7 @@
     const selectedTheme = document.documentElement.dataset.bingoTheme;
     const shouldShow = !isPopout
       && settings.showOtherThemesFlashboard
-      && ["planet-hall-1", "classic"].includes(selectedTheme)
+      && selectedTheme === "planet-hall-1"
       && !document.documentElement.classList.contains("dealer-round-active")
       && !document.documentElement.classList.contains("dealer-overlay-open");
     board.hidden = !shouldShow;
