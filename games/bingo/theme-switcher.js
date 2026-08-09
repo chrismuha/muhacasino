@@ -191,7 +191,14 @@
     document.documentElement.dataset.bingoTheme = selectedTheme;
     window.requestAnimationFrame(syncOtherThemeWaitingFlashboard);
     const app = document.querySelector("#app");
+    const planetHallShell = document.querySelector(".planet-hall-shell");
+    const usePlanetHall2Surface = selectedTheme === "planet-hall-2" && !isPopout;
+    if (planetHallShell) {
+      planetHallShell.hidden = !usePlanetHall2Surface;
+      planetHallShell.style.setProperty("display", usePlanetHall2Surface ? "flex" : "none", "important");
+    }
     if (app) {
+      app.style.setProperty("display", usePlanetHall2Surface ? "none" : "block", "important");
       app.style.removeProperty("left");
       app.style.removeProperty("visibility");
       app.style.removeProperty("pointer-events");

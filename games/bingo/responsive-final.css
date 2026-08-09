@@ -3532,3 +3532,21 @@ html[data-bingo-theme="planet-hall-2"] body > .planet-hall-shell .planet-pattern
   gap: clamp(5px, 1.2vw, 9px) !important;
   padding-inline: 2px !important;
 }
+
+/* Theme-surface routing is exclusive: Classic and Hall 1 never render Hall 2. */
+html:is([data-bingo-theme="classic"], [data-bingo-theme="planet-hall-1"]) body > .planet-hall-shell {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="planet-hall-1"]) body > #app {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+html[data-bingo-theme="planet-hall-2"]:not(.bingo-popout-window) body > #app {
+  display: none !important;
+}
