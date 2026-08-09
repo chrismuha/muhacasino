@@ -190,6 +190,9 @@
     document.querySelector(".hall-overlay-background")?.remove();
     setHallControlsCollapsed(true);
     document.documentElement.dataset.bingoTheme = selectedTheme;
+    const selectedThemeLabel = THEME_DEFINITIONS.find(({ id }) => id === selectedTheme)?.label || "Theme";
+    const routedThemeLabel = document.querySelector(".bingo-popout-toolbar .bingo-theme-trigger > span");
+    if (routedThemeLabel) routedThemeLabel.textContent = selectedThemeLabel;
     window.requestAnimationFrame(syncOtherThemeWaitingFlashboard);
     const app = document.querySelector("#app");
     const planetHallShell = document.querySelector(".planet-hall-shell");
@@ -1298,17 +1301,21 @@
   }
 
   function openDealerWindow() {
+    if (!isPopout) {
+      const dealerUrl = new URL(window.location.href);
+      dealerUrl.searchParams.set("screen", "dealer");
+      dealerUrl.searchParams.delete("player");
+      window.location.assign(dealerUrl.href);
+      return true;
+    }
     let usePopout = false;
     try {
       usePopout = window.localStorage.getItem(DEALER_POPOUT_STORAGE_KEY) === "true";
     } catch {
       // The full-screen Dealer overlay remains the default.
     }
-    // Planet Hall 2's red DEALER control is the in-window console action.
-    if (document.documentElement.dataset.bingoTheme === "planet") usePopout = false;
     if (!usePopout) {
       const opened = clickMatchingControl(/^dealer console$/i);
-      // Hall 2 normally hides #app, so reveal it only after Vue switches views.
       if (opened) document.documentElement.classList.add("dealer-overlay-open");
       return opened;
     }
@@ -1901,6 +1908,12 @@
   function openViewOverlay() {
     const overlay = document.querySelector(".bingo-view-overlay");
     if (!overlay) return;
+    overlay.dataset.pendingCardCount = String(currentViewCount);
+    overlay.querySelectorAll("[data-card-count]").forEach((button) => {
+      const isActive = Number(button.dataset.cardCount) === currentViewCount;
+      button.classList.toggle("active", isActive);
+      button.setAttribute("aria-pressed", String(isActive));
+    });
     overlay.querySelector(".view-choice-panel").hidden = false;
     overlay.querySelector(".view-flashboard-panel").hidden = true;
     overlay.hidden = false;
@@ -1931,7 +1944,10 @@
           <button type="button" data-card-count="6">6 Card View</button>
           <button type="button" data-view-flashboard>Flashboard</button>
         </div>
-        <footer><button type="button" data-view-close>CANCEL</button></footer>
+        <footer>
+          <button type="button" data-view-close>CANCEL</button>
+          <button type="button" data-view-confirm>PROCEED</button>
+        </footer>
       </section>
       <section class="view-flashboard-panel" hidden role="dialog" aria-modal="true" aria-label="Bingo flashboard">
         <header>FLASHBOARD <button type="button" data-view-back>BACK</button></header>
@@ -1941,7 +1957,18 @@
     `;
     overlay.addEventListener("click", (event) => {
       const countButton = event.target.closest("[data-card-count]");
-      if (countButton) selectCardView(Number(countButton.dataset.cardCount));
+      if (countButton) {
+        const selectedCount = Number(countButton.dataset.cardCount);
+        overlay.dataset.pendingCardCount = String(selectedCount);
+        overlay.querySelectorAll("[data-card-count]").forEach((button) => {
+          const isActive = Number(button.dataset.cardCount) === selectedCount;
+          button.classList.toggle("active", isActive);
+          button.setAttribute("aria-pressed", String(isActive));
+        });
+      }
+      if (event.target.closest("[data-view-confirm]")) {
+        selectCardView(Number(overlay.dataset.pendingCardCount || currentViewCount));
+      }
       if (event.target.closest("[data-view-flashboard]")) {
         overlay.querySelector(".view-choice-panel").hidden = true;
         overlay.querySelector(".view-flashboard-panel").hidden = false;
@@ -2103,6 +2130,10 @@
     document.documentElement.dataset.ballTapReady = "true";
     document.addEventListener("click", (event) => {
       if (event.target.closest("#app button")?.textContent?.trim().match(/^player floor$/i)) {
+        if (launchParameters.has("screen")) {
+          returnToPlayerWindow();
+          return;
+        }
         document.documentElement.classList.remove("dealer-overlay-open");
       }
       const ball = event.target.closest(
@@ -2156,7 +2187,19 @@
     const returnButton = document.querySelector(".return-to-player-window");
     const themeSwitcher = document.querySelector(".bingo-theme-switcher");
     if (returnButton && returnButton.parentElement !== toolbar) toolbar.prepend(returnButton);
+    let brand = toolbar.querySelector(".bingo-popout-brand");
+    if (!brand) {
+      brand = document.createElement("span");
+      brand.className = "bingo-popout-brand";
+      brand.setAttribute("aria-label", "Muha Bingo");
+      brand.innerHTML = '<i aria-hidden="true">M</i><strong>MUHA</strong><b>BINGO</b><small>v1.1.9</small>';
+      returnButton?.insertAdjacentElement("afterend", brand);
+    }
     if (themeSwitcher && themeSwitcher.parentElement !== toolbar) toolbar.append(themeSwitcher);
+    const selectedTheme = document.documentElement.dataset.bingoTheme;
+    const selectedThemeLabel = THEME_DEFINITIONS.find(({ id }) => id === selectedTheme)?.label || "Theme";
+    const triggerLabel = themeSwitcher?.querySelector(".bingo-theme-trigger > span");
+    if (triggerLabel) triggerLabel.textContent = selectedThemeLabel;
   }
 
   document.addEventListener("input", saveCardCount, true);

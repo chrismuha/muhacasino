@@ -94,6 +94,25 @@ const gameLoadMessage = document.querySelector("#gameLoadMessage");
 const gameLoadActions = document.querySelector("#gameLoadActions");
 const reloadGameButton = document.querySelector("#reloadGame");
 const returnToLibraryFromError = document.querySelector("#returnToLibraryFromError");
+
+function compareGameTitles(leftId, rightId) {
+  return games[leftId].title.localeCompare(games[rightId].title, undefined, { sensitivity: "base" });
+}
+
+const allGamesRail = document.querySelector("#allGames");
+if (allGamesRail) {
+  [...allGamesRail.querySelectorAll(":scope > [data-game]")]
+    .sort((left, right) => compareGameTitles(left.dataset.game, right.dataset.game))
+    .forEach((card) => allGamesRail.append(card));
+}
+
+const heroTrack = document.querySelector("#heroTrack");
+if (heroTrack) {
+  [...heroTrack.querySelectorAll(":scope > [data-hero-game]")]
+    .sort((left, right) => compareGameTitles(left.dataset.heroGame, right.dataset.heroGame))
+    .forEach((slide) => heroTrack.append(slide));
+}
+
 const slides = [...document.querySelectorAll(".hero-slide")];
 const heroDots = document.querySelector("#heroDots");
 const categoryResults = document.querySelector("#categoryResults");
@@ -321,6 +340,7 @@ function showCategory(categoryId) {
   categoryRail.replaceChildren();
   Object.entries(games)
     .filter(([, game]) => game.categories.includes(categoryId))
+    .sort(([leftId], [rightId]) => compareGameTitles(leftId, rightId))
     .forEach(([gameId]) => categoryRail.append(gameCard(gameId)));
   categoryResults.hidden = false;
   categoryResults.scrollIntoView({ behavior: "smooth", block: "start" });
