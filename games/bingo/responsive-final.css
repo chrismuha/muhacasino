@@ -3672,7 +3672,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend
 
 @media (max-width: 600px) {
   html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
-    grid-template-columns: minmax(0, 1fr) 58px !important;
+    grid-template-columns: minmax(0, 1fr) 58px minmax(138px, 1fr) !important;
   }
 
   html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-credit {
@@ -3689,5 +3689,45 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend
     min-width: clamp(11px, 3.5vw, 17px) !important;
     height: clamp(11px, 3.5vw, 17px) !important;
     min-height: clamp(11px, 3.5vw, 17px) !important;
+  }
+}
+
+/* Hall 2 feature balls and their captions occupy separate rows at every size. */
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature {
+  container-type: size !important;
+  grid-template-rows: auto auto auto !important;
+  align-content: center !important;
+  justify-items: center !important;
+  row-gap: clamp(2px, 1cqh, 6px) !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature > .planet-idle-ball {
+  box-sizing: border-box !important;
+  width: min(68px, 48cqh, 68cqw) !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature > :is(strong, small) {
+  position: static !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+/* A narrow footer uses stacked keys; each individual label remains one line. */
+@media (max-width: 1450px) {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
+    align-content: center !important;
+    row-gap: 3px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > .planet-legend-item {
+    justify-content: flex-start !important;
+    width: 100% !important;
+    font-size: clamp(9px, 1.15vw, 15px) !important;
   }
 }
