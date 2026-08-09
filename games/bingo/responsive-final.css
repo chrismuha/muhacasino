@@ -3608,19 +3608,86 @@ html[data-bingo-theme="planet"]:not(.bingo-popout-window) body > #app {
   }
 }
 
-/* Hall 2 legend ink follows the active light/dark appearance. */
-html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-dark) > .planet-hall-shell .planet-pattern-legend > .planet-legend-item,
-html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-dark) > .planet-hall-shell .planet-pattern-legend .planet-legend-label {
+/* Hall 2 mirrors the real app appearance onto its independent shell. */
+html[data-bingo-theme="planet"] body > .planet-hall-shell[data-appearance="dark"] .planet-pattern-legend > .planet-legend-item,
+html[data-bingo-theme="planet"] body > .planet-hall-shell[data-appearance="dark"] .planet-pattern-legend .planet-legend-label {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
   text-shadow: none !important;
   opacity: 1 !important;
 }
 
-html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) > .planet-hall-shell .planet-pattern-legend > .planet-legend-item,
-html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) > .planet-hall-shell .planet-pattern-legend .planet-legend-label {
+html[data-bingo-theme="planet"] body > .planet-hall-shell[data-appearance="light"] .planet-pattern-legend > .planet-legend-item,
+html[data-bingo-theme="planet"] body > .planet-hall-shell[data-appearance="light"] .planet-pattern-legend .planet-legend-label {
   color: #17243a !important;
   -webkit-text-fill-color: #17243a !important;
   text-shadow: none !important;
   opacity: 1 !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell[data-appearance="dark"] .planet-pattern-legend > .planet-free-item,
+html[data-bingo-theme="planet"] body > .planet-hall-shell[data-appearance="dark"] .planet-pattern-legend > .planet-free-item > .planet-legend-label {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell[data-appearance="light"] .planet-pattern-legend > .planet-free-item,
+html[data-bingo-theme="planet"] body > .planet-hall-shell[data-appearance="light"] .planet-pattern-legend > .planet-free-item > .planet-legend-label {
+  color: #17243a !important;
+  -webkit-text-fill-color: #17243a !important;
+}
+
+/* Final Hall 2 legend layout: all three keys remain visible without clipping. */
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  justify-content: stretch !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  column-gap: clamp(4px, 1vw, 12px) !important;
+  padding-inline: clamp(4px, 1vw, 10px) !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > .planet-legend-item {
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  gap: clamp(3px, .65vw, 8px) !important;
+  padding: 0 !important;
+  font-size: clamp(8px, 1.35vw, 17px) !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .planet-legend-label {
+  display: block !important;
+  min-width: 0 !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 600px) {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
+    grid-template-columns: minmax(0, 1fr) 58px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-credit {
+    display: none !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > .planet-legend-item {
+    font-size: clamp(8px, 2.55vw, 13px) !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .planet-legend-swatch {
+    flex-basis: clamp(11px, 3.5vw, 17px) !important;
+    width: clamp(11px, 3.5vw, 17px) !important;
+    min-width: clamp(11px, 3.5vw, 17px) !important;
+    height: clamp(11px, 3.5vw, 17px) !important;
+    min-height: clamp(11px, 3.5vw, 17px) !important;
+  }
 }

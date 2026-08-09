@@ -112,6 +112,21 @@
     const sourceCards = [...document.querySelectorAll("#app .bingo-card:not(.preview-card):not(.verification-full-card)")];
     if (!shell) return;
 
+    const sourceAppShell = document.querySelector("#app .app-shell");
+    const appearance = sourceAppShell?.classList.contains("theme-light") ? "light" : "dark";
+    const legendInk = appearance === "light" ? "#17243a" : "#ffffff";
+    shell.dataset.appearance = appearance;
+    shell.querySelectorAll(".planet-legend-item, .planet-legend-label").forEach((label) => {
+      label.style.setProperty("color", legendInk, "important");
+      label.style.setProperty("-webkit-text-fill-color", legendInk, "important");
+      label.style.setProperty("text-shadow", "none", "important");
+      label.style.setProperty("opacity", "1", "important");
+    });
+    shell.querySelectorAll(".planet-free-item, .planet-free-item .planet-legend-label").forEach((freeLabel) => {
+      freeLabel.style.setProperty("color", legendInk, "important");
+      freeLabel.style.setProperty("-webkit-text-fill-color", legendInk, "important");
+    });
+
     const wall = shell.querySelector(".planet-card-wall");
     const empty = shell.querySelector(".planet-empty");
     wall.replaceChildren(...sourceCards.map(cardCopy));
