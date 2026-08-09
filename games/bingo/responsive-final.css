@@ -3457,7 +3457,7 @@ html[data-bingo-theme] body .daub-options-x::before,
 html[data-bingo-theme] body .daub-options-x::after {
   content: "";
   position: absolute;
-  top: 50%;
+  top: calc(50% + 2px);
   left: 50%;
   width: 20px;
   height: 3px;
@@ -3474,9 +3474,16 @@ html[data-bingo-theme] body .daub-options-x::after {
 html[data-bingo-theme="classic"] body #app .app-shell .caller-panel {
   border: 0 !important;
   border-radius: 28px !important;
-  background: transparent !important;
   background-image: none !important;
   box-shadow: none !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell.theme-light .caller-panel {
+  background-color: #fff !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell.theme-dark .caller-panel {
+  background-color: #111d2c !important;
 }
 
 html[data-bingo-theme="classic"] body #app .app-shell .current-call-panel {
