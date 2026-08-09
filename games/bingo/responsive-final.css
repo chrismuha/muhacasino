@@ -3721,13 +3721,16 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature >
   html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
     grid-template-columns: minmax(0, 1fr) !important;
     grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
-    align-content: center !important;
-    row-gap: 3px !important;
+    align-content: stretch !important;
+    row-gap: 5px !important;
+    padding-block: 3px !important;
   }
 
   html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > .planet-legend-item {
     justify-content: flex-start !important;
+    align-self: stretch !important;
     width: 100% !important;
+    gap: clamp(7px, .8vw, 10px) !important;
     font-size: clamp(9px, 1.15vw, 15px) !important;
   }
 }
