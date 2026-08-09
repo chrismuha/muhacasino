@@ -513,3 +513,71 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   }
   .hero-actions { align-self: start; }
 }
+
+/* Keep the in-game toolbar balanced between desktop and phone widths. */
+@media (min-width: 601px) and (max-width: 900px) {
+  .game-toolbar {
+    display: grid;
+    grid-template-columns: minmax(190px, 1fr) minmax(120px, .6fr) minmax(190px, .9fr);
+    box-sizing: border-box;
+    width: 100%;
+    height: 72px;
+    min-height: 72px;
+    padding: 7px 10px;
+    gap: 9px;
+  }
+
+  .back-button {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 54px;
+    padding: 8px 12px;
+    font-size: clamp(9.5pt, 1.9vw, 12pt);
+    line-height: 1.05;
+  }
+
+  .back-button b {
+    min-width: 0;
+    white-space: normal;
+  }
+
+  .game-identity {
+    justify-self: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .game-identity > strong {
+    min-width: 0;
+    font-size: clamp(9pt, 1.7vw, 11pt);
+    text-overflow: ellipsis;
+  }
+
+  .game-version {
+    font-size: clamp(7.5pt, 1.25vw, 9pt);
+  }
+
+  .toolbar-theme-picker {
+    justify-self: stretch;
+    width: 100%;
+    min-width: 0;
+    margin-left: 0;
+  }
+
+  .toolbar-theme-picker select {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .game-load-state {
+    inset-block-start: 72px;
+  }
+
+  #gameFrame {
+    height: calc(100dvh - 72px);
+  }
+}

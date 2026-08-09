@@ -2112,6 +2112,18 @@
     };
   }
 
+  function mountUniversalCardDesignOverlay() {
+    if (document.documentElement.dataset.cardDesignOverlayReady === "true") return;
+    document.documentElement.dataset.cardDesignOverlayReady = "true";
+    document.addEventListener("click", (event) => {
+      const cardDesignButton = event.target.closest("#app .card-design-btn");
+      if (!cardDesignButton || cardDesignButton.disabled) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      openDaubOptions();
+    }, true);
+  }
+
   function mountBallTapControl() {
     if (document.documentElement.dataset.ballTapReady === "true") return;
     document.documentElement.dataset.ballTapReady = "true";
@@ -2248,6 +2260,8 @@
         mountPlayerReturnButton();
         mountPopoutToolbar();
         mountViewOverlay();
+        mountDaubOptions();
+        mountUniversalCardDesignOverlay();
         mountScheduleOverlay();
         mountPrizesOverlay();
         observeSpecialBalls();
@@ -2257,6 +2271,7 @@
       mountThemeSwitcher();
       mountViewOverlay();
       mountDaubOptions();
+      mountUniversalCardDesignOverlay();
       mountPurchaseOverlay();
       mountScheduleOverlay();
       mountPrizesOverlay();
@@ -2271,6 +2286,8 @@
       mountPlayerReturnButton();
       mountPopoutToolbar();
       mountViewOverlay();
+      mountDaubOptions();
+      mountUniversalCardDesignOverlay();
       mountScheduleOverlay();
       mountPrizesOverlay();
       observeSpecialBalls();
@@ -2280,6 +2297,7 @@
     mountThemeSwitcher();
     mountViewOverlay();
     mountDaubOptions();
+    mountUniversalCardDesignOverlay();
     mountPurchaseOverlay();
     mountScheduleOverlay();
     mountPrizesOverlay();
