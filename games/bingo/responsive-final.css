@@ -3077,37 +3077,6 @@ html[data-bingo-theme] body #app :is(.dealer-layout, .design-screen) :is(.bingo-
 }
 
 @media (max-width: 600px) {
-  /* Hall 2 Dealer Console has one scroll surface, including its time header. */
-  html[data-bingo-theme="planet"]:is(.dealer-overlay-open, .bingo-popout-window) body > #app {
-    height: 100dvh !important;
-    max-height: 100dvh !important;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    overscroll-behavior-y: contain !important;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  html[data-bingo-theme="planet"]:is(.dealer-overlay-open, .bingo-popout-window) body > #app > .app-shell {
-    height: auto !important;
-    min-height: 100dvh !important;
-    max-height: none !important;
-    overflow: visible !important;
-  }
-
-  html[data-bingo-theme="planet"]:is(.dealer-overlay-open, .bingo-popout-window) body #app .app-shell > .topbar {
-    position: relative !important;
-    inset: auto !important;
-    flex: 0 0 auto !important;
-  }
-
-  html[data-bingo-theme="planet"]:is(.dealer-overlay-open, .bingo-popout-window) body #app .app-shell > .dealer-layout {
-    flex: 0 0 auto !important;
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    overflow: visible !important;
-  }
-
   /* Dealer hero controls retain the same inset as the cards below them. */
   html[data-bingo-theme] body #app .dealer-layout .dealer-hero > :is(.dealer-search, .edit-setup-btn) {
     box-sizing: border-box !important;
@@ -3214,5 +3183,43 @@ html[data-bingo-theme] body #app .dealer-layout .fixed-dealer-status small {
   html[data-bingo-theme] body #app .dealer-layout .dealer-section-title > span {
     flex-basis: 100% !important;
     text-align: left !important;
+  }
+}
+
+/* Dealer and Audience match Player Floor: their mobile header scrolls with content. */
+@media (max-width: 600px) {
+  html[data-bingo-theme] body > #app {
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme] body #app > .app-shell:has(> :is(.dealer-layout, .audience-screen)) {
+    display: flex !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    max-height: 100dvh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  html[data-bingo-theme] body #app > .app-shell:has(> :is(.dealer-layout, .audience-screen)) > :is(
+    .topbar,
+    .dealer-layout,
+    .audience-screen
+  ) {
+    position: relative !important;
+    inset: auto !important;
+    flex: 0 0 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme] body #app > .app-shell:has(> .audience-screen) > .audience-screen {
+    min-height: 100dvh !important;
   }
 }
