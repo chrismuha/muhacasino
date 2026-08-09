@@ -1908,7 +1908,6 @@
   function openViewOverlay() {
     const overlay = document.querySelector(".bingo-view-overlay");
     if (!overlay) return;
-    overlay.dataset.pendingCardCount = String(currentViewCount);
     overlay.querySelectorAll("[data-card-count]").forEach((button) => {
       const isActive = Number(button.dataset.cardCount) === currentViewCount;
       button.classList.toggle("active", isActive);
@@ -1944,10 +1943,7 @@
           <button type="button" data-card-count="6">6 Card View</button>
           <button type="button" data-view-flashboard>Flashboard</button>
         </div>
-        <footer>
-          <button type="button" data-view-close>CANCEL</button>
-          <button type="button" data-view-confirm>PROCEED</button>
-        </footer>
+        <footer><button type="button" data-view-close>CANCEL</button></footer>
       </section>
       <section class="view-flashboard-panel" hidden role="dialog" aria-modal="true" aria-label="Bingo flashboard">
         <header>FLASHBOARD <button type="button" data-view-back>BACK</button></header>
@@ -1958,16 +1954,7 @@
     overlay.addEventListener("click", (event) => {
       const countButton = event.target.closest("[data-card-count]");
       if (countButton) {
-        const selectedCount = Number(countButton.dataset.cardCount);
-        overlay.dataset.pendingCardCount = String(selectedCount);
-        overlay.querySelectorAll("[data-card-count]").forEach((button) => {
-          const isActive = Number(button.dataset.cardCount) === selectedCount;
-          button.classList.toggle("active", isActive);
-          button.setAttribute("aria-pressed", String(isActive));
-        });
-      }
-      if (event.target.closest("[data-view-confirm]")) {
-        selectCardView(Number(overlay.dataset.pendingCardCount || currentViewCount));
+        selectCardView(Number(countButton.dataset.cardCount));
       }
       if (event.target.closest("[data-view-flashboard]")) {
         overlay.querySelector(".view-choice-panel").hidden = true;
@@ -2193,7 +2180,7 @@
       brand = document.createElement("span");
       brand.className = "bingo-popout-brand";
       brand.setAttribute("aria-label", "Muha Bingo");
-      brand.innerHTML = '<i aria-hidden="true">M</i><strong>MUHA</strong><b>BINGO</b><small>v1.1.9</small>';
+      brand.innerHTML = '<strong>MUHA</strong><b>BINGO</b><small>v1.1.9</small>';
       returnButton?.insertAdjacentElement("afterend", brand);
     }
     let appearanceButton = toolbar.querySelector(".window-appearance-button");

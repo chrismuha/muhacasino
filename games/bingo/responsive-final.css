@@ -82,12 +82,6 @@ html[data-bingo-theme] body > .bingo-view-overlay .view-choice-panel > footer {
   gap: 10px !important;
 }
 
-html[data-bingo-theme] body > .bingo-view-overlay [data-view-confirm] {
-  border-color: #58a6ff !important;
-  color: #fff !important;
-  background: #176fca !important;
-}
-
 /* Keep the dauber dialog controls optically centered and Classic's surface rounded. */
 .daub-options-x {
   display: inline-flex !important;
@@ -3880,17 +3874,6 @@ html.bingo-popout-window .bingo-popout-toolbar .bingo-popout-brand {
   white-space: nowrap !important;
 }
 
-html.bingo-popout-window .bingo-popout-toolbar .bingo-popout-brand > i {
-  display: grid !important;
-  place-items: center !important;
-  width: 28px !important;
-  height: 28px !important;
-  border: 2px solid #fff !important;
-  border-radius: 50% !important;
-  background: #1e63c7 !important;
-  font-style: italic !important;
-}
-
 html.bingo-popout-window .bingo-popout-toolbar .bingo-popout-brand > b {
   padding: 4px 7px !important;
   border-radius: 6px !important;
@@ -3935,10 +3918,6 @@ html.bingo-popout-window .bingo-popout-toolbar .bingo-theme-trigger::after {
     gap: 4px !important;
   }
 
-  html.bingo-popout-window .bingo-popout-toolbar .bingo-popout-brand > i {
-    display: none !important;
-  }
-
   html.bingo-popout-window .bingo-popout-toolbar .bingo-theme-trigger {
     min-width: min(42vw, 190px) !important;
     padding-inline: 10px !important;
@@ -3976,42 +3955,10 @@ html.bingo-popout-window .bingo-popout-toolbar .bingo-theme-trigger::after {
     white-space: nowrap !important;
   }
 
-  /* Only Planet Hall 1's routed Dealer header needs the compact time row. */
-  html.bingo-popout-window[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions {
-    grid-template-rows: 110px repeat(2, 54px) !important;
-    min-height: 232px !important;
-  }
-
-  html.bingo-popout-window[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, .72fr) minmax(0, 1.05fr) !important;
-    grid-template-rows: 1fr !important;
-    align-items: center !important;
-    height: 110px !important;
-    min-height: 110px !important;
-    max-height: 110px !important;
-    padding: 9px 10px !important;
-    gap: 8px !important;
-  }
-
-  html.bingo-popout-window[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > label {
-    grid-column: 1 !important;
-    grid-row: 1 !important;
-    align-self: center !important;
-  }
-
-  html.bingo-popout-window[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > div:first-child {
-    grid-column: 2 !important;
-    grid-row: 1 !important;
-  }
-
-  html.bingo-popout-window[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > div:nth-child(2) {
-    grid-column: 3 !important;
-    grid-row: 1 !important;
-  }
 }
 
 /* Planet Hall 2's routed Dealer header uses the same compact content height. */
-@media (max-width: 1050px) {
+@media (max-width: 2000px) {
   /* Routed Hall Dealer screens use real document flow: no blank header cavity or overlap. */
   html.bingo-popout-window:is([data-bingo-theme="current"], [data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app > .app-shell > .topbar {
     position: relative !important;
@@ -4025,6 +3972,13 @@ html.bingo-popout-window .bingo-popout-toolbar .bingo-theme-trigger::after {
     margin: 0 !important;
     padding: 0 !important;
     overflow: hidden !important;
+  }
+
+  html.bingo-popout-window:is([data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app > .app-shell > .topbar,
+  html.bingo-popout-window:is([data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app > .app-shell > .topbar > .header-actions {
+    height: 172px !important;
+    min-height: 172px !important;
+    max-height: 172px !important;
   }
 
   html.bingo-popout-window:is([data-bingo-theme="current"], [data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app > .app-shell > .topbar > .header-actions {
@@ -4068,7 +4022,7 @@ html.bingo-popout-window .bingo-popout-toolbar .bingo-theme-trigger::after {
   html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
     grid-column: 1 / -1 !important;
     grid-row: 1 !important;
-    grid-template-columns: minmax(0, 1.55fr) minmax(0, .7fr) minmax(0, 1.1fr) !important;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, .9fr) minmax(0, 1.2fr) !important;
     grid-template-rows: 1fr !important;
     align-items: center !important;
     height: 94px !important;
@@ -4097,6 +4051,11 @@ html.bingo-popout-window .bingo-popout-toolbar .bingo-theme-trigger::after {
   html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > div:first-child {
     grid-column: 2 !important;
     grid-row: 1 !important;
+  }
+
+  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > div:first-child > span {
+    font-size: clamp(7pt, 2.25vw, 8.5pt) !important;
+    white-space: nowrap !important;
   }
 
   html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > div:nth-child(2) {
@@ -4131,12 +4090,14 @@ html.bingo-popout-window .bingo-popout-toolbar .bingo-theme-trigger::after {
     display: none !important;
   }
 
-  html.bingo-popout-window[data-bingo-theme="planet"] body #app .app-shell .topbar .header-actions {
-    grid-template-rows: 110px repeat(2, 54px) !important;
-    min-height: 232px !important;
+  html.bingo-popout-window:is([data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app .app-shell .topbar .header-actions {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-rows: 110px 54px !important;
+    gap: 8px !important;
   }
 
-  html.bingo-popout-window[data-bingo-theme="planet"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+  html.bingo-popout-window:is([data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app .app-shell .topbar .header-actions > .play-time-panel {
     grid-template-columns: minmax(0, 1.3fr) minmax(0, .72fr) minmax(0, 1.05fr) !important;
     grid-template-rows: 1fr !important;
     align-items: center !important;
@@ -4147,18 +4108,18 @@ html.bingo-popout-window .bingo-popout-toolbar .bingo-theme-trigger::after {
     gap: 8px !important;
   }
 
-  html.bingo-popout-window[data-bingo-theme="planet"] body #app .app-shell .topbar .play-time-panel > label {
+  html.bingo-popout-window:is([data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app .app-shell .topbar .play-time-panel > label {
     grid-column: 1 !important;
     grid-row: 1 !important;
     align-self: center !important;
   }
 
-  html.bingo-popout-window[data-bingo-theme="planet"] body #app .app-shell .topbar .play-time-panel > div:first-child {
+  html.bingo-popout-window:is([data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app .app-shell .topbar .play-time-panel > div:first-child {
     grid-column: 2 !important;
     grid-row: 1 !important;
   }
 
-  html.bingo-popout-window[data-bingo-theme="planet"] body #app .app-shell .topbar .play-time-panel > div:nth-child(2) {
+  html.bingo-popout-window:is([data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app .app-shell .topbar .play-time-panel > div:nth-child(2) {
     grid-column: 3 !important;
     grid-row: 1 !important;
   }
@@ -4184,4 +4145,113 @@ html[data-bingo-theme="current"] body #app .app-shell.theme-dark .topbar .screen
   color: #eef5ff !important;
   -webkit-text-fill-color: #eef5ff !important;
   background: #192b45 !important;
+}
+
+/* Every routed Audience theme accounts for the external toolbar in its scroll range. */
+html.bingo-popout-window body > #app,
+html.bingo-popout-window body > #app > .app-shell:has(> .audience-screen) {
+  box-sizing: border-box !important;
+  height: calc(100dvh - 64px) !important;
+  min-height: 0 !important;
+  max-height: calc(100dvh - 64px) !important;
+  overflow: hidden !important;
+}
+
+html.bingo-popout-window body #app > .app-shell:has(> .audience-screen) > .audience-screen {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  padding-bottom: 112px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior-y: contain !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Routed Audience windows reflow at narrower desktop widths. */
+@media (max-width: 1400px) {
+  html.bingo-popout-window body > #app,
+  html.bingo-popout-window body > #app > .app-shell:has(> .audience-screen) {
+    box-sizing: border-box !important;
+    height: calc(100dvh - 64px) !important;
+    min-height: 0 !important;
+    max-height: calc(100dvh - 64px) !important;
+    overflow: hidden !important;
+  }
+
+  html.bingo-popout-window body #app > .app-shell:has(> .audience-screen) > .audience-screen {
+    position: relative !important;
+    inset: auto !important;
+    flex: 1 1 auto !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 14px 18px 96px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  html.bingo-popout-window body #app .audience-screen > .audience-content {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    gap: 14px !important;
+    overflow: visible !important;
+  }
+
+  html.bingo-popout-window body #app .audience-screen .audience-call {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 390px !important;
+    overflow: hidden !important;
+  }
+
+  html.bingo-popout-window body #app .audience-screen .audience-call > .audience-ball {
+    width: 240px !important;
+    height: 240px !important;
+    min-width: 240px !important;
+    min-height: 240px !important;
+    max-width: 240px !important;
+    max-height: 240px !important;
+    margin-inline: auto !important;
+  }
+
+  html.bingo-popout-window body #app .audience-screen .audience-side {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: none !important;
+    grid-auto-rows: minmax(110px, auto) !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    gap: 14px !important;
+    overflow: visible !important;
+  }
+
+  html.bingo-popout-window body #app .audience-screen .audience-side > section {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 110px !important;
+    overflow: visible !important;
+  }
+
+  html.bingo-popout-window .bingo-popout-toolbar .bingo-popout-brand {
+    flex: 0 0 auto !important;
+    font-size: clamp(8pt, 1.05vw, 11pt) !important;
+  }
+}
+
+@media (max-width: 600px) {
+  html.bingo-popout-window body > #app,
+  html.bingo-popout-window body > #app > .app-shell:has(> .audience-screen) {
+    height: calc(100dvh - 58px) !important;
+    max-height: calc(100dvh - 58px) !important;
+  }
 }
