@@ -434,3 +434,4 @@ removeLegacyCasinoCaching();
 
 const requestedGame = window.location.hash.slice(1);
 if (games[requestedGame]) launchGame(requestedGame, false);
+else showLauncher(false);
