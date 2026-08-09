@@ -1,5 +1,7 @@
 (() => {
   const STORAGE_KEY = "muha-bingo-theme";
+  const THEME_ID_VERSION_KEY = "muha-bingo-theme-id-version";
+  const THEME_ID_VERSION = "canonical-v1";
   const DAUB_STORAGE_KEY = "muha-bingo-daub-design";
   const SOLID_COLOR_STORAGE_KEY = "muha-bingo-solid-colors";
   const VIEW_COUNT_STORAGE_KEY = "muha-bingo-view-count";
@@ -42,17 +44,18 @@
   }
 
   migrateLegacyCardSerialDefaults();
-  // Legacy IDs remain in storage and data-bingo-theme for compatibility.
-  // Use each definition's name (and data-bingo-theme-name) for new UI targeting.
+  const LEGACY_THEME_IDS = Object.freeze({
+    planet: "planet-hall-2",
+    classic: "planet-hall-1",
+    current: "classic",
+    vault: "planet-hall-1",
+  });
   const THEME_DEFINITIONS = Object.freeze([
-    { id: "planet", name: "planet-hall-2", label: "Planet Hall 2" },
-    { id: "classic", name: "planet-hall-1", label: "Planet Hall 1" },
-    { id: "current", name: "classic", label: "Classic" },
+    { id: "planet-hall-2", label: "Planet Hall 2" },
+    { id: "planet-hall-1", label: "Planet Hall 1" },
+    { id: "classic", label: "Classic" },
   ]);
   const themes = THEME_DEFINITIONS.map(({ id }) => id);
-  const themeDefinitionById = Object.fromEntries(
-    THEME_DEFINITIONS.map((definition) => [definition.id, definition])
-  );
   const daubOptions = [
     ["solid", "Solid Color", ""], ["splat", "Splat (Solid Color)", ""],
     ["sharp-splat", "Sharp Splat (Solid Color)", ""], ["circle", "Circle (Solid Color)", ""],
@@ -150,10 +153,16 @@
   function savedTheme() {
     try {
       const value = window.localStorage.getItem(STORAGE_KEY);
-      if (value === "vault") return "classic";
-      return themes.includes(value) ? value : "planet";
+      const alreadyMigrated = window.localStorage.getItem(THEME_ID_VERSION_KEY) === THEME_ID_VERSION;
+      const migratedValue = alreadyMigrated ? value : (LEGACY_THEME_IDS[value] || value);
+      if (!alreadyMigrated) window.localStorage.setItem(THEME_ID_VERSION_KEY, THEME_ID_VERSION);
+      if (themes.includes(migratedValue)) {
+        if (migratedValue !== value) window.localStorage.setItem(STORAGE_KEY, migratedValue);
+        return migratedValue;
+      }
+      return "planet-hall-2";
     } catch {
-      return "planet";
+      return "planet-hall-2";
     }
   }
 
@@ -174,13 +183,12 @@
   }
 
   function applyTheme(theme, broadcast = true) {
-    const selectedTheme = themes.includes(theme) ? theme : "planet";
+    const selectedTheme = themes.includes(theme) ? theme : "planet-hall-2";
     const previousTheme = document.documentElement.dataset.bingoTheme;
     document.documentElement.classList.remove("hall-native-controls-open");
     document.querySelector(".hall-overlay-background")?.remove();
     setHallControlsCollapsed(true);
     document.documentElement.dataset.bingoTheme = selectedTheme;
-    document.documentElement.dataset.bingoThemeName = themeDefinitionById[selectedTheme].name;
     window.requestAnimationFrame(syncOtherThemeWaitingFlashboard);
     const app = document.querySelector("#app");
     if (app) {
@@ -664,7 +672,7 @@
     const selectedTheme = document.documentElement.dataset.bingoTheme;
     const shouldShow = !isPopout
       && settings.showOtherThemesFlashboard
-      && ["classic", "current"].includes(selectedTheme)
+      && ["planet-hall-1", "classic"].includes(selectedTheme)
       && !document.documentElement.classList.contains("dealer-round-active")
       && !document.documentElement.classList.contains("dealer-overlay-open");
     board.hidden = !shouldShow;
