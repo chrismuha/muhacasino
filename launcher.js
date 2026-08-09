@@ -174,6 +174,7 @@ function addHorizontalSwipe(element, onSwipe, { dragScroll = false } = {}) {
 
   element.style.touchAction = "pan-y pinch-zoom";
   element.addEventListener("pointerdown", (event) => {
+    if (event.target.closest("button, a, input, select, textarea, label")) return;
     if (event.pointerType === "mouse" && event.button !== 0) return;
     pointerId = event.pointerId;
     startX = event.clientX;
