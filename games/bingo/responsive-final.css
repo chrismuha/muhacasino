@@ -3304,3 +3304,79 @@ html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .de
     font-size: clamp(16px, 5vw, 22px) !important;
   }
 }
+
+/* Hall 1 and Classic keep the light time panel—and black ink—in dark mode. */
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .play-time-panel {
+  --timezone-arrow: #000 !important;
+  color: #17243a !important;
+  -webkit-text-fill-color: #17243a !important;
+  border-color: #7897c0 !important;
+  background-color: #edf4fd !important;
+  background-image: none !important;
+  text-shadow: none !important;
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .play-time-panel :is(
+  div,
+  label,
+  span,
+  strong
+) {
+  color: #17243a !important;
+  -webkit-text-fill-color: #17243a !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .play-time-panel label > span {
+  color: #40536f !important;
+  -webkit-text-fill-color: #40536f !important;
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .play-time-panel select {
+  color: #17243a !important;
+  -webkit-text-fill-color: #17243a !important;
+  border-color: #7897c0 !important;
+  background-color: #fff !important;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #000 50%),
+    linear-gradient(135deg, #000 50%, transparent 50%) !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .play-time-panel label::after {
+  border-top-color: #000 !important;
+}
+
+/* Dark Dealer surfaces never inherit dark helper copy from their light palettes. */
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .dealer-layout :is(
+  .dealer-hero,
+  .dealer-card,
+  .dealer-stats,
+  .dealer-tabs,
+  .dealer-command-bar,
+  .fixed-dealer-status
+) {
+  color: #f7faff !important;
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .dealer-layout :is(
+  .dealer-hero .eyebrow,
+  .dealer-hero h2,
+  .dealer-section-title .eyebrow,
+  .dealer-section-title h3,
+  .dealer-section-title > span,
+  .dealer-stats span,
+  .dealer-stats small,
+  .target-card-panel > p,
+  .dealer-notice,
+  .fixed-dealer-status > span,
+  .fixed-dealer-status > small,
+  .dealer-empty-state p
+) {
+  color: #f7faff !important;
+  -webkit-text-fill-color: #f7faff !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
