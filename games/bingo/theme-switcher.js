@@ -2186,6 +2186,7 @@
     }
     const returnButton = document.querySelector(".return-to-player-window");
     const themeSwitcher = document.querySelector(".bingo-theme-switcher");
+    const appearanceSource = document.querySelector('#app .appearance-btn[aria-label^="Use "]');
     if (returnButton && returnButton.parentElement !== toolbar) toolbar.prepend(returnButton);
     let brand = toolbar.querySelector(".bingo-popout-brand");
     if (!brand) {
@@ -2194,6 +2195,28 @@
       brand.setAttribute("aria-label", "Muha Bingo");
       brand.innerHTML = '<i aria-hidden="true">M</i><strong>MUHA</strong><b>BINGO</b><small>v1.1.9</small>';
       returnButton?.insertAdjacentElement("afterend", brand);
+    }
+    let appearanceButton = toolbar.querySelector(".window-appearance-button");
+    if (appearanceSource && !appearanceButton) {
+      appearanceButton = document.createElement("button");
+      appearanceButton.className = "btn appearance-btn window-appearance-button";
+      appearanceButton.type = "button";
+      const syncAppearanceButton = () => {
+        appearanceButton.innerHTML = appearanceSource.innerHTML;
+        appearanceButton.setAttribute("aria-label", appearanceSource.getAttribute("aria-label") || "Toggle light or dark mode");
+      };
+      syncAppearanceButton();
+      appearanceButton.addEventListener("click", () => {
+        appearanceSource.click();
+        window.requestAnimationFrame(syncAppearanceButton);
+      });
+      new MutationObserver(syncAppearanceButton).observe(appearanceSource, {
+        attributes: true,
+        childList: true,
+        subtree: true,
+        characterData: true,
+      });
+      toolbar.append(appearanceButton);
     }
     if (themeSwitcher && themeSwitcher.parentElement !== toolbar) toolbar.append(themeSwitcher);
     const selectedTheme = document.documentElement.dataset.bingoTheme;
