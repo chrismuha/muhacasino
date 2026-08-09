@@ -1987,24 +1987,28 @@
       </section>
     `;
     let openingState = null;
-    let dirty = false;
     const captureState = () => ({
       design: savedDaubDesign(),
       colors: savedSolidColors(),
       dealerPopout: overlay.querySelector("[data-dealer-popout]")?.checked || false,
     });
+    const statesMatch = (first, second) => Boolean(first && second)
+      && first.design === second.design
+      && first.dealerPopout === second.dealerPopout
+      && first.colors.pre === second.colors.pre
+      && first.colors.actual === second.colors.actual
+      && first.colors.free === second.colors.free;
+    const hasUnsavedChanges = () => !statesMatch(openingState, captureState());
     const closeDaubOptions = (confirmed = false) => {
-      if (!confirmed && dirty) {
+      if (!confirmed && hasUnsavedChanges()) {
         overlay.querySelector("[data-daub-discard-prompt]").hidden = false;
         return;
       }
-      dirty = false;
       overlay.hidden = true;
     };
     overlay.addEventListener("click", (event) => {
       const designButton = event.target.closest("[data-daub-design]");
       if (designButton) {
-        dirty = true;
         applyDaubDesign(designButton.dataset.daubDesign);
         if (solidColorDaubDesigns.has(designButton.dataset.daubDesign)) {
           const designName = daubOptions.find(([id]) => id === designButton.dataset.daubDesign)?.[1] || "Solid Color";
@@ -2030,12 +2034,10 @@
           try { window.localStorage.setItem(DEALER_POPOUT_STORAGE_KEY, String(openingState.dealerPopout)); } catch {}
         }
         overlay.querySelector("[data-daub-discard-prompt]").hidden = true;
-        dirty = false;
         overlay.hidden = true;
       }
     });
     overlay.addEventListener("input", (event) => {
-      dirty = true;
       if (event.target.matches("[data-dealer-popout]")) {
         try {
           window.localStorage.setItem(DEALER_POPOUT_STORAGE_KEY, String(event.target.checked));
@@ -2061,7 +2063,6 @@
     const originalOpen = openDaubOptions;
     openDaubOptions = function openDaubOptionsWithSnapshot() {
       openingState = captureState();
-      dirty = false;
       overlay.querySelector("[data-daub-discard-prompt]").hidden = true;
       originalOpen();
     };

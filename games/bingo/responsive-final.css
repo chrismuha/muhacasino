@@ -47,6 +47,20 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   }
 }
 
+/* Keep the dauber dialog controls optically centered and Classic's surface rounded. */
+.daub-options-x {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  text-align: center !important;
+}
+
+html[data-bingo-theme="classic"] body .daub-options-overlay > section {
+  border-radius: 18px !important;
+  overflow: auto !important;
+}
+
 /* v1.1.9 iPhone containment foundations. */
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel,
