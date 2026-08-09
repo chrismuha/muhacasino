@@ -47,71 +47,6 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   }
 }
 
-/* Manual Draw has one strong, readable section header in every theme. */
-html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-section-title {
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, .72fr) !important;
-  align-items: end !important;
-  box-sizing: border-box !important;
-  width: 100% !important;
-  min-width: 0 !important;
-  margin: 0 0 18px !important;
-  padding: 0 0 14px !important;
-  gap: 12px 24px !important;
-  border-bottom: 3px solid currentColor !important;
-}
-
-html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-section-title > div {
-  min-width: 0 !important;
-}
-
-html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-section-title > div > .eyebrow {
-  margin: 0 0 5px !important;
-  font-size: clamp(13px, 1.15vw, 17px) !important;
-  font-weight: 900 !important;
-  line-height: 1.15 !important;
-  letter-spacing: .12em !important;
-}
-
-html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-section-title > div > h3 {
-  margin: 0 !important;
-  font-size: clamp(34px, 4vw, 58px) !important;
-  line-height: 1 !important;
-}
-
-html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-section-title > span {
-  align-self: end !important;
-  justify-self: end !important;
-  max-width: 520px !important;
-  font-size: clamp(22px, 2vw, 30px) !important;
-  font-weight: 850 !important;
-  line-height: 1.2 !important;
-  text-align: right !important;
-  white-space: normal !important;
-  overflow-wrap: anywhere !important;
-}
-
-@media (max-width: 700px) {
-  html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-section-title {
-    grid-template-columns: minmax(0, 1fr) !important;
-    align-items: start !important;
-    margin-bottom: 14px !important;
-    padding-bottom: 12px !important;
-    gap: 10px !important;
-  }
-
-  html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-section-title > div > h3 {
-    font-size: clamp(31px, 9vw, 46px) !important;
-  }
-
-  html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-section-title > span {
-    justify-self: stretch !important;
-    max-width: 100% !important;
-    font-size: clamp(19px, 5vw, 24px) !important;
-    text-align: left !important;
-  }
-}
-
 /* v1.1.9 iPhone containment foundations. */
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel,
@@ -3221,5 +3156,70 @@ html[data-bingo-theme] body #app .dealer-layout .fixed-dealer-status small {
 
   html[data-bingo-theme] body #app > .app-shell:has(> .audience-screen) > .audience-screen {
     min-height: 100dvh !important;
+  }
+}
+
+/* Manual Draw has one strong, readable section header in every theme. */
+html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-section-title {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, .72fr) !important;
+  align-items: end !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 0 18px !important;
+  padding: 0 0 14px !important;
+  gap: 12px 24px !important;
+  border-bottom: 3px solid currentColor !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-section-title > div {
+  min-width: 0 !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-section-title > div > .eyebrow {
+  margin: 0 0 5px !important;
+  font-size: clamp(13px, 1.15vw, 17px) !important;
+  font-weight: 900 !important;
+  line-height: 1.15 !important;
+  letter-spacing: .12em !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-section-title > div > h3 {
+  margin: 0 !important;
+  font-size: clamp(34px, 4vw, 58px) !important;
+  line-height: 1 !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-section-title > span {
+  align-self: end !important;
+  justify-self: end !important;
+  max-width: 520px !important;
+  font-size: clamp(22px, 2vw, 30px) !important;
+  font-weight: 850 !important;
+  line-height: 1.2 !important;
+  text-align: right !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+@media (max-width: 700px) {
+  html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-section-title {
+    grid-template-columns: minmax(0, 1fr) !important;
+    align-items: start !important;
+    margin-bottom: 14px !important;
+    padding-bottom: 12px !important;
+    gap: 10px !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-section-title > div > h3 {
+    font-size: clamp(31px, 9vw, 46px) !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-section-title > span {
+    justify-self: stretch !important;
+    max-width: 100% !important;
+    font-size: clamp(19px, 5vw, 24px) !important;
+    text-align: left !important;
   }
 }
