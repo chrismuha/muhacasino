@@ -3441,3 +3441,45 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(
     overflow-y: auto !important;
   }
 }
+
+/* Final dauber close-button authority: hide the baseline-sensitive text glyph. */
+html[data-bingo-theme] body .daub-options-x {
+  box-sizing: border-box !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  text-indent: 0 !important;
+}
+
+html[data-bingo-theme] body .daub-options-x::before,
+html[data-bingo-theme] body .daub-options-x::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 3px;
+  border-radius: 999px;
+  background: currentColor;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+html[data-bingo-theme] body .daub-options-x::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Classic's structural caller wrapper must not show square white corners. */
+html[data-bingo-theme="classic"] body #app .app-shell .caller-panel {
+  border: 0 !important;
+  border-radius: 28px !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell .current-call-panel {
+  border-radius: 28px !important;
+  overflow: hidden !important;
+}
