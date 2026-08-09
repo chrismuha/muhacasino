@@ -221,7 +221,6 @@
     shell.innerHTML = `
       <header class="planet-terminal-header">
         <div class="muha-bingo-logo" role="img" aria-label="Muha Bingo">
-          <span class="muha-bingo-mark" aria-hidden="true">M</span>
           <span class="muha-bingo-words"><b>MUHA</b><span>BINGO</span></span>
         </div>
         <button class="planet-mode-trigger" type="button" aria-label="Use dark mode">

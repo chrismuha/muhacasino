@@ -4840,3 +4840,122 @@ html[data-bingo-theme="classic"] body #app .app-shell .dealer-layout .bingo-sche
     overscroll-behavior-y: contain !important;
   }
 }
+
+/* Keep the Muha Bingo wordmark consistent: no separate M medallion. */
+html[data-bingo-theme] body :is(.muha-bingo-logo .muha-bingo-mark, #app .topbar .brand-lockup > img.brand-mark) {
+  display: none !important;
+}
+
+html[data-bingo-theme] body .muha-bingo-logo {
+  gap: 0 !important;
+}
+
+/* Called-number labels and card instructions must remain readable at phone widths. */
+html[data-bingo-theme] body #app .called-history-frame :is(span, strong, p),
+html[data-bingo-theme="planet"] body > .planet-hall-shell .called-history-frame :is(span, strong, p) {
+  font-size: clamp(14px, 3.5vw, 18px) !important;
+  font-weight: 800 !important;
+  line-height: 1.3 !important;
+}
+
+html[data-bingo-theme] body #app .history-balls span,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .history-balls span {
+  min-width: 48px !important;
+  padding: 9px 8px !important;
+  font-size: clamp(14px, 3.5vw, 18px) !important;
+  font-weight: 900 !important;
+}
+
+html[data-bingo-theme] body #app .bingo-card .card-hint,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-wall .bingo-card .card-hint {
+  box-sizing: border-box !important;
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 10px 0 0 !important;
+  padding: 10px 12px !important;
+  color: #17243a !important;
+  -webkit-text-fill-color: #17243a !important;
+  background: #f7fbff !important;
+  border: 1px solid #9ab0cb !important;
+  font-size: clamp(14px, 3.6vw, 18px) !important;
+  font-weight: 850 !important;
+  line-height: 1.35 !important;
+  text-align: left !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  overflow-wrap: anywhere !important;
+  text-overflow: clip !important;
+  text-shadow: none !important;
+}
+
+/* Mobile call information is primary game content, not fine print. */
+@media (max-width: 600px) {
+  html[data-bingo-theme] body #app .app-shell .recent-panel .section-heading h2,
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .recent-panel .section-heading h2 {
+    font-size: 21px !important;
+    font-weight: 950 !important;
+    line-height: 1.15 !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .recent-panel .section-heading > span,
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .recent-panel .section-heading > span {
+    font-size: 17px !important;
+    font-weight: 900 !important;
+    line-height: 1.2 !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .recent-panel :is(.recent-list, .recent-calls) > :is(p, small),
+  html[data-bingo-theme] body #app .app-shell .recent-panel > :is(p, small),
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .recent-panel :is(p, small) {
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    line-height: 1.4 !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .called-history-frame > div:first-child > span,
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .called-history-frame > div:first-child > span {
+    font-size: 18px !important;
+    font-weight: 950 !important;
+    line-height: 1.2 !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .called-history-frame > div:first-child > strong,
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .called-history-frame > div:first-child > strong {
+    font-size: 20px !important;
+    font-weight: 950 !important;
+    line-height: 1.2 !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .called-history-frame > p,
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .called-history-frame > p {
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    line-height: 1.4 !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .recent-panel .recent-ball > span,
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .recent-panel .recent-ball > span {
+    font-size: 16px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .recent-panel .recent-ball > strong,
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .recent-panel .recent-ball > strong {
+    font-size: 24px !important;
+  }
+}
+
+/* Card helper copy sits on a light surface and always uses dark readable ink. */
+html[data-bingo-theme] body #app .app-shell:is(.theme-light, .theme-dark) .cards-stage .bingo-card.bingo-card .card-hint,
+html[data-bingo-theme] body #app .app-shell:is(.theme-light, .theme-dark) .cards-grid .bingo-card.bingo-card .card-hint,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-wall .bingo-card.bingo-card .card-hint {
+  color: #17243a !important;
+  -webkit-text-fill-color: #17243a !important;
+  background: #f7fbff !important;
+  border-color: #8fa6c2 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
