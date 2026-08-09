@@ -3607,3 +3607,20 @@ html[data-bingo-theme="planet"]:not(.bingo-popout-window) body > #app {
     font-size: 7.5pt !important;
   }
 }
+
+/* Hall 2 legend ink follows the active light/dark appearance. */
+html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-dark) > .planet-hall-shell .planet-pattern-legend > .planet-legend-item,
+html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-dark) > .planet-hall-shell .planet-pattern-legend .planet-legend-label {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) > .planet-hall-shell .planet-pattern-legend > .planet-legend-item,
+html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) > .planet-hall-shell .planet-pattern-legend .planet-legend-label {
+  color: #17243a !important;
+  -webkit-text-fill-color: #17243a !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
