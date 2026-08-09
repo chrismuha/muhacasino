@@ -3380,3 +3380,26 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .a
   opacity: 1 !important;
   text-shadow: none !important;
 }
+
+/* Hall 2 footer card and controls share one surface without a splitter bar. */
+html[data-bingo-theme="planet"] body > .planet-hall-shell :is(
+  .planet-pattern-copy,
+  .planet-pattern-legend,
+  .planet-footer-controls
+) {
+  border-right: 0 !important;
+  border-left: 0 !important;
+  outline: 0 !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .planet-pattern-footer,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > .footer-pattern {
+  border: 0 !important;
+  border-right-width: 0 !important;
+  border-right-style: none !important;
+  border-left-width: 0 !important;
+  border-left-style: none !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
