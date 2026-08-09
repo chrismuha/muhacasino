@@ -1304,9 +1304,13 @@
     } catch {
       // The full-screen Dealer overlay remains the default.
     }
+    // Planet Hall 2's red DEALER control is the in-window console action.
+    if (document.documentElement.dataset.bingoTheme === "planet") usePopout = false;
     if (!usePopout) {
+      // Reveal #app before asking Vue to switch views; Hall 2 normally hides it.
+      document.documentElement.classList.add("dealer-overlay-open");
       const opened = clickMatchingControl(/^dealer console$/i);
-      if (opened) document.documentElement.classList.add("dealer-overlay-open");
+      if (!opened) document.documentElement.classList.remove("dealer-overlay-open");
       return opened;
     }
     const popup = window.bingoApi?.openScreen?.("dealer");
