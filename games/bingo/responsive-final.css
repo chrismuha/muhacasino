@@ -3457,7 +3457,7 @@ html[data-bingo-theme] body .daub-options-x::before,
 html[data-bingo-theme] body .daub-options-x::after {
   content: "";
   position: absolute;
-  top: calc(50% + 2px);
+  top: 50%;
   left: 50%;
   width: 20px;
   height: 3px;
@@ -3471,22 +3471,22 @@ html[data-bingo-theme] body .daub-options-x::after {
 }
 
 /* Classic's structural caller wrapper must not show square white corners. */
-html[data-bingo-theme="classic"] body #app .app-shell .caller-panel {
+html[data-bingo-theme="current"] body #app .app-shell .caller-panel {
   border: 0 !important;
   border-radius: 28px !important;
   background-image: none !important;
   box-shadow: none !important;
 }
 
-html[data-bingo-theme="classic"] body #app .app-shell.theme-light .caller-panel {
+html[data-bingo-theme="current"] body #app .app-shell.theme-light .caller-panel {
   background-color: #fff !important;
 }
 
-html[data-bingo-theme="classic"] body #app .app-shell.theme-dark .caller-panel {
+html[data-bingo-theme="current"] body #app .app-shell.theme-dark .caller-panel {
   background-color: #111d2c !important;
 }
 
-html[data-bingo-theme="classic"] body #app .app-shell .current-call-panel {
+html[data-bingo-theme="current"] body #app .app-shell .current-call-panel {
   border-radius: 28px !important;
   overflow: hidden !important;
 }
