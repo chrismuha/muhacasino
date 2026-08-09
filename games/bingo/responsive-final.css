@@ -3331,14 +3331,43 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .a
   text-shadow: none !important;
 }
 
-html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > span > .legend-label,
-html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > span:has(.free-dot) > .legend-label {
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > .planet-legend-item,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .planet-legend-label {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
-  font: inherit !important;
   white-space: nowrap !important;
   text-shadow: none !important;
   opacity: 1 !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .planet-legend-label {
+  font: inherit !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .planet-legend-swatch {
+  box-sizing: border-box !important;
+  display: block !important;
+  flex: 0 0 18px !important;
+  width: 18px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  min-height: 18px !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 3px !important;
+  box-shadow: none !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .planet-called-swatch {
+  background: #126eff !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .planet-marked-swatch {
+  background: #ed3d35 !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .planet-free-swatch {
+  background: #f5cc4e !important;
 }
 
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .play-time-panel :is(

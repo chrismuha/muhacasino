@@ -240,9 +240,9 @@
         <section class="planet-pattern-box" aria-label="Current winning pattern">
           <div class="planet-pattern-copy"></div>
           <div class="planet-pattern-legend" aria-label="Card mark legend">
-            <span><i class="legend-dot called-dot"></i><b class="legend-label">Called</b></span>
-            <span><i class="legend-dot marked-dot"></i><b class="legend-label">Player marked</b></span>
-            <span><i class="legend-dot free-dot"></i><b class="legend-label">Free space</b></span>
+            <span class="planet-legend-item planet-called-item"><i class="planet-legend-swatch planet-called-swatch"></i><b class="planet-legend-label">Called</b></span>
+            <span class="planet-legend-item planet-marked-item"><i class="planet-legend-swatch planet-marked-swatch"></i><b class="planet-legend-label">Player marked</b></span>
+            <span class="planet-legend-item planet-free-item"><i class="planet-legend-swatch planet-free-swatch"></i><b class="planet-legend-label">Free space</b></span>
             <small>Good luck &amp; have fun!</small>
           </div>
         </section>
