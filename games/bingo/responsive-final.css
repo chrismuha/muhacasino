@@ -2752,3 +2752,19 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(.cl
 html.hall-controls-collapsed:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
   display: none !important;
 }
+
+/* Final controls height: navbar excluded, every required action row visible. */
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]):not(.hall-controls-collapsed) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
+  top: calc(50dvh + 41px) !important;
+  right: 6px !important;
+  bottom: auto !important;
+  left: 6px !important;
+  grid-template-rows: 52px repeat(5, minmax(72px, 1fr)) !important;
+  width: auto !important;
+  height: min(560px, calc(100dvh - 94px)) !important;
+  min-height: min(437px, calc(100dvh - 94px)) !important;
+  max-height: calc(100dvh - 94px) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  transform: translateY(-50%) !important;
+}
