@@ -3223,3 +3223,84 @@ html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-sect
     text-align: left !important;
   }
 }
+
+/* Hall 1 and Hall 2 use Classic's full-width B-I-N-G-O Manual Draw structure. */
+html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .dealer-layout .ball-board-panel > .dealer-ball-board {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-items: stretch !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: clamp(8px, 1.3vw, 16px) !important;
+  gap: clamp(12px, 1.6vw, 20px) !important;
+  overflow: visible !important;
+}
+
+html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: clamp(7px, 1vw, 12px) !important;
+  gap: clamp(7px, 1vw, 12px) !important;
+  overflow: visible !important;
+}
+
+html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column > strong {
+  display: grid !important;
+  grid-column: 1 / -1 !important;
+  grid-row: auto !important;
+  place-items: center !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: clamp(52px, 5vw, 70px) !important;
+  margin: 0 0 3px !important;
+  padding: 8px !important;
+  font-size: clamp(26px, 3vw, 42px) !important;
+  line-height: 1 !important;
+  text-align: center !important;
+}
+
+html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column > button {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: clamp(48px, 5vw, 64px) !important;
+  aspect-ratio: auto !important;
+  margin: 0 !important;
+  padding: 7px 4px !important;
+  border-radius: 999px !important;
+  font-size: clamp(18px, 2vw, 28px) !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+
+@media (max-width: 600px) {
+  html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .dealer-layout .ball-board-panel > .dealer-ball-board {
+    padding: 7px !important;
+    gap: 10px !important;
+  }
+
+  html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column {
+    padding: 6px !important;
+    gap: 6px !important;
+  }
+
+  html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column > strong {
+    min-height: 48px !important;
+    font-size: clamp(24px, 8vw, 34px) !important;
+  }
+
+  html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .dealer-layout .ball-board-panel .dealer-ball-column > button {
+    min-height: 44px !important;
+    font-size: clamp(16px, 5vw, 22px) !important;
+  }
+}
