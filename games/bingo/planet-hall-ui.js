@@ -35,10 +35,14 @@
     const hotFeature = shell.querySelector(".planet-idle-feature.hot-ball");
     const birthdayFeature = shell.querySelector(".planet-idle-feature.birthday-ball");
     const birthdayActive = birthdayDisplayIsActive(settings);
-    hotFeature.querySelector(".planet-idle-ball").textContent = settings.hotEnabled ? String(settings.hotNumber) : "—";
+    const hotBall = hotFeature.querySelector(".planet-idle-ball");
+    hotBall.textContent = settings.hotEnabled ? String(settings.hotNumber) : "";
+    hotBall.classList.toggle("is-placeholder", !settings.hotEnabled);
     hotFeature.querySelector("small").textContent = settings.hotEnabled ? `${settings.hotMultiplier}× PRIZE` : "OFF";
     hotFeature.classList.toggle("is-active", Boolean(settings.hotEnabled));
-    birthdayFeature.querySelector(".planet-idle-ball").textContent = birthdayActive ? String(settings.birthdayNumber) : "—";
+    const birthdayBall = birthdayFeature.querySelector(".planet-idle-ball");
+    birthdayBall.textContent = birthdayActive ? String(settings.birthdayNumber) : "";
+    birthdayBall.classList.toggle("is-placeholder", !birthdayActive);
     birthdayFeature.querySelector("small").textContent = birthdayActive
       ? `${settings.birthdayMultiplier}× PRIZE · ACTIVE TODAY`
       : settings.birthdayEnabled ? "SCHEDULED" : "OFF";
@@ -148,7 +152,9 @@
     ballMarker.textContent = latestNumber ? latestLetter : "-";
     ballMarker.classList.toggle("is-placeholder", !latestNumber);
     ballMarker.closest(".planet-current-ball")?.classList.toggle("has-placeholder", !latestNumber);
-    shell.querySelector(".planet-current-ball strong").textContent = latestText;
+    const currentBall = shell.querySelector(".planet-current-ball");
+    currentBall.querySelector("strong").textContent = latestNumber ? latestText : "#";
+    currentBall.setAttribute("aria-label", latestNumber ? `Current ball ${latestLetter} ${latestText}` : "No ball called yet");
     renderNumberBoard(shell.querySelector(".planet-number-board"), activeCalledNumbers(sourceCards), latestNumber);
     renderNumberBoard(shell.querySelector(".planet-idle-number-board"), activeCalledNumbers(sourceCards), latestNumber);
 
@@ -226,7 +232,7 @@
         <section class="planet-idle-flashboard" aria-label="Waiting for dealer flashboard">
           <header>
             <div class="planet-idle-feature hot-ball">
-              <span class="planet-idle-ball" aria-hidden="true">—</span>
+              <span class="planet-idle-ball is-placeholder" aria-hidden="true"></span>
               <strong>HOT BALL</strong>
               <small>OFF</small>
             </div>
@@ -235,7 +241,7 @@
               <span>The full flashboard will update when calling begins.</span>
             </div>
             <div class="planet-idle-feature birthday-ball">
-              <span class="planet-idle-ball" aria-hidden="true">—</span>
+              <span class="planet-idle-ball is-placeholder" aria-hidden="true"></span>
               <strong>BIRTHDAY BALL</strong>
               <small>OFF</small>
             </div>
@@ -261,7 +267,7 @@
             <small>Good luck &amp; have fun!</small>
           </div>
         </section>
-        <div class="planet-current-ball"><small>-</small><strong>#</strong></div>
+        <div class="planet-current-ball" aria-label="No ball called yet"><small>-</small><strong>#</strong></div>
         <div class="planet-credit"><strong>∞</strong><span>CREDITS</span></div>
       </footer>
     `;
@@ -317,8 +323,34 @@
 (() => {
   let contrastFrame = 0;
 
+  const dealerShortcuts = [
+    ["Space", "Call number"],
+    ["P", "Play / pause"],
+    ["U", "Undo"],
+    ["V", "Verify claim"],
+    ["A", "Audience"],
+  ];
+
+  function enhanceDealerShortcuts() {
+    document.querySelectorAll("#app .dealer-layout .fixed-dealer-status > small:not([data-shortcuts-enhanced])").forEach((shortcutBar) => {
+      shortcutBar.dataset.shortcutsEnhanced = "true";
+      shortcutBar.classList.add("dealer-shortcuts");
+      shortcutBar.replaceChildren(...dealerShortcuts.map(([key, label]) => {
+        const item = document.createElement("span");
+        const keycap = document.createElement("kbd");
+        const copy = document.createElement("span");
+        keycap.textContent = key;
+        copy.textContent = label;
+        item.append(keycap, copy);
+        return item;
+      }));
+      shortcutBar.setAttribute("aria-label", "Dealer keyboard shortcuts");
+    });
+  }
+
   function enforceDealerHeaderContrast() {
     contrastFrame = 0;
+    enhanceDealerShortcuts();
     const shell = document.querySelector("#app .app-shell");
     const heading = shell?.querySelector(".dealer-layout .dealer-hero .eyebrow");
     if (!heading) return;
