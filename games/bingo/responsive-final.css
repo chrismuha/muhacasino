@@ -1892,52 +1892,21 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
 
 /* v1.1.9 cascade-final iPhone authority. */
 @media (max-width: 600px) {
-  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar {
-    grid-template-rows: auto 54px !important;
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-  }
-
-  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .header-actions {
-    display: grid !important;
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    grid-template-rows: auto repeat(2, minmax(48px, auto)) !important;
-    grid-auto-flow: row !important;
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    gap: 7px !important;
+    grid-template-rows: 42px repeat(4, minmax(0, 1fr)) !important;
   }
 
-  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .header-actions > .play-time-panel {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls > .hall-panel-close {
     grid-column: 1 / -1 !important;
   }
 
-  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .header-actions > :is(
-    .appearance-btn,
-    .bingo-theme-switcher.header-theme-switcher,
-    .status-pill,
-    .new-game-btn
-  ) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls > :is(.hall-start-button, .hall-dealer-button) {
     grid-column: span 1 !important;
-    box-sizing: border-box !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    margin: 0 !important;
   }
 
-  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .header-actions > .bingo-theme-switcher.header-theme-switcher > .bingo-theme-trigger {
-    box-sizing: border-box !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-  }
-
-  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .screen-switcher {
-    grid-column: 1 / -1 !important;
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls > [data-hall-action="next"] {
+    display: none !important;
   }
   html[data-bingo-theme] body #app .app-shell .cards-stage .stage-toolbar {
     display: grid !important;
