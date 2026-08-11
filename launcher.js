@@ -95,7 +95,6 @@ const gameLoadActions = document.querySelector("#gameLoadActions");
 const reloadGameButton = document.querySelector("#reloadGame");
 const returnToLibraryFromError = document.querySelector("#returnToLibraryFromError");
 const toolbarCollapseButton = document.querySelector("#toolbarCollapseButton");
-const TOOLBAR_COLLAPSED_KEY = "muha-casino-game-toolbar-collapsed";
 
 function setGameToolbarCollapsed(collapsed) {
   gameView.classList.toggle("toolbar-collapsed", collapsed);
@@ -103,22 +102,13 @@ function setGameToolbarCollapsed(collapsed) {
   toolbarCollapseButton.setAttribute("aria-expanded", String(!collapsed));
   toolbarCollapseButton.setAttribute("aria-label", collapsed ? "Expand game header" : "Collapse game header");
   toolbarCollapseButton.title = collapsed ? "Expand game header" : "Collapse game header";
-  try {
-    localStorage.setItem(TOOLBAR_COLLAPSED_KEY, String(collapsed));
-  } catch {
-    // The header still collapses when storage is unavailable.
-  }
 }
 
 toolbarCollapseButton.addEventListener("click", () => {
   setGameToolbarCollapsed(!gameView.classList.contains("toolbar-collapsed"));
 });
 
-try {
-  setGameToolbarCollapsed(localStorage.getItem(TOOLBAR_COLLAPSED_KEY) === "true");
-} catch {
-  setGameToolbarCollapsed(false);
-}
+setGameToolbarCollapsed(false);
 
 function compareGameTitles(leftId, rightId) {
   return games[leftId].title.localeCompare(games[rightId].title, undefined, { sensitivity: "base" });

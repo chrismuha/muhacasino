@@ -3,7 +3,6 @@
   if (launchParameters.has("screen") || launchParameters.has("player")) return;
 
   let renderQueued = false;
-  const footerCollapsedStorageKey = "muha-bingo-planet-footer-collapsed";
   const cardSerialStartKey = "muha-bingo-card-serial-start";
   const cardSerialStepKey = "muha-bingo-card-serial-step";
   const specialBallStorageKey = "muha-bingo-special-ball-settings";
@@ -287,7 +286,7 @@
         <div class="planet-credit"><strong>∞</strong><span>CREDITS</span></div>
       </footer>
     `;
-    const setFooterCollapsed = (collapsed, persist = true) => {
+    const setFooterCollapsed = (collapsed) => {
       const footerCollapse = shell.querySelector(".planet-footer-collapse");
       shell.classList.toggle("planet-footer-collapsed", collapsed);
       footerCollapse.textContent = collapsed ? "⌃" : "⌄";
@@ -295,12 +294,6 @@
       footerCollapse.setAttribute("aria-label", collapsed ? "Expand Hall footer" : "Collapse Hall footer");
       footerCollapse.title = collapsed ? "Expand Hall footer" : "Collapse Hall footer";
       window.requestAnimationFrame(syncPlanetHallViewport);
-      if (!persist) return;
-      try {
-        window.localStorage.setItem(footerCollapsedStorageKey, String(collapsed));
-      } catch {
-        // The footer still collapses when storage is unavailable.
-      }
     };
     window.setPlanetFooterCollapsed = setFooterCollapsed;
 
@@ -326,13 +319,7 @@
     });
     document.body.append(shell);
     syncPlanetHallViewport();
-    try {
-      const footerCollapsed = window.localStorage.getItem(footerCollapsedStorageKey) === "true";
-      setFooterCollapsed(footerCollapsed, false);
-    } catch {
-      // Use the expanded footer when storage is unavailable.
-      setFooterCollapsed(false, false);
-    }
+    setFooterCollapsed(false);
     const footerControls = document.querySelector(".planet-footer-controls");
     if (footerControls) shell.querySelector(".planet-status-bar").append(footerControls);
     const hallResizeObserver = new ResizeObserver(() => window.requestAnimationFrame(() => {
