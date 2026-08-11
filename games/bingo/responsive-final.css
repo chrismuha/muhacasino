@@ -81,6 +81,64 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapse
   overflow: visible !important;
 }
 
+/* Hall 2 actions belong to the side-tab panel, not the status footer. */
+html[data-bingo-theme="planet"] body > .planet-footer-controls {
+  position: fixed !important;
+  z-index: 21000 !important;
+  top: 50% !important;
+  right: 12px !important;
+  bottom: auto !important;
+  left: auto !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
+  box-sizing: border-box !important;
+  width: min(420px, calc(100vw - 24px)) !important;
+  height: min(330px, calc(100dvh - 24px)) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: calc(100vw - 24px) !important;
+  max-height: calc(100dvh - 24px) !important;
+  margin: 0 !important;
+  padding: 8px !important;
+  gap: 7px !important;
+  overflow: hidden !important;
+  transform: translateY(-50%) !important;
+  border: 3px solid #36558b !important;
+  border-radius: 14px !important;
+  background: rgba(7, 13, 26, .98) !important;
+  box-shadow: 0 18px 48px rgba(0,0,0,.72) !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-footer-controls > button {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+  padding: 6px !important;
+}
+
+html.hall-controls-collapsed[data-bingo-theme="planet"] body > .planet-footer-controls {
+  display: none !important;
+}
+
+html[data-bingo-theme="planet"] body > .hall-controls-toggle {
+  z-index: 22000 !important;
+}
+
+@media (max-width: 600px) {
+  html[data-bingo-theme="planet"] body > .planet-footer-controls {
+    top: 50% !important;
+    right: 54px !important;
+    width: calc(100vw - 66px) !important;
+    max-width: calc(100vw - 66px) !important;
+    height: min(430px, calc(100dvh - 24px)) !important;
+    max-height: calc(100dvh - 24px) !important;
+  }
+}
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapsed > .planet-status-bar > .planet-footer-collapse {
   top: 3px !important;
   border-radius: 0 0 11px 11px !important;

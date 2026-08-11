@@ -196,8 +196,7 @@
 
     if (usePlanetControls) {
       closeButton?.remove();
-      const statusBar = document.querySelector(".planet-hall-shell .planet-status-bar");
-      if (statusBar && controls.parentElement !== statusBar) statusBar.append(controls);
+      if (controls.parentElement !== document.body) document.body.append(controls);
     } else {
       if (closeButton && closeButton.parentElement !== controls) controls.prepend(closeButton);
       if (controls.parentElement !== document.body) document.body.append(controls);
@@ -1529,7 +1528,7 @@
       setHallControlsCollapsed(shouldCollapse);
     });
     document.body.append(controlsToggle);
-    setHallControlsCollapsed(false);
+    setHallControlsCollapsed(true);
   }
 
   function calledNumbers() {

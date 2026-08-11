@@ -314,9 +314,6 @@
     } catch {
       // Use the expanded footer when storage is unavailable.
     }
-    const footerControls = document.querySelector(".planet-footer-controls");
-    if (footerControls) shell.querySelector(".planet-status-bar").append(footerControls);
-
     const hallResizeObserver = new ResizeObserver(() => window.requestAnimationFrame(fitPlanetHallText));
     hallResizeObserver.observe(shell);
     new MutationObserver(() => window.requestAnimationFrame(fitPlanetHallText)).observe(shell, {
