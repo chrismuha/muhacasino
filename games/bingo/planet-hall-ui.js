@@ -345,6 +345,10 @@
       }));
       shortcutBar.setAttribute("aria-label", "Dealer keyboard shortcuts");
     });
+    document.querySelectorAll("#app .dealer-layout .fixed-dealer-status").forEach((statusBar) => {
+      const dealerLayout = statusBar.closest(".dealer-layout");
+      if (dealerLayout && statusBar !== dealerLayout.lastElementChild) dealerLayout.append(statusBar);
+    });
   }
 
   function enforceDealerHeaderContrast() {

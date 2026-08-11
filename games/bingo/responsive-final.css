@@ -5240,7 +5240,9 @@ html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar > * {
 html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar .stage-indicator {
   display: grid !important;
   align-content: center !important;
+  align-self: center !important;
   min-width: 0 !important;
+  transform: translateY(-12px) !important;
 }
 
 html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar .round-snapshot {
@@ -5264,6 +5266,7 @@ html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar .round-snaps
 html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar .primary-dealer-action {
   display: grid !important;
   place-items: center !important;
+  align-self: center !important;
   justify-self: end !important;
   width: min(100%, 360px) !important;
   min-width: 0 !important;
@@ -5281,6 +5284,7 @@ html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar .primary-dea
   line-height: 1.15 !important;
   text-align: center !important;
   text-shadow: none !important;
+  transform: translateY(-12px) !important;
 }
 
 @media (max-width: 760px) {
@@ -5292,6 +5296,11 @@ html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar .primary-dea
   html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar .primary-dealer-action {
     justify-self: stretch !important;
     width: 100% !important;
+    transform: translateY(-8px) !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar .stage-indicator {
+    transform: translateY(-8px) !important;
   }
 }
 
@@ -5315,22 +5324,221 @@ html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar .primary-dea
   }
 }
 
-/* Cards and Dealer panels must never collapse into thin nested scroll bands. */
-html[data-bingo-theme] body #app .app-shell :is(.cards-stage, .cards-grid, .dealer-grid, .dealer-card, .dealer-primary-actions) {
+/* Dealer status and keyboard shortcuts scroll with the Dealer page. */
+html[data-bingo-theme] body #app .dealer-layout .fixed-dealer-status {
+  position: static !important;
+  inset: auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+/* Dealer cards size their rows from content instead of collapsing into strips. */
+html[data-bingo-theme] body #app .dealer-layout {
+  grid-auto-rows: max-content !important;
+  align-content: start !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-grid {
+  grid-auto-rows: max-content !important;
+  align-items: start !important;
   height: auto !important;
   max-height: none !important;
-  min-height: 0 !important;
   overflow: visible !important;
 }
 
-html[data-bingo-theme] body #app .dealer-layout .dealer-primary-actions {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
-  align-items: stretch !important;
-  gap: 10px !important;
-  padding-block: 8px !important;
+html[data-bingo-theme] body #app .dealer-layout .dealer-grid > .dealer-card,
+html[data-bingo-theme] body #app .dealer-layout .dealer-card > .dealer-primary-actions {
+  position: static !important;
+  height: auto !important;
+  min-height: max-content !important;
+  max-height: none !important;
+  overflow: visible !important;
+  transform: none !important;
 }
 
-html[data-bingo-theme] body #app .dealer-layout .dealer-primary-actions > button {
+html[data-bingo-theme] body #app .dealer-layout > :is(
+  .dealer-hero,
+  .bingo-schedule-editor,
+  .bingo-prizes-editor,
+  .dealer-grid,
+  .fixed-dealer-status
+) {
+  position: static !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  transform: none !important;
+}
+
+/* Give Event Schedule enough room for its form and event list. */
+html[data-bingo-theme] body #app .dealer-layout .bingo-schedule-editor {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-content: start !important;
+  gap: 22px !important;
+  width: 100% !important;
+  min-height: 390px !important;
+  padding: clamp(24px, 3vw, 40px) !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .bingo-schedule-form {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+  gap: 16px !important;
+  align-items: end !important;
+  width: 100% !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .bingo-schedule-list {
+  display: grid !important;
+  align-content: start !important;
+  gap: 10px !important;
+  min-height: 120px !important;
+}
+
+/* Clean, consistent Dealer secondary actions in every theme. */
+html[data-bingo-theme] body #app .dealer-layout .dealer-primary-actions .dealer-undo {
+  display: inline-flex !important;
+  place-items: center !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: max-content !important;
+  min-width: 0 !important;
+  min-height: 42px !important;
+  padding: 7px 12px !important;
+  border: 2px solid #8a5a00 !important;
+  border-radius: 10px !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  background: #ffc94d !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.38), 0 2px 0 #704600 !important;
+  font-size: 0 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-primary-actions .dealer-undo::before {
+  content: "⟲" !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 24px !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0 !important;
+  text-align: center !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-primary-actions .dealer-undo::after {
+  content: "Undo last call" !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+  text-shadow: none !important;
+}
+
+@media (max-width: 600px) {
+  html[data-bingo-theme] body #app .dealer-layout .bingo-schedule-editor {
+    min-height: 500px !important;
+    padding: 20px 14px !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .bingo-schedule-form {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+html[data-bingo-theme] body #app .dealer-layout .edit-setup-btn {
+  display: grid !important;
+  place-items: center !important;
   min-height: 56px !important;
+  padding: 11px 16px !important;
+  border: 2px solid #6f9bd2 !important;
+  border-radius: 12px !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: #173a66 !important;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.12), 0 3px 0 #0a213d !important;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  line-height: 1.15 !important;
+  text-align: center !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* Player-card actions use a plain, high-contrast interface label in every theme. */
+html[data-bingo-theme] body #app .dealer-layout .view-target-btn {
+  min-height: 50px !important;
+  color: #10213b !important;
+  -webkit-text-fill-color: #10213b !important;
+  background: #ffffff !important;
+  border: 2px solid #6f8fb8 !important;
+  border-radius: 10px !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  font-size: 16px !important;
+  font-style: normal !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  text-align: center !important;
+  text-transform: none !important;
+  text-decoration: none !important;
+  text-shadow: none !important;
+  box-shadow: 0 2px 0 rgba(16, 33, 59, .18) !important;
+  opacity: 1 !important;
+}
+
+/* Dealer section tabs scroll away with the page; they are never pinned. */
+html[data-bingo-theme] body #app .dealer-layout .dealer-tabs,
+html[data-bingo-theme].dealer-overlay-open body #app .dealer-layout .dealer-tabs,
+html.bingo-popout-window[data-bingo-theme] body #app .dealer-layout .dealer-tabs {
+  position: static !important;
+  inset: auto !important;
+  z-index: auto !important;
+  transform: none !important;
+}
+
+/* Every Dealer entry point uses one vertically scrolling document. */
+html[data-bingo-theme] body #app:has(.dealer-layout),
+html[data-bingo-theme].dealer-overlay-open body #app {
+  height: 100dvh !important;
+  min-height: 0 !important;
+  max-height: 100dvh !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior-y: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+html[data-bingo-theme] body #app:has(.dealer-layout) > .app-shell,
+html[data-bingo-theme].dealer-overlay-open body #app > .app-shell {
+  display: flex !important;
+  flex-direction: column !important;
+  height: auto !important;
+  min-height: 100% !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme] body #app .app-shell > .dealer-layout {
+  flex: 0 0 auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding-bottom: max(90px, env(safe-area-inset-bottom)) !important;
+}
+
+html[data-bingo-theme] body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
+  touch-action: pan-y !important;
+  overscroll-behavior-y: contain !important;
+  -webkit-overflow-scrolling: touch !important;
 }

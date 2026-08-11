@@ -1308,23 +1308,18 @@
   }
 
   function openDealerWindow() {
-    if (!isPopout) {
+    let usePopout = false;
+    try {
+      usePopout = window.localStorage.getItem(DEALER_POPOUT_STORAGE_KEY) === "true";
+    } catch {
+      // The routed Dealer screen remains the default.
+    }
+    if (!usePopout) {
       const dealerUrl = new URL(window.location.href);
       dealerUrl.searchParams.set("screen", "dealer");
       dealerUrl.searchParams.delete("player");
       window.location.assign(dealerUrl.href);
       return true;
-    }
-    let usePopout = false;
-    try {
-      usePopout = window.localStorage.getItem(DEALER_POPOUT_STORAGE_KEY) === "true";
-    } catch {
-      // The full-screen Dealer overlay remains the default.
-    }
-    if (!usePopout) {
-      const opened = clickMatchingControl(/^dealer console$/i);
-      if (opened) document.documentElement.classList.add("dealer-overlay-open");
-      return opened;
     }
     const popup = window.bingoApi?.openScreen?.("dealer");
     if (!popup) {
