@@ -41,7 +41,7 @@ const games = {
   },
   bingo: {
     title: "Muha Bingo",
-    version: "v1.1.9",
+    version: "v1.1.10",
     subtitle: "75-Ball Bingo",
     path: "games/bingo/index.html",
     className: "card-bingo",
@@ -79,7 +79,7 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_BUILD = "20260808-slot-bonuses-v17";
+const SITE_BUILD = "20260811-bingo-v110";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
