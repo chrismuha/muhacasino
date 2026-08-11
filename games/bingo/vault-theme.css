@@ -5193,61 +5193,6 @@ html[data-bingo-theme="current"] #app .app-shell.theme-light .app-footer :is(str
   content: none;
 }
 
-/* Dealer Console: shared, simplified workflow for every visual theme. */
-html.dealer-overlay-open #app {
-  position: fixed !important;
-  z-index: 1300 !important;
-  inset: 0 !important;
-  display: block !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  overflow: auto !important;
-  background: var(--cream, #eef3f9) !important;
-}
-
-html.dealer-overlay-open .planet-hall-shell,
-html.dealer-overlay-open .player-hall-controls,
-html.dealer-overlay-open :is(.universal-view-button, .universal-start-button, .universal-purchase-button, .hall-controls-toggle) {
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-
-html.dealer-overlay-open #app .dealer-layout {
-  box-sizing: border-box;
-  width: min(100%, 1680px);
-  margin-inline: auto;
-  min-height: 100vh;
-  padding: 24px clamp(18px, 3vw, 44px) 90px !important;
-  gap: 18px !important;
-}
-
-html.dealer-overlay-open #app .game-setup-panel {
-  grid-column: 1 / -1 !important;
-  padding: clamp(20px, 2.5vw, 32px) !important;
-  border: 3px solid #4c8de8 !important;
-  border-radius: 18px !important;
-}
-
-html.dealer-overlay-open #app .setup-fields {
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
-  gap: 14px !important;
-}
-
-html.dealer-overlay-open #app .setup-fields :is(input, select) {
-  width: 100%;
-  min-height: 58px !important;
-  padding: 11px 14px !important;
-  font-size: 14.25pt !important;
-}
-
-html.dealer-overlay-open #app .dealer-tabs {
-  position: sticky;
-  z-index: 30;
-  top: 0;
-  padding: 8px !important;
-  box-shadow: 0 6px 18px rgba(0,0,0,.14);
-}
-
 html.dealer-round-active #app .game-setup-panel {
   display: none !important;
 }
@@ -5498,42 +5443,6 @@ html.bingo-popout-window #app .dealer-ball-column button {
   font-size: 8.25pt;
   font-weight: 950;
   letter-spacing: .14em;
-}
-
-.dealer-window-setting {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  margin: 16px;
-  padding: 15px;
-  border: 1px solid #526b9f;
-  border-radius: 11px;
-  color: #eef5ff;
-  background: rgba(34, 48, 75, .86);
-}
-
-.dealer-window-setting input {
-  flex: 0 0 auto;
-  width: 24px;
-  height: 24px;
-  accent-color: #58a515;
-}
-
-.dealer-window-setting span,
-.dealer-window-setting strong,
-.dealer-window-setting small {
-  display: block;
-}
-
-.dealer-window-setting strong {
-  font-size: 10.5pt;
-}
-
-.dealer-window-setting small {
-  margin-top: 4px;
-  color: #b8c6dd;
-  font-size: 8.25pt;
-  line-height: 1.4;
 }
 
 /* Complete Dealer identities: readable and intentionally different in each Hall theme. */

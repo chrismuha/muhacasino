@@ -108,7 +108,7 @@
       channel?.postMessage({ type: "state", state });
     },
     appReady() {
-      if (new URLSearchParams(window.location.search).has("screen")) {
+      if (window.top === window && new URLSearchParams(window.location.search).has("screen")) {
         document.documentElement.classList.add("bingo-popout-window");
       }
     },

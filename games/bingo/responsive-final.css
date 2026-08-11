@@ -48,6 +48,7 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   }
 }
 
+
 /* View and Flashboard dialogs must sit above every Hall control surface. */
 html[data-bingo-theme] body > .bingo-view-overlay:not([hidden]) {
   z-index: 30000 !important;
@@ -4150,19 +4151,6 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature >
   }
 }
 
-/* Hall 2 normally replaces #app, but Dealer Console must reveal it above the hall. */
-html[data-bingo-theme="planet"].dealer-overlay-open:not(.bingo-popout-window) body > #app {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
-
-html[data-bingo-theme="planet"].dealer-overlay-open body > .planet-hall-shell {
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-
 /* Routed Dealer/Audience screens use one branded toolbar with visible appearance and theme controls. */
 html.bingo-popout-window body #app .appearance-btn[aria-label^="Use "] {
   display: none !important;
@@ -4302,181 +4290,6 @@ html.bingo-popout-window .bingo-popout-toolbar .bingo-theme-trigger::after {
 
 }
 
-/* Planet Hall 2's routed Dealer header uses the same compact content height. */
-@media (max-width: 2000px) {
-  /* Routed Hall Dealer screens use real document flow: no blank header cavity or overlap. */
-  html.bingo-popout-window:is([data-bingo-theme="current"], [data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app > .app-shell > .topbar {
-    position: relative !important;
-    inset: auto !important;
-    display: block !important;
-    box-sizing: border-box !important;
-    width: 100% !important;
-    height: 232px !important;
-    min-height: 232px !important;
-    max-height: 232px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-  }
-
-  html.bingo-popout-window:is([data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app > .app-shell > .topbar,
-  html.bingo-popout-window:is([data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app > .app-shell > .topbar > .header-actions {
-    height: 172px !important;
-    min-height: 172px !important;
-    max-height: 172px !important;
-  }
-
-  html.bingo-popout-window:is([data-bingo-theme="current"], [data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app > .app-shell > .topbar > .header-actions {
-    position: relative !important;
-    inset: auto !important;
-    box-sizing: border-box !important;
-    width: 100% !important;
-    height: 232px !important;
-    min-height: 232px !important;
-    max-height: 232px !important;
-    margin: 0 !important;
-    overflow: hidden !important;
-  }
-
-  html.bingo-popout-window:is([data-bingo-theme="current"], [data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app > .app-shell > .dealer-layout {
-    position: relative !important;
-    inset: auto !important;
-    clear: both !important;
-    margin: 0 !important;
-  }
-
-  html.bingo-popout-window[data-bingo-theme="current"] body #app > .app-shell > .dealer-layout {
-    margin-top: 0 !important;
-  }
-
-  html.bingo-popout-window[data-bingo-theme="current"] body #app > .app-shell > .topbar,
-  html.bingo-popout-window[data-bingo-theme="current"] body #app > .app-shell > .topbar > .header-actions {
-    height: 146px !important;
-    min-height: 146px !important;
-    max-height: 146px !important;
-    border-radius: 0 !important;
-  }
-
-  html.bingo-popout-window[data-bingo-theme="current"] body #app > .app-shell > .topbar > .header-actions {
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    grid-template-rows: 94px 44px !important;
-    gap: 8px !important;
-  }
-
-  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
-    grid-column: 1 / -1 !important;
-    grid-row: 1 !important;
-    grid-template-columns: minmax(0, 1.4fr) minmax(0, .9fr) minmax(0, 1.2fr) !important;
-    grid-template-rows: 1fr !important;
-    align-items: center !important;
-    height: 94px !important;
-    min-height: 94px !important;
-    max-height: 94px !important;
-    border-radius: 0 !important;
-    overflow: hidden !important;
-  }
-
-  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel::before,
-  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel::after {
-    border-radius: 0 !important;
-  }
-
-  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions,
-  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions::before,
-  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions::after {
-    border-radius: 0 !important;
-  }
-
-  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > label {
-    grid-column: 1 !important;
-    grid-row: 1 !important;
-  }
-
-  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > div:first-child {
-    grid-column: 2 !important;
-    grid-row: 1 !important;
-  }
-
-  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > div:first-child > span {
-    font-size: clamp(7pt, 2.25vw, 8.5pt) !important;
-    white-space: nowrap !important;
-  }
-
-  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > div:nth-child(2) {
-    grid-column: 3 !important;
-    grid-row: 1 !important;
-  }
-
-  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > :is(
-    .appearance-btn,
-    .status-pill,
-    .new-game-btn
-  ) {
-    position: relative !important;
-    inset: auto !important;
-    grid-row: 2 !important;
-    display: flex !important;
-    width: 100% !important;
-    height: 44px !important;
-    min-height: 44px !important;
-    max-height: 44px !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin: 0 !important;
-    padding: 6px 10px !important;
-    line-height: 1.05 !important;
-    text-align: center !important;
-    transform: translateY(-6px) !important;
-    white-space: nowrap !important;
-  }
-
-  html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .appearance-btn[aria-label^="Use "] {
-    display: none !important;
-  }
-
-  html.bingo-popout-window:is([data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app .app-shell .topbar .header-actions {
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    grid-template-rows: 110px 54px !important;
-    gap: 8px !important;
-  }
-
-  html.bingo-popout-window:is([data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app .app-shell .topbar .header-actions > .play-time-panel {
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, .72fr) minmax(0, 1.05fr) !important;
-    grid-template-rows: 1fr !important;
-    align-items: center !important;
-    height: 110px !important;
-    min-height: 110px !important;
-    max-height: 110px !important;
-    padding: 9px 10px !important;
-    gap: 8px !important;
-  }
-
-  html.bingo-popout-window:is([data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app .app-shell .topbar .play-time-panel > label {
-    grid-column: 1 !important;
-    grid-row: 1 !important;
-    align-self: center !important;
-  }
-
-  html.bingo-popout-window:is([data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app .app-shell .topbar .play-time-panel > div:first-child {
-    grid-column: 2 !important;
-    grid-row: 1 !important;
-  }
-
-  html.bingo-popout-window:is([data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app .app-shell .topbar .play-time-panel > div:nth-child(2) {
-    grid-column: 3 !important;
-    grid-row: 1 !important;
-  }
-
-  html.bingo-popout-window:is([data-bingo-theme="classic"], [data-bingo-theme="planet"]) body #app .app-shell .topbar .header-actions > :is(
-    .appearance-btn,
-    .status-pill,
-    .new-game-btn
-  ) {
-    transform: translateY(-6px) !important;
-  }
-}
 
 /* Classic dark mode keeps its screen navigation dark and readable. */
 html[data-bingo-theme="current"] body #app .app-shell.theme-dark .topbar .screen-switcher {
@@ -5304,6 +5117,7 @@ html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar .primary-dea
   }
 }
 
+
 /* Mobile Player Floor cards belong to the page flow, not a thin nested scroller. */
 @media (max-width: 600px) {
   html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app > .app-shell:has(.game-layout) > .game-layout {
@@ -5498,7 +5312,6 @@ html[data-bingo-theme] body #app .dealer-layout .view-target-btn {
 
 /* Dealer section tabs scroll away with the page; they are never pinned. */
 html[data-bingo-theme] body #app .dealer-layout .dealer-tabs,
-html[data-bingo-theme].dealer-overlay-open body #app .dealer-layout .dealer-tabs,
 html.bingo-popout-window[data-bingo-theme] body #app .dealer-layout .dealer-tabs {
   position: static !important;
   inset: auto !important;
@@ -5508,7 +5321,7 @@ html.bingo-popout-window[data-bingo-theme] body #app .dealer-layout .dealer-tabs
 
 /* Every Dealer entry point uses one vertically scrolling document. */
 html[data-bingo-theme] body #app:has(.dealer-layout),
-html[data-bingo-theme].dealer-overlay-open body #app {
+html.bingo-popout-window[data-bingo-theme] body #app:has(.dealer-layout) {
   height: 100dvh !important;
   min-height: 0 !important;
   max-height: 100dvh !important;
@@ -5519,7 +5332,7 @@ html[data-bingo-theme].dealer-overlay-open body #app {
 }
 
 html[data-bingo-theme] body #app:has(.dealer-layout) > .app-shell,
-html[data-bingo-theme].dealer-overlay-open body #app > .app-shell {
+html.bingo-popout-window[data-bingo-theme] body #app:has(.dealer-layout) > .app-shell {
   display: flex !important;
   flex-direction: column !important;
   height: auto !important;
@@ -5541,4 +5354,304 @@ html[data-bingo-theme] body :is(.classic-hall-controls, .player-hall-controls:no
   touch-action: pan-y !important;
   overscroll-behavior-y: contain !important;
   -webkit-overflow-scrolling: touch !important;
+}
+
+/* Embedded routed Dealer headers establish their full height before content begins. */
+html.bingo-embedded-window[data-bingo-theme] body #app .app-shell:has(> .dealer-layout) > .topbar {
+  position: static !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: auto auto !important;
+  align-content: start !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+html.bingo-embedded-window[data-bingo-theme] body #app .app-shell:has(> .dealer-layout) > .topbar > .header-actions {
+  position: static !important;
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  transform: none !important;
+  overflow: visible !important;
+}
+
+html.bingo-embedded-window[data-bingo-theme] body #app .app-shell:has(> .dealer-layout) > .topbar > .screen-switcher {
+  position: static !important;
+  inset: auto !important;
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+html.bingo-embedded-window[data-bingo-theme] body #app .app-shell > .dealer-layout {
+  position: static !important;
+  clear: both !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+html.bingo-embedded-window[data-bingo-theme] body > .universal-view-button {
+  display: none !important;
+}
+
+/* Game Setup steps and actions remain distinct, readable blocks in every theme. */
+html[data-bingo-theme] body #app .dealer-layout .game-setup-panel {
+  display: grid !important;
+  align-content: start !important;
+  gap: 24px !important;
+  padding: clamp(22px, 3vw, 34px) !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-setup-guide {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-setup-guide > li {
+  display: grid !important;
+  grid-template-columns: 42px minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  min-height: 84px !important;
+  padding: 14px !important;
+  border-radius: 12px !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-setup-guide > li > strong {
+  display: grid !important;
+  place-items: center !important;
+  width: 42px !important;
+  height: 42px !important;
+  margin: 0 !important;
+  border-radius: 50% !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-setup-guide > li > span,
+html[data-bingo-theme] body #app .dealer-layout .dealer-setup-guide > li b,
+html[data-bingo-theme] body #app .dealer-layout .dealer-setup-guide > li small {
+  display: block !important;
+  min-width: 0 !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-setup-guide > li b {
+  margin: 0 0 5px !important;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 1.2 !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-setup-guide > li small {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .game-setup-panel .setup-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  width: 100% !important;
+  margin: 2px 0 8px !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .game-setup-panel .setup-fields {
+  gap: 18px !important;
+  margin-top: 2px !important;
+}
+
+@media (max-width: 760px) {
+  html[data-bingo-theme] body #app .dealer-layout .dealer-setup-guide,
+  html[data-bingo-theme] body #app .dealer-layout .game-setup-panel .setup-actions {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .game-setup-panel {
+    gap: 20px !important;
+    padding: 20px 14px !important;
+  }
+}
+
+/* Planet Hall 2 keyboard help uses compact, high-contrast shortcut cards. */
+html[data-bingo-theme="planet"] body #app .dealer-layout .fixed-dealer-status {
+  gap: 12px !important;
+  padding: 16px !important;
+  border: 2px solid #36b94f !important;
+  border-radius: 14px !important;
+  color: #172238 !important;
+  -webkit-text-fill-color: #172238 !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="planet"] body #app .dealer-layout .fixed-dealer-status > :is(strong, span) {
+  color: #172238 !important;
+  -webkit-text-fill-color: #172238 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="planet"] body #app .dealer-layout .fixed-dealer-status > .dealer-shortcuts {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  padding: 0 !important;
+}
+
+html[data-bingo-theme="planet"] body #app .dealer-layout .fixed-dealer-status > .dealer-shortcuts > span {
+  grid-template-columns: auto minmax(0, 1fr) !important;
+  min-height: 48px !important;
+  padding: 8px 10px !important;
+  border: 2px solid #7d9cc6 !important;
+  border-radius: 10px !important;
+  color: #172238 !important;
+  -webkit-text-fill-color: #172238 !important;
+  background: #f1f5fa !important;
+  box-shadow: none !important;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="planet"] body #app .dealer-layout .fixed-dealer-status > .dealer-shortcuts kbd {
+  min-width: 38px !important;
+  min-height: 34px !important;
+  border: 2px solid #1769e0 !important;
+  border-radius: 8px !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: #1769e0 !important;
+  box-shadow: 0 2px 0 #0d438f !important;
+  font-size: 14px !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="planet"] body #app .dealer-layout .fixed-dealer-status > .dealer-shortcuts > span > span {
+  color: #172238 !important;
+  -webkit-text-fill-color: #172238 !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 950px) {
+  html[data-bingo-theme="planet"] body #app .dealer-layout .fixed-dealer-status > .dealer-shortcuts {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 600px) {
+  html[data-bingo-theme="planet"] body #app .dealer-layout .fixed-dealer-status > .dealer-shortcuts {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 390px) {
+  html[data-bingo-theme="planet"] body #app .dealer-layout .fixed-dealer-status > .dealer-shortcuts {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+/* One Hall 2 control component is moved between Home and routed screens. */
+html[data-bingo-theme="planet"] :is(
+  body > .planet-hall-shell .planet-footer-controls,
+  body:has(#app .dealer-layout) > .planet-footer-controls
+) {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
+  align-content: stretch !important;
+  box-sizing: border-box !important;
+  padding: 4px !important;
+  gap: 5px !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme="planet"] :is(
+  body > .planet-hall-shell .planet-footer-controls,
+  body:has(#app .dealer-layout) > .planet-footer-controls
+) > button {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+  max-height: none !important;
+  padding: 5px !important;
+  gap: 0 !important;
+}
+
+html[data-bingo-theme="planet"] :is(
+  body > .planet-hall-shell .planet-footer-controls,
+  body:has(#app .dealer-layout) > .planet-footer-controls
+) > :is(.hall-start-button, .hall-dealer-button) {
+  grid-column: span 1 !important;
+}
+
+html[data-bingo-theme="planet"] :is(
+  body > .planet-hall-shell .planet-footer-controls,
+  body:has(#app .dealer-layout) > .planet-footer-controls
+) > button > span {
+  display: none !important;
+}
+
+html[data-bingo-theme="planet"] :is(
+  body > .planet-hall-shell .planet-footer-controls,
+  body:has(#app .dealer-layout) > .planet-footer-controls
+) > button .bi {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  font-size: clamp(22px, 3vw, 34px) !important;
+  line-height: 1 !important;
+}
+
+html.bingo-embedded-window[data-bingo-theme="planet"]:not(.hall-controls-collapsed) body:has(#app .dealer-layout) > .planet-footer-controls {
+  position: fixed !important;
+  z-index: 21000 !important;
+  top: auto !important;
+  right: 8px !important;
+  bottom: 8px !important;
+  left: auto !important;
+  width: clamp(232px, 26vw, 260px) !important;
+  height: 144px !important;
+  min-height: 144px !important;
+  max-height: 144px !important;
+  margin: 0 !important;
+  transform: none !important;
+  touch-action: pan-y !important;
+  overscroll-behavior-y: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+@media (max-width: 420px) {
+  html.bingo-embedded-window[data-bingo-theme="planet"]:not(.hall-controls-collapsed) body:has(#app .dealer-layout) > .planet-footer-controls {
+    right: 6px !important;
+    bottom: 6px !important;
+    width: min(260px, calc(100vw - 12px)) !important;
+  }
+}
+
+html.bingo-embedded-window.hall-controls-collapsed[data-bingo-theme="planet"] body:has(#app .dealer-layout) > .planet-footer-controls {
+  display: none !important;
 }

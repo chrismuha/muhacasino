@@ -6,7 +6,6 @@
   const SOLID_COLOR_STORAGE_KEY = "muha-bingo-solid-colors";
   const VIEW_COUNT_STORAGE_KEY = "muha-bingo-view-count";
   const CARD_COUNT_STORAGE_KEY = "muha-bingo-card-count";
-  const DEALER_POPOUT_STORAGE_KEY = "muha-bingo-dealer-popout";
   const INCORRECT_BINGO_STORAGE_KEY = "muha-bingo-incorrect-claims";
   const SCHEDULE_STORAGE_KEY = "muha-bingo-schedule";
   const PRIZES_STORAGE_KEY = "muha-bingo-prizes";
@@ -19,6 +18,7 @@
   const UNLIMITED_CREDITS = 1_000_000_000;
   const launchParameters = new URLSearchParams(window.location.search);
   const isPopout = launchParameters.has("screen") || launchParameters.has("player");
+  const isEmbedded = window.parent !== window;
   const themeChannel = "BroadcastChannel" in window
     ? new BroadcastChannel("muha-bingo-theme-sync")
     : null;
@@ -184,6 +184,26 @@
     );
   }
 
+  function syncUnifiedHallControls(theme = document.documentElement.dataset.bingoTheme) {
+    const controls = document.querySelector(".player-hall-controls");
+    if (!controls) return;
+    const usePlanetControls = theme === "planet";
+    const closeButton = controls._hallCloseButton;
+
+    controls.classList.toggle("planet-footer-controls", usePlanetControls);
+    controls.classList.toggle("classic-hall-controls", !usePlanetControls);
+    controls.setAttribute("aria-label", usePlanetControls ? "Planet Hall 2 controls" : "Bingo Hall controls");
+
+    if (usePlanetControls) {
+      closeButton?.remove();
+      const statusBar = document.querySelector(".planet-hall-shell .planet-status-bar");
+      if (statusBar && controls.parentElement !== statusBar) statusBar.append(controls);
+    } else {
+      if (closeButton && closeButton.parentElement !== controls) controls.prepend(closeButton);
+      if (controls.parentElement !== document.body) document.body.append(controls);
+    }
+  }
+
   function applyTheme(theme, broadcast = true) {
     const selectedTheme = themes.includes(theme) ? theme : "planet";
     const previousTheme = document.documentElement.dataset.bingoTheme;
@@ -191,6 +211,7 @@
     document.querySelector(".hall-overlay-background")?.remove();
     setHallControlsCollapsed(true);
     document.documentElement.dataset.bingoTheme = selectedTheme;
+    syncUnifiedHallControls(selectedTheme);
     const selectedThemeLabel = THEME_DEFINITIONS.find(({ id }) => id === selectedTheme)?.label || "Theme";
     const routedThemeLabel = document.querySelector(".bingo-popout-toolbar .bingo-theme-trigger > span");
     if (routedThemeLabel) routedThemeLabel.textContent = selectedThemeLabel;
@@ -280,7 +301,7 @@
 
   function mountThemeSwitcher() {
     // Embedded Bingo uses the casino toolbar's native theme dropdown.
-    if (window.parent !== window && !isPopout) {
+    if (isEmbedded) {
       mountPlayerHallControls();
       applyTheme(savedTheme());
       return true;
@@ -691,8 +712,7 @@
     const shouldShow = !isPopout
       && settings.showOtherThemesFlashboard
       && selectedTheme === "classic"
-      && !document.documentElement.classList.contains("dealer-round-active")
-      && !document.documentElement.classList.contains("dealer-overlay-open");
+      && !document.documentElement.classList.contains("dealer-round-active");
     board.hidden = !shouldShow;
     if (!shouldShow) return;
 
@@ -1308,27 +1328,10 @@
   }
 
   function openDealerWindow() {
-    let usePopout = false;
-    try {
-      usePopout = window.localStorage.getItem(DEALER_POPOUT_STORAGE_KEY) === "true";
-    } catch {
-      // The routed Dealer screen remains the default.
-    }
-    if (!usePopout) {
-      const dealerUrl = new URL(window.location.href);
-      dealerUrl.searchParams.set("screen", "dealer");
-      dealerUrl.searchParams.delete("player");
-      window.location.assign(dealerUrl.href);
-      return true;
-    }
-    const popup = window.bingoApi?.openScreen?.("dealer");
-    if (!popup) {
-      showHallMessage(
-        "DEALER WINDOW BLOCKED",
-        "Allow pop-ups for Muha Casino, then press DEALER or CONTROLS again."
-      );
-      return false;
-    }
+    const dealerUrl = new URL(window.location.href);
+    dealerUrl.searchParams.set("screen", "dealer");
+    dealerUrl.searchParams.delete("player");
+    window.location.assign(dealerUrl.href);
     return true;
   }
 
@@ -1436,23 +1439,23 @@
       <button type="button" data-hall-action="trade" disabled aria-label="Bonanza Trade unavailable" title="Coming soon"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>BONANZA TRADE</span></button>
       <button type="button" data-hall-action="next" disabled aria-label="Next unavailable" title="Coming soon"><span>NEXT</span><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
     `;
-    const classicControls = document.createElement("nav");
-    classicControls.className = "player-hall-controls classic-hall-controls";
-    classicControls.setAttribute("aria-label", "Bingo Hall controls");
-    classicControls.innerHTML = `
+    const hallControls = document.createElement("nav");
+    hallControls.className = "player-hall-controls";
+    hallControls.innerHTML = `
       <button class="hall-panel-close" type="button" aria-label="Hide Hall controls">
         <i class="bi bi-caret-right-fill" aria-hidden="true"></i><span>HIDE CONTROLS</span>
       </button>
       ${controlsMarkup}
     `;
-    classicControls.querySelector(".hall-panel-close")?.addEventListener("click", () => {
+    hallControls._hallCloseButton = hallControls.querySelector(".hall-panel-close");
+    hallControls._hallCloseButton?.addEventListener("click", () => {
       setHallControlsCollapsed(true);
     });
 
     const positionClassicControls = () => {
       const header = document.querySelector("#app .topbar");
       const headerBottom = Math.max(12, Math.ceil(header?.getBoundingClientRect().bottom || 0) + 10);
-      classicControls.style.setProperty("--hall-controls-safe-top", `${headerBottom}px`);
+      hallControls.style.setProperty("--hall-controls-safe-top", `${headerBottom}px`);
     };
     window.addEventListener("resize", positionClassicControls, { passive: true });
     if (window.ResizeObserver) {
@@ -1462,28 +1465,12 @@
     }
     window.requestAnimationFrame(positionClassicControls);
 
-    const planetControls = document.createElement("nav");
-    planetControls.className = "player-hall-controls planet-footer-controls";
-    planetControls.setAttribute("aria-label", "Planet Hall 2 controls");
-    planetControls.innerHTML = `
-      <button class="hall-start-button" type="button" data-hall-action="start"><i class="bi bi-play-fill" aria-hidden="true"></i><span>PLAY SESSION</span></button>
-      <button class="hall-dealer-button" type="button" data-hall-action="dealer"><i class="bi bi-person-badge-fill" aria-hidden="true"></i><span>DEALER</span></button>
-      <button type="button" data-hall-action="view"><i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i><span>VIEW</span></button>
-      <button type="button" data-hall-action="options"><i class="bi bi-gear-fill" aria-hidden="true"></i><span>OPTIONS</span></button>
-      <button type="button" data-hall-action="purchase"><i class="bi bi-cart-fill" aria-hidden="true"></i><span>PURCHASE</span></button>
-      <button type="button" data-hall-action="schedule"><i class="bi bi-calendar3" aria-hidden="true"></i><span>SCHEDULE</span></button>
-      <button type="button" data-hall-action="prizes"><i class="bi bi-trophy-fill" aria-hidden="true"></i><span>PRIZES</span></button>
-      <button type="button" data-hall-action="trade" disabled aria-label="Bonanza Trade unavailable" title="Coming soon"><i class="bi bi-arrow-left-right" aria-hidden="true"></i><span>BONANZA TRADE</span></button>
-      <button type="button" data-hall-action="next" disabled aria-label="Next unavailable" title="Coming soon"><span>NEXT</span><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
-    `;
-
-    [classicControls, planetControls].forEach((controls) => {
-      controls.addEventListener("click", (event) => {
-        const button = event.target.closest("[data-hall-action]");
-        if (button) handleHallAction(button.dataset.hallAction);
-      });
-      document.body.append(controls);
+    hallControls.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-hall-action]");
+      if (button) handleHallAction(button.dataset.hallAction);
     });
+    document.body.append(hallControls);
+    syncUnifiedHallControls();
 
     const universalDock = document.createElement("nav");
     universalDock.className = "universal-controls-dock";
@@ -1933,12 +1920,14 @@
   function mountViewOverlay() {
     if (document.querySelector(".bingo-view-overlay")) return;
 
-    const viewButton = document.createElement("button");
-    viewButton.className = "universal-view-button";
-    viewButton.type = "button";
-    viewButton.innerHTML = '<i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i><span>VIEW</span>';
-    viewButton.addEventListener("click", openViewOverlay);
-    (document.querySelector(".universal-controls-dock") || document.body).append(viewButton);
+    if (!isPopout) {
+      const viewButton = document.createElement("button");
+      viewButton.className = "universal-view-button";
+      viewButton.type = "button";
+      viewButton.innerHTML = '<i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i><span>VIEW</span>';
+      viewButton.addEventListener("click", openViewOverlay);
+      (document.querySelector(".universal-controls-dock") || document.body).append(viewButton);
+    }
 
     const overlay = document.createElement("div");
     overlay.className = "bingo-view-overlay";
@@ -2030,10 +2019,6 @@
             <span style="--preview-color:var(--free-space)">FREE</span>
           </div>
         </div>
-        <label class="dealer-window-setting">
-          <input type="checkbox" data-dealer-popout>
-          <span><strong>Open Dealer in a separate window</strong><small>Disabled by default. Enable this to use a separate Dealer tab instead of the full-screen overlay.</small></span>
-        </label>
         <footer><button type="button" data-daub-options-close>CONFIRM</button></footer>
         <div class="daub-discard-prompt" data-daub-discard-prompt hidden role="alertdialog" aria-modal="true" aria-labelledby="daub-discard-title">
           <section>
@@ -2048,11 +2033,9 @@
     const captureState = () => ({
       design: savedDaubDesign(),
       colors: savedSolidColors(),
-      dealerPopout: overlay.querySelector("[data-dealer-popout]")?.checked || false,
     });
     const statesMatch = (first, second) => Boolean(first && second)
       && first.design === second.design
-      && first.dealerPopout === second.dealerPopout
       && first.colors.pre === second.colors.pre
       && first.colors.actual === second.colors.actual
       && first.colors.free === second.colors.free;
@@ -2088,34 +2071,18 @@
         if (openingState) {
           applyDaubDesign(openingState.design);
           applySolidColors(openingState.colors);
-          overlay.querySelector("[data-dealer-popout]").checked = openingState.dealerPopout;
-          try { window.localStorage.setItem(DEALER_POPOUT_STORAGE_KEY, String(openingState.dealerPopout)); } catch {}
         }
         overlay.querySelector("[data-daub-discard-prompt]").hidden = true;
         overlay.hidden = true;
       }
     });
     overlay.addEventListener("input", (event) => {
-      if (event.target.matches("[data-dealer-popout]")) {
-        try {
-          window.localStorage.setItem(DEALER_POPOUT_STORAGE_KEY, String(event.target.checked));
-        } catch {
-          // The selection remains usable until this page closes.
-        }
-        return;
-      }
       if (!event.target.matches("[data-solid-color]")) return;
       const colors = savedSolidColors();
       colors[event.target.dataset.solidColor] = event.target.value;
       applySolidColors(colors);
     });
     document.body.append(overlay);
-    try {
-      overlay.querySelector("[data-dealer-popout]").checked =
-        window.localStorage.getItem(DEALER_POPOUT_STORAGE_KEY) === "true";
-    } catch {
-      overlay.querySelector("[data-dealer-popout]").checked = false;
-    }
     applySolidColors();
     applyDaubDesign(savedDaubDesign());
     const originalOpen = openDaubOptions;
@@ -2150,7 +2117,6 @@
           returnToPlayerWindow();
           return;
         }
-        document.documentElement.classList.remove("dealer-overlay-open");
       }
       const ball = event.target.closest(
         ".planet-current-ball, #app .bingo-ball, #app .dealer-current-ball, #app .audience-ball"
@@ -2182,7 +2148,7 @@
   }
 
   function mountPlayerReturnButton() {
-    if (!isPopout || document.querySelector(".return-to-player-window")) return;
+    if (!isPopout || isEmbedded || document.querySelector(".return-to-player-window")) return;
     const button = document.createElement("button");
     button.className = "return-to-player-window";
     button.type = "button";
@@ -2192,7 +2158,7 @@
   }
 
   function mountPopoutToolbar() {
-    if (!isPopout) return;
+    if (!isPopout || isEmbedded) return;
     let toolbar = document.querySelector(".bingo-popout-toolbar");
     if (!toolbar) {
       toolbar = document.createElement("nav");
@@ -2272,7 +2238,7 @@
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
-      if (isPopout) {
+      if (isPopout && !isEmbedded) {
         mountThemeSwitcher();
         mountPlayerReturnButton();
         mountPopoutToolbar();
@@ -2298,7 +2264,7 @@
       restoreSavedPreferences();
     }, { once: true });
   } else {
-    if (isPopout) {
+    if (isPopout && !isEmbedded) {
       mountThemeSwitcher();
       mountPlayerReturnButton();
       mountPopoutToolbar();
