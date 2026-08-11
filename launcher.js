@@ -283,6 +283,7 @@ function showLauncher(updateHistory = true) {
   gameLoadState.hidden = true;
   gameView.hidden = true;
   launcher.hidden = false;
+  document.body.classList.remove("game-open");
   bingoThemeToolbar.hidden = true;
   document.title = "Muha Casino";
   if (updateHistory) history.replaceState(null, "", window.location.pathname);
@@ -341,6 +342,7 @@ function launchGame(gameId, updateHistory = true) {
   gameFrame.src = activeGameUrl();
   launcher.hidden = true;
   gameView.hidden = false;
+  document.body.classList.add("game-open");
   document.title = `${game.title} | Muha Casino`;
 
   if (updateHistory) history.pushState({ gameId }, "", `#${gameId}`);

@@ -48,6 +48,45 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   }
 }
 
+/* Cascade-final Hall 2 footer toggle. Keep it inside the footer so Chrome and
+   Safari cannot clip its hit target when the status bar hides overflow. */
+html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar > .planet-footer-collapse {
+  position: absolute !important;
+  z-index: 500 !important;
+  top: 3px !important;
+  left: 50% !important;
+  display: grid !important;
+  visibility: visible !important;
+  place-items: center !important;
+  width: 52px !important;
+  height: 30px !important;
+  min-width: 52px !important;
+  min-height: 30px !important;
+  padding: 0 !important;
+  transform: translateX(-50%) !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+  border: 2px solid #6d8bc4 !important;
+  border-radius: 0 0 11px 11px !important;
+  color: #fff !important;
+  background: #14213a !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapsed > .planet-status-bar {
+  flex-basis: 36px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapsed > .planet-status-bar > .planet-footer-collapse {
+  top: 3px !important;
+  border-radius: 0 0 11px 11px !important;
+  transform: translateX(-50%) !important;
+}
+
 /* Planet Hall 2's footer may collapse to a small restore strip at any size. */
 html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
   position: relative !important;
@@ -5897,4 +5936,36 @@ html.bingo-embedded-window.hall-controls-collapsed[data-bingo-theme="planet"] bo
     min-height: 0 !important;
     max-height: none !important;
   }
+}
+
+/* Final authority for the Hall 2 footer's visible touch target. */
+html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar > .planet-footer-collapse {
+  position: absolute !important;
+  z-index: 500 !important;
+  top: 3px !important;
+  left: 50% !important;
+  display: grid !important;
+  visibility: visible !important;
+  place-items: center !important;
+  width: 52px !important;
+  height: 30px !important;
+  min-width: 52px !important;
+  min-height: 30px !important;
+  padding: 0 !important;
+  transform: translateX(-50%) !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+  border: 2px solid #6d8bc4 !important;
+  border-radius: 0 0 11px 11px !important;
+  color: #fff !important;
+  background: #14213a !important;
+  opacity: 1 !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapsed > .planet-status-bar {
+  flex: 0 0 36px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  overflow: visible !important;
 }
