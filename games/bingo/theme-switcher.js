@@ -1452,17 +1452,25 @@
       setHallControlsCollapsed(true);
     });
 
+    let observedClassicHeader = null;
+    const headerResizeObserver = window.ResizeObserver
+      ? new ResizeObserver(() => positionClassicControls())
+      : null;
     const positionClassicControls = () => {
       const header = document.querySelector("#app .topbar");
+      if (header !== observedClassicHeader) {
+        if (observedClassicHeader) headerResizeObserver?.unobserve(observedClassicHeader);
+        if (header) headerResizeObserver?.observe(header);
+        observedClassicHeader = header;
+      }
       const headerBottom = Math.max(12, Math.ceil(header?.getBoundingClientRect().bottom || 0) + 10);
       hallControls.style.setProperty("--hall-controls-safe-top", `${headerBottom}px`);
     };
     window.addEventListener("resize", positionClassicControls, { passive: true });
-    if (window.ResizeObserver) {
-      const headerResizeObserver = new ResizeObserver(positionClassicControls);
-      const header = document.querySelector("#app .topbar");
-      if (header) headerResizeObserver.observe(header);
-    }
+    new MutationObserver(() => window.requestAnimationFrame(positionClassicControls)).observe(
+      document.querySelector("#app") || document.body,
+      { childList: true, subtree: true }
+    );
     window.requestAnimationFrame(positionClassicControls);
 
     hallControls.addEventListener("click", (event) => {

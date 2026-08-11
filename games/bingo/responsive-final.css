@@ -5739,3 +5739,78 @@ html.bingo-embedded-window[data-bingo-theme="planet"]:not(.hall-controls-collaps
 html.bingo-embedded-window.hall-controls-collapsed[data-bingo-theme="planet"] body:has(#app .dealer-layout) > .planet-footer-controls {
   display: none !important;
 }
+
+/* Mobile route/theme changes can replace the React topbar while Safari is
+   restoring the frame.  Let the rendered controls establish the header's
+   block size instead of retaining one of the older fixed-height geometries. */
+@media (max-width: 600px) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell > .topbar {
+    position: relative !important;
+    inset: auto !important;
+    z-index: 2 !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    transform: none !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell > .topbar > .header-actions {
+    position: relative !important;
+    inset: auto !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: none !important;
+    grid-auto-flow: row !important;
+    grid-auto-rows: minmax(54px, auto) !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    gap: 7px !important;
+    overflow: visible !important;
+    transform: none !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell > .topbar > .header-actions > * {
+    position: relative !important;
+    inset: auto !important;
+    grid-row: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    transform: none !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell > .topbar > .header-actions > .play-time-panel {
+    grid-column: 1 / -1 !important;
+    grid-row: auto !important;
+    height: auto !important;
+    min-height: 126px !important;
+    max-height: none !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell > .topbar > .screen-switcher {
+    position: relative !important;
+    inset: auto !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 54px !important;
+    max-height: none !important;
+    margin: 7px 0 0 !important;
+    transform: none !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell > :is(.game-layout, .dealer-layout, .design-screen) {
+    position: relative !important;
+    inset: auto !important;
+    z-index: 1 !important;
+    flex: 0 0 auto !important;
+    clear: both !important;
+    transform: none !important;
+  }
+}
