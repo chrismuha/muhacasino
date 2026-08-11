@@ -5144,3 +5144,77 @@ html.bingo-popout-window[data-bingo-theme="planet"] body > .planet-hall-shell {
     max-height: calc(100dvh - 58px) !important;
   }
 }
+
+/* Mobile readability and shared-control authority. */
+html[data-bingo-theme] body #app .dealer-layout .fixed-dealer-status > .dealer-shortcuts > span {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: #8db9f2 !important;
+  background: #101d31 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .fixed-dealer-status > .dealer-shortcuts kbd {
+  color: #081426 !important;
+  -webkit-text-fill-color: #081426 !important;
+  border-color: #b8d8ff !important;
+  background: #ffffff !important;
+}
+
+html[data-bingo-theme] body #app .dealer-primary-actions .dealer-undo {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+html[data-bingo-theme] body #app .dealer-primary-actions .dealer-undo::before {
+  content: "↶  Undo last call" !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  font-family: Arial, system-ui, sans-serif !important;
+  font-size: max(18px, 12pt) !important;
+  font-weight: 1000 !important;
+  line-height: 1 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme] body :is(#app .bingo-card, .planet-card-wall .bingo-card) .card-top {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: #7da9e5 !important;
+  background: #102542 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme] body :is(#app .bingo-card, .planet-card-wall .bingo-card) .card-top :is(span, strong, .card-id) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+@media (max-width: 600px) {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-flashboard > header {
+    grid-template-columns: minmax(82px, 25vw) minmax(0, 1fr) minmax(82px, 25vw) !important;
+    gap: 5px !important;
+    padding: 6px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature {
+    padding-inline: 3px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature > strong {
+    max-width: 100% !important;
+    font-size: clamp(7px, 2.25vw, 11px) !important;
+    letter-spacing: 0 !important;
+    overflow-wrap: anywhere !important;
+    white-space: normal !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature > small {
+    max-width: 100% !important;
+    font-size: clamp(6px, 1.9vw, 9px) !important;
+    overflow-wrap: anywhere !important;
+    white-space: normal !important;
+  }
+}

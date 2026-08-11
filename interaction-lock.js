@@ -8,6 +8,10 @@
       touch-action: manipulation;
     }
 
+    .game-rail {
+      touch-action: pan-x pinch-zoom !important;
+    }
+
     img, svg {
       -webkit-user-drag: none !important;
       user-drag: none !important;

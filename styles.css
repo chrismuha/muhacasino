@@ -338,6 +338,7 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   text-transform: uppercase;
 }
 .toolbar-theme-picker[hidden] { display: none; }
+#bingoThemeToolbar { display: none !important; }
 .toolbar-theme-picker select {
   min-height: 38px;
   padding: 6px 34px 6px 12px;
@@ -485,6 +486,19 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 }
 
 @media (max-width: 600px) {
+  html, body {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 100dvh !important;
+    overflow-x: clip !important;
+    overscroll-behavior-x: none !important;
+  }
+  #launcher {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 100dvh !important;
+    overflow-x: clip !important;
+  }
   .game-toolbar { box-sizing: border-box; height: auto; min-height: 56px; gap: 7px; padding: 6px 8px; }
   .back-button { flex: 0 0 42px; width: 42px; height: 42px; justify-content: center; box-sizing: border-box; padding: 0; font-size: 20pt; line-height: 1; }
   .back-button b { display: none; }
@@ -495,7 +509,15 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   .game-version { font-size: 8pt; }
   .game-load-state { inset-block-start: 68px; }
   #gameFrame { height: calc(100dvh - 68px); }
-  .game-rail { grid-auto-columns: min(340px, calc(100vw - 42px)); scroll-padding-inline: 2px; }
+  .game-rail {
+    grid-auto-columns: min(340px, calc(100vw - 42px));
+    width: 100% !important;
+    max-width: 100% !important;
+    scroll-padding-inline: 2px;
+    touch-action: pan-x pinch-zoom !important;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
   .card-money .card-details strong { font-size: 13.25pt; }
   .hero-content {
     display: grid;

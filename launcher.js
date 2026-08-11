@@ -303,7 +303,9 @@ function launchGame(gameId, updateHistory = true) {
   showGameLoading();
   currentGame.textContent = game.title;
   currentGameVersion.textContent = game.version;
-  bingoThemeToolbar.hidden = gameId !== "bingo";
+  // Bingo owns its theme control. Keeping the launcher copy hidden prevents a
+  // duplicate selector beside Bingo's light/dark control in every Hall theme.
+  bingoThemeToolbar.hidden = true;
   if (gameId === "bingo") {
     try {
       const savedTheme = localStorage.getItem("muha-bingo-theme");
