@@ -5218,3 +5218,111 @@ html[data-bingo-theme] body :is(#app .bingo-card, .planet-card-wall .bingo-card)
     white-space: normal !important;
   }
 }
+
+/* Keep the Dealer command strip readable and collision-free in every theme. */
+html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar {
+  display: grid !important;
+  grid-template-columns: minmax(180px, .8fr) minmax(280px, 1.4fr) minmax(240px, .8fr) !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 1400px !important;
+  gap: 16px !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar > * {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar .stage-indicator {
+  display: grid !important;
+  align-content: center !important;
+  min-width: 0 !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar .round-snapshot {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(120px, 1fr)) !important;
+  align-content: center !important;
+  gap: 10px 20px !important;
+  color: var(--dealer-text) !important;
+  -webkit-text-fill-color: var(--dealer-text) !important;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+  font-size: clamp(13px, 1vw, 16px) !important;
+  line-height: 1.2 !important;
+  text-shadow: none !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar .round-snapshot > span {
+  min-width: 0 !important;
+  white-space: normal !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar .primary-dealer-action {
+  justify-self: end !important;
+  width: min(100%, 360px) !important;
+  min-width: 0 !important;
+  min-height: 64px !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+  font-size: clamp(14px, 1.15vw, 18px) !important;
+  font-weight: 900 !important;
+  line-height: 1.15 !important;
+  text-shadow: none !important;
+}
+
+@media (max-width: 760px) {
+  html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar .primary-dealer-action {
+    justify-self: stretch !important;
+    width: 100% !important;
+  }
+}
+
+/* Mobile Player Floor cards belong to the page flow, not a thin nested scroller. */
+@media (max-width: 600px) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app > .app-shell:has(.game-layout) > .game-layout {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme] body #app .game-layout :is(.cards-stage, .cards-grid) {
+    display: grid !important;
+    flex: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}
+
+/* Cards and Dealer panels must never collapse into thin nested scroll bands. */
+html[data-bingo-theme] body #app .app-shell :is(.cards-stage, .cards-grid, .dealer-grid, .dealer-card, .dealer-primary-actions) {
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-primary-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+  align-items: stretch !important;
+  gap: 10px !important;
+  padding-block: 8px !important;
+}
+
+html[data-bingo-theme] body #app .dealer-layout .dealer-primary-actions > button {
+  min-height: 56px !important;
+}

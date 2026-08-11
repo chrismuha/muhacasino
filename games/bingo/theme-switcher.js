@@ -279,8 +279,7 @@
   }
 
   function mountThemeSwitcher() {
-    // The casino shell owns theme navigation for embedded Bingo. Do not create a
-    // second, hidden-at-first switcher that can be exposed by later theme CSS.
+    // Embedded Bingo uses the casino toolbar's native theme dropdown.
     if (window.parent !== window && !isPopout) {
       mountPlayerHallControls();
       applyTheme(savedTheme());
