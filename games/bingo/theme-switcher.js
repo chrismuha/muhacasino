@@ -204,6 +204,24 @@
     }
   }
 
+  function resetPlanetMobileViewport() {
+    if (document.documentElement.dataset.bingoTheme !== "planet"
+      || !window.matchMedia("(max-width: 600px)").matches) return;
+    const reset = () => {
+      window.scrollTo(0, 0);
+      if (document.scrollingElement) document.scrollingElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      const shell = document.querySelector(".planet-hall-shell");
+      if (shell) shell.scrollTop = 0;
+    };
+    reset();
+    window.requestAnimationFrame(() => {
+      reset();
+      window.requestAnimationFrame(reset);
+    });
+    window.setTimeout(reset, 120);
+  }
+
   function applyTheme(theme, broadcast = true) {
     const selectedTheme = themes.includes(theme) ? theme : "planet";
     const previousTheme = document.documentElement.dataset.bingoTheme;
@@ -230,6 +248,7 @@
       app.style.removeProperty("pointer-events");
       app.style.removeProperty("opacity");
     }
+    if (usePlanetHall2Surface) resetPlanetMobileViewport();
     const closeButton = document.querySelector(".hall-native-controls-close");
     if (closeButton) closeButton.hidden = true;
     const windowHeader = document.querySelector(".hall-dealer-window-header");
@@ -252,6 +271,7 @@
   }
 
   window.applyBingoTheme = applyTheme;
+  window.addEventListener("pageshow", resetPlanetMobileViewport);
   window.addEventListener("storage", (event) => {
     if (event.key === STORAGE_KEY && event.newValue) applyTheme(event.newValue, false);
   });
