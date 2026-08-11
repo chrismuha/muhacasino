@@ -196,7 +196,8 @@
 
     if (usePlanetControls) {
       closeButton?.remove();
-      if (controls.parentElement !== document.body) document.body.append(controls);
+      const statusBar = document.querySelector(".planet-hall-shell .planet-status-bar");
+      if (statusBar && controls.parentElement !== statusBar) statusBar.append(controls);
     } else {
       if (closeButton && closeButton.parentElement !== controls) controls.prepend(closeButton);
       if (controls.parentElement !== document.body) document.body.append(controls);
@@ -226,7 +227,7 @@
     const previousTheme = document.documentElement.dataset.bingoTheme;
     document.documentElement.classList.remove("hall-native-controls-open");
     document.querySelector(".hall-overlay-background")?.remove();
-    setHallControlsCollapsed(true);
+    setHallControlsCollapsed(false);
     document.documentElement.dataset.bingoTheme = selectedTheme;
     syncUnifiedHallControls(selectedTheme);
     const selectedThemeLabel = THEME_DEFINITIONS.find(({ id }) => id === selectedTheme)?.label || "Theme";
