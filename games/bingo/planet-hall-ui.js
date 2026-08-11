@@ -224,6 +224,10 @@
     shell.style.setProperty("height", height, "important");
     shell.style.setProperty("min-height", height, "important");
     shell.style.setProperty("max-height", height, "important");
+    const headerHeight = Math.ceil(shell.querySelector(".planet-terminal-header")?.getBoundingClientRect().height || 0);
+    const footerHeight = Math.ceil(shell.querySelector(".planet-status-bar")?.getBoundingClientRect().height || 0);
+    shell.style.setProperty("--planet-shell-header-height", `${headerHeight}px`);
+    shell.style.setProperty("--planet-shell-footer-height", `${footerHeight}px`);
   }
 
   function mountPlanetHall() {
@@ -290,6 +294,7 @@
       footerCollapse.setAttribute("aria-expanded", String(!collapsed));
       footerCollapse.setAttribute("aria-label", collapsed ? "Expand Hall footer" : "Collapse Hall footer");
       footerCollapse.title = collapsed ? "Expand Hall footer" : "Collapse Hall footer";
+      window.requestAnimationFrame(syncPlanetHallViewport);
       if (!persist) return;
       try {
         window.localStorage.setItem(footerCollapsedStorageKey, String(collapsed));
@@ -330,7 +335,10 @@
     }
     const footerControls = document.querySelector(".planet-footer-controls");
     if (footerControls) shell.querySelector(".planet-status-bar").append(footerControls);
-    const hallResizeObserver = new ResizeObserver(() => window.requestAnimationFrame(fitPlanetHallText));
+    const hallResizeObserver = new ResizeObserver(() => window.requestAnimationFrame(() => {
+      syncPlanetHallViewport();
+      fitPlanetHallText();
+    }));
     hallResizeObserver.observe(shell);
     new MutationObserver(() => window.requestAnimationFrame(fitPlanetHallText)).observe(shell, {
       childList: true,

@@ -87,9 +87,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell {
   position: fixed !important;
   inset: 0 !important;
   box-sizing: border-box !important;
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) !important;
-  grid-template-rows: auto minmax(0, 1fr) auto !important;
+  display: block !important;
   width: 100% !important;
   height: 100dvh !important;
   min-height: 100dvh !important;
@@ -100,19 +98,19 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell {
 }
 
 html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-terminal-header {
-  position: relative !important;
-  grid-column: 1 !important;
-  grid-row: 1 !important;
+  position: absolute !important;
+  z-index: 3 !important;
+  inset: 0 0 auto !important;
+  width: 100% !important;
   min-width: 0 !important;
 }
 
 html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-play-surface {
-  position: relative !important;
-  grid-column: 1 !important;
-  grid-row: 2 !important;
-  align-self: stretch !important;
+  position: absolute !important;
+  z-index: 1 !important;
+  inset: var(--planet-shell-header-height, 0px) 0 var(--planet-shell-footer-height, 36px) !important;
   width: 100% !important;
-  height: 100% !important;
+  height: auto !important;
   min-width: 0 !important;
   min-height: 0 !important;
   max-height: none !important;
@@ -120,10 +118,9 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-play-surface
 }
 
 html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
-  position: relative !important;
-  grid-column: 1 !important;
-  grid-row: 3 !important;
-  align-self: end !important;
+  position: absolute !important;
+  z-index: 3 !important;
+  inset: auto 0 0 !important;
   width: 100% !important;
   min-width: 0 !important;
   margin: 0 !important;
