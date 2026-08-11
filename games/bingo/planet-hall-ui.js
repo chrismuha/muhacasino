@@ -215,6 +215,17 @@
     }
   }
 
+  function syncPlanetHallViewport() {
+    const shell = document.querySelector(".planet-hall-shell");
+    if (!shell) return;
+    const viewportHeight = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0);
+    if (!viewportHeight) return;
+    const height = `${Math.round(viewportHeight)}px`;
+    shell.style.setProperty("height", height, "important");
+    shell.style.setProperty("min-height", height, "important");
+    shell.style.setProperty("max-height", height, "important");
+  }
+
   function mountPlanetHall() {
     if (document.querySelector(".planet-hall-shell")) return;
     const shell = document.createElement("main");
@@ -309,6 +320,7 @@
         ?.click();
     });
     document.body.append(shell);
+    syncPlanetHallViewport();
     try {
       const footerCollapsed = window.localStorage.getItem(footerCollapsedStorageKey) === "true";
       setFooterCollapsed(footerCollapsed, false);
@@ -329,6 +341,8 @@
       if ([cardSerialStartKey, cardSerialStepKey, specialBallStorageKey].includes(event.key)) queueSync();
     });
     window.addEventListener("muha-bingo-special-balls-changed", queueSync);
+    window.addEventListener("resize", syncPlanetHallViewport, { passive: true });
+    window.visualViewport?.addEventListener("resize", syncPlanetHallViewport, { passive: true });
 
     const sourceApp = document.querySelector("#app");
     if (sourceApp) new MutationObserver(queueSync).observe(sourceApp, { childList: true, subtree: true, attributes: true });
@@ -337,6 +351,7 @@
       attributeFilter: ["class"],
     });
     queueSync();
+    window.requestAnimationFrame(syncPlanetHallViewport);
     window.requestAnimationFrame(fitPlanetHallText);
   }
 

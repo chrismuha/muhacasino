@@ -84,9 +84,17 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapse
 /* Structural Hall 2 authority: header, play field, and footer always occupy
    separate grid rows, regardless of either outer-bar state. */
 html[data-bingo-theme="planet"] body > .planet-hall-shell {
+  position: fixed !important;
+  inset: 0 !important;
+  box-sizing: border-box !important;
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) !important;
   grid-template-rows: auto minmax(0, 1fr) auto !important;
+  width: 100% !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  max-height: 100dvh !important;
+  overflow: hidden !important;
   align-content: stretch !important;
   justify-content: stretch !important;
 }
