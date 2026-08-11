@@ -81,6 +81,71 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapse
   overflow: visible !important;
 }
 
+/* Structural Hall 2 authority: header, play field, and footer always occupy
+   separate grid rows, regardless of either outer-bar state. */
+html[data-bingo-theme="planet"] body > .planet-hall-shell {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: auto minmax(0, 1fr) auto !important;
+  align-content: stretch !important;
+  justify-content: stretch !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-terminal-header {
+  position: relative !important;
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  min-width: 0 !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-play-surface {
+  position: relative !important;
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+  align-self: stretch !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
+  position: relative !important;
+  grid-column: 1 !important;
+  grid-row: 3 !important;
+  align-self: end !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapsed > .planet-status-bar {
+  display: block !important;
+  box-sizing: border-box !important;
+  flex: none !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapsed > .planet-status-bar > :not(.planet-footer-collapse) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+html[data-bingo-theme="planet"] body > .hall-controls-toggle {
+  display: none !important;
+}
+
+html.hall-controls-collapsed[data-bingo-theme="planet"] body > .hall-controls-toggle {
+  display: grid !important;
+}
+
 /* Hall 2 Home uses its original compact icon grid in the status footer. */
 html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar > .planet-footer-controls {
   position: static !important;
@@ -6025,4 +6090,68 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapse
   min-height: 36px !important;
   max-height: 36px !important;
   overflow: visible !important;
+}
+
+/* Cascade-last structural authority for both collapse controls. */
+html[data-bingo-theme="planet"] body > .planet-hall-shell {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: auto minmax(0, 1fr) auto !important;
+  align-content: stretch !important;
+  justify-content: stretch !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-terminal-header {
+  position: relative !important;
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  min-width: 0 !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-play-surface {
+  position: relative !important;
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+  align-self: stretch !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
+  position: relative !important;
+  grid-column: 1 !important;
+  grid-row: 3 !important;
+  align-self: end !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapsed > .planet-status-bar {
+  display: block !important;
+  box-sizing: border-box !important;
+  flex: none !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapsed > .planet-status-bar > :not(.planet-footer-collapse) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+html[data-bingo-theme="planet"] body > .hall-controls-toggle {
+  display: none !important;
+}
+
+html.hall-controls-collapsed[data-bingo-theme="planet"] body > .hall-controls-toggle {
+  display: grid !important;
 }

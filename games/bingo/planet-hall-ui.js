@@ -272,20 +272,29 @@
         <div class="planet-credit"><strong>∞</strong><span>CREDITS</span></div>
       </footer>
     `;
+    const setFooterCollapsed = (collapsed, persist = true) => {
+      const footerCollapse = shell.querySelector(".planet-footer-collapse");
+      shell.classList.toggle("planet-footer-collapsed", collapsed);
+      footerCollapse.textContent = collapsed ? "⌃" : "⌄";
+      footerCollapse.setAttribute("aria-expanded", String(!collapsed));
+      footerCollapse.setAttribute("aria-label", collapsed ? "Expand Hall footer" : "Collapse Hall footer");
+      footerCollapse.title = collapsed ? "Expand Hall footer" : "Collapse Hall footer";
+      window.dispatchEvent(new CustomEvent("muha-bingo-planet-footer-collapsed", {
+        detail: { collapsed },
+      }));
+      if (!persist) return;
+      try {
+        window.localStorage.setItem(footerCollapsedStorageKey, String(collapsed));
+      } catch {
+        // The footer still collapses when storage is unavailable.
+      }
+    };
+    window.setPlanetFooterCollapsed = setFooterCollapsed;
+
     shell.addEventListener("click", (event) => {
       const footerCollapse = event.target.closest(".planet-footer-collapse");
       if (footerCollapse) {
-        const collapsed = !shell.classList.contains("planet-footer-collapsed");
-        shell.classList.toggle("planet-footer-collapsed", collapsed);
-        footerCollapse.textContent = collapsed ? "⌃" : "⌄";
-        footerCollapse.setAttribute("aria-expanded", String(!collapsed));
-        footerCollapse.setAttribute("aria-label", collapsed ? "Expand Hall footer" : "Collapse Hall footer");
-        footerCollapse.title = collapsed ? "Expand Hall footer" : "Collapse Hall footer";
-        try {
-          window.localStorage.setItem(footerCollapsedStorageKey, String(collapsed));
-        } catch {
-          // The footer still collapses when storage is unavailable.
-        }
+        setFooterCollapsed(!shell.classList.contains("planet-footer-collapsed"));
         return;
       }
       const modeTrigger = event.target.closest(".planet-mode-trigger");
@@ -305,14 +314,10 @@
     document.body.append(shell);
     try {
       const footerCollapsed = window.localStorage.getItem(footerCollapsedStorageKey) === "true";
-      shell.classList.toggle("planet-footer-collapsed", footerCollapsed);
-      const footerCollapse = shell.querySelector(".planet-footer-collapse");
-      footerCollapse.textContent = footerCollapsed ? "⌃" : "⌄";
-      footerCollapse.setAttribute("aria-expanded", String(!footerCollapsed));
-      footerCollapse.setAttribute("aria-label", footerCollapsed ? "Expand Hall footer" : "Collapse Hall footer");
-      footerCollapse.title = footerCollapsed ? "Expand Hall footer" : "Collapse Hall footer";
+      setFooterCollapsed(footerCollapsed, false);
     } catch {
       // Use the expanded footer when storage is unavailable.
+      setFooterCollapsed(false, false);
     }
     const footerControls = document.querySelector(".planet-footer-controls");
     if (footerControls) shell.querySelector(".planet-status-bar").append(footerControls);
