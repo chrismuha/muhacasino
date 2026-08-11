@@ -3,6 +3,7 @@
   if (launchParameters.has("screen") || launchParameters.has("player")) return;
 
   let renderQueued = false;
+  const footerCollapsedStorageKey = "muha-bingo-planet-footer-collapsed";
   const cardSerialStartKey = "muha-bingo-card-serial-start";
   const cardSerialStepKey = "muha-bingo-card-serial-step";
   const specialBallStorageKey = "muha-bingo-special-ball-settings";
@@ -257,6 +258,7 @@
         <aside class="planet-number-board" aria-label="Called number board"></aside>
       </section>
       <footer class="planet-status-bar">
+        <button class="planet-footer-collapse" type="button" aria-expanded="true" aria-label="Collapse Hall footer" title="Collapse Hall footer">⌄</button>
         <section class="planet-pattern-box" aria-label="Current winning pattern">
           <div class="planet-pattern-copy"></div>
           <div class="planet-pattern-legend" aria-label="Card mark legend">
@@ -271,6 +273,21 @@
       </footer>
     `;
     shell.addEventListener("click", (event) => {
+      const footerCollapse = event.target.closest(".planet-footer-collapse");
+      if (footerCollapse) {
+        const collapsed = !shell.classList.contains("planet-footer-collapsed");
+        shell.classList.toggle("planet-footer-collapsed", collapsed);
+        footerCollapse.textContent = collapsed ? "⌃" : "⌄";
+        footerCollapse.setAttribute("aria-expanded", String(!collapsed));
+        footerCollapse.setAttribute("aria-label", collapsed ? "Expand Hall footer" : "Collapse Hall footer");
+        footerCollapse.title = collapsed ? "Expand Hall footer" : "Collapse Hall footer";
+        try {
+          window.localStorage.setItem(footerCollapsedStorageKey, String(collapsed));
+        } catch {
+          // The footer still collapses when storage is unavailable.
+        }
+        return;
+      }
       const modeTrigger = event.target.closest(".planet-mode-trigger");
       if (modeTrigger) {
         document.querySelector('#app .appearance-btn[aria-label^="Use "]')?.click();
@@ -286,6 +303,17 @@
         ?.click();
     });
     document.body.append(shell);
+    try {
+      const footerCollapsed = window.localStorage.getItem(footerCollapsedStorageKey) === "true";
+      shell.classList.toggle("planet-footer-collapsed", footerCollapsed);
+      const footerCollapse = shell.querySelector(".planet-footer-collapse");
+      footerCollapse.textContent = footerCollapsed ? "⌃" : "⌄";
+      footerCollapse.setAttribute("aria-expanded", String(!footerCollapsed));
+      footerCollapse.setAttribute("aria-label", footerCollapsed ? "Expand Hall footer" : "Collapse Hall footer");
+      footerCollapse.title = footerCollapsed ? "Expand Hall footer" : "Collapse Hall footer";
+    } catch {
+      // Use the expanded footer when storage is unavailable.
+    }
     const footerControls = document.querySelector(".planet-footer-controls");
     if (footerControls) shell.querySelector(".planet-status-bar").append(footerControls);
 

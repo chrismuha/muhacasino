@@ -79,7 +79,7 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_BUILD = "20260811-bingo-v110";
+const SITE_BUILD = "20260811-collapsible-game-bars";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
@@ -94,6 +94,31 @@ const gameLoadMessage = document.querySelector("#gameLoadMessage");
 const gameLoadActions = document.querySelector("#gameLoadActions");
 const reloadGameButton = document.querySelector("#reloadGame");
 const returnToLibraryFromError = document.querySelector("#returnToLibraryFromError");
+const toolbarCollapseButton = document.querySelector("#toolbarCollapseButton");
+const TOOLBAR_COLLAPSED_KEY = "muha-casino-game-toolbar-collapsed";
+
+function setGameToolbarCollapsed(collapsed) {
+  gameView.classList.toggle("toolbar-collapsed", collapsed);
+  toolbarCollapseButton.textContent = collapsed ? "⌄" : "⌃";
+  toolbarCollapseButton.setAttribute("aria-expanded", String(!collapsed));
+  toolbarCollapseButton.setAttribute("aria-label", collapsed ? "Expand game header" : "Collapse game header");
+  toolbarCollapseButton.title = collapsed ? "Expand game header" : "Collapse game header";
+  try {
+    localStorage.setItem(TOOLBAR_COLLAPSED_KEY, String(collapsed));
+  } catch {
+    // The header still collapses when storage is unavailable.
+  }
+}
+
+toolbarCollapseButton.addEventListener("click", () => {
+  setGameToolbarCollapsed(!gameView.classList.contains("toolbar-collapsed"));
+});
+
+try {
+  setGameToolbarCollapsed(localStorage.getItem(TOOLBAR_COLLAPSED_KEY) === "true");
+} catch {
+  setGameToolbarCollapsed(false);
+}
 
 function compareGameTitles(leftId, rightId) {
   return games[leftId].title.localeCompare(games[rightId].title, undefined, { sensitivity: "base" });

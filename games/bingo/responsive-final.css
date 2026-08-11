@@ -48,6 +48,55 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   }
 }
 
+/* Planet Hall 2's footer may collapse to a small restore strip at any size. */
+html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
+  position: relative !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-collapse {
+  position: absolute !important;
+  z-index: 40 !important;
+  top: -2px !important;
+  left: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  box-sizing: border-box !important;
+  width: 48px !important;
+  height: 28px !important;
+  min-width: 48px !important;
+  min-height: 28px !important;
+  padding: 0 !important;
+  transform: translate(-50%, -100%) !important;
+  border: 2px solid #36558b !important;
+  border-radius: 10px 10px 0 0 !important;
+  color: #fff !important;
+  background: #14213a !important;
+  box-shadow: 0 -3px 10px rgba(0,0,0,.45) !important;
+  font: 1000 16px/1 system-ui, sans-serif !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapsed > .planet-status-bar {
+  flex: 0 0 30px !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapsed > .planet-status-bar > :not(.planet-footer-collapse) {
+  display: none !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapsed .planet-footer-collapse {
+  top: 1px !important;
+  transform: translateX(-50%) !important;
+  border-radius: 0 0 10px 10px !important;
+}
+
 
 /* View and Flashboard dialogs must sit above every Hall control surface. */
 html[data-bingo-theme] body > .bingo-view-overlay:not([hidden]) {

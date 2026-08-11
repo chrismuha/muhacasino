@@ -611,3 +611,38 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
     display: none;
   }
 }
+
+/* The game host header can collapse without removing its always-available restore control. */
+.game-toolbar { position: relative; }
+.toolbar-collapse-button {
+  position: absolute;
+  z-index: 8;
+  left: 50%;
+  bottom: -15px;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 48px;
+  height: 30px;
+  padding: 0;
+  transform: translateX(-50%);
+  border: 2px solid #51678f;
+  border-radius: 0 0 12px 12px;
+  color: #fff;
+  background: #18233a;
+  box-shadow: 0 4px 10px rgba(0,0,0,.45);
+  font: 1000 16px/1 system-ui, sans-serif;
+  cursor: pointer;
+}
+.toolbar-collapse-button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+.game-view.toolbar-collapsed .game-toolbar {
+  box-sizing: border-box;
+  height: 28px !important;
+  min-height: 28px !important;
+  padding: 0 !important;
+  border-bottom-color: #405174;
+}
+.game-view.toolbar-collapsed .game-toolbar > :not(.toolbar-collapse-button) { display: none !important; }
+.game-view.toolbar-collapsed .toolbar-collapse-button { bottom: -15px; border-radius: 0 0 12px 12px; }
+.game-view.toolbar-collapsed #gameFrame { height: calc(100dvh - 28px) !important; }
+.game-view.toolbar-collapsed .game-load-state { inset-block-start: 28px !important; }
