@@ -5212,6 +5212,90 @@ html[data-bingo-theme] body #app .dealer-layout .bingo-schedule-list {
   min-height: 120px !important;
 }
 
+/* Desktop-site views around 980 CSS pixels must not inherit the tablet geometry.
+   Keep this range above phone/tablet widths so the compact layouts stay unchanged. */
+@media (min-width: 901px) and (max-width: 1100px) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar:has(.screen-switcher) {
+    grid-template-rows: auto 61px !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar > .header-actions {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-rows: auto 54px !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .header-actions > .play-time-panel {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+    grid-template-columns: minmax(180px, .85fr) minmax(210px, 1fr) minmax(260px, 1.25fr) !important;
+    grid-template-rows: minmax(68px, auto) !important;
+    align-items: center !important;
+    height: auto !important;
+    min-height: 82px !important;
+    max-height: none !important;
+    padding: 8px 14px !important;
+    gap: 12px !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .play-time-panel > :is(div, label) {
+    grid-row: 1 !important;
+    align-self: center !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .play-time-panel > div:first-child {
+    grid-column: 1 !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .play-time-panel > div:nth-child(2) {
+    grid-column: 2 !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .play-time-panel > label {
+    display: block !important;
+    grid-column: 3 !important;
+    overflow: visible !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .play-time-panel > label > select {
+    height: 46px !important;
+    min-height: 46px !important;
+    max-height: 46px !important;
+    margin-top: 3px !important;
+  }
+
+  html[data-bingo-theme="current"] body #app .app-shell .topbar > .header-actions::before {
+    height: 82px !important;
+    min-height: 82px !important;
+    max-height: 82px !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .dealer-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout :is(.special-ball-grid, .target-summary) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  html[data-bingo-theme] body #app .dealer-layout .special-ball-card :is(input, select, label),
+  html[data-bingo-theme] body #app .dealer-layout .target-card-panel :is(input, select, label) {
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  html[data-bingo-theme] body #app .game-layout .cards-grid {
+    grid-template-rows: auto !important;
+    align-content: start !important;
+  }
+
+  html[data-bingo-theme] body #app .game-layout .cards-grid > .bingo-card {
+    align-self: start !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+}
+
 /* Clean, consistent Dealer secondary actions in every theme. */
 html[data-bingo-theme] body #app .dealer-layout .dealer-primary-actions .dealer-undo {
   display: inline-flex !important;
