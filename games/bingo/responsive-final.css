@@ -4902,6 +4902,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-wall .bin
   text-shadow: none !important;
 }
 
+
 /* Mobile call information is primary game content, not fine print. */
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .app-shell .recent-panel .section-heading h2,
@@ -5095,5 +5096,51 @@ html.bingo-embedded-window body > .planet-hall-shell .planet-terminal-header {
     max-height: 58px !important;
     margin: 0 !important;
     transform: none !important;
+  }
+}
+
+/* v1.1.9 mobile navigation corrections. Kept last in the cascade. */
+html[data-bingo-theme="planet"] body .hall-controls-toggle {
+  position: fixed !important;
+  z-index: 20000 !important;
+  top: 50% !important;
+  right: 0 !important;
+  display: grid !important;
+  width: 40px !important;
+  height: 62px !important;
+  place-items: center !important;
+  padding: 0 !important;
+  border: 2px solid #55e9ff !important;
+  border-right: 0 !important;
+  border-radius: 12px 0 0 12px !important;
+  color: #fff !important;
+  background: linear-gradient(#246bc4, #12396f) !important;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.2), -4px 6px 14px rgba(0,0,0,.36) !important;
+  transform: translateY(-50%) !important;
+  pointer-events: auto !important;
+}
+
+html[data-bingo-theme="planet"]:not(.hall-controls-collapsed) body .hall-controls-toggle {
+  display: none !important;
+}
+
+html.hall-controls-collapsed[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
+  display: none !important;
+}
+
+/* The routed toolbar occupies real space; keep every screen below it. */
+html.bingo-popout-window body > #app,
+html.bingo-popout-window[data-bingo-theme="planet"] body > .planet-hall-shell {
+  top: 64px !important;
+  height: calc(100dvh - 64px) !important;
+  max-height: calc(100dvh - 64px) !important;
+}
+
+@media (max-width: 680px) {
+  html.bingo-popout-window body > #app,
+  html.bingo-popout-window[data-bingo-theme="planet"] body > .planet-hall-shell {
+    top: 58px !important;
+    height: calc(100dvh - 58px) !important;
+    max-height: calc(100dvh - 58px) !important;
   }
 }

@@ -279,6 +279,13 @@
   }
 
   function mountThemeSwitcher() {
+    // The casino shell owns theme navigation for embedded Bingo. Do not create a
+    // second, hidden-at-first switcher that can be exposed by later theme CSS.
+    if (window.parent !== window && !isPopout) {
+      mountPlayerHallControls();
+      applyTheme(savedTheme());
+      return true;
+    }
     if (document.querySelector(".bingo-theme-switcher")) return true;
 
     const switcher = document.createElement("div");
@@ -2129,7 +2136,10 @@
     if (document.documentElement.dataset.cardDesignOverlayReady === "true") return;
     document.documentElement.dataset.cardDesignOverlayReady = "true";
     document.addEventListener("click", (event) => {
-      const cardDesignButton = event.target.closest("#app .card-design-btn");
+      const candidate = event.target.closest("#app button");
+      const cardDesignButton = candidate && /^\s*✦?\s*card design\s*$/i.test(candidate.textContent)
+        ? candidate
+        : null;
       if (!cardDesignButton || cardDesignButton.disabled) return;
       event.preventDefault();
       event.stopImmediatePropagation();
