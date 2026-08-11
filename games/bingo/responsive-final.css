@@ -6232,85 +6232,51 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell:not(.planet-footer-col
   pointer-events: auto !important;
 }
 
-/* Dealer claim verification is a true viewport modal in every theme. */
+/* Dealer claim verification: isolated modal styling with no inactive Hall side effects. */
 html[data-bingo-theme] body #app .verification-overlay {
-  position: fixed !important;
   z-index: 50000 !important;
-  inset: 0 !important;
-  display: grid !important;
-  place-items: center !important;
-  box-sizing: border-box !important;
-  width: 100vw !important;
-  height: 100dvh !important;
-  min-height: 100dvh !important;
-  padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)) !important;
-  overflow: auto !important;
-  overscroll-behavior: contain !important;
   background: rgba(3, 8, 19, .76) !important;
   -webkit-backdrop-filter: blur(12px) saturate(.75) !important;
   backdrop-filter: blur(12px) saturate(.75) !important;
 }
 
-html[data-bingo-theme] body:has(#app .verification-overlay) > :not(#app),
-html[data-bingo-theme] body #app > .app-shell:has(.verification-overlay) > :not(.verification-overlay) {
-  pointer-events: none !important;
-  user-select: none !important;
-}
-
-html[data-bingo-theme] body #app .verification-dialog {
-  position: relative !important;
-  box-sizing: border-box !important;
-  width: min(1080px, 100%) !important;
-  max-width: 1080px !important;
-  max-height: calc(100dvh - max(24px, env(safe-area-inset-top)) - max(24px, env(safe-area-inset-bottom))) !important;
-  margin: auto !important;
-  overflow: auto !important;
-  overscroll-behavior: contain !important;
-  color: #132039 !important;
-  background: #fff !important;
-  border: 2px solid #d6e0ec !important;
-  box-shadow: 0 28px 90px rgba(0,0,0,.72) !important;
-}
-
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .verification-overlay {
-    padding: max(7px, env(safe-area-inset-top)) max(7px, env(safe-area-inset-right)) max(7px, env(safe-area-inset-bottom)) max(7px, env(safe-area-inset-left)) !important;
+    box-sizing: border-box !important;
+    padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)) !important;
+    overflow: auto !important;
+    overscroll-behavior: contain !important;
   }
 
   html[data-bingo-theme] body #app .verification-dialog {
+    box-sizing: border-box !important;
     width: 100% !important;
     max-width: 460px !important;
-    max-height: calc(100dvh - max(14px, env(safe-area-inset-top)) - max(14px, env(safe-area-inset-bottom))) !important;
+    max-height: calc(100dvh - 16px) !important;
+    margin: auto !important;
     padding: 14px !important;
+    overflow: auto !important;
     border-radius: 16px !important;
   }
 
   html[data-bingo-theme] body #app .verification-dialog > header {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
-    gap: 6px !important;
+    gap: 5px !important;
     margin-bottom: 10px !important;
   }
 
   html[data-bingo-theme] body #app .verification-dialog > header h2 {
     margin: 2px 0 !important;
     font-size: clamp(17pt, 6vw, 22pt) !important;
-    line-height: 1.08 !important;
-  }
-
-  html[data-bingo-theme] body #app .verification-dialog > header p {
-    font-size: 10pt !important;
-    line-height: 1.35 !important;
   }
 
   html[data-bingo-theme] body #app .verification-dialog > header > strong {
     justify-self: start !important;
     padding: 6px 10px !important;
-    font-size: 9pt !important;
   }
 
   html[data-bingo-theme] body #app .verification-overlay-body {
-    display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     grid-template-rows: auto 44px !important;
     gap: 8px !important;
@@ -6328,20 +6294,11 @@ html[data-bingo-theme] body #app .verification-dialog {
     padding: 10px !important;
   }
 
-  html[data-bingo-theme] body #app .verification-full-card .card-top {
-    min-height: 34px !important;
-  }
-
-  html[data-bingo-theme] body #app .verification-full-card .bingo-letters span {
-    font-size: clamp(13pt, 5vw, 18pt) !important;
-  }
-
   html[data-bingo-theme] body #app .verification-full-card .number-grid {
     min-height: 240px !important;
   }
 
   html[data-bingo-theme] body #app .verification-cell {
-    min-width: 0 !important;
     font-size: clamp(11pt, 4.7vw, 17pt) !important;
   }
 
@@ -6350,7 +6307,6 @@ html[data-bingo-theme] body #app .verification-dialog {
     width: 100% !important;
     height: 44px !important;
     min-height: 44px !important;
-    border-radius: 10px !important;
     font-size: 22pt !important;
   }
 
@@ -6362,7 +6318,6 @@ html[data-bingo-theme] body #app .verification-dialog {
   }
 
   html[data-bingo-theme] body #app .verification-dialog > footer {
-    display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 8px !important;
   }
