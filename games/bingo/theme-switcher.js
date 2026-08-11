@@ -183,10 +183,6 @@
       collapsed ? "Show Hall controls" : "Hide Hall controls"
     );
   }
-  window.addEventListener("muha-bingo-planet-footer-collapsed", (event) => {
-    setHallControlsCollapsed(Boolean(event.detail?.collapsed));
-  });
-
   function syncUnifiedHallControls(theme = document.documentElement.dataset.bingoTheme) {
     const controls = document.querySelector(".player-hall-controls");
     if (!controls) return;
@@ -1529,9 +1525,6 @@
     controlsToggle.type = "button";
     controlsToggle.addEventListener("click", () => {
       const shouldCollapse = !document.documentElement.classList.contains("hall-controls-collapsed");
-      if (document.documentElement.dataset.bingoTheme === "planet" && !shouldCollapse) {
-        window.setPlanetFooterCollapsed?.(false);
-      }
       setHallControlsCollapsed(shouldCollapse);
     });
     document.body.append(controlsToggle);

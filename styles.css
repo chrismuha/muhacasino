@@ -644,8 +644,6 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 }
 .game-view.toolbar-collapsed .game-toolbar > :not(.toolbar-collapse-button) { display: none !important; }
 .game-view.toolbar-collapsed .toolbar-collapse-button { bottom: -15px; border-radius: 0 0 12px 12px; }
-.game-view.toolbar-collapsed #gameFrame { height: calc(100dvh - 28px) !important; }
-.game-view.toolbar-collapsed .game-load-state { inset-block-start: 28px !important; }
 
 /* A running game owns the viewport; the launcher document must not scroll behind it. */
 html:has(body.game-open),
@@ -668,12 +666,10 @@ body.game-open #gameFrame {
   min-height: 0;
   overscroll-behavior: none;
 }
-body.game-open .game-view.toolbar-collapsed #gameFrame { top: 28px; }
-
 @media (max-width: 600px) {
-  body.game-open .game-view:not(.toolbar-collapsed) #gameFrame { top: 68px; }
+  body.game-open .game-view #gameFrame { top: 68px; }
 }
 
 @media (min-width: 601px) {
-  body.game-open .game-view:not(.toolbar-collapsed) #gameFrame { top: 64px; }
+  body.game-open .game-view #gameFrame { top: 64px; }
 }

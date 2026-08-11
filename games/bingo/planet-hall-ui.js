@@ -279,9 +279,6 @@
       footerCollapse.setAttribute("aria-expanded", String(!collapsed));
       footerCollapse.setAttribute("aria-label", collapsed ? "Expand Hall footer" : "Collapse Hall footer");
       footerCollapse.title = collapsed ? "Expand Hall footer" : "Collapse Hall footer";
-      window.dispatchEvent(new CustomEvent("muha-bingo-planet-footer-collapsed", {
-        detail: { collapsed },
-      }));
       if (!persist) return;
       try {
         window.localStorage.setItem(footerCollapsedStorageKey, String(collapsed));

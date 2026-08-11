@@ -143,6 +143,58 @@ html[data-bingo-theme="planet"] body > .hall-controls-toggle {
 }
 
 html.hall-controls-collapsed[data-bingo-theme="planet"] body > .hall-controls-toggle {
+  display: none !important;
+}
+
+/* Hall 2 keeps its actions in the footer; View remains a separate side tab. */
+html[data-bingo-theme="planet"] body > .universal-controls-dock {
+  position: fixed !important;
+  z-index: 21500 !important;
+  top: 50% !important;
+  right: 0 !important;
+  bottom: auto !important;
+  left: auto !important;
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+  transform: translateY(-50%) !important;
+  pointer-events: none !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-bingo-theme="planet"] body > .universal-controls-dock > :not(.universal-view-button) {
+  display: none !important;
+}
+
+html[data-bingo-theme="planet"] body > .universal-controls-dock > .universal-view-button {
+  display: grid !important;
+  place-items: center !important;
+  gap: 3px !important;
+  width: 46px !important;
+  min-width: 46px !important;
+  height: 78px !important;
+  min-height: 78px !important;
+  padding: 7px 4px !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+  border: 3px solid #65ddff !important;
+  border-right: 0 !important;
+  border-radius: 14px 0 0 14px !important;
+  color: #fff !important;
+  background: linear-gradient(#357fda, #174f9f) !important;
+  box-shadow: inset 0 0 0 3px rgba(255,255,255,.18), 0 4px 12px rgba(0,0,0,.5) !important;
+  font-size: 18px !important;
+}
+
+html[data-bingo-theme="planet"] body > .universal-controls-dock > .universal-view-button span {
+  font: 900 9px/1 system-ui, sans-serif !important;
+  letter-spacing: .04em !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell:not(.planet-footer-collapsed) > .planet-status-bar > .planet-footer-controls {
   display: grid !important;
 }
 
@@ -6154,4 +6206,28 @@ html[data-bingo-theme="planet"] body > .hall-controls-toggle {
 
 html.hall-controls-collapsed[data-bingo-theme="planet"] body > .hall-controls-toggle {
   display: grid !important;
+}
+
+/* Final Hall 2 authority: footer actions and the View tab are independent. */
+html[data-bingo-theme="planet"] body > .hall-controls-toggle,
+html.hall-controls-collapsed[data-bingo-theme="planet"] body > .hall-controls-toggle {
+  display: none !important;
+}
+
+html[data-bingo-theme="planet"] body > .universal-controls-dock {
+  display: block !important;
+}
+
+html[data-bingo-theme="planet"] body > .universal-controls-dock > :not(.universal-view-button) {
+  display: none !important;
+}
+
+html[data-bingo-theme="planet"] body > .universal-controls-dock > .universal-view-button {
+  display: grid !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell:not(.planet-footer-collapsed) > .planet-status-bar > .planet-footer-controls {
+  display: grid !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
