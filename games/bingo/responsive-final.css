@@ -6817,3 +6817,73 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball.h
     justify-self: end !important;
   }
 }
+
+/* Desktop containment: allocate space instead of clipping Classic toolbar controls. */
+@media (min-width: 901px) {
+  html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .topbar .play-time-panel {
+    display: grid !important;
+    grid-template-columns: minmax(150px, .75fr) minmax(280px, 1fr) minmax(320px, 1.55fr) !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+  }
+
+  html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .topbar .play-time-panel > label {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    overflow: visible !important;
+  }
+
+  html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .topbar .play-time-panel > label > select {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    padding-right: 40px !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: nowrap !important;
+  }
+
+  html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .cards-stage .stage-toolbar {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+  }
+
+  html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .cards-stage .stage-toolbar > div:first-child,
+  html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .cards-stage .card-view-tools {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .cards-stage .card-view-tools {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) max-content !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .cards-stage .sort-control {
+    grid-column: 1 !important;
+    min-width: 0 !important;
+  }
+
+  html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .cards-stage .card-pager {
+    grid-column: 2 !important;
+  }
+
+  html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .cards-stage .view-control {
+    grid-column: 1 / -1 !important;
+    justify-self: end !important;
+    width: max-content !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+}
