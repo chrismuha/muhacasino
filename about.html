@@ -149,7 +149,34 @@
       </article>
 
       <article id="bingo" class="history-card featured-history">
-        <header><span class="game-icon bingo">B</span><div><p>Casino Hall</p><h2>Muha Bingo</h2></div><b>v1.1.10</b></header>
+        <header><span class="game-icon bingo">B</span><div><p>Casino Hall</p><h2>Muha Bingo</h2></div><b>v1.1.11</b></header>
+        <section><h3>v1.1.11 · 2026-08-15–16 · Responsive Hall controls and desktop readability</h3>
+          <div class="release-groups">
+            <div class="release-group"><h4>Player Floor</h4><ul>
+              <li>Made Planet Hall 2 the default Bingo experience while preserving every saved theme choice.</li>
+              <li>Kept the winning-pattern footer visible and made Hall controls restore cleanly after overlays close.</li>
+              <li>Improved responsive game navigation, card scrolling, and mobile control access without allowing blank-page overscroll.</li>
+              <li>Made Recent Calls, Call History, counts, called-number labels, and empty states easier to read across themes.</li>
+            </ul></div>
+            <div class="release-group"><h4>Desktop layout fixes</h4><ul>
+              <li>Kept the Call History empty-state message inside its panel instead of clipping at the right edge.</li>
+              <li>Replaced the thin, high waiting dash with a thicker marker positioned closer to the current-ball number in every theme.</li>
+              <li>Kept the Classic Casino floor cards heading on one line beside its controls.</li>
+              <li>Expanded the device time-zone field so its full option and dropdown indicator remain visible.</li>
+              <li>Reserved stable space for all six Show card-count buttons so their numbers remain centered and uncut.</li>
+            </ul></div>
+            <div class="release-group"><h4>Casino shell and controls</h4><ul>
+              <li>Improved compact-window game navigation and kept the casino header collapse control independent of the running game.</li>
+              <li>Revealed mobile settings and controls that could previously be hidden or pushed outside the viewport.</li>
+              <li>Balanced card sorting, paging, view controls, and game status across supported desktop widths.</li>
+            </ul></div>
+            <div class="release-group"><h4>Reliability</h4><ul>
+              <li>Updated stylesheet cache keys with each responsive correction so deployed browsers load the current layout.</li>
+              <li>Kept shared Bingo behavior free of source-only comments and covered active helpers with syntax checks.</li>
+              <li>Verified the full Muha Casino JavaScript check suite after the release changes.</li>
+            </ul></div>
+          </div>
+        </section>
         <section><h3>v1.1.10 · Updated 2026-08-11 · Mobile Hall viewport reliability update</h3>
           <div class="release-groups">
             <div class="release-group"><h4>Bingo on iPhone</h4><ul>
