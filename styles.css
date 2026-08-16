@@ -217,8 +217,8 @@ a { color: inherit; text-decoration: none; }
 
 .content-section { width: min(1280px, calc(100% - 48px)); margin: 0 auto; padding: 75px 0 0; }
 .section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 23px; }
-.section-heading h2 { margin: 0; font-size: clamp(24pt, 4vw, 39.6pt); letter-spacing: -.055em; }
-.section-kicker { margin-bottom: 8px; color: #9a74ff; }
+.section-heading h2 { margin: 0; font-size: clamp(30pt, 4.8vw, 48pt); letter-spacing: -.055em; }
+.section-kicker { margin-bottom: 9px; color: #9a74ff; font-size: clamp(11pt, 1.7vw, 14pt); }
 
 .rail-controls { display: flex; gap: 8px; }
 .rail-controls button, .text-button { border: 1px solid #2c3044; background: #151724; cursor: pointer; }
@@ -233,9 +233,14 @@ a { color: inherit; text-decoration: none; }
   overflow-x: auto;
   padding: 8px 2px 18px;
   scroll-behavior: smooth;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: none;
   scrollbar-width: thin;
   scrollbar-color: #353950 transparent;
+}
+
+.game-rail.is-direct-scrolling {
+  scroll-behavior: auto;
+  scroll-snap-type: none;
 }
 
 .game-card {
@@ -541,7 +546,8 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   .game-load-state { inset-block-start: 68px; }
   #gameFrame { height: calc(100dvh - 68px); }
   .game-rail {
-    grid-auto-columns: min(340px, calc(100vw - 42px));
+    grid-auto-columns: calc((100vw - 50px) / 2);
+    gap: 10px;
     width: 100% !important;
     max-width: 100% !important;
     scroll-padding-inline: 2px;
@@ -549,7 +555,40 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
     overscroll-behavior-x: contain;
     -webkit-overflow-scrolling: touch;
   }
-  .card-money .card-details strong { font-size: 13.25pt; }
+  .game-card {
+    min-height: 235px;
+    border-radius: 16px;
+  }
+  .mini-reels {
+    padding: 11px 9px;
+    border-width: 4px;
+    border-radius: 11px;
+    font-size: clamp(10pt, 4vw, 13pt);
+  }
+  .card-visual i {
+    right: -4px;
+    bottom: -18px;
+    font-size: 72pt;
+  }
+  .card-details {
+    padding: 48px 38px 12px 12px;
+  }
+  .card-details strong,
+  .card-money .card-details strong {
+    min-height: 2.35em;
+    margin-bottom: 3px;
+    font-size: clamp(9.5pt, 3.6vw, 11.5pt);
+  }
+  .card-details small {
+    font-size: 7.5pt;
+  }
+  .card-play {
+    right: 9px;
+    bottom: 14px;
+    width: 27px;
+    height: 27px;
+    font-size: 7pt;
+  }
   .hero-content {
     display: grid;
     grid-template-rows: auto 190px 108px auto;
@@ -666,7 +705,7 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   font: 1000 16px/1 system-ui, sans-serif;
   cursor: pointer;
 }
-.toolbar-collapse-button > span {
+.bar-collapse-chevron > span {
   display: block;
   width: 10px;
   height: 10px;
@@ -675,7 +714,7 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   transform: rotate(-135deg);
   transition: transform .18s ease;
 }
-.game-view.toolbar-collapsed .toolbar-collapse-button > span { transform: rotate(45deg); }
+.game-view.toolbar-collapsed .bar-collapse-chevron > span { transform: rotate(45deg); }
 .toolbar-collapse-button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
 .game-view.toolbar-collapsed .game-toolbar {
   box-sizing: border-box;

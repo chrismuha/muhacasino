@@ -1,7 +1,7 @@
 
 
 
-html.bingo-embedded-window #app .appearance-btn[aria-label^="Use "],
+html.bingo-embedded-window #app .appearance-btn,
 html.bingo-embedded-window body > .planet-hall-shell .planet-mode-trigger {
   display: none !important;
 }
@@ -77,6 +77,19 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar >
   color: #fff !important;
   background: #14213a !important;
   opacity: 1 !important;
+}
+
+html[data-bingo-theme] body .bar-collapse-chevron > span {
+  width: 10px !important;
+  height: 10px !important;
+  border-right: 4px solid currentColor !important;
+  border-bottom: 4px solid currentColor !important;
+  transform: rotate(-135deg) !important;
+  transition: transform .18s ease !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapsed .bar-collapse-chevron > span {
+  transform: rotate(45deg) !important;
 }
 
 html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapsed > .planet-status-bar {
@@ -6438,16 +6451,8 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .n
   cursor: pointer !important;
 }
 
-html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .native-pattern-collapse > span {
-  width: 10px !important;
-  height: 10px !important;
-  border-right: 4px solid currentColor !important;
-  border-bottom: 4px solid currentColor !important;
+html.native-pattern-collapsed:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .bar-collapse-chevron > span {
   transform: rotate(45deg) !important;
-}
-
-html.native-pattern-collapsed:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .native-pattern-collapse > span {
-  transform: rotate(-135deg) !important;
 }
 
 html.native-pattern-collapsed:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(.game-layout) > .app-footer {
@@ -6465,4 +6470,34 @@ html.native-pattern-collapsed:is([data-bingo-theme="classic"], [data-bingo-theme
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
+}
+
+html.bingo-embedded-window[data-bingo-theme] body #app .app-shell:has(> .game-layout) > .topbar > .header-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+html.bingo-embedded-window[data-bingo-theme] body #app .app-shell:has(> .game-layout) > .topbar > .header-actions > .play-time-panel {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+}
+
+html.bingo-embedded-window[data-bingo-theme] body #app .app-shell:has(> .game-layout) > .topbar > .header-actions > :is(.card-design-btn, .status-pill, .new-game-btn) {
+  grid-column: auto !important;
+  grid-row: 2 !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 58px !important;
+  min-height: 58px !important;
+  max-height: 58px !important;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  border-width: 2px !important;
+  border-radius: 12px !important;
+  font-size: clamp(15px, 1.25vw, 20px) !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
 }

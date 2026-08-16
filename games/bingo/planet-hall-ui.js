@@ -6,6 +6,7 @@
   const cardSerialStartKey = "muha-bingo-card-serial-start";
   const cardSerialStepKey = "muha-bingo-card-serial-step";
   const specialBallStorageKey = "muha-bingo-special-ball-settings";
+  const planetFooterCollapsedStorageKey = "muha-bingo-planet-footer-collapsed";
 
   function specialBallDisplaySettings() {
     try {
@@ -272,7 +273,7 @@
         <aside class="planet-number-board" aria-label="Called number board"></aside>
       </section>
       <footer class="planet-status-bar">
-        <button class="planet-footer-collapse" type="button" aria-expanded="true" aria-label="Collapse Hall footer" title="Collapse Hall footer">⌄</button>
+        <button class="planet-footer-collapse bar-collapse-chevron" type="button" aria-expanded="true" aria-label="Collapse Hall footer" title="Collapse Hall footer"><span aria-hidden="true"></span></button>
         <section class="planet-pattern-box" aria-label="Current winning pattern">
           <div class="planet-pattern-copy"></div>
           <div class="planet-pattern-legend" aria-label="Card mark legend">
@@ -289,7 +290,6 @@
     const setFooterCollapsed = (collapsed) => {
       const footerCollapse = shell.querySelector(".planet-footer-collapse");
       shell.classList.toggle("planet-footer-collapsed", collapsed);
-      footerCollapse.textContent = collapsed ? "⌃" : "⌄";
       footerCollapse.setAttribute("aria-expanded", String(!collapsed));
       footerCollapse.setAttribute("aria-label", collapsed ? "Expand Hall footer" : "Collapse Hall footer");
       footerCollapse.title = collapsed ? "Expand Hall footer" : "Collapse Hall footer";
@@ -300,7 +300,13 @@
     shell.addEventListener("click", (event) => {
       const footerCollapse = event.target.closest(".planet-footer-collapse");
       if (footerCollapse) {
-        setFooterCollapsed(!shell.classList.contains("planet-footer-collapsed"));
+        const collapsed = !shell.classList.contains("planet-footer-collapsed");
+        setFooterCollapsed(collapsed);
+        try {
+          window.localStorage.setItem(planetFooterCollapsedStorageKey, String(collapsed));
+        } catch {
+
+        }
         return;
       }
       const modeTrigger = event.target.closest(".planet-mode-trigger");
@@ -318,6 +324,11 @@
         ?.click();
     });
     document.body.append(shell);
+    try {
+      setFooterCollapsed(window.localStorage.getItem(planetFooterCollapsedStorageKey) === "true");
+    } catch {
+      setFooterCollapsed(false);
+    }
     syncPlanetHallViewport();
     setFooterCollapsed(false);
     const footerControls = document.querySelector(".planet-footer-controls");

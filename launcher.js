@@ -97,6 +97,7 @@ const gameLoadActions = document.querySelector("#gameLoadActions");
 const reloadGameButton = document.querySelector("#reloadGame");
 const returnToLibraryFromError = document.querySelector("#returnToLibraryFromError");
 const toolbarCollapseButton = document.querySelector("#toolbarCollapseButton");
+const toolbarCollapsedStorageKey = "muha-casino-toolbar-collapsed";
 
 function setGameToolbarCollapsed(collapsed) {
   gameView.classList.toggle("toolbar-collapsed", collapsed);
@@ -106,10 +107,20 @@ function setGameToolbarCollapsed(collapsed) {
 }
 
 toolbarCollapseButton.addEventListener("click", () => {
-  setGameToolbarCollapsed(!gameView.classList.contains("toolbar-collapsed"));
+  const collapsed = !gameView.classList.contains("toolbar-collapsed");
+  setGameToolbarCollapsed(collapsed);
+  try {
+    window.localStorage.setItem(toolbarCollapsedStorageKey, String(collapsed));
+  } catch {
+
+  }
 });
 
-setGameToolbarCollapsed(false);
+try {
+  setGameToolbarCollapsed(window.localStorage.getItem(toolbarCollapsedStorageKey) === "true");
+} catch {
+  setGameToolbarCollapsed(false);
+}
 
 function compareGameTitles(leftId, rightId) {
   return games[leftId].title.localeCompare(games[rightId].title, undefined, { sensitivity: "base" });
@@ -209,7 +220,8 @@ function addHorizontalSwipe(element, onSwipe, { dragScroll = false } = {}) {
 
   element.style.touchAction = "pan-y pinch-zoom";
   element.addEventListener("pointerdown", (event) => {
-    if (event.target.closest("button, a, input, select, textarea, label")) return;
+    const interactiveTarget = event.target.closest("button, a, input, select, textarea, label");
+    if (interactiveTarget && (!dragScroll || !interactiveTarget.matches(".game-card"))) return;
     if (event.pointerType === "mouse" && event.button !== 0) return;
     pointerId = event.pointerId;
     startX = event.clientX;
@@ -224,7 +236,10 @@ function addHorizontalSwipe(element, onSwipe, { dragScroll = false } = {}) {
     const deltaY = event.clientY - startY;
     if (Math.abs(deltaX) < 8 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
     dragged = true;
-    if (dragScroll) element.scrollLeft = startScrollLeft - deltaX;
+    if (dragScroll) {
+      element.classList.add("is-direct-scrolling");
+      element.scrollLeft = startScrollLeft - deltaX;
+    }
   });
   element.addEventListener("pointerup", (event) => {
     if (event.pointerId !== pointerId) return;
@@ -232,11 +247,15 @@ function addHorizontalSwipe(element, onSwipe, { dragScroll = false } = {}) {
     const deltaY = event.clientY - startY;
     element.releasePointerCapture?.(pointerId);
     pointerId = null;
+    element.classList.remove("is-direct-scrolling");
     if (!dragScroll && Math.abs(deltaX) >= 48 && Math.abs(deltaX) > Math.abs(deltaY)) {
       onSwipe(deltaX < 0 ? 1 : -1);
     }
   });
-  element.addEventListener("pointercancel", () => { pointerId = null; });
+  element.addEventListener("pointercancel", () => {
+    pointerId = null;
+    element.classList.remove("is-direct-scrolling");
+  });
   element.addEventListener("click", (event) => {
     if (!dragged) return;
     event.preventDefault();
@@ -260,6 +279,7 @@ document.querySelector("#heroTrack").addEventListener("wheel", (event) => {
 }, { passive: false });
 
 document.querySelectorAll(".game-rail").forEach((rail) => {
+  let wheelEndTimer = 0;
   addHorizontalSwipe(rail, () => {}, { dragScroll: true });
   rail.addEventListener("wheel", (event) => {
     if (rail.scrollWidth <= rail.clientWidth) return;
@@ -270,7 +290,12 @@ document.querySelectorAll(".game-rail").forEach((rail) => {
     const atEnd = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 1;
     if (!horizontalGesture && ((delta < 0 && atStart) || (delta > 0 && atEnd))) return;
     event.preventDefault();
-    rail.scrollLeft += delta;
+    window.clearTimeout(wheelEndTimer);
+    rail.classList.add("is-direct-scrolling");
+    rail.scrollBy({ left: delta, behavior: "auto" });
+    wheelEndTimer = window.setTimeout(() => {
+      rail.classList.remove("is-direct-scrolling");
+    }, 140);
   }, { passive: false });
 });
 

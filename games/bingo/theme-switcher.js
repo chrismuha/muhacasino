@@ -15,6 +15,8 @@
   const CARD_SERIAL_STEP_STORAGE_KEY = "muha-bingo-card-serial-step";
   const CARD_SERIAL_DEFAULT_VERSION_KEY = "muha-bingo-card-serial-default-version";
   const SPECIAL_BALL_STORAGE_KEY = "muha-bingo-special-ball-settings";
+  const HALL_CONTROLS_COLLAPSED_STORAGE_KEY = "muha-bingo-hall-controls-collapsed";
+  const PATTERN_COLLAPSED_STORAGE_KEY = "muha-bingo-pattern-collapsed";
   const UNLIMITED_CREDITS = 1_000_000_000;
   const launchParameters = new URLSearchParams(window.location.search);
   const isPopout = launchParameters.has("screen") || launchParameters.has("player");
@@ -1499,6 +1501,11 @@
     hallControls._hallCloseButton = hallControls.querySelector(".hall-panel-close");
     hallControls._hallCloseButton?.addEventListener("click", () => {
       setHallControlsCollapsed(true);
+      try {
+        window.localStorage.setItem(HALL_CONTROLS_COLLAPSED_STORAGE_KEY, "true");
+      } catch {
+
+      }
     });
 
     let observedClassicHeader = null;
@@ -1556,9 +1563,18 @@
     controlsToggle.addEventListener("click", () => {
       const shouldCollapse = !document.documentElement.classList.contains("hall-controls-collapsed");
       setHallControlsCollapsed(shouldCollapse);
+      try {
+        window.localStorage.setItem(HALL_CONTROLS_COLLAPSED_STORAGE_KEY, String(shouldCollapse));
+      } catch {
+
+      }
     });
     document.body.append(controlsToggle);
-    setHallControlsCollapsed(true);
+    try {
+      setHallControlsCollapsed(window.localStorage.getItem(HALL_CONTROLS_COLLAPSED_STORAGE_KEY) !== "false");
+    } catch {
+      setHallControlsCollapsed(true);
+    }
   }
 
   function calledNumbers() {
@@ -1810,14 +1826,24 @@
     const footer = document.querySelector("#app .app-shell:has(.game-layout) > .app-footer");
     if (!footer || footer.querySelector(".native-pattern-collapse")) return;
     const button = document.createElement("button");
-    button.className = "native-pattern-collapse";
+    button.className = "native-pattern-collapse bar-collapse-chevron";
     button.type = "button";
     button.innerHTML = '<span aria-hidden="true"></span>';
     button.addEventListener("click", () => {
-      setNativePatternCollapsed(!document.documentElement.classList.contains("native-pattern-collapsed"));
+      const collapsed = !document.documentElement.classList.contains("native-pattern-collapsed");
+      setNativePatternCollapsed(collapsed);
+      try {
+        window.localStorage.setItem(PATTERN_COLLAPSED_STORAGE_KEY, String(collapsed));
+      } catch {
+
+      }
     });
     footer.prepend(button);
-    setNativePatternCollapsed(document.documentElement.classList.contains("native-pattern-collapsed"));
+    try {
+      setNativePatternCollapsed(window.localStorage.getItem(PATTERN_COLLAPSED_STORAGE_KEY) === "true");
+    } catch {
+      setNativePatternCollapsed(false);
+    }
   }
 
   function restoreSavedPreferences() {
