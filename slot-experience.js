@@ -7,6 +7,7 @@
         moneyMode: false,
         luckyWheel: true,
         wheelOdds: 0.5,
+        revealDoors: "off",
         deposited: 100,
         played: 0,
         balance: 100,
@@ -17,6 +18,7 @@
         state.moneyMode = Boolean(saved.moneyMode);
         state.luckyWheel = saved.luckyWheel !== false;
         state.wheelOdds = [0.25, 0.5, 0.75, 1].includes(Number(saved.wheelOdds)) ? Number(saved.wheelOdds) : 0.5;
+        state.revealDoors = ["off", "reels", "symbols"].includes(saved.revealDoors) ? saved.revealDoors : "off";
     } catch {  }
 
     function money(value) {
@@ -29,6 +31,7 @@
                 moneyMode: state.moneyMode,
                 luckyWheel: state.luckyWheel,
                 wheelOdds: state.wheelOdds,
+                revealDoors: state.revealDoors,
             }));
         } catch {  }
     }
@@ -93,7 +96,16 @@
                     <option value="1">100% Win / 0% Loss</option>
                 </select>
                 <small>Winning slices award 1×, 2×, or 3× the credits needed for the current wager.</small>
-            </div>`;
+            </div>
+            ${gameKey === "pretty-penny" ? `<div class="select penny-door-setting">
+                <label for="pennyRevealDoors">Pretty Penny reveal doors</label>
+                <select id="pennyRevealDoors">
+                    <option value="off">Off</option>
+                    <option value="reels">Cover all reels</option>
+                    <option value="symbols">Cover individual symbols</option>
+                </select>
+                <small>Choose whether a spin is concealed before the result is revealed. Doors are off by default.</small>
+            </div>` : ""}`;
         settingsRoot.appendChild(settings);
 
         document.body.insertAdjacentHTML("beforeend", `
@@ -127,9 +139,11 @@
         const moneyToggle = document.getElementById("moneyModeToggle");
         const wheelToggle = document.getElementById("luckyWheelToggle");
         const odds = document.getElementById("luckyWheelOdds");
+        const revealDoors = document.getElementById("pennyRevealDoors");
         moneyToggle.checked = state.moneyMode;
         wheelToggle.checked = state.luckyWheel;
         odds.value = String(state.wheelOdds);
+        if (revealDoors) revealDoors.value = state.revealDoors;
         moneyToggle.addEventListener("change", () => { state.moneyMode = moneyToggle.checked; updateMoneyUi(); });
         wheelToggle.addEventListener("change", () => {
             state.luckyWheel = wheelToggle.checked;
@@ -137,6 +151,7 @@
             window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
         });
         odds.addEventListener("change", () => { state.wheelOdds = Number(odds.value); save(); });
+        revealDoors?.addEventListener("change", () => { state.revealDoors = revealDoors.value; save(); });
         withdrawalButton.addEventListener("click", () => {
             updateMoneyUi();
             document.getElementById("withdrawalOverlay").hidden = false;
@@ -211,11 +226,15 @@
     }
 
     function closeReelDoors(reels) {
+        if (state.revealDoors === "off") return;
         const host = reels?.parentElement;
         if (!reels || !host || host.querySelector(":scope > .penny-reveal-doors")) return;
         host.classList.add("penny-door-host");
         reels.classList.add("penny-doors-active");
-        host.insertAdjacentHTML("beforeend", `<div class="penny-reveal-doors" aria-hidden="true"><div class="penny-door left"><span>Pretty</span></div><div class="penny-door right"><span>Penny</span></div></div>`);
+        const doorMarkup = state.revealDoors === "symbols"
+            ? `<div class="penny-symbol-doors">${Array.from({ length: 25 }, (_, index) => `<i><span>${index % 2 ? "Penny" : "Pretty"}</span></i>`).join("")}</div>`
+            : `<div class="penny-door left"><span>Pretty</span></div><div class="penny-door right"><span>Penny</span></div>`;
+        host.insertAdjacentHTML("beforeend", `<div class="penny-reveal-doors mode-${state.revealDoors}" aria-hidden="true">${doorMarkup}</div>`);
         const doors = host.querySelector(":scope > .penny-reveal-doors");
         doors.style.top = `${reels.offsetTop}px`;
         doors.style.left = `${reels.offsetLeft}px`;

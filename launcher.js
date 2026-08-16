@@ -234,7 +234,7 @@ function addHorizontalSwipe(element, onSwipe, { dragScroll = false } = {}) {
     if (event.pointerId !== pointerId) return;
     const deltaX = event.clientX - startX;
     const deltaY = event.clientY - startY;
-    if (Math.abs(deltaX) < 8 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+    if (Math.abs(deltaX) < 5 || Math.abs(deltaX) <= Math.abs(deltaY) * 1.1) return;
     dragged = true;
     if (dragScroll) {
       element.classList.add("is-direct-scrolling");
@@ -248,7 +248,7 @@ function addHorizontalSwipe(element, onSwipe, { dragScroll = false } = {}) {
     element.releasePointerCapture?.(pointerId);
     pointerId = null;
     element.classList.remove("is-direct-scrolling");
-    if (!dragScroll && Math.abs(deltaX) >= 48 && Math.abs(deltaX) > Math.abs(deltaY)) {
+    if (!dragScroll && Math.abs(deltaX) >= 30 && Math.abs(deltaX) > Math.abs(deltaY)) {
       onSwipe(deltaX < 0 ? 1 : -1);
     }
   });

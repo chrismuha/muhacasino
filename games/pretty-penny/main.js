@@ -1240,6 +1240,7 @@ function getSettingsDefinitions() {
         { key: "moneyMode", title: "Money Mode", element: document.getElementById("moneyModeToggle")?.closest(".checkbox-setting") },
         { key: "luckyWheel", title: "Lucky Wheel", element: document.getElementById("luckyWheelToggle")?.closest(".checkbox-setting") },
         { key: "luckyWheelOdds", title: "Lucky Wheel Odds", element: document.getElementById("luckyWheelOdds")?.closest(".select") },
+        { key: "revealDoors", title: "Pretty Penny Reveal Doors", element: document.getElementById("pennyRevealDoors")?.closest(".select") },
         { key: "adjustMoney", title: "Adjust Money", element: creditStepEl?.closest(".credit-controls") },
         { key: "denomination", title: "Denomination", element: denomEl?.closest(".select") },
         { key: "lines", title: "Lines", element: linesEl?.closest(".select") },

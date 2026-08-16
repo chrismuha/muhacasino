@@ -6501,3 +6501,27 @@ html.bingo-embedded-window[data-bingo-theme] body #app .app-shell:has(> .game-la
   text-align: center !important;
   white-space: nowrap !important;
 }
+
+/* The casino toolbar owns appearance in embedded play; keep in-theme actions uniform. */
+html.bingo-embedded-window[data-bingo-theme] body #app .app-shell .topbar .appearance-btn {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .header-actions > :is(.appearance-btn, .card-design-btn, .status-pill, .new-game-btn) {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    max-height: 58px !important;
+    margin: 0 !important;
+    padding: 8px 10px !important;
+    border-width: 2px !important;
+    border-radius: 12px !important;
+    font-size: clamp(14px, 4vw, 18px) !important;
+    line-height: 1.1 !important;
+    white-space: nowrap !important;
+  }
+}
