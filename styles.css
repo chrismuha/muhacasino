@@ -338,6 +338,35 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   text-transform: uppercase;
 }
 .toolbar-theme-picker[hidden] { display: none; }
+.toolbar-bingo-controls {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-self: end;
+  gap: 8px;
+}
+.toolbar-bingo-controls[hidden] { display: none; }
+.toolbar-bingo-controls .toolbar-theme-picker { margin-left: 0; }
+.toolbar-appearance-button {
+  display: inline-flex;
+  min-width: 84px;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid #424a67;
+  border-radius: 999px;
+  color: #f4f7ff;
+  background: #20263a;
+  font: 850 8.5pt/1 system-ui, sans-serif;
+  cursor: pointer;
+}
+.toolbar-appearance-button:hover,
+.toolbar-appearance-button:focus-visible {
+  border-color: var(--cyan);
+  outline: 2px solid rgba(87,228,242,.25);
+}
 .toolbar-theme-picker select {
   min-height: 38px;
   padding: 6px 34px 6px 12px;
@@ -503,8 +532,11 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   .back-button b { display: none; }
   .game-identity { flex: 1 1 auto; gap: 5px; }
   .game-identity > strong { font-size: 9pt; text-overflow: ellipsis; }
-  .toolbar-theme-picker { flex: 0 1 36%; min-width: 0; }
+  .toolbar-bingo-controls { flex: 0 1 48%; gap: 5px; }
+  .toolbar-theme-picker { flex: 1 1 auto; min-width: 0; }
   .toolbar-theme-picker select { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; padding-inline: 10px 25px; font-size: 8.5pt; }
+  .toolbar-appearance-button { flex: 0 0 42px; min-width: 42px; width: 42px; padding: 0; }
+  .toolbar-appearance-button b { display: none; }
   .game-version { font-size: 8pt; }
   .game-load-state { inset-block-start: 68px; }
   #gameFrame { height: calc(100dvh - 68px); }
@@ -539,7 +571,7 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 @media (min-width: 601px) {
   .game-toolbar {
     display: grid;
-    grid-template-columns: minmax(180px, 320px) minmax(90px, 1fr) minmax(180px, 320px);
+    grid-template-columns: minmax(180px, 320px) minmax(90px, 1fr) minmax(260px, 400px);
     box-sizing: border-box;
     width: 100%;
     height: 64px;
@@ -634,6 +666,16 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   font: 1000 16px/1 system-ui, sans-serif;
   cursor: pointer;
 }
+.toolbar-collapse-button > span {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-right: 4px solid currentColor;
+  border-bottom: 4px solid currentColor;
+  transform: rotate(-135deg);
+  transition: transform .18s ease;
+}
+.game-view.toolbar-collapsed .toolbar-collapse-button > span { transform: rotate(45deg); }
 .toolbar-collapse-button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
 .game-view.toolbar-collapsed .game-toolbar {
   box-sizing: border-box;

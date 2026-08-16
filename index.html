@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#070811">
   <meta name="description" content="Muha Casino — slots, Bingo, and classic tabletop games in one game library.">
   <title>Muha Casino</title>
-  <link rel="stylesheet" href="styles.css?build=20260816-game-frame-height">
+  <link rel="stylesheet" href="styles.css?build=20260816-bingo-header-appearance">
 </head>
 <body>
   <main id="launcher">
@@ -214,15 +214,18 @@
     <div class="game-toolbar">
       <a id="backButton" class="back-button" href="./" aria-label="Return to game library"><span aria-hidden="true">←</span><b>RETURN TO GAME LIBRARY</b></a>
       <span class="game-identity"><strong id="currentGame" style="color:#fff !important;-webkit-text-fill-color:#fff !important"></strong><span id="currentGameVersion" class="game-version" aria-label="Game version"></span></span>
-      <label id="bingoThemeToolbar" class="toolbar-theme-picker" hidden>
-        <span>Theme</span>
-        <select id="bingoThemeSelect" aria-label="Bingo theme">
-          <option value="planet">Planet Hall 2</option>
-          <option value="classic">Planet Hall 1</option>
-          <option value="current">Classic</option>
-        </select>
-      </label>
-      <button id="toolbarCollapseButton" class="toolbar-collapse-button" type="button" aria-expanded="true" aria-label="Collapse game header" title="Collapse game header">⌃</button>
+      <div id="bingoToolbarControls" class="toolbar-bingo-controls" hidden>
+        <label id="bingoThemeToolbar" class="toolbar-theme-picker">
+          <span>Theme</span>
+          <select id="bingoThemeSelect" aria-label="Bingo theme">
+            <option value="planet">Planet Hall 2</option>
+            <option value="classic">Planet Hall 1</option>
+            <option value="current">Classic</option>
+          </select>
+        </label>
+        <button id="bingoAppearanceButton" class="toolbar-appearance-button" type="button" aria-label="Use dark mode" title="Use dark mode"><span aria-hidden="true">☾</span><b>DARK</b></button>
+      </div>
+      <button id="toolbarCollapseButton" class="toolbar-collapse-button" type="button" aria-expanded="true" aria-label="Collapse game header" title="Collapse game header"><span aria-hidden="true"></span></button>
     </div>
     <iframe id="gameFrame" title="Selected slot game" allow="fullscreen"></iframe>
     <div id="gameLoadState" class="game-load-state" role="status" aria-live="polite">
@@ -239,6 +242,6 @@
   </section>
 
   <script src="interaction-lock.js?build=20260811-horizontal-rails"></script>
-  <script src="launcher.js?build=20260811-session-only-toolbar-collapse"></script>
+  <script src="launcher.js?build=20260816-wheel-card-rails"></script>
 </body>
 </html>

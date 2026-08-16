@@ -1,5 +1,11 @@
 /* Loaded after the theme cascade so viewport containment stays authoritative.
    Runtime IDs: planet = Hall 2, classic = Hall 1, current = Classic UI. */
+/* Embedded Bingo uses the casino header's single appearance control. */
+html.bingo-embedded-window #app .appearance-btn[aria-label^="Use "],
+html.bingo-embedded-window body > .planet-hall-shell .planet-mode-trigger {
+  display: none !important;
+}
+
 html[data-bingo-theme="current"] body #app .app-shell .topbar {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) !important;
@@ -6334,4 +6340,123 @@ html[data-bingo-theme] body #app .verification-overlay {
     font-size: 10.5pt !important;
     white-space: normal !important;
   }
+}
+
+/* Cascade-final Hall 1 compact desktop composition inside the casino iframe. */
+@media (min-width: 901px) and (max-width: 1100px) {
+  html[data-bingo-theme="classic"] body #app .app-shell .game-layout {
+    grid-template-columns: minmax(210px, 260px) minmax(0, 1fr) !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 10px !important;
+    padding-inline: 10px !important;
+    overflow-x: clip !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .game-layout > *,
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage,
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-grid {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .stage-toolbar {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .card-view-tools {
+    grid-template-columns: minmax(0, 1fr) minmax(190px, max-content) !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .sort-control {
+    grid-template-columns: max-content minmax(0, 1fr) !important;
+    min-width: 0 !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .sort-control select {
+    width: 100% !important;
+    min-width: 0 !important;
+    text-overflow: ellipsis !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    overflow-x: clip !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-grid > .bingo-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+}
+
+html[data-bingo-theme="classic"] body #app .app-shell.theme-light .cards-stage .stage-heading .eyebrow {
+  color: #412419 !important;
+  -webkit-text-fill-color: #412419 !important;
+}
+
+/* Hall 1 and Classic share Hall 2's expandable winning-pattern bar behavior. */
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(.game-layout) > .app-footer {
+  position: relative !important;
+  padding-top: 38px !important;
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .native-pattern-collapse {
+  position: absolute !important;
+  z-index: 20 !important;
+  top: 3px !important;
+  left: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  box-sizing: border-box !important;
+  width: 52px !important;
+  min-width: 52px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 0 !important;
+  transform: translateX(-50%) !important;
+  border: 2px solid #6d8bc4 !important;
+  border-radius: 0 0 11px 11px !important;
+  color: #fff !important;
+  background: #14213a !important;
+  box-shadow: 0 3px 8px rgba(0,0,0,.35) !important;
+  cursor: pointer !important;
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .native-pattern-collapse > span {
+  width: 10px !important;
+  height: 10px !important;
+  border-right: 4px solid currentColor !important;
+  border-bottom: 4px solid currentColor !important;
+  transform: rotate(45deg) !important;
+}
+
+html.native-pattern-collapsed:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .native-pattern-collapse > span {
+  transform: rotate(-135deg) !important;
+}
+
+html.native-pattern-collapsed:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(.game-layout) > .app-footer {
+  display: block !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+html.native-pattern-collapsed:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(.game-layout) > .app-footer > :not(.native-pattern-collapse) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }

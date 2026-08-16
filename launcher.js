@@ -86,8 +86,10 @@ const gameFrame = document.querySelector("#gameFrame");
 const currentGame = document.querySelector("#currentGame");
 const currentGameVersion = document.querySelector("#currentGameVersion");
 const backButton = document.querySelector("#backButton");
+const bingoToolbarControls = document.querySelector("#bingoToolbarControls");
 const bingoThemeToolbar = document.querySelector("#bingoThemeToolbar");
 const bingoThemeSelect = document.querySelector("#bingoThemeSelect");
+const bingoAppearanceButton = document.querySelector("#bingoAppearanceButton");
 const gameLoadState = document.querySelector("#gameLoadState");
 const gameLoadTitle = document.querySelector("#gameLoadTitle");
 const gameLoadMessage = document.querySelector("#gameLoadMessage");
@@ -98,7 +100,6 @@ const toolbarCollapseButton = document.querySelector("#toolbarCollapseButton");
 
 function setGameToolbarCollapsed(collapsed) {
   gameView.classList.toggle("toolbar-collapsed", collapsed);
-  toolbarCollapseButton.textContent = collapsed ? "⌄" : "⌃";
   toolbarCollapseButton.setAttribute("aria-expanded", String(!collapsed));
   toolbarCollapseButton.setAttribute("aria-label", collapsed ? "Expand game header" : "Collapse game header");
   toolbarCollapseButton.title = collapsed ? "Expand game header" : "Collapse game header";
@@ -261,9 +262,15 @@ document.querySelector("#heroTrack").addEventListener("wheel", (event) => {
 document.querySelectorAll(".game-rail").forEach((rail) => {
   addHorizontalSwipe(rail, () => {}, { dragScroll: true });
   rail.addEventListener("wheel", (event) => {
-    if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
+    if (rail.scrollWidth <= rail.clientWidth) return;
+    const horizontalGesture = Math.abs(event.deltaX) > Math.abs(event.deltaY);
+    const delta = horizontalGesture ? event.deltaX : event.deltaY;
+    if (!delta) return;
+    const atStart = rail.scrollLeft <= 0;
+    const atEnd = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 1;
+    if (!horizontalGesture && ((delta < 0 && atStart) || (delta > 0 && atEnd))) return;
     event.preventDefault();
-    rail.scrollLeft += event.deltaX;
+    rail.scrollLeft += delta;
   }, { passive: false });
 });
 
@@ -274,7 +281,7 @@ function showLauncher(updateHistory = true) {
   gameView.hidden = true;
   launcher.hidden = false;
   document.body.classList.remove("game-open");
-  bingoThemeToolbar.hidden = true;
+  bingoToolbarControls.hidden = true;
   document.title = "Muha Casino";
   if (updateHistory) history.replaceState(null, "", window.location.pathname);
   restartSlider();
@@ -319,7 +326,7 @@ function launchGame(gameId, updateHistory = true) {
   showGameLoading();
   currentGame.textContent = game.title;
   currentGameVersion.textContent = game.version;
-  bingoThemeToolbar.hidden = gameId !== "bingo";
+  bingoToolbarControls.hidden = gameId !== "bingo";
   if (gameId === "bingo") {
     try {
       const savedTheme = localStorage.getItem("muha-bingo-theme");
@@ -405,6 +412,20 @@ bingoThemeSelect.addEventListener("change", () => {
   sendBingoTheme(theme);
 });
 
+bingoAppearanceButton.addEventListener("click", () => {
+  if (activeGameId !== "bingo") return;
+  gameFrame.contentWindow?.postMessage({ type: "muha-bingo-toggle-appearance" }, window.location.origin);
+});
+
+function syncBingoAppearanceButton(appearance) {
+  const isDark = appearance === "dark";
+  const action = isDark ? "light" : "dark";
+  bingoAppearanceButton.querySelector("span").textContent = isDark ? "☀" : "☾";
+  bingoAppearanceButton.querySelector("b").textContent = action.toUpperCase();
+  bingoAppearanceButton.setAttribute("aria-label", `Use ${action} mode`);
+  bingoAppearanceButton.title = `Use ${action} mode`;
+}
+
 function sendBingoTheme(theme) {
   gameFrame.contentWindow?.postMessage({
     type: "muha-bingo-theme",
@@ -416,11 +437,15 @@ bingoThemeChannel?.addEventListener("message", (event) => {
   const theme = event.data?.theme;
   if (!["planet", "classic", "current"].includes(theme)) return;
   bingoThemeSelect.value = theme;
-  if (!bingoThemeToolbar.hidden) sendBingoTheme(theme);
+  if (!bingoToolbarControls.hidden) sendBingoTheme(theme);
 });
 
 window.addEventListener("message", (event) => {
   if (event.origin !== window.location.origin) return;
+  if (event.data?.type === "muha-bingo-appearance" && activeGameId === "bingo") {
+    syncBingoAppearanceButton(event.data.appearance);
+    return;
+  }
   if (event.data?.type !== "muha-bingo-focus-player-hall") return;
   if (activeGameId !== "bingo") launchGame("bingo");
   window.focus();
@@ -442,8 +467,9 @@ gameFrame.addEventListener("load", () => {
     // Cross-origin frames cannot be inspected, but a completed load is still usable.
   }
   gameLoadState.hidden = true;
-  if (!bingoThemeToolbar.hidden) {
+  if (!bingoToolbarControls.hidden) {
     sendBingoTheme(bingoThemeSelect.value);
+    gameFrame.contentWindow?.postMessage({ type: "muha-bingo-request-appearance" }, window.location.origin);
   }
 });
 

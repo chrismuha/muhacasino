@@ -276,6 +276,15 @@
   });
   window.addEventListener("message", (event) => {
     if (event.origin !== window.location.origin) return;
+    if (event.data?.type === "muha-bingo-toggle-appearance") {
+      document.querySelector('#app .appearance-btn[aria-label^="Use "]')?.click();
+      window.setTimeout(queueEmbeddedAppearanceReport, 0);
+      return;
+    }
+    if (event.data?.type === "muha-bingo-request-appearance") {
+      queueEmbeddedAppearanceReport();
+      return;
+    }
     if (event.data?.type === "muha-bingo-focus-player-hall") {
       window.focus();
       if (window.parent !== window) {
@@ -287,6 +296,27 @@
     if (event.data?.type !== "muha-bingo-theme") return;
     applyTheme(event.data.theme, false);
   });
+
+  let embeddedAppearanceReportQueued = false;
+  function queueEmbeddedAppearanceReport() {
+    if (!isEmbedded || embeddedAppearanceReportQueued) return;
+    embeddedAppearanceReportQueued = true;
+    window.requestAnimationFrame(() => {
+      embeddedAppearanceReportQueued = false;
+      const shell = document.querySelector("#app .app-shell");
+      if (!shell) return;
+      window.parent.postMessage({
+        type: "muha-bingo-appearance",
+        appearance: shell.classList.contains("theme-dark") ? "dark" : "light",
+      }, window.location.origin);
+    });
+  }
+
+  new MutationObserver((mutations) => {
+    if (mutations.some((mutation) =>
+      mutation.type === "childList" || mutation.target.matches?.("#app .app-shell")
+    )) queueEmbeddedAppearanceReport();
+  }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
   themeChannel?.addEventListener("message", (event) => {
     if (event.data?.theme) applyTheme(event.data.theme, false);
   });
@@ -1766,6 +1796,30 @@
     });
   }
 
+  function setNativePatternCollapsed(collapsed) {
+    document.documentElement.classList.toggle("native-pattern-collapsed", collapsed);
+    const button = document.querySelector("#app .native-pattern-collapse");
+    if (!button) return;
+    button.setAttribute("aria-expanded", String(!collapsed));
+    button.setAttribute("aria-label", collapsed ? "Expand winning pattern bar" : "Collapse winning pattern bar");
+    button.title = collapsed ? "Expand winning pattern bar" : "Collapse winning pattern bar";
+  }
+
+  function mountNativePatternCollapse() {
+    if (document.documentElement.dataset.bingoTheme === "planet") return;
+    const footer = document.querySelector("#app .app-shell:has(.game-layout) > .app-footer");
+    if (!footer || footer.querySelector(".native-pattern-collapse")) return;
+    const button = document.createElement("button");
+    button.className = "native-pattern-collapse";
+    button.type = "button";
+    button.innerHTML = '<span aria-hidden="true"></span>';
+    button.addEventListener("click", () => {
+      setNativePatternCollapsed(!document.documentElement.classList.contains("native-pattern-collapsed"));
+    });
+    footer.prepend(button);
+    setNativePatternCollapsed(document.documentElement.classList.contains("native-pattern-collapsed"));
+  }
+
   function restoreSavedPreferences() {
     applySolidColors();
     restoreCardView();
@@ -1781,6 +1835,7 @@
     revealRequestedDealerSection();
     monitorScheduledStarts();
     syncIncorrectBingoClaims();
+    mountNativePatternCollapse();
   }
 
   function openScheduleOverlay() {
