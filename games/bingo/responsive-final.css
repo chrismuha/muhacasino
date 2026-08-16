@@ -6630,3 +6630,22 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .history-balls span {
   font-weight: 900 !important;
   line-height: 1.1 !important;
 }
+
+/* Keep the desktop empty-state copy inside the call-history panel. */
+html[data-bingo-theme] body #app .app-shell .called-history-frame,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .called-history-frame {
+  align-items: flex-start !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .called-history-frame > div:first-child,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .called-history-frame > div:first-child {
+  flex: 0 0 auto !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .called-history-frame > p,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .called-history-frame > p {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
