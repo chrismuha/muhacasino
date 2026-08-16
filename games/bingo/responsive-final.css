@@ -7014,6 +7014,10 @@ html[data-bingo-theme] body > .universal-controls-dock {
   box-shadow: none !important;
 }
 
+html.bingo-embedded-window[data-bingo-theme] body > .universal-controls-dock {
+  display: none !important;
+}
+
 html[data-bingo-theme] body > .universal-controls-dock > :not(.universal-view-button) {
   display: none !important;
 }

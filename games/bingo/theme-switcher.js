@@ -290,6 +290,10 @@
       queueEmbeddedAppearanceReport();
       return;
     }
+    if (event.data?.type === "muha-bingo-open-view") {
+      openViewOverlay();
+      return;
+    }
     if (event.data?.type === "muha-bingo-focus-player-hall") {
       window.focus();
       if (window.parent !== window) {

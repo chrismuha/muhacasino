@@ -79,7 +79,7 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_BUILD = "20260816-bingo-compact-surfaced-timezone";
+const SITE_BUILD = "20260816-bingo-view-header-control";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
@@ -89,6 +89,7 @@ const backButton = document.querySelector("#backButton");
 const bingoToolbarControls = document.querySelector("#bingoToolbarControls");
 const bingoThemeToolbar = document.querySelector("#bingoThemeToolbar");
 const bingoThemeSelect = document.querySelector("#bingoThemeSelect");
+const bingoViewButton = document.querySelector("#bingoViewButton");
 const bingoAppearanceButton = document.querySelector("#bingoAppearanceButton");
 const gameLoadState = document.querySelector("#gameLoadState");
 const gameLoadTitle = document.querySelector("#gameLoadTitle");
@@ -451,6 +452,11 @@ bingoThemeSelect.addEventListener("change", () => {
 bingoAppearanceButton.addEventListener("click", () => {
   if (activeGameId !== "bingo") return;
   gameFrame.contentWindow?.postMessage({ type: "muha-bingo-toggle-appearance" }, window.location.origin);
+});
+
+bingoViewButton.addEventListener("click", () => {
+  if (activeGameId !== "bingo") return;
+  gameFrame.contentWindow?.postMessage({ type: "muha-bingo-open-view" }, window.location.origin);
 });
 
 function syncBingoAppearanceButton(appearance) {

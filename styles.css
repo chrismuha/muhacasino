@@ -354,7 +354,8 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 }
 .toolbar-bingo-controls[hidden] { display: none; }
 .toolbar-bingo-controls .toolbar-theme-picker { margin-left: 0; }
-.toolbar-appearance-button {
+.toolbar-appearance-button,
+.toolbar-view-button {
   display: inline-flex;
   min-width: 84px;
   min-height: 38px;
@@ -370,7 +371,9 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   cursor: pointer;
 }
 .toolbar-appearance-button:hover,
-.toolbar-appearance-button:focus-visible {
+.toolbar-appearance-button:focus-visible,
+.toolbar-view-button:hover,
+.toolbar-view-button:focus-visible {
   border-color: var(--cyan);
   outline: 2px solid rgba(87,228,242,.25);
 }
@@ -542,8 +545,10 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   .toolbar-bingo-controls { flex: 0 1 48%; gap: 5px; }
   .toolbar-theme-picker { flex: 1 1 auto; min-width: 0; }
   .toolbar-theme-picker select { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; padding-inline: 10px 25px; font-size: 8.5pt; }
-  .toolbar-appearance-button { flex: 0 0 42px; min-width: 42px; width: 42px; padding: 0; }
-  .toolbar-appearance-button b { display: none; }
+  .toolbar-appearance-button,
+  .toolbar-view-button { flex: 0 0 42px; min-width: 42px; width: 42px; padding: 0; }
+  .toolbar-appearance-button b,
+  .toolbar-view-button b { display: none; }
   .game-version { font-size: 8pt; }
   .game-load-state { inset-block-start: 68px; }
   #gameFrame { height: calc(100dvh - 68px); }
