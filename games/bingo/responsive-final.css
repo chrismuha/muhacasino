@@ -6679,20 +6679,45 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball.h
   transform: translate(-50%, -22px) !important;
 }
 
-/* Keep the Classic desktop stage title beside its card controls. */
+/* Keep the Classic desktop stage title and card controls inside the stage. */
 @media (min-width: 901px) {
-  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .stage-heading {
-    flex: 0 0 auto !important;
-    min-width: max-content !important;
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .stage-toolbar {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    gap: 12px !important;
+    overflow: visible !important;
   }
 
-  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .stage-heading h2 {
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .stage-toolbar > div:first-child {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .stage-toolbar > div:first-child h2 {
     max-width: none !important;
     margin-bottom: 0 !important;
     font-size: clamp(22px, 1.4vw, 26px) !important;
     line-height: 1.05 !important;
     white-space: nowrap !important;
     overflow-wrap: normal !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .card-view-tools {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) max-content !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    gap: 10px !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .view-control {
+    grid-column: 1 / -1 !important;
+    justify-self: start !important;
   }
 
   /* Reserve enough desktop width for the complete device-time-zone option. */
@@ -6751,19 +6776,19 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball.h
 }
 
 @media (min-width: 1101px) {
-  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .stage-toolbar {
-    display: grid !important;
-    grid-template-columns: max-content minmax(0, 1fr) !important;
-    align-items: center !important;
-    gap: 18px !important;
-  }
-
   html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .card-view-tools {
     display: grid !important;
     grid-template-columns: minmax(250px, 1fr) max-content max-content !important;
     align-items: center !important;
+    box-sizing: border-box !important;
     width: 100% !important;
     min-width: 0 !important;
+    padding-right: 72px !important;
     gap: 10px !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .view-control {
+    grid-column: auto !important;
+    justify-self: end !important;
   }
 }
