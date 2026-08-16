@@ -660,16 +660,25 @@ body.game-open .game-view { overflow: hidden; overscroll-behavior: none; }
 body.game-open #gameFrame {
   position: absolute;
   right: 0;
-  bottom: 0;
   left: 0;
-  height: auto !important;
   min-height: 0;
   overscroll-behavior: none;
 }
+body.game-open .game-view.toolbar-collapsed #gameFrame {
+  top: 28px;
+  height: calc(100dvh - 28px) !important;
+}
+body.game-open .game-view.toolbar-collapsed .game-load-state { inset-block-start: 28px; }
 @media (max-width: 600px) {
-  body.game-open .game-view #gameFrame { top: 68px; }
+  body.game-open .game-view:not(.toolbar-collapsed) #gameFrame {
+    top: 68px;
+    height: calc(100dvh - 68px) !important;
+  }
 }
 
 @media (min-width: 601px) {
-  body.game-open .game-view #gameFrame { top: 64px; }
+  body.game-open .game-view:not(.toolbar-collapsed) #gameFrame {
+    top: 64px;
+    height: calc(100dvh - 64px) !important;
+  }
 }
