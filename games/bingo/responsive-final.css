@@ -7277,7 +7277,7 @@ html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell.them
 @media (min-width: 901px) {
   html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel {
     display: grid !important;
-    grid-template-columns: minmax(150px, .8fr) minmax(220px, 1fr) minmax(300px, 1.25fr) !important;
+    grid-template-columns: minmax(170px, .75fr) minmax(290px, 1.15fr) minmax(330px, 1.25fr) !important;
     grid-template-rows: minmax(64px, auto) !important;
     align-items: center !important;
     box-sizing: border-box !important;
@@ -7311,7 +7311,26 @@ html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell.them
     border: 0 !important;
     border-radius: 0 !important;
     background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
     box-shadow: none !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell.theme-dark .topbar .play-time-panel > label,
+  html[data-bingo-theme] body #app .app-shell.theme-light .topbar .play-time-panel > label {
+    border: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > div > strong {
+    max-width: none !important;
+    overflow: visible !important;
+    white-space: nowrap !important;
+    text-overflow: clip !important;
+    font-size: clamp(22px, 1.6vw, 30px) !important;
   }
 
   html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label::before {
