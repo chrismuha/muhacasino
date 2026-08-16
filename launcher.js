@@ -79,7 +79,7 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_BUILD = "20260816-bingo-v1-1-11-toolbar-fix";
+const SITE_BUILD = "20260816-bingo-refresh-state-clock";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
@@ -353,11 +353,23 @@ function launchGame(gameId, updateHistory = true) {
   currentGameVersion.textContent = game.version;
   bingoToolbarControls.hidden = gameId !== "bingo";
   if (gameId === "bingo") {
-    bingoThemeSelect.value = "planet";
+    let selectedTheme = "planet";
     try {
-      localStorage.setItem("muha-bingo-theme", "planet");
+      const liveState = JSON.parse(localStorage.getItem("muha-bingo-live-state") || "null");
+      const roundHasProgress = Boolean(liveState && (
+        liveState.calledNumbers?.length
+        || liveState.winningCardIds?.length
+        || liveState.pendingWinnerIds?.length
+        || liveState.rejectedCardIds?.length
+      ));
+      const storedTheme = localStorage.getItem("muha-bingo-theme");
+      selectedTheme = roundHasProgress && ["planet", "classic", "current"].includes(storedTheme)
+        ? storedTheme
+        : "planet";
+      localStorage.setItem("muha-bingo-theme", selectedTheme);
       localStorage.setItem("muha-bingo-theme-id-version", "legacy-restored-v1");
     } catch { }
+    bingoThemeSelect.value = selectedTheme;
   }
   gameFrame.title = game.title;
   gameFrame.src = activeGameUrl();

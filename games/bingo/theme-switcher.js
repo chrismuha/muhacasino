@@ -1,5 +1,6 @@
 (() => {
   const STORAGE_KEY = "muha-bingo-theme";
+  const LIVE_STATE_KEY = "muha-bingo-live-state";
   const THEME_ID_VERSION_KEY = "muha-bingo-theme-id-version";
   const THEME_ID_VERSION = "legacy-restored-v1";
   const DAUB_STORAGE_KEY = "muha-bingo-daub-design";
@@ -153,13 +154,23 @@
   }
 
   function savedTheme() {
+    let selectedTheme = "planet";
     try {
-      window.localStorage.setItem(STORAGE_KEY, "planet");
+      const liveState = JSON.parse(window.localStorage.getItem(LIVE_STATE_KEY) || "null");
+      const roundHasProgress = Boolean(liveState && (
+        liveState.calledNumbers?.length
+        || liveState.winningCardIds?.length
+        || liveState.pendingWinnerIds?.length
+        || liveState.rejectedCardIds?.length
+      ));
+      const storedTheme = window.localStorage.getItem(STORAGE_KEY);
+      selectedTheme = roundHasProgress && themes.includes(storedTheme) ? storedTheme : "planet";
+      window.localStorage.setItem(STORAGE_KEY, selectedTheme);
       window.localStorage.setItem(THEME_ID_VERSION_KEY, THEME_ID_VERSION);
     } catch {
 
     }
-    return "planet";
+    return selectedTheme;
   }
 
   function setHallControlsCollapsed(collapsed) {

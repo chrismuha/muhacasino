@@ -2,19 +2,11 @@
   if (window.bingoApi) return;
 
   const STATE_KEY = "muha-bingo-live-state";
+  const CLOCK_KEY = "muha-bingo-round-clock";
   const channel = "BroadcastChannel" in window ? new BroadcastChannel("muha-bingo-live") : null;
   const listeners = new Set();
-  const windowId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-  const navigationEntry = window.performance?.getEntriesByType?.("navigation")?.[0];
-
-  if (navigationEntry?.type === "reload") {
-    try {
-      localStorage.removeItem(STATE_KEY);
-    } catch {
-
-    }
-    channel?.postMessage({ type: "round-reset", source: windowId });
-  }
+  const restoredState = readState();
+  let restoredStateDelivered = !restoredState;
 
   function readState() {
     try {
@@ -28,15 +20,74 @@
     if (state && typeof state === "object") listeners.forEach((listener) => listener(state));
   }
 
+  function roundHasProgress(state) {
+    return Boolean(state && (
+      state.calledNumbers?.length
+      || state.winningCardIds?.length
+      || state.pendingWinnerIds?.length
+      || state.rejectedCardIds?.length
+    ));
+  }
+
+  function roundIsActive(state) {
+    if (!roundHasProgress(state)) return false;
+    const winnerLimit = Math.max(1, Number(state.maximumWinners) || 1);
+    return (state.winningCardIds?.length || 0) < winnerLimit;
+  }
+
+  function readClock() {
+    try {
+      return { elapsedMs: 0, startedAt: null, running: false, ...JSON.parse(localStorage.getItem(CLOCK_KEY) || "{}") };
+    } catch {
+      return { elapsedMs: 0, startedAt: null, running: false };
+    }
+  }
+
+  function writeClock(clock) {
+    try {
+      localStorage.setItem(CLOCK_KEY, JSON.stringify(clock));
+    } catch {
+
+    }
+  }
+
+  function syncClock(state) {
+    const now = Date.now();
+    const clock = readClock();
+    if (!roundHasProgress(state)) {
+      writeClock({ elapsedMs: 0, startedAt: null, running: false });
+    } else if (roundIsActive(state) && !clock.running) {
+      writeClock({ elapsedMs: Math.max(0, Number(clock.elapsedMs) || 0), startedAt: now, running: true });
+    } else if (!roundIsActive(state) && clock.running) {
+      writeClock({
+        elapsedMs: Math.max(0, Number(clock.elapsedMs) || 0) + Math.max(0, now - Number(clock.startedAt || now)),
+        startedAt: null,
+        running: false,
+      });
+    }
+  }
+
+  function elapsedMilliseconds() {
+    const clock = readClock();
+    return Math.max(0, Number(clock.elapsedMs) || 0)
+      + (clock.running ? Math.max(0, Date.now() - Number(clock.startedAt || Date.now())) : 0);
+  }
+
+  function formattedElapsed() {
+    const totalSeconds = Math.floor(elapsedMilliseconds() / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return [hours, minutes, seconds].map((value) => String(value).padStart(2, "0")).join(":");
+  }
+
+  function syncElapsedDisplay() {
+    const display = document.querySelector("#app .play-time-panel > div:first-child strong");
+    if (display && display.textContent !== formattedElapsed()) display.textContent = formattedElapsed();
+  }
+
   channel?.addEventListener("message", (event) => {
     if (event.data?.type === "state") deliver(event.data.state);
-    if (event.data?.type === "round-reset" && event.data.source !== windowId) {
-      try {
-        localStorage.removeItem(STATE_KEY);
-      } catch {
-
-      }
-    }
     if (event.data?.type === "request-state") {
       const state = readState();
       if (state) channel.postMessage({ type: "state", state });
@@ -91,7 +142,11 @@
     onState(listener) {
       listeners.add(listener);
       const state = readState();
-      if (state) window.setTimeout(() => listener(state), 0);
+      if (state) window.setTimeout(() => {
+        restoredStateDelivered = true;
+        listener(state);
+      }, 0);
+      else restoredStateDelivered = true;
       return () => listeners.delete(listener);
     },
     requestState() {
@@ -100,6 +155,11 @@
       channel?.postMessage({ type: "request-state" });
     },
     publishState(state) {
+      if (!restoredStateDelivered && roundHasProgress(restoredState) && !roundHasProgress(state)) {
+        deliver(restoredState);
+        return;
+      }
+      syncClock(state);
       try {
         localStorage.setItem(STATE_KEY, JSON.stringify(state));
       } catch {
@@ -113,4 +173,9 @@
       }
     },
   };
+
+  syncClock(restoredState);
+  const elapsedObserver = new MutationObserver(syncElapsedDisplay);
+  elapsedObserver.observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+  window.setInterval(syncElapsedDisplay, 250);
 })();

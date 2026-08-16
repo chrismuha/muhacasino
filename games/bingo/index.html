@@ -29,8 +29,17 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script>
       try {
-        document.documentElement.dataset.bingoTheme = "planet";
-        localStorage.setItem("muha-bingo-theme", "planet");
+        const liveState = JSON.parse(localStorage.getItem("muha-bingo-live-state") || "null");
+        const roundHasProgress = Boolean(liveState && (
+          liveState.calledNumbers?.length || liveState.winningCardIds?.length
+          || liveState.pendingWinnerIds?.length || liveState.rejectedCardIds?.length
+        ));
+        const storedTheme = localStorage.getItem("muha-bingo-theme");
+        const selectedTheme = roundHasProgress && ["planet", "classic", "current"].includes(storedTheme)
+          ? storedTheme
+          : "planet";
+        document.documentElement.dataset.bingoTheme = selectedTheme;
+        localStorage.setItem("muha-bingo-theme", selectedTheme);
         localStorage.setItem("muha-bingo-theme-id-version", "legacy-restored-v1");
       } catch {
         document.documentElement.dataset.bingoTheme = "planet";
@@ -42,11 +51,11 @@
         document.documentElement.classList.add("bingo-embedded-window");
       }
     </script>
-    <script src="./browser-bingo-api.js?build=20260811-v120-embedded-route-detection"></script>
+    <script src="./browser-bingo-api.js?build=20260816-v121-refresh-state-clock"></script>
     <script type="module" crossorigin src="./assets/index-DsHWgouX.js?build=20260807-v117-special-ball-engine"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-BIJKjhW9.css?build=20260731-classic-header-final">
     <link rel="stylesheet" href="./vault-theme.css?build=20260811-v121-single-dealer-route">
-    <link rel="stylesheet" href="./responsive-final.css?build=20260816-v212-classic-toolbar-containment">
+    <link rel="stylesheet" href="./responsive-final.css?build=20260816-v213-planet-view-strip">
   </head>
   <body>
     <div id="app"></div>
@@ -61,7 +70,7 @@
       </section>
     </div>
     <script src="../../interaction-lock.js?build=20260808-no-double-tap"></script>
-    <script src="./theme-switcher.js?build=20260816-v141-planet-default"></script>
+    <script src="./theme-switcher.js?build=20260816-v142-active-round-theme"></script>
     <script src="./planet-hall-ui.js?build=20260816-v148-wide-placeholders"></script>
     <script src="./runtime-guard.js?build=20260809-v119-restored-runtime-theme-ids"></script>
   </body>

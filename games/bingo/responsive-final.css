@@ -216,6 +216,31 @@ html[data-bingo-theme="planet"] body > .universal-controls-dock > .universal-vie
   letter-spacing: .04em !important;
 }
 
+@media (min-width: 601px) {
+  html[data-bingo-theme="planet"] body > .universal-controls-dock {
+    top: auto !important;
+    right: 12px !important;
+    bottom: 2px !important;
+    transform: none !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .universal-controls-dock > .universal-view-button {
+    grid-template-columns: auto auto !important;
+    width: 82px !important;
+    min-width: 82px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 3px 9px !important;
+    border: 2px solid #65ddff !important;
+    border-radius: 9px !important;
+    font-size: 15px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .universal-controls-dock > .universal-view-button span {
+    font-size: 9px !important;
+  }
+}
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell:not(.planet-footer-collapsed) > .planet-status-bar > .planet-footer-controls {
   display: grid !important;
 }
