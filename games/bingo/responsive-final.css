@@ -274,7 +274,9 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapse
 
 
 html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
-  position: relative !important;
+  position: sticky !important;
+  z-index: 40 !important;
+  bottom: 0 !important;
 }
 
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-collapse {
@@ -6185,7 +6187,9 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-play-surface
 }
 
 html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
-  position: relative !important;
+  position: sticky !important;
+  z-index: 40 !important;
+  bottom: 0 !important;
   grid-column: 1 !important;
   grid-row: 3 !important;
   align-self: end !important;
@@ -6406,7 +6410,9 @@ html[data-bingo-theme="classic"] body #app .app-shell.theme-light .cards-stage .
 
 
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(.game-layout) > .app-footer {
-  position: relative !important;
+  position: sticky !important;
+  z-index: 40 !important;
+  bottom: 0 !important;
   padding-top: 38px !important;
 }
 
