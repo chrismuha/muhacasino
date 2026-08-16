@@ -79,7 +79,7 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_BUILD = "20260816-bingo-planet-dealer-system";
+const SITE_BUILD = "20260816-bingo-hall1-header-containment";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");

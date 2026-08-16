@@ -7226,3 +7226,49 @@ html[data-bingo-theme="planet"] body:has(#app .dealer-layout) > :is(
   visibility: hidden !important;
   pointer-events: none !important;
 }
+
+/* Planet Hall 1 embedded header fills its row and no longer uses a floating side toggle. */
+html.bingo-embedded-window[data-bingo-theme] body > .hall-controls-toggle {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+@media (min-width: 901px) {
+  html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell > .topbar > .header-actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    gap: 10px !important;
+  }
+
+  html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > :is(.status-pill, .new-game-btn) {
+    grid-column: auto !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > label > span {
+    color: #253b5e !important;
+    -webkit-text-fill-color: #253b5e !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+  }
+
+  html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell.theme-dark .topbar .play-time-panel > label > span {
+    color: #d9e7fb !important;
+    -webkit-text-fill-color: #d9e7fb !important;
+  }
+}
