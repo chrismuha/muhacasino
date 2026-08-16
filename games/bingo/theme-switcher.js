@@ -39,7 +39,7 @@
       }
       window.localStorage.setItem(CARD_SERIAL_DEFAULT_VERSION_KEY, "sequential-v1");
     } catch {
-      // Storage can be unavailable; the sequential runtime fallbacks still apply.
+
     }
   }
 
@@ -146,7 +146,7 @@
     try {
       window.localStorage.setItem(SOLID_COLOR_STORAGE_KEY, JSON.stringify(colors));
     } catch {
-      // The colors still work when storage is unavailable.
+
     }
   }
 
@@ -262,7 +262,7 @@
     try {
       window.localStorage.setItem(STORAGE_KEY, selectedTheme);
     } catch {
-      // The theme still works when local storage is unavailable.
+
     }
     if (broadcast && previousTheme !== selectedTheme) {
       themeChannel?.postMessage({ theme: selectedTheme });
@@ -343,13 +343,13 @@
     try {
       window.localStorage.setItem(DAUB_STORAGE_KEY, selectedDesign);
     } catch {
-      // The selected dauber still works when storage is unavailable.
+
     }
     if (solidColorDaubDesigns.has(selectedDesign)) applySolidColors();
   }
 
   function mountThemeSwitcher() {
-    // Embedded Bingo uses the casino toolbar's native theme dropdown.
+
     if (isEmbedded) {
       mountPlayerHallControls();
       applyTheme(savedTheme());
@@ -660,7 +660,7 @@
     try {
       window.localStorage.setItem(SPECIAL_BALL_STORAGE_KEY, JSON.stringify(settings));
     } catch {
-      // The special-ball settings remain active in this window.
+
     }
     enhanceSpecialBallSettings();
     queueSpecialBallSync();
@@ -846,7 +846,7 @@
     try {
       window.localStorage.setItem(key, String(value));
     } catch {
-      // The dealer's value remains active in the current rendered setup.
+
     }
     syncCardSerials();
   }
@@ -864,7 +864,7 @@
     try {
       window.localStorage.setItem(SCHEDULE_STORAGE_KEY, JSON.stringify(entries));
     } catch {
-      // The schedule remains available in the current rendered view.
+
     }
   }
 
@@ -981,7 +981,7 @@
     try {
       window.localStorage.setItem(PRIZES_STORAGE_KEY, JSON.stringify(prizes));
     } catch {
-      // Prize details remain available in the current rendered view.
+
     }
   }
 
@@ -1099,7 +1099,7 @@
     try {
       window.localStorage.removeItem(DEALER_SECTION_STORAGE_KEY);
     } catch {
-      // Scrolling still works when storage is unavailable.
+
     }
     section.scrollIntoView({ behavior: "smooth", block: "start" });
     section.querySelector("input, button")?.focus({ preventScroll: true });
@@ -1110,7 +1110,7 @@
     try {
       window.localStorage.setItem(DEALER_SECTION_STORAGE_KEY, selector);
     } catch {
-      // The current window can still reveal its Dealer section.
+
     }
     const opened = openDealerWindow();
     if (!opened) return;
@@ -1140,7 +1140,7 @@
     try {
       window.localStorage.setItem(SCHEDULE_STARTED_STORAGE_KEY, JSON.stringify([...ids]));
     } catch {
-      // This window still prevents repeat starts during the current check.
+
     }
   }
 
@@ -1188,7 +1188,7 @@
     try {
       window.localStorage.setItem(INCORRECT_BINGO_STORAGE_KEY, JSON.stringify(state));
     } catch {
-      // The current window can still show the tally without persistent storage.
+
     }
     incorrectBingoChannel?.postMessage({ type: "incorrect-bingo-state", state, announce });
     renderIncorrectBingoTally(state, announce);
@@ -1272,7 +1272,7 @@
     try {
       renderIncorrectBingoTally(JSON.parse(event.newValue));
     } catch {
-      // Ignore an incomplete cross-window update.
+
     }
   });
 
@@ -1281,7 +1281,7 @@
     try {
       window.localStorage.setItem(CARD_COUNT_STORAGE_KEY, String(count));
     } catch {
-      // The purchase can still complete when preference storage is unavailable.
+
     }
 
     const dealerOpened = openDealerWindow();
@@ -1600,7 +1600,7 @@
     try {
       window.localStorage.setItem(VIEW_COUNT_STORAGE_KEY, String(selectedCount));
     } catch {
-      // Card view remains usable when storage is unavailable.
+
     }
     closeViewOverlay();
   }
@@ -1661,7 +1661,7 @@
     try {
       window.localStorage.setItem(CARD_COUNT_STORAGE_KEY, String(count));
     } catch {
-      // Setup remains usable when storage is unavailable.
+
     }
   }
 
@@ -1674,7 +1674,7 @@
     try {
       window.localStorage.setItem(VIEW_COUNT_STORAGE_KEY, String(count));
     } catch {
-      // The selected view still works for the current session.
+
     }
     document.querySelectorAll("[data-card-count]").forEach((choice) => {
       const isActive = Number(choice.dataset.cardCount) === count;
@@ -2218,7 +2218,7 @@
       try {
         playerWindow = window.opener.top || window.opener;
       } catch {
-        // The immediate opener is still usable.
+
       }
       playerWindow.postMessage({ type: "muha-bingo-focus-player-hall" }, window.location.origin);
       playerWindow.focus();

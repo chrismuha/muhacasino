@@ -1,41 +1,41 @@
 function createSorryGame() {
-  /* ===== Constants ===== */
-  const BOARD_LEN = 56; // main loop cells 0..55 (14 per side)
+
+  const BOARD_LEN = 56;
   const PAWNS_PER_PLAYER = 4;
   const START = -1;
   const HOME = 999;
 
   const LANE_LEN = 5;
-  const LANE_BASE = [1100, 1200]; // [P1, P2] (unchanged)
+  const LANE_BASE = [1100, 1200];
 
-  const START_ENTRY = [0, 28]; // P1 at 0, P2 opposite at 28
-  const HOME_ENTRY = [27, 55]; // turn into lane just before each START
+  const START_ENTRY = [0, 28];
+  const HOME_ENTRY = [27, 55];
 
   const SLIDES = [
-    // P1-owned
+
     { start: (START_ENTRY[0] + 3) % BOARD_LEN, len: 4, owner: 0 },
     { start: (START_ENTRY[0] + 11) % BOARD_LEN, len: 5, owner: 0 },
-    // P2-owned
+
     { start: (START_ENTRY[1] + 3) % BOARD_LEN, len: 4, owner: 1 },
     { start: (START_ENTRY[1] + 11) % BOARD_LEN, len: 5, owner: 1 },
   ];
 
-  // Event system (UI can subscribe to 'change' and 'log')
+
   const listeners = { change: new Set(), log: new Set() };
   const emit = (type, payload) => { (listeners[type] || []).forEach(fn => fn(payload)); };
 
-  // Game state
+
   const state = {
-    turn: 0, // 0=P1, 1=P2
+    turn: 0,
     pawns: [Array(PAWNS_PER_PLAYER).fill(START), Array(PAWNS_PER_PLAYER).fill(START)],
     deck: [],
     discard: [],
-    drawn: null, // current card label or null
+    drawn: null,
   };
 
-  /* ===== Deck ===== */
+
   function buildDeck() {
-    // approximate classic flow; adjust to taste
+
     const make = (label, count) => Array.from({ length: count }, () => label);
     const deck = [
       ...make('1', 5), ...make('2', 4), ...make('3', 4), ...make('4', 4),
@@ -50,7 +50,7 @@ function createSorryGame() {
     return deck;
   }
 
-  /* ===== Helpers ===== */
+
   const opponent = (p) => 1 - p;
   const isMain = (pos) => pos >= 0 && pos < BOARD_LEN;
   const laneOf = (pos) =>
@@ -78,22 +78,22 @@ function createSorryGame() {
   }
   const slideEndpoint = (slide) => (slide.start + slide.len - 1) % BOARD_LEN;
 
-  // Allow entering from START on **any number** or **SORRY**
+
   function canEnterStartOn(card) {
     return card === 'SORRY' || !Number.isNaN(Number(card));
   }
 
-  // Step-by-step forward so a pawn can turn into its Home lane at HOME_ENTRY[player]
+
   function stepForwardOnce(player, pos) {
-    if (pos === START) return START_ENTRY[player]; // typically handled via "enter"
+    if (pos === START) return START_ENTRY[player];
     const ln = laneOf(pos);
     if (ln === player) {
       const idx = pos - LANE_BASE[player];
       if (idx < LANE_LEN - 1) return pos + 1;
-      return HOME; // last lane cell -> HOME
+      return HOME;
     }
-    if (ln !== -1) return pos; // opponent lane should not be entered by legal moves
-    if (pos === HOME_ENTRY[player]) return LANE_BASE[player]; // turn into lane
+    if (ln !== -1) return pos;
+    if (pos === HOME_ENTRY[player]) return LANE_BASE[player];
     return (pos + 1) % BOARD_LEN;
   }
 
@@ -103,10 +103,10 @@ function createSorryGame() {
       const next = stepForwardOnce(player, pos);
       if (next === HOME) {
         if (s === steps - 1) return { valid: true, to: HOME };
-        return { valid: false }; // overshoot HOME
+        return { valid: false };
       }
       const ln = laneOf(next);
-      if (ln !== -1 && ln !== player) return { valid: false }; // cannot enter rival lane
+      if (ln !== -1 && ln !== player) return { valid: false };
       pos = next;
     }
     return { valid: true, to: pos };
@@ -120,13 +120,13 @@ function createSorryGame() {
     return `Cell ${pos}`;
   }
 
-  /* ===== Legal moves ===== */
+
   function legalMovesForCard(player, card) {
     const actions = [];
     const mine = state.pawns[player];
     const their = state.pawns[opponent(player)];
 
-    // SORRY!: from START to any opponent on main track
+
     if (card === 'SORRY') {
       const starters = mine.map((p, i) => ({ i, at: p })).filter(z => z.at === START);
       const targets = their.map((p, i) => ({ i, at: p })).filter(z => isMain(z.at));
@@ -145,12 +145,12 @@ function createSorryGame() {
 
     const n = Number(card);
 
-    // Enter from START on ANY number or SORRY
+
     if (canEnterStartOn(card)) {
       for (let i = 0; i < PAWNS_PER_PLAYER; i++) {
         if (mine[i] === START) {
           const entry = START_ENTRY[player];
-          // allow entry if entry is not occupied by own pawn (opponent there will be bumped)
+
           if (cellOccupiedBy(player, entry) === -1) {
             actions.push({
               type: 'MOVE', pawn: i, from: START, to: entry, steps: 'enter',
@@ -165,7 +165,7 @@ function createSorryGame() {
       const pos = mine[i];
       if (pos === START || pos === HOME) continue;
 
-      // 4 = backward four (main track only; cannot go backward in lanes)
+
       if (n === 4) {
         if (isMain(pos)) {
           const to = (pos - 4 + BOARD_LEN) % BOARD_LEN;
@@ -179,7 +179,7 @@ function createSorryGame() {
         continue;
       }
 
-      // 10: forward 10 or back 1 (back 1 only on main)
+
       if (n === 10) {
         if (isMain(pos)) {
           const toBack = (pos - 1 + BOARD_LEN) % BOARD_LEN;
@@ -221,8 +221,8 @@ function createSorryGame() {
             const A = computeForwardDest(player, pos, a);
             const B = computeForwardDest(player, posB, b);
             if (!A.valid || !B.valid) continue;
-            if (A.to !== HOME && B.to !== HOME && A.to === B.to) continue; // cannot land on same cell
-            if (A.to !== HOME && cellOccupiedBy(player, A.to) !== -1) continue;   // cannot land on own pawn
+            if (A.to !== HOME && B.to !== HOME && A.to === B.to) continue;
+            if (A.to !== HOME && cellOccupiedBy(player, A.to) !== -1) continue;
             if (B.to !== HOME && cellOccupiedBy(player, B.to) !== -1) continue;
             actions.push({
               type: 'SPLIT7', pawns: [i, k], steps: [a, b], dests: [A.to, B.to],
@@ -305,7 +305,7 @@ function createSorryGame() {
   }
 
 
-  /* ===== Apply actions (mutates state) ===== */
+
   function bumpIfNeeded(player, pos) {
     const occ = anyPawnAt(pos);
     if (occ && occ.player !== player) {
@@ -326,7 +326,7 @@ function createSorryGame() {
       if (isMain(to)) bumpIfNeeded(player, to);
     } else if (action.type === 'MOVE_SLIDE') {
       const { pawn, to, slide } = action;
-      // land on slide start then bump along slide path
+
       mine[pawn] = slide.start;
       emit('log', `P${player + 1}: landed on slide start ${slide.start}.`);
       for (const cell of slide.path) {
@@ -374,12 +374,12 @@ function createSorryGame() {
   function checkWin() {
     for (let p = 0; p < 2; p++) {
       const allHome = state.pawns[p].every(x => x === HOME);
-      if (allHome) return p; // winner index
+      if (allHome) return p;
     }
     return -1;
   }
 
-  /* ===== Turn / Deck flow ===== */
+
   function newGame() {
     state.turn = 0;
     state.pawns = [Array(PAWNS_PER_PLAYER).fill(START), Array(PAWNS_PER_PLAYER).fill(START)];
@@ -394,7 +394,7 @@ function createSorryGame() {
     if (!state.deck.length) {
       state.deck = state.discard;
       state.discard = [];
-      // shuffle
+
       for (let i = state.deck.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [state.deck[i], state.deck[j]] = [state.deck[j], state.deck[i]];
@@ -435,7 +435,7 @@ function createSorryGame() {
     return { ok: true, winner: -1 };
   }
 
-  /* ===== Public API ===== */
+
   function snapshot() {
     return {
       turn: state.turn,
@@ -456,21 +456,21 @@ function createSorryGame() {
   function on(event, handler) { (listeners[event] || listeners.change).add(handler); return () => off(event, handler); }
   function off(event, handler) { (listeners[event] || listeners.change).delete(handler); }
 
-  // initialize
+
   newGame();
 
   return {
-    // lifecycle
+
     newGame,
-    // turn & deck
+
     drawCard,
     legalActions,
     play,
-    // state
+
     snapshot,
-    // utils (helpful for UI text)
+
     describePos,
-    // events
+
     on, off,
   };
 }
@@ -478,6 +478,6 @@ function createSorryGame() {
 if (typeof module !== 'undefined') {
   module.exports = { createSorryGame };
 } else {
-  // expose globally for browser usage
+
   window.createSorryGame = createSorryGame;
 }

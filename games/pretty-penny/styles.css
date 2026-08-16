@@ -1,4 +1,4 @@
-/* Root Variables */
+
 :root {
     --bg: #0b0f17;
     --card: #121828;
@@ -26,7 +26,7 @@
     font-display: swap;
 }
 
-/* Reset / Base */
+
 * {
     box-sizing: border-box
 }
@@ -38,7 +38,7 @@ body,
     -webkit-tap-highlight-color: transparent;
 }
 
-/* Page Layout */
+
 html,
 body {
     margin: 0;
@@ -74,7 +74,7 @@ select,
     touch-action: manipulation;
 }
 
-/* Game Grid */
+
 .game {
     width: 100%;
     min-height: 100vh;
@@ -291,7 +291,7 @@ select,
   }
 }
 
-/* Card */
+
 .card {
     background: linear-gradient(180deg, rgba(255, 255, 255, .04), rgba(255, 255, 255, 0)), var(--card);
     border-radius: 0;
@@ -301,7 +301,7 @@ select,
     height: auto;
 }
 
-/* Title / Header */
+
 .title {
     display: flex;
     align-items: center;
@@ -316,7 +316,7 @@ select,
         0 0 20px #39ff14,
         0 0 40px #39ff14;
 }
-/* Reels / Slots */
+
 .reels {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -372,7 +372,7 @@ select,
     box-shadow: inset 0 0 0 2px #39ff14cc, 0 0 30px rgba(57, 255, 20, .25);
 }
 
-/* Info Button / Popup */
+
 .info-btn {
     background: transparent;
     border: 2px solid var(--accent2);
@@ -430,7 +430,7 @@ select,
     box-shadow: 0 0 12px rgba(165, 255, 125, .5);
 }
 
-/* Cells */
+
 .cell {
     display: flex;
     align-items: center;
@@ -451,7 +451,7 @@ select,
     transform: scale(1.03);
 }
 
-/* HUD / Controls */
+
 .hud {
     display: flex;
     gap: 10px;
@@ -481,7 +481,7 @@ select,
     flex: 0 0 auto;
 }
 
-/* Grouped control blocks */
+
 .stat,
 .select {
     background: rgba(255, 255, 255, .03);
@@ -494,7 +494,7 @@ select,
     color: var(--accent2);
 }
 
-/* Form Elements */
+
 label {
     font-size: 9pt;
     color: var(--muted);
@@ -515,7 +515,7 @@ input[type=number] {
     user-select: text;
 }
 
-/* Primary Buttons */
+
 button {
     border: 0;
     background: radial-gradient(160% 160% at 30% 20%, var(--accent)0%, #2cd3ff 40%, #0aa6ce 100%);
@@ -575,7 +575,7 @@ button:focus-visible,
     box-shadow: 0 0 0 3px rgba(165, 255, 125, .25);
 }
 
-/* Text & Status */
+
 .muted {
     color: var(--muted);
     font-size: 10pt;
@@ -684,7 +684,7 @@ button:focus-visible,
     font-weight: 700;
 }
 
-/* Lines Preview */
+
 .legend {
     font-size: 9pt;
     color: var(--muted);
@@ -716,7 +716,7 @@ button:focus-visible,
     opacity: 1 !important;
 }
 
-/* Footer / Credit Controls */
+
 .footer {
     font-size: 9pt;
     color: var(--muted);
@@ -792,7 +792,7 @@ button:focus-visible,
     font-weight: 700;
 }
 
-/* Stat Displays */
+
 #creditStep {
     width: 100%;
     min-width: 0;
@@ -824,7 +824,7 @@ button:focus-visible,
     text-align: right;
 }
 
-/* --- Glowing Buttons --- */
+
 button:not(.info-btn) {
     position: relative;
     z-index: 0;
@@ -835,7 +835,7 @@ button:not(.info-btn) {
     animation: button-glow-cycle var(--glow-cycle-duration) linear infinite;
 }
 
-/* Base glow effect */
+
 button:not(.info-btn)::before {
     content: "";
     position: absolute;
@@ -857,7 +857,7 @@ button:not(.info-btn)::before {
     animation: button-glow-rotate 3.2s linear infinite;
 }
 
-/* Slight scale on hover */
+
 button:not(.info-btn):hover {
     transform: scale(1.05);
     animation-duration: 1.4s;
@@ -941,19 +941,19 @@ button:not(.info-btn)[disabled]::before {
     }
 }
 
-/* Glowing effect - alternative style
-.glow-button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  
-box-shadow: 0 0 10px rgba(0, 123, 255, 0.7);
-} */
 
-/* Mobile polish baseline */
+
+
+
+
+
+
+
+
+
+
+
+
 html {
   -webkit-text-size-adjust: 100%;
 }
@@ -1191,7 +1191,7 @@ a.btn {
   }
 }
 
-/* iPhone SE-specific portrait tuning (e.g., 375x667 and smaller) */
+
 @media (max-width: 380px) and (max-height: 700px) and (orientation: portrait) {
   .game {
     gap: 0;
@@ -1300,7 +1300,7 @@ a.btn {
   }
 }
 
-/* Keep payout info button shape/size consistent across all breakpoints. */
+
 #payInfo.info-btn {
   width: 22px;
   height: 22px;
@@ -1319,7 +1319,7 @@ a.btn {
   overflow: hidden;
 }
 
-/* Overlay for payout rules + lines preview */
+
 body.overlay-open {
   overflow: hidden;
 }
@@ -1535,7 +1535,7 @@ body.overlay-open {
   }
 }
 
-/* Muha Slots neon jackpot presentation */
+
 .jackpot-board {
   margin: 0 0 8px;
   padding: 7px;
@@ -1664,7 +1664,7 @@ body.overlay-open {
   }
 }
 
-/* Center jackpot results with equal spacing around the reel board. */
+
 .reels {
   padding: clamp(8px, 1vw, 12px);
 }
@@ -1714,7 +1714,7 @@ body.overlay-open {
   .jackpot-chip { animation: none; }
 }
 
-/* Legacy cabinet layout retained underneath the Pretty Penny visual layer. */
+
 :root {
   --bg: #24170f;
   --card: #3b2416;
@@ -1998,7 +1998,7 @@ button:hover { filter: brightness(1.12); }
 
 @keyframes feature-pulse { to { transform: scale(1.04); filter: brightness(1.25); } }
 
-/* Pretty Penny — a bright mid-century savings-club identity. */
+
 :root {
   --bg: #183f3b;
   --card: #f6edda;
@@ -2270,7 +2270,7 @@ select, input[type=number], input[type=text] {
   .pot-rule { grid-column: 1; }
 }
 
-/* Responsive composition: this intentionally wins over the inherited slot layout. */
+
 html,
 body {
   width: 100%;
@@ -2352,7 +2352,7 @@ body {
   white-space: normal;
 }
 
-/* Keep the decorative cent mark readable on cream savings cards. */
+
 .pot::after {
   color: #9b4d35;
   opacity: 1;
@@ -2641,7 +2641,7 @@ body {
   background: #d86f51;
 }
 
-/* Keep the wheel controls reachable above mobile browser chrome. */
+
 .feature-overlay:has(.wheel-dialog) {
   align-items: start;
   overflow-x: hidden;
@@ -3019,7 +3019,7 @@ label {
   }
 }
 
-/* Keep every reel chip fully visible; teaser chips stay bright without win glow. */
+
 .reels .cell.jackpot-teaser-cell,
 .reels .cell.jackpot-win,
 .reels .cell.link-teaser-cell,
@@ -3115,7 +3115,7 @@ label {
   font-variant-numeric: tabular-nums;
 }
 
-/* Let status copy grow instead of clipping long win and loss messages. */
+
 .right .auto-spin-countdown,
 .right .message {
   grid-column: 1 / -1;
@@ -3147,7 +3147,7 @@ label {
   white-space: normal;
 }
 
-/* Match & Win jackpot bonus */
+
 .match-win-dialog { width: min(92vw, 560px); text-align: center; }
 .match-win-grid { display: grid; grid-template-columns: repeat(3, minmax(74px, 1fr)); gap: 12px; margin: 20px auto; max-width: 440px; }
 .match-win-grid button { min-height: 92px; border: 2px solid rgba(255,255,255,.4); border-radius: 14px; background: rgba(10,16,30,.9); color: #fff; font-size: 1.7rem; cursor: pointer; }

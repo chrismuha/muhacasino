@@ -1,6 +1,6 @@
-/* Loaded after the theme cascade so viewport containment stays authoritative.
-   Runtime IDs: planet = Hall 2, classic = Hall 1, current = Classic UI. */
-/* Embedded Bingo uses the casino header's single appearance control. */
+
+
+
 html.bingo-embedded-window #app .appearance-btn[aria-label^="Use "],
 html.bingo-embedded-window body > .planet-hall-shell .planet-mode-trigger {
   display: none !important;
@@ -12,7 +12,7 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   width: 100% !important;
 }
 
-/* Mobile Player Floor uses one page scroll; the footer remains separate. */
+
 @media (max-width: 600px) {
   html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app > .app-shell:has(.game-layout) {
     display: flex !important;
@@ -54,8 +54,8 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   }
 }
 
-/* Cascade-final Hall 2 footer toggle. Keep it inside the footer so Chrome and
-   Safari cannot clip its hit target when the status bar hides overflow. */
+
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar > .planet-footer-collapse {
   position: absolute !important;
   z-index: 500 !important;
@@ -87,8 +87,8 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapse
   overflow: visible !important;
 }
 
-/* Structural Hall 2 authority: header, play field, and footer always occupy
-   separate grid rows, regardless of either outer-bar state. */
+
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell {
   position: fixed !important;
   inset: 0 !important;
@@ -157,7 +157,7 @@ html.hall-controls-collapsed[data-bingo-theme="planet"] body > .hall-controls-to
   display: none !important;
 }
 
-/* Hall 2 keeps its actions in the footer; View remains a separate side tab. */
+
 html[data-bingo-theme="planet"] body > .universal-controls-dock {
   position: fixed !important;
   z-index: 21500 !important;
@@ -209,7 +209,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell:not(.planet-footer-col
   display: grid !important;
 }
 
-/* Hall 2 Home uses its original compact icon grid in the status footer. */
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar > .planet-footer-controls {
   position: static !important;
   inset: auto !important;
@@ -272,7 +272,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapse
   transform: translateX(-50%) !important;
 }
 
-/* Planet Hall 2's footer may collapse to a small restore strip at any size. */
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
   position: relative !important;
 }
@@ -322,7 +322,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapse
 }
 
 
-/* View and Flashboard dialogs must sit above every Hall control surface. */
+
 html[data-bingo-theme] body > .bingo-view-overlay:not([hidden]) {
   z-index: 30000 !important;
   box-sizing: border-box !important;
@@ -333,7 +333,7 @@ html[data-bingo-theme] body > .bingo-view-overlay:not([hidden]) {
   padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom)) !important;
 }
 
-/* View and Flashboard own the interaction layer while open in every theme. */
+
 html.view-overlay-open body > :is(
   .player-hall-controls,
   .universal-controls-dock,
@@ -367,7 +367,7 @@ html[data-bingo-theme] body > .bingo-view-overlay .view-choice-panel > footer {
   gap: 10px !important;
 }
 
-/* Keep the dauber dialog controls optically centered and Classic's surface rounded. */
+
 .daub-options-x {
   display: inline-flex !important;
   align-items: center !important;
@@ -381,7 +381,7 @@ html[data-bingo-theme="classic"] body .daub-options-overlay > section {
   overflow: auto !important;
 }
 
-/* v1.1.9 iPhone containment foundations. */
+
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel,
   html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
@@ -518,7 +518,7 @@ html[data-bingo-theme="classic"] body .daub-options-overlay > section {
   }
 }
 
-/* Cascade-final Dealer sizing: Find Card and Edit Game Setup match every full-width section. */
+
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .dealer-layout .dealer-hero > :is(.dealer-search, .edit-setup-btn) {
     box-sizing: border-box !important;
@@ -530,7 +530,7 @@ html[data-bingo-theme="classic"] body .daub-options-overlay > section {
   }
 }
 
-/* Treat the B-I-N-G-O letters as the visual header of every player card. */
+
 html[data-bingo-theme] body #app .bingo-card .bingo-letters,
 html[data-bingo-theme="planet"] body .planet-card-wall .bingo-letters {
   position: relative !important;
@@ -553,7 +553,7 @@ html[data-bingo-theme="planet"] body .planet-card-wall .bingo-letters::after {
   pointer-events: none !important;
 }
 
-/* Narrow-screen timezone authority: one label row, one bounded native control, one arrow. */
+
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .app-shell .topbar .header-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -641,7 +641,7 @@ html[data-bingo-theme="planet"] body .planet-card-wall .bingo-letters::after {
     background-repeat: no-repeat !important;
   }
 
-  /* Dealer hero controls use the same inner gutter as the cards below them. */
+
   html[data-bingo-theme] body #app .dealer-layout .dealer-hero > :is(
     .dealer-search,
     .edit-setup-btn,
@@ -655,7 +655,7 @@ html[data-bingo-theme="planet"] body .planet-card-wall .bingo-letters::after {
   }
 }
 
-/* Cascade-final overrides for the fixes above. */
+
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .app-shell .play-time-panel :is(span, strong) { font-size: clamp(6.5pt, 2.25vw, 8.5pt) !important; }
   html[data-bingo-theme] body #app .app-shell .header-actions { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 7px !important; }
@@ -667,7 +667,7 @@ html[data-bingo-theme="planet"] body .planet-card-wall .bingo-letters::after {
   html[data-bingo-theme] body #app .app-shell .dealer-layout :is(.dealer-grid, .dealer-card, .player-cards-section) { height: auto !important; max-height: none !important; min-height: 0 !important; overflow: visible !important; }
 }
 
-/* 2026-08 responsive/accessibility consolidation. Keep last in the cascade. */
+
 html[data-bingo-theme] body #app .app-shell .design-screen {
   color: #132039 !important;
   background: #f3f7fd !important;
@@ -888,10 +888,10 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy :
   html[data-bingo-theme] body #app .app-prompt button { min-width: 0 !important; min-height: 48px !important; padding: 8px 12px !important; font-size: 11pt !important; white-space: normal !important; }
 }
 
-/* 2026-08 iPhone final authority.
-   Keep this block last: the theme file contains older mobile experiments. */
+
+
 @media (max-width: 600px) {
-  /* Hall 1 / Classic controls fill the usable area below the app header. */
+
   html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls {
     position: fixed !important;
     z-index: 10000 !important;
@@ -931,7 +931,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy :
     min-height: 0 !important;
   }
 
-  /* Dealer screens are one readable column with exactly one internal scroller. */
+
   html[data-bingo-theme] body #app .app-shell .dealer-layout {
     align-content: start !important;
     grid-auto-rows: max-content !important;
@@ -952,7 +952,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy :
     max-height: none !important;
   }
 
-  /* Hall 2 itself is a fixed, full-screen surface; only the card well may scroll. */
+
   html[data-bingo-theme="planet"] body > .planet-hall-shell {
     display: flex !important;
     flex-direction: column !important;
@@ -974,7 +974,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy :
     -webkit-overflow-scrolling: touch !important;
   }
 
-  /* Daub meanings sit above the winning-pattern preview on iPhone. */
+
   html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
     flex: 0 0 154px !important;
     height: 154px !important;
@@ -1619,7 +1619,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-control
   }
 }
 
-/* Live distance-to-win labels remain prominent and consistent in every theme. */
+
 html[data-bingo-theme] body #app .app-shell .bingo-card .card-distance strong {
   font-size: clamp(13pt, 1.8vw, 18pt) !important;
   font-weight: 900 !important;
@@ -1643,7 +1643,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-wall .pla
   white-space: nowrap !important;
 }
 
-/* Every theme shares the same complete Player Floor information-footer geometry. */
+
 html[data-bingo-theme] body #app .app-shell .app-footer {
   box-sizing: border-box !important;
   display: grid !important;
@@ -1814,7 +1814,7 @@ html[data-bingo-theme] body #app .app-shell .app-footer .legend-dot {
   html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small):nth-child(5) { grid-row: 5 !important; }
 }
 
-/* Final Hall 2 3-by-3 action-grid authority. */
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
@@ -1828,7 +1828,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-control
   grid-column: span 1 !important;
 }
 
-/* Shared Dealer Console containment for every Bingo theme and window mode. */
+
 html[data-bingo-theme] body #app .app-shell .dealer-layout {
   box-sizing: border-box !important;
   display: grid !important;
@@ -2019,7 +2019,7 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
   }
 }
 
-/* iPhone portrait containment and reflow. */
+
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .app-shell :is(.topbar, .header-actions, .screen-switcher, .play-time-panel) { box-sizing: border-box !important; width: 100% !important; min-width: 0 !important; max-width: 100% !important; overflow: hidden !important; }
   html[data-bingo-theme] body #app .app-shell .topbar .header-actions { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; padding-inline: 8px !important; }
@@ -2061,7 +2061,7 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
   html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls { width: 100% !important; min-width: 0 !important; max-width: 100% !important; }
 }
 
-/* Keep Safari scrolling inside Bingo content instead of beyond the document. */
+
 @media (max-width: 600px) {
   html[data-bingo-theme],
   html[data-bingo-theme] body {
@@ -2106,7 +2106,7 @@ html[data-bingo-theme] body #app .dealer-layout .verification-dialog {
   }
 }
 
-/* Hall 1 prize copy must remain readable on its brown dealer surface. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .dealer-layout .bingo-prizes-heading p,
 html[data-bingo-theme="classic"] body #app .app-shell .dealer-layout .bingo-prizes-empty,
 html[data-bingo-theme="classic"] body #app .app-shell .dealer-layout .bingo-prizes-list small {
@@ -2137,7 +2137,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .dealer-layout .bingo-priz
   opacity: 1 !important;
 }
 
-/* Classic UI navigation sits slightly closer to the controls above it. */
+
 html[data-bingo-theme="current"] body #app .app-shell .topbar > .screen-switcher {
   position: relative !important;
   top: -8px !important;
@@ -2149,7 +2149,7 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar > .screen-switcher
   transform: none !important;
 }
 
-/* Hall 1's appearance control keeps one stable visual identity in both modes. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .appearance-btn {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
@@ -2159,7 +2159,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .appearance-btn {
   text-shadow: 0 1px 2px #000 !important;
 }
 
-/* Hall 1 light mode uses dark ink on cream surfaces, never cream on cream. */
+
 html[data-bingo-theme="classic"] body #app .app-shell.theme-light .dealer-layout :is(
   .bingo-schedule-heading p,
   .bingo-schedule-empty,
@@ -2228,7 +2228,7 @@ html[data-bingo-theme="classic"] body #app .app-shell.theme-light .dealer-layout
 }
 
 @media (max-width: 600px) {
-  /* Four header actions must share the viewport without clipping the last button. */
+
   html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
     column-gap: 4px !important;
@@ -2272,7 +2272,7 @@ html[data-bingo-theme="classic"] body #app .app-shell.theme-light .dealer-layout
     transform: none !important;
   }
 
-  /* Prize fields need usable widths instead of five squeezed columns. */
+
   html[data-bingo-theme="classic"] body #app .dealer-layout .bingo-prizes-form {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -2285,7 +2285,7 @@ html[data-bingo-theme="classic"] body #app .app-shell.theme-light .dealer-layout
   }
 }
 
-/* Hall 1 control copy never falls back to muted gray. */
+
 html[data-bingo-theme="classic"] body #app .app-shell.theme-dark :is(
   .speed-control > span,
   .sort-control > span,
@@ -2329,7 +2329,7 @@ html[data-bingo-theme="classic"] body #app .app-shell :is(.speed-control, .sort-
   opacity: 1 !important;
 }
 
-/* Dealer keyboard shortcuts are paired chips, never a clipping text ribbon. */
+
 html[data-bingo-theme] body #app .dealer-layout .fixed-dealer-status > .dealer-shortcuts {
   grid-column: 1 / -1 !important;
   display: grid !important;
@@ -2419,7 +2419,7 @@ html[data-bingo-theme="current"] body #app .app-shell.theme-light .dealer-layout
   }
 }
 
-/* Final iPhone authority for fieldsets, Hall 2 pattern, and game/dealer workspaces. */
+
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .special-ball-card {
     position: relative !important;
@@ -2547,7 +2547,7 @@ html[data-bingo-theme="current"] body #app .app-shell.theme-light .dealer-layout
   }
 }
 
-/* Cascade-final iPhone corrections. */
+
 @media (max-width: 600px) {
   html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body > .classic-hall-controls {
     position: fixed !important;
@@ -2614,7 +2614,7 @@ html[data-bingo-theme="current"] body #app .app-shell.theme-light .dealer-layout
   }
 }
 
-/* True cascade-final mobile sizing. */
+
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .app-shell .play-time-panel :is(span, strong) { font-size: clamp(6.5pt, 2.25vw, 8.5pt) !important; }
   html[data-bingo-theme] body #app .app-shell .header-actions { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 7px !important; }
@@ -2626,7 +2626,7 @@ html[data-bingo-theme="current"] body #app .app-shell.theme-light .dealer-layout
   html[data-bingo-theme] body #app .app-shell .dealer-layout :is(.dealer-grid, .dealer-card, .player-cards-section) { height: auto !important; max-height: none !important; min-height: 0 !important; overflow: visible !important; }
 }
 
-/* Shared desktop geometry; themes retain their own colors and typography. */
+
 @media (min-width: 601px) {
   html[data-bingo-theme] body #app .app-shell .topbar,
   html[data-bingo-theme] body #app .app-shell .header-actions,
@@ -2688,7 +2688,7 @@ html[data-bingo-theme="current"] body #app .app-shell.theme-light .dealer-layout
   }
 }
 
-/* Classic footer legend stays compact beside the winning-pattern card. */
+
 @media (min-width: 451px) {
   html[data-bingo-theme="current"] body #app .app-shell .app-footer {
     grid-template-rows: repeat(4, 26px) !important;
@@ -2705,7 +2705,7 @@ html[data-bingo-theme="current"] body #app .app-shell.theme-light .dealer-layout
   }
 }
 
-/* Special-ball titles sit above their bordered settings boxes in every theme. */
+
 html[data-bingo-theme] body #app .dealer-layout .special-ball-card {
   position: relative !important;
   margin-top: 38px !important;
@@ -2731,7 +2731,7 @@ html[data-bingo-theme] body #app .dealer-layout .special-ball-card > legend {
   line-height: 1.1 !important;
 }
 
-/* v1.1.9 cascade-final iPhone authority. */
+
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .app-shell .topbar {
     height: auto !important;
@@ -2777,7 +2777,7 @@ html[data-bingo-theme] body #app .dealer-layout .special-ball-card > legend {
     gap: 8px !important;
   }
 
-  /* Pop-out controls are direct dealer-hero children, so give them their own inset. */
+
   html[data-bingo-theme] body #app .dealer-layout .dealer-hero > .popout-btn {
     box-sizing: border-box !important;
     width: calc(100% - 12px) !important;
@@ -2960,7 +2960,7 @@ html[data-bingo-theme] body #app .dealer-layout .special-ball-card > legend {
   }
 }
 
-/* Absolute final sizing for the two Dealer hero controls that form full-width rows. */
+
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .dealer-layout .dealer-hero > :is(.dealer-search, .edit-setup-btn) {
     box-sizing: border-box !important;
@@ -2972,7 +2972,7 @@ html[data-bingo-theme] body #app .dealer-layout .special-ball-card > legend {
   }
 }
 
-/* B-I-N-G-O is the card header; the divider separates it from the number field. */
+
 html[data-bingo-theme] body #app .bingo-card .bingo-letters,
 html[data-bingo-theme="planet"] body .planet-card-wall .bingo-letters {
   position: relative !important;
@@ -2995,7 +2995,7 @@ html[data-bingo-theme="planet"] body .planet-card-wall .bingo-letters::after {
   pointer-events: none !important;
 }
 
-/* Mobile Hall 1 and Classic topbars reserve real rows for controls and screen tabs. */
+
 @media (max-width: 600px) {
   html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar:has(.screen-switcher) {
     display: grid !important;
@@ -3037,7 +3037,7 @@ html[data-bingo-theme="planet"] body .planet-card-wall .bingo-letters::after {
   }
 }
 
-/* Full Bingo cards use the same letter-header treatment on every Dealer Console. */
+
 html[data-bingo-theme] body #app .dealer-layout .bingo-letters {
   position: relative !important;
   margin-bottom: 5px !important;
@@ -3058,7 +3058,7 @@ html[data-bingo-theme] body #app .dealer-layout .bingo-letters::after {
   pointer-events: none !important;
 }
 
-/* Every theme uses the same readable footer-key sizing while retaining theme colors. */
+
 html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small) {
   column-gap: 10px !important;
   font-size: clamp(10pt, 1.55vw, 14pt) !important;
@@ -3079,7 +3079,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend
   line-height: 1.1 !important;
 }
 
-/* Keep the complete timezone field inside the mobile time-panel border. */
+
 @media (max-width: 600px) {
   html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar:has(.screen-switcher) {
     grid-template-rows: minmax(282px, auto) 61px !important;
@@ -3101,7 +3101,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend
   }
 }
 
-/* In two-column footers, legend rows form one compact group beside the pattern. */
+
 @media (min-width: 501px) {
   html[data-bingo-theme] body #app .app-shell .app-footer {
     grid-template-rows: repeat(4, 30px) !important;
@@ -3123,7 +3123,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend
   html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small):nth-child(5) { grid-row: 4 !important; }
 }
 
-/* Tablet and narrow-window headers must size from their contents, not legacy fixed rows. */
+
 @media (max-width: 1050px) {
   html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar:has(.screen-switcher) {
     display: grid !important;
@@ -3202,7 +3202,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend
   }
 }
 
-/* Hall 1 has room for a compact single-row time panel outside portrait widths. */
+
 @media (min-width: 601px) and (max-width: 1050px) {
   html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
     grid-template-columns: minmax(230px, 1.25fr) minmax(120px, .8fr) minmax(190px, 1.2fr) !important;
@@ -3235,7 +3235,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend
   }
 }
 
-/* The collapsed-controls handle must float above every game-content layer. */
+
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body .hall-controls-toggle {
   position: fixed !important;
   z-index: 20000 !important;
@@ -3243,7 +3243,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body .hall-c
   pointer-events: auto !important;
 }
 
-/* Classic keeps its stacked timezone field wholly inside the time-panel border. */
+
 @media (max-width: 1050px) {
   html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -3286,7 +3286,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body .hall-c
   }
 }
 
-/* Classic's visible blue time surface follows the complete stacked panel height. */
+
 @media (max-width: 1050px) {
   html[data-bingo-theme="current"] body #app .app-shell .topbar > .header-actions::before {
     width: 100% !important;
@@ -3297,7 +3297,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body .hall-c
   }
 }
 
-/* Classic uses the same large full-screen controls experience as Hall 1. */
+
 @media (max-width: 1050px) {
   html[data-bingo-theme="current"]:not(.hall-controls-collapsed) body .classic-hall-controls {
     position: fixed !important;
@@ -3342,7 +3342,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body .hall-c
   }
 }
 
-/* Hall 1 and Classic View Controls fill the usable viewport below the app navbar. */
+
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]):not(.hall-controls-collapsed) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
   position: fixed !important;
   z-index: 21000 !important;
@@ -3400,7 +3400,7 @@ html.hall-controls-collapsed:is([data-bingo-theme="classic"], [data-bingo-theme=
   display: none !important;
 }
 
-/* Final controls height: navbar excluded, every required action row visible. */
+
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]):not(.hall-controls-collapsed) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
   top: calc(50dvh + 41px) !important;
   right: 6px !important;
@@ -3416,7 +3416,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]):not(.hall-co
   transform: translateY(-50%) !important;
 }
 
-/* Hall 1 uses the same complete controls-panel outline and surface as Classic. */
+
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
   border: 3px solid #526b9f !important;
   border-radius: 14px !important;
@@ -3424,7 +3424,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(.cl
   box-shadow: inset 0 0 0 2px #142546, 0 18px 48px rgba(0, 0, 0, .68) !important;
 }
 
-/* Mobile hides Next, so only four action rows belong in the controls grid. */
+
 @media (max-width: 600px) {
   html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]):not(.hall-controls-collapsed) body :is(.classic-hall-controls, .player-hall-controls:not(.planet-footer-controls)) {
     grid-template-rows: 52px repeat(4, minmax(72px, 1fr)) !important;
@@ -3433,7 +3433,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(.cl
   }
 }
 
-/* Hall 2 pattern information sits directly in the footer without a separator box. */
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
   border: 0 !important;
   border-radius: 0 !important;
@@ -3441,7 +3441,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
   box-shadow: none !important;
 }
 
-/* Open Hall 1 / Classic controls visually and interactively suspend the game behind them. */
+
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]):not(.hall-controls-collapsed) body #app {
   pointer-events: none !important;
   user-select: none !important;
@@ -3453,14 +3453,14 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]).hall-control
   filter: none !important;
 }
 
-/* Hall 2's card region has no black divider strip before its footer. */
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-area {
   border: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
 }
 
-/* Hall 1 / Classic Dealer summaries remain readable in narrow and tablet windows. */
+
 @media (max-width: 1050px) {
   html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .dealer-layout .fixed-dealer-status {
     display: grid !important;
@@ -3538,7 +3538,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-area {
   }
 }
 
-/* Hall 1 keeps a compact header even when the portrait breakpoint is active. */
+
 @media (max-width: 1050px) {
   html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -3614,7 +3614,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-area {
   }
 }
 
-/* Dealer/setup card previews share one professional B-I-N-G-O header geometry. */
+
 html[data-bingo-theme] body #app :is(.dealer-layout, .design-screen) :is(.bingo-card, .preview-card) .bingo-letters {
   display: grid !important;
   grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
@@ -3659,7 +3659,7 @@ html[data-bingo-theme] body #app :is(.dealer-layout, .design-screen) :is(.bingo-
 }
 
 @media (max-width: 600px) {
-  /* Dealer hero controls retain the same inset as the cards below them. */
+
   html[data-bingo-theme] body #app .dealer-layout .dealer-hero > :is(.dealer-search, .edit-setup-btn) {
     box-sizing: border-box !important;
     justify-self: center !important;
@@ -3670,7 +3670,7 @@ html[data-bingo-theme] body #app :is(.dealer-layout, .design-screen) :is(.bingo-
   }
 }
 
-/* Every Dealer card uses one centered B-I-N-G-O heading with a true underline. */
+
 html[data-bingo-theme] body :is(#app, .planet-card-wall) :is(
   .bingo-card,
   .planet-card,
@@ -3726,7 +3726,7 @@ html[data-bingo-theme] body :is(#app, .planet-card-wall) :is(
   text-align: center !important;
 }
 
-/* Dealer instructions and helper copy remain readable without widening panels. */
+
 html[data-bingo-theme] body #app .dealer-layout .dealer-section-title > span {
   flex: 0 1 420px !important;
   max-width: 100% !important;
@@ -3768,7 +3768,7 @@ html[data-bingo-theme] body #app .dealer-layout .fixed-dealer-status small {
   }
 }
 
-/* Dealer and Audience match Player Floor: their mobile header scrolls with content. */
+
 @media (max-width: 600px) {
   html[data-bingo-theme] body > #app {
     overflow: hidden !important;
@@ -3806,7 +3806,7 @@ html[data-bingo-theme] body #app .dealer-layout .fixed-dealer-status small {
   }
 }
 
-/* Manual Draw has one strong, readable section header in every theme. */
+
 html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-section-title {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) minmax(260px, .72fr) !important;
@@ -3871,7 +3871,7 @@ html[data-bingo-theme] body #app .dealer-layout .ball-board-panel > .dealer-sect
   }
 }
 
-/* Hall 1 and Hall 2 use Classic's full-width B-I-N-G-O Manual Draw structure. */
+
 html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .dealer-layout .ball-board-panel > .dealer-ball-board {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) !important;
@@ -3952,7 +3952,7 @@ html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) body #app .de
   }
 }
 
-/* Hall 1 and Classic keep the light time panel—and black ink—in dark mode. */
+
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .play-time-panel {
   --timezone-arrow: #000 !important;
   color: #17243a !important;
@@ -4035,7 +4035,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .a
   border-top-color: #000 !important;
 }
 
-/* Dark Dealer surfaces never inherit dark helper copy from their light palettes. */
+
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell.theme-dark .dealer-layout :is(
   .dealer-hero,
   .dealer-card,
@@ -4067,7 +4067,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .a
   text-shadow: none !important;
 }
 
-/* Hall 2 footer card and controls share one surface without a splitter bar. */
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell :is(
   .planet-pattern-copy,
   .planet-pattern-legend,
@@ -4090,7 +4090,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .
   box-shadow: none !important;
 }
 
-/* Hall 1 and Classic keep the disabled Next action visible on every viewport. */
+
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(
   .classic-hall-controls,
   .player-hall-controls:not(.planet-footer-controls)
@@ -4114,7 +4114,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body :is(
   }
 }
 
-/* Final dauber close-button authority: hide the baseline-sensitive text glyph. */
+
 html[data-bingo-theme] body .daub-options-x {
   box-sizing: border-box !important;
   display: grid !important;
@@ -4142,7 +4142,7 @@ html[data-bingo-theme] body .daub-options-x::after {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 
-/* Classic's structural caller wrapper must not show square white corners. */
+
 html[data-bingo-theme="current"] body #app .app-shell .caller-panel {
   border: 0 !important;
   border-radius: 28px !important;
@@ -4163,7 +4163,7 @@ html[data-bingo-theme="current"] body #app .app-shell .current-call-panel {
   overflow: hidden !important;
 }
 
-/* Footer legend labels stay on one line in every theme and viewport. */
+
 html[data-bingo-theme] body #app .app-shell .app-footer > :is(span, small),
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > :is(span, small) {
   flex-flow: row nowrap !important;
@@ -4186,14 +4186,14 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend
   }
 }
 
-/* Classic and Hall 2 never display Hall 1's optional waiting flashboard. */
+
 html:not([data-bingo-theme="classic"]) body > .other-theme-waiting-flashboard {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
 }
 
-/* Give each Hall 2 footer key a distinct, readable group. */
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
   grid-template-columns: repeat(3, max-content) !important;
   justify-content: space-between !important;
@@ -4209,7 +4209,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend
   text-shadow: none !important;
 }
 
-/* Theme-surface routing is exclusive: Classic and Hall 1 never render Hall 2. */
+
 html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body > .planet-hall-shell {
   display: none !important;
   visibility: hidden !important;
@@ -4240,7 +4240,7 @@ html[data-bingo-theme="planet"]:not(.bingo-popout-window) body > #app {
   }
 }
 
-/* Hall 2 mirrors the real app appearance onto its independent shell. */
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell[data-appearance="dark"] .planet-pattern-legend > .planet-legend-item,
 html[data-bingo-theme="planet"] body > .planet-hall-shell[data-appearance="dark"] .planet-pattern-legend .planet-legend-label {
   color: #fff !important;
@@ -4269,7 +4269,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell[data-appearance="light
   -webkit-text-fill-color: #17243a !important;
 }
 
-/* Final Hall 2 legend layout: all three keys remain visible without clipping. */
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
   box-sizing: border-box !important;
   display: grid !important;
@@ -4324,7 +4324,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend
   }
 }
 
-/* Hall 2 feature balls and their captions occupy separate rows at every size. */
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature {
   container-type: size !important;
   grid-template-rows: auto auto auto !important;
@@ -4369,7 +4369,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature >
   padding-bottom: 1px !important;
 }
 
-/* A narrow footer uses stacked keys; each individual label remains one line. */
+
 @media (max-width: 1450px) {
   html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
     grid-template-columns: minmax(0, 1fr) !important;
@@ -4403,7 +4403,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature >
   }
 }
 
-/* Preserve the original Hall 2 presentation on wide screens, with safe separation. */
+
 @media (min-width: 1451px) {
   html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -4424,7 +4424,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature >
   }
 }
 
-/* Routed Dealer/Audience screens use one branded toolbar with visible appearance and theme controls. */
+
 html.bingo-popout-window body #app .appearance-btn[aria-label^="Use "] {
   display: none !important;
 }
@@ -4456,7 +4456,7 @@ html.bingo-popout-window .bingo-popout-toolbar > .appearance-btn + .bingo-theme-
   margin-left: 0 !important;
 }
 
-/* Classic's shared window navigation remains dark blue in both appearances. */
+
 html.bingo-popout-window[data-bingo-theme="current"] .bingo-popout-toolbar {
   border-bottom-color: #31527d !important;
   background: linear-gradient(90deg, #07162d, #102b4f, #07162d) !important;
@@ -4564,7 +4564,7 @@ html.bingo-popout-window .bingo-popout-toolbar .bingo-theme-trigger::after {
 }
 
 
-/* Classic dark mode keeps its screen navigation dark and readable. */
+
 html[data-bingo-theme="current"] body #app .app-shell.theme-dark .topbar .screen-switcher {
   border-color: #31527d !important;
   background: #10213a !important;
@@ -4578,7 +4578,7 @@ html[data-bingo-theme="current"] body #app .app-shell.theme-dark .topbar .screen
   background: #192b45 !important;
 }
 
-/* Final Classic routed override: never inherit the native 16px select minimum here. */
+
 html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel label > select {
   padding: 7px 30px 7px 10px !important;
   font: 800 13px/1.1 Inter, ui-sans-serif, system-ui, sans-serif !important;
@@ -4589,7 +4589,7 @@ html.bingo-popout-window[data-bingo-theme="current"] body #app .app-shell .topba
   text-size-adjust: none !important;
 }
 
-/* Every routed Audience theme accounts for the external toolbar in its scroll range. */
+
 html.bingo-popout-window body > #app,
 html.bingo-popout-window body > #app > .app-shell:has(> .audience-screen) {
   box-sizing: border-box !important;
@@ -4609,7 +4609,7 @@ html.bingo-popout-window body #app > .app-shell:has(> .audience-screen) > .audie
   -webkit-overflow-scrolling: touch;
 }
 
-/* Routed Audience windows reflow at narrower desktop widths. */
+
 @media (max-width: 1400px) {
   html.bingo-popout-window[data-bingo-theme="current"] body #app .topbar .play-time-panel select {
     padding: 7px 32px 7px 12px !important;
@@ -4712,7 +4712,7 @@ html.bingo-popout-window body #app > .app-shell:has(> .audience-screen) > .audie
   }
 }
 
-/* Empty special balls use the same two-line marker as the footer ball. */
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature > .planet-idle-ball.is-placeholder::before {
   content: "-\A#" !important;
   display: block !important;
@@ -4724,7 +4724,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature >
   text-align: center !important;
 }
 
-/* Hall 1's longer elapsed label wraps instead of clipping on a narrow screen. */
+
 @media (max-width: 600px) {
   html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > div:first-child,
   html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > div:first-child > span {
@@ -4740,7 +4740,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-feature >
   }
 }
 
-/* Hall 1 recent calls use compact, legible bingo balls instead of oversized disks. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .recent-panel .recent-list {
   display: grid !important;
   grid-template-columns: repeat(auto-fill, 72px) !important;
@@ -4836,7 +4836,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .recent-panel .recent-ball
   }
 }
 
-/* Hall 1 contrast authority: never place brown label ink on its brown/dark panels. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .current-call-panel .speed-control > span,
 html[data-bingo-theme="classic"] body #app .app-shell .cards-stage :is(.sort-control, .view-control) > span {
   color: #fff4d6 !important;
@@ -4851,7 +4851,7 @@ html[data-bingo-theme="classic"] body #app .app-shell.theme-dark .current-call-p
   -webkit-text-fill-color: #fff !important;
 }
 
-/* Hall 1 Schedule keeps secondary copy and form values readable on brown surfaces. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .dealer-layout .bingo-schedule-heading p,
 html[data-bingo-theme="classic"] body #app .app-shell .dealer-layout .bingo-schedule-empty,
 html[data-bingo-theme="classic"] body #app .app-shell .dealer-layout .bingo-schedule-list small {
@@ -4884,7 +4884,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .dealer-layout .bingo-sche
   border-color: #d7ad62 !important;
 }
 
-/* Mobile owns exactly one visual viewport; only explicit game panes may scroll. */
+
 @media (max-width: 600px) {
   html[data-bingo-theme],
   html[data-bingo-theme] body {
@@ -4938,7 +4938,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .dealer-layout .bingo-sche
   }
 }
 
-/* Keep the Muha Bingo wordmark consistent: no separate M medallion. */
+
 html[data-bingo-theme] body :is(.muha-bingo-logo .muha-bingo-mark, #app .topbar .brand-lockup > img.brand-mark) {
   display: none !important;
 }
@@ -4947,7 +4947,7 @@ html[data-bingo-theme] body .muha-bingo-logo {
   gap: 0 !important;
 }
 
-/* Called-number labels and card instructions must remain readable at phone widths. */
+
 html[data-bingo-theme] body #app .called-history-frame :is(span, strong, p),
 html[data-bingo-theme="planet"] body > .planet-hall-shell .called-history-frame :is(span, strong, p) {
   font-size: clamp(14px, 3.5vw, 18px) !important;
@@ -4989,7 +4989,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-wall .bin
 }
 
 
-/* Mobile call information is primary game content, not fine print. */
+
 @media (max-width: 600px) {
   html[data-bingo-theme] body #app .app-shell .recent-panel .section-heading h2,
   html[data-bingo-theme="planet"] body > .planet-hall-shell .recent-panel .section-heading h2 {
@@ -5045,7 +5045,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-wall .bin
   }
 }
 
-/* Card helper copy sits on a light surface and always uses dark readable ink. */
+
 html[data-bingo-theme] body #app .app-shell:is(.theme-light, .theme-dark) .cards-stage .bingo-card.bingo-card .card-hint,
 html[data-bingo-theme] body #app .app-shell:is(.theme-light, .theme-dark) .cards-grid .bingo-card.bingo-card .card-hint,
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-wall .bingo-card.bingo-card .card-hint {
@@ -5058,7 +5058,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-card-wall .bin
   filter: none !important;
 }
 
-/* The casino toolbar owns branding and theme navigation while Bingo is embedded. */
+
 html.bingo-embedded-window body #app .app-shell .topbar > .brand-lockup,
 html.bingo-embedded-window[data-bingo-theme] body #app .app-shell .topbar .bingo-theme-switcher.header-theme-switcher,
 html.bingo-embedded-window[data-bingo-theme] body > .bingo-theme-switcher,
@@ -5070,7 +5070,7 @@ html.bingo-embedded-window body > .planet-hall-shell .planet-terminal-header {
   justify-content: flex-end !important;
 }
 
-/* Planet Hall 1 desktop navigation sizes from its content so no breakpoint creates a void. */
+
 @media (min-width: 501px) {
   html[data-bingo-theme="classic"] body #app .app-shell .topbar:has(.screen-switcher) {
     display: grid !important;
@@ -5185,7 +5185,7 @@ html.bingo-embedded-window body > .planet-hall-shell .planet-terminal-header {
   }
 }
 
-/* v1.1.9 mobile navigation corrections. Kept last in the cascade. */
+
 html[data-bingo-theme="planet"] body .hall-controls-toggle {
   position: fixed !important;
   z-index: 20000 !important;
@@ -5214,7 +5214,7 @@ html.hall-controls-collapsed[data-bingo-theme="planet"] body > .planet-hall-shel
   display: none !important;
 }
 
-/* The routed toolbar occupies real space; keep every screen below it. */
+
 html.bingo-popout-window body > #app,
 html.bingo-popout-window[data-bingo-theme="planet"] body > .planet-hall-shell {
   top: 64px !important;
@@ -5231,7 +5231,7 @@ html.bingo-popout-window[data-bingo-theme="planet"] body > .planet-hall-shell {
   }
 }
 
-/* Mobile readability and shared-control authority. */
+
 html[data-bingo-theme] body #app .dealer-layout .fixed-dealer-status > .dealer-shortcuts > span {
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
@@ -5305,7 +5305,7 @@ html[data-bingo-theme] body :is(#app .bingo-card, .planet-card-wall .bingo-card)
   }
 }
 
-/* Keep the Dealer command strip readable and collision-free in every theme. */
+
 html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar {
   display: grid !important;
   grid-template-columns: minmax(180px, .8fr) minmax(280px, 1.4fr) minmax(240px, .8fr) !important;
@@ -5391,7 +5391,7 @@ html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar .primary-dea
 }
 
 
-/* Mobile Player Floor cards belong to the page flow, not a thin nested scroller. */
+
 @media (max-width: 600px) {
   html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app > .app-shell:has(.game-layout) > .game-layout {
     flex: 0 0 auto !important;
@@ -5411,7 +5411,7 @@ html[data-bingo-theme] body #app .dealer-layout .dealer-command-bar .primary-dea
   }
 }
 
-/* Dealer status and keyboard shortcuts scroll with the Dealer page. */
+
 html[data-bingo-theme] body #app .dealer-layout .fixed-dealer-status {
   position: static !important;
   inset: auto !important;
@@ -5421,7 +5421,7 @@ html[data-bingo-theme] body #app .dealer-layout .fixed-dealer-status {
   transform: none !important;
 }
 
-/* Dealer cards size their rows from content instead of collapsing into strips. */
+
 html[data-bingo-theme] body #app .dealer-layout {
   grid-auto-rows: max-content !important;
   align-content: start !important;
@@ -5459,7 +5459,7 @@ html[data-bingo-theme] body #app .dealer-layout > :is(
   transform: none !important;
 }
 
-/* Give Event Schedule enough room for its form and event list. */
+
 html[data-bingo-theme] body #app .dealer-layout .bingo-schedule-editor {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) !important;
@@ -5485,8 +5485,8 @@ html[data-bingo-theme] body #app .dealer-layout .bingo-schedule-list {
   min-height: 120px !important;
 }
 
-/* Desktop-site views around 980 CSS pixels must not inherit the tablet geometry.
-   Keep this range above phone/tablet widths so the compact layouts stay unchanged. */
+
+
 @media (min-width: 901px) and (max-width: 1100px) {
   html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar:has(.screen-switcher) {
     grid-template-rows: auto 61px !important;
@@ -5569,7 +5569,7 @@ html[data-bingo-theme] body #app .dealer-layout .bingo-schedule-list {
   }
 }
 
-/* Clean, consistent Dealer secondary actions in every theme. */
+
 html[data-bingo-theme] body #app .dealer-layout .dealer-primary-actions .dealer-undo {
   display: inline-flex !important;
   place-items: center !important;
@@ -5645,7 +5645,7 @@ html[data-bingo-theme] body #app .dealer-layout .edit-setup-btn {
   opacity: 1 !important;
 }
 
-/* Player-card actions use a plain, high-contrast interface label in every theme. */
+
 html[data-bingo-theme] body #app .dealer-layout .view-target-btn {
   min-height: 50px !important;
   color: #10213b !important;
@@ -5667,7 +5667,7 @@ html[data-bingo-theme] body #app .dealer-layout .view-target-btn {
   opacity: 1 !important;
 }
 
-/* Dealer section tabs scroll away with the page; they are never pinned. */
+
 html[data-bingo-theme] body #app .dealer-layout .dealer-tabs,
 html.bingo-popout-window[data-bingo-theme] body #app .dealer-layout .dealer-tabs {
   position: static !important;
@@ -5676,7 +5676,7 @@ html.bingo-popout-window[data-bingo-theme] body #app .dealer-layout .dealer-tabs
   transform: none !important;
 }
 
-/* Every Dealer entry point uses one vertically scrolling document. */
+
 html[data-bingo-theme] body #app:has(.dealer-layout),
 html.bingo-popout-window[data-bingo-theme] body #app:has(.dealer-layout) {
   height: 100dvh !important;
@@ -5713,7 +5713,7 @@ html[data-bingo-theme] body :is(.classic-hall-controls, .player-hall-controls:no
   -webkit-overflow-scrolling: touch !important;
 }
 
-/* Embedded routed Dealer headers establish their full height before content begins. */
+
 html.bingo-embedded-window[data-bingo-theme] body #app .app-shell:has(> .dealer-layout) > .topbar {
   position: static !important;
   display: grid !important;
@@ -5762,7 +5762,7 @@ html.bingo-embedded-window[data-bingo-theme] body > .universal-view-button {
   display: none !important;
 }
 
-/* Game Setup steps and actions remain distinct, readable blocks in every theme. */
+
 html[data-bingo-theme] body #app .dealer-layout .game-setup-panel {
   display: grid !important;
   align-content: start !important;
@@ -5847,7 +5847,7 @@ html[data-bingo-theme] body #app .dealer-layout .game-setup-panel .setup-fields 
   }
 }
 
-/* Planet Hall 2 keyboard help uses compact, high-contrast shortcut cards. */
+
 html[data-bingo-theme="planet"] body #app .dealer-layout .fixed-dealer-status {
   gap: 12px !important;
   padding: 16px !important;
@@ -5927,7 +5927,7 @@ html[data-bingo-theme="planet"] body #app .dealer-layout .fixed-dealer-status > 
   }
 }
 
-/* One Hall 2 control component is moved between Home and routed screens. */
+
 html[data-bingo-theme="planet"] :is(
   body > .planet-hall-shell .planet-footer-controls,
   body:has(#app .dealer-layout) > .planet-footer-controls
@@ -6013,9 +6013,9 @@ html.bingo-embedded-window.hall-controls-collapsed[data-bingo-theme="planet"] bo
   display: none !important;
 }
 
-/* Mobile route/theme changes can replace the React topbar while Safari is
-   restoring the frame.  Let the rendered controls establish the header's
-   block size instead of retaining one of the older fixed-height geometries. */
+
+
+
 @media (max-width: 600px) {
   html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell > .topbar {
     position: relative !important;
@@ -6088,9 +6088,9 @@ html.bingo-embedded-window.hall-controls-collapsed[data-bingo-theme="planet"] bo
   }
 }
 
-/* Planet Hall 2 owns a separate shell outside #app. Keep that shell attached
-   to the mobile viewport so Safari cannot reveal its footer at a restored
-   document scroll offset after moving between halls or routed screens. */
+
+
+
 @media (max-width: 600px) {
   html[data-bingo-theme="planet"] body > .planet-hall-shell {
     position: fixed !important;
@@ -6123,7 +6123,7 @@ html.bingo-embedded-window.hall-controls-collapsed[data-bingo-theme="planet"] bo
   }
 }
 
-/* Final authority for the Hall 2 footer's visible touch target. */
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar > .planet-footer-collapse {
   position: absolute !important;
   z-index: 500 !important;
@@ -6155,7 +6155,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapse
   overflow: visible !important;
 }
 
-/* Cascade-last structural authority for both collapse controls. */
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) !important;
@@ -6219,7 +6219,7 @@ html.hall-controls-collapsed[data-bingo-theme="planet"] body > .hall-controls-to
   display: grid !important;
 }
 
-/* Final Hall 2 authority: footer actions and the View tab are independent. */
+
 html[data-bingo-theme="planet"] body > .hall-controls-toggle,
 html.hall-controls-collapsed[data-bingo-theme="planet"] body > .hall-controls-toggle {
   display: none !important;
@@ -6243,7 +6243,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell:not(.planet-footer-col
   pointer-events: auto !important;
 }
 
-/* Dealer claim verification: isolated modal styling with no inactive Hall side effects. */
+
 html[data-bingo-theme] body #app .verification-overlay {
   z-index: 50000 !important;
   background: rgba(3, 8, 19, .76) !important;
@@ -6342,7 +6342,7 @@ html[data-bingo-theme] body #app .verification-overlay {
   }
 }
 
-/* Cascade-final Hall 1 compact desktop composition inside the casino iframe. */
+
 @media (min-width: 901px) and (max-width: 1100px) {
   html[data-bingo-theme="classic"] body #app .app-shell .game-layout {
     grid-template-columns: minmax(210px, 260px) minmax(0, 1fr) !important;
@@ -6404,7 +6404,7 @@ html[data-bingo-theme="classic"] body #app .app-shell.theme-light .cards-stage .
   -webkit-text-fill-color: #412419 !important;
 }
 
-/* Hall 1 and Classic share Hall 2's expandable winning-pattern bar behavior. */
+
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(.game-layout) > .app-footer {
   position: relative !important;
   padding-top: 38px !important;

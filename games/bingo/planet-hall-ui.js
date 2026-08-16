@@ -357,7 +357,7 @@
   }
 })();
 
-/* Keep the Dealer Console eyebrow readable after every Vue/theme rerender. */
+
 (() => {
   let contrastFrame = 0;
 

@@ -17,7 +17,7 @@
         state.moneyMode = Boolean(saved.moneyMode);
         state.luckyWheel = saved.luckyWheel !== false;
         state.wheelOdds = [0.25, 0.5, 0.75, 1].includes(Number(saved.wheelOdds)) ? Number(saved.wheelOdds) : 0.5;
-    } catch { /* Keep the safe defaults. */ }
+    } catch {  }
 
     function money(value) {
         return `$${Number(value || 0).toFixed(2)}`;
@@ -30,7 +30,7 @@
                 luckyWheel: state.luckyWheel,
                 wheelOdds: state.wheelOdds,
             }));
-        } catch { /* Session-only fallback. */ }
+        } catch {  }
     }
 
     function withdrawable() {

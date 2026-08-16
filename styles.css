@@ -567,7 +567,7 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   .hero-actions { align-self: start; }
 }
 
-/* Keep the in-game toolbar balanced at every non-phone width. */
+
 @media (min-width: 601px) {
   .game-toolbar {
     display: grid;
@@ -644,7 +644,7 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   }
 }
 
-/* The game host header can collapse without removing its always-available restore control. */
+
 .game-toolbar { position: relative; }
 .toolbar-collapse-button {
   position: absolute;
@@ -687,7 +687,7 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 .game-view.toolbar-collapsed .game-toolbar > :not(.toolbar-collapse-button) { display: none !important; }
 .game-view.toolbar-collapsed .toolbar-collapse-button { bottom: -15px; border-radius: 0 0 12px 12px; }
 
-/* A running game owns the viewport; the launcher document must not scroll behind it. */
+
 html:has(body.game-open),
 body.game-open {
   box-sizing: border-box;

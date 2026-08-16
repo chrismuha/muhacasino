@@ -148,7 +148,7 @@ function removeLegacyCasinoCaching() {
     navigator.serviceWorker.getRegistrations()
       .then((registrations) => Promise.all(registrations.map((registration) => registration.unregister())))
       .catch(() => {
-        // Direct network loading still works when service-worker access is restricted.
+
       });
   }
   if ("caches" in window) {
@@ -159,7 +159,7 @@ function removeLegacyCasinoCaching() {
           .map((name) => window.caches.delete(name))
       ))
       .catch(() => {
-        // Direct network loading still works when cache storage is restricted.
+
       });
   }
 }
@@ -407,7 +407,7 @@ bingoThemeSelect.addEventListener("change", () => {
   try {
     localStorage.setItem("muha-bingo-theme", theme);
   } catch {
-    // Bingo can still switch themes when storage is unavailable.
+
   }
   sendBingoTheme(theme);
 });
@@ -464,7 +464,7 @@ gameFrame.addEventListener("load", () => {
       return;
     }
   } catch {
-    // Cross-origin frames cannot be inspected, but a completed load is still usable.
+
   }
   gameLoadState.hidden = true;
   if (!bingoToolbarControls.hidden) {

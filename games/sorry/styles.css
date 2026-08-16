@@ -171,7 +171,7 @@ footer {
     }
 }
 
-/* ===== Board wrapper ===== */
+
 .board {
     background: var(--board);
     border-radius: 14px;
@@ -211,7 +211,7 @@ footer {
     opacity: 0.6;
 }
 
-/* ===== Square Track — 17x17 grid ===== */
+
 .track {
     position: relative;
     width: 100%;
@@ -231,7 +231,7 @@ footer {
     contain: layout paint;
 }
 
-/* Perimeter cells (56) */
+
 .cell {
     position: relative;
     background: var(--cell);
@@ -262,7 +262,7 @@ footer {
     z-index: 3;
 }
 
-/* Pawns */
+
 .pawn {
     width: 18px;
     height: 18px;
@@ -289,14 +289,14 @@ footer {
     background: var(--blue);
 }
 
-/* HOME LANES */
+
 .homecell {
     background: #f3f4f6;
     border-radius: 8px;
     box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .15), 0 2px 4px rgba(0, 0, 0, .28);
 }
 
-/* Fallback solid tints */
+
 .homecell.red {
     background: #f6c9c5;
 }
@@ -305,7 +305,7 @@ footer {
     background: #cfe5f6;
 }
 
-/* Nicer blending */
+
 @supports (background: color-mix(in hsl, red 50%, white)) {
     .homecell.red {
         background: color-mix(in hsl, var(--red) 28%, var(--cell));
@@ -316,7 +316,7 @@ footer {
     }
 }
 
-/* Blue lane */
+
 .homecell.blue.l1 {
     grid-row: 15;
     grid-column: 9;
@@ -342,7 +342,7 @@ footer {
     grid-column: 9;
 }
 
-/* Red lane */
+
 .homecell.red.l1 {
     grid-row: 9;
     grid-column: 3;
@@ -368,7 +368,7 @@ footer {
     grid-column: 7;
 }
 
-/* START circles & HOME stars */
+
 .start-badge,
 .home-star {
     position: absolute;
@@ -382,7 +382,7 @@ footer {
     z-index: 1;
 }
 
-/* Start circles */
+
 .start-badge {
     border-radius: 50%;
     box-shadow:
@@ -400,7 +400,7 @@ footer {
     background: var(--blue);
 }
 
-/* HOME stars */
+
 .home-star {
     color: #0a0a0a;
     clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
@@ -415,7 +415,7 @@ footer {
     background: var(--blue);
 }
 
-/* Start badges */
+
 .start-badge.blue {
     bottom: -20px;
     left: -20px;
@@ -426,7 +426,7 @@ footer {
     right: -20px;
 }
 
-/* HOME stars */
+
 .home-star.blue {
     left: 50%;
     bottom: -20px;
@@ -439,21 +439,21 @@ footer {
     transform: translateY(-50%);
 }
 
-/* ===== Slides (visual background tints) — only Red & Blue ===== */
-/* Fallback for older browsers */
+
+
 .track .cell:nth-child(4),
 .track .cell:nth-child(12) {
-    /* P1 slides → Red */
+
     background: #f6c9c5;
 }
 
 .track .cell:nth-child(32),
 .track .cell:nth-child(40) {
-    /* P2 slides → Blue */
+
     background: #cfe5f6;
 }
 
-/* Prefer color-mix for nicer tint */
+
 @supports (background: color-mix(in hsl, red 50%, white)) {
 
     .track .cell:nth-child(4),
@@ -467,7 +467,7 @@ footer {
     }
 }
 
-/* ===== Direction arrows for flow ===== */
+
 .track .cell::after {
     content: "";
     position: absolute;
@@ -486,32 +486,32 @@ footer {
     display: block;
 }
 
-/* Top → */
+
 .track .cell:nth-child(-n+15)::after {
     transform: rotate(0deg);
 }
 
-/* Right ↓ */
+
 .track .cell:nth-child(n+16):nth-child(-n+29)::after {
     transform: rotate(90deg);
 }
 
-/* Bottom ← */
+
 .track .cell:nth-child(n+30):nth-child(-n+43)::after {
     transform: rotate(180deg);
 }
 
-/* Left ↑ */
+
 .track .cell:nth-child(n+44):nth-child(-n+56)::after {
     transform: rotate(-90deg);
 }
 
-/* Hide any old corner artifacts */
+
 .track .corner {
     display: none;
 }
 
-/* Consistency */
+
 *,
 *::before,
 *::after {
@@ -528,8 +528,8 @@ footer {
     }
 }
 
-/* ===== Perimeter cell placement (unchanged) ===== */
-/* Top row (cells 1..15) */
+
+
 .track .cell:nth-child(1) {
     grid-row: 2;
     grid-column: 2;
@@ -605,7 +605,7 @@ footer {
     grid-column: 16;
 }
 
-/* Right column (16..29) */
+
 .track .cell:nth-child(16) {
     grid-row: 3;
     grid-column: 16;
@@ -676,7 +676,7 @@ footer {
     grid-column: 16;
 }
 
-/* Bottom row (30..43) */
+
 .track .cell:nth-child(30) {
     grid-row: 16;
     grid-column: 15;
@@ -747,7 +747,7 @@ footer {
     grid-column: 2;
 }
 
-/* Left column (44..56) */
+
 .track .cell:nth-child(44) {
     grid-row: 15;
     grid-column: 2;
@@ -812,7 +812,7 @@ footer {
     grid-row: 3;
     grid-column: 2;
 }
-/* Mobile polish baseline */
+
 html {
   -webkit-text-size-adjust: 100%;
 }

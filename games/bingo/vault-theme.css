@@ -359,7 +359,7 @@ body {
   }
 }
 
-/* Sort Cards remains legible in every card-count and Hall layout. */
+
 [data-bingo-theme] #app .sort-control {
   display: grid !important;
   grid-template-columns: auto minmax(250px, 1fr) !important;
@@ -391,7 +391,7 @@ body {
   font-size: 12pt !important;
 }
 
-/* Keep the full Dealer workspace beside the open Planet Hall control drawer. */
+
 @media (min-width: 1201px) {
   html[data-bingo-theme="classic"]:not(.hall-controls-collapsed) #app .dealer-layout {
     padding-right: 430px !important;
@@ -440,7 +440,7 @@ body {
   }
 }
 
-/* Winner-log empty-state star stays visible on every theme surface. */
+
 html[data-bingo-theme] #app .app-shell.theme-light .dealer-empty-state > span:first-child {
   color: #8a5700 !important;
   -webkit-text-fill-color: #8a5700 !important;
@@ -455,7 +455,7 @@ html[data-bingo-theme] #app .app-shell.theme-dark .dealer-empty-state > span:fir
   text-shadow: 0 1px 0 #000 !important;
 }
 
-/* Planet Hall dealer tabs use white labels instead of muted gray. */
+
 html[data-bingo-theme="classic"] #app .dealer-tabs button,
 html.bingo-popout-window[data-bingo-theme="classic"] #app .dealer-tabs button {
   color: #fff !important;
@@ -463,7 +463,7 @@ html.bingo-popout-window[data-bingo-theme="classic"] #app .dealer-tabs button {
   opacity: 1 !important;
 }
 
-/* Round-setup field labels remain readable above their inputs. */
+
 html[data-bingo-theme] #app .app-shell.theme-dark .setup-fields label > span {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
@@ -478,7 +478,7 @@ html[data-bingo-theme] #app .app-shell.theme-light .setup-fields label > span {
   text-shadow: none !important;
 }
 
-/* Setup-guide headings and descriptions use white text on dark cards. */
+
 html.bingo-popout-window[data-bingo-theme] #app .app-shell.theme-dark .dealer-setup-guide li :is(b, small) {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
@@ -486,7 +486,7 @@ html.bingo-popout-window[data-bingo-theme] #app .app-shell.theme-dark .dealer-se
   text-shadow: none !important;
 }
 
-/* The time-zone field remains dark in the light app palette, so its arrow is white. */
+
 html[data-bingo-theme] #app .app-shell.theme-light .play-time-panel {
   --timezone-arrow: #fff !important;
 }
@@ -501,7 +501,7 @@ html[data-bingo-theme] #app .app-shell.theme-light .play-time-panel label::after
   border-top-color: #fff !important;
 }
 
-/* Planet Hall light mode uses a white time-zone field and therefore a dark arrow. */
+
 html[data-bingo-theme="classic"] #app .app-shell.theme-light .play-time-panel {
   --timezone-arrow: #17243a !important;
 }
@@ -516,14 +516,14 @@ html[data-bingo-theme="classic"] #app .app-shell.theme-light .play-time-panel la
   border-top-color: #17243a !important;
 }
 
-/* Give the Audience current-call ball a little more vertical breathing room. */
+
 html[data-bingo-theme] #app .audience-ball {
   width: min(40vh, 360px) !important;
   height: min(40vh, 360px) !important;
   margin-top: 10px !important;
 }
 
-/* Audience waiting/current-call status must remain visible below the ball. */
+
 html[data-bingo-theme] #app .audience-call > p {
   position: relative !important;
   z-index: 2 !important;
@@ -534,7 +534,7 @@ html[data-bingo-theme] #app .audience-call > p {
   text-shadow: 0 2px 2px rgba(0, 0, 0, .75) !important;
 }
 
-/* Reserve a real row for the Audience status instead of letting the ball push it offscreen. */
+
 html[data-bingo-theme] #app .audience-content {
   min-height: 0 !important;
 }
@@ -570,7 +570,7 @@ html[data-bingo-theme] #app .audience-call > p {
   visibility: visible !important;
 }
 
-/* Player Floor current-call status is a separate rendering path from Audience Display. */
+
 html[data-bingo-theme] #app .current-call-panel .ball-wrap {
   width: 112px !important;
   height: 112px !important;
@@ -593,7 +593,7 @@ html[data-bingo-theme] #app .current-call-panel .call-name {
   text-shadow: none !important;
 }
 
-/* Keep the readiness label centered inside its pill. */
+
 html[data-bingo-theme] #app .topbar .status-pill {
   position: relative !important;
   display: grid !important;
@@ -605,7 +605,7 @@ html[data-bingo-theme] #app .topbar .status-pill .status-dot {
   display: none !important;
 }
 
-/* Audience balls have one identical outer diameter in every theme. */
+
 html[data-bingo-theme] #app .audience-call > .audience-ball {
   box-sizing: border-box !important;
   align-self: start !important;
@@ -629,7 +629,7 @@ html[data-bingo-theme] #app .audience-call > .audience-ball {
   }
 }
 
-/* Player Preferences eyebrow uses an accessible foreground on both design canvases. */
+
 html[data-bingo-theme] #app .app-shell.theme-light .design-copy > .eyebrow {
   color: #40536d !important;
   -webkit-text-fill-color: #40536d !important;
@@ -652,7 +652,7 @@ html[data-bingo-theme] body #app .app-shell.theme-light .design-screen .eyebrow 
   text-shadow: none !important;
 }
 
-/* Keep all three Audience information cards above the bottom control bar. */
+
 html[data-bingo-theme] #app .audience-side {
   box-sizing: border-box !important;
   display: grid !important;
@@ -688,7 +688,7 @@ html[data-bingo-theme] #app .audience-winners > p {
   transform: translateY(-4px) !important;
 }
 
-/* Audience header pattern and called-count indicators need display-size type. */
+
 html[data-bingo-theme] #app .audience-header > strong {
   font-size: 12pt !important;
   line-height: 1.2 !important;
@@ -702,7 +702,7 @@ html[data-bingo-theme] #app .audience-header > small {
   opacity: 1 !important;
 }
 
-/* Planet Hall light Dealer surfaces use dark labels; dark mode retains white. */
+
 html[data-bingo-theme="classic"] #app .app-shell.theme-light .dealer-tabs button:not(.active) {
   color: #342019 !important;
   -webkit-text-fill-color: #342019 !important;
@@ -731,7 +731,7 @@ html[data-bingo-theme] #app .audience-call > span {
   opacity: 1 !important;
 }
 
-/* Audience waiting status follows the actual light/dark canvas contrast. */
+
 html[data-bingo-theme] #app .app-shell.theme-light .audience-call > p {
   color: #111 !important;
   -webkit-text-fill-color: #111 !important;
@@ -744,7 +744,7 @@ html[data-bingo-theme] #app .app-shell.theme-dark .audience-call > p {
   text-shadow: 0 2px 2px rgba(0, 0, 0, .75) !important;
 }
 
-/* Card Design uses full-size form typography and stays clear of the Hall drawer. */
+
 @media (min-width: 1201px) {
   html[data-bingo-theme="classic"]:not(.hall-controls-collapsed) #app .design-screen {
     padding-right: 430px !important;
@@ -833,7 +833,7 @@ html[data-bingo-theme] #app .app-shell.theme-dark .audience-call > p {
   opacity: 1 !important;
 }
 
-/* Planet Hall boards use wide letter rows; the working Classic grid stays intact. */
+
 html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .dealer-ball-board {
   grid-template-columns: 1fr !important;
   gap: 12px !important;
@@ -872,7 +872,7 @@ html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .dealer-
   }
 }
 
-/* Classic and Current header actions keep readable labels without clipping. */
+
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .topbar .header-actions {
   grid-template-columns: minmax(270px, 1.4fr) repeat(5, minmax(108px, 1fr)) !important;
   gap: 8px !important;
@@ -942,7 +942,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .topbar
   }
 }
 
-/* Cascade-final Hall 1 overlay and white time-zone heading. */
+
 html[data-bingo-theme="classic"] .player-hall-controls {
   top: 50% !important;
   right: auto !important;
@@ -965,7 +965,7 @@ html[data-bingo-theme="classic"] #app .play-time-panel :is(.eyebrow, .timezone-l
   text-shadow: 0 1px 2px rgba(0, 0, 0, .72) !important;
 }
 
-/* The current Bingo game title stays white in every theme header. */
+
 html[data-bingo-theme] #app .topbar .brand-lockup h1 {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
@@ -973,7 +973,7 @@ html[data-bingo-theme] #app .topbar .brand-lockup h1 {
   text-shadow: 0 1px 2px rgba(0, 0, 0, .7) !important;
 }
 
-/* Hall 1 keeps its close control in the panel and its expand arrow at the edge. */
+
 html[data-bingo-theme="classic"]:not(.hall-controls-collapsed) .hall-controls-toggle {
   display: none !important;
 }
@@ -995,7 +995,7 @@ html.hall-controls-collapsed[data-bingo-theme="classic"] .hall-controls-toggle {
   transform: translateY(-50%) !important;
 }
 
-/* Planet Hall 1 actions are a centered, viewport-bounded overlay. */
+
 html[data-bingo-theme="classic"] .player-hall-controls {
   top: 50% !important;
   right: auto !important;
@@ -1033,7 +1033,7 @@ html[data-bingo-theme="classic"] .player-hall-controls button :is(span, strong) 
   overflow-wrap: anywhere !important;
 }
 
-/* Hall 1's time-zone heading always uses white ink on its dark header panel. */
+
 html[data-bingo-theme="classic"] #app .play-time-panel label > span,
 html[data-bingo-theme="classic"] #app .play-time-panel :is(.eyebrow, .timezone-label, [data-timezone-label]) {
   color: #fff !important;
@@ -1059,7 +1059,7 @@ html[data-bingo-theme="classic"] #app .play-time-panel :is(.eyebrow, .timezone-l
   }
 }
 
-/* Planet Hall 1 card toolbar keeps Sort and paging inside the stage. */
+
 html[data-bingo-theme="classic"] #app .cards-stage .stage-toolbar {
   box-sizing: border-box !important;
   display: grid !important;
@@ -1114,7 +1114,7 @@ html[data-bingo-theme="classic"] #app .cards-stage .card-pager button {
   padding-inline: 8px !important;
 }
 
-/* Planet Hall 1 time-zone copy is readable in both appearance modes. */
+
 html[data-bingo-theme="classic"] #app .play-time-panel label > span {
   color: #3b241b !important;
   -webkit-text-fill-color: #3b241b !important;
@@ -1179,7 +1179,7 @@ html[data-bingo-theme="classic"] #app .app-shell.theme-dark .play-time-panel sel
   }
 }
 
-/* Classic screen navigation keeps only the individual button surfaces. */
+
 html[data-bingo-theme="current"] body #app .app-shell .topbar .screen-switcher {
   border-color: transparent !important;
   background-color: transparent !important;
@@ -1192,7 +1192,7 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar .screen-switcher b
   background-clip: padding-box !important;
 }
 
-/* Reserve enough Classic header width for the complete time-zone value. */
+
 html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
   grid-template-columns: minmax(110px, .75fr) minmax(175px, 1.15fr) minmax(190px, 1.1fr) !important;
 }
@@ -1215,7 +1215,7 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel s
   }
 }
 
-/* Specificity lock: Ready to play has no white surface in either Hall 1 mode. */
+
 html[data-bingo-theme="classic"] body #app .app-shell.theme-light .topbar .header-actions > .status-pill,
 html[data-bingo-theme="classic"] body #app .app-shell.theme-dark .topbar .header-actions > .status-pill {
   color: #fff !important;
@@ -1241,7 +1241,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > 
   background: transparent !important;
 }
 
-/* Final Hall 1 action and clock polish. */
+
 html[data-bingo-theme="classic"] #app .topbar .header-actions {
   background: transparent !important;
 }
@@ -1300,7 +1300,7 @@ html[data-bingo-theme="classic"] #app .topbar .play-time-panel > div > strong {
   }
 }
 
-/* Planet Hall only: fit every ball in its row without an inner scrollbar. */
+
 html[data-bingo-theme="classic"] #app .dealer-ball-column {
   grid-template-columns: 60px repeat(15, minmax(0, 1fr)) !important;
   width: 100% !important;
@@ -1318,7 +1318,7 @@ html[data-bingo-theme="classic"] #app .dealer-ball-column button {
   padding-inline: 0 !important;
 }
 
-/* Classic Player Floor auto-call and Recent Calls states remain unmistakable. */
+
 html[data-bingo-theme="current"] #app .caller-panel .btn-auto {
   min-height: 56px !important;
   color: #fff !important;
@@ -1384,7 +1384,7 @@ html[data-bingo-theme="current"] #app .recent-panel .section-heading > span {
   }
 }
 
-/* Final Hall 1 header geometry: full-width time content and four equal actions. */
+
 html[data-bingo-theme="classic"] #app .topbar {
   grid-template-columns: minmax(0, 1fr) !important;
 }
@@ -1476,7 +1476,7 @@ html[data-bingo-theme="classic"] #app .topbar .screen-switcher {
   }
 }
 
-/* Clear, static card-progress states shared by every Bingo theme. */
+
 .bingo-card {
   position: relative;
 }
@@ -1582,7 +1582,7 @@ html[data-bingo-theme="classic"] #app .topbar .screen-switcher {
   background: #1769e0;
 }
 
-/* Planet Hall 2 light mode keeps its arcade identity on a bright terminal surface. */
+
 html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) .planet-hall-shell {
   color: #10213d;
   background-color: #e8f1fb;
@@ -1642,7 +1642,7 @@ html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) .planet-ga
   color: #24559b;
 }
 
-/* Planet Hall 2 Dealer Console uses the Player Hall's red, green, and black cabinet palette. */
+
 html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout {
   --dealer-bg: #090b10;
   --dealer-panel: #171a20;
@@ -1741,7 +1741,7 @@ html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout :is(.btn-aut
   background-image: none !important;
 }
 
-/* Planet Hall 2 live ball keeps dark ink on its bright face. */
+
 html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout .dealer-current-ball {
   border-color: #ed3d35 !important;
   color: #10213d !important;
@@ -1765,7 +1765,7 @@ html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout .dealer-curr
   text-shadow: none !important;
 }
 
-/* Planet Hall 2 pattern choices use dark cards with explicit readable states. */
+
 html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout .dealer-pattern-list button {
   color: #fff !important;
   border: 2px solid #3fc548 !important;
@@ -1806,7 +1806,7 @@ html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout .dealer-patt
   -webkit-text-fill-color: #fff !important;
 }
 
-/* Planet Hall uses a compact header instead of the taller shared Hall geometry. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .topbar {
   grid-template-columns: minmax(220px, 320px) minmax(0, 1fr) !important;
   grid-template-rows: 100px 46px !important;
@@ -1857,7 +1857,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar .screen-switcher b
   max-height: 46px !important;
 }
 
-/* Planet Hall setup steps use dark themed cards with explicit text contrast. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .dealer-layout .dealer-setup-guide li {
   color: #fff8e6 !important;
   border: 2px solid #9bdc43 !important;
@@ -1889,7 +1889,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .dealer-layout .dealer-set
   text-shadow: none !important;
 }
 
-/* Planet Hall Card Design stays inside the brown, gold, and green Hall identity. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .design-screen {
   color: #fff8e6 !important;
   background-color: #180c0b !important;
@@ -1935,7 +1935,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .design-screen :is(select,
   background-image: none !important;
 }
 
-/* Planet Hall card-view chooser uses solid cabinet colors. */
+
 html[data-bingo-theme="classic"] body .view-choice-panel {
   color: #fff8e6 !important;
   border-color: #b98032 !important;
@@ -1963,7 +1963,7 @@ html[data-bingo-theme="classic"] body .view-choice-panel footer {
   background-image: none !important;
 }
 
-/* Planet Hall audience ball clears the fixed bottom controls without clipping. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .audience-call > .audience-ball {
   width: 260px !important;
   height: 260px !important;
@@ -1979,13 +1979,13 @@ html[data-bingo-theme="classic"] body #app .app-shell .audience-call > :is(span,
   transform: none !important;
 }
 
-/* Reserve space for the fixed pop-out controls instead of covering the ball. */
+
 html.bingo-popout-window[data-bingo-theme="classic"] body #app .app-shell .audience-screen {
   box-sizing: border-box !important;
   padding-bottom: 112px !important;
 }
 
-/* Card-view and Flashboard dialogs must render above every Hall header. */
+
 html[data-bingo-theme="classic"] body .bingo-view-overlay {
   z-index: 10000 !important;
 }
@@ -2122,7 +2122,7 @@ html.bingo-popout-window[data-bingo-theme="current"] #app .dealer-layout :is(
   background-color: #ffffff !important;
 }
 
-/* Keep the Planet Hall dealer surfaces and their text on the same dark palette. */
+
 html.bingo-popout-window:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app :is(
   .play-time-panel,
   .dealer-command-bar,
@@ -2303,7 +2303,7 @@ html.bingo-embedded-window .bingo-theme-switcher { display: none !important; }
   }
 }
 
-/* Round summary is plain readable text, not a highlighted pattern badge. */
+
 [data-bingo-theme] #app .round-snapshot {
   display: flex !important;
   flex-wrap: wrap;
@@ -2327,7 +2327,7 @@ html.bingo-embedded-window .bingo-theme-switcher { display: none !important; }
   font-weight: 950 !important;
 }
 
-/* Call history stays readable from the Player Hall at normal viewing distance. */
+
 [data-bingo-theme] #app .called-history-frame {
   min-height: 76px !important;
   gap: 18px !important;
@@ -2365,7 +2365,7 @@ html.bingo-embedded-window .bingo-theme-switcher { display: none !important; }
   font-size: 9pt !important;
 }
 
-/* Credits and prize totals are key Dealer information, not fine print. */
+
 [data-bingo-theme] #app .finance-summary-panel .dealer-section-title :is(h2, h3) {
   font-size: 18pt !important;
   line-height: 1.15 !important;
@@ -2397,7 +2397,7 @@ html.bingo-embedded-window .bingo-theme-switcher { display: none !important; }
   line-height: 1.15 !important;
 }
 
-/* Card identity uses clean interface typography instead of terminal-style lettering. */
+
 [data-bingo-theme] #app .bingo-card .card-top {
   min-height: 52px !important;
   align-items: center !important;
@@ -2451,7 +2451,7 @@ html[data-bingo-theme="classic"] #app .bingo-card .card-id {
   color: #c8d6eb !important;
 }
 
-/* Card footer information is a readable status band, never fine print. */
+
 [data-bingo-theme] #app .bingo-card .card-distance {
   min-height: 42px !important;
   gap: 12px !important;
@@ -2506,7 +2506,7 @@ html[data-bingo-theme="classic"] #app .bingo-card .card-id {
   text-shadow: none !important;
 }
 
-/* Light-mode time controls keep dark ink regardless of the Hall palette. */
+
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-shell.theme-light .play-time-panel {
   color: #17243a !important;
   border-color: #7897c0 !important;
@@ -2532,7 +2532,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-sh
   opacity: 1 !important;
 }
 
-/* Distance-to-Bingo is the primary card footer status. */
+
 [data-bingo-theme] #app .bingo-card .card-distance strong {
   display: inline-flex;
   min-height: 32px;
@@ -2553,7 +2553,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-sh
   background: #ffd75b !important;
 }
 
-/* Live Draw controls use explicit, readable action and disabled states. */
+
 [data-bingo-theme] #app .dealer-primary-actions {
   gap: 10px !important;
 }
@@ -2599,7 +2599,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-sh
   outline-offset: 2px !important;
 }
 
-/* Directed Play is a primary Dealer workflow and uses full control sizing. */
+
 [data-bingo-theme] #app .target-card-panel > .eyebrow {
   font-size: 10.5pt !important;
   letter-spacing: .12em !important;
@@ -2665,7 +2665,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-sh
   }
 }
 
-/* Manual balls and winning patterns use fixed accessible color pairs. */
+
 [data-bingo-theme] #app .dealer-ball-column {
   border-color: #587294 !important;
   background: #17263b !important;
@@ -2742,7 +2742,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-sh
   opacity: 1 !important;
 }
 
-/* Manual Draw owns the full Dealer row and fills it edge to edge. */
+
 [data-bingo-theme] #app .dealer-grid {
   width: 100% !important;
   max-width: none !important;
@@ -2793,7 +2793,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-sh
   }
 }
 
-/* Player cards grow with their five number rows and readable footer content. */
+
 [data-bingo-theme] #app .cards-stage {
   min-height: 820px !important;
   height: auto !important;
@@ -3363,7 +3363,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-sh
   }
 }
 
-/* Planet Hall: modeled after the photographed red hall terminals. */
+
 [data-bingo-theme="classic"] body,
 [data-bingo-theme="classic"] .app-shell {
   color: #f4f7fb;
@@ -3523,7 +3523,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-sh
   background: linear-gradient(#1a1c22, #0b0c10);
 }
 
-/* Planet Hall has two complete casino palettes, not a label-only mode toggle. */
+
 html[data-bingo-theme="classic"] #app .app-shell.theme-light {
   color: #342019 !important;
   background: #f3e5c8 !important;
@@ -3864,7 +3864,7 @@ html[data-bingo-theme="classic"] #app .topbar .header-actions > .appearance-btn 
   transform: translateY(-1px);
 }
 
-/* Reliable high-contrast surfaces in every Planet Hall player/dealer window. */
+
 html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) :is(
   .play-time-panel,
   .round-snapshot
@@ -4047,7 +4047,7 @@ html[data-bingo-theme="current"] .universal-controls-dock {
   box-shadow: 0 -5px 18px rgba(0, 0, 0, .25);
 }
 
-/* Classic uses the complete Hall control panel instead of the incomplete legacy dock. */
+
 html[data-bingo-theme="current"] .universal-controls-dock {
   display: none !important;
 }
@@ -4252,7 +4252,7 @@ html.hall-controls-collapsed[data-bingo-theme="current"] .universal-controls-doc
   box-shadow: 0 5px 18px rgba(0, 0, 0, .35);
 }
 
-/* Classic theme dark mode must win over its light-theme presentation rules. */
+
 html[data-bingo-theme="current"] #app .app-shell.theme-dark {
   color: #edf3ff !important;
   background: #0d1420 !important;
@@ -4332,7 +4332,7 @@ html[data-bingo-theme="current"] #app .app-shell.theme-dark .bingo-card .card-di
   color: #1761b4 !important;
 }
 
-/* Classic light mode uses deliberate ink colors instead of dark-mode leftovers. */
+
 html[data-bingo-theme="current"] #app .app-shell.theme-light :is(
   .game-layout,
   .cards-stage,
@@ -4658,7 +4658,7 @@ html[data-bingo-theme="current"] #app .app-shell.theme-light .app-footer :is(str
   box-shadow: inset 0 0 0 2px #caff74;
 }
 
-/* Planet Hall 2 purchase terminal mirrors the red-and-black hall kiosk. */
+
 [data-bingo-theme="planet"] .planet-purchase-terminal {
   padding: 20px;
   background:
@@ -5383,7 +5383,7 @@ html.bingo-popout-window #app .dealer-ball-column button {
   font-size: 8.25pt !important;
 }
 
-/* A brighter, high-contrast Muha Bingo identity in every Hall theme. */
+
 .muha-bingo-logo {
   border-color: #ffffff;
   background: linear-gradient(135deg, #102f72, #48178d 58%, #8f175f);
@@ -5445,7 +5445,7 @@ html.bingo-popout-window #app .dealer-ball-column button {
   letter-spacing: .14em;
 }
 
-/* Complete Dealer identities: readable and intentionally different in each Hall theme. */
+
 [data-bingo-theme="planet"] {
   --dealer-bg: #071225;
   --dealer-panel: #102442;
@@ -5527,7 +5527,7 @@ html.bingo-popout-window #app .dealer-ball-column button {
   background: var(--dealer-panel-alt) !important;
 }
 
-/* Player Hall 2 dealer ball keeps its own readable ink and illuminated rim. */
+
 html[data-bingo-theme="planet"] #app .dealer-current-ball {
   width: 88px;
   height: 88px;
@@ -5553,7 +5553,7 @@ html[data-bingo-theme="planet"] #app .dealer-current-ball strong {
   text-shadow: none !important;
 }
 
-/* Dealer pattern cards are primary setup controls and must read at a glance. */
+
 [data-bingo-theme] #app .dealer-pattern-list {
   grid-template-columns: repeat(3, minmax(220px, 1fr)) !important;
   gap: 12px !important;
@@ -5724,7 +5724,7 @@ html[data-bingo-theme="planet"] #app .dealer-current-ball strong {
   gap: 10px;
 }
 
-/* Player controls use explicit foreground/background pairs in every theme. */
+
 [data-bingo-theme] #app .game-layout :is(
   .caller-panel,
   .cards-stage,
@@ -5897,7 +5897,7 @@ html[data-bingo-theme="planet"] #app .dealer-current-ball strong {
   outline-offset: 3px !important;
 }
 
-/* Audience screens inherit each theme without sacrificing call readability. */
+
 [data-bingo-theme] #app .audience-screen {
   color: var(--dealer-text) !important;
   background:
@@ -6164,7 +6164,7 @@ html[data-bingo-theme="planet"] #app .dealer-current-ball strong {
   }
 }
 
-/* Player Hall 2: keep recent calls and card copy readable in both display modes. */
+
 html[data-bingo-theme="current"] #app .app-shell:is(.theme-light, .theme-dark) .recent-panel .section-heading h2 {
   opacity: 1 !important;
   text-shadow: none !important;
@@ -6242,7 +6242,7 @@ html[data-bingo-theme="current"] #app .bingo-card .card-hint {
   }
 }
 
-/* Player Hall 2: mode changes never move the clock and visibly restyle Audience Display. */
+
 html[data-bingo-theme="current"] #app .topbar {
   position: relative !important;
   display: flex !important;
@@ -6359,7 +6359,7 @@ html[data-bingo-theme="current"] #app .app-shell.theme-dark .audience-side p {
   }
 }
 
-/* Card progress stays inside its card instead of sizing from its full sentence. */
+
 html[data-bingo-theme="current"] #app .bingo-card .card-distance {
   grid-template-columns: minmax(90px, .8fr) minmax(0, 1.2fr) !important;
   box-sizing: border-box !important;
@@ -6386,7 +6386,7 @@ html[data-bingo-theme="current"] #app .bingo-card .card-distance.ready strong {
   background: #ffd75b !important;
 }
 
-/* Auto-call speed remains readable on Player Hall 2's dark surface. */
+
 html[data-bingo-theme="current"] #app .app-shell.theme-dark :is(.speed-control, .auto-speed) > :is(span, label),
 html[data-bingo-theme="current"] #app .app-shell.theme-dark .caller-panel .auto-speed {
   color: #dce8f8 !important;
@@ -6401,7 +6401,7 @@ html[data-bingo-theme="current"] #app .app-shell.theme-dark .caller-panel select
   opacity: 1 !important;
 }
 
-/* Sort Cards text gets enough vertical room in every Bingo theme. */
+
 [data-bingo-theme] #app .sort-control select {
   box-sizing: border-box !important;
   width: 100% !important;
@@ -6419,7 +6419,7 @@ html[data-bingo-theme="current"] #app .app-shell.theme-dark .caller-panel select
   grid-template-columns: auto minmax(290px, 1fr) !important;
 }
 
-/* Every screen tab has a complete outline, including the rightmost Audience tab. */
+
 [data-bingo-theme] #app .screen-switcher {
   box-sizing: border-box !important;
   border-width: 2px !important;
@@ -6437,7 +6437,7 @@ html[data-bingo-theme="current"] #app .app-shell.theme-dark .caller-panel select
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.3), 0 4px 10px rgba(19,32,57,.18) !important;
 }
 
-/* Time-zone geometry is identical in light and dark mode on every theme. */
+
 [data-bingo-theme] #app .play-time-panel {
   --timezone-arrow: #52647d;
   box-sizing: border-box !important;
@@ -6500,7 +6500,7 @@ html[data-bingo-theme="current"] #app .app-shell.theme-dark .play-time-panel {
   }
 }
 
-/* Final responsive safeguards for the Hall control rail and action docks. */
+
 html[data-bingo-theme="current"] #app .game-layout {
   box-sizing: border-box !important;
   padding-right: max(64px, env(safe-area-inset-right)) !important;
@@ -6529,7 +6529,7 @@ html[data-bingo-theme="classic"]:not(.hall-controls-collapsed) #app .game-layout
   }
 }
 
-/* Light and Dark labels occupy identical space, preventing header reflow. */
+
 [data-bingo-theme] #app .topbar .header-actions > .appearance-btn {
   box-sizing: border-box !important;
   flex: 0 0 118px !important;
@@ -6541,7 +6541,7 @@ html[data-bingo-theme="classic"]:not(.hall-controls-collapsed) #app .game-layout
   white-space: nowrap !important;
 }
 
-/* Call History balls use explicit high-contrast states in every theme and mode. */
+
 [data-bingo-theme] #app .history-balls span {
   min-width: 44px !important;
   padding: 8px 7px !important;
@@ -6562,7 +6562,7 @@ html[data-bingo-theme="classic"]:not(.hall-controls-collapsed) #app .game-layout
   box-shadow: 0 0 0 2px rgba(255,255,255,.22) !important;
 }
 
-/* Planet Hall's cream Dealer ball always uses dark ink for its number. */
+
 html[data-bingo-theme="classic"] #app .dealer-current-ball strong {
   color: #151d2c !important;
   opacity: 1 !important;
@@ -6575,7 +6575,7 @@ html[data-bingo-theme="classic"] #app .dealer-current-ball :is(span, small) {
   text-shadow: none !important;
 }
 
-/* Light Hall selectors use a visible black arrow; dark Hall selectors use white. */
+
 [data-bingo-theme] #app .app-shell.theme-light .play-time-panel {
   --timezone-arrow: #000;
 }
@@ -6592,7 +6592,7 @@ html[data-bingo-theme="classic"] #app .dealer-current-ball :is(span, small) {
     linear-gradient(135deg, #fff 50%, transparent 50%) !important;
 }
 
-/* A real triangle keeps the time-zone arrow visible when Hall rules clear select backgrounds. */
+
 [data-bingo-theme] #app .play-time-panel label {
   position: relative !important;
 }
@@ -6615,7 +6615,7 @@ html[data-bingo-theme="classic"] #app .dealer-current-ball :is(span, small) {
   border-top-color: #fff;
 }
 
-/* Pop-out card headers retain bright text on their dark Hall banner. */
+
 html.bingo-popout-window:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .stage-heading .eyebrow {
   color: #ffd968 !important;
   opacity: 1 !important;
@@ -6628,13 +6628,13 @@ html.bingo-popout-window:is([data-bingo-theme="planet"], [data-bingo-theme="clas
   text-shadow: none !important;
 }
 
-/* Dark dealer pop-outs use readable placeholder copy. */
+
 html.bingo-popout-window:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .dealer-layout :is(input, select)::placeholder {
   color: #c8d5e8 !important;
   opacity: 1 !important;
 }
 
-/* Green calling actions use white icons instead of low-contrast red. */
+
 [data-bingo-theme] #app .btn-auto:not(:disabled) :is(.bi, i),
 [data-bingo-theme] #app button:is(.hall-start-button, .primary-dealer-action):not(:disabled) :is(.bi, i) {
   color: #fff !important;
@@ -6642,7 +6642,7 @@ html.bingo-popout-window:is([data-bingo-theme="planet"], [data-bingo-theme="clas
   text-shadow: none !important;
 }
 
-/* Dual-contrast arrow: white rim remains visible on dark fields, black center on light fields. */
+
 [data-bingo-theme] #app .play-time-panel label::before {
   content: "";
   position: absolute;
@@ -6679,7 +6679,7 @@ html.bingo-popout-window:is([data-bingo-theme="planet"], [data-bingo-theme="clas
   border-top-color: #fff !important;
 }
 
-/* Player pop-out stage banners always use light ink on navy. */
+
 html.bingo-popout-window #app .cards-stage .stage-heading :is(.eyebrow, h2) {
   color: #fff8e6 !important;
   -webkit-text-fill-color: #fff8e6 !important;
@@ -6692,7 +6692,7 @@ html.bingo-popout-window #app .cards-stage .stage-heading .eyebrow {
   -webkit-text-fill-color: #ffd968 !important;
 }
 
-/* Card Design remains dark-on-light even when a dark Hall palette is active. */
+
 html.bingo-popout-window #app .design-screen {
   color: #17243a !important;
   background: #eef3f9 !important;
@@ -6716,7 +6716,7 @@ html.bingo-popout-window #app .design-screen .design-group {
   background: #fff !important;
 }
 
-/* Pop-out history and Auto Call states remain readable in every palette. */
+
 html.bingo-popout-window #app .called-history-frame {
   color: #eef5ff !important;
   background: #122947 !important;
@@ -6746,7 +6746,7 @@ html.bingo-popout-window #app .called-history-frame > p {
   opacity: 1 !important;
 }
 
-/* Dealer navigation and all four stat cells remain distinct and readable. */
+
 [data-bingo-theme] #app .screen-switcher button:not(.active) {
   color: #17243a !important;
   -webkit-text-fill-color: #17243a !important;
@@ -6792,7 +6792,7 @@ html[data-bingo-theme="current"] #app .dealer-stats > div :is(span, small, p) {
   opacity: 1 !important;
 }
 
-/* Classic light Dealer uses light surfaces, so its Dealer tokens must follow suit. */
+
 html[data-bingo-theme="classic"] #app .app-shell.theme-light .dealer-layout {
   --dealer-bg: #f2dfb8;
   --dealer-panel: #fff8e8;
@@ -6843,7 +6843,7 @@ html.bingo-popout-window[data-bingo-theme="classic"] #app .app-shell.theme-light
   opacity: 1 !important;
 }
 
-/* The Player Cards title is rendered directly in the toolbar in player pop-outs. */
+
 html.bingo-popout-window[data-bingo-theme="classic"] #app .app-shell.theme-light .cards-stage .stage-toolbar {
   color: #fff8e6 !important;
   -webkit-text-fill-color: #fff8e6 !important;
@@ -6861,7 +6861,7 @@ html.bingo-popout-window[data-bingo-theme="classic"] #app .app-shell.theme-light
   -webkit-text-fill-color: #ffd968 !important;
 }
 
-/* Keep pattern instructions readable on the light pattern cards. */
+
 [data-bingo-theme] #app .dealer-pattern-list button:not(.active) small {
   color: #31445f !important;
   -webkit-text-fill-color: #31445f !important;
@@ -6874,7 +6874,7 @@ html.bingo-popout-window[data-bingo-theme="classic"] #app .app-shell.theme-light
   opacity: 1 !important;
 }
 
-/* The win-confirmation dialog always has a white surface, including in dark mode. */
+
 [data-bingo-theme] #app .verification-dialog > header span {
   color: #536174 !important;
   -webkit-text-fill-color: #536174 !important;
@@ -6900,7 +6900,7 @@ html.bingo-popout-window[data-bingo-theme="classic"] #app .app-shell.theme-light
   opacity: 1 !important;
 }
 
-/* Confirmation prompts use a white card even when the surrounding game is dark. */
+
 [data-bingo-theme] .app-prompt-backdrop {
   z-index: 10000 !important;
   align-items: start !important;
@@ -6933,7 +6933,7 @@ html.bingo-popout-window[data-bingo-theme="classic"] #app .app-shell.theme-light
   opacity: 1 !important;
 }
 
-/* Keep all three navigation buttons inside one complete outer outline. */
+
 [data-bingo-theme] #app .screen-switcher {
   display: grid !important;
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
@@ -6959,7 +6959,7 @@ html[data-bingo-theme="current"] #app .topbar .screen-switcher {
   justify-self: stretch !important;
 }
 
-/* Call History is a light card in light mode and needs dark foreground text. */
+
 [data-bingo-theme] #app .app-shell.theme-light .called-history-frame > div:first-child span {
   color: #40536d !important;
   -webkit-text-fill-color: #40536d !important;
@@ -6978,7 +6978,7 @@ html[data-bingo-theme="current"] #app .topbar .screen-switcher {
   opacity: 1 !important;
 }
 
-/* Distance-to-Bingo text must contrast with its solid status pill. */
+
 [data-bingo-theme] #app .bingo-card .card-distance:not(.ready) strong {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
@@ -6993,7 +6993,7 @@ html[data-bingo-theme="current"] #app .topbar .screen-switcher {
   opacity: 1 !important;
 }
 
-/* Disabled auto-call uses a light surface, so its label and icon stay dark. */
+
 [data-bingo-theme] #app .btn-auto:disabled {
   color: #31445f !important;
   -webkit-text-fill-color: #31445f !important;
@@ -7010,7 +7010,7 @@ html[data-bingo-theme="current"] #app .topbar .screen-switcher {
   opacity: 1 !important;
 }
 
-/* Call History uses a navy surface in dark mode and needs light foreground text. */
+
 [data-bingo-theme] #app .app-shell.theme-dark .called-history-frame > div:first-child span {
   color: #b7c9e3 !important;
   -webkit-text-fill-color: #b7c9e3 !important;
@@ -7029,7 +7029,7 @@ html[data-bingo-theme="current"] #app .topbar .screen-switcher {
   opacity: 1 !important;
 }
 
-/* Enabled auto-call is a primary action and always uses a solid dark surface. */
+
 [data-bingo-theme] #app .btn-auto:not(:disabled) {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
@@ -7046,7 +7046,7 @@ html[data-bingo-theme="current"] #app .topbar .screen-switcher {
   opacity: 1 !important;
 }
 
-/* Planet themes always use a dark history surface, regardless of appearance mode. */
+
 html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .called-history-frame > div:first-child span,
 html:is([data-bingo-theme="planet"], [data-bingo-theme="classic"]) #app .called-history-frame > p {
   color: #c1d0e5 !important;
@@ -7075,7 +7075,7 @@ html[data-bingo-theme] .called-history-frame > div:first-child strong {
   opacity: 1 !important;
 }
 
-/* Only the text is normalized; each theme keeps its own panel styling. */
+
 html[data-bingo-theme] body #app .app-shell .called-history-frame :is(span, p) {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
@@ -7090,7 +7090,7 @@ html[data-bingo-theme] body #app .app-shell .called-history-frame strong {
   opacity: 1 !important;
 }
 
-/* Planet Hall 2: explicit foregrounds for the exact Call History elements. */
+
 html[data-bingo-theme="planet"] body #app .app-shell .called-history-frame > div:first-child > span,
 html[data-bingo-theme="planet"] body #app .app-shell .called-history-frame > p {
   color: #fff !important;
@@ -7108,7 +7108,7 @@ html[data-bingo-theme="planet"] body #app .app-shell .called-history-frame > div
   opacity: 1 !important;
 }
 
-/* Planet Hall 2 empty-history message. */
+
 html[data-bingo-theme="planet"] body #app .app-shell .called-history-frame.called-history-frame > p {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
@@ -7118,7 +7118,7 @@ html[data-bingo-theme="planet"] body #app .app-shell .called-history-frame.calle
   opacity: 1 !important;
 }
 
-/* Planet Hall 2 Call History heading. */
+
 html[data-bingo-theme="planet"] body #app .app-shell .called-history-frame.called-history-frame > div:first-child > span {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
@@ -7128,7 +7128,7 @@ html[data-bingo-theme="planet"] body #app .app-shell .called-history-frame.calle
   opacity: 1 !important;
 }
 
-/* Planet Hall 2 footer pattern uses dark ink on its light footer surface. */
+
 html[data-bingo-theme="planet"] body #app .app-shell .app-footer {
   color: #31445f !important;
   border-color: #8da9cf !important;
@@ -7159,7 +7159,7 @@ html[data-bingo-theme="planet"] body #app .app-shell .app-footer > small {
   opacity: 1 !important;
 }
 
-/* Classic dark mode keeps a dark footer and therefore needs light text. */
+
 html[data-bingo-theme="current"] body #app .app-shell.theme-dark .app-footer {
   color: #eef5ff !important;
   border-color: #617a9e !important;
@@ -7182,7 +7182,7 @@ html[data-bingo-theme="current"] body #app .app-shell.theme-dark .footer-pattern
   opacity: 1 !important;
 }
 
-/* Classic light mode uses dark text on its light footer. */
+
 html[data-bingo-theme="current"] body #app .app-shell.theme-light .app-footer {
   color: #31445f !important;
   border-color: #8da9cf !important;
@@ -7205,7 +7205,7 @@ html[data-bingo-theme="current"] body #app .app-shell.theme-light .footer-patter
   opacity: 1 !important;
 }
 
-/* Footer legend labels follow the footer surface in every supported mode. */
+
 html[data-bingo-theme="planet"] body #app .app-shell .app-footer > span,
 html[data-bingo-theme="current"] body #app .app-shell.theme-light .app-footer > span {
   color: #31445f !important;
@@ -7223,7 +7223,7 @@ html[data-bingo-theme="current"] body #app .app-shell.theme-dark .app-footer > s
   opacity: 1 !important;
 }
 
-/* Classic dark-mode incorrect-call summary uses light text on navy. */
+
 html[data-bingo-theme="current"] body #app .app-shell.theme-dark .incorrect-bingo-tally span,
 html[data-bingo-theme="current"] body #app .app-shell.theme-dark .incorrect-bingo-tally small {
   color: #dce8f8 !important;
@@ -7239,7 +7239,7 @@ html[data-bingo-theme="current"] body #app .app-shell.theme-dark .incorrect-bing
   opacity: 1 !important;
 }
 
-/* Classic light-mode incorrect-call summary uses dark text on the light card. */
+
 html[data-bingo-theme="current"] body #app .app-shell.theme-light .incorrect-bingo-tally span,
 html[data-bingo-theme="current"] body #app .app-shell.theme-light .incorrect-bingo-tally small {
   color: #40536d !important;
@@ -7255,7 +7255,7 @@ html[data-bingo-theme="current"] body #app .app-shell.theme-light .incorrect-bin
   opacity: 1 !important;
 }
 
-/* Classic dealer stats stay light in both modes, so use dark tally text. */
+
 html[data-bingo-theme="current"] body #app .app-shell .dealer-stats .incorrect-bingo-tally :is(span, small) {
   color: #40536d !important;
   -webkit-text-fill-color: #40536d !important;
@@ -7270,7 +7270,7 @@ html[data-bingo-theme="current"] body #app .app-shell .dealer-stats .incorrect-b
   opacity: 1 !important;
 }
 
-/* The audience tally is on navy and keeps a light foreground. */
+
 html[data-bingo-theme="current"] body #app .app-shell .audience-incorrect-bingo :is(span, small) {
   color: #dce8f8 !important;
   -webkit-text-fill-color: #dce8f8 !important;
@@ -7285,7 +7285,7 @@ html[data-bingo-theme="current"] body #app .app-shell .audience-incorrect-bingo 
   opacity: 1 !important;
 }
 
-/* Planet Hall dealer status is dark; shortcuts and status copy stay light. */
+
 html.bingo-popout-window[data-bingo-theme="classic"] body #app .fixed-dealer-status :is(strong, span, small) {
   color: #f4f7fc !important;
   -webkit-text-fill-color: #f4f7fc !important;
@@ -7304,7 +7304,7 @@ html.bingo-popout-window[data-bingo-theme="classic"] body #app .fixed-dealer-sta
   background: #fff !important;
 }
 
-/* Cream finance and target cards use dark brown ink. */
+
 html[data-bingo-theme="classic"] body #app .credit-summary > div,
 html[data-bingo-theme="classic"] body #app .target-summary > div {
   color: #2d1813 !important;
@@ -7326,7 +7326,7 @@ html[data-bingo-theme="classic"] body #app :is(.credit-summary, .target-summary)
   opacity: 1 !important;
 }
 
-/* Planet Hall setup guide cards are light surfaces. */
+
 html.bingo-popout-window[data-bingo-theme="classic"] body #app .dealer-setup-guide li {
   border-color: #9fb1ca !important;
   background: #f5f4ef !important;
@@ -7339,7 +7339,7 @@ html.bingo-popout-window[data-bingo-theme="classic"] body #app .dealer-setup-gui
   opacity: 1 !important;
 }
 
-/* Planet Hall incorrect-call tally sits on a dark dealer surface. */
+
 html[data-bingo-theme="classic"] body #app .incorrect-bingo-tally :is(span, small) {
   color: #f2ddbf !important;
   -webkit-text-fill-color: #f2ddbf !important;
@@ -7354,7 +7354,7 @@ html[data-bingo-theme="classic"] body #app .incorrect-bingo-tally strong {
   opacity: 1 !important;
 }
 
-/* Card Design uses the full viewport width so fields never clip or overlap. */
+
 [data-bingo-theme] body #app .design-screen {
   grid-template-columns: minmax(0, 1fr) !important;
   gap: 32px !important;
@@ -7388,7 +7388,7 @@ html[data-bingo-theme="classic"] body #app .incorrect-bingo-tally strong {
   }
 }
 
-/* Classic Card Design light and dark modes use explicit surface pairings. */
+
 html[data-bingo-theme="current"] body #app .app-shell.theme-light .design-screen {
   color: #17243a !important;
   background: #eef3f9 !important;
@@ -7435,7 +7435,7 @@ html[data-bingo-theme="current"] body #app .app-shell.theme-dark .design-screen 
   opacity: 1 !important;
 }
 
-/* Ball letter/hyphen and number/hash use distinct colors on every screen. */
+
 html[data-bingo-theme] body :is(
   .planet-current-ball,
   #app .bingo-ball,
@@ -7448,7 +7448,7 @@ html[data-bingo-theme] body :is(
   opacity: 1 !important;
 }
 
-/* Final Hall header geometry: Theme belongs in the first action row. */
+
 html[data-bingo-theme="classic"] #app .topbar .header-actions {
   grid-template-columns: minmax(300px, 1fr) repeat(5, max-content) !important;
 }
@@ -7474,7 +7474,7 @@ html[data-bingo-theme="classic"] #app .topbar .header-actions > .header-theme-sw
   }
 }
 
-/* Find Card is one complete outlined control, not two conflicting boxes. */
+
 html[data-bingo-theme] #app .dealer-layout .dealer-search {
   box-sizing: border-box !important;
   display: flex !important;
@@ -7507,7 +7507,7 @@ html[data-bingo-theme] #app .dealer-layout .dealer-search:focus-within {
   outline-offset: 2px !important;
 }
 
-/* The shared header remains present on Player Floor, Dealer, and Audience. */
+
 html[data-bingo-theme="classic"] #app .topbar {
   position: relative !important;
   z-index: 100 !important;
@@ -7522,7 +7522,7 @@ html[data-bingo-theme="classic"] #app .topbar .header-actions {
   grid-template-columns: minmax(280px, 1fr) repeat(4, minmax(92px, 118px)) 104px !important;
 }
 
-/* Theme is a compact header action, never a large Hall control. */
+
 html[data-bingo-theme] #app .topbar .bingo-theme-switcher.header-theme-switcher {
   box-sizing: border-box !important;
   width: 104px !important;
@@ -7565,7 +7565,7 @@ html[data-bingo-theme] #app .topbar .bingo-theme-switcher.header-theme-switcher 
   }
 }
 
-/* Planet Hall: keep the complete console inside the viewport. */
+
 html[data-bingo-theme="classic"],
 html[data-bingo-theme="classic"] body,
 html[data-bingo-theme="classic"] body > #app,
@@ -7676,7 +7676,7 @@ html[data-bingo-theme="classic"] #app :is(.game-layout, .dealer-layout, .design-
   }
 }
 
-/* The Bingo pattern header is informational and is never highlighted. */
+
 html[data-bingo-theme] body #app .pattern-panel > header {
   border: 0 !important;
   background: transparent !important;
@@ -7690,7 +7690,7 @@ html[data-bingo-theme] body #app .pattern-panel > header * {
   filter: none !important;
 }
 
-/* Planet Hall setup labels sit on a cream surface and use dark ink. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .setup-fields label > span {
   color: #50392b !important;
   -webkit-text-fill-color: #50392b !important;
@@ -7700,7 +7700,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .setup-fields label > span
   opacity: 1 !important;
 }
 
-/* The round-summary pattern name is plain text, never a highlighted badge. */
+
 html[data-bingo-theme] body #app .app-shell .round-snapshot > :first-child {
   padding: 0 !important;
   border: 0 !important;
@@ -7711,7 +7711,7 @@ html[data-bingo-theme] body #app .app-shell .round-snapshot > :first-child {
   filter: none !important;
 }
 
-/* Incorrect-call summaries are centered within their card on every surface. */
+
 html[data-bingo-theme] body #app .incorrect-bingo-tally {
   display: grid !important;
   align-content: center !important;
@@ -7735,7 +7735,7 @@ html[data-bingo-theme] body #app .dealer-stats > :not(.incorrect-bingo-tally) :i
   text-align: left !important;
 }
 
-/* Remove Planet Hall graph-paper textures; structural canvases use solids only. */
+
 html[data-bingo-theme="classic"] body #app .app-shell.theme-light :is(
   .game-layout,
   .dealer-layout,
@@ -7756,7 +7756,7 @@ html[data-bingo-theme="classic"] body #app .app-shell.theme-dark :is(
   background-size: auto !important;
 }
 
-/* Make the letter/hyphen position prominent above the ball number. */
+
 html[data-bingo-theme] body :is(
   .planet-current-ball,
   #app .bingo-ball,
@@ -7780,7 +7780,7 @@ html[data-bingo-theme] body :is(
   opacity: 1 !important;
 }
 
-/* Final placement: keep Theme in the upper action row without consuming a grid row. */
+
 html[data-bingo-theme="classic"] #app .topbar .header-actions {
   position: relative !important;
   grid-template-columns: minmax(280px, 1fr) repeat(4, minmax(92px, 118px)) !important;
@@ -7809,7 +7809,7 @@ html[data-bingo-theme="classic"] #app .topbar .header-actions > .bingo-theme-swi
   font-size: 8.25pt !important;
 }
 
-/* Start auto call is a blue action with no inherited green Hall outline. */
+
 html[data-bingo-theme] #app .caller-panel .btn-auto {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
@@ -7827,7 +7827,7 @@ html[data-bingo-theme] #app .caller-panel .btn-auto:is(:hover, :focus-visible) {
   outline-offset: 2px !important;
 }
 
-/* Theme menu opens above the navigation and game canvas without being clipped. */
+
 html[data-bingo-theme] #app .topbar {
   z-index: 5000 !important;
   overflow: visible !important;
@@ -7853,7 +7853,7 @@ html[data-bingo-theme] #app .topbar .screen-switcher {
   z-index: 1 !important;
 }
 
-/* Classic header: two contained rows with no wrapped pills or clipped tabs. */
+
 html[data-bingo-theme="current"] #app .topbar {
   box-sizing: border-box !important;
   display: grid !important;
@@ -7947,7 +7947,7 @@ html[data-bingo-theme="current"] #app .topbar .screen-switcher {
   }
 }
 
-/* Shared time-panel background is 70px tall in every theme and mode. */
+
 html[data-bingo-theme] #app .topbar {
   grid-template-rows: minmax(126px, auto) 54px !important;
 }
@@ -7965,7 +7965,7 @@ html[data-bingo-theme] #app .topbar .header-actions > .play-time-panel {
   max-height: 70px !important;
 }
 
-/* Time-zone panels retain their full control height inside the separated header. */
+
 html[data-bingo-theme="planet"] #app .topbar {
   grid-template-rows: minmax(124px, auto) 54px !important;
 }
@@ -7989,7 +7989,7 @@ html[data-bingo-theme="planet"] #app .topbar .play-time-panel select {
   max-height: 42px !important;
 }
 
-/* Raise the complete clock/time-zone group together inside its header panel. */
+
 html[data-bingo-theme="planet"] #app .topbar .play-time-panel > :is(div, label) {
   position: relative !important;
   top: -4px !important;
@@ -8006,7 +8006,7 @@ html[data-bingo-theme="planet"] #app .topbar .play-time-panel label > select {
   line-height: 1.1 !important;
 }
 
-/* Final shared geometry: every theme and mode uses identical header positioning. */
+
 html[data-bingo-theme] #app .topbar {
   box-sizing: border-box !important;
   position: relative !important;
@@ -8161,7 +8161,7 @@ html[data-bingo-theme] #app .topbar .play-time-panel label > select {
   }
 }
 
-/* Planet Hall 2 Audience canvas is dark in both app modes, so this status is always white. */
+
 html[data-bingo-theme="planet"] #app .audience-call > p {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
@@ -8169,7 +8169,7 @@ html[data-bingo-theme="planet"] #app .audience-call > p {
   text-shadow: 0 2px 2px rgba(0, 0, 0, .75) !important;
 }
 
-/* Do not let the viewport flex layout collapse the three Classic header lines. */
+
 html[data-bingo-theme="current"] #app .topbar {
   flex: 0 0 auto !important;
   flex-shrink: 0 !important;
@@ -8208,7 +8208,7 @@ html[data-bingo-theme="current"] #app :is(.game-layout, .dealer-layout, .design-
   min-height: 0 !important;
 }
 
-/* Planet Hall 2 uses the same protected three-line header structure. */
+
 html[data-bingo-theme="planet"] #app .topbar {
   box-sizing: border-box !important;
   display: grid !important;
@@ -8322,7 +8322,7 @@ html[data-bingo-theme="planet"] #app .topbar .screen-switcher {
   }
 }
 
-/* Screen tabs always occupy a separate contained line; the page never pans sideways. */
+
 html[data-bingo-theme],
 html[data-bingo-theme] body,
 html[data-bingo-theme] body > #app,
@@ -8354,7 +8354,7 @@ html[data-bingo-theme] #app :is(.game-layout, .dealer-layout, .design-screen, .a
   overflow-x: hidden !important;
 }
 
-/* Ready to play matches the rectangular header action buttons, never a round pill. */
+
 html[data-bingo-theme] #app .topbar .status-pill {
   box-sizing: border-box !important;
   display: grid !important;
@@ -8375,7 +8375,7 @@ html[data-bingo-theme="current"] #app .topbar .status-pill {
   border-radius: 8px !important;
 }
 
-/* Classic header uses three visual lines: identity/time, actions, then screen tabs. */
+
 html[data-bingo-theme="current"] #app .topbar {
   grid-template-columns: minmax(220px, 320px) minmax(0, 1fr) !important;
   grid-template-rows: auto auto !important;
@@ -8448,7 +8448,7 @@ html[data-bingo-theme="current"] #app .topbar .screen-switcher {
   }
 }
 
-/* Cascade-final synchronized header geometry for every theme and mode. */
+
 html[data-bingo-theme] #app .topbar {
   box-sizing: border-box !important;
   display: grid !important;
@@ -8570,7 +8570,7 @@ html[data-bingo-theme] #app .topbar .play-time-panel label > select {
   padding-bottom: 4px !important;
 }
 
-/* Cascade-final Audience waiting-message contrast. */
+
 html[data-bingo-theme] #app .app-shell.theme-dark .audience-call > p {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
@@ -8599,7 +8599,7 @@ html[data-bingo-theme]:not([data-bingo-theme="planet"]) #app .app-shell.theme-li
   }
 }
 
-/* Absolute final contrast override for Planet Hall 2's always-dark Audience canvas. */
+
 html[data-bingo-theme="planet"] body #app .app-shell .audience-screen .audience-content .audience-call > p {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
@@ -8608,7 +8608,7 @@ html[data-bingo-theme="planet"] body #app .app-shell .audience-screen .audience-
   text-shadow: 0 2px 2px rgba(0, 0, 0, .8) !important;
 }
 
-/* Player Hall pages scroll vertically; Dealer and Audience keep their contained layouts. */
+
 html[data-bingo-theme]:has(#app .game-layout),
 html[data-bingo-theme]:has(#app .game-layout) body {
   height: auto !important;
@@ -8654,7 +8654,7 @@ html[data-bingo-theme="planet"] .planet-card-wall {
   overflow-y: visible !important;
 }
 
-/* Player Cards and House Controls are prominent, high-contrast section headers. */
+
 html[data-bingo-theme] #app .app-shell :is(.stage-heading, .dealer-hero) .eyebrow {
   font-size: 12pt !important;
   font-weight: 950 !important;
@@ -8679,7 +8679,7 @@ html[data-bingo-theme="classic"] #app .app-shell.theme-light :is(.stage-heading,
   -webkit-text-fill-color: #50321f !important;
 }
 
-/* Player Floor Current Call heading uses display-size, high-contrast type. */
+
 html[data-bingo-theme] #app .current-call-panel > .eyebrow {
   font-size: 14pt !important;
   font-weight: 950 !important;
@@ -8704,7 +8704,7 @@ html[data-bingo-theme="classic"] #app .app-shell.theme-light .current-call-panel
   -webkit-text-fill-color: #50321f !important;
 }
 
-/* Player Cards header is larger and fully legible on every stage surface. */
+
 html[data-bingo-theme] #app .cards-stage .stage-heading .eyebrow {
   font-size: 14pt !important;
   font-weight: 950 !important;
@@ -8730,7 +8730,7 @@ html[data-bingo-theme="classic"] #app .app-shell.theme-light .cards-stage .stage
   -webkit-text-fill-color: #342019 !important;
 }
 
-/* Classic dark mode section eyebrows must override older per-theme muted colors. */
+
 html[data-bingo-theme="current"] body #app .app-shell.theme-dark .cards-stage .stage-heading .eyebrow,
 html[data-bingo-theme="classic"] body #app .app-shell.theme-dark .cards-stage .stage-heading .eyebrow {
   color: #fff !important;
@@ -8749,7 +8749,7 @@ html[data-bingo-theme="classic"] body #app .app-shell.theme-dark .dealer-layout 
   text-shadow: none !important;
 }
 
-/* Classic uses the current theme key: force correct contrast on each surface. */
+
 html[data-bingo-theme="current"] body #app > .app-shell.theme-dark main.game-layout .cards-stage .stage-heading > .eyebrow {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
@@ -8768,7 +8768,7 @@ html[data-bingo-theme="current"] body #app > .app-shell.theme-dark main.dealer-l
   opacity: 1 !important;
 }
 
-/* Final cross-theme section-heading contrast; do not depend on wrapper structure. */
+
 html[data-bingo-theme] body #app .app-shell .cards-stage .stage-heading .eyebrow,
 html[data-bingo-theme] body #app .app-shell.theme-light .cards-stage .stage-heading .eyebrow,
 html[data-bingo-theme] body #app .app-shell.theme-dark .cards-stage .stage-heading .eyebrow {
@@ -8795,7 +8795,7 @@ html[data-bingo-theme] body #app .app-shell.theme-dark .dealer-layout .dealer-he
   text-shadow: none !important;
 }
 
-/* Rendered Dealer Console markup uses stage-toolbar, not stage-heading. */
+
 html[data-bingo-theme] body #app .app-shell .cards-stage > .stage-toolbar > div:first-child > .eyebrow {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
@@ -8822,7 +8822,7 @@ html[data-bingo-theme] body #app .app-shell.theme-dark .dealer-layout > .dealer-
   text-shadow: none !important;
 }
 
-/* Classic light mode requires a true black House Controls heading. */
+
 html[data-bingo-theme="current"] body #app .app-shell.theme-light .dealer-layout > .dealer-hero > div:first-child > .eyebrow,
 html[data-bingo-theme="classic"] body #app .app-shell.theme-light .dealer-layout > .dealer-hero > div:first-child > .eyebrow {
   color: #000 !important;
@@ -8832,7 +8832,7 @@ html[data-bingo-theme="classic"] body #app .app-shell.theme-light .dealer-layout
   text-shadow: none !important;
 }
 
-/* Classic dark mode carries one navy palette throughout the Dealer Console. */
+
 html[data-bingo-theme="current"] body #app .app-shell.theme-dark .dealer-layout {
   --dealer-bg: #071a2f;
   --dealer-panel: #102a49;
@@ -8890,7 +8890,7 @@ html[data-bingo-theme="current"] body #app .app-shell.theme-dark .dealer-layout 
   opacity: 1 !important;
 }
 
-/* Keep Bingo-card numbers readable after the broad light/dark theme text rules. */
+
 html[data-bingo-theme="classic"] body #app .bingo-card .number-cell:not(.called):not(.marked):not(.free),
 html[data-bingo-theme="classic"] body #app .bingo-card .number-cell.called.pattern-called,
 html[data-bingo-theme="classic"] body #app .preview-card .number-cell.called:not(.pattern-called):not(.off-pattern-called),
@@ -8909,7 +8909,7 @@ html[data-bingo-theme="classic"] body #app .bingo-card .number-cell.called.off-p
   text-shadow: none !important;
 }
 
-/* Card Design renders its preview values inside strong/span elements. */
+
 html[data-bingo-theme="classic"] body #app .design-screen .preview-card .number-cell:not(.marked):not(.called):not(.free) :is(strong, span),
 html[data-bingo-theme="classic"] body #app .design-screen .preview-card .number-cell.called:not(.off-pattern-called) :is(strong, span),
 html[data-bingo-theme="classic"] body #app .design-screen .preview-card .number-cell.free :is(strong, span) {
@@ -8927,7 +8927,7 @@ html[data-bingo-theme="classic"] body #app .design-screen .preview-card .number-
   text-shadow: none !important;
 }
 
-/* The Card Design introduction sits on cream in light mode, so it needs dark ink. */
+
 html[data-bingo-theme="classic"] body #app .app-shell.theme-light .design-screen .design-copy > h2 {
   color: #342019 !important;
   -webkit-text-fill-color: #342019 !important;
@@ -8942,7 +8942,7 @@ html[data-bingo-theme="classic"] body #app .app-shell.theme-light .design-screen
   text-shadow: none !important;
 }
 
-/* Planet Hall 2 light mode: replace the cabinet-dark Dealer palette with light surfaces. */
+
 html[data-bingo-theme="planet"] body #app .app-shell.theme-light .dealer-layout {
   --dealer-bg: #ffffff;
   --dealer-panel: #ffffff;
@@ -8982,7 +8982,7 @@ html[data-bingo-theme="planet"] body #app .app-shell.theme-light .dealer-layout 
   box-shadow: inset 0 0 0 1px #73ea79, 0 10px 26px rgba(0, 0, 0, .12) !important;
 }
 
-/* The red Dealer masthead is unchanged between modes. */
+
 html[data-bingo-theme="planet"] body #app .app-shell.theme-light .dealer-layout > .dealer-hero {
   color: #fff !important;
   border-color: #3fc548 !important;
@@ -9060,7 +9060,7 @@ html[data-bingo-theme="planet"] body #app .app-shell.theme-light .dealer-layout 
   -webkit-text-fill-color: #fff !important;
 }
 
-/* Preserve the dark-mode red/green action colors in the light console. */
+
 html[data-bingo-theme="planet"] body #app .app-shell.theme-light .dealer-layout :is(
   .btn-call,
   .setup-round-btn,
@@ -9102,7 +9102,7 @@ html[data-bingo-theme="planet"] body #app .app-shell.theme-light .dealer-layout 
   -webkit-text-fill-color: #10213d !important;
 }
 
-/* Planet Hall 2 Audience Display follows the same light/dark mode switch. */
+
 html[data-bingo-theme="planet"] body #app .app-shell.theme-light .audience-screen {
   --dealer-bg: #e8f1fb;
   --dealer-panel: #ffffff;
@@ -9149,7 +9149,7 @@ html[data-bingo-theme="planet"] body #app .app-shell.theme-light .audience-scree
   box-shadow: 0 10px 26px rgba(24, 63, 109, .12) !important;
 }
 
-/* Planet Hall's switcher is 54px tall; reserve a full row plus its outer border. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .topbar:has(.screen-switcher) {
   grid-template-rows: 100px 58px !important;
   height: auto !important;
@@ -9174,7 +9174,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar .screen-switcher b
   line-height: 1.15 !important;
 }
 
-/* Player Hall 2's unlimited-credit symbol sits on a pale tile in light mode. */
+
 html[data-bingo-theme="planet"] body #app .app-shell.theme-light .planet-credit > strong {
   color: #000 !important;
   -webkit-text-fill-color: #000 !important;
@@ -9182,7 +9182,7 @@ html[data-bingo-theme="planet"] body #app .app-shell.theme-light .planet-credit 
   text-shadow: none !important;
 }
 
-/* Light Dealer masthead: white copy on red, dark copy inside its white stat tiles. */
+
 html[data-bingo-theme="planet"] body #app .app-shell.theme-light .dealer-layout > .dealer-hero .eyebrow {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
@@ -9211,7 +9211,7 @@ html[data-bingo-theme="planet"] body #app .app-shell.theme-light .dealer-layout 
   text-shadow: none !important;
 }
 
-/* Secondary controls use stronger dark ink on their white faces. */
+
 html[data-bingo-theme="planet"] body #app .app-shell.theme-light .dealer-layout > .dealer-hero :is(
   .popout-btn,
   .edit-setup-btn,
@@ -9223,7 +9223,7 @@ html[data-bingo-theme="planet"] body #app .app-shell.theme-light .dealer-layout 
   text-shadow: none !important;
 }
 
-/* Cascade-final light-console contrast for the masthead and incorrect-call tile. */
+
 html[data-bingo-theme="planet"] body #app .app-shell.theme-light .dealer-layout .dealer-hero > div:first-child > .eyebrow {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
@@ -9251,7 +9251,7 @@ html[data-bingo-theme="planet"] body #app .app-shell.theme-light .dealer-layout 
   text-shadow: none !important;
 }
 
-/* Every enabled Dealer button gets a visible light-mode hover state. */
+
 html[data-bingo-theme="planet"] body #app .app-shell.theme-light .dealer-layout button:hover:not(:disabled) {
   color: #10213d !important;
   -webkit-text-fill-color: #10213d !important;
@@ -9304,7 +9304,7 @@ html[data-bingo-theme="planet"] body #app .app-shell.theme-light .dealer-layout 
   background-color: #0e58b8 !important;
 }
 
-/* The Planet Hall shell is a sibling of #app, so mode detection must come from :has(). */
+
 html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) .planet-hall-shell .planet-credit > strong {
   color: #000 !important;
   -webkit-text-fill-color: #000 !important;
@@ -9313,7 +9313,7 @@ html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) .planet-ha
   text-shadow: none !important;
 }
 
-/* Target the rendered House Controls node directly, independent of generated class names. */
+
 html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) #app .app-shell.theme-light main.dealer-layout .dealer-hero > div:first-child > :first-child,
 html[data-bingo-theme="planet"] body:has(#app .app-shell.theme-light) #app .app-shell.theme-light main.dealer-layout .dealer-hero .eyebrow {
   color: #fff !important;
@@ -9333,7 +9333,7 @@ html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout > .dealer-he
   }
 }
 
-/* Dealer-managed Bingo event schedule */
+
 #app .dealer-layout .bingo-schedule-editor {
   display: grid;
   gap: 16px;
@@ -9524,7 +9524,7 @@ html[data-bingo-theme="planet"] #app .app-shell.theme-light .bingo-schedule-form
   }
 }
 
-/* Dealer-managed prizes intentionally use independent presentation hooks. */
+
 #app .dealer-layout .bingo-prizes-editor {
   display: grid;
   gap: 16px;
@@ -9699,7 +9699,7 @@ html[data-bingo-theme="planet"] #app .app-shell.theme-light .bingo-prizes-form i
   }
 }
 
-/* Planet Hall must remain a viewport-sized console inside the casino iframe. */
+
 html[data-bingo-theme="planet"],
 html[data-bingo-theme="planet"] body {
   width: 100% !important;
@@ -9782,7 +9782,7 @@ html[data-bingo-theme="planet"] .planet-card-wall :is(.number-cell, .bingo-lette
   width: auto !important;
 }
 
-/* Two columns leave guaranteed room for the flashboard in ordinary windows. */
+
 @media (max-width: 1500px) {
   html[data-bingo-theme="planet"] .planet-card-wall {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -9808,7 +9808,7 @@ html[data-bingo-theme="planet"] .planet-number-board span {
   min-height: 0 !important;
 }
 
-/* Planet Hall 2 uses the full card stage as a flashboard until the Dealer starts play. */
+
 html[data-bingo-theme="planet"] .planet-idle-flashboard[hidden] {
   display: none !important;
 }
@@ -9976,7 +9976,7 @@ html[data-bingo-theme="planet"] .planet-idle-number-board > span.latest {
   text-shadow: none;
 }
 
-/* Dealer-configured special balls are true auto-stamps shared by every theme. */
+
 [data-bingo-theme] #app .number-cell:is(.hot-ball-stamp, .birthday-ball-stamp) {
   outline: 3px solid #ffbe24 !important;
   outline-offset: -4px !important;
@@ -10131,7 +10131,7 @@ html[data-bingo-theme="planet"] .planet-idle-number-board > span.latest {
   }
 }
 
-/* Planet Hall and Classic can opt into the complete pre-game flashboard. */
+
 .other-theme-waiting-flashboard[hidden] {
   display: none !important;
 }
@@ -10559,7 +10559,7 @@ html[data-bingo-theme="planet"] .planet-current-ball strong {
   }
 }
 
-/* Keep the flashboard visible and keep every footer control inside its row. */
+
 html[data-bingo-theme="planet"] .planet-number-board {
   display: grid !important;
   align-self: stretch !important;
@@ -10728,7 +10728,7 @@ html[data-bingo-theme="planet"] .planet-footer-controls button {
   }
 }
 
-/* Purchase terminal remains readable inside short and narrow game windows. */
+
 [data-bingo-theme="planet"] .planet-purchase-terminal {
   box-sizing: border-box !important;
   padding: clamp(8px, 2vw, 20px) !important;
@@ -10838,7 +10838,7 @@ html[data-bingo-theme="planet"] .planet-footer-controls button {
   }
 }
 
-/* Classic and Current use the same hard viewport boundary as Planet Hall. */
+
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]),
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body {
   box-sizing: border-box !important;
@@ -10943,7 +10943,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-fo
   }
 }
 
-/* Cascade-final readable header actions for Classic and Current. */
+
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .topbar .header-actions {
   grid-template-columns: minmax(270px, 1.4fr) repeat(5, minmax(108px, 1fr)) !important;
   gap: 8px !important;
@@ -10994,7 +10994,7 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .topbar
   }
 }
 
-/* Final authority: Hall 1 overlay and time-zone heading. */
+
 html[data-bingo-theme="classic"] .player-hall-controls {
   top: 50% !important;
   right: auto !important;
@@ -11016,7 +11016,7 @@ html[data-bingo-theme="classic"] #app .play-time-panel :is(.eyebrow, .timezone-l
   text-shadow: 0 1px 2px rgba(0, 0, 0, .72) !important;
 }
 
-/* Hall 1 Player Floor actions use a clean, readable interface face. */
+
 html[data-bingo-theme="classic"] .player-hall-controls button {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
   font-size: clamp(11pt, 2.1vw, 15pt) !important;
@@ -11040,7 +11040,7 @@ html[data-bingo-theme="classic"] .player-hall-controls button > span {
   }
 }
 
-/* Hall 1's screen buttons use the same readable interface typography. */
+
 html[data-bingo-theme="classic"] #app .topbar .screen-switcher button {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
   font-size: clamp(11pt, 1.7vw, 15pt) !important;
@@ -11053,7 +11053,7 @@ html[data-bingo-theme="classic"] #app .topbar .screen-switcher button {
   text-shadow: none !important;
 }
 
-/* The Hall 1 overlay begins below the rendered header and uses the remaining viewport. */
+
 html[data-bingo-theme="classic"] .player-hall-controls {
   z-index: 10000 !important;
   top: var(--hall-controls-safe-top, 220px) !important;
@@ -11071,7 +11071,7 @@ html[data-bingo-theme="classic"] .player-hall-controls .hall-panel-close {
   flex: 0 0 auto !important;
 }
 
-/* Absolute final Hall 1 header layout; this must remain last in the cascade. */
+
 html[data-bingo-theme="classic"] #app .topbar {
   grid-template-columns: minmax(0, 1fr) !important;
   grid-template-rows: auto 54px !important;
@@ -11216,7 +11216,7 @@ html[data-bingo-theme="classic"] #app .topbar .screen-switcher {
   }
 }
 
-/* Hall 1 utility actions share equal columns and comfortably sized labels. */
+
 html[data-bingo-theme="classic"] #app .topbar .header-actions {
   grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
 }
@@ -11273,7 +11273,7 @@ html[data-bingo-theme="classic"] #app .topbar .status-pill {
   }
 }
 
-/* Cascade guard for Hall 1 header sizing. */
+
 html[data-bingo-theme="classic"] #app .topbar .header-actions {
   grid-column: 1 / -1 !important;
   justify-self: stretch !important;
@@ -11339,7 +11339,7 @@ html[data-bingo-theme="classic"] #app .topbar .header-actions > :is(.appearance-
   }
 }
 
-/* Last-word Hall 1 action and clock styling. */
+
 html[data-bingo-theme="classic"] #app .topbar .header-actions {
   background: transparent !important;
 }
@@ -11398,7 +11398,7 @@ html[data-bingo-theme="classic"] #app .topbar .play-time-panel > div > strong {
   }
 }
 
-/* Keep the white Hall 1 time surface entirely above the action row. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions {
   grid-template-rows: 94px 58px !important;
   height: 160px !important;
@@ -11460,7 +11460,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > 
   }
 }
 
-/* Narrow Hall 1 keeps three distinct header rows without stacking over tabs. */
+
 @media (max-width: 650px) {
   html[data-bingo-theme="classic"] body #app .app-shell .topbar {
     grid-template-columns: minmax(0, 1fr) !important;
@@ -11549,7 +11549,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > 
   }
 }
 
-/* Hall 1 speed selection is a large, readable control. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .caller-panel .speed-control {
   width: min(320px, 100%) !important;
   margin: 24px auto 0 !important;
@@ -11583,7 +11583,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .caller-panel .speed-contr
   line-height: 1.1 !important;
 }
 
-/* Give the Player Floor navigation row more air above it. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .topbar {
   row-gap: 24px !important;
 }
@@ -11607,7 +11607,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar {
   }
 }
 
-/* Separate Hall 1's utility actions from its screen-navigation buttons. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .topbar {
   row-gap: 14px !important;
   padding-top: 8px !important;
@@ -11618,7 +11618,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar .screen-switcher {
   margin-top: 0 !important;
 }
 
-/* Hall 1 call actions use larger, clean interface lettering. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .caller-panel :is(.btn-call, .btn-auto) {
   display: flex !important;
   align-items: center !important;
@@ -11658,7 +11658,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .caller-panel :is(.btn-cal
   }
 }
 
-/* Hall 1 screen navigation has no shared white backing panel. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .topbar .screen-switcher {
   border-color: transparent !important;
   background-color: transparent !important;
@@ -11671,7 +11671,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .topbar .screen-switcher b
   background-clip: padding-box !important;
 }
 
-/* Hall 1 footer mirrors Hall 2: complete pattern card plus a vertical legend. */
+
 html[data-bingo-theme="classic"] body #app .app-shell .app-footer {
   box-sizing: border-box !important;
   display: grid !important;
@@ -11832,7 +11832,7 @@ html[data-bingo-theme="classic"] body #app .app-shell .app-footer .legend-dot {
   html[data-bingo-theme="classic"] body #app .app-shell .app-footer > :is(span, small):nth-child(5) { grid-row: 5 !important; }
 }
 
-/* Classic uses the same large, complete time panel as Planet Hall 1. */
+
 html[data-bingo-theme="current"] body #app .app-shell .topbar {
   grid-template-rows: 160px 54px !important;
   row-gap: 14px !important;
@@ -11953,7 +11953,7 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > 
   }
 }
 
-/* Classic time columns stay separate inside the real available panel width. */
+
 html[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
   grid-template-columns: minmax(120px, .8fr) minmax(185px, 1.25fr) minmax(150px, 1fr) !important;
   column-gap: 10px !important;
@@ -11987,7 +11987,7 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel s
   white-space: nowrap !important;
 }
 
-/* Classic receives the same enlarged Auto-call Speed control as Hall 1. */
+
 html[data-bingo-theme="current"] body #app .app-shell .caller-panel .speed-control {
   width: min(320px, 100%) !important;
   margin: 24px auto 0 !important;
@@ -12036,7 +12036,7 @@ html[data-bingo-theme="current"] body #app .app-shell .caller-panel .speed-contr
   }
 }
 
-/* Final Classic navigation and time-zone containment. */
+
 html[data-bingo-theme="current"] body #app .app-shell .topbar .screen-switcher {
   border-color: transparent !important;
   background-color: transparent !important;
@@ -12072,7 +12072,7 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel s
   }
 }
 
-/* Final Hall 2 nine-action grid, kept after every theme override. */
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
@@ -12086,7 +12086,7 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-control
   grid-column: span 1 !important;
 }
 
-/* Unfinished Hall actions remain visible but unmistakably unavailable. */
+
 html[data-bingo-theme] body .player-hall-controls :is([data-hall-action="trade"], [data-hall-action="next"]):disabled {
   border-color: #626a76 !important;
   color: #d1d5db !important;

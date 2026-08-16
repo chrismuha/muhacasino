@@ -11,7 +11,7 @@
     try {
       localStorage.removeItem(STATE_KEY);
     } catch {
-      // A reload still starts from the app defaults when storage is unavailable.
+
     }
     channel?.postMessage({ type: "round-reset", source: windowId });
   }
@@ -34,7 +34,7 @@
       try {
         localStorage.removeItem(STATE_KEY);
       } catch {
-        // Connected windows will stop restoring the previous round when possible.
+
       }
     }
     if (event.data?.type === "request-state") {
@@ -48,7 +48,7 @@
     try {
       deliver(JSON.parse(event.newValue));
     } catch {
-      // Ignore an incomplete storage event.
+
     }
   });
 
@@ -67,7 +67,7 @@
           ? null
           : new URL(popup.location.href);
       } catch {
-        // A named window from another page can still be safely navigated below.
+
       }
       const wrongScreen = Object.entries(parameters).some(
         ([key, value]) => current?.searchParams.get(key) !== String(value)
@@ -103,7 +103,7 @@
       try {
         localStorage.setItem(STATE_KEY, JSON.stringify(state));
       } catch {
-        // Open windows still synchronize through BroadcastChannel.
+
       }
       channel?.postMessage({ type: "state", state });
     },

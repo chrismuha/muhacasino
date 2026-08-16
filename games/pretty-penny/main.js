@@ -1,4 +1,4 @@
-// Config
+
 const WILD_SYMBOL = "penny";
 const BONUS_SYMBOL = "bonus";
 const LINK_SYMBOL = "LINK";
@@ -14,7 +14,7 @@ const SYMBOL_LABELS = {
 };
 const JACKPOT_TEASER_RATE = 0.06;
 
-// Weights (higher = more common)
+
 const WEIGHTS = {
     [WILD_SYMBOL]: 1,
     piggy: 1,
@@ -25,7 +25,7 @@ const WEIGHTS = {
     strawberry: 8,
 };
 
-// Paytable (multipliers) for 3/4/5 in a row from the left
+
 const PAYTABLE = {
     [WILD_SYMBOL]: { 3: 120, 4: 600, 5: 3000 },
     piggy: { 3: 60, 4: 240, 5: 1200 },
@@ -63,22 +63,22 @@ const MONTE_CARLO_BASELINES_BY_LINES = {
     },
 };
 
-// Paylines
+
 const PAYLINES = [
-    [2, 2, 2, 2, 2], // 1 middle
-    [0, 0, 0, 0, 0], // 2 top
-    [4, 4, 4, 4, 4], // 3 bottom
-    [1, 1, 1, 1, 1], // 4 upper-mid
-    [3, 3, 3, 3, 3], // 5 lower-mid
-    [0, 1, 2, 3, 4], // 6 diagonal down
-    [4, 3, 2, 1, 0], // 7 diagonal up
-    [1, 2, 3, 2, 1], // 8 V around center
-    [0, 1, 0, 1, 0], // 9 small wave near top
-    [4, 3, 4, 3, 4], // 10 small wave near bottom
+    [2, 2, 2, 2, 2],
+    [0, 0, 0, 0, 0],
+    [4, 4, 4, 4, 4],
+    [1, 1, 1, 1, 1],
+    [3, 3, 3, 3, 3],
+    [0, 1, 2, 3, 4],
+    [4, 3, 2, 1, 0],
+    [1, 2, 3, 2, 1],
+    [0, 1, 0, 1, 0],
+    [4, 3, 4, 3, 4],
 ];
 
 
-// DOM
+
 const reelsEl = document.getElementById("reels");
 const messageEl = document.getElementById("message");
 const balanceEl = document.getElementById("balance");
@@ -150,7 +150,7 @@ const SESSION_VISIBILITY_BY_MODE = {
 };
 
 
-// State
+
 const INITIAL_CREDITS_USD = 100.0;
 let balance = INITIAL_CREDITS_USD;
 let isSpinning = false;
@@ -188,7 +188,7 @@ const BONUS_WHEEL_SEGMENTS = [
     { kind: "jackpot", tier: "Grand", weight: 0.002, start: 0.998, end: 1 },
 ];
 
-// Session Winnings State
+
 let sessionWinningsUSD = 0;
 let sessionLossesUSD = 0;
 let netSessionWinningsUSD = 0;
@@ -220,7 +220,7 @@ document.addEventListener("touchend", (e) => {
 }, { passive: false });
 
 
-// Utilities
+
 function fmtUSD(n) {
     return `$${Number(n).toFixed(2)}`;
 }
@@ -398,7 +398,7 @@ function getTotalBet() {
     const lines = parseInt(linesEl.value, 10);
     const betPerLine = parseFloat(betEl.value);
     const denom = getDenominationValue();
-    // Total bet shown in dollars to user (lines * bet credits * denom)
+
     return roundUSD(lines * betPerLine * denom);
 }
 
@@ -920,7 +920,7 @@ function resolveSpinGrid(forceWin) {
     return spinOnce();
 }
 
-// Returns { totalWinUSD, lineWins: [...], winningPositions: Set<string> }
+
 function evaluateGrid(grid, wagerConfig = getWagerConfig()) {
     const { linesActive, betPerLine, denom } = wagerConfig;
 
@@ -960,7 +960,7 @@ function animateSpin(durationMs = 600) {
 }
 
 
-// Lines Preview (now 5 rows)
+
 function renderSingleLinesPreview(targetEl) {
     if (!targetEl) return;
     const active = parseInt(linesEl.value, 10);
@@ -1033,7 +1033,7 @@ function updateGameOddsDisplay() {
 }
 
 
-// Info Overlay
+
 function applyOverlayPage(index) {
     const max = Math.max(overlayPageEls.length - 1, 0);
     overlayPageIndex = Math.min(Math.max(index, 0), max);
@@ -1266,7 +1266,7 @@ function saveSettingsPins() {
     try {
         localStorage.setItem(SETTINGS_PIN_STORAGE_KEY, JSON.stringify(settingsPins));
     } catch {
-        // Pinning still works for the current page when storage is unavailable.
+
     }
 }
 
@@ -1367,15 +1367,15 @@ function setupSettingsOverlay() {
     placeSettingsOnHome();
 }
 
-// Credit step controls (▲ / ▼)
 
-// -----------------------------
-// Session Winnings UI (match Available Credits, DELETE duplicates hard + orphans)
-// -----------------------------
+
+
+
+
 
 const BOX_SELECTOR = ".credits-box, .available-box, .stat-box, .box, .tile, .panel, .balance-box, .stat";
 
-/* Locate the Available Credits box containing the balance value. */
+
 function findAvailableCreditsBox() {
     if (!balanceEl) return null;
     let node = balanceEl;
@@ -1390,7 +1390,7 @@ function findAvailableCreditsBox() {
     return balanceEl.closest(BOX_SELECTOR) || balanceEl.parentElement || null;
 }
 
-/* Match the $ value typography to the Available Credits value node (no layout changes). */
+
 function matchValueTypography(srcValueEl, destValueEl) {
     if (!srcValueEl || !destValueEl) return;
     const cs = getComputedStyle(srcValueEl);
@@ -1425,9 +1425,9 @@ function createSessionStatBox({ availBox, boxId, valueId, labelText }) {
     return statBox;
 }
 
-/* Ensure session stat boxes exist, matching Available Credits. */
+
 function ensureSessionStatsUI() {
-    // HARD DELETE existing session stat containers/values
+
     SESSION_STAT_CLEANUP_SELECTORS.forEach((selector) => {
         document.querySelectorAll(selector).forEach((n) => n.remove());
     });
@@ -1750,7 +1750,7 @@ async function runAutoSpin() {
     if (stoppedForInsufficientCredits) openLastChanceOverlay();
 }
 
-// Main Spin Flow
+
 async function doSpin(options = {}) {
     if (isSpinning) {
         return { completed: false, reason: "busy", totalWinUSD: 0 };
@@ -1772,7 +1772,7 @@ async function doSpin(options = {}) {
     updateTotals();
     clearMessage();
 
-    // Deduct paid bets up front. Free spins retain the triggering wager.
+
     if (isFreeSpin) {
         freeSpinsRemaining -= 1;
         updateFeatureStatus();
@@ -1789,7 +1789,7 @@ async function doSpin(options = {}) {
         await new Promise(r => setTimeout(r, 700));
     }
 
-    // Final outcome
+
     const shouldWin = Math.random() < getTargetSpinWinRate();
     let grid = resolveSpinGrid(shouldWin);
     const bonusTriggered = !isFreeSpin && Math.random() < getFeatureRate(bonusGameOddsEl, 0.01);
@@ -1825,7 +1825,7 @@ async function doSpin(options = {}) {
     subtractNetSessionWinnings(lossComponentUSD);
     if (!isFreeSpin) adjustActualSessionNet(-totalBetUSD);
 
-    // Payout
+
     if (totalWinUSD > 0) {
         balance = clampBalanceUSD(balance + totalWinUSD);
         addSessionWinnings(totalWinUSD);
@@ -1924,7 +1924,7 @@ function bindSpinHold() {
     });
 }
 
-// Events
+
 function onConfigChange() {
     totalBetDisplayOverrideUSD = null;
     updateTotals();
@@ -2019,7 +2019,7 @@ lastChanceConfirmBtn?.addEventListener("click", () => {
 bindRapidPress(overlayPrevBtn, () => stepOverlayPage(-1));
 bindRapidPress(overlayNextBtn, () => stepOverlayPage(1));
 
-// Keyboard shortcuts
+
 document.addEventListener("keydown", (e) => {
     const target = e.target;
     const isTypingField = target && (
@@ -2073,7 +2073,7 @@ document.addEventListener("keyup", (e) => {
     handleSpinAction();
 });
 
-// Init
+
 (function init() {
     setupSettingsOverlay();
     setupFeatureUI();
@@ -2091,7 +2091,7 @@ document.addEventListener("keyup", (e) => {
     updateGameOddsDisplay();
     updateAutoSpinControls();
 
-    // ARIA defaults
+
     payInfoBtn?.setAttribute("aria-expanded", "false");
     if (previewOverlayEl) previewOverlayEl.hidden = true;
     if (lastChanceOverlayEl) lastChanceOverlayEl.hidden = true;
