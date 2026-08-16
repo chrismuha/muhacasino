@@ -6800,6 +6800,49 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball.h
   }
 }
 
+/* Player-floor Bingo cards stay square in every theme and card-count view. */
+html[data-bingo-theme] body #app .cards-grid {
+  grid-auto-rows: auto !important;
+  grid-template-rows: repeat(var(--card-rows), auto) !important;
+  align-items: start !important;
+}
+
+html[data-bingo-theme] body :is(
+  #app .cards-grid > .bingo-card,
+  .planet-hall-shell .planet-card-wall .bingo-card
+) {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  aspect-ratio: 1 / 1 !important;
+  align-self: start !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme] body :is(
+  #app .cards-grid > .bingo-card,
+  .planet-hall-shell .planet-card-wall .bingo-card
+) > .number-grid {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  grid-template-rows: repeat(5, minmax(0, 1fr)) !important;
+  overflow: hidden !important;
+}
+
+html[data-bingo-theme] body :is(
+  #app .cards-grid > .bingo-card,
+  .planet-hall-shell .planet-card-wall .bingo-card
+) .number-cell {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
 @media (min-width: 1101px) {
   html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .card-view-tools {
     display: grid !important;
