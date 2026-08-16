@@ -6926,6 +6926,78 @@ html[data-bingo-theme] body :is(
   overflow-wrap: normal !important;
 }
 
+/* Keep VIEW in the top bar in every hall; never cover or clip game content. */
+html[data-bingo-theme] body > .universal-controls-dock {
+  position: fixed !important;
+  z-index: 21500 !important;
+  top: max(8px, env(safe-area-inset-top)) !important;
+  right: max(10px, env(safe-area-inset-right)) !important;
+  bottom: auto !important;
+  left: auto !important;
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+  transform: none !important;
+  pointer-events: none !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-bingo-theme] body > .universal-controls-dock > :not(.universal-view-button) {
+  display: none !important;
+}
+
+html[data-bingo-theme] body > .universal-controls-dock > .universal-view-button {
+  display: inline-grid !important;
+  grid-template-columns: auto auto !important;
+  place-items: center !important;
+  box-sizing: border-box !important;
+  width: 94px !important;
+  min-width: 94px !important;
+  max-width: 94px !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  margin: 0 !important;
+  padding: 6px 10px !important;
+  gap: 7px !important;
+  pointer-events: auto !important;
+  border: 2px solid #77a4df !important;
+  border-radius: 10px !important;
+  color: #fff !important;
+  background: #17345f !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .3) !important;
+  font: 900 14px/1 system-ui, sans-serif !important;
+  letter-spacing: .03em !important;
+  transform: none !important;
+}
+
+html[data-bingo-theme] body > .universal-controls-dock > .universal-view-button i {
+  font-size: 17px !important;
+  line-height: 1 !important;
+}
+
+html[data-bingo-theme] body > .universal-controls-dock > .universal-view-button span {
+  font: inherit !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 600px) {
+  html[data-bingo-theme] body > .universal-controls-dock > .universal-view-button {
+    width: 82px !important;
+    min-width: 82px !important;
+    max-width: 82px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    padding: 5px 8px !important;
+    gap: 5px !important;
+    font-size: 12px !important;
+  }
+}
+
 /* Desktop sidebar headings remain single-line at every supported zoom/width. */
 @media (min-width: 901px) {
   html[data-bingo-theme] body #app .app-shell .recent-panel .section-heading {
