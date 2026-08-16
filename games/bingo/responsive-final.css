@@ -6800,97 +6800,6 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball.h
   }
 }
 
-/* Player-floor Bingo cards stay square in every theme and card-count view. */
-html[data-bingo-theme] body #app .cards-grid {
-  grid-auto-rows: auto !important;
-  grid-template-rows: repeat(var(--card-rows), auto) !important;
-  align-items: start !important;
-}
-
-html[data-bingo-theme] body :is(
-  #app .cards-grid > .bingo-card,
-  .planet-hall-shell .planet-card-wall .bingo-card
-) {
-  box-sizing: border-box !important;
-  width: 100% !important;
-  min-width: 0 !important;
-  max-width: 100% !important;
-  height: auto !important;
-  min-height: 0 !important;
-  max-height: none !important;
-  aspect-ratio: 1 / 1 !important;
-  align-self: start !important;
-  overflow: hidden !important;
-}
-
-html[data-bingo-theme] body :is(
-  #app .cards-grid > .bingo-card,
-  .planet-hall-shell .planet-card-wall .bingo-card
-) > .number-grid {
-  flex: 1 1 0 !important;
-  min-height: 0 !important;
-  height: auto !important;
-  grid-template-rows: repeat(5, minmax(0, 1fr)) !important;
-  overflow: hidden !important;
-}
-
-html[data-bingo-theme] body :is(
-  #app .cards-grid > .bingo-card,
-  .planet-hall-shell .planet-card-wall .bingo-card
-) .number-cell {
-  min-width: 0 !important;
-  min-height: 0 !important;
-  overflow: hidden !important;
-}
-
-/* Fit the complete card face inside its square instead of clipping the number grid. */
-html[data-bingo-theme] body :is(
-  #app .cards-grid > .bingo-card,
-  .planet-hall-shell .planet-card-wall .bingo-card
-) > .card-top {
-  flex: 0 0 auto !important;
-  min-height: 0 !important;
-  padding-block: 8px !important;
-}
-
-html[data-bingo-theme] body :is(
-  #app .cards-grid > .bingo-card,
-  .planet-hall-shell .planet-card-wall .bingo-card
-) > .bingo-letters {
-  flex: 0 0 auto !important;
-  min-height: 0 !important;
-}
-
-html[data-bingo-theme] body :is(
-  #app .cards-grid > .bingo-card,
-  .planet-hall-shell .planet-card-wall .bingo-card
-) > .card-distance {
-  flex: 0 0 42px !important;
-  box-sizing: border-box !important;
-  min-height: 42px !important;
-  height: 42px !important;
-  margin-top: 5px !important;
-  padding: 5px 9px !important;
-  overflow: hidden !important;
-}
-
-html[data-bingo-theme] body :is(
-  #app .cards-grid > .bingo-card,
-  .planet-hall-shell .planet-card-wall .bingo-card
-) > .card-distance :is(span, strong) {
-  margin: 0 !important;
-  font-size: clamp(12px, 1.15vw, 17px) !important;
-  line-height: 1 !important;
-  white-space: nowrap !important;
-}
-
-html[data-bingo-theme] body :is(
-  #app .cards-grid > .bingo-card,
-  .planet-hall-shell .planet-card-wall .bingo-card
-) > .card-hint {
-  display: none !important;
-}
-
 @media (min-width: 1101px) {
   html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .card-view-tools {
     display: grid !important;
@@ -6913,7 +6822,7 @@ html[data-bingo-theme] body :is(
 @media (min-width: 901px) {
   html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .topbar .play-time-panel {
     display: grid !important;
-    grid-template-columns: minmax(140px, .65fr) minmax(250px, .9fr) minmax(360px, 2.2fr) !important;
+    grid-template-columns: minmax(150px, 1fr) minmax(280px, 1fr) 420px !important;
     width: 100% !important;
     min-width: 0 !important;
     overflow: visible !important;
@@ -6921,17 +6830,18 @@ html[data-bingo-theme] body :is(
 
   html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .topbar .play-time-panel > label {
     box-sizing: border-box !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: none !important;
+    justify-self: end !important;
+    width: 420px !important;
+    min-width: 420px !important;
+    max-width: 420px !important;
     overflow: visible !important;
   }
 
   html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .topbar .play-time-panel > label > select {
     box-sizing: border-box !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: none !important;
+    width: 420px !important;
+    min-width: 420px !important;
+    max-width: 420px !important;
     padding-right: 40px !important;
     overflow: visible !important;
     text-overflow: clip !important;
