@@ -3080,32 +3080,20 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) #app .app-sh
   position: absolute;
   z-index: 1;
   inset: 2px;
-  border-radius: 48% 52% 44% 56% / 55% 43% 57% 45%;
+  border-radius: 0;
   background: var(--splat-ink);
   clip-path: none;
-  -webkit-mask-image:
-    radial-gradient(circle at 50% 50%, #000 0 42%, transparent 43%),
-    radial-gradient(circle at 50% 9%, #000 0 15%, transparent 16%),
-    radial-gradient(circle at 78% 19%, #000 0 14%, transparent 15%),
-    radial-gradient(circle at 91% 49%, #000 0 15%, transparent 16%),
-    radial-gradient(circle at 77% 81%, #000 0 14%, transparent 15%),
-    radial-gradient(circle at 48% 91%, #000 0 15%, transparent 16%),
-    radial-gradient(circle at 20% 80%, #000 0 14%, transparent 15%),
-    radial-gradient(circle at 9% 48%, #000 0 15%, transparent 16%),
-    radial-gradient(circle at 22% 18%, #000 0 14%, transparent 15%);
-  mask-image:
-    radial-gradient(circle at 50% 50%, #000 0 42%, transparent 43%),
-    radial-gradient(circle at 50% 9%, #000 0 15%, transparent 16%),
-    radial-gradient(circle at 78% 19%, #000 0 14%, transparent 15%),
-    radial-gradient(circle at 91% 49%, #000 0 15%, transparent 16%),
-    radial-gradient(circle at 77% 81%, #000 0 14%, transparent 15%),
-    radial-gradient(circle at 48% 91%, #000 0 15%, transparent 16%),
-    radial-gradient(circle at 20% 80%, #000 0 14%, transparent 15%),
-    radial-gradient(circle at 9% 48%, #000 0 15%, transparent 16%),
-    radial-gradient(circle at 22% 18%, #000 0 14%, transparent 15%);
+  -webkit-mask-image: url("./assets/splat-daub-v1.png");
+  mask-image: url("./assets/splat-daub-v1.png");
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
   filter: none;
   opacity: 1;
-  transform: rotate(-6deg) scale(.92);
+  transform: scale(1.12);
 }
 
 [data-daub-design="splat"] :is(#app, .planet-card-wall) .number-cell.marked:not(.called)::before {
@@ -5048,30 +5036,18 @@ html[data-bingo-theme="current"] #app .app-shell.theme-light .app-footer :is(str
 
 .daub-preview.splat {
   background: var(--actual-daub, #126eff);
-  border-radius: 48% 52% 44% 56% / 55% 43% 57% 45%;
+  border-radius: 0;
   clip-path: none;
-  -webkit-mask-image:
-    radial-gradient(circle at 50% 50%, #000 0 42%, transparent 43%),
-    radial-gradient(circle at 50% 9%, #000 0 15%, transparent 16%),
-    radial-gradient(circle at 78% 19%, #000 0 14%, transparent 15%),
-    radial-gradient(circle at 91% 49%, #000 0 15%, transparent 16%),
-    radial-gradient(circle at 77% 81%, #000 0 14%, transparent 15%),
-    radial-gradient(circle at 48% 91%, #000 0 15%, transparent 16%),
-    radial-gradient(circle at 20% 80%, #000 0 14%, transparent 15%),
-    radial-gradient(circle at 9% 48%, #000 0 15%, transparent 16%),
-    radial-gradient(circle at 22% 18%, #000 0 14%, transparent 15%);
-  mask-image:
-    radial-gradient(circle at 50% 50%, #000 0 42%, transparent 43%),
-    radial-gradient(circle at 50% 9%, #000 0 15%, transparent 16%),
-    radial-gradient(circle at 78% 19%, #000 0 14%, transparent 15%),
-    radial-gradient(circle at 91% 49%, #000 0 15%, transparent 16%),
-    radial-gradient(circle at 77% 81%, #000 0 14%, transparent 15%),
-    radial-gradient(circle at 48% 91%, #000 0 15%, transparent 16%),
-    radial-gradient(circle at 20% 80%, #000 0 14%, transparent 15%),
-    radial-gradient(circle at 9% 48%, #000 0 15%, transparent 16%),
-    radial-gradient(circle at 22% 18%, #000 0 14%, transparent 15%);
+  -webkit-mask-image: url("./assets/splat-daub-v1.png");
+  mask-image: url("./assets/splat-daub-v1.png");
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
   filter: none;
-  transform: rotate(-6deg) scale(.92);
+  transform: scale(1.12);
 }
 
 .daub-preview.sharp-splat {

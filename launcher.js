@@ -79,7 +79,7 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_BUILD = "20260816-bingo-hall1-header-containment";
+const SITE_BUILD = "20260816-bingo-splat-daub-v1";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
