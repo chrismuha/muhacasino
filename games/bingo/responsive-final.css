@@ -7275,17 +7275,64 @@ html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell.them
 
 /* The timezone label is layout only; the select is the single visible control. */
 @media (min-width: 901px) {
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel {
+    display: grid !important;
+    grid-template-columns: minmax(150px, .8fr) minmax(220px, 1fr) minmax(300px, 1.25fr) !important;
+    grid-template-rows: minmax(64px, auto) !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 108px !important;
+    height: auto !important;
+    max-height: none !important;
+    padding: 10px 14px !important;
+    gap: 18px !important;
+    overflow: visible !important;
+  }
+
   html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: max-content 46px !important;
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    align-items: end !important;
+    align-self: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 70px !important;
+    height: 70px !important;
+    padding: 0 !important;
+    gap: 5px !important;
+    overflow: visible !important;
     border: 0 !important;
     border-radius: 0 !important;
     background: transparent !important;
     box-shadow: none !important;
   }
 
-  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label::before,
-  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label::after {
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label::before {
     display: none !important;
     content: none !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label::after {
+    content: "" !important;
+    position: absolute !important;
+    z-index: 3 !important;
+    top: auto !important;
+    right: 16px !important;
+    bottom: 17px !important;
+    display: block !important;
+    width: 0 !important;
+    height: 0 !important;
+    border-right: 7px solid transparent !important;
+    border-left: 7px solid transparent !important;
+    border-top: 8px solid #17243a !important;
+    pointer-events: none !important;
   }
 
   html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label > select {
@@ -7295,14 +7342,7 @@ html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell.them
     border-radius: 8px !important;
     padding: 6px 42px 6px 12px !important;
     background-color: #fff !important;
-    background-image:
-      linear-gradient(45deg, transparent 50%, #17243a 50%),
-      linear-gradient(135deg, #17243a 50%, transparent 50%) !important;
-    background-position:
-      calc(100% - 18px) 50%,
-      calc(100% - 12px) 50% !important;
-    background-size: 7px 7px, 7px 7px !important;
-    background-repeat: no-repeat !important;
+    background-image: none !important;
     box-shadow: none !important;
   }
 
@@ -7311,8 +7351,10 @@ html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell.them
     -webkit-text-fill-color: #fff !important;
     border-color: #6f8fbe !important;
     background-color: #0d192a !important;
-    background-image:
-      linear-gradient(45deg, transparent 50%, #fff 50%),
-      linear-gradient(135deg, #fff 50%, transparent 50%) !important;
+    background-image: none !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell.theme-dark .topbar .play-time-panel > label::after {
+    border-top-color: #fff !important;
   }
 }
