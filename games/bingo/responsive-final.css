@@ -123,6 +123,7 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   }
 }
 
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar > .planet-footer-collapse {
   position: absolute !important;
   z-index: 500 !important;
@@ -7092,5 +7093,59 @@ html[data-bingo-theme] body > .universal-controls-dock > .universal-view-button 
   html[data-bingo-theme] body #app .app-shell .recent-panel .section-heading > span {
     flex: 0 0 auto !important;
     white-space: nowrap !important;
+  }
+}
+
+/* Final desktop corrections for dealer heading containment and Planet Hall 1 time height. */
+@media (min-width: 901px) {
+  html[data-bingo-theme="planet"] body #app .app-shell > .dealer-layout {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding-inline: 24px !important;
+    overflow-x: clip !important;
+  }
+
+  html[data-bingo-theme="planet"] body #app .app-shell > .dealer-layout > .dealer-hero {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-inline: 0 !important;
+    padding-inline: 24px !important;
+    transform: none !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme="planet"] body #app .app-shell > .dealer-layout > .dealer-hero h2 {
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    text-indent: 0 !important;
+    transform: none !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+    box-sizing: border-box !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: 38px 44px !important;
+    align-content: center !important;
+    width: 100% !important;
+    min-height: 108px !important;
+    height: 108px !important;
+    max-height: 108px !important;
+    padding-block: 8px !important;
+    row-gap: 4px !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > label {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    min-height: 44px !important;
+    height: 44px !important;
+    max-height: 44px !important;
+    margin: 0 !important;
   }
 }
