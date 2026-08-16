@@ -2315,6 +2315,31 @@
     if (triggerLabel) triggerLabel.textContent = selectedThemeLabel;
   }
 
+  function widenStandaloneDashes(root = document.body) {
+    if (!root) return;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const replacements = [];
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      const parentTag = node.parentElement?.tagName;
+      if (!["SCRIPT", "STYLE", "TEXTAREA"].includes(parentTag) && node.nodeValue?.trim() === "-") {
+        replacements.push(node);
+      }
+    }
+    replacements.forEach((node) => {
+      node.nodeValue = node.nodeValue.replace("-", "—");
+    });
+  }
+
+  const dashObserver = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === "characterData") widenStandaloneDashes(mutation.target.parentElement);
+      mutation.addedNodes.forEach((node) => widenStandaloneDashes(node.nodeType === Node.TEXT_NODE ? node.parentElement : node));
+    });
+  });
+  widenStandaloneDashes();
+  dashObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
+
   document.addEventListener("input", saveCardCount, true);
   document.addEventListener("change", saveCardCount, true);
   document.addEventListener("change", saveCardSerialSetting, true);

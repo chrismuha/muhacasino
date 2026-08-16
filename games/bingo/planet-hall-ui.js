@@ -147,10 +147,10 @@
       "#app .bingo-ball, #app .dealer-current-ball, #app .audience-ball"
     );
     const latestText = sourceBall?.querySelector("strong")?.textContent?.trim() || "#";
-    const latestLetter = sourceBall?.querySelector("span, small")?.textContent?.trim() || "-";
+    const latestLetter = sourceBall?.querySelector("span, small")?.textContent?.trim() || "—";
     const latestNumber = /^\d+$/.test(latestText) ? Number(latestText) : null;
     const ballMarker = shell.querySelector(".planet-current-ball small");
-    ballMarker.textContent = latestNumber ? latestLetter : "-";
+    ballMarker.textContent = latestNumber ? latestLetter : "—";
     ballMarker.classList.toggle("is-placeholder", !latestNumber);
     ballMarker.closest(".planet-current-ball")?.classList.toggle("has-placeholder", !latestNumber);
     const currentBall = shell.querySelector(".planet-current-ball");
@@ -283,7 +283,7 @@
             <small>Good luck &amp; have fun!</small>
           </div>
         </section>
-        <div class="planet-current-ball" aria-label="No ball called yet"><small>-</small><strong>#</strong></div>
+        <div class="planet-current-ball" aria-label="No ball called yet"><small>—</small><strong>#</strong></div>
         <div class="planet-credit"><strong>∞</strong><span>CREDITS</span></div>
       </footer>
     `;

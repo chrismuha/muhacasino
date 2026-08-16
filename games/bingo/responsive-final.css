@@ -54,8 +54,6 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   }
 }
 
-
-
 html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar > .planet-footer-collapse {
   position: absolute !important;
   z-index: 500 !important;
@@ -6524,4 +6522,111 @@ html.bingo-embedded-window[data-bingo-theme] body #app .app-shell .topbar .appea
     line-height: 1.1 !important;
     white-space: nowrap !important;
   }
+}
+
+/* Compact, consistent game actions with clear ready-state feedback in every hall. */
+html[data-bingo-theme] body #app .app-shell .topbar .status-pill {
+  transition: filter .16s ease, transform .16s ease, box-shadow .16s ease !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .topbar .status-pill:is(:hover, :active) {
+  filter: brightness(1.2) saturate(1.12) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 7px 16px rgba(0, 0, 0, .22) !important;
+}
+
+html.bingo-embedded-window[data-bingo-theme] body #app .app-shell:has(> .game-layout) > .topbar > .header-actions {
+  grid-template-columns: repeat(3, minmax(118px, 176px)) !important;
+  justify-content: start !important;
+}
+
+html.bingo-embedded-window[data-bingo-theme] body #app .app-shell:has(> .game-layout) > .topbar > .header-actions > :is(.card-design-btn, .status-pill, .new-game-btn) {
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  padding-inline: 6px !important;
+}
+
+@media (max-width: 600px) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell .topbar .header-actions > :is(.appearance-btn, .card-design-btn, .status-pill, .new-game-btn) {
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+    padding-inline: 6px !important;
+  }
+}
+
+/* Keep the compact card-count selector crisp and legible in every theme. */
+html[data-bingo-theme] body #app .app-shell .cards-stage .view-control,
+html[data-bingo-theme] body #app .app-shell .cards-stage .view-control > span,
+html[data-bingo-theme] body #app .app-shell .cards-stage .view-control button {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif !important;
+  font-style: normal !important;
+  font-variant: normal !important;
+  font-stretch: normal !important;
+  letter-spacing: 0 !important;
+  text-shadow: none !important;
+  -webkit-text-stroke: 0 !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .cards-stage .view-control > span {
+  font-weight: 800 !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .cards-stage .view-control button {
+  font-size: 15px !important;
+  font-weight: 750 !important;
+  line-height: 1 !important;
+}
+
+/* Recent-call and called-number information must remain readable at every size. */
+html[data-bingo-theme] body #app .app-shell .recent-panel .section-heading h2,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .recent-panel .section-heading h2 {
+  font-size: clamp(20px, 2.1vw, 24px) !important;
+  font-weight: 900 !important;
+  line-height: 1.15 !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .recent-panel .section-heading > span,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .recent-panel .section-heading > span,
+html[data-bingo-theme] body #app .app-shell .called-history-frame > div:first-child > span,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .called-history-frame > div:first-child > span {
+  font-size: clamp(16px, 1.65vw, 19px) !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .called-history-frame > div:first-child > strong,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .called-history-frame > div:first-child > strong {
+  font-size: clamp(18px, 1.9vw, 22px) !important;
+  font-weight: 900 !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .recent-panel :is(p, small),
+html[data-bingo-theme] body #app .app-shell .called-history-frame > p,
+html[data-bingo-theme="planet"] body > .planet-hall-shell :is(.recent-panel, .called-history-frame) :is(p, small) {
+  font-size: clamp(16px, 1.55vw, 18px) !important;
+  font-weight: 750 !important;
+  line-height: 1.35 !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .recent-panel .recent-ball > span,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .recent-panel .recent-ball > span {
+  font-size: clamp(15px, 1.45vw, 17px) !important;
+  font-weight: 900 !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .recent-panel .recent-ball > strong,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .recent-panel .recent-ball > strong {
+  font-size: clamp(22px, 2.25vw, 27px) !important;
+  font-weight: 950 !important;
+}
+
+html[data-bingo-theme] body #app .app-shell .history-balls span,
+html[data-bingo-theme="planet"] body > .planet-hall-shell .history-balls span {
+  min-width: 54px !important;
+  padding: 10px 9px !important;
+  font-size: clamp(16px, 1.75vw, 20px) !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
 }
