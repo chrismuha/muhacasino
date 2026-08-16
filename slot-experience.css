@@ -1,0 +1,29 @@
+.slot-experience-settings { display: contents; }
+.slot-money-setting, .slot-wheel-setting { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: .7rem; padding: .65rem .75rem; border: 1px solid #ffffff24; border-radius: 10px; background: #ffffff0a; }
+.slot-money-setting span, .slot-wheel-setting span { display: grid; gap: .2rem; min-width: 0; }
+.slot-money-setting input, .slot-wheel-setting input { width: 18px; height: 18px; margin: 0; }
+.slot-money-setting small, .slot-wheel-setting small, .slot-wheel-odds-setting small { opacity: .72; }
+.withdrawal-button { width: 100%; min-width: 0; padding: .8rem 1.15rem; border-radius: 999px; box-shadow: 0 8px 20px #0005; }
+@media (min-width: 901px) { .right:has(> .withdrawal-button:not([hidden])) { grid-template-columns: repeat(5, minmax(110px, 1fr)); } }
+@media (max-width: 900px) { .right > .withdrawal-button { grid-column: 1 / -1; } }
+.slot-experience-overlay { z-index: 1000; }
+html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow: hidden; }
+.slot-experience-panel { max-width: 560px; max-height: 90dvh; overflow: auto; }
+.withdrawal-totals { display: grid; grid-template-columns: repeat(3, 1fr); gap: .65rem; margin: 1rem 0; }
+.withdrawal-totals div { display: grid; gap: .35rem; padding: .8rem; border: 1px solid currentColor; border-radius: 12px; background: #ffffff10; }
+.withdrawal-totals span { font-size: .78rem; opacity: .75; }
+.withdrawal-totals strong { font-size: 1.15rem; }
+.lucky-wheel-panel { text-align: center; }
+.lucky-wheel { position: relative; width: min(270px, 72vw); aspect-ratio: 1; margin: 1rem auto; }
+.lucky-wheel-pointer { position: absolute; z-index: 2; top: -12px; left: 50%; translate: -50%; font-size: 2rem; color: #ffe073; filter: drop-shadow(0 2px 2px #000); }
+.lucky-wheel-disc { width: 100%; height: 100%; border: 8px solid #f5c84c; border-radius: 50%; position: relative; overflow: hidden; background: conic-gradient(#21b66f 0 60deg,#803f9f 60deg 120deg,#1c8bc7 120deg 180deg,#803f9f 180deg 240deg,#e79d24 240deg 300deg,#803f9f 300deg); box-shadow: inset 0 0 0 5px #fff4, 0 8px 30px #0008; }
+.lucky-wheel-disc.spinning { transform: rotate(var(--wheel-turn)); transition: transform 1.5s cubic-bezier(.12,.75,.18,1); }
+.lucky-wheel-disc span { position: absolute; inset: 46% auto auto 50%; width: 44%; text-align: center; transform-origin: 0 50%; font-weight: 900; font-size: .9rem; text-shadow: 0 1px 2px #000; }
+.lucky-wheel-disc span:nth-child(1){transform:rotate(30deg) translateX(12%)} .lucky-wheel-disc span:nth-child(2){transform:rotate(90deg) translateX(12%)} .lucky-wheel-disc span:nth-child(3){transform:rotate(150deg) translateX(12%)} .lucky-wheel-disc span:nth-child(4){transform:rotate(210deg) translateX(12%)} .lucky-wheel-disc span:nth-child(5){transform:rotate(270deg) translateX(12%)} .lucky-wheel-disc span:nth-child(6){transform:rotate(330deg) translateX(12%)}
+.penny-door-host { position: relative; overflow: hidden; }
+.penny-reveal-doors { position: absolute; inset: 0; z-index: 25; display: flex; pointer-events: none; perspective: 1000px; }
+.penny-door { width: 50%; display: grid; place-items: center; color: #fff7d1; font-size: clamp(1.4rem, 5vw, 3.8rem); font-weight: 900; letter-spacing: .08em; text-shadow: 0 3px 8px #6b173e; background: linear-gradient(135deg,#f6a8c9,#bf477d 55%,#79254e); border: 5px solid #f7d780; box-shadow: inset 0 0 30px #fff5; transition: transform .8s cubic-bezier(.5,0,.2,1); }
+.penny-door.left { transform-origin: left center; border-right-width: 2px; } .penny-door.right { transform-origin: right center; border-left-width: 2px; }
+.penny-reveal-doors.open .left { transform: rotateY(-105deg); } .penny-reveal-doors.open .right { transform: rotateY(105deg); }
+@media (max-width: 560px) { .withdrawal-totals { grid-template-columns: 1fr; } .lucky-wheel { width: min(230px, 68vw); } }
+@media (prefers-reduced-motion: reduce) { .lucky-wheel-disc.spinning, .penny-door { transition-duration: .01ms; } }

@@ -382,7 +382,7 @@ function getActiveTotalBetUSD(totalBetOverrideUSD = totalBetDisplayOverrideUSD) 
 function shouldOfferLastChanceSpin(totalBetOverrideUSD = totalBetDisplayOverrideUSD) {
     if (freeSpinsRemaining > 0) return false;
     const totalBetUSD = getActiveTotalBetUSD(totalBetOverrideUSD);
-    return balance > 0 && balance < totalBetUSD;
+    return balance < totalBetUSD && (balance > 0 || window.slotExperience?.isLuckyWheelEnabled());
 }
 
 function getWagerConfig(totalBetOverrideUSD = null) {
@@ -405,8 +405,9 @@ function updateTotals() {
     const totalBet = getActiveTotalBetUSD();
     totalBetEl.textContent = fmtUSD(totalBet);
     balanceEl.textContent = fmtUSD(balance);
+    window.slotExperience?.setBalance(balance);
     const canSpinNow = freeSpinsRemaining > 0 || balance >= totalBet;
-    const canUseLastChance = balance > 0 && balance < totalBet;
+    const canUseLastChance = balance < totalBet && (balance > 0 || window.slotExperience?.isLuckyWheelEnabled());
     spinBtn.disabled = autoSpinRunning ? false : (!(canSpinNow || canUseLastChance) || isSpinning);
     maxBtn.disabled = isSpinning || autoSpinRunning;
     if (resetSessionBtn) resetSessionBtn.disabled = isSpinning || autoSpinRunning;
@@ -929,6 +930,17 @@ function updateLastChanceOverlayContent() {
 
 function openLastChanceOverlay() {
     if (!shouldOfferLastChanceSpin() || !lastChanceOverlayEl || autoSpinRunning || isSpinning) return false;
+    const totalBetUSD = getActiveTotalBetUSD();
+    const requiredCreditUSD = roundUSD(Math.max(totalBetUSD - balance, 0));
+    if (window.slotExperience?.offerLuckyWheel({
+        needed: requiredCreditUSD,
+        wager: totalBetUSD,
+        onAward: async (awardUSD) => {
+            balance = clampBalanceUSD(balance + awardUSD);
+            updateCreditsInsertedDisplay();
+            await doSpin({ totalBetOverrideUSD: totalBetUSD, offerLastChance: false });
+        },
+    })) return true;
     pendingLastChanceSpinUSD = getActiveTotalBetUSD();
     updateLastChanceOverlayContent();
     lastChanceOverlayEl.hidden = false;
@@ -948,6 +960,7 @@ async function tryLastChanceSpin() {
     if (requiredCreditUSD > 0) {
         balance = clampBalanceUSD(balance + requiredCreditUSD);
         creditsInsertedUSD = roundUSD(creditsInsertedUSD + requiredCreditUSD);
+        window.slotExperience?.recordDeposit(requiredCreditUSD);
         updateCreditsInsertedDisplay();
     }
     closeLastChanceOverlay();
@@ -1060,6 +1073,9 @@ function handleEsc(e) {
 
 function getSettingsDefinitions() {
     return [
+        { key: "moneyMode", title: "Money Mode", element: document.getElementById("moneyModeToggle")?.closest(".checkbox-setting") },
+        { key: "luckyWheel", title: "Lucky Wheel", element: document.getElementById("luckyWheelToggle")?.closest(".checkbox-setting") },
+        { key: "luckyWheelOdds", title: "Lucky Wheel Odds", element: document.getElementById("luckyWheelOdds")?.closest(".select") },
         { key: "adjustMoney", title: "Adjust Money", element: creditStepEl?.closest(".credit-controls") },
         { key: "denomination", title: "Denomination", element: denomEl?.closest(".select") },
         { key: "lines", title: "Lines", element: linesEl?.closest(".select") },
@@ -1426,6 +1442,7 @@ function resetSessionState() {
     netSessionLossesUSD = 0;
     actualSessionNetUSD = 0;
     creditsInsertedUSD = INITIAL_CREDITS_USD;
+    window.slotExperience?.reset(INITIAL_CREDITS_USD);
     spinElapsedAccumulatedMs = 0;
     autoSpinStartedAt = 0;
     window.clearInterval(autoSpinElapsedTimer);
@@ -1458,6 +1475,7 @@ function adjustBalanceByCredits(creditDelta) {
     balance = clampBalanceUSD(balance + adjustmentUSD);
     const appliedAdjustmentUSD = roundUSD(balance - previousBalanceUSD);
     creditsInsertedUSD = clampBalanceUSD(creditsInsertedUSD + appliedAdjustmentUSD);
+    if (appliedAdjustmentUSD > 0) window.slotExperience?.recordDeposit(appliedAdjustmentUSD);
     updateCreditsInsertedDisplay();
     updateTotals();
     updateRealtimeCreditMessage();
@@ -1593,6 +1611,7 @@ async function doSpin(options = {}) {
         updateFeatureStatus();
     } else {
         balance = clampBalanceUSD(balance - totalBetUSD);
+        window.slotExperience?.recordPlay(totalBetUSD);
     }
     updateTotals();
 
@@ -1812,6 +1831,7 @@ payInfoBtn?.addEventListener("click", () => {
     togglePreviewOverlay(true);
 });
 document.addEventListener("keydown", handleEsc);
+window.addEventListener("slot-experience-settings-change", updateTotals);
 previewOverlayCloseBtn?.addEventListener("click", () => togglePreviewOverlay(false));
 lastChanceCloseBtn?.addEventListener("click", () => closeLastChanceOverlay({ restoreFocus: true }));
 lastChanceCancelBtn?.addEventListener("click", () => closeLastChanceOverlay({ restoreFocus: true }));

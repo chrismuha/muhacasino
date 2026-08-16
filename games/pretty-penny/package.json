@@ -1,7 +1,7 @@
 {
   "name": "pretty-penny",
   "version": "1.1.3",
-  "description": "Pretty Penny is a play-money slot game with savings banks, linked penny values, a weighted wheel, and Match & Win. NO REAL MONEY",
+  "description": "Pretty Penny is a simulated-credit slot game with savings banks, linked penny values, a weighted wheel, and Match & Win.",
   "main": "main.js",
   "scripts": {
     "build": "node --check main.js"
