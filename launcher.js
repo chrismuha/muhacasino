@@ -79,7 +79,7 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_BUILD = "20260811-collapsible-game-bars";
+const SITE_BUILD = "20260816-planet-hall-2-default";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
@@ -353,12 +353,11 @@ function launchGame(gameId, updateHistory = true) {
   currentGameVersion.textContent = game.version;
   bingoToolbarControls.hidden = gameId !== "bingo";
   if (gameId === "bingo") {
+    bingoThemeSelect.value = "planet";
     try {
-      const savedTheme = localStorage.getItem("muha-bingo-theme");
-      bingoThemeSelect.value = ["planet", "classic", "current"].includes(savedTheme) ? savedTheme : "planet";
-    } catch {
-      bingoThemeSelect.value = "planet";
-    }
+      localStorage.setItem("muha-bingo-theme", "planet");
+      localStorage.setItem("muha-bingo-theme-id-version", "legacy-restored-v1");
+    } catch { }
   }
   gameFrame.title = game.title;
   gameFrame.src = activeGameUrl();

@@ -154,20 +154,12 @@
 
   function savedTheme() {
     try {
-      const value = window.localStorage.getItem(STORAGE_KEY);
-      const storedVersion = window.localStorage.getItem(THEME_ID_VERSION_KEY);
-      const migratedValue = storedVersion === "canonical-v1"
-        ? (CANONICAL_THEME_IDS[value] || value)
-        : value;
-      if (storedVersion !== THEME_ID_VERSION) window.localStorage.setItem(THEME_ID_VERSION_KEY, THEME_ID_VERSION);
-      if (themes.includes(migratedValue)) {
-        if (migratedValue !== value) window.localStorage.setItem(STORAGE_KEY, migratedValue);
-        return migratedValue;
-      }
-      return "planet";
+      window.localStorage.setItem(STORAGE_KEY, "planet");
+      window.localStorage.setItem(THEME_ID_VERSION_KEY, THEME_ID_VERSION);
     } catch {
-      return "planet";
+
     }
+    return "planet";
   }
 
   function setHallControlsCollapsed(collapsed) {
