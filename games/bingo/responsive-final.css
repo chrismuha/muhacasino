@@ -54,6 +54,75 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   }
 }
 
+/* Compact, fully surfaced timezone row in every desktop theme. */
+@media (min-width: 901px) {
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: auto auto !important;
+    min-height: 108px !important;
+    height: auto !important;
+    max-height: none !important;
+    padding-block: 10px !important;
+    row-gap: 5px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label {
+    display: grid !important;
+    grid-template-columns: max-content minmax(0, 1fr) !important;
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 44px !important;
+    height: 44px !important;
+    margin: 0 !important;
+    padding: 4px 5px 4px 10px !important;
+    gap: 10px !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(111, 139, 181, .72) !important;
+    border-radius: 10px !important;
+    background-color: rgba(221, 232, 248, .72) !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label > span {
+    margin: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > label > select {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 34px !important;
+    height: 34px !important;
+    max-height: 34px !important;
+    margin: 0 !important;
+    padding-block: 4px !important;
+    border: 1px solid #7894bd !important;
+    border-radius: 7px !important;
+    color: #17243a !important;
+    -webkit-text-fill-color: #17243a !important;
+    background-color: #fff !important;
+    opacity: 1 !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell.theme-dark .topbar .play-time-panel > label {
+    border-color: #526f9e !important;
+    background-color: #17263d !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell.theme-dark .topbar .play-time-panel > label > select {
+    border-color: #6f8fbe !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+    background-color: #0d192a !important;
+  }
+}
+
 html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar > .planet-footer-collapse {
   position: absolute !important;
   z-index: 500 !important;
