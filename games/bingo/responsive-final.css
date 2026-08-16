@@ -7376,4 +7376,46 @@ html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell.them
   html[data-bingo-theme] body #app .app-shell.theme-dark .topbar .play-time-panel > label::after {
     border-top-color: #fff !important;
   }
+
+  /* Embedded Classic previously forced this panel back to two rows. */
+  html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
+    grid-template-columns: minmax(170px, .75fr) minmax(290px, 1.15fr) minmax(330px, 1.25fr) !important;
+    grid-template-rows: minmax(64px, auto) !important;
+    align-items: center !important;
+    align-content: center !important;
+    min-height: 108px !important;
+    height: auto !important;
+    max-height: none !important;
+    padding: 10px 14px !important;
+    gap: 18px !important;
+    overflow: visible !important;
+  }
+
+  html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > label {
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    align-self: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 70px !important;
+    height: 70px !important;
+    max-height: 70px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    border: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+
+  html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > label > select {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
 }
