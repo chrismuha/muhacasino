@@ -6649,3 +6649,121 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .called-history-frame 
   white-space: normal !important;
   overflow-wrap: anywhere !important;
 }
+
+/* Give the waiting marker a substantial centered bar in every native theme. */
+html[data-bingo-theme] body #app .app-shell .ball-wrap:not(.has-ball) .bingo-ball > span {
+  display: block !important;
+  flex: 0 0 6px !important;
+  width: 34px !important;
+  min-width: 34px !important;
+  height: 6px !important;
+  min-height: 6px !important;
+  margin: 5px 0 8px !important;
+  overflow: hidden !important;
+  background: currentColor !important;
+  border-radius: 999px !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+}
+
+/* The Planet shell draws its placeholder separately; keep it near the number. */
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball.has-placeholder::before {
+  top: 50% !important;
+  width: 30% !important;
+  height: 5px !important;
+  overflow: hidden !important;
+  background: currentColor !important;
+  border-radius: 999px !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  transform: translate(-50%, -22px) !important;
+}
+
+/* Keep the Classic desktop stage title beside its card controls. */
+@media (min-width: 901px) {
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .stage-heading {
+    flex: 0 0 auto !important;
+    min-width: max-content !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .stage-heading h2 {
+    max-width: none !important;
+    margin-bottom: 0 !important;
+    font-size: clamp(22px, 1.4vw, 26px) !important;
+    line-height: 1.05 !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+  }
+
+  /* Reserve enough desktop width for the complete device-time-zone option. */
+  html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .topbar .play-time-panel {
+    grid-template-columns: minmax(130px, .8fr) minmax(260px, 1.2fr) minmax(260px, 1fr) !important;
+  }
+
+  html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .topbar .play-time-panel > label {
+    min-width: 260px !important;
+    overflow: visible !important;
+  }
+
+  html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .topbar .play-time-panel select {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 260px !important;
+    max-width: 100% !important;
+    padding-right: 36px !important;
+    overflow: visible !important;
+    font-size: clamp(15px, 1.15vw, 18px) !important;
+    text-overflow: clip !important;
+  }
+
+  /* Keep all six desktop card-count buttons fully visible and centered. */
+  html[data-bingo-theme] body #app .app-shell .cards-stage .view-control {
+    display: grid !important;
+    grid-template-columns: max-content max-content !important;
+    align-items: center !important;
+    justify-content: end !important;
+    min-width: max-content !important;
+    gap: 8px !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .cards-stage .view-control .btn-group {
+    display: grid !important;
+    grid-template-columns: repeat(6, 36px) !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 224px !important;
+    padding: 3px !important;
+    gap: 1px !important;
+    overflow: visible !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell .cards-stage .view-control button {
+    box-sizing: border-box !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    text-align: center !important;
+  }
+}
+
+@media (min-width: 1101px) {
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .stage-toolbar {
+    display: grid !important;
+    grid-template-columns: max-content minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 18px !important;
+  }
+
+  html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .card-view-tools {
+    display: grid !important;
+    grid-template-columns: minmax(250px, 1fr) max-content max-content !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    gap: 10px !important;
+  }
+}
