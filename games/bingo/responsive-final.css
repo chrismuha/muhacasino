@@ -7150,17 +7150,19 @@ html[data-bingo-theme] body > .universal-controls-dock > .universal-view-button 
   }
 }
 
-/* Planet Hall 2 dealer surfaces use one navy/blue system without player overlays. */
+/* Planet Hall 2 uses its red-and-green house palette throughout the dealer view. */
 html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout {
-  --dealer-bg: #08111f !important;
-  --dealer-panel: #101d31 !important;
-  --dealer-panel-alt: #172945 !important;
-  --dealer-text: #f4f8ff !important;
-  --dealer-muted: #b7c8e3 !important;
-  --dealer-line: #4f73aa !important;
-  --dealer-accent: #2e7be5 !important;
+  --dealer-bg: #120606 !important;
+  --dealer-panel: #681817 !important;
+  --dealer-panel-alt: #8f201d !important;
+  --dealer-text: #fffdf4 !important;
+  --dealer-muted: #f5dfca !important;
+  --dealer-line: #42d84f !important;
+  --dealer-accent: #62e451 !important;
+  --dealer-active: #31b840 !important;
+  --dealer-input: #210b0a !important;
   color: var(--dealer-text) !important;
-  background: linear-gradient(180deg, #0a1425, #07101d) !important;
+  background: linear-gradient(180deg, #3a0d0c, #120606) !important;
 }
 
 html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout > .dealer-hero,
@@ -7174,7 +7176,7 @@ html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout :is(
   color: var(--dealer-text) !important;
   border-color: var(--dealer-line) !important;
   background: var(--dealer-panel) !important;
-  box-shadow: inset 0 0 0 1px rgba(126, 164, 220, .2), 0 8px 20px rgba(0, 0, 0, .24) !important;
+  box-shadow: inset 0 0 0 1px rgba(132, 255, 112, .22), 0 8px 20px rgba(0, 0, 0, .28) !important;
 }
 
 html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout :is(h1, h2, h3, h4, strong, label, .eyebrow) {
@@ -7193,30 +7195,30 @@ html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout :is(input, s
   color: var(--dealer-text) !important;
   -webkit-text-fill-color: var(--dealer-text) !important;
   border-color: var(--dealer-line) !important;
-  background: #0b1627 !important;
+  background: var(--dealer-input) !important;
 }
 
 html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout button:not(:disabled) {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
-  border-color: #6f96cd !important;
-  background: linear-gradient(180deg, #285b99, #17365f) !important;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14), 0 3px 8px rgba(0, 0, 0, .25) !important;
+  border-color: #55e360 !important;
+  background: linear-gradient(180deg, #ba312c, #7c1917) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16), 0 3px 8px rgba(0, 0, 0, .28) !important;
   text-shadow: none !important;
 }
 
 html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout button:is(:hover, :focus-visible):not(:disabled) {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
-  border-color: #9dc8ff !important;
-  background: linear-gradient(180deg, #3a82dc, #205aa7) !important;
-  box-shadow: 0 5px 13px rgba(27, 92, 180, .35) !important;
+  border-color: #b5ff9d !important;
+  background: linear-gradient(180deg, #55d84c, #249c35) !important;
+  box-shadow: 0 5px 13px rgba(40, 180, 58, .34) !important;
 }
 
 html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout button.active:not(:disabled),
 html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout :is(.btn-call, .setup-round-btn, .target-call-btn, .primary-dealer-action):not(:disabled) {
-  border-color: #9cc9ff !important;
-  background: linear-gradient(180deg, #2d83ed, #145ab8) !important;
+  border-color: #c7ffad !important;
+  background: linear-gradient(180deg, #63e94f, #2caf3b) !important;
 }
 
 html[data-bingo-theme="planet"] body:has(#app .dealer-layout) > :is(
