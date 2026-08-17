@@ -6565,6 +6565,25 @@ html.native-pattern-collapsed:is([data-bingo-theme="classic"], [data-bingo-theme
   pointer-events: none !important;
 }
 
+/* The native themes scroll as one document on phones. Keep their footer in
+   that flow so its lower rows and safe-area padding cannot be clipped by the
+   fixed mobile viewport. Planet Hall 2 owns a separate fixed footer shell. */
+@media (max-width: 600px) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(.game-layout) > .app-footer {
+    position: relative !important;
+    inset: auto !important;
+    box-sizing: border-box !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
+    transform: none !important;
+  }
+}
+
 html.bingo-embedded-window[data-bingo-theme] body #app .app-shell:has(> .game-layout) > .topbar > .header-actions {
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
 }

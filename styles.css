@@ -391,6 +391,21 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   border-color: var(--cyan);
   outline: 2px solid rgba(87,228,242,.25);
 }
+.view-layout-icon {
+  display: grid;
+  grid-template-columns: repeat(2, 6px);
+  grid-template-rows: repeat(2, 6px);
+  gap: 2px;
+  width: 14px;
+  height: 14px;
+}
+.view-layout-icon i {
+  display: block;
+  box-sizing: border-box;
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+  background: rgba(255,255,255,.08);
+}
 .back-button { display: inline-flex; align-items: center; gap: 7px; padding: 9px 14px; border: 1px solid rgba(255,255,255,.22); border-radius: 999px; background: #22263c; font-weight: 800; cursor: pointer; }
 .back-button b { font: inherit; }
 .back-button:hover, .back-button:focus-visible { background: #343b5c; outline: 2px solid var(--cyan); }
@@ -542,9 +557,9 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   .back-button b { display: none; }
   .game-identity { flex: 1 1 auto; gap: 5px; }
   .game-identity > strong { font-size: 9pt; text-overflow: ellipsis; }
-  .toolbar-bingo-controls { flex: 0 1 48%; gap: 5px; }
-  .toolbar-theme-picker { flex: 1 1 auto; min-width: 0; }
-  .toolbar-theme-picker select { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; padding-inline: 10px 25px; font-size: 8.5pt; }
+  .toolbar-bingo-controls { flex: 0 0 auto; gap: 5px; }
+  .toolbar-theme-picker { flex: 0 0 auto; min-width: 0; }
+  .toolbar-theme-picker select { box-sizing: border-box; width: clamp(112px, 34vw, 140px); min-width: 112px; max-width: 140px; padding-inline: 10px 25px; font-size: 8.5pt; text-overflow: clip; }
   .toolbar-appearance-button,
   .toolbar-view-button { flex: 0 0 42px; min-width: 42px; width: 42px; padding: 0; }
   .toolbar-appearance-button b,
@@ -670,9 +685,10 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 
   .toolbar-theme-picker select {
     box-sizing: border-box;
-    width: auto;
-    min-width: 0;
-    max-width: 100%;
+    width: clamp(112px, 34vw, 140px);
+    min-width: 112px;
+    max-width: 140px;
+    text-overflow: clip;
   }
 
   .game-load-state {
