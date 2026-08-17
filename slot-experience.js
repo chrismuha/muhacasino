@@ -8,6 +8,7 @@
         luckyWheel: true,
         wheelOdds: 0.5,
         revealDoors: "off",
+        revealDoorRows: [0, 1, 2, 3, 4],
         deposited: 100,
         played: 0,
         balance: 100,
@@ -19,6 +20,9 @@
         state.luckyWheel = saved.luckyWheel !== false;
         state.wheelOdds = [0.25, 0.5, 0.75, 1].includes(Number(saved.wheelOdds)) ? Number(saved.wheelOdds) : 0.5;
         state.revealDoors = ["off", "reels", "symbols"].includes(saved.revealDoors) ? saved.revealDoors : "off";
+        state.revealDoorRows = Array.isArray(saved.revealDoorRows)
+            ? [...new Set(saved.revealDoorRows.map(Number).filter((row) => Number.isInteger(row) && row >= 0 && row < 5))]
+            : [0, 1, 2, 3, 4];
     } catch {  }
 
     function money(value) {
@@ -32,6 +36,7 @@
                 luckyWheel: state.luckyWheel,
                 wheelOdds: state.wheelOdds,
                 revealDoors: state.revealDoors,
+                revealDoorRows: state.revealDoorRows,
             }));
         } catch {  }
     }
@@ -101,10 +106,14 @@
                 <label for="pennyRevealDoors">Pretty Penny reveal doors</label>
                 <select id="pennyRevealDoors">
                     <option value="off">Off</option>
-                    <option value="reels">Cover all reels</option>
-                    <option value="symbols">Cover individual symbols</option>
+                    <option value="reels">Cover selected rows</option>
+                    <option value="symbols">Cover individual symbols in selected rows</option>
                 </select>
-                <small>Choose whether a spin is concealed before the result is revealed. Doors are off by default.</small>
+                <fieldset class="penny-door-rows">
+                    <legend>Rows concealed</legend>
+                    ${Array.from({ length: 5 }, (_, row) => `<label><input type="checkbox" data-penny-door-row="${row}"> Row ${row + 1}</label>`).join("")}
+                </fieldset>
+                <small>Choose one, several, or all rows. Doors are off by default.</small>
             </div>` : ""}`;
         settingsRoot.appendChild(settings);
 
@@ -144,6 +153,16 @@
         wheelToggle.checked = state.luckyWheel;
         odds.value = String(state.wheelOdds);
         if (revealDoors) revealDoors.value = state.revealDoors;
+        const revealDoorRows = Array.from(document.querySelectorAll("[data-penny-door-row]"));
+        revealDoorRows.forEach((checkbox) => {
+            checkbox.checked = state.revealDoorRows.includes(Number(checkbox.dataset.pennyDoorRow));
+            checkbox.addEventListener("change", () => {
+                state.revealDoorRows = revealDoorRows
+                    .filter((rowCheckbox) => rowCheckbox.checked)
+                    .map((rowCheckbox) => Number(rowCheckbox.dataset.pennyDoorRow));
+                save();
+            });
+        });
         moneyToggle.addEventListener("change", () => { state.moneyMode = moneyToggle.checked; updateMoneyUi(); });
         wheelToggle.addEventListener("change", () => {
             state.luckyWheel = wheelToggle.checked;
@@ -226,14 +245,20 @@
     }
 
     function closeReelDoors(reels) {
-        if (state.revealDoors === "off") return;
+        if (state.revealDoors === "off" || state.revealDoorRows.length === 0) return;
         const host = reels?.parentElement;
         if (!reels || !host || host.querySelector(":scope > .penny-reveal-doors")) return;
         host.classList.add("penny-door-host");
         reels.classList.add("penny-doors-active");
+        const selectedRows = new Set(state.revealDoorRows);
         const doorMarkup = state.revealDoors === "symbols"
-            ? `<div class="penny-symbol-doors">${Array.from({ length: 25 }, (_, index) => `<i><span>${index % 2 ? "Penny" : "Pretty"}</span></i>`).join("")}</div>`
-            : `<div class="penny-door left"><span>Pretty</span></div><div class="penny-door right"><span>Penny</span></div>`;
+            ? `<div class="penny-symbol-doors">${Array.from({ length: 25 }, (_, index) => {
+                const selected = selectedRows.has(Math.floor(index / 5));
+                return `<i class="${selected ? "selected" : "uncovered"}"><span>${index % 2 ? "Penny" : "Pretty"}</span></i>`;
+            }).join("")}</div>`
+            : `<div class="penny-row-doors">${Array.from({ length: 5 }, (_, row) => selectedRows.has(row)
+                ? `<div class="penny-row-door-track"><i class="penny-door left"><span>Pretty</span></i><i class="penny-door right"><span>Penny</span></i></div>`
+                : "<div></div>").join("")}</div>`;
         host.insertAdjacentHTML("beforeend", `<div class="penny-reveal-doors mode-${state.revealDoors}" aria-hidden="true">${doorMarkup}</div>`);
         const doors = host.querySelector(":scope > .penny-reveal-doors");
         doors.style.top = `${reels.offsetTop}px`;
