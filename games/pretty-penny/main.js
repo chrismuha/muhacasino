@@ -46,6 +46,8 @@ const JACKPOT_BASE_WAGER_USD = 0.50;
 
 const ROWS = 5;
 const COLS = 5;
+const GEM_HOLD_SPINS = 3;
+const GEM_VALUE_MULTIPLIERS = [0.25, 0.5, 1, 1.5, 2];
 const MAX_OUTCOME_ATTEMPTS = 200;
 const MONTE_CARLO_BASELINES_BY_LINES = {
     spins: 500000,
@@ -200,6 +202,10 @@ let freeSpinWagerConfig = null;
 let featureStatusEl = null;
 let bonusOverlayEl = null;
 let potProgress = [0, 0, 0];
+let gemHoldRow = Math.floor(Math.random() * ROWS);
+let gemHoldSpinsRemaining = GEM_HOLD_SPINS;
+let heldGems = new Map();
+let gemHoldCyclePendingReset = false;
 const potFillEls = [0, 1, 2].map((index) => document.getElementById(`potFill${index}`));
 const potValueEls = [0, 1, 2].map((index) => document.getElementById(`potValue${index}`));
 
@@ -469,12 +475,15 @@ function updateFeatureStatus() {
     if (!featureStatusEl) return;
     const freeSpinsActive = getFeatureRate(freeSpinsOddsEl, 0.03) > 0;
     const bonusActive = getFeatureRate(bonusGameOddsEl, 0.01) > 0;
+    const gemStatus = gemHoldCyclePendingReset
+        ? `Gem Row ${gemHoldRow + 1}: cycle finished • new row next spin`
+        : `Gem Row ${gemHoldRow + 1}: ${heldGems.size}/${COLS} gems • ${gemHoldSpinsRemaining} spin${gemHoldSpinsRemaining === 1 ? "" : "s"} left`;
     if (freeSpinsRemaining > 0) {
-        featureStatusEl.textContent = `FREE SPINS: ${freeSpinsRemaining}`;
+        featureStatusEl.textContent = `FREE SPINS: ${freeSpinsRemaining} • ${gemStatus}`;
     } else if (freeSpinsActive && bonusActive) {
-        featureStatusEl.textContent = "Free Spins & Reserve Wheel active";
+        featureStatusEl.textContent = `Free Spins & Reserve Wheel active • ${gemStatus}`;
     } else {
-        featureStatusEl.textContent = `Free Spins ${freeSpinsActive ? "active" : "not active"} • Reserve Wheel ${bonusActive ? "active" : "not active"}`;
+        featureStatusEl.textContent = `Free Spins ${freeSpinsActive ? "active" : "not active"} • Reserve Wheel ${bonusActive ? "active" : "not active"} • ${gemStatus}`;
     }
     featureStatusEl.classList.toggle("feature-active", freeSpinsRemaining > 0 || freeSpinsActive || bonusActive);
 }
@@ -723,6 +732,15 @@ function createCell(symbol, isWinning = false) {
         cell.setAttribute("aria-label", symbol.anchor ? "Link chip" : `Linked value ${fmtUSD(symbol.value)}`);
         return cell;
     }
+    if (symbol?.kind === "gem") {
+        const chip = document.createElement("span");
+        chip.className = "hold-gem";
+        chip.innerHTML = `<span class="gem-stone" aria-hidden="true">♦</span><strong>${fmtUSD(symbol.value)}</strong><span>HELD GEM</span>`;
+        cell.appendChild(chip);
+        cell.classList.add(symbol.completed ? "gem-row-win" : "gem-held-cell");
+        cell.setAttribute("aria-label", `Held gem worth ${fmtUSD(symbol.value)}`);
+        return cell;
+    }
     if (typeof symbol === "object") {
         const chip = document.createElement("span");
         chip.className = `jackpot-chip jackpot-${symbol.jackpot.toLowerCase()}`;
@@ -784,9 +802,9 @@ function renderOutcomeGrid(grid, winningPositions, jackpotWins, jackpotTeasers =
     const jackpotPositions = new Set();
     for (const jackpotWin of jackpotSymbols) {
         const position = preferredPositions.find(([r, c]) =>
-            !displayPositions.has(`${r},${c}`) && !jackpotPositions.has(`${r},${c}`)
+            displayGrid[r][c]?.kind !== "gem" && !displayPositions.has(`${r},${c}`) && !jackpotPositions.has(`${r},${c}`)
         )
-            || preferredPositions.find(([r, c]) => !jackpotPositions.has(`${r},${c}`));
+            || preferredPositions.find(([r, c]) => displayGrid[r][c]?.kind !== "gem" && !jackpotPositions.has(`${r},${c}`));
         const [row, col] = position;
         displayGrid[row][col] = {
             jackpot: jackpotWin.name,
@@ -839,6 +857,50 @@ function addLinkChips(grid, winningSpin, wagerConfig) {
         }
     }
     return { grid: displayGrid, winUSD, winningPositions, count: valueCount };
+}
+
+function resetGemHoldCycle() {
+    gemHoldRow = Math.floor(Math.random() * ROWS);
+    gemHoldSpinsRemaining = GEM_HOLD_SPINS;
+    heldGems = new Map();
+    gemHoldCyclePendingReset = false;
+}
+
+function advanceGemHold(grid, wagerConfig) {
+    if (gemHoldCyclePendingReset) resetGemHoldCycle();
+    const displayGrid = grid.map((row) => [...row]);
+    const emptyColumns = Array.from({ length: COLS }, (_, col) => col)
+        .filter((col) => !heldGems.has(col))
+        .sort(() => Math.random() - 0.5);
+    const gemsToLand = Math.min(emptyColumns.length, Math.random() < 0.5 ? 2 : 1);
+    emptyColumns.slice(0, gemsToLand).forEach((col) => {
+        const multiplier = GEM_VALUE_MULTIPLIERS[Math.floor(Math.random() * GEM_VALUE_MULTIPLIERS.length)];
+        heldGems.set(col, roundUSD(Math.max(0.01, wagerConfig.totalBetUSD * multiplier)));
+    });
+
+    gemHoldSpinsRemaining -= 1;
+    const completed = heldGems.size === COLS;
+    const winUSD = completed
+        ? roundUSD(Array.from(heldGems.values()).reduce((sum, value) => sum + value, 0))
+        : 0;
+    const winningPositions = new Set();
+    heldGems.forEach((value, col) => {
+        displayGrid[gemHoldRow][col] = { kind: "gem", value, completed };
+        if (completed) winningPositions.add(`${gemHoldRow},${col}`);
+    });
+    const result = {
+        grid: displayGrid,
+        winUSD,
+        winningPositions,
+        completed,
+        row: gemHoldRow + 1,
+        gemCount: heldGems.size,
+        spinsRemaining: gemHoldSpinsRemaining,
+        cycleEnded: completed || gemHoldSpinsRemaining === 0,
+    };
+    if (result.cycleEnded) gemHoldCyclePendingReset = true;
+    updateFeatureStatus();
+    return result;
 }
 
 function updatePotDisplay() {
@@ -1617,6 +1679,7 @@ function resetSessionState() {
     freeSpinsRemaining = 0;
     freeSpinWagerConfig = null;
     potProgress = [0, 0, 0];
+    resetGemHoldCycle();
     updatePotDisplay();
     updateFeatureStatus();
     resetCustomJackpotOdds();
@@ -1799,8 +1862,11 @@ async function doSpin(options = {}) {
     const { totalWinUSD: regularWinUSD, lineWins, winningPositions } = evaluateGrid(grid, wagerConfig);
     const linkResult = addLinkChips(grid, shouldWin, wagerConfig);
     grid = linkResult.grid;
+    const gemResult = advanceGemHold(grid, wagerConfig);
+    grid = gemResult.grid;
     const displayWinningPositions = new Set(winningPositions);
     linkResult.winningPositions.forEach((position) => displayWinningPositions.add(position));
+    gemResult.winningPositions.forEach((position) => displayWinningPositions.add(position));
     bonusResult?.winningPositions.forEach((position) => displayWinningPositions.add(position));
     const jackpotWins = resolveJackpotWins(totalBetUSD);
     const jackpotTeasers = resolveJackpotTeasers(jackpotWins, totalBetUSD);
@@ -1819,7 +1885,7 @@ async function doSpin(options = {}) {
         freeSpinWagerConfig = { ...wagerConfig };
         updateFeatureStatus();
     }
-    const totalWinUSD = roundUSD(regularWinUSD + jackpotWinUSD + bonusWinUSD + linkResult.winUSD + potWinUSD);
+    const totalWinUSD = roundUSD(regularWinUSD + jackpotWinUSD + bonusWinUSD + linkResult.winUSD + potWinUSD + gemResult.winUSD);
     const lossComponentUSD = isFreeSpin ? 0 : Math.max(totalBetUSD - totalWinUSD, 0);
     addSessionLosses(lossComponentUSD);
     addNetSessionLosses(lossComponentUSD);
@@ -1839,6 +1905,7 @@ async function doSpin(options = {}) {
             .concat(jackpotWins.map((jackpot) => `${jackpot.name.toUpperCase()} JACKPOT → ${fmtUSD(jackpot.amountUSD)}`))
             .concat(bonusWinUSD ? [`RESERVE WHEEL ${bonusOutcome.label} → ${fmtUSD(bonusWinUSD)}`] : [])
             .concat(linkResult.winUSD ? [`LINK × ${linkResult.count} VALUES → ${fmtUSD(linkResult.winUSD)}`] : [])
+            .concat(gemResult.winUSD ? [`GEM ROW ${gemResult.row} COMPLETE → ${fmtUSD(gemResult.winUSD)}`] : [])
             .concat(potWinUSD ? [`${potResult.popped.map((index) => SAVINGS_BANKS[index].name).join(" + ")} OPENED → ${fmtUSD(potWinUSD)}`] : [])
             .concat(freeSpinsTriggered ? [`${freeSpinsAwarded} FREE SPINS AWARDED`] : [])
             .join(" • ");
@@ -1849,7 +1916,10 @@ async function doSpin(options = {}) {
         if (status) creditHint = ` ${status}`;
         if (!options.silentNoWin) {
             const featureText = freeSpinsTriggered ? ` ${freeSpinsAwarded} FREE SPINS AWARDED!` : "";
-            setMessage(`${isFreeSpin ? "Free spin" : "No win — try again!"}${featureText}${creditHint}`);
+            const gemText = gemResult.cycleEnded
+                ? ` Gem row ${gemResult.row} finished ${gemResult.gemCount}/${COLS}; a new three-spin row starts next spin.`
+                : ` Gem row ${gemResult.row}: ${gemResult.gemCount}/${COLS}, ${gemResult.spinsRemaining} spin${gemResult.spinsRemaining === 1 ? "" : "s"} left.`;
+            setMessage(`${isFreeSpin ? "Free spin" : "No win — try again!"}${featureText}${gemText}${creditHint}`);
         }
     }
 

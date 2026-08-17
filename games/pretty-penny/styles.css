@@ -19,6 +19,37 @@
     --glow-cycle-duration: 2.4s;
 }
 
+.hold-gem {
+    width: 92%;
+    height: 92%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffb8ea;
+    border-radius: 12px;
+    color: #fff6fd;
+    background: radial-gradient(circle at 35% 25%, #ffecfb 0 8%, #f04db5 28%, #76195f 72%, #2b0b35 100%);
+    box-shadow: inset 0 0 12px rgba(255, 255, 255, .35), 0 0 12px rgba(240, 77, 181, .65);
+    text-align: center;
+}
+
+.hold-gem .gem-stone {
+    color: #bffff5;
+    font-size: clamp(13pt, 2vw, 22pt);
+    line-height: .75;
+    text-shadow: 0 0 8px #50ffe1;
+}
+
+.hold-gem strong { font-size: clamp(7pt, 1.3vw, 11pt); line-height: 1.05; }
+.hold-gem > span:last-child { font-size: clamp(4pt, .6vw, 6pt); letter-spacing: .08em; }
+.reels .cell.gem-row-win { animation: gemRowWin .55s ease-in-out infinite alternate; }
+
+@keyframes gemRowWin {
+    from { box-shadow: inset 0 0 10px #fff, 0 0 8px #ff65cb; }
+    to { box-shadow: inset 0 0 20px #fff, 0 0 22px #ffe66d; }
+}
+
 @font-face {
     font-family: "bootstrap-icons";
     src: url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/fonts/bootstrap-icons.woff2") format("woff2"),
