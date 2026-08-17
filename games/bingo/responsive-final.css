@@ -1,6 +1,3 @@
-
-
-
 html.bingo-embedded-window #app .appearance-btn,
 html.bingo-embedded-window body > .planet-hall-shell .planet-mode-trigger {
   display: none !important;
@@ -54,7 +51,6 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
   }
 }
 
-/* Compact, fully surfaced timezone row in every desktop theme. */
 @media (min-width: 901px) {
   html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -6565,9 +6561,6 @@ html.native-pattern-collapsed:is([data-bingo-theme="classic"], [data-bingo-theme
   pointer-events: none !important;
 }
 
-/* Keep the native mobile footer sticky while allowing its expanded content
-   and safe-area padding to size without clipping. Planet Hall 2 owns a
-   separate fixed footer shell. */
 @media (max-width: 600px) {
   html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(.game-layout) > .app-footer {
     position: sticky !important;
@@ -6615,7 +6608,6 @@ html.bingo-embedded-window[data-bingo-theme] body #app .app-shell:has(> .game-la
   white-space: nowrap !important;
 }
 
-/* The casino toolbar owns appearance in embedded play; keep in-theme actions uniform. */
 html.bingo-embedded-window[data-bingo-theme] body #app .app-shell .topbar .appearance-btn {
   display: none !important;
 }
@@ -6639,7 +6631,6 @@ html.bingo-embedded-window[data-bingo-theme] body #app .app-shell .topbar .appea
   }
 }
 
-/* Compact, consistent game actions with clear ready-state feedback in every hall. */
 html[data-bingo-theme] body #app .app-shell .topbar .status-pill {
   transition: filter .16s ease, transform .16s ease, box-shadow .16s ease !important;
 }
@@ -6671,7 +6662,6 @@ html.bingo-embedded-window[data-bingo-theme] body #app .app-shell:has(> .game-la
   }
 }
 
-/* Keep the compact card-count selector crisp and legible in every theme. */
 html[data-bingo-theme] body #app .app-shell .cards-stage .view-control,
 html[data-bingo-theme] body #app .app-shell .cards-stage .view-control > span,
 html[data-bingo-theme] body #app .app-shell .cards-stage .view-control button {
@@ -6694,7 +6684,6 @@ html[data-bingo-theme] body #app .app-shell .cards-stage .view-control button {
   line-height: 1 !important;
 }
 
-/* Recent-call and called-number information must remain readable at every size. */
 html[data-bingo-theme] body #app .app-shell .recent-panel .section-heading h2,
 html[data-bingo-theme="planet"] body > .planet-hall-shell .recent-panel .section-heading h2 {
   font-size: clamp(20px, 2.1vw, 24px) !important;
@@ -6746,7 +6735,6 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .history-balls span {
   line-height: 1.1 !important;
 }
 
-/* Keep the desktop empty-state copy inside the call-history panel. */
 html[data-bingo-theme] body #app .app-shell .called-history-frame,
 html[data-bingo-theme="planet"] body > .planet-hall-shell .called-history-frame {
   align-items: flex-start !important;
@@ -6765,7 +6753,6 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .called-history-frame 
   overflow-wrap: anywhere !important;
 }
 
-/* Give the waiting marker a substantial centered bar in every native theme. */
 html[data-bingo-theme] body #app .app-shell .ball-wrap:not(.has-ball) .bingo-ball > span {
   display: block !important;
   flex: 0 0 6px !important;
@@ -6781,7 +6768,6 @@ html[data-bingo-theme] body #app .app-shell .ball-wrap:not(.has-ball) .bingo-bal
   line-height: 0 !important;
 }
 
-/* The Planet shell draws its placeholder separately; keep it near the number. */
 html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball.has-placeholder::before {
   top: 50% !important;
   width: 30% !important;
@@ -6794,7 +6780,6 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball.h
   transform: translate(-50%, -22px) !important;
 }
 
-/* Keep the Classic desktop stage title and card controls inside the stage. */
 @media (min-width: 901px) {
   html[data-bingo-theme="classic"] body #app .app-shell .cards-stage .stage-toolbar {
     display: grid !important;
@@ -6835,7 +6820,6 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball.h
     justify-self: start !important;
   }
 
-  /* Reserve enough desktop width for the complete device-time-zone option. */
   html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .topbar .play-time-panel {
     grid-template-columns: minmax(130px, .8fr) minmax(260px, 1.2fr) minmax(260px, 1fr) !important;
   }
@@ -6856,7 +6840,6 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball.h
     text-overflow: clip !important;
   }
 
-  /* Keep all six desktop card-count buttons fully visible and centered. */
   html[data-bingo-theme] body #app .app-shell .cards-stage .view-control {
     display: grid !important;
     grid-template-columns: max-content max-content !important;
@@ -6908,7 +6891,6 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball.h
   }
 }
 
-/* Desktop containment: allocate space instead of clipping Classic toolbar controls. */
 @media (min-width: 901px) {
   html:is([data-bingo-theme="current"], [data-bingo-theme="classic"]) body #app .app-shell .topbar .play-time-panel {
     display: grid !important;
@@ -6993,7 +6975,6 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-current-ball.h
   }
 }
 
-/* Keep player-card footer/status copy compact and on one line. */
 html[data-bingo-theme] body :is(
   #app .cards-grid > .bingo-card,
   .planet-hall-shell .planet-card-wall .bingo-card
@@ -7016,7 +6997,6 @@ html[data-bingo-theme] body :is(
   overflow-wrap: normal !important;
 }
 
-/* Keep VIEW in the top bar in every hall; never cover or clip game content. */
 html[data-bingo-theme] body > .universal-controls-dock {
   position: fixed !important;
   z-index: 21500 !important;
@@ -7092,7 +7072,6 @@ html[data-bingo-theme] body > .universal-controls-dock > .universal-view-button 
   }
 }
 
-/* Desktop sidebar headings remain single-line at every supported zoom/width. */
 @media (min-width: 901px) {
   html[data-bingo-theme] body #app .app-shell .recent-panel .section-heading {
     display: flex !important;
@@ -7116,7 +7095,6 @@ html[data-bingo-theme] body > .universal-controls-dock > .universal-view-button 
   }
 }
 
-/* Final desktop corrections for dealer heading containment and Planet Hall 1 time height. */
 @media (min-width: 901px) {
   html[data-bingo-theme="planet"] body #app .app-shell > .dealer-layout {
     box-sizing: border-box !important;
@@ -7170,7 +7148,6 @@ html[data-bingo-theme] body > .universal-controls-dock > .universal-view-button 
   }
 }
 
-/* Planet Hall 2 uses its red-and-green house palette throughout the dealer view. */
 html[data-bingo-theme="planet"] body #app .app-shell .dealer-layout {
   --dealer-bg: #120606 !important;
   --dealer-panel: #681817 !important;
@@ -7249,7 +7226,6 @@ html[data-bingo-theme="planet"] body:has(#app .dealer-layout) > :is(
   pointer-events: none !important;
 }
 
-/* Planet Hall 1 embedded header fills its row and no longer uses a floating side toggle. */
 html.bingo-embedded-window[data-bingo-theme] body > .hall-controls-toggle {
   display: none !important;
   visibility: hidden !important;
@@ -7295,17 +7271,16 @@ html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell.them
   }
 }
 
-/* The timezone label is layout only; the select is the single visible control. */
 @media (min-width: 901px) {
   html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel {
     display: grid !important;
-    grid-template-columns: minmax(170px, .75fr) minmax(290px, 1.15fr) minmax(330px, 1.25fr) !important;
-    grid-template-rows: minmax(64px, auto) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: minmax(64px, auto) 70px !important;
     align-items: center !important;
     box-sizing: border-box !important;
     width: 100% !important;
     min-width: 0 !important;
-    min-height: 108px !important;
+    min-height: 152px !important;
     height: auto !important;
     max-height: none !important;
     padding: 10px 14px !important;
@@ -7318,8 +7293,8 @@ html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell.them
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
     grid-template-rows: max-content 46px !important;
-    grid-column: 3 !important;
-    grid-row: 1 !important;
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
     align-items: end !important;
     align-self: center !important;
     width: 100% !important;
@@ -7345,6 +7320,20 @@ html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell.them
     background-color: transparent !important;
     background-image: none !important;
     box-shadow: none !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell.theme-light .topbar .play-time-panel > label > span {
+    color: #253b5e !important;
+    -webkit-text-fill-color: #253b5e !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+  }
+
+  html[data-bingo-theme] body #app .app-shell.theme-dark .topbar .play-time-panel > label > span {
+    color: #e9f2ff !important;
+    -webkit-text-fill-color: #e9f2ff !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
   }
 
   html[data-bingo-theme] body #app .app-shell .topbar .play-time-panel > div > strong {
@@ -7399,13 +7388,12 @@ html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell.them
     border-top-color: #fff !important;
   }
 
-  /* Embedded Classic previously forced this panel back to two rows. */
   html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell .topbar .header-actions > .play-time-panel {
-    grid-template-columns: minmax(170px, .75fr) minmax(290px, 1.15fr) minmax(330px, 1.25fr) !important;
-    grid-template-rows: minmax(64px, auto) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: minmax(64px, auto) 70px !important;
     align-items: center !important;
     align-content: center !important;
-    min-height: 108px !important;
+    min-height: 152px !important;
     height: auto !important;
     max-height: none !important;
     padding: 10px 14px !important;
@@ -7414,8 +7402,8 @@ html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell.them
   }
 
   html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell .topbar .play-time-panel > label {
-    grid-column: 3 !important;
-    grid-row: 1 !important;
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
     align-self: center !important;
     width: 100% !important;
     min-width: 0 !important;
@@ -7441,18 +7429,17 @@ html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell.them
     overflow: visible !important;
   }
 
-  /* Planet Hall 1 has the same embedded header and must remain contained too. */
   html.bingo-embedded-window[data-bingo-theme="current"] body #app .app-shell .topbar .header-actions > .play-time-panel {
     grid-column: 1 / -1 !important;
-    grid-template-columns: minmax(170px, .75fr) minmax(290px, 1.15fr) minmax(330px, 1.25fr) !important;
-    grid-template-rows: minmax(64px, auto) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: minmax(64px, auto) 70px !important;
     align-items: center !important;
     align-content: center !important;
     box-sizing: border-box !important;
     width: 100% !important;
     min-width: 0 !important;
     max-width: 100% !important;
-    min-height: 108px !important;
+    min-height: 152px !important;
     height: auto !important;
     max-height: none !important;
     margin: 0 !important;
@@ -7464,8 +7451,8 @@ html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell.them
   html.bingo-embedded-window[data-bingo-theme="current"] body #app .app-shell .topbar .play-time-panel > label {
     position: relative !important;
     inset: auto !important;
-    grid-column: 3 !important;
-    grid-row: 1 !important;
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
     align-self: center !important;
     box-sizing: border-box !important;
     width: 100% !important;
