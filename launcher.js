@@ -371,6 +371,9 @@ function launchGame(gameId, updateHistory = true) {
       localStorage.setItem("muha-bingo-theme-id-version", "legacy-restored-v1");
     } catch { }
     bingoThemeSelect.value = selectedTheme;
+    gameView.dataset.bingoTheme = selectedTheme;
+  } else {
+    delete gameView.dataset.bingoTheme;
   }
   gameFrame.title = game.title;
   gameFrame.src = activeGameUrl();
@@ -456,7 +459,7 @@ bingoAppearanceButton.addEventListener("click", () => {
 
 bingoViewButton.addEventListener("click", () => {
   if (activeGameId !== "bingo") return;
-  gameFrame.contentWindow?.postMessage({ type: "muha-bingo-open-view" }, window.location.origin);
+  gameFrame.contentWindow?.postMessage({ type: "muha-bingo-toggle-view" }, window.location.origin);
 });
 
 function syncBingoAppearanceButton(appearance) {
@@ -469,6 +472,7 @@ function syncBingoAppearanceButton(appearance) {
 }
 
 function sendBingoTheme(theme) {
+  gameView.dataset.bingoTheme = theme;
   gameFrame.contentWindow?.postMessage({
     type: "muha-bingo-theme",
     theme,

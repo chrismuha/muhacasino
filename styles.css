@@ -708,11 +708,12 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 
 
 .game-toolbar { position: relative; }
+.game-view[data-bingo-theme="planet"] .game-toolbar { border-bottom-color: transparent; }
 .toolbar-collapse-button {
   position: absolute;
   z-index: 8;
   left: 50%;
-  bottom: -15px;
+  bottom: -28px;
   display: grid;
   place-items: center;
   box-sizing: border-box;
@@ -730,14 +731,16 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 }
 .bar-collapse-chevron > span {
   display: block;
-  width: 10px;
-  height: 10px;
-  border-right: 4px solid currentColor;
-  border-bottom: 4px solid currentColor;
-  transform: rotate(-135deg);
-  transition: transform .18s ease;
+  box-sizing: border-box;
+  width: 14px;
+  height: 9px;
+  border: 0;
+  background: currentColor;
+  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  transform: none;
+  transition: clip-path .18s ease;
 }
-.game-view.toolbar-collapsed .bar-collapse-chevron > span { transform: rotate(45deg); }
+.game-view.toolbar-collapsed .bar-collapse-chevron > span { clip-path: polygon(0 0, 50% 100%, 100% 0); }
 .toolbar-collapse-button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
 .game-view.toolbar-collapsed .game-toolbar {
   box-sizing: border-box;
@@ -747,7 +750,7 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   border-bottom-color: #405174;
 }
 .game-view.toolbar-collapsed .game-toolbar > :not(.toolbar-collapse-button) { display: none !important; }
-.game-view.toolbar-collapsed .toolbar-collapse-button { bottom: -15px; border-radius: 0 0 12px 12px; }
+.game-view.toolbar-collapsed .toolbar-collapse-button { bottom: -28px; border-radius: 0 0 12px 12px; }
 
 
 html:has(body.game-open),

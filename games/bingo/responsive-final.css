@@ -123,7 +123,7 @@ html[data-bingo-theme="current"] body #app .app-shell .topbar {
 html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar > .planet-footer-collapse {
   position: absolute !important;
   z-index: 500 !important;
-  top: 3px !important;
+  top: 0 !important;
   left: 50% !important;
   display: grid !important;
   visibility: visible !important;
@@ -144,16 +144,19 @@ html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar >
 }
 
 html[data-bingo-theme] body .bar-collapse-chevron > span {
-  width: 10px !important;
-  height: 10px !important;
-  border-right: 4px solid currentColor !important;
-  border-bottom: 4px solid currentColor !important;
-  transform: rotate(-135deg) !important;
-  transition: transform .18s ease !important;
+  box-sizing: border-box !important;
+  width: 14px !important;
+  height: 9px !important;
+  border: 0 !important;
+  background: currentColor !important;
+  clip-path: polygon(0 100%, 50% 0, 100% 100%) !important;
+  transform: none !important;
+  transition: clip-path .18s ease !important;
 }
 
 html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapsed .bar-collapse-chevron > span {
-  transform: rotate(45deg) !important;
+  clip-path: polygon(0 0, 50% 100%, 100% 0) !important;
+  transform: none !important;
 }
 
 html[data-bingo-theme="planet"] body > .planet-hall-shell.planet-footer-collapsed > .planet-status-bar {
@@ -5171,7 +5174,12 @@ html.bingo-embedded-window body > .planet-hall-shell .planet-terminal-header .mu
 }
 
 html.bingo-embedded-window body > .planet-hall-shell .planet-terminal-header {
-  justify-content: flex-end !important;
+  display: none !important;
+  visibility: hidden !important;
+  min-height: 0 !important;
+  height: 0 !important;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 
 
@@ -6231,7 +6239,7 @@ html.bingo-embedded-window.hall-controls-collapsed[data-bingo-theme="planet"] bo
 html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar > .planet-footer-collapse {
   position: absolute !important;
   z-index: 500 !important;
-  top: 3px !important;
+  top: 0 !important;
   left: 50% !important;
   display: grid !important;
   visibility: visible !important;
@@ -6518,10 +6526,144 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .a
   padding-top: 38px !important;
 }
 
+html[data-bingo-theme="planet"] body > .planet-hall-shell:not(.planet-footer-collapsed) > .planet-status-bar {
+  box-sizing: border-box !important;
+  padding-top: 38px !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-flashboard {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-idle-flashboard > header {
+  border-bottom: 0 !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar {
+  border-top: 0 !important;
+}
+
+@media (min-width: 901px) {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell:not(.planet-footer-collapsed) > .planet-status-bar {
+    flex-basis: 214px !important;
+    height: 214px !important;
+    min-height: 214px !important;
+    max-height: 214px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview {
+    position: relative !important;
+    top: -6px !important;
+    align-self: center !important;
+    flex-basis: 108px !important;
+    width: 108px !important;
+    min-width: 108px !important;
+    max-width: 108px !important;
+    height: 108px !important;
+    min-height: 108px !important;
+    max-height: 108px !important;
+    padding: 7px !important;
+    gap: 3px !important;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview {
+    align-self: center !important;
+    flex-basis: 88px !important;
+    width: 88px !important;
+    min-width: 88px !important;
+    max-width: 88px !important;
+    height: 88px !important;
+    min-height: 88px !important;
+    max-height: 88px !important;
+    padding: 6px !important;
+    gap: 2px !important;
+  }
+}
+
+@media (min-width: 601px) {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
+    align-content: center !important;
+    row-gap: 3px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > .planet-legend-item,
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .planet-legend-label {
+    font-size: clamp(12pt, 1.25vw, 17pt) !important;
+    font-weight: 900 !important;
+    line-height: 1.05 !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > small {
+    grid-column: 1 / -1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: clamp(10pt, 1vw, 13pt) !important;
+    font-weight: 850 !important;
+    line-height: 1.05 !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern span {
+    font-size: clamp(13pt, 1.25vw, 17pt) !important;
+    font-weight: 900 !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern strong {
+    font-size: clamp(22pt, 2vw, 28pt) !important;
+    font-weight: 950 !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern small {
+    font-size: clamp(13pt, 1.2vw, 17pt) !important;
+    line-height: 1.25 !important;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1450px) {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
+    grid-template-rows: repeat(3, max-content) max-content !important;
+  }
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(> .game-layout) > .app-footer {
+  display: grid !important;
+  visibility: visible !important;
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  opacity: 1 !important;
+}
+
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(> .game-layout) > .app-footer > .native-pattern-collapse {
+  display: grid !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  opacity: 1 !important;
+}
+
+@media (min-width: 601px) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(> .game-layout) {
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) auto !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(> .game-layout) > .game-layout {
+    min-height: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+}
+
 html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .native-pattern-collapse {
   position: absolute !important;
   z-index: 20 !important;
-  top: 3px !important;
+  top: 0 !important;
   left: 50% !important;
   display: grid !important;
   place-items: center !important;
@@ -6541,7 +6683,8 @@ html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .n
 }
 
 html.native-pattern-collapsed:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .bar-collapse-chevron > span {
-  transform: rotate(45deg) !important;
+  clip-path: polygon(0 0, 50% 100%, 100% 0) !important;
+  transform: none !important;
 }
 
 html.native-pattern-collapsed:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(.game-layout) > .app-footer {
@@ -6559,6 +6702,38 @@ html.native-pattern-collapsed:is([data-bingo-theme="classic"], [data-bingo-theme
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
+}
+
+html[data-bingo-theme="planet"] body > .planet-hall-shell > .planet-status-bar > .planet-footer-collapse,
+html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .native-pattern-collapse {
+  top: -2px !important;
+}
+
+@media (min-width: 901px) {
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(> .game-layout) > .app-footer {
+    grid-template-columns: minmax(390px, 1.35fr) minmax(220px, .65fr) minmax(260px, 1fr) !important;
+  }
+
+  html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(> .game-layout) > .app-footer > :is(span, small) {
+    grid-column: 2 !important;
+  }
+}
+
+html.bingo-embedded-window:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(> .game-layout) > .topbar > .header-actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+html.bingo-embedded-window:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(> .game-layout) > .topbar > .header-actions > .play-time-panel,
+html.bingo-embedded-window:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(> .game-layout) > .topbar > .header-actions > .card-design-btn {
+  grid-column: 1 / -1 !important;
+}
+
+html.bingo-embedded-window:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(> .game-layout) > .topbar > .header-actions > .card-design-btn {
+  grid-row: 2 !important;
+}
+
+html.bingo-embedded-window:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(> .game-layout) > .topbar > .header-actions > :is(.status-pill, .new-game-btn) {
+  grid-row: 3 !important;
 }
 
 @media (max-width: 600px) {

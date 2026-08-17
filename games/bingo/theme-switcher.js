@@ -290,6 +290,10 @@
       queueEmbeddedAppearanceReport();
       return;
     }
+    if (event.data?.type === "muha-bingo-toggle-view") {
+      toggleViewOverlay();
+      return;
+    }
     if (event.data?.type === "muha-bingo-open-view") {
       openViewOverlay();
       return;
@@ -2032,6 +2036,16 @@
     overlay.hidden = false;
   }
 
+  function toggleViewOverlay() {
+    const overlay = document.querySelector(".bingo-view-overlay");
+    if (!overlay) return;
+    if (overlay.hidden) {
+      openViewOverlay();
+    } else {
+      closeViewOverlay();
+    }
+  }
+
   function mountViewOverlay() {
     if (document.querySelector(".bingo-view-overlay")) return;
 
@@ -2040,7 +2054,7 @@
       viewButton.className = "universal-view-button";
       viewButton.type = "button";
       viewButton.innerHTML = '<i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i><span>VIEW</span>';
-      viewButton.addEventListener("click", openViewOverlay);
+      viewButton.addEventListener("click", toggleViewOverlay);
       (document.querySelector(".universal-controls-dock") || document.body).append(viewButton);
     }
 
