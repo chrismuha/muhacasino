@@ -6736,6 +6736,160 @@ html.bingo-embedded-window:is([data-bingo-theme="classic"], [data-bingo-theme="c
   grid-row: 3 !important;
 }
 
+@media (min-width: 901px) {
+  html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell:has(> .game-layout) > .topbar {
+    box-sizing: border-box !important;
+    height: auto !important;
+    min-height: 286px !important;
+    overflow: visible !important;
+  }
+
+  html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell:has(> .game-layout) > .topbar > .header-actions {
+    grid-template-rows: minmax(138px, auto) 48px 48px !important;
+    align-content: start !important;
+    height: auto !important;
+    min-height: 250px !important;
+    gap: 10px !important;
+    overflow: visible !important;
+  }
+
+  html.bingo-embedded-window[data-bingo-theme="classic"] body #app .app-shell:has(> .game-layout) > .topbar .screen-switcher {
+    position: relative !important;
+    inset: auto !important;
+    margin-top: 12px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  html[data-bingo-theme="planet"] body > .planet-hall-shell:not(.planet-footer-collapsed) > .planet-status-bar {
+    flex-basis: 230px !important;
+    height: 230px !important;
+    min-height: 230px !important;
+    max-height: 230px !important;
+    grid-template-columns: minmax(0, 1fr) 62px minmax(138px, .9fr) !important;
+    align-items: stretch !important;
+    gap: 5px !important;
+    padding: 34px 5px 5px !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-box {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: minmax(128px, 1fr) 58px !important;
+    align-items: stretch !important;
+    gap: 5px !important;
+    padding: 3px !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy {
+    grid-row: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy > .footer-pattern,
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .planet-pattern-footer > .footer-pattern {
+    display: grid !important;
+    grid-template-columns: 72px minmax(0, 1fr) !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    gap: 8px !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .pattern-preview {
+    position: static !important;
+    display: grid !important;
+    width: 72px !important;
+    min-width: 72px !important;
+    max-width: 72px !important;
+    height: 72px !important;
+    min-height: 72px !important;
+    max-height: 72px !important;
+    padding: 5px !important;
+    gap: 2px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern > :not(.pattern-preview) {
+    display: block !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern span,
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern strong,
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern small {
+    display: block !important;
+    margin: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern span {
+    font-size: 8pt !important;
+    line-height: 1 !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern strong {
+    margin-top: 3px !important;
+    font-size: 14pt !important;
+    line-height: 1 !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-copy .footer-pattern small {
+    margin-top: 4px !important;
+    font-size: 7.5pt !important;
+    line-height: 1.15 !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend {
+    grid-row: 2 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: repeat(3, 16px) !important;
+    align-content: center !important;
+    width: 100% !important;
+    height: 58px !important;
+    gap: 2px !important;
+    padding: 0 3px !important;
+    overflow: hidden !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend > .planet-legend-item {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    gap: 5px !important;
+    font-size: 8pt !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-pattern-legend .planet-legend-swatch {
+    flex: 0 0 13px !important;
+    width: 13px !important;
+    min-width: 13px !important;
+    height: 13px !important;
+    min-height: 13px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 3px !important;
+    gap: 4px !important;
+  }
+
+  html[data-bingo-theme="planet"] body > .planet-hall-shell .planet-footer-controls > button {
+    min-width: 0 !important;
+    min-height: 48px !important;
+    padding: 3px !important;
+  }
+}
+
 @media (max-width: 600px) {
   html:is([data-bingo-theme="classic"], [data-bingo-theme="current"]) body #app .app-shell:has(.game-layout) > .app-footer {
     position: sticky !important;
