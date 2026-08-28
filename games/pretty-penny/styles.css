@@ -3192,39 +3192,3 @@ label {
 .match-win-grid .jackpot-grand { background: #876500; }
 .match-win-result { min-height: 1.5em; font-weight: 800; }
 @media (max-width: 480px) { .match-win-grid { gap: 8px; } .match-win-grid button { min-height: 76px; padding: 6px; } }
-
-/* Keep every reel and control inside the embedded mobile viewport. */
-@media (max-width: 600px) {
-  html,
-  body,
-  .game,
-  .card {
-    box-sizing: border-box;
-    width: 100%;
-    max-width: 100vw;
-    min-width: 0;
-  }
-
-  .card {
-    overflow-x: clip;
-  }
-
-  .reels {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-
-  .reels .cell,
-  .reels .icon-container,
-  .right > *,
-  .left > * {
-    min-width: 0;
-    max-width: 100%;
-  }
-
-  .feature-status,
-  .auto-spin-hint,
-  .message {
-    overflow-wrap: anywhere;
-    white-space: normal;
-  }
-}
