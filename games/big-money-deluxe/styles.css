@@ -2138,3 +2138,23 @@ button:focus-visible,
 .match-win-grid .jackpot-grand { background: #876500; }
 .match-win-result { min-height: 1.5em; font-weight: 800; }
 @media (max-width: 480px) { .match-win-grid { gap: 8px; } .match-win-grid button { min-height: 76px; padding: 6px; } }
+
+/* The casino toolbar toggle hangs 28px into the iframe on phones. */
+@media (max-width: 600px) {
+  .card:first-child {
+    padding-top: 36px;
+  }
+
+  .title {
+    width: 100%;
+    min-width: 0;
+    padding-inline: 34px;
+    overflow-wrap: anywhere;
+    line-height: 1.08;
+    text-align: center;
+  }
+
+  .title .info-btn {
+    flex: 0 0 30px;
+  }
+}
