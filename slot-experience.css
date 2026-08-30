@@ -1,8 +1,8 @@
 .slot-experience-settings { display: contents; }
-.slot-money-setting, .slot-wheel-setting { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: .7rem; padding: .65rem .75rem; border: 1px solid #ffffff24; border-radius: 10px; background: #ffffff0a; }
-.slot-money-setting span, .slot-wheel-setting span { display: grid; gap: .2rem; min-width: 0; }
-.slot-money-setting input, .slot-wheel-setting input { width: 18px; height: 18px; margin: 0; }
-.slot-money-setting small, .slot-wheel-setting small, .slot-wheel-odds-setting small { opacity: .72; }
+.slot-withdrawal-setting, .slot-wheel-setting { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: .7rem; padding: .65rem .75rem; border: 1px solid #ffffff24; border-radius: 10px; background: #ffffff0a; }
+.slot-withdrawal-setting span, .slot-wheel-setting span { display: grid; gap: .2rem; min-width: 0; }
+.slot-withdrawal-setting input, .slot-wheel-setting input { width: 18px; height: 18px; margin: 0; }
+.slot-play-mode-setting small, .slot-withdrawal-setting small, .slot-wheel-setting small, .slot-wheel-odds-setting small { display: block; margin-top: .35rem; opacity: .72; }
 .withdrawal-button { width: 100%; min-width: 0; padding: .8rem 1.15rem; border-radius: 999px; box-shadow: 0 8px 20px #0005; }
 @media (min-width: 901px) { .right:has(> .withdrawal-button:not([hidden])) { grid-template-columns: repeat(5, minmax(110px, 1fr)); } }
 @media (max-width: 900px) { .right > .withdrawal-button { grid-column: 1 / -1; } }
@@ -37,6 +37,28 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 .penny-reveal-doors.open .penny-symbol-doors i:nth-child(3n) { transition-delay: .12s; }
 @media (max-width: 560px) { .withdrawal-totals { grid-template-columns: 1fr; } .lucky-wheel { width: min(230px, 68vw); } }
 @media (prefers-reduced-motion: reduce) { .lucky-wheel-disc.spinning, .penny-door, .penny-symbol-doors i { transition-duration: .01ms; } }
+
+/* Shared slot HUD normalization. Keeps controls from collapsing into narrow
+   columns when a game is hosted inside the casino iframe. */
+.hud { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; grid-auto-rows: max-content; width: 100%; height: auto; align-items: start; }
+.hud > .left { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-column: 1; grid-row: 2; width: 100%; min-width: 0; }
+.hud > .right { display: grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); grid-column: 1; grid-row: 1; width: 100%; min-width: 0; max-width: 100%; align-items: stretch; }
+.hud > .right > button { width: 100%; min-width: 0; }
+.hud > .right > :is(.auto-spin-hint, .auto-spin-countdown, .message) { grid-column: 1 / -1; width: 100%; min-width: 0; max-width: 100%; margin-inline: 0; text-align: center; overflow-wrap: anywhere; }
+.hud > .left > *, .hud > .right > * { min-width: 0; max-width: 100%; }
+.hud :is(select, input[type="number"], input[type="text"]) { max-width: 100%; }
+
+@media (min-width: 901px) {
+  .hud > .right:has(> .withdrawal-button:not([hidden])) { grid-template-columns: repeat(5, minmax(110px, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  .hud > .left, .hud > .right { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .hud > .left { grid-template-columns: minmax(0, 1fr); }
+  .hud > .right { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
 .penny-door-rows { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; margin: 8px 0 5px; padding: 7px; border: 1px solid rgba(255, 255, 255, .18); border-radius: 8px; }
 .penny-door-rows legend { padding: 0 4px; color: var(--game-muted, #8d98b3); font-size: .78rem; }

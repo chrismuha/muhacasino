@@ -4,7 +4,8 @@
     const gameKey = location.pathname.split("/").filter(Boolean).slice(-2, -1)[0] || "slots";
     const storageKey = `muhaCasino.slotExperience.${gameKey}.v1`;
     const state = {
-        moneyMode: false,
+        displayMode: "credits",
+        withdrawalDemo: false,
         luckyWheel: true,
         wheelOdds: 0.5,
         revealDoors: "off",
@@ -16,7 +17,12 @@
 
     try {
         const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
-        state.moneyMode = Boolean(saved.moneyMode);
+        state.displayMode = ["credits", "money"].includes(saved.displayMode)
+            ? saved.displayMode
+            : (saved.moneyMode ? "money" : "credits");
+        state.withdrawalDemo = typeof saved.withdrawalDemo === "boolean"
+            ? saved.withdrawalDemo
+            : Boolean(saved.moneyMode);
         state.luckyWheel = saved.luckyWheel !== false;
         state.wheelOdds = [0.25, 0.5, 0.75, 1].includes(Number(saved.wheelOdds)) ? Number(saved.wheelOdds) : 0.5;
         state.revealDoors = ["off", "reels", "symbols"].includes(saved.revealDoors) ? saved.revealDoors : "off";
@@ -29,10 +35,16 @@
         return `$${Number(value || 0).toFixed(2)}`;
     }
 
+    function formatAmount(value) {
+        const amount = Number(value || 0).toFixed(2);
+        return state.displayMode === "money" ? `$${amount}` : `${amount} cr`;
+    }
+
     function save() {
         try {
             localStorage.setItem(storageKey, JSON.stringify({
-                moneyMode: state.moneyMode,
+                displayMode: state.displayMode,
+                withdrawalDemo: state.withdrawalDemo,
                 luckyWheel: state.luckyWheel,
                 wheelOdds: state.wheelOdds,
                 revealDoors: state.revealDoors,
@@ -46,11 +58,20 @@
     }
 
     function updateMoneyUi() {
-        document.body.classList.toggle("money-mode-active", state.moneyMode);
-        const toggle = document.getElementById("moneyModeToggle");
-        if (toggle) toggle.checked = state.moneyMode;
+        document.body.classList.toggle("money-display-mode", state.displayMode === "money");
+        document.body.classList.toggle("credits-display-mode", state.displayMode === "credits");
+        const modeSelect = document.getElementById("playModeSelect");
+        if (modeSelect) modeSelect.value = state.displayMode;
+        const withdrawalToggle = document.getElementById("withdrawalDemoToggle");
+        if (withdrawalToggle) withdrawalToggle.checked = state.withdrawalDemo;
         const button = document.getElementById("withdrawalButton");
-        if (button) button.hidden = !state.moneyMode;
+        if (button) button.hidden = !state.withdrawalDemo;
+        const balanceLabel = document.querySelector('.stat:has(#balance) .muted');
+        if (balanceLabel) balanceLabel.textContent = state.displayMode === "money" ? "Available Balance:" : "Available Credits:";
+        const adjustmentLabel = document.querySelector('label[for="creditStep"]');
+        if (adjustmentLabel) adjustmentLabel.textContent = state.displayMode === "money" ? "Adjust Money (dollars):" : "Adjust Credits:";
+        const insertedLabel = document.querySelector('.stat:has(#creditsInserted) .muted');
+        if (insertedLabel) insertedLabel.textContent = state.displayMode === "money" ? "Money Added:" : "Credits Inserted:";
         const values = {
             withdrawalDeposited: state.deposited,
             withdrawalPlayed: state.played,
@@ -84,9 +105,17 @@
         const settings = document.createElement("div");
         settings.className = "slot-experience-settings";
         settings.innerHTML = `
-            <label class="checkbox-setting slot-money-setting">
-                <input id="moneyModeToggle" type="checkbox">
-                <span><strong>Money mode</strong><small>Show the simulated withdrawal experience.</small></span>
+            <div class="select slot-play-mode-setting">
+                <label for="playModeSelect">Play balance as</label>
+                <select id="playModeSelect">
+                    <option value="credits">Credits (fake money)</option>
+                    <option value="money">Money ($, simulated)</option>
+                </select>
+                <small>Changes how balances, bets, and prizes are displayed. All play remains simulated.</small>
+            </div>
+            <label class="checkbox-setting slot-withdrawal-setting">
+                <input id="withdrawalDemoToggle" type="checkbox">
+                <span><strong>Withdrawal demonstration</strong><small>Show the separate simulated withdrawal experience.</small></span>
             </label>
             <label class="checkbox-setting slot-wheel-setting">
                 <input id="luckyWheelToggle" type="checkbox" checked>
@@ -145,11 +174,13 @@
         const actionArea = document.querySelector(".right");
         if (actionArea) actionArea.insertBefore(withdrawalButton, actionArea.querySelector(".auto-spin-hint, .message"));
 
-        const moneyToggle = document.getElementById("moneyModeToggle");
+        const playModeSelect = document.getElementById("playModeSelect");
+        const withdrawalToggle = document.getElementById("withdrawalDemoToggle");
         const wheelToggle = document.getElementById("luckyWheelToggle");
         const odds = document.getElementById("luckyWheelOdds");
         const revealDoors = document.getElementById("pennyRevealDoors");
-        moneyToggle.checked = state.moneyMode;
+        playModeSelect.value = state.displayMode;
+        withdrawalToggle.checked = state.withdrawalDemo;
         wheelToggle.checked = state.luckyWheel;
         odds.value = String(state.wheelOdds);
         if (revealDoors) revealDoors.value = state.revealDoors;
@@ -163,7 +194,15 @@
                 save();
             });
         });
-        moneyToggle.addEventListener("change", () => { state.moneyMode = moneyToggle.checked; updateMoneyUi(); });
+        playModeSelect.addEventListener("change", () => {
+            state.displayMode = playModeSelect.value === "money" ? "money" : "credits";
+            updateMoneyUi();
+            window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
+        });
+        withdrawalToggle.addEventListener("change", () => {
+            state.withdrawalDemo = withdrawalToggle.checked;
+            updateMoneyUi();
+        });
         wheelToggle.addEventListener("change", () => {
             state.luckyWheel = wheelToggle.checked;
             save();
@@ -280,6 +319,8 @@
 
     injectUi();
     window.slotExperience = {
+        formatAmount,
+        getDisplayMode: () => state.displayMode,
         offerLuckyWheel,
         closeReelDoors,
         revealReelDoors,

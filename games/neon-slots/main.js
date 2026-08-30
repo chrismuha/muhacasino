@@ -193,7 +193,7 @@ document.addEventListener("touchend", (e) => {
 
 
 function fmtUSD(n) {
-    return `$${Number(n).toFixed(2)}`;
+    return window.slotExperience?.formatAmount(n) || `$${Number(n).toFixed(2)}`;
 }
 
 function fmtPercent(n) {
@@ -1073,7 +1073,8 @@ function handleEsc(e) {
 
 function getSettingsDefinitions() {
     return [
-        { key: "moneyMode", title: "Money Mode", element: document.getElementById("moneyModeToggle")?.closest(".checkbox-setting") },
+        { key: "playMode", title: "Credits or Money", element: document.getElementById("playModeSelect")?.closest(".select") },
+        { key: "withdrawalDemo", title: "Withdrawal Demonstration", element: document.getElementById("withdrawalDemoToggle")?.closest(".checkbox-setting") },
         { key: "luckyWheel", title: "Lucky Wheel", element: document.getElementById("luckyWheelToggle")?.closest(".checkbox-setting") },
         { key: "luckyWheelOdds", title: "Lucky Wheel Odds", element: document.getElementById("luckyWheelOdds")?.closest(".select") },
         { key: "adjustMoney", title: "Adjust Money", element: creditStepEl?.closest(".credit-controls") },
