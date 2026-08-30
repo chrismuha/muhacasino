@@ -5,6 +5,8 @@
   "scripts": {
     "start": "vite --host 127.0.0.1 --port 5174 --open",
     "dev": "vite --host 127.0.0.1 --port 5174 --open",
+    "dev:web": "vite --host 127.0.0.1 --port 5174 --open /dev-preview.html",
+    "dev:mobile:web": "npm run dev:web",
     "preview": "vite preview --host 127.0.0.1 --port 4173 --open",
     "build": "vite build",
     "build:web": "vite build",
