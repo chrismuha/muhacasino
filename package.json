@@ -3,7 +3,32 @@
   "private": true,
   "description": "Muha Casino — slots, Bingo, and classic tabletop games in one game library.",
   "scripts": {
-    "start": "npx --yes serve . --listen 5196",
-    "check": "node --check launcher.js && node --check interaction-lock.js && node --check slot-experience.js && node --check about-history.js && node --check games/bingo/browser-bingo-api.js && node --check games/bingo/planet-hall-ui.js && node --check games/bingo/runtime-guard.js && node --check games/bingo/theme-switcher.js && node --check games/big-money-deluxe/main.js && node --check games/neon-slots/main.js && node --check games/pretty-penny/main.js && node --check games/treasurepots/main.js && node --check games/sorry/main.js && node --check games/sorry/ui/main.js && node --check games/yahtzee/main.js"
+    "start": "vite --host 127.0.0.1 --port 5174 --open",
+    "dev": "vite --host 127.0.0.1 --port 5174 --open",
+    "preview": "vite preview --host 127.0.0.1 --port 4173 --open",
+    "build": "vite build",
+    "build:web": "vite build",
+    "check": "node --check launcher.js && node --check interaction-lock.js && node --check slot-experience.js && node --check about-history.js && node --check games/bingo/browser-bingo-api.js && node --check games/bingo/planet-hall-ui.js && node --check games/bingo/runtime-guard.js && node --check games/bingo/theme-switcher.js && node --check games/big-money-deluxe/main.js && node --check games/neon-slots/main.js && node --check games/pretty-penny/main.js && node --check games/treasurepots/main.js && node --check games/sorry/main.js && node --check games/sorry/ui/main.js && node --check games/yahtzee/main.js",
+    "cap:sync": "npm run build && npx cap sync",
+    "cap:sync:android": "npm run build && npx cap sync android",
+    "cap:sync:ios": "npm run build && npx cap sync ios",
+    "dev:android": "npm run cap:sync:android && npx cap open android",
+    "dev:ios": "npm run cap:sync:ios && npx cap open ios",
+    "mobile:sync": "npm run cap:sync",
+    "mobile:sync:android": "npm run cap:sync:android",
+    "mobile:sync:ios": "npm run cap:sync:ios",
+    "mobile:open:android": "npx cap open android",
+    "mobile:open:ios": "npx cap open ios"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5",
+    "cross-env": "^10.1.0",
+    "vite": "^8.2.2"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.0",
+    "@capacitor/cli": "^8.5.0",
+    "@capacitor/core": "^8.5.0",
+    "@capacitor/ios": "^8.5.0"
   }
 }

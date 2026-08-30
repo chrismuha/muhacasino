@@ -268,6 +268,7 @@ a { color: inherit; text-decoration: none; }
   height: 100%;
   place-items: center;
   overflow: hidden;
+  pointer-events: none;
 }
 .card-money .card-visual { background: radial-gradient(circle at 50% 35%, #9d721b, #162815 68%); }
 .card-neon .card-visual { background: radial-gradient(circle at 50% 35%, #d21db3, #28114e 68%); }
@@ -293,10 +294,25 @@ a { color: inherit; text-decoration: none; }
   display: block;
   padding: 70px 66px 20px 21px;
   background: linear-gradient(transparent, rgba(8,9,15,.92) 62%);
+  pointer-events: none;
 }
 .card-details strong { display: flex; min-height: 2.5em; align-items: flex-end; margin-bottom: 6px; overflow-wrap: anywhere; font-size: 14.16pt; line-height: 1.25; }
 .card-details small { color: #8d91a6; font-weight: 650; }
-.card-play { position: absolute; z-index: 3; right: 18px; bottom: 24px; display: grid; width: 38px; height: 38px; place-items: center; border-radius: 50%; background: white; color: #111; font-size: 9pt; }
+.card-play {
+  position: absolute;
+  z-index: 3;
+  right: 18px;
+  bottom: 24px;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 50%;
+  background: white;
+  color: #111;
+  font-size: 9pt;
+  pointer-events: auto;
+}
 
 .categories-section { padding-bottom: 50px; }
 .category-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }

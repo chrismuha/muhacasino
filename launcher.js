@@ -229,7 +229,9 @@ function addHorizontalSwipe(element, onSwipe, { dragScroll = false } = {}) {
     startY = event.clientY;
     startScrollLeft = element.scrollLeft;
     dragged = false;
-    element.setPointerCapture?.(pointerId);
+    if (!dragScroll) {
+      element.setPointerCapture?.(pointerId);
+    }
   });
   element.addEventListener("pointermove", (event) => {
     if (event.pointerId !== pointerId) return;
@@ -411,9 +413,12 @@ function showCategory(categoryId) {
 }
 
 document.addEventListener("click", (event) => {
+  const playIcon = event.target.closest(".card-play");
   const gameButton = event.target.closest("[data-game]");
-  if (gameButton) {
-    launchGame(gameButton.dataset.game);
+  const launchTarget = playIcon?.closest(".game-card") ?? gameButton;
+
+  if (launchTarget) {
+    launchGame(launchTarget.dataset.game);
   }
 
   const categoryButton = event.target.closest("[data-category]");
