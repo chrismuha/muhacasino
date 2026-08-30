@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Muha Casino">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7638ff"/>
+      <stop offset="0.52" stop-color="#ec2e82"/>
+      <stop offset="1" stop-color="#ffb32f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="28%" cy="18%" r="76%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".42"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="#070811"/>
+  <rect x="28" y="28" width="456" height="456" rx="100" fill="url(#bg)"/>
+  <rect x="28" y="28" width="456" height="456" rx="100" fill="url(#glow)"/>
+  <path d="M126 368V144h63l67 107 67-107h63v224h-65V246l-65 98-65-98v122z" fill="#fff"/>
+  <circle cx="410" cy="102" r="23" fill="#ffe66d"/>
+</svg>
