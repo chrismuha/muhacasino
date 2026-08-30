@@ -3,9 +3,9 @@
   "private": true,
   "description": "Muha Casino — slots, Bingo, and classic tabletop games in one game library.",
   "scripts": {
-    "start": "vite --host 127.0.0.1 --port 5174 --open",
-    "dev": "vite --host 127.0.0.1 --port 5174 --open",
-    "dev:web": "vite --host 127.0.0.1 --port 5174 --open /dev-preview.html",
+    "start": "vite --host 127.0.0.1 --port 5194 --open",
+    "dev": "vite --host 127.0.0.1 --port 5194 --open",
+    "dev:web": "vite --host 127.0.0.1 --port 5194 --open /dev-preview.html",
     "dev:mobile:web": "npm run dev:web",
     "preview": "vite preview --host 127.0.0.1 --port 4173 --open",
     "build": "vite build",
