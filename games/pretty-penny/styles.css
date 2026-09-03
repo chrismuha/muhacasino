@@ -1510,7 +1510,8 @@ body.overlay-open {
 }
 
 .overlay-section-compact {
-  overflow: visible;
+  overflow-x: clip;
+  overflow-y: visible;
 }
 
 .last-chance-summary {
@@ -3225,11 +3226,15 @@ label {
   }
 }
 
-/* Final reel containment contract. The grid owns sizing, while cells own
-   clipping; paint containment on the grid cropped edge wins and feature art. */
+/* Final screen-containment contract. Pretty Penny has more decorated and
+   animated children than the other slots, so every layout boundary must be
+   allowed to shrink to the iframe instead of increasing its intrinsic width. */
 .reels-wrap {
   min-width: 0;
-  overflow: visible;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  overflow: clip;
 }
 
 .reels,
@@ -3237,17 +3242,149 @@ label {
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  overflow: visible;
+  overflow: clip;
 }
 
 .reels {
-  contain: layout;
+  contain: layout paint;
   isolation: isolate;
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .reels .cell {
+  box-sizing: border-box;
   width: auto;
+  max-width: 100%;
   min-width: 0;
   height: var(--reel-row-h);
+}
+
+.reels .icon-container,
+.reels .jackpot-chip,
+.reels .link-chip,
+.hold-gem {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.pot-feature,
+.pots,
+.hud,
+.left,
+.right {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+html,
+body,
+.game,
+.card {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+.card {
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+.title,
+.title > span,
+.jackpot-board,
+.jackpot-pills,
+.jackpot-pill,
+.pot-copy,
+.pot,
+.hud > *,
+.left > *,
+.right > *,
+.credit-controls,
+.credit-row,
+.select,
+.stat {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.title > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.title {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  width: 100%;
+  font-size: clamp(24pt, 5vw, 44pt);
+}
+
+.title-mark {
+  justify-self: end;
+}
+
+.title .info-btn {
+  justify-self: start;
+}
+
+.overlay-panel,
+.overlay-panel-compact,
+.feature-dialog,
+.match-win-dialog {
+  box-sizing: border-box;
+  width: min(760px, calc(100% - 20px));
+  max-width: calc(100% - 20px);
+}
+
+.overlay-panel-compact {
+  width: min(520px, calc(100% - 20px));
+}
+
+.feature-dialog {
+  width: min(620px, calc(100% - 20px));
+}
+
+.match-win-dialog {
+  width: min(560px, calc(100% - 20px));
+}
+
+.match-win-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
+  max-width: 440px;
+}
+
+@media (max-width: 560px) {
+  .title {
+    width: 100%;
+    font-size: clamp(22pt, 9vw, 32pt);
+  }
+
+  .title-mark {
+    flex-shrink: 0;
+  }
+
+  .jackpot-pill,
+  .pot {
+    overflow: hidden;
+  }
+
+  .jackpot-pill b,
+  .pot b,
+  .pot small,
+  .pot-rule {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
 }
