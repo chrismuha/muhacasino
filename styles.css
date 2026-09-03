@@ -348,6 +348,32 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 .game-identity { display: flex; min-width: 0; align-items: baseline; gap: 7px; }
 .game-identity > strong { min-width: 0; }
 #currentGame { color: #fff !important; -webkit-text-fill-color: #fff !important; opacity: 1 !important; }
+.slot-mode-toolbar {
+  display: grid;
+  grid-template-columns: auto 38px auto;
+  align-items: center;
+  justify-self: end;
+  gap: 7px;
+  min-height: 38px;
+  margin-left: auto;
+  margin-right: 56px;
+  padding: 5px 10px;
+  border: 1px solid #51678f;
+  border-radius: 999px;
+  color: #d9e1f2;
+  background: #111a2c;
+  font: 800 8.5pt/1 system-ui, sans-serif;
+  cursor: pointer;
+}
+.slot-mode-toolbar[hidden] { display: none; }
+.slot-mode-toolbar span { opacity: .55; white-space: nowrap; }
+.slot-mode-toolbar i { position: relative; box-sizing: border-box; width: 38px; height: 22px; border: 2px solid #8ca0c5; border-radius: 999px; background: #050914; }
+.slot-mode-toolbar i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 12px; height: 12px; border-radius: 50%; background: #fff; transition: transform .18s ease; }
+.slot-mode-toolbar[aria-checked="false"] span:first-child,
+.slot-mode-toolbar[aria-checked="true"] span:last-child { opacity: 1; color: #fff; }
+.slot-mode-toolbar[aria-checked="true"] i { border-color: #36d9bd; background: #123d3b; }
+.slot-mode-toolbar[aria-checked="true"] i::after { transform: translateX(16px); }
+.slot-mode-toolbar:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
 .toolbar-theme-picker {
   display: flex;
   min-width: 0;
@@ -771,15 +797,15 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 .bar-collapse-chevron > span {
   display: block;
   box-sizing: border-box;
-  width: 14px;
-  height: 9px;
-  border: 0;
-  background: currentColor;
-  clip-path: polygon(0 100%, 50% 0, 100% 100%);
-  transform: none;
-  transition: clip-path .18s ease;
+  width: 11px;
+  height: 11px;
+  border: solid currentColor;
+  border-width: 0 3px 3px 0;
+  background: transparent;
+  transform: rotate(-135deg) translate(-2px, -2px);
+  transition: transform .18s ease;
 }
-.game-view.toolbar-collapsed .bar-collapse-chevron > span { clip-path: polygon(0 0, 50% 100%, 100% 0); }
+.game-view.toolbar-collapsed .bar-collapse-chevron > span { width: 14px; height: 9px; border: 0; background: currentColor; clip-path: polygon(0 0, 50% 100%, 100% 0); transform: none; }
 .toolbar-collapse-button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
 .game-view.toolbar-collapsed .game-toolbar {
   box-sizing: border-box;

@@ -2081,7 +2081,13 @@ payInfoBtn?.addEventListener("click", () => {
     togglePreviewOverlay(true);
 });
 document.addEventListener("keydown", handleEsc);
-window.addEventListener("slot-experience-settings-change", updateTotals);
+window.addEventListener("slot-experience-settings-change", () => {
+    updateTotals();
+    updateAllSessionDisplays();
+    updateCreditStepEffect();
+    updatePotDisplay();
+    updateGameOddsDisplay();
+});
 previewOverlayCloseBtn?.addEventListener("click", () => togglePreviewOverlay(false));
 lastChanceCloseBtn?.addEventListener("click", () => closeLastChanceOverlay({ restoreFocus: true }));
 lastChanceCancelBtn?.addEventListener("click", () => closeLastChanceOverlay({ restoreFocus: true }));

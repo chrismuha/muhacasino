@@ -14,7 +14,7 @@
   <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?build=20260829-ios-iframe-pwa-v3">
+  <link rel="stylesheet" href="styles.css?build=20260903-slot-toolbar-v1">
 </head>
 <body>
   <main id="launcher">
@@ -222,6 +222,7 @@
     <div class="game-toolbar">
       <a id="backButton" class="back-button" href="./" aria-label="Return to game library"><span aria-hidden="true">←</span><b>RETURN TO GAME LIBRARY</b></a>
       <span class="game-identity"><strong id="currentGame" style="color:#fff !important;-webkit-text-fill-color:#fff !important"></strong><span id="currentGameVersion" class="game-version" aria-label="Game version"></span></span>
+      <button id="slotModeToolbar" class="slot-mode-toolbar" type="button" role="switch" aria-checked="false" aria-label="Use simulated real-money display" hidden><span>Fake money</span><i aria-hidden="true"></i><span>Real money</span></button>
       <div id="bingoToolbarControls" class="toolbar-bingo-controls" hidden>
         <label id="bingoThemeToolbar" class="toolbar-theme-picker">
           <span>Theme</span>
@@ -251,7 +252,7 @@
   </section>
 
   <script src="interaction-lock.js?build=20260811-horizontal-rails"></script>
-  <script src="launcher.js?build=20260817-bingo-theme-toolbar-state"></script>
+  <script src="launcher.js?build=20260903-slot-toolbar-v1"></script>
   <script src="pwa.js?build=20260829-pwa-v1"></script>
 </body>
 </html>

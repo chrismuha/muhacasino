@@ -60,12 +60,6 @@
     function updateMoneyUi() {
         document.body.classList.toggle("money-display-mode", state.displayMode === "money");
         document.body.classList.toggle("credits-display-mode", state.displayMode === "credits");
-        const modeToggle = document.getElementById("playModeToggle");
-        if (modeToggle) {
-            const moneyMode = state.displayMode === "money";
-            modeToggle.setAttribute("aria-checked", String(moneyMode));
-            modeToggle.title = moneyMode ? "Switch to fake-money credits" : "Switch to simulated money";
-        }
         const withdrawalToggle = document.getElementById("withdrawalDemoToggle");
         if (withdrawalToggle) withdrawalToggle.checked = state.withdrawalDemo;
         const button = document.getElementById("withdrawalButton");
@@ -168,16 +162,8 @@
 
         const withdrawalButton = document.getElementById("withdrawalButton");
         const actionArea = document.querySelector(".right");
-        const playModeToggle = document.createElement("button");
-        playModeToggle.id = "playModeToggle";
-        playModeToggle.className = "slot-play-mode-toggle";
-        playModeToggle.type = "button";
-        playModeToggle.setAttribute("role", "switch");
-        playModeToggle.setAttribute("aria-label", "Use simulated real-money display");
-        playModeToggle.innerHTML = `<span>Fake money</span><i aria-hidden="true"></i><span>Real money</span>`;
         if (actionArea) {
             const actionStatus = actionArea.querySelector(".auto-spin-hint, .message");
-            actionArea.insertBefore(playModeToggle, actionStatus);
             actionArea.insertBefore(withdrawalButton, actionStatus);
         }
 
@@ -198,11 +184,6 @@
                     .map((rowCheckbox) => Number(rowCheckbox.dataset.pennyDoorRow));
                 save();
             });
-        });
-        playModeToggle.addEventListener("click", () => {
-            state.displayMode = state.displayMode === "money" ? "credits" : "money";
-            updateMoneyUi();
-            window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
         });
         withdrawalToggle.addEventListener("change", () => {
             state.withdrawalDemo = withdrawalToggle.checked;
@@ -326,6 +307,11 @@
     window.slotExperience = {
         formatAmount,
         getDisplayMode: () => state.displayMode,
+        toggleDisplayMode() {
+            state.displayMode = state.displayMode === "money" ? "credits" : "money";
+            updateMoneyUi();
+            window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
+        },
         offerLuckyWheel,
         closeReelDoors,
         revealReelDoors,

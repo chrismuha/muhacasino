@@ -98,7 +98,24 @@ const gameLoadActions = document.querySelector("#gameLoadActions");
 const reloadGameButton = document.querySelector("#reloadGame");
 const returnToLibraryFromError = document.querySelector("#returnToLibraryFromError");
 const toolbarCollapseButton = document.querySelector("#toolbarCollapseButton");
+const slotModeToolbar = document.querySelector("#slotModeToolbar");
 const toolbarCollapsedStorageKey = "muha-casino-toolbar-collapsed";
+const slotGameIds = new Set(["big-money-deluxe", "neon-slots", "pretty-penny", "treasurepots"]);
+
+function syncSlotModeToolbar(displayMode) {
+  const moneyMode = displayMode === "money";
+  const action = moneyMode ? "Switch to fake-money credits" : "Switch to simulated money";
+  slotModeToolbar.setAttribute("aria-checked", String(moneyMode));
+  slotModeToolbar.setAttribute("aria-label", action);
+  slotModeToolbar.title = action;
+}
+
+slotModeToolbar.addEventListener("click", () => {
+  if (!slotGameIds.has(activeGameId)) return;
+  const experience = gameFrame.contentWindow?.slotExperience;
+  experience?.toggleDisplayMode();
+  syncSlotModeToolbar(experience?.getDisplayMode());
+});
 
 function setGameToolbarCollapsed(collapsed) {
   gameView.classList.toggle("toolbar-collapsed", collapsed);
@@ -310,6 +327,7 @@ function showLauncher(updateHistory = true) {
   launcher.hidden = false;
   document.body.classList.remove("game-open");
   bingoToolbarControls.hidden = true;
+  slotModeToolbar.hidden = true;
   document.title = "Muha Casino";
   if (updateHistory) history.replaceState(null, "", window.location.pathname);
   restartSlider();
@@ -355,6 +373,7 @@ function launchGame(gameId, updateHistory = true) {
   currentGame.textContent = game.title;
   currentGameVersion.textContent = game.version;
   bingoToolbarControls.hidden = gameId !== "bingo";
+  slotModeToolbar.hidden = !slotGameIds.has(gameId);
   if (gameId === "bingo") {
     let selectedTheme = "planet";
     try {
@@ -518,6 +537,9 @@ gameFrame.addEventListener("load", () => {
 
   }
   gameLoadState.hidden = true;
+  if (slotGameIds.has(activeGameId)) {
+    syncSlotModeToolbar(gameFrame.contentWindow?.slotExperience?.getDisplayMode());
+  }
   if (!bingoToolbarControls.hidden) {
     sendBingoTheme(bingoThemeSelect.value);
     gameFrame.contentWindow?.postMessage({ type: "muha-bingo-request-appearance" }, window.location.origin);
