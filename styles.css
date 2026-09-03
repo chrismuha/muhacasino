@@ -740,15 +740,15 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 .toolbar-collapse-button {
   position: absolute;
   z-index: 8;
-  left: 50%;
-  bottom: -28px;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: 0;
   display: grid;
   place-items: center;
   box-sizing: border-box;
   width: 48px;
   height: 30px;
   padding: 0;
-  transform: translateX(-50%);
+  transform: none;
   border: 2px solid #51678f;
   border-top: 0;
   border-radius: 0 0 12px 12px;
@@ -789,7 +789,7 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   border-bottom-color: #405174;
 }
 .game-view.toolbar-collapsed .game-toolbar > :not(.toolbar-collapse-button) { display: none !important; }
-.game-view.toolbar-collapsed .toolbar-collapse-button { bottom: -28px; border-radius: 0 0 12px 12px; }
+.game-view.toolbar-collapsed .toolbar-collapse-button { bottom: 0; border-radius: 0 0 12px 12px; }
 
 
 html:has(body.game-open),

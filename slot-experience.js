@@ -60,8 +60,12 @@
     function updateMoneyUi() {
         document.body.classList.toggle("money-display-mode", state.displayMode === "money");
         document.body.classList.toggle("credits-display-mode", state.displayMode === "credits");
-        const modeSelect = document.getElementById("playModeSelect");
-        if (modeSelect) modeSelect.value = state.displayMode;
+        const modeToggle = document.getElementById("playModeToggle");
+        if (modeToggle) {
+            const moneyMode = state.displayMode === "money";
+            modeToggle.setAttribute("aria-checked", String(moneyMode));
+            modeToggle.title = moneyMode ? "Switch to fake-money credits" : "Switch to simulated money";
+        }
         const withdrawalToggle = document.getElementById("withdrawalDemoToggle");
         if (withdrawalToggle) withdrawalToggle.checked = state.withdrawalDemo;
         const button = document.getElementById("withdrawalButton");
@@ -105,14 +109,6 @@
         const settings = document.createElement("div");
         settings.className = "slot-experience-settings";
         settings.innerHTML = `
-            <div class="select slot-play-mode-setting">
-                <label for="playModeSelect">Play balance as</label>
-                <select id="playModeSelect">
-                    <option value="credits">Credits (fake money)</option>
-                    <option value="money">Money ($, simulated)</option>
-                </select>
-                <small>Changes how balances, bets, and prizes are displayed. All play remains simulated.</small>
-            </div>
             <label class="checkbox-setting slot-withdrawal-setting">
                 <input id="withdrawalDemoToggle" type="checkbox">
                 <span><strong>Withdrawal demonstration</strong><small>Show the separate simulated withdrawal experience.</small></span>
@@ -172,14 +168,23 @@
 
         const withdrawalButton = document.getElementById("withdrawalButton");
         const actionArea = document.querySelector(".right");
-        if (actionArea) actionArea.insertBefore(withdrawalButton, actionArea.querySelector(".auto-spin-hint, .message"));
+        const playModeToggle = document.createElement("button");
+        playModeToggle.id = "playModeToggle";
+        playModeToggle.className = "slot-play-mode-toggle";
+        playModeToggle.type = "button";
+        playModeToggle.setAttribute("role", "switch");
+        playModeToggle.setAttribute("aria-label", "Use simulated real-money display");
+        playModeToggle.innerHTML = `<span>Fake money</span><i aria-hidden="true"></i><span>Real money</span>`;
+        if (actionArea) {
+            const actionStatus = actionArea.querySelector(".auto-spin-hint, .message");
+            actionArea.insertBefore(playModeToggle, actionStatus);
+            actionArea.insertBefore(withdrawalButton, actionStatus);
+        }
 
-        const playModeSelect = document.getElementById("playModeSelect");
         const withdrawalToggle = document.getElementById("withdrawalDemoToggle");
         const wheelToggle = document.getElementById("luckyWheelToggle");
         const odds = document.getElementById("luckyWheelOdds");
         const revealDoors = document.getElementById("pennyRevealDoors");
-        playModeSelect.value = state.displayMode;
         withdrawalToggle.checked = state.withdrawalDemo;
         wheelToggle.checked = state.luckyWheel;
         odds.value = String(state.wheelOdds);
@@ -194,8 +199,8 @@
                 save();
             });
         });
-        playModeSelect.addEventListener("change", () => {
-            state.displayMode = playModeSelect.value === "money" ? "money" : "credits";
+        playModeToggle.addEventListener("click", () => {
+            state.displayMode = state.displayMode === "money" ? "credits" : "money";
             updateMoneyUi();
             window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
         });
