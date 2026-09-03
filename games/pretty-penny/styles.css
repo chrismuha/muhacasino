@@ -2080,19 +2080,12 @@ body {
 }
 
 .title-mark {
-  display: inline-grid;
-  width: 1.1em;
-  height: 1.1em;
-  place-items: center;
-  border: 3px double #fff4cf;
-  border-radius: 50%;
-  color: #fff8e5;
-  background: #bd623f;
-  box-shadow: 0 3px 0 #83402a;
-  font-family: Georgia, serif;
-  font-size: 9.6pt;
-  font-style: normal;
-  line-height: 1;
+  display: block;
+  width: clamp(50px, 7vw, 78px);
+  height: clamp(50px, 7vw, 78px);
+  flex: 0 0 clamp(50px, 7vw, 78px);
+  object-fit: contain;
+  filter: drop-shadow(0 4px 3px rgba(102, 48, 28, .38));
 }
 
 .info-btn {
@@ -2884,7 +2877,9 @@ label {
   }
 
   .title-mark {
-    flex: 0 0 1.1em;
+    width: clamp(44px, 13vw, 58px);
+    height: clamp(44px, 13vw, 58px);
+    flex-basis: clamp(44px, 13vw, 58px);
   }
 
   .jackpot-board {
