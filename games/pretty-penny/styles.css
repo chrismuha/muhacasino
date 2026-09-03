@@ -3229,3 +3229,30 @@ label {
     white-space: normal;
   }
 }
+
+/* Final reel containment contract. The grid owns sizing, while cells own
+   clipping; paint containment on the grid cropped edge wins and feature art. */
+.reels-wrap {
+  min-width: 0;
+  overflow: visible;
+}
+
+.reels,
+.reels-wrap.penny-door-host {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: visible;
+}
+
+.reels {
+  contain: layout;
+  isolation: isolate;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.reels .cell {
+  width: auto;
+  min-width: 0;
+  height: var(--reel-row-h);
+}

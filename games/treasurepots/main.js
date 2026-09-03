@@ -44,6 +44,7 @@ const JACKPOT_TIERS = [
     { name: "Grand", oddsElementId: "grandJackpotOdds", customId: "grandJackpotCustomOdds", winInputId: "grandJackpotWinPercent", lossInputId: "grandJackpotLossPercent", defaultRate: 0.00001, amountUSD: 25000 },
 ];
 const JACKPOT_BASE_WAGER_USD = 0.50;
+window.slotExperience?.configureJackpots(JACKPOT_TIERS, { baseWager: JACKPOT_BASE_WAGER_USD });
 
 const ROWS = 5;
 const COLS = 5;
@@ -446,9 +447,7 @@ function updateTotals() {
 }
 
 function getScaledJackpotAmount(tier, totalBetUSD = getActiveTotalBetUSD()) {
-    const wager = Math.max(0.01, Number(totalBetUSD) || JACKPOT_BASE_WAGER_USD);
-    const scale = Math.max(1, wager / JACKPOT_BASE_WAGER_USD);
-    return roundUSD(tier.amountUSD * scale);
+    return window.slotExperience?.getJackpotAmount(tier, totalBetUSD) ?? tier.amountUSD;
 }
 
 function updateJackpotDisplay(totalBetUSD = getActiveTotalBetUSD()) {
@@ -1281,6 +1280,7 @@ function getSettingsDefinitions() {
         { key: "sessionStats", title: "Session Stats Display", element: sessionStatDisplayEl?.closest(".select") },
         { key: "creditsInserted", title: "Credits Inserted", element: creditsInsertedEl?.closest(".stat") },
         { key: "winOdds", title: "Regular Win Odds", element: winOddsEl?.closest(".select") },
+        { key: "jackpotAmounts", title: "Jackpot Amounts and Bet Scaling", element: document.querySelector(".jackpot-config-setting") },
         ...JACKPOT_TIERS.map((tier) => ({
             key: `${tier.name.toLowerCase()}JackpotOdds`,
             title: `${tier.name} Jackpot Odds`,

@@ -99,7 +99,6 @@ const reloadGameButton = document.querySelector("#reloadGame");
 const returnToLibraryFromError = document.querySelector("#returnToLibraryFromError");
 const toolbarCollapseButton = document.querySelector("#toolbarCollapseButton");
 const slotModeToolbar = document.querySelector("#slotModeToolbar");
-const toolbarCollapsedStorageKey = "muha-casino-toolbar-collapsed";
 const slotGameIds = new Set(["big-money-deluxe", "neon-slots", "pretty-penny", "treasurepots"]);
 
 function syncSlotModeToolbar(displayMode) {
@@ -127,18 +126,9 @@ function setGameToolbarCollapsed(collapsed) {
 toolbarCollapseButton.addEventListener("click", () => {
   const collapsed = !gameView.classList.contains("toolbar-collapsed");
   setGameToolbarCollapsed(collapsed);
-  try {
-    window.localStorage.setItem(toolbarCollapsedStorageKey, String(collapsed));
-  } catch {
-
-  }
 });
 
-try {
-  setGameToolbarCollapsed(window.localStorage.getItem(toolbarCollapsedStorageKey) === "true");
-} catch {
-  setGameToolbarCollapsed(false);
-}
+setGameToolbarCollapsed(false);
 
 function compareGameTitles(leftId, rightId) {
   return games[leftId].title.localeCompare(games[rightId].title, undefined, { sensitivity: "base" });
@@ -369,6 +359,7 @@ function launchGame(gameId, updateHistory = true) {
 
   window.clearInterval(sliderTimer);
   activeGameId = gameId;
+  setGameToolbarCollapsed(false);
   showGameLoading();
   currentGame.textContent = game.title;
   currentGameVersion.textContent = game.version;

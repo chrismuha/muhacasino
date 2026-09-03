@@ -27,6 +27,12 @@ const JACKPOT_TIERS = [
     { name: "Major", elementId: "jackpotMajor", oddsElementId: "majorJackpotOdds", customId: "majorJackpotCustomOdds", winInputId: "majorJackpotWinPercent", lossInputId: "majorJackpotLossPercent", defaultRate: 0.00005, amountUSD: 1000 },
     { name: "Grand", elementId: "jackpotGrand", oddsElementId: "grandJackpotOdds", customId: "grandJackpotCustomOdds", winInputId: "grandJackpotWinPercent", lossInputId: "grandJackpotLossPercent", defaultRate: 0.00001, amountUSD: 10000 },
 ];
+window.slotExperience?.configureJackpots(JACKPOT_TIERS, { baseWager: 0.50 });
+
+function getScaledJackpotAmount(tier, totalBetUSD = getActiveTotalBetUSD()) {
+    if (tier.name === "Blank") return 0;
+    return window.slotExperience?.getJackpotAmount(tier, totalBetUSD) ?? tier.amountUSD;
+}
 
 const ROWS = 5;
 const COLS = 5;
@@ -496,15 +502,16 @@ function playMatchAndWinBonus() {
                 if (finished || button.disabled) return;
                 button.disabled = true;
                 button.className = `jackpot-${tier.name.toLowerCase()}`;
-                button.innerHTML = `<strong>${tier.name}</strong><span>${fmtUSD(tier.amountUSD)}</span>`;
+                const awardUSD = getScaledJackpotAmount(tier);
+                button.innerHTML = `<strong>${tier.name}</strong><span>${fmtUSD(awardUSD)}</span>`;
                 const count = (counts.get(tier.name) || 0) + 1;
                 counts.set(tier.name, count);
                 const remaining = grid.querySelectorAll("button:not(:disabled)").length;
                 if (count === 3) {
                     finished = true;
                     grid.querySelectorAll("button").forEach((card) => { card.disabled = true; });
-                    result.textContent = `${tier.name.toUpperCase()} JACKPOT — ${fmtUSD(tier.amountUSD)}`;
-                    setTimeout(() => { overlay.remove(); resolve(tier.amountUSD); }, 1400);
+                    result.textContent = `${tier.name.toUpperCase()} JACKPOT — ${fmtUSD(awardUSD)}`;
+                    setTimeout(() => { overlay.remove(); resolve(awardUSD); }, 1400);
                 } else if (remaining === 0) {
                     finished = true;
                     result.textContent = "No three-of-a-kind this time.";
@@ -693,14 +700,14 @@ function resolveJackpotWins() {
     if (Math.random() >= jackpotRate) return [];
     return jackpotTiers
         .filter(({ rate }) => Math.random() < rate / jackpotRate)
-        .map(({ tier }) => tier);
+        .map(({ tier }) => ({ ...tier, amountUSD: getScaledJackpotAmount(tier) }));
 }
 
 function updateJackpotDisplay() {
     for (const tier of JACKPOT_TIERS) {
         const valueEl = document.getElementById(tier.elementId);
         if (!valueEl) continue;
-        valueEl.textContent = fmtUSD(tier.amountUSD);
+        valueEl.textContent = fmtUSD(getScaledJackpotAmount(tier));
     }
 }
 
@@ -1064,6 +1071,7 @@ function getSettingsDefinitions() {
         { key: "sessionStats", title: "Session Stats Display", element: sessionStatDisplayEl?.closest(".select") },
         { key: "creditsInserted", title: "Credits Inserted", element: creditsInsertedEl?.closest(".stat") },
         { key: "winOdds", title: "Regular Win Odds", element: winOddsEl?.closest(".select") },
+        { key: "jackpotAmounts", title: "Jackpot Amounts and Bet Scaling", element: document.querySelector(".jackpot-config-setting") },
         ...JACKPOT_TIERS.map((tier) => ({
             key: `${tier.name.toLowerCase()}JackpotOdds`,
             title: `${tier.name} Jackpot Odds`,

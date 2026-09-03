@@ -32,6 +32,19 @@ const JACKPOT_TIERS = [
     { name: "Major", oddsElementId: "majorJackpotOdds", customId: "majorJackpotCustomOdds", winInputId: "majorJackpotWinPercent", lossInputId: "majorJackpotLossPercent", defaultRate: 0.00005, amountUSD: 1000 },
     { name: "Grand", oddsElementId: "grandJackpotOdds", customId: "grandJackpotCustomOdds", winInputId: "grandJackpotWinPercent", lossInputId: "grandJackpotLossPercent", defaultRate: 0.00001, amountUSD: 10000 },
 ];
+window.slotExperience?.configureJackpots(JACKPOT_TIERS, { baseWager: 0.50 });
+
+function getScaledJackpotAmount(tier, totalBetUSD = getActiveTotalBetUSD()) {
+    if (tier.name === "Blank") return 0;
+    return window.slotExperience?.getJackpotAmount(tier, totalBetUSD) ?? tier.amountUSD;
+}
+
+function updateJackpotDisplay() {
+    JACKPOT_TIERS.forEach((tier) => {
+        const amountEl = document.getElementById(`jackpot${tier.name}`);
+        if (amountEl) amountEl.textContent = fmtUSD(getScaledJackpotAmount(tier));
+    });
+}
 
 const ROWS = 5;
 const COLS = 5;
@@ -501,15 +514,16 @@ function playMatchAndWinBonus() {
                 if (finished || button.disabled) return;
                 button.disabled = true;
                 button.className = `jackpot-${tier.name.toLowerCase()}`;
-                button.innerHTML = `<strong>${tier.name}</strong><span>${fmtUSD(tier.amountUSD)}</span>`;
+                const awardUSD = getScaledJackpotAmount(tier);
+                button.innerHTML = `<strong>${tier.name}</strong><span>${fmtUSD(awardUSD)}</span>`;
                 const count = (counts.get(tier.name) || 0) + 1;
                 counts.set(tier.name, count);
                 const remaining = grid.querySelectorAll("button:not(:disabled)").length;
                 if (count === 3) {
                     finished = true;
                     grid.querySelectorAll("button").forEach((card) => { card.disabled = true; });
-                    result.textContent = `${tier.name.toUpperCase()} JACKPOT — ${fmtUSD(tier.amountUSD)}`;
-                    setTimeout(() => { overlay.remove(); resolve(tier.amountUSD); }, 1400);
+                    result.textContent = `${tier.name.toUpperCase()} JACKPOT — ${fmtUSD(awardUSD)}`;
+                    setTimeout(() => { overlay.remove(); resolve(awardUSD); }, 1400);
                 } else if (remaining === 0) {
                     finished = true;
                     result.textContent = "No three-of-a-kind this time.";
@@ -657,14 +671,14 @@ function resolveJackpotWins() {
     if (Math.random() >= jackpotRate) return [];
     return jackpotTiers
         .filter(({ rate }) => Math.random() < rate / jackpotRate)
-        .map(({ tier }) => tier);
+        .map(({ tier }) => ({ ...tier, amountUSD: getScaledJackpotAmount(tier) }));
 }
 
 function resolveJackpotTeasers(jackpotWins) {
     if (jackpotWins.length > 0 || Math.random() >= JACKPOT_TEASER_RATE) return [];
     const teaserCount = Math.random() < 0.1 ? 2 : 1;
     const shuffledTiers = [...JACKPOT_TIERS].sort(() => Math.random() - 0.5);
-    return shuffledTiers.slice(0, teaserCount).map((tier) => ({ ...tier, teaser: true }));
+    return shuffledTiers.slice(0, teaserCount).map((tier) => ({ ...tier, amountUSD: getScaledJackpotAmount(tier), teaser: true }));
 }
 
 function renderOutcomeGrid(grid, winningPositions, jackpotWins, jackpotTeasers = []) {
@@ -1086,6 +1100,7 @@ function getSettingsDefinitions() {
         { key: "sessionStats", title: "Session Stats Display", element: sessionStatDisplayEl?.closest(".select") },
         { key: "creditsInserted", title: "Credits Inserted", element: creditsInsertedEl?.closest(".stat") },
         { key: "winOdds", title: "Regular Win Odds", element: winOddsEl?.closest(".select") },
+        { key: "jackpotAmounts", title: "Jackpot Amounts and Bet Scaling", element: document.querySelector(".jackpot-config-setting") },
         ...JACKPOT_TIERS.map((tier) => ({
             key: `${tier.name.toLowerCase()}JackpotOdds`,
             title: `${tier.name} Jackpot Odds`,
@@ -1836,6 +1851,7 @@ window.addEventListener("slot-experience-settings-change", () => {
     updateTotals();
     updateAllSessionDisplays();
     updateCreditStepEffect();
+    updateJackpotDisplay();
     updateGameOddsDisplay();
     updateFeatureRules();
 });

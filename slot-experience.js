@@ -13,6 +13,7 @@
         deposited: 100,
         played: 0,
         balance: 100,
+        jackpots: null,
     };
 
     try {
@@ -29,6 +30,7 @@
         state.revealDoorRows = Array.isArray(saved.revealDoorRows)
             ? [...new Set(saved.revealDoorRows.map(Number).filter((row) => Number.isInteger(row) && row >= 0 && row < 5))]
             : [0, 1, 2, 3, 4];
+        state.jackpots = saved.jackpots && typeof saved.jackpots === "object" ? saved.jackpots : null;
     } catch {  }
 
     function money(value) {
@@ -49,6 +51,7 @@
                 wheelOdds: state.wheelOdds,
                 revealDoors: state.revealDoors,
                 revealDoorRows: state.revealDoorRows,
+                jackpots: state.jackpots,
             }));
         } catch {  }
     }
@@ -120,6 +123,20 @@
                     <option value="1">100% Win / 0% Loss</option>
                 </select>
                 <small>Winning slices award 1×, 2×, or 3× the credits needed for the current wager.</small>
+            </div>
+            <div class="jackpot-config-setting">
+                <strong>Jackpot amounts and bet scaling</strong>
+                <div class="jackpot-base-grid">
+                    ${["Mini", "Minor", "Major", "Grand"].map((name) => `<label>${name}<input type="number" min="0.01" step="0.01" data-jackpot-base="${name.toLowerCase()}"></label>`).join("")}
+                </div>
+                <label class="jackpot-scale-toggle"><input id="jackpotScalingEnabled" type="checkbox" checked><span>Adjust jackpots with the total bet</span></label>
+                <label>Scaling method<select id="jackpotScalingMode"><option value="multiply">Multiply with bet</option><option value="increment">Add an amount per bet step</option></select></label>
+                <div class="jackpot-scale-grid">
+                    <label>Reference bet<input id="jackpotBaseWager" type="number" min="0.01" step="0.01"></label>
+                    <label>Bet step<input id="jackpotBetStep" type="number" min="0.01" step="0.01"></label>
+                    <label>Amount per step<input id="jackpotStepAmount" type="number" min="0" step="0.01"></label>
+                </div>
+                <small>Multiplier mode changes each base jackpot in direct proportion to the bet. Step mode adds or subtracts the configured amount as the bet moves above or below the reference bet.</small>
             </div>
             ${gameKey === "pretty-penny" ? `<div class="select penny-door-setting">
                 <label for="pennyRevealDoors">Pretty Penny reveal doors</label>
@@ -196,6 +213,21 @@
         });
         odds.addEventListener("change", () => { state.wheelOdds = Number(odds.value); save(); });
         revealDoors?.addEventListener("change", () => { state.revealDoors = revealDoors.value; save(); });
+        document.querySelectorAll(".jackpot-config-setting input, .jackpot-config-setting select").forEach((control) => {
+            control.addEventListener("change", () => {
+                if (!state.jackpots) return;
+                state.jackpots.enabled = document.getElementById("jackpotScalingEnabled").checked;
+                state.jackpots.mode = document.getElementById("jackpotScalingMode").value === "increment" ? "increment" : "multiply";
+                state.jackpots.baseWager = Math.max(0.01, Number(document.getElementById("jackpotBaseWager").value) || 0.5);
+                state.jackpots.betStep = Math.max(0.01, Number(document.getElementById("jackpotBetStep").value) || 0.5);
+                state.jackpots.stepAmount = Math.max(0, Number(document.getElementById("jackpotStepAmount").value) || 0);
+                document.querySelectorAll("[data-jackpot-base]").forEach((input) => {
+                    state.jackpots.amounts[input.dataset.jackpotBase] = Math.max(0.01, Number(input.value) || 0.01);
+                });
+                save();
+                window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
+            });
+        });
         withdrawalButton.addEventListener("click", () => {
             updateMoneyUi();
             document.getElementById("withdrawalOverlay").hidden = false;
@@ -311,6 +343,36 @@
             state.displayMode = state.displayMode === "money" ? "credits" : "money";
             updateMoneyUi();
             window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
+        },
+        configureJackpots(tiers, { baseWager = 0.5 } = {}) {
+            const defaults = Object.fromEntries(tiers.map((tier) => [tier.name.toLowerCase(), Number(tier.amountUSD)]));
+            const saved = state.jackpots || {};
+            state.jackpots = {
+                enabled: saved.enabled !== false,
+                mode: saved.mode === "increment" ? "increment" : "multiply",
+                baseWager: Math.max(0.01, Number(saved.baseWager) || baseWager),
+                betStep: Math.max(0.01, Number(saved.betStep) || baseWager),
+                stepAmount: Math.max(0, Number(saved.stepAmount) || 10),
+                amounts: Object.fromEntries(Object.entries({ ...defaults, ...(saved.amounts || {}) })
+                    .map(([name, amount]) => [name, Math.max(0.01, Number(amount) || defaults[name] || 0.01)])),
+            };
+            document.getElementById("jackpotScalingEnabled").checked = state.jackpots.enabled;
+            document.getElementById("jackpotScalingMode").value = state.jackpots.mode;
+            document.getElementById("jackpotBaseWager").value = state.jackpots.baseWager;
+            document.getElementById("jackpotBetStep").value = state.jackpots.betStep;
+            document.getElementById("jackpotStepAmount").value = state.jackpots.stepAmount;
+            document.querySelectorAll("[data-jackpot-base]").forEach((input) => { input.value = state.jackpots.amounts[input.dataset.jackpotBase]; });
+            save();
+        },
+        getJackpotAmount(tier, wager) {
+            const config = state.jackpots;
+            const base = Number(config?.amounts?.[tier.name.toLowerCase()] ?? tier.amountUSD);
+            if (!config?.enabled) return Math.max(0.01, Math.round(base * 100) / 100);
+            const bet = Math.max(0.01, Number(wager) || config.baseWager);
+            const amount = config.mode === "increment"
+                ? base + ((bet - config.baseWager) / config.betStep) * config.stepAmount
+                : base * (bet / config.baseWager);
+            return Math.max(0.01, Math.round(amount * 100) / 100);
         },
         offerLuckyWheel,
         closeReelDoors,
