@@ -486,11 +486,8 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
 #gameFrame {
   display: block;
   box-sizing: border-box;
-  /* iOS Safari otherwise expands an iframe to the intrinsic width of its
-     document. A deliberately tiny preferred width plus a 100% minimum keeps
-     the iframe viewport equal to the visible game area. */
-  width: 1px;
-  min-width: 100%;
+  width: 100%;
+  min-width: 0;
   max-width: 100%;
   height: calc(100vh - 56px);
   border: 0;
