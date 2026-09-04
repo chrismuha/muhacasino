@@ -943,11 +943,43 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   border-top-color: color-mix(in srgb, var(--accent, #7df9ff) 42%, transparent) !important;
 }
 
+.settings-panel .settings-stage > .auto-spin-countdown {
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 68px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 !important;
+  padding: 14px 18px !important;
+  border: 2px solid color-mix(in srgb, var(--accent, #7df9ff) 58%, var(--text, #fff)) !important;
+  border-radius: 12px !important;
+  color: var(--text, #eef4ff) !important;
+  background: color-mix(in srgb, var(--card, #121828) 84%, var(--text, #fff) 16%) !important;
+  box-shadow: none !important;
+  font-size: clamp(18px, 2.6vw, 25px) !important;
+  font-weight: 850 !important;
+  letter-spacing: -.015em;
+  line-height: 1.15 !important;
+  text-align: center;
+}
+
+.settings-panel .settings-stage > :is(p, .stat):not(.overlay-note):not(.auto-spin-countdown) {
+  font-size: clamp(15px, 1.8vw, 18px) !important;
+  font-weight: 750 !important;
+  line-height: 1.35 !important;
+}
+
 @media (max-width: 560px) {
   .settings-panel :is(label, .select label, .checkbox-setting, .credit-controls > label) {
     font-size: 13px !important;
   }
   .settings-panel :is(small, .overlay-note, .muted, .jackpot-config-setting > small) {
     font-size: 12px !important;
+  }
+  .settings-panel .settings-stage > .auto-spin-countdown {
+    min-height: 60px;
+    padding: 11px 13px !important;
+    font-size: 18px !important;
   }
 }
