@@ -3753,8 +3753,10 @@ body {
 }
 
 .reels .link-chip.link-value {
-  grid-template-columns: clamp(24px, 3vw, 34px) minmax(0, 1fr);
+  grid-template-columns: clamp(24px, 3vw, 34px) auto;
   grid-template-rows: 1fr;
+  place-content: center;
+  justify-items: center;
   column-gap: clamp(3px, .55vw, 7px);
   width: 100%;
   height: 100%;
@@ -3780,30 +3782,46 @@ body {
   grid-row: 1;
   width: clamp(24px, 3vw, 34px);
   height: clamp(24px, 3vw, 34px);
-  margin: 0;
+  margin: auto;
+  place-self: center;
 }
 
 .reels .link-chip.link-value > strong {
   grid-column: 2;
   grid-row: 1;
   align-self: center;
+  justify-self: center;
   color: inherit;
   font-size: clamp(11px, 1.55vw, 17px);
 }
 
 .reels .hold-gem {
-  grid-template-columns: clamp(25px, 3.4vw, 38px) minmax(0, 1fr);
+  grid-template-columns: clamp(25px, 3.4vw, 38px) auto;
+  place-content: center;
+  justify-items: center;
   gap: clamp(3px, .55vw, 7px);
   padding-inline: clamp(7px, 1vw, 12px);
 }
 
 .reels .hold-gem .gem-stone {
   font-size: clamp(22px, 3.5vw, 36px);
+  place-self: center;
 }
 
 .reels .hold-gem strong {
   overflow: visible;
+  place-self: center;
   font-size: clamp(12px, 1.75vw, 19px);
   letter-spacing: -.02em;
   text-overflow: clip;
+}
+
+.reels .link-chip.link-anchor {
+  place-content: center;
+  justify-items: center;
+}
+
+.reels :is(.link-chain-icon, .link-meter-icon, .gem-stone) {
+  align-self: center;
+  justify-self: center;
 }
