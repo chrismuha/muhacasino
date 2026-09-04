@@ -48,6 +48,8 @@ window.slotExperience?.configureJackpots(JACKPOT_TIERS, { baseWager: JACKPOT_BAS
 const ROWS = 5;
 const COLS = 5;
 const GEM_HOLD_SPINS = 3;
+const GEM_HOLD_TRIGGER_RATE = 0.03;
+const GEM_DOUBLE_LAND_CHANCE = 0.12;
 const GEM_VALUE_MULTIPLIERS = [0.25, 0.5, 1, 1.5, 2];
 const MAX_OUTCOME_ATTEMPTS = 200;
 const MONTE_CARLO_BASELINES_BY_LINES = {
@@ -93,6 +95,7 @@ const winOddsEl = document.getElementById("winOdds");
 const freeSpinsOddsEl = document.getElementById("freeSpinsOdds");
 const freeSpinsAwardEl = document.getElementById("freeSpinsAward");
 const bonusGameOddsEl = document.getElementById("bonusGameOdds");
+const gemHoldOddsEl = document.getElementById("gemHoldOdds");
 const linkWinOddsEl = document.getElementById("linkWinOdds");
 const linkTeaserOddsEl = document.getElementById("linkTeaserOdds");
 const featureOddsRulesEl = document.getElementById("featureOddsRules");
@@ -203,8 +206,9 @@ let freeSpinWagerConfig = null;
 let featureStatusEl = document.getElementById("featureStatus");
 let bonusOverlayEl = null;
 let potProgress = [0, 0, 0];
-let gemHoldRow = Math.floor(Math.random() * ROWS);
-let gemHoldSpinsRemaining = GEM_HOLD_SPINS;
+let gemHoldRow = 0;
+let gemHoldSpinsRemaining = 0;
+let gemHoldActive = false;
 let heldGems = new Map();
 let gemHoldCyclePendingReset = false;
 const potFillEls = [0, 1, 2].map((index) => document.getElementById(`potFill${index}`));
@@ -495,11 +499,12 @@ function updateFeatureRules() {
     if (!featureOddsRulesEl) return;
     const freeRate = getFeatureRate(freeSpinsOddsEl, 0.03);
     const bonusRate = getFeatureRate(bonusGameOddsEl, 0.01);
-    const linkWinRate = getFeatureRate(linkWinOddsEl, 0.28);
-    const linkTeaserRate = getFeatureRate(linkTeaserOddsEl, 0.09);
+    const gemHoldRate = getFeatureRate(gemHoldOddsEl, GEM_HOLD_TRIGGER_RATE);
+    const linkWinRate = getFeatureRate(linkWinOddsEl, 0.10);
+    const linkTeaserRate = getFeatureRate(linkTeaserOddsEl, 0.03);
     const wager = getActiveTotalBetUSD();
     const jackpotAwards = JACKPOT_TIERS.map((tier) => `${tier.name} ${fmtUSD(getScaledJackpotAmount(tier, wager))}`).join(", ");
-    featureOddsRulesEl.textContent = `With the current settings, each paid spin independently has a ${(freeRate * 100).toFixed(0)}% win / ${((1 - freeRate) * 100).toFixed(0)}% loss chance to award ${getFreeSpinsAward()} free spins, and a ${(bonusRate * 100).toFixed(0)}% win / ${((1 - bonusRate) * 100).toFixed(0)}% loss chance to land 3, 4, or 5 Reserve Wheel chips from the left on an active payline and open the Pretty Penny wheel. Eligible winning spins have a ${(linkWinRate * 100).toFixed(0)}% winning-LINK chance; spins without one have a ${(linkTeaserRate * 100).toFixed(0)}% chance to display a non-paying Not Connected chain. Regular wheel prizes are Copper Penny 1× bet (35%), Lucky Nickel 2× (25%), Shiny Dime 5× (18%), and Golden Quarter 10× (12%). Jackpot outcomes are ${jackpotAwards}, with odds Mini 7%, Minor 2%, Major 0.8%, and Grand 0.2%. Reel Jackpot Odds settings do not change the wheel.`;
+    featureOddsRulesEl.textContent = `With the current settings, each paid spin independently has a ${(freeRate * 100).toFixed(0)}% win / ${((1 - freeRate) * 100).toFixed(0)}% loss chance to award ${getFreeSpinsAward()} free spins, a ${(bonusRate * 100).toFixed(0)}% win / ${((1 - bonusRate) * 100).toFixed(0)}% loss chance to open the Pretty Penny wheel, and a ${(gemHoldRate * 100).toFixed(0)}% chance to trigger the three-spin Hold & Win Wild feature. Eligible winning spins have a ${(linkWinRate * 100).toFixed(0)}% winning-LINK chance; spins without one have a ${(linkTeaserRate * 100).toFixed(0)}% chance to display a non-paying Not Connected chain. Regular wheel prizes are Copper Penny 1× bet (35%), Lucky Nickel 2× (25%), Shiny Dime 5× (18%), and Golden Quarter 10× (12%). Jackpot outcomes are ${jackpotAwards}, with odds Mini 7%, Minor 2%, Major 0.8%, and Grand 0.2%. Reel Jackpot Odds settings do not change the wheel.`;
 }
 
 function setupFeatureUI() {
@@ -823,8 +828,8 @@ function spinOnce() {
 function addLinkChips(grid, winningSpin, wagerConfig) {
     const displayGrid = grid.map((row) => [...row]);
     const winningPositions = new Set();
-    const activeChain = winningSpin && Math.random() < getFeatureRate(linkWinOddsEl, 0.28);
-    const showOrphan = !activeChain && Math.random() < getFeatureRate(linkTeaserOddsEl, 0.09);
+    const activeChain = winningSpin && Math.random() < getFeatureRate(linkWinOddsEl, 0.10);
+    const showOrphan = !activeChain && Math.random() < getFeatureRate(linkTeaserOddsEl, 0.03);
     if (!activeChain && !showOrphan) return { grid: displayGrid, winUSD: 0, winningPositions, count: 0, meterHits: [] };
 
     const row = Math.floor(Math.random() * ROWS);
@@ -851,19 +856,44 @@ function addLinkChips(grid, winningSpin, wagerConfig) {
 }
 
 function resetGemHoldCycle() {
+    gemHoldActive = false;
+    gemHoldSpinsRemaining = 0;
+    heldGems = new Map();
+    gemHoldCyclePendingReset = false;
+}
+
+function startGemHoldCycle() {
+    gemHoldActive = true;
     gemHoldRow = Math.floor(Math.random() * ROWS);
     gemHoldSpinsRemaining = GEM_HOLD_SPINS;
     heldGems = new Map();
     gemHoldCyclePendingReset = false;
 }
 
-function advanceGemHold(grid, wagerConfig) {
+function advanceGemHold(grid, wagerConfig, canTrigger = true) {
     if (gemHoldCyclePendingReset) resetGemHoldCycle();
     const displayGrid = grid.map((row) => [...row]);
+    if (!gemHoldActive) {
+        const triggerRate = getFeatureRate(gemHoldOddsEl, GEM_HOLD_TRIGGER_RATE);
+        if (!canTrigger || Math.random() >= triggerRate) {
+            updateFeatureStatus();
+            return {
+                grid: displayGrid,
+                winUSD: 0,
+                winningPositions: new Set(),
+                completed: false,
+                row: 0,
+                gemCount: 0,
+                spinsRemaining: 0,
+                cycleEnded: false,
+            };
+        }
+        startGemHoldCycle();
+    }
     const emptyColumns = Array.from({ length: COLS }, (_, col) => col)
         .filter((col) => !heldGems.has(col))
         .sort(() => Math.random() - 0.5);
-    const gemsToLand = Math.min(emptyColumns.length, Math.random() < 0.5 ? 2 : 1);
+    const gemsToLand = Math.min(emptyColumns.length, Math.random() < GEM_DOUBLE_LAND_CHANCE ? 2 : 1);
     emptyColumns.slice(0, gemsToLand).forEach((col) => {
         const multiplier = GEM_VALUE_MULTIPLIERS[Math.floor(Math.random() * GEM_VALUE_MULTIPLIERS.length)];
         heldGems.set(col, roundUSD(Math.max(0.01, wagerConfig.totalBetUSD * multiplier)));
@@ -945,7 +975,10 @@ function addBonusChipWin(grid, linesActive) {
 }
 
 function getLineMatchResult(path, grid) {
-    const lineSymbols = path.map((row, col) => grid[row][col]);
+    const lineSymbols = path.map((row, col) => {
+        const symbol = grid[row][col];
+        return symbol?.kind === "gem" ? WILD_SYMBOL : symbol;
+    });
     const baseSymbol = lineSymbols.find((symbol) => symbol !== WILD_SYMBOL) || WILD_SYMBOL;
 
     let count = 0;
@@ -1310,6 +1343,7 @@ function getSettingsDefinitions() {
         { key: "freeSpinsOdds", title: "Free Spins Odds", element: freeSpinsOddsEl?.closest(".select") },
         { key: "freeSpinsAward", title: "Free Spins Award", element: freeSpinsAwardEl?.closest(".select") },
         { key: "bonusGameOdds", title: "Reserve Wheel Trigger Odds", element: bonusGameOddsEl?.closest(".select") },
+        { key: "gemHoldOdds", title: "Hold & Win Wild Trigger Odds", element: gemHoldOddsEl?.closest(".select") },
         { key: "linkWinOdds", title: "Winning LINK Chain Odds", element: linkWinOddsEl?.closest(".select") },
         { key: "linkTeaserOdds", title: "Not Connected LINK Display Odds", element: linkTeaserOddsEl?.closest(".select") },
     ].filter((setting) => setting.element);
@@ -1888,11 +1922,11 @@ async function doSpin(options = {}) {
     const bonusTriggered = !isFreeSpin && Math.random() < getFeatureRate(bonusGameOddsEl, 0.01);
     const bonusResult = bonusTriggered ? addBonusChipWin(grid, wagerConfig.linesActive) : null;
     if (bonusResult) grid = bonusResult.grid;
-    const { totalWinUSD: regularWinUSD, lineWins, winningPositions } = evaluateGrid(grid, wagerConfig);
     const linkResult = addLinkChips(grid, shouldWin, wagerConfig);
     grid = linkResult.grid;
-    const gemResult = advanceGemHold(grid, wagerConfig);
+    const gemResult = advanceGemHold(grid, wagerConfig, !isFreeSpin);
     grid = gemResult.grid;
+    const { totalWinUSD: regularWinUSD, lineWins, winningPositions } = evaluateGrid(grid, wagerConfig);
     const displayWinningPositions = new Set(winningPositions);
     linkResult.winningPositions.forEach((position) => displayWinningPositions.add(position));
     gemResult.winningPositions.forEach((position) => displayWinningPositions.add(position));
@@ -2183,7 +2217,7 @@ document.addEventListener("keyup", (e) => {
     setupSettingsOverlay();
     setupFeatureUI();
     updatePotDisplay();
-    [freeSpinsOddsEl, freeSpinsAwardEl, bonusGameOddsEl, linkWinOddsEl, linkTeaserOddsEl].forEach((select) => select?.addEventListener("change", () => {
+    [freeSpinsOddsEl, freeSpinsAwardEl, bonusGameOddsEl, gemHoldOddsEl, linkWinOddsEl, linkTeaserOddsEl].forEach((select) => select?.addEventListener("change", () => {
         updateFeatureRules();
         updateFeatureStatus();
     }));
