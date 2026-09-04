@@ -1810,6 +1810,7 @@ function pauseSpinElapsedTimer() {
 
 function updateAutoSpinHint() {
     if (!autoSpinHintEl) return;
+    autoSpinHintEl.hidden = !autoSpinRunning;
     if (autoSpinRunning) {
         const totalBetUSD = getTotalBet();
         if (balance < totalBetUSD) {
@@ -1819,7 +1820,7 @@ function updateAutoSpinHint() {
         autoSpinHintEl.textContent = `Auto spin running (${autoSpinRemaining} spins). Tap Cancel to stop.`;
         return;
     }
-    autoSpinHintEl.textContent = "Tap Spin or Spacebar once to spin. Hold either one for auto spin. Tap again to stop.";
+    autoSpinHintEl.textContent = "";
 }
 
 function cancelAutoSpin() {

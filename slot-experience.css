@@ -645,6 +645,7 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 }
 .slot-game-pretty-penny .card {
   border-top: 0 !important;
+  border-bottom: 0 !important;
 }
 .slot-game-pretty-penny .pot-feature {
   padding: 5px 7px !important;
