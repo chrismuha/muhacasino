@@ -179,7 +179,7 @@ let settingsItems = [];
 let settingsPins = {};
 const SETTINGS_PIN_STORAGE_KEY = "treasurePots.settingsPins.v1";
 const SAVINGS_BANKS = [
-    { name: "Pin Money", amountUSD: 5 },
+    { name: "Pocket Money", amountUSD: 5 },
     { name: "Nest Egg", amountUSD: 25 },
     { name: "Rainy Day", amountUSD: 100 },
 ];

@@ -683,6 +683,15 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   line-height: 1.05 !important;
   font-variant-numeric: tabular-nums;
 }
+.slot-game-pretty-penny .pot-feature > .pots > .pot > b {
+  color: #174e48 !important;
+  font-family: "Avenir Next", Avenir, ui-rounded, system-ui, sans-serif !important;
+  font-size: clamp(12px, 1.5vw, 17px) !important;
+  font-weight: 950 !important;
+  letter-spacing: .015em;
+  line-height: 1.05 !important;
+  text-wrap: balance;
+}
 @media (min-width: 900px) {
   .jackpot-pills {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
