@@ -1114,6 +1114,7 @@ function showSettingsPage(index) {
     settingsOverlayEl.querySelector(".settings-page-title").textContent = setting.title;
     settingsOverlayEl.querySelector(".settings-page-count").textContent =
         `Page ${settingsPageIndex + 1} of ${settingsItems.length}`;
+    settingsOverlayEl.querySelector(".settings-page-jump").value = String(settingsPageIndex);
     settingsOverlayEl.querySelector(".settings-pin-toggle").checked = Boolean(settingsPins[setting.key]);
 }
 
@@ -1159,7 +1160,7 @@ function setupSettingsOverlay() {
             </div>
             <div class="settings-toolbar">
                 <button type="button" class="settings-prev" aria-label="Previous setting">← Previous</button>
-                <span class="settings-page-count"></span>
+                <label class="settings-page-jump-wrap"><span class="settings-page-count"></span><select class="settings-page-jump" aria-label="Jump to setting page"></select></label>
                 <button type="button" class="settings-next" aria-label="Next setting">Next →</button>
             </div>
             <h4 class="settings-page-title"></h4>
@@ -1177,10 +1178,13 @@ function setupSettingsOverlay() {
         setting.element.parentNode.insertBefore(marker, setting.element);
         return { ...setting, marker };
     });
+    settingsOverlayEl.querySelector(".settings-page-jump").innerHTML = settingsItems
+        .map((setting, index) => `<option value="${index}">${setting.title}</option>`).join("");
 
     settingsOverlayEl.querySelector(".settings-close").addEventListener("click", closeSettingsOverlay);
     settingsOverlayEl.querySelector(".settings-prev").addEventListener("click", () => showSettingsPage(settingsPageIndex - 1));
     settingsOverlayEl.querySelector(".settings-next").addEventListener("click", () => showSettingsPage(settingsPageIndex + 1));
+    settingsOverlayEl.querySelector(".settings-page-jump").addEventListener("change", (event) => showSettingsPage(Number(event.target.value)));
     settingsOverlayEl.querySelector(".settings-pin-toggle").addEventListener("change", (event) => {
         settingsPins[settingsItems[settingsPageIndex].key] = event.target.checked;
         saveSettingsPins();

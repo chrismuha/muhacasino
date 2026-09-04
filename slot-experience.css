@@ -203,3 +203,74 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Stable, fast settings navigation across every slot. */
+.settings-panel {
+  max-height: min(90dvh, 720px);
+  overflow: hidden;
+}
+.settings-toolbar {
+  grid-template-columns: minmax(88px, auto) minmax(140px, 1fr) minmax(88px, auto) !important;
+  align-items: stretch;
+  gap: 7px !important;
+}
+.settings-page-jump-wrap {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.settings-page-jump-wrap .settings-page-count {
+  margin: 0;
+  white-space: nowrap;
+}
+.settings-page-jump {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+}
+.settings-toolbar :is(button, select) {
+  touch-action: manipulation !important;
+  transition: none !important;
+}
+.settings-stage {
+  box-sizing: border-box;
+  height: clamp(210px, 42dvh, 360px);
+  min-height: 0 !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 700px) {
+  .title {
+    min-height: 0 !important;
+    margin-block: 0 5px !important;
+  }
+  .jackpot-board {
+    margin-block: 0 5px !important;
+    padding: 5px 6px !important;
+  }
+  .jackpot-board h3 { margin-block: 0 4px !important; }
+  .jackpot-pill { min-height: 32px !important; padding-block: 3px !important; }
+  .pot-feature { margin-block: 5px !important; padding: 6px !important; gap: 5px !important; }
+  .pot { min-height: 46px !important; padding-block: 4px !important; }
+  .reels-wrap { padding: 4px !important; row-gap: 5px !important; }
+  .reels {
+    --reel-row-h: clamp(24px, 7vw, 32px) !important;
+    --reel-row-gap: 3px !important;
+    gap: 3px !important;
+    padding: 3px !important;
+  }
+  .settings-panel { max-height: 94dvh; }
+  .settings-toolbar {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .settings-page-jump-wrap {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .settings-stage { height: clamp(190px, 44dvh, 330px); }
+}
