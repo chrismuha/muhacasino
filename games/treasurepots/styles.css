@@ -3669,9 +3669,9 @@ label {
 .reels .cell.hold-link-cell {
   padding: 0;
   overflow: hidden;
-  border-color: #b7832d;
-  background: linear-gradient(145deg, #fffdf0, #f1dda8);
-  box-shadow: inset 0 -5px #d6b760;
+  border-color: #b7832d !important;
+  background: linear-gradient(145deg, #fffdf0, #f1dda8) !important;
+  box-shadow: inset 0 -5px #d6b760 !important;
 }
 
 .reels .hold-coin {
@@ -3718,7 +3718,7 @@ label {
   width: auto;
   margin: 0;
   padding: 0;
-  color: inherit;
+  color: #4a2f0d !important;
   background: transparent;
   line-height: 1;
   white-space: nowrap;
@@ -3726,6 +3726,8 @@ label {
 
 .reels .hold-coin > strong { align-self: end; font-size: clamp(10px, 1.45vw, 16px); }
 .reels .hold-coin > span { align-self: start; font-size: clamp(6px, .8vw, 9px); letter-spacing: .03em; }
+.reels .hold-coin.collect-coin > strong,
+.reels .hold-coin.collect-coin > span { color: #174c39 !important; }
 
 /* Jackpot awards also become integrated reel cards instead of nested pills. */
 .reels .cell[class*="jackpot-meter-cell-"] {
