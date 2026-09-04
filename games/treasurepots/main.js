@@ -711,8 +711,8 @@ function createCell(symbol, isWinning = false) {
         const chip = document.createElement("span");
         chip.className = `hold-coin ${symbol.collect ? "collect-coin" : "value-coin"}`;
         chip.innerHTML = symbol.collect
-            ? "<strong>COLLECT</strong><span>ALL COINS</span>"
-            : `<strong>${fmtUSD(symbol.value)}</strong><span>HOLD &amp; LINK</span>`;
+            ? "<i class=\"hold-coin-icon\" aria-hidden=\"true\">☘</i><strong>COLLECT</strong><span>ALL COINS</span>"
+            : `<i class="hold-coin-icon" aria-hidden="true">●</i><strong>${fmtUSD(symbol.value)}</strong><span>HOLD &amp; LINK</span>`;
         cell.appendChild(chip);
         cell.classList.add("hold-link-cell");
         cell.setAttribute("aria-label", symbol.collect ? "Collect coin" : `Value coin ${fmtUSD(symbol.value)}`);
@@ -736,6 +736,7 @@ function createCell(symbol, isWinning = false) {
         chip.innerHTML = `<strong>${symbol.jackpot}</strong><span>${fmtUSD(symbol.value)}</span>`;
         chip.setAttribute("aria-hidden", "true");
         cell.appendChild(chip);
+        cell.classList.add(`jackpot-meter-cell-${symbol.jackpot.toLowerCase()}`);
         if (symbol.teaser) {
             cell.classList.add("jackpot-teaser-cell");
             cell.setAttribute("aria-label", `${symbol.jackpot} jackpot symbol, no jackpot won`);
@@ -861,7 +862,13 @@ function updatePotDisplay() {
     potProgress.forEach((value, index) => {
         const shown = Math.min(100, Math.round(value));
         if (potFillEls[index]) potFillEls[index].style.height = `${shown}%`;
-        if (potValueEls[index]) potValueEls[index].textContent = `${fmtUSD(SAVINGS_BANKS[index].amountUSD)} • ${shown}%`;
+        if (potValueEls[index]) {
+            potValueEls[index].textContent = fmtUSD(SAVINGS_BANKS[index].amountUSD);
+            potValueEls[index].closest(".pot")?.querySelector(".pot-meter")?.setAttribute(
+                "aria-label",
+                `${SAVINGS_BANKS[index].name} meter, ${shown}% full`,
+            );
+        }
     });
 }
 
