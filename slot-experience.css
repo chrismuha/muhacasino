@@ -138,10 +138,14 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   width: auto;
   max-width: 100%;
   min-width: 0;
-  padding: 7px 8px;
+  margin: 0;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 .slot-bet-control > label:first-child {
-  font-weight: 900;
+  display: none;
 }
 .bet-stepper > #bet {
   width: 100%;
@@ -175,7 +179,7 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   align-items: end;
   width: 100%;
   min-width: 0;
-  margin-top: 6px;
+  margin-top: 0;
   gap: 6px;
 }
 .slot-wager-row > .slot-denomination-control {
@@ -500,8 +504,13 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
 }
 .hud > .right > :is(#spin, #max, #resetSession, #settingsButton) {
-  width: min(100%, 160px);
-  max-width: 160px;
+  box-sizing: border-box;
+  width: min(100%, 140px);
+  max-width: 140px;
+  min-height: 42px;
+  padding: 6px 8px;
+  font-size: clamp(11px, 1.3vw, 14px);
+  line-height: 1.05;
   justify-self: center;
 }
 .hud .credit-controls .credit-row {
@@ -519,10 +528,31 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   display: none !important;
 }
 
+/* Pull the complete play surface upward by removing decorative vertical air,
+   without shrinking the reels or interactive content. */
+.card {
+  margin-top: 0 !important;
+  padding-top: clamp(3px, .55vw, 7px) !important;
+}
+.title {
+  margin-top: 0 !important;
+  margin-bottom: 3px !important;
+}
+.jackpot-board,
+.pot-feature {
+  margin-block: 2px !important;
+}
+.reels-wrap {
+  margin-top: 2px !important;
+}
+.reels-wrap > .hud {
+  margin-top: 3px !important;
+}
+
 /* Compact consumer-screen jackpot and fill-meter presentation. Larger
    cabinet displays opt back into roomier dimensions below. */
 .jackpot-board {
-  margin-block: 5px !important;
+  margin-block: 2px !important;
   padding: 4px 6px !important;
 }
 .jackpot-pills {
@@ -554,7 +584,7 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   text-overflow: clip;
 }
 .pot-feature {
-  margin-block: 5px !important;
+  margin-block: 2px !important;
   padding: 5px 7px !important;
 }
 .pot-feature > .pots {
