@@ -718,8 +718,8 @@ function createCell(symbol, isWinning = false) {
         const chip = document.createElement("span");
         chip.className = `link-chip ${symbol.anchor ? "link-anchor" : "link-value"} ${symbol.orphan ? "link-orphan" : ""}`;
         chip.innerHTML = symbol.anchor
-            ? `<strong>LINK</strong><span>${symbol.orphan ? "NOT CONNECTED" : "START"}</span>`
-            : `<i class="link-meter-icon link-meter-${symbol.meterIndex}" aria-hidden="true"></i><strong>${fmtUSD(symbol.value)}</strong><span>${symbol.orphan ? "NOT CONNECTED" : SAVINGS_BANKS[symbol.meterIndex].name.toUpperCase()}</span>`;
+            ? `<i class="link-chain-icon" aria-hidden="true">↗</i><strong>LINK</strong><span class="chip-caption">${symbol.orphan ? "NOT CONNECTED" : "START"}</span>`
+            : `<i class="link-meter-icon link-meter-${symbol.meterIndex}" aria-hidden="true"></i><strong>${fmtUSD(symbol.value)}</strong><span class="chip-caption">${symbol.orphan ? "NOT CONNECTED" : SAVINGS_BANKS[symbol.meterIndex].name.toUpperCase()}</span>`;
         cell.appendChild(chip);
         cell.classList.add(symbol.orphan ? "link-teaser-cell" : "link-win-cell");
         cell.setAttribute("aria-label", symbol.anchor ? "Link chip" : `${SAVINGS_BANKS[symbol.meterIndex].name} linked value ${fmtUSD(symbol.value)}`);
@@ -728,7 +728,7 @@ function createCell(symbol, isWinning = false) {
     if (symbol?.kind === "gem") {
         const chip = document.createElement("span");
         chip.className = "hold-gem";
-        chip.innerHTML = `<span class="gem-stone" aria-hidden="true">♦</span><strong>${fmtUSD(symbol.value)}</strong><span>HELD GEM</span>`;
+        chip.innerHTML = `<span class="gem-stone" aria-hidden="true">♦</span><strong>${fmtUSD(symbol.value)}</strong><span class="chip-caption">HELD WILD</span>`;
         cell.appendChild(chip);
         cell.classList.add(symbol.completed ? "gem-row-win" : "gem-held-cell");
         cell.setAttribute("aria-label", `Held gem worth ${fmtUSD(symbol.value)}`);
@@ -928,7 +928,13 @@ function updatePotDisplay() {
     potProgress.forEach((value, index) => {
         const shown = Math.min(100, Math.round(value));
         if (potFillEls[index]) potFillEls[index].style.height = `${shown}%`;
-        if (potValueEls[index]) potValueEls[index].textContent = `${fmtUSD(SAVINGS_BANKS[index].amountUSD)} • ${shown}%`;
+        if (potValueEls[index]) {
+            potValueEls[index].textContent = fmtUSD(SAVINGS_BANKS[index].amountUSD);
+            potValueEls[index].closest(".pot")?.querySelector(".pot-meter")?.setAttribute(
+                "aria-label",
+                `${SAVINGS_BANKS[index].name} meter, ${shown}% full`,
+            );
+        }
     });
 }
 

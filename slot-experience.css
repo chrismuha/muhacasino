@@ -676,6 +676,13 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   height: 36px !important;
   filter: none !important;
 }
+.slot-game-pretty-penny .pot-feature > .pots > .pot > small {
+  color: #8b3828 !important;
+  font-size: clamp(13px, 1.65vw, 18px) !important;
+  font-weight: 950 !important;
+  line-height: 1.05 !important;
+  font-variant-numeric: tabular-nums;
+}
 @media (min-width: 900px) {
   .jackpot-pills {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;

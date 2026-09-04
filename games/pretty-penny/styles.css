@@ -2986,6 +2986,112 @@ label {
   }
 }
 
+/* Reel feature chips use artwork plus one useful value. Their full status is
+   already announced by the result and feature rows, so tiny duplicate captions
+   stay available to assistive text without crowding a reel cell. */
+.reels .hold-gem,
+.reels .link-chip {
+  position: relative;
+  box-sizing: border-box;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  margin: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.72);
+  border-radius: 10px;
+  box-shadow: inset 0 1px rgba(255,255,255,.56), 0 2px 4px rgba(63,38,25,.2);
+  transform: none;
+}
+
+.reels .hold-gem {
+  display: grid;
+  grid-template-columns: minmax(20px, .7fr) minmax(0, 1fr);
+  place-items: center;
+  gap: 2px;
+  padding: 3px 6px;
+  border-color: #b6639f;
+  background: linear-gradient(145deg, #f8d9ef, #d983bb 52%, #98517f);
+  box-shadow: inset 0 1px #fff9, 0 2px 4px rgba(77,32,66,.28);
+}
+
+.reels .hold-gem .gem-stone {
+  color: #fff8d5;
+  font-size: clamp(15px, 2.8vw, 27px);
+  line-height: 1;
+  text-shadow: 0 1px 1px #71345f, 0 0 5px #fff4b8;
+}
+
+.reels .hold-gem strong {
+  min-width: 0;
+  padding: 0;
+  color: #35152d;
+  background: transparent;
+  font: 950 clamp(8px, 1.25vw, 13px)/1 system-ui, sans-serif;
+  white-space: nowrap;
+}
+
+.reels .link-chip {
+  padding: 3px 6px;
+  color: #3d2718;
+  background: linear-gradient(145deg, #fff4c7, #e2b65f);
+}
+
+.reels .link-chip.link-anchor {
+  display: grid;
+  grid-template-columns: auto auto;
+  place-content: center;
+  align-items: center;
+  gap: 4px;
+  color: #fffaf0;
+  border-color: #b7583d;
+  background: linear-gradient(145deg, #d97958, #a64632);
+}
+
+.reels .link-chain-icon {
+  display: grid;
+  place-items: center;
+  width: clamp(18px, 2.6vw, 27px);
+  height: clamp(18px, 2.6vw, 27px);
+  border-radius: 50%;
+  color: #873522;
+  background: #fff2ca;
+  font: 950 clamp(10px, 1.4vw, 15px)/1 system-ui, sans-serif;
+}
+
+.reels .link-chip.link-value {
+  grid-template-columns: clamp(22px, 3vw, 34px) minmax(0, 1fr);
+  grid-template-rows: 1fr;
+  column-gap: 4px;
+}
+
+.reels .link-chip.link-value > .link-meter-icon {
+  grid-row: 1;
+  width: clamp(22px, 3vw, 34px);
+  height: clamp(22px, 3vw, 34px);
+}
+
+.reels .link-chip.link-value > strong {
+  grid-column: 2;
+  align-self: center;
+  color: #3d2718;
+  font-size: clamp(7px, 1.1vw, 12px);
+}
+
+.reels .hold-gem .chip-caption,
+.reels .link-chip .chip-caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.reels .link-chip.link-orphan {
+  opacity: .72;
+  filter: saturate(.65);
+}
+
 .reels .link-meter-icon {
   display: block;
   flex: 0 0 auto;

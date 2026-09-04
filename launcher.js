@@ -79,7 +79,7 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_BUILD = "20260816-bingo-hall1-timezone-containment";
+const SITE_BUILD = "20260904-pretty-penny-clean-savings-values";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
