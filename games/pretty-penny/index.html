@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
     <title>Pretty Penny</title>
-    <link rel="icon" href="../../icons/icon-192.png?v=20260904" type="image/png" />
+    <link rel="icon" href="../../icons/muha-brand-mark.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-  <link rel="stylesheet" href="styles.css?build=20260903-frame-interior-v8" />
+  <link rel="stylesheet" href="styles.css?build=20260904-distinct-meter-icons-v12" />
 </head>
 
 <body>
@@ -23,10 +23,10 @@
             <section class="jackpot-board" aria-labelledby="jackpotBoardTitle">
                 <h3 id="jackpotBoardTitle">The Penny Reserve</h3>
                 <div class="jackpot-pills">
-                    <div class="jackpot-pill jackpot-mini"><span>Mini</span><b id="jackpotMini">$250.00</b></div>
-                    <div class="jackpot-pill jackpot-minor"><span>Minor</span><b id="jackpotMinor">$1,000.00</b></div>
-                    <div class="jackpot-pill jackpot-major"><span>Major</span><b id="jackpotMajor">$5,000.00</b></div>
-                    <div class="jackpot-pill jackpot-grand"><span>Grand</span><b id="jackpotGrand">$25,000.00</b></div>
+                    <div class="jackpot-pill jackpot-mini" data-icon="★"><span>Mini</span><b id="jackpotMini">$250.00</b></div>
+                    <div class="jackpot-pill jackpot-minor" data-icon="◆"><span>Minor</span><b id="jackpotMinor">$1,000.00</b></div>
+                    <div class="jackpot-pill jackpot-major" data-icon="♛"><span>Major</span><b id="jackpotMajor">$5,000.00</b></div>
+                    <div class="jackpot-pill jackpot-grand" data-icon="✦"><span>Grand</span><b id="jackpotGrand">$25,000.00</b></div>
                 </div>
             </section>
             <section class="pot-feature" aria-label="Pretty Penny savings bonus progress">
@@ -35,9 +35,9 @@
                     <strong>Winning LINK chains slowly fill the three banks.</strong>
                 </div>
                 <div class="pots" id="pots">
-                    <div class="pot" data-pot="0"><div class="pot-meter"><span id="potFill0"></span></div><b>Pin Money</b><small id="potValue0">$5.00 • 0%</small></div>
-                    <div class="pot" data-pot="1"><div class="pot-meter"><span id="potFill1"></span></div><b>Nest Egg</b><small id="potValue1">$25.00 • 0%</small></div>
-                    <div class="pot" data-pot="2"><div class="pot-meter"><span id="potFill2"></span></div><b>Rainy Day</b><small id="potValue2">$100.00 • 0%</small></div>
+                    <div class="pot" data-pot="0" data-icon="👛"><div class="pot-meter"><span id="potFill0"></span></div><b>Pin Money</b><small id="potValue0">$5.00 • 0%</small></div>
+                    <div class="pot" data-pot="1" data-icon="🥚"><div class="pot-meter"><span id="potFill1"></span></div><b>Nest Egg</b><small id="potValue1">$25.00 • 0%</small></div>
+                    <div class="pot" data-pot="2" data-icon="☂"><div class="pot-meter"><span id="potFill2"></span></div><b>Rainy Day</b><small id="potValue2">$100.00 • 0%</small></div>
                 </div>
                 <p class="pot-rule">Fixed awards: Pin Money $5 • Nest Egg $25 • Rainy Day $100</p>
             </section>
@@ -45,6 +45,8 @@
                 <div id="reels" class="reels" aria-live="polite" aria-label="Slot reels">
 
                 </div>
+                <div id="message" class="message reel-result" role="status" aria-live="polite"></div>
+                <div id="featureStatus" class="slot-feature-indicator" role="status" aria-live="polite"></div>
                 <div class="hud">
                     <div class="left">
                         <div class="stat"><span class="muted">Available Credits:</span> <b id="balance">—</b></div>
@@ -93,13 +95,7 @@
                                 <option value="0.05">5¢</option>
                                 <option value="0.10">10¢</option>
                                 <option value="0.25">25¢</option>
-                                <option value="0.50">50¢</option>
                                 <option value="1.00">$1.00</option>
-                                <option value="2.00">$2.00</option>
-                                <option value="5.00">$5.00</option>
-                                <option value="10.00">$10.00</option>
-                                <option value="50.00">$50.00</option>
-                                <option value="100.00">$100.00</option>
                             </select>
                         </div>
 
@@ -247,7 +243,6 @@
                         <button id="settingsButton" type="button" aria-haspopup="dialog" aria-expanded="false">Settings</button>
                         <p id="autoSpinHint" class="auto-spin-hint" aria-live="polite">Tap Spin or Spacebar once to spin. Hold either one for auto spin. Tap again to stop.</p>
                         <p id="autoSpinElapsed" class="auto-spin-countdown" aria-live="polite">Time elapsed: 00:00</p>
-                        <div id="message" class="message" role="status" aria-live="polite"></div>
                     </div>
                 </div>
             </div>
@@ -286,6 +281,7 @@
                     <p>Free spins cost no credits and retain the denomination, active lines, and bet per line from the paid spin that awarded them. Their payouts are added to Available Credits. Free spins cannot retrigger either feature.</p>
                     <p>The Pretty Penny bonus activates only when three, four, or five Reserve Wheel chips land from the left on an active payline, then randomly opens the Reserve Wheel or Match &amp; Win. Wheel odds remain fixed. In Match &amp; Win, reveal cards and match three jackpot values; jackpot amounts scale with the triggering bet and relative chances come from the current Jackpot Odds settings.</p>
                     <h4>Savings Banks &amp; Penny Chains</h4>
+                    <p>The savings meters use separate symbols for quick recognition: a purse for Pin Money, an egg for Nest Egg, and an umbrella for Rainy Day. The Penny Reserve jackpots also use distinct tier badges: star for Mini, diamond for Minor, crown for Major, and sparkle for Grand.</p>
                     <p><strong>Three-Spin Gem Row:</strong> One reel row is selected for a three-spin Hold &amp; Win cycle. One or two valued gems land and remain held on each spin. Fill all five positions within those three spins to win the total of every displayed gem value in that row. If the row is not full after the third spin, its gems clear and a new three-spin cycle begins on the next spin.</p>
                     <p>Only a winning LINK chain on a paid spin can attempt to advance the savings banks. On each qualifying LINK win, Pin Money has a 72% chance to gain 2–6%, Nest Egg has a 48% chance to gain 2–6%, and Rainy Day has a 28% chance to gain 2–6%. Their fixed awards are $5, $25, and $100. A bank opens only after its own meter reaches 100%, then resets to 0%. Unfinished banks keep their progress. Free-spin LINK wins do not advance the banks.</p>
                     <p>A LINK chip may appear on any reel, but a link win is valid only when LINK is present on the first reel. On a winning spin, every connected value chip immediately following that first-reel LINK is added to the win. The chain ends at the first ordinary symbol. Non-winning LINK chips stay colorful and are marked “Not Connected.”</p>
@@ -300,7 +296,8 @@
                     <p class="overlay-note"><strong>Actual Net Session Winnings / Actual Net Session Losses:</strong> True net totals where only one side is non-zero at a time.</p>
                     <p class="overlay-note"><strong>Denomination (Value Per Credit):</strong> Dollar value of one credit. Higher denomination increases bet size and payout size proportionally.</p>
                     <p class="overlay-note"><strong>Lines:</strong> Number of active paylines (1-10). More lines means more chances to win, but higher total bet.</p>
-                    <p class="overlay-note"><strong>Bet Per Line:</strong> Credits wagered on each active line. Increasing this raises both total bet and possible payout.</p>
+                    <p class="overlay-note"><strong>Bet Per Line:</strong> The monetary wager on each active line. Each choice equals the selected denomination multiplied by its credit level; for example, 5 credits at a 10¢ denomination is 50¢ per line.</p>
+                    <p class="overlay-note"><strong>Jackpot Bet Scaling:</strong> Multiplier mode changes each base jackpot in direct proportion to the total bet. Step mode adds or subtracts the configured amount as the wager moves above or below the reference bet.</p>
                     <p class="overlay-note"><strong>Win Odds:</strong> Sets the target chance that a spin resolves as a win. Winning payout amounts still come from the paytable.</p>
                     <p class="overlay-note"><strong>Free Spins Win / Loss Ratio:</strong> Sets the independent chance that a paid spin awards free spins.</p>
                     <p class="overlay-note"><strong>Number of Free Spins Awarded:</strong> Sets how many free games are added when the feature triggers.</p>
@@ -392,11 +389,11 @@
         </div>
     </div>
 
-    <link rel="stylesheet" href="../../slot-experience.css?v=1.9.0">
+    <link rel="stylesheet" href="../../slot-experience.css?v=1.9.6">
     <script src="../../interaction-lock.js?build=20260808-no-double-tap"></script>
     <script src="../../play-session.js?v=1.1.2"></script>
-    <script src="../../slot-experience.js?v=1.9.0"></script>
-    <script src="main.js?v=1.4.0"></script>
+    <script src="../../slot-experience.js?v=1.10.2"></script>
+    <script src="main.js?v=1.4.0&amp;build=20260904-feature-meter"></script>
 </body>
 
 </html>

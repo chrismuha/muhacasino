@@ -172,7 +172,7 @@ let actualSessionNetUSD = 0;
 let creditsInsertedUSD = INITIAL_CREDITS_USD;
 let freeSpinsRemaining = 0;
 let freeSpinWagerConfig = null;
-let featureStatusEl = null;
+let featureStatusEl = document.getElementById("featureStatus");
 let bonusOverlayEl = null;
 
 document.addEventListener("gesturestart", (e) => e.preventDefault());
@@ -424,16 +424,9 @@ function setMessage(msg) {
 
 function updateFeatureStatus() {
     if (!featureStatusEl) return;
-    const freeSpinsActive = getFeatureRate(freeSpinsOddsEl, 0.03) > 0;
     const bonusActive = getFeatureRate(bonusGameOddsEl, 0.01) > 0;
-    if (freeSpinsRemaining > 0) {
-        featureStatusEl.textContent = `FREE SPINS: ${freeSpinsRemaining}`;
-    } else if (freeSpinsActive && bonusActive) {
-        featureStatusEl.textContent = "Free Spins & Bonus Plays active";
-    } else {
-        featureStatusEl.textContent = `Free Spins ${freeSpinsActive ? "active" : "not active"} • Bonus Plays ${bonusActive ? "active" : "not active"}`;
-    }
-    featureStatusEl.classList.toggle("feature-active", freeSpinsRemaining > 0 || freeSpinsActive || bonusActive);
+    featureStatusEl.textContent = `FREE SPINS ${freeSpinsRemaining} · BONUS GAME ${bonusActive ? "READY" : "OFF"}`;
+    featureStatusEl.classList.toggle("feature-active", freeSpinsRemaining > 0);
 }
 
 function getFeatureRate(select, fallback) {
@@ -540,11 +533,6 @@ function updateFeatureRules() {
 }
 
 function setupFeatureUI() {
-    featureStatusEl = document.createElement("div");
-    featureStatusEl.className = "feature-status";
-    featureStatusEl.setAttribute("aria-live", "polite");
-    reelsEl.insertAdjacentElement("afterend", featureStatusEl);
-
     bonusOverlayEl = document.createElement("div");
     bonusOverlayEl.className = "feature-overlay";
     bonusOverlayEl.hidden = true;
@@ -1182,8 +1170,33 @@ function setupSettingsOverlay() {
         .map((setting, index) => `<option value="${index}">${setting.title}</option>`).join("");
 
     settingsOverlayEl.querySelector(".settings-close").addEventListener("click", closeSettingsOverlay);
-    settingsOverlayEl.querySelector(".settings-prev").addEventListener("click", () => showSettingsPage(settingsPageIndex - 1));
-    settingsOverlayEl.querySelector(".settings-next").addEventListener("click", () => showSettingsPage(settingsPageIndex + 1));
+    const bindSettingsPager = (selector, direction) => {
+        const button = settingsOverlayEl.querySelector(selector);
+        let repeatDelay = 0;
+        let repeatTimer = 0;
+        const stopRepeating = () => {
+            window.clearTimeout(repeatDelay);
+            window.clearInterval(repeatTimer);
+        };
+        button.addEventListener("pointerdown", (event) => {
+            if (event.button !== 0) return;
+            event.preventDefault();
+            button.focus({ preventScroll: true });
+            showSettingsPage(settingsPageIndex + direction);
+            repeatDelay = window.setTimeout(() => {
+                repeatTimer = window.setInterval(() => showSettingsPage(settingsPageIndex + direction), 110);
+            }, 350);
+        });
+        ["pointerup", "pointercancel", "lostpointercapture", "pointerleave"].forEach((eventName) => {
+            button.addEventListener(eventName, stopRepeating);
+        });
+        button.addEventListener("click", (event) => {
+            event.preventDefault();
+            if (event.detail === 0) showSettingsPage(settingsPageIndex + direction);
+        });
+    };
+    bindSettingsPager(".settings-prev", -1);
+    bindSettingsPager(".settings-next", 1);
     settingsOverlayEl.querySelector(".settings-page-jump").addEventListener("change", (event) => showSettingsPage(Number(event.target.value)));
     settingsOverlayEl.querySelector(".settings-pin-toggle").addEventListener("change", (event) => {
         settingsPins[settingsItems[settingsPageIndex].key] = event.target.checked;

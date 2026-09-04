@@ -232,7 +232,7 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   min-height: 44px;
 }
 .settings-toolbar :is(button, select) {
-  touch-action: manipulation !important;
+  touch-action: none !important;
   transition: none !important;
 }
 .settings-stage {
@@ -242,6 +242,68 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
+}
+
+/* The outcome belongs to the reel surface, not the controls beneath it. */
+.reels-wrap > .reel-result {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 2.5em;
+  margin: 5px 0 0 !important;
+  padding: 7px 10px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  border: 2px solid #1b554f !important;
+  color: #102f2c !important;
+  background: #fffdf4 !important;
+  font-weight: 950 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+.reels-wrap > .slot-feature-indicator {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin: 4px 0 0;
+  padding: 4px 8px;
+  border: 1px solid #bf8e37;
+  border-radius: 999px;
+  color: #3b2608;
+  background: #fff1bd;
+  font-size: clamp(11px, 1.5vw, 14px);
+  font-weight: 900;
+  line-height: 1.15;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* Jackpot scaling is a single compact settings page. Keep all controls visible
+   together instead of creating a second scrollbar inside the dialog. */
+.settings-stage:has(> .jackpot-scaling-setting) {
+  overflow-y: hidden;
+}
+.settings-stage > .jackpot-scaling-setting {
+  gap: 5px;
+  padding: 7px;
+}
+.settings-stage > .jackpot-scaling-setting > strong {
+  line-height: 1.1;
+}
+.settings-stage > .jackpot-scaling-setting > label {
+  gap: 2px;
+}
+.settings-stage > .jackpot-scaling-setting :is(input, select) {
+  min-height: 36px;
+  padding-block: 4px;
+}
+.settings-stage > .jackpot-scaling-setting .jackpot-scale-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
 }
 
 @media (max-width: 700px) {
@@ -273,4 +335,78 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
     grid-row: 2;
   }
   .settings-stage { height: clamp(190px, 44dvh, 330px); }
+  .reels-wrap > .reel-result {
+    min-height: 2.25em;
+    margin-top: 4px !important;
+    padding: 5px 7px !important;
+  }
+}
+
+/* Keep the play surface machine-like. Detailed explanations remain in the
+   game-rules overlay; the home screen only presents live meters. */
+.jackpot-board > h3,
+.pot-feature > .pot-copy,
+.pot-feature > .pot-rule {
+  display: none !important;
+}
+.jackpot-pills > .jackpot-pill {
+  box-sizing: border-box;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 3px !important;
+  min-width: 0;
+  min-height: 52px !important;
+  padding: 6px 8px !important;
+  text-align: center !important;
+}
+.jackpot-pills > .jackpot-pill > span,
+.jackpot-pills > .jackpot-pill > b,
+.jackpot-pills > .jackpot-pill > strong {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 0 !important;
+  text-align: center !important;
+  line-height: 1.05 !important;
+}
+.jackpot-pills > .jackpot-pill > span {
+  font-size: clamp(13px, 1.8vw, 17px) !important;
+  font-weight: 900 !important;
+}
+.jackpot-pills > .jackpot-pill > :is(b, strong) {
+  font-size: clamp(16px, 2.2vw, 22px) !important;
+  font-variant-numeric: tabular-nums;
+}
+.pot-feature {
+  display: block !important;
+}
+.pot-feature > .pots {
+  width: 100%;
+  max-width: 100%;
+}
+.hud button,
+.hud button:hover,
+.hud button:active {
+  box-shadow: none !important;
+}
+.footer {
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+@media (max-width: 900px) {
+  .jackpot-pills {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+@media (max-width: 560px) {
+  .jackpot-pills > .jackpot-pill {
+    min-height: 46px !important;
+    padding: 5px 6px !important;
+  }
+  .jackpot-pills > .jackpot-pill > span { font-size: 12px !important; }
+  .jackpot-pills > .jackpot-pill > :is(b, strong) { font-size: clamp(15px, 4.4vw, 19px) !important; }
 }

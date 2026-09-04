@@ -140,7 +140,6 @@
                     <label>Bet step<input id="jackpotBetStep" type="number" min="0.01" step="0.01"></label>
                     <label>Amount per step<input id="jackpotStepAmount" type="number" min="0" step="0.01"></label>
                 </div>
-                <small>Multiplier mode changes each base jackpot in direct proportion to the bet. Step mode adds or subtracts the configured amount as the bet moves above or below the reference bet.</small>
             </div>
             ${gameKey === "pretty-penny" ? `<div class="select penny-door-setting">
                 <label for="pennyRevealDoors">Pretty Penny reveal doors</label>
@@ -160,6 +159,19 @@
         const betSelect = document.getElementById("bet");
         if (betSelect && !betSelect.closest(".bet-stepper")) {
             const betSetting = betSelect.parentElement;
+            const denomSelect = document.getElementById("denom");
+            const linesSelect = document.getElementById("lines");
+            const betLabel = betSetting.querySelector('label[for="bet"]');
+            if (betLabel) betLabel.textContent = "Bet Per Line";
+            const updateBetOptionLabels = () => {
+                const denomination = Number(denomSelect?.value || 0.01);
+                Array.from(betSelect.options).forEach((option) => {
+                    const amount = Number(option.value) * denomination;
+                    option.textContent = amount < 1
+                        ? `${Math.round(amount * 100)}¢`
+                        : `$${amount.toFixed(2)}`;
+                });
+            };
             const stepper = document.createElement("div");
             stepper.className = "bet-stepper";
             betSelect.parentNode.insertBefore(stepper, betSelect);
@@ -189,8 +201,6 @@
             const presets = document.createElement("div");
             presets.className = "bet-presets";
             presets.setAttribute("aria-label", "Quick total bet presets");
-            const denomSelect = document.getElementById("denom");
-            const linesSelect = document.getElementById("lines");
             const totalBetPresets = [
                 { total: 0.5, label: "50¢", bet: "5" },
                 { total: 1, label: "$1.00", bet: "10" },
@@ -235,8 +245,12 @@
                 });
             };
             betSelect.addEventListener("change", syncBetPresets);
-            denomSelect?.addEventListener("change", syncBetPresets);
+            denomSelect?.addEventListener("change", () => {
+                updateBetOptionLabels();
+                syncBetPresets();
+            });
             linesSelect?.addEventListener("change", syncBetPresets);
+            updateBetOptionLabels();
             syncBetPresets();
 
             betSetting.classList.add("slot-bet-control");

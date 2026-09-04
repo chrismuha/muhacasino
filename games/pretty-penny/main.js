@@ -200,7 +200,7 @@ let actualSessionNetUSD = 0;
 let creditsInsertedUSD = INITIAL_CREDITS_USD;
 let freeSpinsRemaining = 0;
 let freeSpinWagerConfig = null;
-let featureStatusEl = null;
+let featureStatusEl = document.getElementById("featureStatus");
 let bonusOverlayEl = null;
 let potProgress = [0, 0, 0];
 let gemHoldRow = Math.floor(Math.random() * ROWS);
@@ -472,19 +472,12 @@ function setMessage(msg) {
 
 function updateFeatureStatus() {
     if (!featureStatusEl) return;
-    const freeSpinsActive = getFeatureRate(freeSpinsOddsEl, 0.03) > 0;
     const bonusActive = getFeatureRate(bonusGameOddsEl, 0.01) > 0;
     const gemStatus = gemHoldCyclePendingReset
-        ? `Gem Row ${gemHoldRow + 1}: cycle finished • new row next spin`
-        : `Gem Row ${gemHoldRow + 1}: ${heldGems.size}/${COLS} gems • ${gemHoldSpinsRemaining} spin${gemHoldSpinsRemaining === 1 ? "" : "s"} left`;
-    if (freeSpinsRemaining > 0) {
-        featureStatusEl.textContent = `FREE SPINS: ${freeSpinsRemaining} • ${gemStatus}`;
-    } else if (freeSpinsActive && bonusActive) {
-        featureStatusEl.textContent = `Free Spins & Reserve Wheel active • ${gemStatus}`;
-    } else {
-        featureStatusEl.textContent = `Free Spins ${freeSpinsActive ? "active" : "not active"} • Reserve Wheel ${bonusActive ? "active" : "not active"} • ${gemStatus}`;
-    }
-    featureStatusEl.classList.toggle("feature-active", freeSpinsRemaining > 0 || freeSpinsActive || bonusActive);
+        ? "GEMS RESET NEXT SPIN"
+        : `GEMS ${heldGems.size}/${COLS} · ${gemHoldSpinsRemaining} SPINS LEFT`;
+    featureStatusEl.textContent = `FREE SPINS ${freeSpinsRemaining} · RESERVE WHEEL ${bonusActive ? "READY" : "OFF"} · ${gemStatus}`;
+    featureStatusEl.classList.toggle("feature-active", freeSpinsRemaining > 0 || heldGems.size > 0);
 }
 
 function getFeatureRate(select, fallback) {
@@ -509,11 +502,6 @@ function updateFeatureRules() {
 }
 
 function setupFeatureUI() {
-    featureStatusEl = document.createElement("div");
-    featureStatusEl.className = "feature-status";
-    featureStatusEl.setAttribute("aria-live", "polite");
-    reelsEl.insertAdjacentElement("afterend", featureStatusEl);
-
     bonusOverlayEl = document.createElement("div");
     bonusOverlayEl.className = "feature-overlay";
     bonusOverlayEl.hidden = true;
@@ -1424,8 +1412,33 @@ function setupSettingsOverlay() {
         .map((setting, index) => `<option value="${index}">${setting.title}</option>`).join("");
 
     settingsOverlayEl.querySelector(".settings-close").addEventListener("click", closeSettingsOverlay);
-    settingsOverlayEl.querySelector(".settings-prev").addEventListener("click", () => showSettingsPage(settingsPageIndex - 1));
-    settingsOverlayEl.querySelector(".settings-next").addEventListener("click", () => showSettingsPage(settingsPageIndex + 1));
+    const bindSettingsPager = (selector, direction) => {
+        const button = settingsOverlayEl.querySelector(selector);
+        let repeatDelay = 0;
+        let repeatTimer = 0;
+        const stopRepeating = () => {
+            window.clearTimeout(repeatDelay);
+            window.clearInterval(repeatTimer);
+        };
+        button.addEventListener("pointerdown", (event) => {
+            if (event.button !== 0) return;
+            event.preventDefault();
+            button.focus({ preventScroll: true });
+            showSettingsPage(settingsPageIndex + direction);
+            repeatDelay = window.setTimeout(() => {
+                repeatTimer = window.setInterval(() => showSettingsPage(settingsPageIndex + direction), 110);
+            }, 350);
+        });
+        ["pointerup", "pointercancel", "lostpointercapture", "pointerleave"].forEach((eventName) => {
+            button.addEventListener(eventName, stopRepeating);
+        });
+        button.addEventListener("click", (event) => {
+            event.preventDefault();
+            if (event.detail === 0) showSettingsPage(settingsPageIndex + direction);
+        });
+    };
+    bindSettingsPager(".settings-prev", -1);
+    bindSettingsPager(".settings-next", 1);
     settingsOverlayEl.querySelector(".settings-page-jump").addEventListener("change", (event) => showSettingsPage(Number(event.target.value)));
     settingsOverlayEl.querySelector(".settings-pin-toggle").addEventListener("change", (event) => {
         settingsPins[settingsItems[settingsPageIndex].key] = event.target.checked;
@@ -1920,11 +1933,10 @@ async function doSpin(options = {}) {
         const status = getCreditStatusMessage(options.totalBetOverrideUSD);
         if (status) creditHint = ` ${status}`;
         if (!options.silentNoWin) {
-            const featureText = freeSpinsTriggered ? ` ${freeSpinsAwarded} FREE SPINS AWARDED!` : "";
-            const gemText = gemResult.cycleEnded
-                ? ` Gem row ${gemResult.row} finished ${gemResult.gemCount}/${COLS}; a new three-spin row starts next spin.`
-                : ` Gem row ${gemResult.row}: ${gemResult.gemCount}/${COLS}, ${gemResult.spinsRemaining} spin${gemResult.spinsRemaining === 1 ? "" : "s"} left.`;
-            setMessage(`${isFreeSpin ? "Free spin" : "No win — try again!"}${featureText}${gemText}${creditHint}`);
+            const outcome = freeSpinsTriggered
+                ? `${freeSpinsAwarded} FREE SPINS AWARDED!`
+                : (isFreeSpin ? "Free spin — no win." : "No win — try again!");
+            setMessage(`${outcome}${creditHint}`);
         }
     }
 
