@@ -819,3 +819,77 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
     height: 48px !important;
   }
 }
+
+/* Final settings readability contract. Every slot supplies --card, --text,
+   --muted, --accent, and --accent2, so settings retain the game's identity
+   without allowing legacy translucent text or unrelated panel colors through. */
+.settings-panel {
+  color: var(--text, #eef4ff) !important;
+  background: var(--card, #121828) !important;
+  border: 2px solid color-mix(in srgb, var(--accent, #7df9ff) 72%, var(--text, #fff)) !important;
+}
+
+.settings-panel :is(.settings-page-title, .settings-page-count, label, strong, h2, h3, h4, p) {
+  color: var(--text, #eef4ff) !important;
+  opacity: 1 !important;
+}
+
+.settings-panel .settings-page-title {
+  margin-block: 7px 2px !important;
+  font-size: clamp(17px, 2.5vw, 23px) !important;
+  font-weight: 950 !important;
+  line-height: 1.08;
+}
+
+.settings-panel .settings-page-count {
+  color: color-mix(in srgb, var(--text, #eef4ff) 82%, var(--accent, #7df9ff)) !important;
+  font-size: clamp(12px, 1.5vw, 14px) !important;
+  font-weight: 850 !important;
+}
+
+.settings-panel :is(label, .select label, .checkbox-setting, .credit-controls > label) {
+  font-size: clamp(13px, 1.6vw, 16px) !important;
+  font-weight: 800 !important;
+  line-height: 1.22 !important;
+}
+
+.settings-panel :is(small, .overlay-note, .muted, .jackpot-config-setting > small, .slot-wheel-setting small, .slot-withdrawal-setting small) {
+  color: color-mix(in srgb, var(--text, #eef4ff) 82%, var(--muted, #8d98b3)) !important;
+  font-size: clamp(12px, 1.35vw, 14px) !important;
+  font-weight: 650 !important;
+  line-height: 1.35 !important;
+  opacity: 1 !important;
+}
+
+.settings-panel :is(.select, .checkbox-setting, .credit-controls, .jackpot-config-setting, .slot-wheel-setting, .slot-withdrawal-setting, .penny-door-rows) {
+  border: 1px solid color-mix(in srgb, var(--accent, #7df9ff) 45%, var(--text, #fff)) !important;
+  background: color-mix(in srgb, var(--card, #121828) 91%, var(--text, #fff) 9%) !important;
+  box-shadow: none !important;
+}
+
+.settings-panel :is(select, input[type="number"], input[type="text"]) {
+  min-height: 42px !important;
+  border: 2px solid color-mix(in srgb, var(--accent, #7df9ff) 62%, var(--text, #fff)) !important;
+  color: var(--text, #eef4ff) !important;
+  background: color-mix(in srgb, var(--card, #121828) 84%, var(--text, #fff) 16%) !important;
+  font-size: clamp(14px, 1.6vw, 17px) !important;
+  font-weight: 800 !important;
+}
+
+.settings-panel :is(select, input):focus-visible {
+  outline: 3px solid var(--accent, #7df9ff) !important;
+  outline-offset: 2px;
+}
+
+.settings-panel .settings-pin-row {
+  border-top-color: color-mix(in srgb, var(--accent, #7df9ff) 42%, transparent) !important;
+}
+
+@media (max-width: 560px) {
+  .settings-panel :is(label, .select label, .checkbox-setting, .credit-controls > label) {
+    font-size: 13px !important;
+  }
+  .settings-panel :is(small, .overlay-note, .muted, .jackpot-config-setting > small) {
+    font-size: 12px !important;
+  }
+}
