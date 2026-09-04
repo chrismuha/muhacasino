@@ -23,8 +23,6 @@
     "mobile:open:ios": "npx cap open ios"
   },
   "devDependencies": {
-    "concurrently": "^10.0.5",
-    "cross-env": "^10.1.0",
     "vite": "^8.2.2"
   },
   "dependencies": {
