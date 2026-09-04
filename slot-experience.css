@@ -684,13 +684,25 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   font-variant-numeric: tabular-nums;
 }
 .slot-game-pretty-penny .pot-feature > .pots > .pot > b {
-  color: #174e48 !important;
-  font-family: "Avenir Next", Avenir, ui-rounded, system-ui, sans-serif !important;
-  font-size: clamp(12px, 1.5vw, 17px) !important;
-  font-weight: 950 !important;
-  letter-spacing: .015em;
-  line-height: 1.05 !important;
+  color: #843d32 !important;
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-size: clamp(14px, 1.9vw, 21px) !important;
+  font-style: italic;
+  font-weight: 800 !important;
+  letter-spacing: -.025em;
+  line-height: .95 !important;
+  text-shadow: 0 1px rgba(255,255,255,.9);
   text-wrap: balance;
+}
+.slot-game-pretty-penny .pot-feature > .pots > .pot[data-pot="1"] > b {
+  color: #176b59 !important;
+}
+.slot-game-pretty-penny .pot-feature > .pots > .pot[data-pot="2"] > b {
+  color: #285c91 !important;
+}
+.slot-game-pretty-penny .pot-feature > .pots > .pot > small {
+  margin-top: 2px;
+  letter-spacing: .02em;
 }
 @media (min-width: 900px) {
   .jackpot-pills {
