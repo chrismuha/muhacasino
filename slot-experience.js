@@ -371,12 +371,11 @@
                 const award = Math.max(attempt.needed, attempt.needed * multiplier);
                 result.textContent = `Lucky win! ${money(award)} in simulated credits was added.`;
                 const callback = attempt.onAward;
-                window.setTimeout(async () => {
-                    if (pendingWheel !== attempt) return;
-                    pendingWheel = null;
-                    closeOverlay("luckyWheelOverlay");
-                    await callback(award);
-                }, 700);
+                await callback(award);
+                if (pendingWheel !== attempt) return;
+                button.disabled = false;
+                button.textContent = "Close";
+                button.onclick = () => closeOverlay("luckyWheelOverlay");
             }, 1500);
         };
         button.focus();

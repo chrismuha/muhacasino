@@ -939,7 +939,7 @@ function openLastChanceOverlay() {
         onAward: async (awardUSD) => {
             balance = clampBalanceUSD(balance + awardUSD);
             updateCreditsInsertedDisplay();
-            await doSpin({ totalBetOverrideUSD: totalBetUSD, offerLastChance: false });
+            updateTotals();
         },
     })) return true;
     pendingLastChanceSpinUSD = getActiveTotalBetUSD();
