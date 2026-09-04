@@ -1010,6 +1010,18 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   line-height: 1.35 !important;
 }
 
+.settings-panel .settings-stage .stat :is(span, .muted) {
+  color: var(--text, #eef4ff) !important;
+  opacity: 1 !important;
+}
+
+.settings-panel .settings-stage .stat :is(b, strong),
+.settings-panel .settings-stage :is(#balance, #totalBet, #creditsInserted, [id*="SessionWinnings"], [id*="SessionLosses"]) {
+  color: color-mix(in srgb, var(--text, #eef4ff) 72%, var(--accent, #7df9ff) 28%) !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
 @media (max-width: 560px) {
   .settings-panel :is(label, .select label, .checkbox-setting, .credit-controls > label) {
     font-size: 13px !important;
