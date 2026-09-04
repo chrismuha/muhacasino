@@ -3807,3 +3807,88 @@ label {
   .pots > .pot { grid-template-columns: 36px minmax(0, 1fr); padding-inline: 5px; }
   .pots > .pot .pot-meter { width: 34px !important; height: 34px !important; }
 }
+
+/* Complete the linked-meter treatment: the compact bank cards use the same
+   warm display surface as Pretty Penny and each reel value carries its bank. */
+.pot-feature {
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #f4dfba, #e9c98e);
+  box-shadow: inset 0 0 0 1px rgba(122, 83, 27, .32);
+}
+
+.pots {
+  gap: clamp(7px, 1vw, 12px);
+}
+
+.pots > .pot {
+  min-height: clamp(62px, 7vw, 78px);
+  grid-template-columns: clamp(50px, 5.8vw, 64px) minmax(0, 1fr);
+  border: 2px solid #8b6425;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #fffdf2, #f7edd3);
+  box-shadow: inset 0 -6px #e3d4ae, 0 3px 0 #a9792c;
+}
+
+.pots > .pot .pot-meter {
+  width: clamp(48px, 5.6vw, 62px) !important;
+  height: clamp(48px, 5.6vw, 62px) !important;
+}
+
+.pots > .pot b {
+  align-self: end;
+  color: #174c39 !important;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(14px, 1.8vw, 21px);
+  font-style: italic;
+  line-height: 1;
+}
+
+.pots > .pot small {
+  align-self: start;
+  color: #7b431d !important;
+  font-size: clamp(13px, 1.55vw, 18px);
+  line-height: 1.05;
+}
+
+.reels .hold-coin.value-coin .hold-coin-icon {
+  border-radius: 0;
+  box-shadow: none;
+  filter: drop-shadow(0 1px 1px rgba(42,25,15,.36));
+}
+
+.reels .hold-coin.hold-meter-0 .hold-coin-icon {
+  background: #b36b2e;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M28 25 37 9h26l9 16 13 9 9 57H6l9-57 13-9Zm10 0h24l-5-8H43l-5 8Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M28 25 37 9h26l9 16 13 9 9 57H6l9-57 13-9Zm10 0h24l-5-8H43l-5 8Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.reels .hold-coin.hold-meter-1 .hold-coin-icon {
+  background: #27925b;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M49 43C25 20 2 34 10 55c5 13 19 14 31 7-8 13-9 24-9 30h36c0-6-2-17-10-30 13 7 27 6 32-7 8-21-15-35-39-12C64 15 37-1 26 14c-9 12 1 25 23 29Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M49 43C25 20 2 34 10 55c5 13 19 14 31 7-8 13-9 24-9 30h36c0-6-2-17-10-30 13 7 27 6 32-7 8-21-15-35-39-12C64 15 37-1 26 14c-9 12 1 25 23 29Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.reels .hold-coin.hold-meter-2 .hold-coin-icon {
+  background: #c59720;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='m8 29 22 19 20-35 20 35 22-19-8 54H16L8 29Zm8 59h68v8H16v-8Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='m8 29 22 19 20-35 20 35 22-19-8 54H16L8 29Zm8 59h68v8H16v-8Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.reels .jackpot-chip.jackpot-grand::before {
+  content: "🏆";
+  color: initial;
+  background: linear-gradient(145deg, #d06471, #75213d);
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", system-ui, sans-serif;
+  font-size: clamp(13px, 1.8vw, 20px);
+}
+
+@media (max-width: 560px) {
+  .pots > .pot {
+    min-height: 56px;
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+  .pots > .pot .pot-meter { width: 40px !important; height: 40px !important; }
+  .pots > .pot b { font-size: clamp(12px, 3.8vw, 16px); }
+  .pots > .pot small { font-size: clamp(11px, 3.3vw, 14px); }
+}

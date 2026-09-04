@@ -709,10 +709,10 @@ function createCell(symbol, isWinning = false) {
     }
     if (symbol?.kind === "hold-coin") {
         const chip = document.createElement("span");
-        chip.className = `hold-coin ${symbol.collect ? "collect-coin" : "value-coin"}`;
+        chip.className = `hold-coin ${symbol.collect ? "collect-coin" : `value-coin hold-meter-${symbol.meterIndex}`}`;
         chip.innerHTML = symbol.collect
             ? "<i class=\"hold-coin-icon\" aria-hidden=\"true\">☘</i><strong>COLLECT</strong><span>ALL COINS</span>"
-            : `<i class="hold-coin-icon" aria-hidden="true">●</i><strong>${fmtUSD(symbol.value)}</strong><span>HOLD &amp; LINK</span>`;
+            : `<i class="hold-coin-icon" aria-hidden="true"></i><strong>${fmtUSD(symbol.value)}</strong><span>${SAVINGS_BANKS[symbol.meterIndex].name.toUpperCase()}</span>`;
         cell.appendChild(chip);
         cell.classList.add("hold-link-cell");
         cell.setAttribute("aria-label", symbol.collect ? "Collect coin" : `Value coin ${fmtUSD(symbol.value)}`);
@@ -826,22 +826,27 @@ function addLinkChips(grid, winningSpin, wagerConfig) {
     const winningPositions = new Set();
     const triggered = winningSpin && Math.random() < getFeatureRate(linkWinOddsEl, 0.28);
     const teaser = !triggered && Math.random() < getFeatureRate(linkTeaserOddsEl, 0.09);
-    if (!triggered && !teaser) return { grid: displayGrid, winUSD: 0, winningPositions, count: 0 };
+    if (!triggered && !teaser) return { grid: displayGrid, winUSD: 0, winningPositions, count: 0, meterHits: [] };
     const coinCount = triggered ? 6 + Math.floor(Math.random() * 7) : 2 + Math.floor(Math.random() * 4);
     const positions = Array.from({ length: ROWS * COLS }, (_, index) => [Math.floor(index / COLS), index % COLS])
         .sort(() => Math.random() - 0.5).slice(0, coinCount);
     let winUSD = 0;
+    const meterHits = [];
     positions.forEach(([row, col], index) => {
         const collect = triggered && index === 0;
         const multiplier = [0.5, 1, 2, 3, 5, 10, 15][Math.floor(Math.random() * 7)];
         const value = roundUSD(Math.max(0.01, wagerConfig.totalBetUSD * multiplier));
-        displayGrid[row][col] = { kind: "hold-coin", collect, value };
+        const meterIndex = collect ? null : Math.floor(Math.random() * SAVINGS_BANKS.length);
+        displayGrid[row][col] = { kind: "hold-coin", collect, value, meterIndex };
         if (triggered) {
             winningPositions.add(`${row},${col}`);
-            if (!collect) winUSD = roundUSD(winUSD + value);
+            if (!collect) {
+                winUSD = roundUSD(winUSD + value);
+                meterHits.push(meterIndex);
+            }
         }
     });
-    return { grid: displayGrid, winUSD, winningPositions, count: coinCount };
+    return { grid: displayGrid, winUSD, winningPositions, count: coinCount, meterHits };
 }
 
 function addScatterSymbols(grid, triggered) {
@@ -872,12 +877,10 @@ function updatePotDisplay() {
     });
 }
 
-function advanceTreasurePots(hasPaidLinkWin) {
-    if (!hasPaidLinkWin) return { winUSD: 0, popped: [] };
-    const progressRates = [0.72, 0.48, 0.28];
-    potProgress = potProgress.map((value, index) => {
-        if (Math.random() >= progressRates[index]) return value;
-        return Math.min(100, value + 2 + Math.floor(Math.random() * 5));
+function advanceTreasurePots(meterHits) {
+    if (!meterHits.length) return { winUSD: 0, popped: [] };
+    meterHits.forEach((index) => {
+        potProgress[index] = Math.min(100, potProgress[index] + 2 + Math.floor(Math.random() * 5));
     });
     const full = potProgress.map((value, index) => value >= 100 ? index : -1).filter((index) => index >= 0);
     if (full.length === 0) {
@@ -1875,7 +1878,7 @@ async function doSpin(options = {}) {
     renderOutcomeGrid(grid, displayWinningPositions, jackpotWins, jackpotTeasers);
     const bonusOutcome = bonusTriggered ? await playBonusGame(totalBetUSD) : null;
     const bonusWinUSD = bonusOutcome?.winUSD || 0;
-    const potResult = advanceTreasurePots(!isFreeSpin && linkResult.winUSD > 0);
+    const potResult = advanceTreasurePots(!isFreeSpin ? linkResult.meterHits : []);
     const potWinUSD = potResult.winUSD;
     await animatePotPop(potResult.popped);
     const freeSpinsAwarded = getFreeSpinsAward();
