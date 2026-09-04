@@ -8,7 +8,7 @@
     <link rel="icon" href="../../icons/muha-brand-mark.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-  <link rel="stylesheet" href="styles.css?build=20260904-flat-interface" />
+  <link rel="stylesheet" href="styles.css?build=20260904-treasure-jackpots" />
 </head>
 
 <body>
@@ -23,16 +23,16 @@
             <section class="jackpot-board" aria-labelledby="jackpotBoardTitle">
                 <h3 id="jackpotBoardTitle">The Emerald Vault</h3>
                 <div class="jackpot-pills">
-                    <div class="jackpot-pill jackpot-mini" data-icon="⭐"><span>Mini</span><b id="jackpotMini">$250.00</b></div>
-                    <div class="jackpot-pill jackpot-minor" data-icon="💎"><span>Minor</span><b id="jackpotMinor">$1,000.00</b></div>
-                    <div class="jackpot-pill jackpot-major" data-icon="♛"><span>Major</span><b id="jackpotMajor">$5,000.00</b></div>
+                    <div class="jackpot-pill jackpot-mini" data-icon="🪙"><span>Mini</span><b id="jackpotMini">$250.00</b></div>
+                    <div class="jackpot-pill jackpot-minor" data-icon="☘️"><span>Minor</span><b id="jackpotMinor">$1,000.00</b></div>
+                    <div class="jackpot-pill jackpot-major" data-icon="🗝️"><span>Major</span><b id="jackpotMajor">$5,000.00</b></div>
                     <div class="jackpot-pill jackpot-grand" data-icon="🏆"><span>Grand</span><b id="jackpotGrand">$25,000.00</b></div>
                 </div>
             </section>
             <section class="pot-feature" aria-label="TreasurePots savings bonus progress">
                 <div class="pot-copy">
                     <span class="eyebrow">Treasure Pot Feature</span>
-                    <strong>COLLECT 6 or more coins to unlock Hold &amp; Link.</strong>
+                    <strong>Winning LINK chains feed the three Treasure Pot meters.</strong>
                 </div>
                 <div class="pots" id="pots">
                     <div class="pot" data-pot="0"><div class="pot-meter" role="img" aria-label="Pocket Pot meter, 0% full"><span id="potFill0"></span></div><b>Pocket Pot</b><small id="potValue0">$5.00</small></div>
@@ -143,8 +143,9 @@
                         <div class="select"><label for="freeSpinsOdds">Free Spins Win / Loss Ratio</label><select id="freeSpinsOdds"><option value="0">0% Win / 100% Loss (Never)</option><option value="0.01">1% Win / 99% Loss</option><option value="0.02">2% Win / 98% Loss</option><option value="0.03" selected>3% Win / 97% Loss</option><option value="0.05">5% Win / 95% Loss</option><option value="0.10">10% Win / 90% Loss</option><option value="0.25">25% Win / 75% Loss</option><option value="0.50">50% Win / 50% Loss</option></select></div>
                         <div class="select"><label for="freeSpinsAward">Number of Free Spins Awarded</label><select id="freeSpinsAward"><option value="3">3 Free Spins</option><option value="5">5 Free Spins</option><option value="8" selected>8 Free Spins</option><option value="10">10 Free Spins</option><option value="15">15 Free Spins</option><option value="20">20 Free Spins</option></select></div>
                         <div class="select"><label for="bonusGameOdds">Emerald Wheel Trigger Win / Loss Ratio</label><select id="bonusGameOdds"><option value="0">0% Win / 100% Loss (Never)</option><option value="0.01" selected>1% Win / 99% Loss</option><option value="0.02">2% Win / 98% Loss</option><option value="0.03">3% Win / 97% Loss</option><option value="0.05">5% Win / 95% Loss</option><option value="0.10">10% Win / 90% Loss</option><option value="0.25">25% Win / 75% Loss</option><option value="0.50">50% Win / 50% Loss</option></select></div>
-                        <div class="select"><label for="linkWinOdds">6+ Coin Hold &amp; Link Trigger Ratio</label><select id="linkWinOdds"><option value="0">Never</option><option value="0.05">5%</option><option value="0.10">10%</option><option value="0.15">15%</option><option value="0.20">20%</option><option value="0.28" selected>28%</option><option value="0.35">35%</option><option value="0.50">50%</option><option value="0.75">75%</option><option value="1">100%</option></select></div>
-                        <div class="select"><label for="linkTeaserOdds">Coin Teaser Display Ratio</label><select id="linkTeaserOdds"><option value="0">Never</option><option value="0.01">1%</option><option value="0.03">3%</option><option value="0.05">5%</option><option value="0.09" selected>9%</option><option value="0.10">10%</option><option value="0.15">15%</option><option value="0.20">20%</option><option value="0.35">35%</option><option value="0.50">50%</option></select></div>
+                        <div class="select"><label for="gemHoldOdds">Emerald Hold &amp; Win Wild Trigger Ratio</label><select id="gemHoldOdds"><option value="0">0% Trigger / 100% No Trigger (Never)</option><option value="0.01">1% Trigger / 99% No Trigger</option><option value="0.02">2% Trigger / 98% No Trigger</option><option value="0.03" selected>3% Trigger / 97% No Trigger</option><option value="0.05">5% Trigger / 95% No Trigger</option><option value="0.10">10% Trigger / 90% No Trigger</option><option value="0.25">25% Trigger / 75% No Trigger</option></select></div>
+                        <div class="select"><label for="linkWinOdds">Winning LINK Chain Win / Loss Ratio</label><select id="linkWinOdds"><option value="0">0% LINK / 100% No LINK (Never)</option><option value="0.05">5% LINK / 95% No LINK</option><option value="0.10" selected>10% LINK / 90% No LINK</option><option value="0.15">15% LINK / 85% No LINK</option><option value="0.20">20% LINK / 80% No LINK</option><option value="0.28">28% LINK / 72% No LINK</option><option value="0.35">35% LINK / 65% No LINK</option><option value="0.50">50% LINK / 50% No LINK</option><option value="0.75">75% LINK / 25% No LINK</option><option value="1">100% LINK / 0% No LINK</option></select></div>
+                        <div class="select"><label for="linkTeaserOdds">Not Connected LINK Display Ratio</label><select id="linkTeaserOdds"><option value="0">0% Show / 100% Hide (Never)</option><option value="0.01">1% Show / 99% Hide</option><option value="0.03" selected>3% Show / 97% Hide</option><option value="0.05">5% Show / 95% Hide</option><option value="0.09">9% Show / 91% Hide</option><option value="0.10">10% Show / 90% Hide</option><option value="0.15">15% Show / 85% Hide</option><option value="0.20">20% Show / 80% Hide</option><option value="0.35">35% Show / 65% Hide</option><option value="0.50">50% Show / 50% Hide</option></select></div>
 
                         <div class="select jackpot-odds-setting">
                             <label for="miniJackpotOdds">Mini Jackpot Odds</label>
@@ -273,7 +274,8 @@
                     <p>The TreasurePots bonus activates only when three, four, or five Emerald Wheel chips land from the left on an active payline, then randomly opens the TreasurePots Wheel or Match &amp; Win. Wheel odds remain fixed. Match &amp; Win always contains a three-card jackpot match; its guaranteed tier is selected by the relative Jackpot Odds settings, so Mini is normally most common, and its award scales with the triggering bet.</p>
                     <h4>Savings Pots &amp; Emerald Links</h4>
                     <p>Only a winning LINK chain on a paid spin can attempt to advance the savings banks. On each qualifying LINK win, Pocket Pot has a 72% chance to gain 2–6%, Lucky Pot has a 48% chance to gain 2–6%, and Royal Pot has a 28% chance to gain 2–6%. Their fixed awards are $5, $25, and $100. A bank opens only after its own meter reaches 100%, then resets to 0%. Unfinished banks keep their progress. Free-spin LINK wins do not advance the banks.</p>
-                    <p>Six or more gold value coins trigger Hold &amp; Link. The coins lock in place and one guaranteed COLLECT coin gathers every displayed dollar value into a single Big Money-style total. Two to five coins may appear as a non-paying teaser.</p>
+                    <p>A winning LINK starts in the first reel and connects two to four value cards across one row. Each value carries the Pocket, Lucky, or Royal symbol and advances that matching meter. A Not Connected chain can appear as a non-paying teaser.</p>
+                    <p>Emerald Hold &amp; Win selects one row for three spins. One or occasionally two held wild emeralds land per spin and remain until the feature ends. Filling all five positions awards their combined displayed values; otherwise they reset after the third spin.</p>
                     <h4>Settings Guide</h4>
                     <p class="overlay-note"><strong>Session Stats Display:</strong> Chooses which stat boxes are visible (regular session totals, Net totals, or Actual Net totals).</p>
                     <p class="overlay-note"><strong>Winnings Only / Losses Only:</strong> Shows only regular session winnings or regular session losses.</p>

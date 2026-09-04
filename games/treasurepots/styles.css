@@ -3893,6 +3893,103 @@ label {
   .pots > .pot small { font-size: clamp(11px, 3.3vw, 14px); }
 }
 
+/* TreasurePots has its own jackpot language rather than Pretty Penny's set. */
+.reels .jackpot-chip.jackpot-mini::before,
+.reels .jackpot-chip.jackpot-minor::before,
+.reels .jackpot-chip.jackpot-major::before,
+.reels .jackpot-chip.jackpot-grand::before {
+  color: initial;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", system-ui, sans-serif;
+  font-size: clamp(13px, 1.8vw, 20px);
+}
+.reels .jackpot-chip.jackpot-mini::before { content: "🪙"; }
+.reels .jackpot-chip.jackpot-minor::before { content: "☘️"; }
+.reels .jackpot-chip.jackpot-major::before { content: "🗝️"; }
+.reels .jackpot-chip.jackpot-grand::before { content: "🏆"; }
+
+.reels .cell.link-meter-cell-0 { border-color: #a96b2f; background: #f4dfbb !important; }
+.reels .cell.link-meter-cell-1 { border-color: #2f8b61; background: #dcefe1 !important; }
+.reels .cell.link-meter-cell-2 { border-color: #b18a24; background: #f3e8ad !important; }
+
+.reels .link-chip.link-value {
+  display: grid;
+  grid-template-columns: clamp(24px, 3vw, 34px) auto;
+  grid-template-rows: 1fr 1fr;
+  place-content: center;
+  align-items: center;
+  column-gap: clamp(4px, .65vw, 8px);
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 3px clamp(7px, 1vw, 12px);
+  border: 0;
+  border-radius: inherit;
+  color: #3f2b12;
+  background: transparent;
+}
+
+.reels .link-chip.link-value .hold-coin-icon {
+  grid-column: 1;
+  grid-row: 1 / 3;
+}
+
+.reels .link-chip.link-value > strong,
+.reels .link-chip.link-value > span {
+  grid-column: 2;
+  width: auto;
+  margin: 0;
+  color: inherit !important;
+  background: transparent;
+  line-height: 1;
+  white-space: nowrap;
+}
+.reels .link-chip.link-value > strong { align-self: end; font-size: clamp(10px, 1.45vw, 16px); }
+.reels .link-chip.link-value > span { align-self: start; font-size: clamp(6px, .8vw, 9px); }
+
+.reels .link-chip.hold-meter-0 .hold-coin-icon { background: #b36b2e; }
+.reels .link-chip.hold-meter-1 .hold-coin-icon { background: #27925b; }
+.reels .link-chip.hold-meter-2 .hold-coin-icon { background: #c59720; }
+.reels .link-chip.hold-meter-0 .hold-coin-icon,
+.reels .link-chip.hold-meter-1 .hold-coin-icon,
+.reels .link-chip.hold-meter-2 .hold-coin-icon {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.reels .link-chip.hold-meter-0 .hold-coin-icon {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M28 25 37 9h26l9 16 13 9 9 57H6l9-57 13-9Zm10 0h24l-5-8H43l-5 8Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M28 25 37 9h26l9 16 13 9 9 57H6l9-57 13-9Zm10 0h24l-5-8H43l-5 8Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.reels .link-chip.hold-meter-1 .hold-coin-icon {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M49 43C25 20 2 34 10 55c5 13 19 14 31 7-8 13-9 24-9 30h36c0-6-2-17-10-30 13 7 27 6 32-7 8-21-15-35-39-12C64 15 37-1 26 14c-9 12 1 25 23 29Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M49 43C25 20 2 34 10 55c5 13 19 14 31 7-8 13-9 24-9 30h36c0-6-2-17-10-30 13 7 27 6 32-7 8-21-15-35-39-12C64 15 37-1 26 14c-9 12 1 25 23 29Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.reels .link-chip.hold-meter-2 .hold-coin-icon {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='m8 29 22 19 20-35 20 35 22-19-8 54H16L8 29Zm8 59h68v8H16v-8Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='m8 29 22 19 20-35 20 35 22-19-8 54H16L8 29Zm8 59h68v8H16v-8Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.reels .cell.gem-held-cell,
+.reels .cell.gem-row-win { padding: 0; border-color: #2f8b61; background: #d9eee2 !important; }
+.reels .hold-gem {
+  display: grid;
+  grid-template-columns: clamp(25px, 3.2vw, 36px) auto;
+  grid-template-rows: 1fr 1fr;
+  place-content: center;
+  align-items: center;
+  column-gap: 6px;
+  width: 100%;
+  height: 100%;
+  padding: 3px 8px;
+  color: #164936;
+  background: transparent;
+}
+.reels .hold-gem .gem-stone { grid-row: 1 / 3; color: #168b67; font-size: clamp(22px, 3vw, 34px); }
+.reels .hold-gem strong,
+.reels .hold-gem > span:last-child { color: #164936; line-height: 1; }
+.reels .hold-gem strong { align-self: end; font-size: clamp(10px, 1.4vw, 16px); }
+.reels .hold-gem > span:last-child { align-self: start; font-size: clamp(6px, .8vw, 9px); font-weight: 900; }
+
 /* TreasurePots uses a deliberately flat visual language. */
 body {
   background: #06231d;

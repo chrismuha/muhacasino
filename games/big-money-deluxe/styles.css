@@ -665,6 +665,37 @@ select,
   }
 }
 
+/* Winning coins occupy their reel cells so the payout animation reads at the
+   same scale as the board instead of floating as a small badge. */
+.reels .cell.win .money-chip {
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
+  min-width: 0;
+  min-height: 0;
+  max-width: none;
+  max-height: none;
+  margin: 2px;
+  padding: .35em .5em;
+  font-size: clamp(12pt, 1.85vw, 18pt);
+}
+
+.reels .cell.win .money-chip.jackpot-chip {
+  width: calc(100% - 4px);
+  min-height: 0;
+}
+
+@keyframes payout-chip-win {
+  0% { transform: scale(.94); filter: brightness(.96); }
+  55% { transform: scale(1); filter: brightness(1.12); }
+  100% { transform: scale(.98); filter: brightness(1.04); }
+}
+
+@media (max-width: 520px) {
+  .reels .cell.win .money-chip {
+    font-size: clamp(9.6pt, 3.6vw, 12pt);
+  }
+}
+
 
 
 .reels {
