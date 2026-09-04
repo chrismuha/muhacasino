@@ -742,6 +742,7 @@ function createCell(symbol, isWinning = false) {
         chip.innerHTML = `<strong>${symbol.jackpot}</strong><span>${fmtUSD(symbol.value)}</span>`;
         chip.setAttribute("aria-hidden", "true");
         cell.appendChild(chip);
+        cell.classList.add(`jackpot-meter-cell-${symbol.jackpot.toLowerCase()}`);
         if (symbol.teaser) {
             cell.classList.add("jackpot-teaser-cell");
             cell.setAttribute("aria-label", `${symbol.jackpot} jackpot symbol, no jackpot won`);
