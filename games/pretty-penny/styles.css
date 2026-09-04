@@ -3002,17 +3002,58 @@ label {
 .jackpot-pills > .jackpot-major::before { color: #5b2e00; background: linear-gradient(145deg, #fff4a5, #e4a71d 72%); }
 .jackpot-pills > .jackpot-grand::before { color: #fff7ce; background: linear-gradient(145deg, #d86167, #751f38 72%); text-shadow: 0 1px #4a1425; }
 
-.pots > .pot::after {
-  content: attr(data-icon);
-  display: block;
-  top: 50%;
-  right: 8px;
-  transform: translateY(-50%);
-  color: #173f3b;
-  opacity: 1;
-  font: normal clamp(26px, 3vw, 36px)/1 "Apple Color Emoji", "Segoe UI Emoji", system-ui, sans-serif;
-  filter: drop-shadow(0 1px 1px rgba(59,31,12,.32));
+.jackpot-pills > .jackpot-pill {
+  border: 2px solid #8e4a2e !important;
+  color: #542814 !important;
+  background: linear-gradient(145deg, #fffdf3, #f3d5a8) !important;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.72), 0 4px 0 #a75937 !important;
 }
+.jackpot-pills > .jackpot-pill > span { color: #542814 !important; }
+.jackpot-pills > .jackpot-pill > :is(b, strong) { color: #103f3a !important; }
+
+.pots > .pot .pot-meter {
+  border-color: #143d38 !important;
+  background: #173f3b !important;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.2), 0 2px 0 #6f4529 !important;
+}
+.pots > .pot .pot-meter > span {
+  background: linear-gradient(90deg, #ff7b45, #ffd05c 58%, #fff0a4) !important;
+  box-shadow: 0 0 8px rgba(255,183,62,.8) !important;
+}
+
+.pots > .pot::after {
+  display: none;
+}
+
+/* The savings silhouettes are the meters; progress rises inside each shape. */
+.pots > .pot .pot-meter {
+  width: clamp(42px, 5vw, 56px) !important;
+  height: clamp(42px, 5vw, 56px) !important;
+  overflow: hidden;
+  border: 0 !important;
+  border-radius: 0;
+  background: #102f3f !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 2px 1px rgba(42,25,15,.45));
+}
+.pots > .pot[data-pot="0"] .pot-meter {
+  background: #542536 !important;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M29 27 36 10h28l7 17h11l12 63H6l12-63h11Zm9 0h24l-4-9H42l-4 9Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M29 27 36 10h28l7 17h11l12 63H6l12-63h11Zm9 0h24l-4-9H42l-4 9Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.pots > .pot[data-pot="1"] .pot-meter {
+  background: #123d38 !important;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M50 4C30 4 13 40 13 64c0 20 16 32 37 32s37-12 37-32C87 40 70 4 50 4Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M50 4C30 4 13 40 13 64c0 20 16 32 37 32s37-12 37-32C87 40 70 4 50 4Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.pots > .pot[data-pot="2"] .pot-meter {
+  background: #142f55 !important;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M6 48C9 23 27 8 50 8s41 15 44 40c-8-6-15-6-22 0-8-6-15-6-22 0-8-6-15-6-22 0-7-6-14-6-22 0Zm39-1h10v34c0 8 10 8 10 0h10c0 22-30 22-30 0V47Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M6 48C9 23 27 8 50 8s41 15 44 40c-8-6-15-6-22 0-8-6-15-6-22 0-8-6-15-6-22 0-7-6-14-6-22 0Zm39-1h10v34c0 8 10 8 10 0h10c0 22-30 22-30 0V47Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.pots > .pot[data-pot="0"] .pot-meter > span { background: linear-gradient(#ffb076, #e45263) !important; }
+.pots > .pot[data-pot="1"] .pot-meter > span { background: linear-gradient(#a8f0c5, #32a779) !important; }
+.pots > .pot[data-pot="2"] .pot-meter > span { background: linear-gradient(#9ee8ff, #3f83d7) !important; }
 
 @media (max-width: 560px) {
   .jackpot-pills > .jackpot-pill::before {

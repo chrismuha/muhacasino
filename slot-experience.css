@@ -268,7 +268,10 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   text-shadow: none !important;
   overflow-y: auto;
 }
-.reels-wrap > .slot-feature-indicator[hidden] { display: none !important; }
+.reels-wrap > .slot-feature-indicator[hidden] {
+  display: block !important;
+  visibility: visible;
+}
 .reels-wrap > .slot-feature-indicator {
   box-sizing: border-box;
   width: 100%;
