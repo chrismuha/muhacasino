@@ -142,6 +142,50 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   }
 }
 
+/* Settings are a full-screen workspace in every slot game. Keeping the page
+   controls outside the scrolling stage makes rapid navigation stable on both
+   touch screens and full-size casino displays. */
+.settings-overlay {
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  place-items: stretch !important;
+}
+
+.settings-overlay > .settings-panel {
+  box-sizing: border-box !important;
+  width: 100vw !important;
+  max-width: none !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  max-height: 100dvh !important;
+  margin: 0 !important;
+  padding: max(12px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left)) !important;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto !important;
+  gap: 8px !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+}
+
+.settings-overlay .settings-stage {
+  width: min(100%, 1100px) !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin-inline: auto !important;
+  align-content: start;
+  overflow-y: auto !important;
+}
+
+.settings-overlay :is(.overlay-head, .settings-toolbar, .settings-page-title, .settings-pin-row) {
+  width: min(100%, 1100px);
+  box-sizing: border-box;
+  margin-inline: auto;
+}
+
+.settings-overlay .settings-pin-row {
+  margin-top: 0 !important;
+}
+
 .penny-door-rows { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; margin: 8px 0 5px; padding: 7px; border: 1px solid rgba(255, 255, 255, .18); border-radius: 8px; }
 .penny-door-rows legend { padding: 0 4px; color: var(--game-muted, #8d98b3); font-size: .78rem; }
 .penny-door-rows label { display: flex; align-items: center; justify-content: center; gap: 3px; margin: 0; font-size: .72rem; white-space: nowrap; }

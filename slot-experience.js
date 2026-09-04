@@ -182,7 +182,7 @@
                 <label for="luckyWheelOdds">Lucky Wheel Win / Loss Ratio</label>
                 <select id="luckyWheelOdds">
                     <option value="0.25">25% Win / 75% Loss</option>
-                    <option value="0.50">50% Win / 50% Loss</option>
+                    <option value="0.5" selected>50% Win / 50% Loss</option>
                     <option value="0.75">75% Win / 25% Loss</option>
                     <option value="1">100% Win / 0% Loss</option>
                 </select>
