@@ -2138,3 +2138,96 @@ button:focus-visible,
 .match-win-grid .jackpot-grand { background: #876500; }
 .match-win-result { min-height: 1.5em; font-weight: 800; }
 @media (max-width: 480px) { .match-win-grid { gap: 8px; } .match-win-grid button { min-height: 76px; padding: 6px; } }
+
+/* Big Money Deluxe's reels are a payout board: unpaid positions remain empty. */
+.reels {
+  gap: clamp(4px, .55vw, 7px);
+  padding: clamp(7px, .8vw, 10px);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(49, 104, 76, .62), transparent 66%),
+    linear-gradient(180deg, #102d21, #071a12);
+}
+
+.reels .cell {
+  padding: clamp(5px, .55vw, 8px);
+  overflow: hidden;
+  border: 1px solid rgba(217, 184, 91, .38);
+  border-radius: 9px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, .08), transparent 46%),
+    linear-gradient(180deg, rgba(32, 77, 55, .96), rgba(13, 42, 29, .98));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .1),
+    inset 0 -2px 5px rgba(0, 0, 0, .3);
+}
+
+.reels .cell:empty::before {
+  content: "$";
+  color: rgba(241, 211, 126, .16);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(15pt, 2vw, 22pt);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.reels .cell.win {
+  border-color: rgba(255, 220, 112, .85);
+  background:
+    linear-gradient(135deg, rgba(255, 244, 194, .16), transparent 48%),
+    linear-gradient(180deg, #285d40, #153d2a);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 241, 185, .28),
+    0 0 10px rgba(229, 190, 74, .25);
+}
+
+.reels .money-chip {
+  width: auto;
+  height: auto;
+  min-width: min(68%, 6.2rem);
+  min-height: clamp(34px, 4.2vw, 48px);
+  max-width: calc(100% - 8px);
+  max-height: calc(100% - 6px);
+  padding: .38em .68em;
+  border-width: 2px;
+  font-size: clamp(9.6pt, 1.35vw, 13.2pt);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .65),
+    inset 0 -3px 5px rgba(107, 65, 0, .28),
+    0 3px 6px rgba(0, 0, 0, .34);
+}
+
+.reels .money-chip.jackpot-chip {
+  width: min(78%, 7.6rem);
+  min-width: 0;
+  min-height: clamp(38px, 4.7vw, 54px);
+  gap: .12em;
+  padding: .3em .55em;
+}
+
+.reels .jackpot-chip strong {
+  font-size: clamp(7.8pt, 1.05vw, 10.2pt);
+}
+
+.reels .jackpot-chip span {
+  font-size: clamp(7.5pt, 1vw, 9.6pt);
+}
+
+@media (max-width: 520px) {
+  .reels .cell {
+    padding: 3px;
+    border-radius: 6px;
+  }
+
+  .reels .money-chip {
+    min-width: min(82%, 5.4rem);
+    min-height: 30px;
+    padding: .3em .42em;
+    font-size: clamp(8.4pt, 3.1vw, 10.8pt);
+  }
+
+  .reels .money-chip.jackpot-chip {
+    width: calc(100% - 4px);
+    min-height: 34px;
+    padding-inline: .25em;
+  }
+}
