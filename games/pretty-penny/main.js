@@ -722,6 +722,7 @@ function createCell(symbol, isWinning = false) {
             : `<i class="link-meter-icon link-meter-${symbol.meterIndex}" aria-hidden="true"></i><strong>${fmtUSD(symbol.value)}</strong><span class="chip-caption">${symbol.orphan ? "NOT CONNECTED" : SAVINGS_BANKS[symbol.meterIndex].name.toUpperCase()}</span>`;
         cell.appendChild(chip);
         cell.classList.add(symbol.orphan ? "link-teaser-cell" : "link-win-cell");
+        if (!symbol.anchor) cell.classList.add(`link-meter-cell-${symbol.meterIndex}`);
         cell.setAttribute("aria-label", symbol.anchor ? "Link chip" : `${SAVINGS_BANKS[symbol.meterIndex].name} linked value ${fmtUSD(symbol.value)}`);
         return cell;
     }
