@@ -157,46 +157,17 @@
         settingsRoot.appendChild(settings);
 
         const betSelect = document.getElementById("bet");
-        if (betSelect && !betSelect.closest(".bet-stepper")) {
+        if (betSelect && !betSelect.dataset.buttonBetsReady) {
+            betSelect.dataset.buttonBetsReady = "true";
             const betSetting = betSelect.parentElement;
             const denomSelect = document.getElementById("denom");
             const linesSelect = document.getElementById("lines");
             const betLabel = betSetting.querySelector('label[for="bet"]');
-            if (betLabel) betLabel.textContent = "Bet Per Line";
-            const updateBetOptionLabels = () => {
-                const denomination = Number(denomSelect?.value || 0.01);
-                Array.from(betSelect.options).forEach((option) => {
-                    const amount = Number(option.value) * denomination;
-                    option.textContent = amount < 1
-                        ? `${Math.round(amount * 100)}¢`
-                        : `$${amount.toFixed(2)}`;
-                });
-            };
-            const stepper = document.createElement("div");
-            stepper.className = "bet-stepper";
-            betSelect.parentNode.insertBefore(stepper, betSelect);
-            stepper.appendChild(betSelect);
-
-            const makeStepButton = (direction) => {
-                const button = document.createElement("button");
-                const increase = direction > 0;
-                button.type = "button";
-                button.className = `slot-bet-step slot-bet-${increase ? "up" : "down"}`;
-                button.textContent = increase ? "▲" : "▼";
-                button.setAttribute("aria-label", `${increase ? "Increase" : "Decrease"} bet per line`);
-                button.title = `${increase ? "Increase" : "Decrease"} bet per line`;
-                button.addEventListener("click", () => {
-                    const nextIndex = Math.max(0, Math.min(betSelect.options.length - 1, betSelect.selectedIndex + direction));
-                    if (nextIndex === betSelect.selectedIndex) return;
-                    betSelect.selectedIndex = nextIndex;
-                    betSelect.dispatchEvent(new Event("change", { bubbles: true }));
-                    betSelect.focus();
-                });
-                return button;
-            };
-
-            stepper.prepend(makeStepButton(-1));
-            stepper.append(makeStepButton(1));
+            if (betLabel) betLabel.textContent = "Total Bet";
+            betSetting.hidden = false;
+            betSelect.hidden = true;
+            betSelect.tabIndex = -1;
+            betSelect.setAttribute("aria-hidden", "true");
 
             const presets = document.createElement("div");
             presets.className = "bet-presets";
@@ -224,10 +195,6 @@
                 });
                 presets.appendChild(button);
             });
-            const presetLabel = document.createElement("small");
-            presetLabel.className = "bet-presets-label";
-            presetLabel.textContent = "Total bet presets";
-            betSetting.appendChild(presetLabel);
             betSetting.appendChild(presets);
 
             const syncBetPresets = () => {
@@ -239,12 +206,8 @@
                 });
             };
             betSelect.addEventListener("change", syncBetPresets);
-            denomSelect?.addEventListener("change", () => {
-                updateBetOptionLabels();
-                syncBetPresets();
-            });
+            denomSelect?.addEventListener("change", syncBetPresets);
             linesSelect?.addEventListener("change", syncBetPresets);
-            updateBetOptionLabels();
             syncBetPresets();
 
             betSetting.classList.add("slot-bet-control");
