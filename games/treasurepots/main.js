@@ -457,7 +457,7 @@ function updateTotals() {
 }
 
 function getScaledJackpotAmount(tier, totalBetUSD = getActiveTotalBetUSD()) {
-    return window.slotExperience?.getJackpotAmount(tier, totalBetUSD) ?? tier.amountUSD;
+    return window.slotExperience?.getJackpotAmount(tier, totalBetUSD, getDenominationValue()) ?? tier.amountUSD;
 }
 
 function updateJackpotDisplay(totalBetUSD = getActiveTotalBetUSD()) {

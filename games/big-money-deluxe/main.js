@@ -31,7 +31,7 @@ window.slotExperience?.configureJackpots(JACKPOT_TIERS, { baseWager: 0.50 });
 
 function getScaledJackpotAmount(tier, totalBetUSD = getActiveTotalBetUSD()) {
     if (tier.name === "Blank") return 0;
-    return window.slotExperience?.getJackpotAmount(tier, totalBetUSD) ?? tier.amountUSD;
+    return window.slotExperience?.getJackpotAmount(tier, totalBetUSD, getDenominationValue()) ?? tier.amountUSD;
 }
 
 const ROWS = 5;

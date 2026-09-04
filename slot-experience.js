@@ -134,7 +134,7 @@
             </div>
             <div class="jackpot-config-setting jackpot-scaling-setting">
                 <strong>Jackpot bet scaling</strong>
-                <label class="jackpot-scale-toggle"><input id="jackpotScalingEnabled" type="checkbox" checked><span>Adjust jackpots with the total bet</span></label>
+                <label class="jackpot-scale-toggle"><input id="jackpotScalingEnabled" type="checkbox" checked><span>Adjust jackpots with total bet and denomination</span></label>
                 <label>Scaling method<select id="jackpotScalingMode"><option value="multiply">Multiply with bet</option><option value="increment">Add an amount per bet step</option></select></label>
                 <div class="jackpot-scale-grid">
                     <label>Reference bet<input id="jackpotBaseWager" type="number" min="0.01" step="0.01"></label>
@@ -479,14 +479,16 @@
             document.querySelectorAll("[data-jackpot-base]").forEach((input) => { input.value = state.jackpots.amounts[input.dataset.jackpotBase]; });
             save();
         },
-        getJackpotAmount(tier, wager) {
+        getJackpotAmount(tier, wager, denomination = 0.01) {
             const config = state.jackpots;
             const base = Number(config?.amounts?.[tier.name.toLowerCase()] ?? tier.amountUSD);
             if (!config?.enabled) return Math.max(0.01, Math.round(base * 100) / 100);
             const bet = Math.max(0.01, Number(wager) || config.baseWager);
+            const denominationFactor = Math.max(0.01, Number(denomination) || 0.01) / 0.01;
+            const scaledBet = bet * denominationFactor;
             const amount = config.mode === "increment"
-                ? base + ((bet - config.baseWager) / config.betStep) * config.stepAmount
-                : base * (bet / config.baseWager);
+                ? base + ((scaledBet - config.baseWager) / config.betStep) * config.stepAmount
+                : base * (scaledBet / config.baseWager);
             return Math.max(0.01, Math.round(amount * 100) / 100);
         },
         offerLuckyWheel,
