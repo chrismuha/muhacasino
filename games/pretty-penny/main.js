@@ -1376,7 +1376,11 @@ function setupSettingsOverlay() {
     if (!Object.prototype.hasOwnProperty.call(settingsPins, "denomination")) {
         settingsPins.denomination = true;
     }
-    settingsPins.adjustMoney = true;
+    const adjustMoneyMigrationKey = `${SETTINGS_PIN_STORAGE_KEY}.adjustMoneyDefaultOff.${location.pathname}`;
+    if (!localStorage.getItem(adjustMoneyMigrationKey)) {
+        settingsPins.adjustMoney = false;
+        localStorage.setItem(adjustMoneyMigrationKey, "1");
+    }
     if (!Object.prototype.hasOwnProperty.call(settingsPins, "creditsInserted")) settingsPins.creditsInserted = true;
     saveSettingsPins();
 
