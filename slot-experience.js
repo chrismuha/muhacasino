@@ -102,6 +102,7 @@
     }
 
     function injectUi() {
+        document.body.classList.add(`slot-game-${gameKey}`);
         const settingsRoot = document.querySelector(".controls, .settings, .control-panel") || document.body;
         const settings = document.createElement("div");
         settings.className = "slot-experience-settings";
@@ -195,7 +196,17 @@
                 });
                 presets.appendChild(button);
             });
-            betSetting.appendChild(presets);
+            const wagerRow = document.createElement("div");
+            wagerRow.className = "slot-wager-row";
+            wagerRow.appendChild(presets);
+            const denomSetting = denomSelect?.closest(".select");
+            if (denomSetting) {
+                denomSetting.classList.add("slot-denomination-control");
+                const denomLabel = denomSetting.querySelector('label[for="denom"]');
+                if (denomLabel) denomLabel.textContent = "Denom";
+                wagerRow.appendChild(denomSetting);
+            }
+            betSetting.appendChild(wagerRow);
 
             const syncBetPresets = () => {
                 const currentTotal = Number(denomSelect?.value || 0) * Number(linesSelect?.value || 0) * Number(betSelect.value || 0);

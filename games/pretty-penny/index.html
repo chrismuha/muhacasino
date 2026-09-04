@@ -8,7 +8,7 @@
     <link rel="icon" href="../../icons/muha-brand-mark.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-  <link rel="stylesheet" href="styles.css?build=20260904-visible-linked-symbols-v19" />
+  <link rel="stylesheet" href="styles.css?build=20260904-compact-result-rows-v23" />
 </head>
 
 <body>
@@ -25,7 +25,7 @@
                 <div class="jackpot-pills">
                     <div class="jackpot-pill jackpot-mini" data-icon="⭐"><span>Mini</span><b id="jackpotMini">$250.00</b></div>
                     <div class="jackpot-pill jackpot-minor" data-icon="💎"><span>Minor</span><b id="jackpotMinor">$1,000.00</b></div>
-                    <div class="jackpot-pill jackpot-major" data-icon="🏆"><span>Major</span><b id="jackpotMajor">$5,000.00</b></div>
+                    <div class="jackpot-pill jackpot-major" data-icon="👑"><span>Major</span><b id="jackpotMajor">$5,000.00</b></div>
                     <div class="jackpot-pill jackpot-grand" data-icon="✨"><span>Grand</span><b id="jackpotGrand">$25,000.00</b></div>
                 </div>
             </section>
@@ -64,7 +64,7 @@
                             <p id="creditStepEffect" class="overlay-note" aria-live="polite"></p>
                         </div>
 
-                        <div class="stat">
+                        <div class="stat total-bet-summary">
                             <span class="muted">Total Bet:</span>
                             <b id="totalBet">—</b>
                         </div>
@@ -272,7 +272,7 @@
                     <p>Free spins cost no credits and retain the denomination, active lines, and bet per line from the paid spin that awarded them. Their payouts are added to Available Credits. Free spins cannot retrigger either feature.</p>
                     <p>The Pretty Penny bonus activates only when three, four, or five Reserve Wheel chips land from the left on an active payline, then randomly opens the Reserve Wheel or Match &amp; Win. Wheel odds remain fixed. Match &amp; Win always contains a three-card jackpot match; its guaranteed tier is selected by the relative Jackpot Odds settings, so Mini is normally most common, and its award scales with the triggering bet.</p>
                     <h4>Savings Banks &amp; Penny Chains</h4>
-                    <p>Each savings meter is shaped like its purpose and the shape itself fills as progress increases: a coral purse for Pin Money, a green egg for Nest Egg, and a blue umbrella for Rainy Day. Connected LINK values display one of those same shapes; collecting that value advances only the matching meter by 2–6%. The Penny Reserve jackpots use distinct tier badges: star for Mini, diamond for Minor, trophy for Major, and sparkle for Grand.</p>
+                    <p>Each savings meter is shaped like its purpose and the shape itself fills as progress increases: a coral purse for Pin Money, a green egg for Nest Egg, and a blue umbrella for Rainy Day. Connected LINK values display one of those same shapes; collecting that value advances only the matching meter by 2–6%. The Penny Reserve jackpots use distinct tier badges: star for Mini, diamond for Minor, crown for Major, and sparkle for Grand.</p>
                     <p><strong>Three-Spin Gem Row:</strong> One reel row is selected for a three-spin Hold &amp; Win cycle. One or two valued gems land and remain held on each spin. Fill all five positions within those three spins to win the total of every displayed gem value in that row. If the row is not full after the third spin, its gems clear and a new three-spin cycle begins on the next spin.</p>
                     <p>Only a connected LINK chain on a paid spin advances the savings banks. Every connected purse, egg, or umbrella value adds 2–6% to its matching meter. Their fixed awards are $5, $25, and $100. A bank opens only after its own meter reaches 100%, then resets to 0%. Unfinished banks keep their progress. Free-spin LINK wins do not advance the banks.</p>
                     <p>A LINK chip may appear on any reel, but a link win is valid only when LINK is present on the first reel. On a winning spin, every connected value chip immediately following that first-reel LINK is added to the win. The chain ends at the first ordinary symbol. Non-winning LINK chips stay colorful and are marked “Not Connected.”</p>
@@ -285,7 +285,7 @@
                     <p class="overlay-note"><strong>Session Losses:</strong> Total loss this session from spins where bet exceeded payout.</p>
                     <p class="overlay-note"><strong>Net Session Winnings / Net Session Losses:</strong> Legacy net-style totals where each side can stay positive at the same time.</p>
                     <p class="overlay-note"><strong>Actual Net Session Winnings / Actual Net Session Losses:</strong> True net totals where only one side is non-zero at a time.</p>
-                    <p class="overlay-note"><strong>Denomination (Value Per Credit):</strong> Dollar value of one credit. Higher denomination increases bet size and payout size proportionally.</p>
+                    <p class="overlay-note"><strong>Denomination:</strong> The compact selector beside the Total Bet buttons sets the value of one credit. Higher denominations increase bet and payout values proportionally.</p>
                     <p class="overlay-note"><strong>Lines:</strong> Number of active paylines (1-10). More lines means more chances to win, but higher total bet.</p>
                     <p class="overlay-note"><strong>Total Bet buttons:</strong> The four main-screen buttons directly select 50¢, $1.50, $4.00, or $8.00 and replace the former Bet Per Line dropdown and arrow controls.</p>
                     <p class="overlay-note"><strong>Jackpot Bet Scaling:</strong> Multiplier mode changes each base jackpot in direct proportion to the total bet. Step mode adds or subtracts the configured amount as the wager moves above or below the reference bet.</p>
@@ -296,7 +296,7 @@
                     <p class="overlay-note"><strong>Winning LINK Chain Win / Loss Ratio:</strong> Sets the chance that an eligible winning spin replaces part of a reel row with a first-reel LINK and connected value chips.</p>
                     <p class="overlay-note"><strong>Not Connected LINK Display Ratio:</strong> Sets the chance that a spin without a winning LINK displays a colorful, non-paying “Not Connected” LINK chain.</p>
                     <p class="overlay-note"><strong>Jackpot Odds:</strong> Controls jackpots that appear directly on the reels only. Each tier offers presets shown as “1 in N spins,” plus Custom percentage controls. These settings do not alter the bonus wheel. Jackpot dollar values scale with total bet using $0.50 as the base wager, but never fall below the displayed minimums. Custom odds clear on Reset Session or page reload.</p>
-                    <p class="overlay-note"><strong>Settings:</strong> Opens the paginated settings dialog. Use Show this setting on the home screen to pin individual settings. Denomination is pinned by default.</p>
+                    <p class="overlay-note"><strong>Settings:</strong> Opens the paginated settings dialog. Use Show this setting on the home screen to pin optional settings. Denomination always remains beside the Total Bet buttons.</p>
                     <p class="overlay-note"><strong>Adjust Credit + ▲/▼:</strong> Sets how much credit to add/remove per click, scaled by denomination.</p>
                     <p class="overlay-note"><strong>Skip Winning Highlight Delay:</strong> Removes the auto-spin pause after winning reels are highlighted.</p>
                     <p class="overlay-note"><strong>Spin:</strong> Plays one round using current settings and deducts the total bet first. On desktop, tap Spacebar for one spin or hold it for auto spin; Spacebar does not scroll the page.</p>
@@ -380,11 +380,11 @@
         </div>
     </div>
 
-    <link rel="stylesheet" href="../../slot-experience.css?v=1.9.10">
+    <link rel="stylesheet" href="../../slot-experience.css?v=1.9.18">
     <script src="../../interaction-lock.js?build=20260808-no-double-tap"></script>
     <script src="../../play-session.js?v=1.1.2"></script>
-    <script src="../../slot-experience.js?v=1.10.5"></script>
-    <script src="main.js?v=1.4.0&amp;build=20260904-linked-meter-symbols"></script>
+    <script src="../../slot-experience.js?v=1.10.7"></script>
+    <script src="main.js?v=1.4.0&amp;build=20260904-stat-layout"></script>
 </body>
 
 </html>

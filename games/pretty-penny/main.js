@@ -1294,12 +1294,11 @@ function getSettingsDefinitions() {
         { key: "luckyWheelOdds", title: "Lucky Wheel Odds", element: document.getElementById("luckyWheelOdds")?.closest(".select") },
         { key: "revealDoors", title: "Pretty Penny Reveal Doors", element: document.getElementById("pennyRevealDoors")?.closest(".select") },
         { key: "adjustMoney", title: "Adjust Money", element: creditStepEl?.closest(".credit-controls") },
-        { key: "denomination", title: "Denomination", element: denomEl?.closest(".select") },
         { key: "lines", title: "Lines", element: linesEl?.closest(".select") },
         { key: "maxBetCredits", title: "Max Bet Credits", element: maxBetUsesAvailableCreditsEl?.closest(".checkbox-setting") },
         { key: "winDelay", title: "Winning Highlight Delay", element: skipWinAnimationDelayEl?.closest(".checkbox-setting") },
         { key: "sessionStats", title: "Session Stats Display", element: sessionStatDisplayEl?.closest(".select") },
-        { key: "creditsInserted", title: "Credits Inserted", element: creditsInsertedEl?.closest(".stat") },
+        { key: "creditsInserted", title: "Money Added / Credits Inserted", element: creditsInsertedEl?.closest(".stat") },
         { key: "winOdds", title: "Regular Win Odds", element: winOddsEl?.closest(".select") },
         { key: "jackpotAmounts", title: "Jackpot Amounts", element: document.querySelector(".jackpot-amounts-setting") },
         { key: "jackpotScaling", title: "Jackpot Bet Scaling", element: document.querySelector(".jackpot-scaling-setting") },
@@ -1565,6 +1564,12 @@ function ensureSessionStatsUI() {
         labelText: "Actual Net Session Losses",
     });
     actualWinningsBox.insertAdjacentElement("afterend", actualLossesBox);
+
+    const creditsSetting = settingsItems.find((setting) => setting.key === "creditsInserted");
+    if (creditsSetting?.marker) {
+        actualLossesBox.after(creditsSetting.marker);
+        if (settingsPins.creditsInserted) creditsSetting.marker.after(creditsSetting.element);
+    }
 }
 
 function updateSessionDisplay(valueId, amountUSD) {

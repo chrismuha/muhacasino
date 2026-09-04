@@ -166,8 +166,43 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   grid-template-columns: repeat(4, minmax(0, 1fr));
   width: 100%;
   min-width: 0;
-  margin-top: 6px;
+  margin-top: 0;
   gap: 5px;
+}
+.slot-wager-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(70px, 12vw, 92px);
+  align-items: end;
+  width: 100%;
+  min-width: 0;
+  margin-top: 6px;
+  gap: 6px;
+}
+.slot-wager-row > .slot-denomination-control {
+  display: grid;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  gap: 2px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+.slot-denomination-control > label {
+  margin: 0;
+  font-size: .68rem;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+}
+.slot-denomination-control > #denom {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 4px 20px 4px 7px;
+  font-size: clamp(11px, 1.7vw, 14px);
 }
 .bet-presets-label {
   display: block;
@@ -198,7 +233,8 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   .hud { gap: 5px !important; }
   .hud > .left, .hud > .right { gap: 5px !important; }
   .hud :is(.stat, .select, .credit-controls, .checkbox-setting) { padding: 5px 6px; }
-  .bet-presets { gap: 4px; }
+  .slot-wager-row { grid-template-columns: minmax(0, 1fr) 70px; gap: 4px; }
+  .bet-presets { gap: 3px; }
   .hud .credit-controls {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -429,4 +465,142 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   }
   .jackpot-pills > .jackpot-pill > span { font-size: 12px !important; }
   .jackpot-pills > .jackpot-pill > :is(b, strong) { font-size: clamp(15px, 4.4vw, 19px) !important; }
+}
+
+/* Every slot reserves the same compact, stable result rows. This lives after
+   the shared mobile rules so those rules cannot enlarge the rows again. */
+.reels-wrap > .reel-result {
+  height: 40px;
+  min-height: 40px;
+  max-height: 40px;
+  padding: 4px 8px !important;
+  font-size: clamp(10px, 1.35vw, 13px) !important;
+}
+.reels-wrap > .slot-feature-indicator {
+  height: 24px;
+  min-height: 24px;
+  max-height: 24px;
+  padding: 2px 7px;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(9px, 1.2vw, 12px);
+  line-height: 1;
+}
+@media (max-width: 700px) {
+  .reels-wrap > .reel-result {
+    height: 38px;
+    min-height: 38px;
+    max-height: 38px;
+  }
+}
+
+/* Only the four primary actions are narrower; their original height, padding,
+   grid, and touch behavior remain unchanged. */
+.hud > .right {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+.hud > .right > :is(#spin, #max, #resetSession, #settingsButton) {
+  width: min(100%, 160px);
+  max-width: 160px;
+  justify-self: center;
+}
+.hud .credit-controls .credit-row {
+  grid-template-columns: minmax(0, 1fr) 30px 30px !important;
+  gap: 4px !important;
+}
+.hud .credit-controls .icon-btn {
+  box-sizing: border-box;
+  width: 30px !important;
+  min-width: 30px !important;
+  min-height: 32px !important;
+  padding: 0 !important;
+}
+.hud .total-bet-summary {
+  display: none !important;
+}
+
+/* Compact consumer-screen jackpot and fill-meter presentation. Larger
+   cabinet displays opt back into roomier dimensions below. */
+.jackpot-board {
+  margin-block: 5px !important;
+  padding: 4px 6px !important;
+}
+.jackpot-pills {
+  gap: 4px !important;
+}
+.jackpot-pills > .jackpot-pill {
+  min-height: 40px !important;
+  padding: 3px 5px !important;
+  gap: 1px !important;
+}
+.jackpot-pills > .jackpot-pill::before {
+  inset-inline-start: 5px !important;
+  width: 28px !important;
+  height: 28px !important;
+  font-size: 18px !important;
+}
+.jackpot-pills > .jackpot-pill > span {
+  font-size: clamp(10px, 1.2vw, 13px) !important;
+}
+.jackpot-pills > .jackpot-pill > :is(b, strong) {
+  font-size: clamp(12px, 1.55vw, 17px) !important;
+}
+.slot-game-pretty-penny .jackpot-pills > .jackpot-pill {
+  padding-inline: 38px 5px !important;
+}
+.slot-game-pretty-penny .jackpot-pills > .jackpot-pill > :is(span, b, strong) {
+  min-width: 0;
+  overflow: visible;
+  text-overflow: clip;
+}
+.pot-feature {
+  margin-block: 5px !important;
+  padding: 5px 7px !important;
+}
+.pot-feature > .pots {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 4px !important;
+}
+.pot-feature > .pots > .pot {
+  grid-template-columns: 30px minmax(0, 1fr) !important;
+  min-height: 40px !important;
+  padding: 3px 5px !important;
+  gap: 4px !important;
+}
+.pot-feature > .pots > .pot .pot-meter {
+  width: 30px !important;
+  height: 30px !important;
+}
+.pot-feature > .pots > .pot > b {
+  font-size: clamp(9px, 1.15vw, 12px) !important;
+  line-height: 1 !important;
+}
+.pot-feature > .pots > .pot > small {
+  font-size: clamp(8px, 1vw, 11px) !important;
+  line-height: 1 !important;
+}
+@media (min-width: 900px) {
+  .jackpot-pills {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+@media (min-width: 1600px) and (min-height: 900px) {
+  .jackpot-pills > .jackpot-pill {
+    min-height: 52px !important;
+    padding: 6px 8px !important;
+  }
+  .jackpot-pills > .jackpot-pill::before {
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 24px !important;
+  }
+  .pot-feature > .pots > .pot {
+    grid-template-columns: 44px minmax(0, 1fr) !important;
+    min-height: 58px !important;
+    padding: 6px 8px !important;
+  }
+  .pot-feature > .pots > .pot .pot-meter {
+    width: 44px !important;
+    height: 44px !important;
+  }
 }

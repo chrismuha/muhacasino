@@ -51,7 +51,7 @@
                             <p id="creditStepEffect" class="overlay-note" aria-live="polite"></p>
                         </div>
 
-                        <div class="stat">
+                        <div class="stat total-bet-summary">
                             <span class="muted">Total Bet:</span>
                             <b id="totalBet">—</b>
                         </div>
@@ -268,7 +268,7 @@
                     <p class="overlay-note"><strong>Session Losses:</strong> Total loss this session from spins where bet exceeded payout.</p>
                     <p class="overlay-note"><strong>Net Session Winnings / Net Session Losses:</strong> Legacy net-style totals where each side can stay positive at the same time.</p>
                     <p class="overlay-note"><strong>Actual Net Session Winnings / Actual Net Session Losses:</strong> True net totals where only one side is non-zero at a time.</p>
-                    <p class="overlay-note"><strong>Denomination (Value Per Credit):</strong> Dollar value of one credit. Higher denomination increases bet size and payout size proportionally.</p>
+                    <p class="overlay-note"><strong>Denomination:</strong> The compact selector beside the Total Bet buttons sets the value of one credit. Higher denominations increase bet and payout values proportionally.</p>
                     <p class="overlay-note"><strong>Lines:</strong> Number of active paylines (1-10). More lines means more chances to win, but higher total bet.</p>
                     <p class="overlay-note"><strong>Total Bet buttons:</strong> The four main-screen buttons directly select 50¢, $1.50, $4.00, or $8.00 and replace the former Bet Per Line dropdown and arrow controls.</p>
                     <p class="overlay-note"><strong>Jackpot Bet Scaling:</strong> Multiplier mode changes each base jackpot in direct proportion to the total bet. Step mode adds or subtracts the configured amount as the wager moves above or below the reference bet.</p>
@@ -278,7 +278,7 @@
                     <p class="overlay-note"><strong>Bonus Plays Win / Loss Ratio:</strong> Sets the independent chance that a paid spin opens Bonus Plays.</p>
                     <p class="overlay-note"><strong>Bonus Plays Prizes:</strong> Sets the three multiplier awards shuffled behind the boxes. Choose Custom to type any positive multiplier.</p>
                     <p class="overlay-note"><strong>Jackpot Odds:</strong> Each tier offers realistic preset odds shown as “1 in N spins,” plus Custom percentage controls. Custom odds clear on Reset Session or page reload.</p>
-                    <p class="overlay-note"><strong>Settings:</strong> Opens the paginated settings dialog. Use Show this setting on the home screen to pin individual settings. Denomination is pinned by default.</p>
+                    <p class="overlay-note"><strong>Settings:</strong> Opens the paginated settings dialog. Use Show this setting on the home screen to pin optional settings. Denomination always remains beside the Total Bet buttons.</p>
                     <p class="overlay-note"><strong>Adjust Credit + ▲/▼:</strong> Sets how much credit to add/remove per click, scaled by denomination.</p>
                     <p class="overlay-note"><strong>Skip Winning Highlight Delay:</strong> Removes the auto-spin pause after the winning payout chips animate.</p>
                     <p class="overlay-note"><strong>Spin:</strong> Plays one round using current settings and deducts the total bet first. On desktop, tap Spacebar for one spin or hold it for auto spin; Spacebar does not scroll the page.</p>
@@ -363,11 +363,11 @@
         </div>
     </div>
 
-    <link rel="stylesheet" href="../../slot-experience.css?v=1.9.10">
+    <link rel="stylesheet" href="../../slot-experience.css?v=1.9.18">
     <script src="../../interaction-lock.js?build=20260808-no-double-tap"></script>
     <script src="../../play-session.js?v=1.1.2"></script>
-    <script src="../../slot-experience.js?v=1.10.5"></script>
-    <script src="main.js?v=1.4.0&amp;build=20260904-fixed-feature-bar"></script>
+    <script src="../../slot-experience.js?v=1.10.7"></script>
+    <script src="main.js?v=1.4.0&amp;build=20260904-stat-layout"></script>
 </body>
 
 </html>
