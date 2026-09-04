@@ -12,6 +12,8 @@
     .brand { margin-right: auto; }
     .brand strong { display: block; font-size: 15px; }
     .brand span, label span, .dimensions { color: #aeb8ca; font-size: 12px; }
+    .audit { min-width: 92px; color: #7ee2b8; font-size: 12px; font-weight: 800; }
+    .audit.warning { color: #ffb36a; }
     label { display: grid; gap: 4px; }
     select, input, button { height: 34px; border: 1px solid #465269; border-radius: 7px; background: #252c3a; color: inherit; padding: 0 10px; font: inherit; }
     input { width: 82px; }
@@ -38,6 +40,18 @@
 <body>
   <header class="toolbar">
     <div class="brand"><strong>Muha Casino mobile preview</strong><span>Choose a viewport to test the responsive layout</span></div>
+    <label><span>Preview</span>
+      <select id="preview">
+        <option value="/">Game Library</option>
+        <option value="/#big-money-deluxe">Big Money Deluxe</option>
+        <option value="/#neon-slots">Neon Slots</option>
+        <option value="/#pretty-penny">Pretty Penny</option>
+        <option value="/#treasurepots">TreasurePots</option>
+        <option value="/#bingo">Muha Bingo</option>
+        <option value="/#sorry">Sorry!</option>
+        <option value="/#yahtzee">Yahtzee</option>
+      </select>
+    </label>
     <label><span>Device</span>
       <select id="preset">
         <option value="402x874" data-cutout="island" data-home-indicator>iPhone 17</option>
@@ -54,6 +68,9 @@
         <option value="834x1210">iPad Pro 11-inch</option>
         <option value="1032x1376">iPad Pro 13-inch</option>
         <option value="800x900">Foldable (Open)</option>
+        <option value="1080x1920" data-cabinet>Casino Cabinet · Portrait</option>
+        <option value="1920x1080" data-cabinet>Casino Cabinet · Landscape</option>
+        <option value="1280x1024" data-cabinet>Casino Cabinet · 5:4</option>
         <option value="320x568">Small Phone</option>
         <option value="custom">Custom</option>
       </select>
@@ -69,10 +86,12 @@
     </div>
     <button id="rotate" type="button" title="Swap width and height">↻ Rotate</button>
     <span class="dimensions" id="dimensions"></span>
+    <span class="audit" id="audit" role="status">Checking layout…</span>
   </header>
   <main><div class="device" id="device"><div class="screen-cutout none" id="screen-cutout" aria-hidden="true"></div><div class="home-indicator hidden" id="home-indicator" aria-hidden="true"></div><iframe id="app-preview" src="/" title="Muha Casino application"></iframe></div></main>
   <script>
     const $ = (selector) => document.querySelector(selector);
+    const preview = $('#preview');
     const preset = $('#preset');
     const custom = $('#custom');
     const width = $('#width');
@@ -83,9 +102,35 @@
     const cutoutHeight = $('#cutout-height');
     const device = $('#device');
     const dimensions = $('#dimensions');
+    const audit = $('#audit');
     const screenCutout = $('#screen-cutout');
     const homeIndicator = $('#home-indicator');
     const appPreview = $('#app-preview');
+
+    preview.addEventListener('change', () => {
+      appPreview.src = preview.value;
+    });
+
+    function getDocuments(rootDocument) {
+      const documents = [rootDocument];
+      rootDocument.querySelectorAll('iframe').forEach((frame) => {
+        try {
+          if (frame.contentDocument) documents.push(...getDocuments(frame.contentDocument));
+        } catch (_) {}
+      });
+      return documents;
+    }
+
+    function auditLayout() {
+      const root = appPreview.contentDocument;
+      if (!root) return;
+      const overflows = getDocuments(root).filter((doc) => {
+        const element = doc.documentElement;
+        return element.scrollWidth > element.clientWidth + 2;
+      });
+      audit.textContent = overflows.length ? `⚠ ${overflows.length} horizontal overflow` : '✓ Width fits';
+      audit.classList.toggle('warning', Boolean(overflows.length));
+    }
 
     function applySafeArea(option, cutout) {
       const root = appPreview.contentDocument?.documentElement;
@@ -128,6 +173,7 @@
       applyCutout(option);
       homeIndicator.classList.toggle('hidden', !option?.hasAttribute('data-home-indicator'));
       if (preset.value !== 'custom') resize(...preset.value.split('x'));
+      window.setTimeout(auditLayout, 250);
     }
 
     preset.addEventListener('change', applyPreset);
@@ -146,7 +192,11 @@
       resize(height.value, width.value);
       applyPreset();
     });
-    appPreview.addEventListener('load', applyPreset);
+    appPreview.addEventListener('load', () => {
+      applyPreset();
+      window.setTimeout(auditLayout, 900);
+    });
+    window.setInterval(auditLayout, 1500);
     applyPreset();
   </script>
 </body>

@@ -103,10 +103,12 @@ const slotGameIds = new Set(["big-money-deluxe", "neon-slots", "pretty-penny", "
 
 function syncSlotModeToolbar(displayMode) {
   const moneyMode = displayMode === "money";
-  const action = moneyMode ? "Switch to fake-money credits" : "Switch to simulated money";
+  const current = moneyMode ? "Real Money" : "Fake Money";
+  const action = moneyMode ? "switch to fake money credits" : "switch to real money";
   slotModeToolbar.setAttribute("aria-checked", String(moneyMode));
-  slotModeToolbar.setAttribute("aria-label", action);
-  slotModeToolbar.title = action;
+  slotModeToolbar.querySelector(".slot-mode-state").textContent = current;
+  slotModeToolbar.setAttribute("aria-label", `${current} display; ${action}`);
+  slotModeToolbar.title = `${current} display — ${action}`;
 }
 
 slotModeToolbar.addEventListener("click", () => {
