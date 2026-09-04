@@ -477,7 +477,6 @@ function updateFeatureStatus() {
     if (heldGems.size > 0) statuses.push(gemHoldCyclePendingReset
         ? "GEMS RESET NEXT SPIN"
         : `GEMS ${heldGems.size}/${COLS} · ${gemHoldSpinsRemaining} SPINS LEFT`);
-    featureStatusEl.hidden = statuses.length === 0;
     featureStatusEl.textContent = statuses.join(" · ");
     featureStatusEl.classList.toggle("feature-active", freeSpinsRemaining > 0 || heldGems.size > 0);
 }
@@ -515,7 +514,7 @@ function setupFeatureUI() {
             <div class="bonus-wheel-wrap">
                 <span class="wheel-pointer" aria-hidden="true"></span>
                 <div class="bonus-wheel" aria-label="Jackpot wheel">
-                    <span class="wheel-center">¢</span>
+                    <span class="wheel-center"><img src="assets/title-penny-shiny.png?v=1.4.0" alt="Pretty Penny" /></span>
                 </div>
             </div>
             <div class="wheel-odds" aria-label="Wheel odds">

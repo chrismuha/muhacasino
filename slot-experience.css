@@ -273,9 +273,13 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   visibility: visible;
 }
 .reels-wrap > .slot-feature-indicator {
+  display: flex;
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
+  height: clamp(30px, 3.6vw, 38px);
+  min-height: clamp(30px, 3.6vw, 38px);
+  max-height: clamp(30px, 3.6vw, 38px);
   margin: 4px 0 0;
   padding: 4px 8px;
   border: 1px solid #bf8e37;
@@ -285,6 +289,8 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   font-size: clamp(11px, 1.5vw, 14px);
   font-weight: 900;
   line-height: 1.15;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   overflow-wrap: anywhere;
 }

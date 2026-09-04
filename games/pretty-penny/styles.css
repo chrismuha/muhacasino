@@ -2545,6 +2545,14 @@ body {
   font: 900 clamp(24pt, 7vw, 40.5pt)/1 Georgia, serif;
 }
 
+.wheel-center img {
+  display: block;
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 2px rgba(52,24,8,.42));
+}
+
 .wheel-pointer {
   position: absolute;
   z-index: 3;

@@ -202,17 +202,12 @@
             presets.className = "bet-presets";
             presets.setAttribute("aria-label", "Quick total bet presets");
             const totalBetPresets = [
+                { total: 0.1, label: "10¢", bet: "1" },
                 { total: 0.5, label: "50¢", bet: "5" },
                 { total: 1, label: "$1.00", bet: "10" },
-                { total: 1.8, label: "$1.80", bet: "18" },
-                { total: 5, label: "$5.00", bet: "50" },
+                { total: 2.5, label: "$2.50", bet: "25" },
                 { total: 10, label: "$10.00", bet: "100" },
             ];
-            if (!Array.from(betSelect.options).some((option) => option.value === "18")) {
-                const option = new Option("18", "18");
-                const nextOption = Array.from(betSelect.options).find((candidate) => Number(candidate.value) > 18);
-                betSelect.insertBefore(option, nextOption || null);
-            }
             totalBetPresets.forEach(({ total, label, bet }) => {
                 const button = document.createElement("button");
                 button.type = "button";

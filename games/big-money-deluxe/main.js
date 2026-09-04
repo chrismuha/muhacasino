@@ -424,7 +424,6 @@ function setMessage(msg) {
 
 function updateFeatureStatus() {
     if (!featureStatusEl) return;
-    featureStatusEl.hidden = freeSpinsRemaining <= 0;
     featureStatusEl.textContent = freeSpinsRemaining > 0 ? `FREE SPINS ${freeSpinsRemaining}` : "";
     featureStatusEl.classList.toggle("feature-active", freeSpinsRemaining > 0);
 }
