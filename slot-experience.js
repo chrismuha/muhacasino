@@ -248,7 +248,7 @@
                 <div class="overlay-panel overlay-panel-compact slot-experience-panel lucky-wheel-panel">
                     <div class="overlay-head"><h3 id="luckyWheelTitle">Lucky Credit Wheel</h3><button type="button" class="overlay-close" data-close="luckyWheelOverlay">Close</button></div>
                     <p class="overlay-note">You are short on credits. Spin for a chance to keep playing.</p>
-                    <div class="lucky-wheel" aria-label="Lucky wheel"><div class="lucky-wheel-pointer">▼</div><div class="lucky-wheel-disc"><span>1×</span><span>TRY<br>AGAIN</span><span>2×</span><span>TRY<br>AGAIN</span><span>3×</span><span>TRY<br>AGAIN</span></div></div>
+                    <div class="lucky-wheel" aria-label="Lucky wheel with alternating 1, 0, 2, 0, 3, and 0 times award wedges"><div class="lucky-wheel-pointer">▼</div><div class="lucky-wheel-disc"><span>1×</span><span>0×</span><span>2×</span><span>0×</span><span>3×</span><span>0×</span></div></div>
                     <p id="luckyWheelResult" class="last-chance-summary">The wheel odds follow your setting.</p>
                     <button id="luckyWheelSpin" type="button">Spin Lucky Wheel</button>
                 </div>
