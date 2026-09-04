@@ -113,7 +113,7 @@
             </label>
             <label class="checkbox-setting slot-wheel-setting">
                 <input id="luckyWheelToggle" type="checkbox" checked>
-                <span><strong>Lucky wheel when credits run out</strong><small>Turn off to restore the original last-chance behavior.</small></span>
+                <span><strong>One rescue wheel when credits run out</strong><small>Available once per session after paid play leaves too few credits for the current wager.</small></span>
             </label>
             <div class="select slot-wheel-odds-setting">
                 <label for="luckyWheelOdds">Lucky Wheel Win / Loss Ratio</label>
@@ -330,8 +330,11 @@
     }
 
     let pendingWheel = null;
+    let luckyWheelUsed = false;
     function offerLuckyWheel({ needed, wager, onAward }) {
-        if (!state.luckyWheel || pendingWheel) return false;
+        const currentWager = Math.max(0.01, Number(wager) || 0.01);
+        const hasPlayedToDepletion = state.played > 0 && state.balance + 0.0001 < currentWager;
+        if (!state.luckyWheel || luckyWheelUsed || pendingWheel || !hasPlayedToDepletion) return false;
         pendingWheel = { needed: Math.max(0.01, needed), wager, onAward };
         const overlay = document.getElementById("luckyWheelOverlay");
         const button = document.getElementById("luckyWheelSpin");
@@ -343,6 +346,7 @@
         button.disabled = false;
         button.textContent = "Spin Lucky Wheel";
         button.onclick = () => {
+            luckyWheelUsed = true;
             button.disabled = true;
             const attempt = pendingWheel;
             const disc = overlay.querySelector(".lucky-wheel-disc");
@@ -358,9 +362,10 @@
                 if (pendingWheel !== attempt) return;
                 disc.classList.remove("spinning");
                 if (!won) {
-                    result.textContent = "No award this time. You can try the wheel again.";
+                    result.textContent = "No award this time. The one rescue spin for this session has been used.";
                     button.disabled = false;
-                    button.textContent = "Spin Again";
+                    button.textContent = "Close";
+                    button.onclick = () => closeOverlay("luckyWheelOverlay");
                     return;
                 }
                 const award = Math.max(attempt.needed, attempt.needed * multiplier);
@@ -501,10 +506,10 @@
         revealReelDoors,
         renderResultMessage,
         renderFeatureStatus,
-        isLuckyWheelEnabled: () => state.luckyWheel,
+        isLuckyWheelEnabled: () => state.luckyWheel && !luckyWheelUsed,
         recordDeposit(amount) { if (amount > 0) state.deposited += amount; updateMoneyUi(); },
         recordPlay(amount) { if (amount > 0) state.played += amount; updateMoneyUi(); },
         setBalance(amount) { state.balance = Math.max(0, Number(amount) || 0); updateMoneyUi(); },
-        reset(balance = 100) { state.deposited = balance; state.played = 0; state.balance = balance; updateMoneyUi(); },
+        reset(balance = 100) { state.deposited = balance; state.played = 0; state.balance = balance; luckyWheelUsed = false; updateMoneyUi(); },
     };
 })();
