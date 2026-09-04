@@ -177,7 +177,8 @@ let settingsOverlayEl = null;
 let settingsPageIndex = 0;
 let settingsItems = [];
 let settingsPins = {};
-const SETTINGS_PIN_STORAGE_KEY = "treasurePots.settingsPins.v1";
+const SETTINGS_PIN_STORAGE_KEY = "prettyPenny.settingsPins.v3";
+const LEGACY_SETTINGS_PIN_STORAGE_KEY = "treasurePots.settingsPins.v1";
 const SAVINGS_BANKS = [
     { name: "Pocket Money", amountUSD: 5 },
     { name: "Nest Egg", amountUSD: 25 },
@@ -1410,7 +1411,9 @@ function closeSettingsOverlay() {
 
 function setupSettingsOverlay() {
     try {
-        settingsPins = JSON.parse(localStorage.getItem(SETTINGS_PIN_STORAGE_KEY) || "{}");
+        const savedPins = localStorage.getItem(SETTINGS_PIN_STORAGE_KEY);
+        settingsPins = JSON.parse(savedPins || localStorage.getItem(LEGACY_SETTINGS_PIN_STORAGE_KEY) || "{}");
+        if (!savedPins) Object.keys(settingsPins).filter((key) => /Odds$/i.test(key)).forEach((key) => delete settingsPins[key]);
     } catch {
         settingsPins = {};
     }

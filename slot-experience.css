@@ -661,7 +661,12 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   padding: 0 !important;
 }
 .hud .total-bet-summary {
-  display: none !important;
+  display: flex !important;
+  min-height: 0 !important;
+  padding: 7px 10px !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 /* Pull the complete play surface upward by removing decorative vertical air,

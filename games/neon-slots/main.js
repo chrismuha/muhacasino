@@ -173,7 +173,8 @@ let settingsOverlayEl = null;
 let settingsPageIndex = 0;
 let settingsItems = [];
 let settingsPins = {};
-const SETTINGS_PIN_STORAGE_KEY = "muhaSlots.settingsPins.v1";
+const SETTINGS_PIN_STORAGE_KEY = "muhaSlots.settingsPins.v2";
+const LEGACY_SETTINGS_PIN_STORAGE_KEY = "muhaSlots.settingsPins.v1";
 
 
 let sessionWinningsUSD = 0;
@@ -1153,7 +1154,9 @@ function closeSettingsOverlay() {
 
 function setupSettingsOverlay() {
     try {
-        settingsPins = JSON.parse(localStorage.getItem(SETTINGS_PIN_STORAGE_KEY) || "{}");
+        const savedPins = localStorage.getItem(SETTINGS_PIN_STORAGE_KEY);
+        settingsPins = JSON.parse(savedPins || localStorage.getItem(LEGACY_SETTINGS_PIN_STORAGE_KEY) || "{}");
+        if (!savedPins) Object.keys(settingsPins).filter((key) => /Odds$/i.test(key)).forEach((key) => delete settingsPins[key]);
     } catch {
         settingsPins = {};
     }

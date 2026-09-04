@@ -184,13 +184,12 @@
                 button.type = "button";
                 button.className = "bet-preset";
                 button.dataset.betTotal = String(total);
+                button.dataset.baseLabel = label;
                 button.textContent = label;
                 button.setAttribute("aria-label", `Set total bet to ${label}`);
                 button.addEventListener("click", () => {
-                    if (denomSelect) denomSelect.value = "0.01";
                     if (linesSelect) linesSelect.value = "10";
                     betSelect.value = bet;
-                    denomSelect?.dispatchEvent(new Event("change", { bubbles: true }));
                     linesSelect?.dispatchEvent(new Event("change", { bubbles: true }));
                     betSelect.dispatchEvent(new Event("change", { bubbles: true }));
                 });
@@ -209,9 +208,15 @@
             betSetting.appendChild(wagerRow);
 
             const syncBetPresets = () => {
-                const currentTotal = Number(denomSelect?.value || 0) * Number(linesSelect?.value || 0) * Number(betSelect.value || 0);
+                const denomination = Number(denomSelect?.value || 0.01);
+                const denominationScale = denomination / 0.01;
+                const currentTotal = denomination * Number(linesSelect?.value || 0) * Number(betSelect.value || 0);
                 presets.querySelectorAll(".bet-preset").forEach((button) => {
-                    const selected = Math.abs(Number(button.dataset.betTotal) - currentTotal) < 0.001;
+                    const scaledTotal = Number(button.dataset.betTotal) * denominationScale;
+                    const display = denominationScale === 1 ? button.dataset.baseLabel : money(scaledTotal);
+                    const selected = Math.abs(scaledTotal - currentTotal) < 0.001;
+                    button.textContent = display;
+                    button.setAttribute("aria-label", `Set total bet to ${display} at the current denomination`);
                     button.classList.toggle("is-selected", selected);
                     button.setAttribute("aria-pressed", String(selected));
                 });
