@@ -4130,3 +4130,82 @@ button:not(.info-btn) {
 .feature-dialog {
   background-image: none;
 }
+
+/* Match Pretty Penny's readable feature hierarchy without borrowing its
+   copper palette. The shaped Treasure Pot graphics remain the fill meters. */
+body.slot-game-treasurepots .pot-feature {
+  padding: 5px 7px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: #ead5aa !important;
+}
+
+body.slot-game-treasurepots .pot-feature > .pots > .pot {
+  grid-template-columns: 38px minmax(0, 1fr) !important;
+  min-height: 52px !important;
+  padding: 6px 7px !important;
+  align-items: center !important;
+  overflow: hidden !important;
+  border-color: #2b765d !important;
+  background: #fff8e7 !important;
+}
+
+body.slot-game-treasurepots .pot-feature > .pots > .pot .pot-meter {
+  width: 36px !important;
+  height: 36px !important;
+}
+
+body.slot-game-treasurepots .pot-feature > .pots > .pot > b {
+  color: #79411f !important;
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-size: clamp(14px, 1.9vw, 21px) !important;
+  font-style: italic;
+  font-weight: 800 !important;
+  letter-spacing: -.025em;
+  line-height: .95 !important;
+  text-wrap: balance;
+}
+
+body.slot-game-treasurepots .pot-feature > .pots > .pot[data-pot="1"] > b { color: #176b59 !important; }
+body.slot-game-treasurepots .pot-feature > .pots > .pot[data-pot="2"] > b { color: #806111 !important; }
+
+body.slot-game-treasurepots .pot-feature > .pots > .pot > small {
+  margin-top: 2px;
+  color: #6b3d1d !important;
+  font-size: clamp(13px, 1.65vw, 18px) !important;
+  font-weight: 950 !important;
+  letter-spacing: .02em;
+  line-height: 1.05 !important;
+  font-variant-numeric: tabular-nums;
+}
+
+body.slot-game-treasurepots .reels-wrap > .reel-result {
+  border-color: #1f6958 !important;
+  background: #fffdf4 !important;
+}
+
+body.slot-game-treasurepots .reel-result .win-result-primary {
+  color: #9b551d !important;
+  font-size: clamp(15px, 2vw, 22px) !important;
+}
+
+body.slot-game-treasurepots .reel-result .win-result-details {
+  color: #174e3f !important;
+  font-size: clamp(9px, 1.1vw, 12px) !important;
+}
+
+body.slot-game-treasurepots .reels-wrap > .slot-feature-indicator {
+  border-color: #c49528 !important;
+  color: #49320b !important;
+  background: #fff0b8 !important;
+}
+
+body.slot-game-treasurepots .feature-status-primary {
+  color: #70470b;
+  font-size: clamp(15px, 1.8vw, 21px);
+}
+
+body.slot-game-treasurepots .feature-status-detail {
+  color: #175342;
+  font-size: clamp(9px, 1vw, 12px);
+}
