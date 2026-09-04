@@ -3731,3 +3731,49 @@ body {
     overflow-wrap: anywhere;
   }
 }
+
+/* Final LINK tile presentation must follow the legacy Pretty Penny layers. */
+.reels .link-chip.link-value {
+  grid-template-columns: clamp(20px, 2.7vw, 30px) minmax(0, 1fr);
+  grid-template-rows: 1fr;
+  column-gap: clamp(3px, .55vw, 7px);
+  width: calc(100% - 10px);
+  height: calc(100% - 10px);
+  margin: 5px;
+  padding: 3px clamp(6px, .8vw, 10px);
+  border: 2px solid #c66a57;
+  border-radius: 9px;
+  color: #44251e;
+  background: linear-gradient(145deg, #fffaf0, #f7ddd4);
+  box-shadow: inset 0 1px rgba(255,255,255,.95), 0 2px 0 rgba(116,61,47,.3);
+}
+
+.reels .link-chip.link-meter-value-1 {
+  border-color: #4d9b7f;
+  color: #153f35;
+  background: linear-gradient(145deg, #f8fff9, #d9eee3);
+  box-shadow: inset 0 1px rgba(255,255,255,.95), 0 2px 0 rgba(38,104,81,.28);
+}
+
+.reels .link-chip.link-meter-value-2 {
+  border-color: #5a8fc2;
+  color: #173d63;
+  background: linear-gradient(145deg, #f8fcff, #dcebf8);
+  box-shadow: inset 0 1px rgba(255,255,255,.95), 0 2px 0 rgba(49,91,132,.28);
+}
+
+.reels .link-chip.link-value > .link-meter-icon {
+  grid-column: 1;
+  grid-row: 1;
+  width: clamp(20px, 2.7vw, 30px);
+  height: clamp(20px, 2.7vw, 30px);
+  margin: 0;
+}
+
+.reels .link-chip.link-value > strong {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  color: inherit;
+  font-size: clamp(9px, 1.35vw, 15px);
+}

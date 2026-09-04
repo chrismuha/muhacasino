@@ -716,7 +716,7 @@ function createCell(symbol, isWinning = false) {
     }
     if (symbol?.kind === "link") {
         const chip = document.createElement("span");
-        chip.className = `link-chip ${symbol.anchor ? "link-anchor" : "link-value"} ${symbol.orphan ? "link-orphan" : ""}`;
+        chip.className = `link-chip ${symbol.anchor ? "link-anchor" : `link-value link-meter-value-${symbol.meterIndex}`} ${symbol.orphan ? "link-orphan" : ""}`;
         chip.innerHTML = symbol.anchor
             ? `<i class="link-chain-icon" aria-hidden="true">↗</i><strong>LINK</strong><span class="chip-caption">${symbol.orphan ? "NOT CONNECTED" : "START"}</span>`
             : `<i class="link-meter-icon link-meter-${symbol.meterIndex}" aria-hidden="true"></i><strong>${fmtUSD(symbol.value)}</strong><span class="chip-caption">${symbol.orphan ? "NOT CONNECTED" : SAVINGS_BANKS[symbol.meterIndex].name.toUpperCase()}</span>`;
