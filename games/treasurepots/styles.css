@@ -4186,7 +4186,6 @@ body.slot-game-treasurepots .reels-wrap > .reel-result {
 
 body.slot-game-treasurepots .reel-result .win-result-primary {
   color: #9b551d !important;
-  font-size: clamp(15px, 2vw, 22px) !important;
 }
 
 body.slot-game-treasurepots .reel-result .win-result-details {
@@ -4202,7 +4201,6 @@ body.slot-game-treasurepots .reels-wrap > .slot-feature-indicator {
 
 body.slot-game-treasurepots .feature-status-primary {
   color: #70470b;
-  font-size: clamp(15px, 1.8vw, 21px);
 }
 
 body.slot-game-treasurepots .feature-status-detail {

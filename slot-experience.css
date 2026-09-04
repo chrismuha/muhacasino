@@ -442,10 +442,17 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   justify-content: center;
   gap: clamp(6px, 1vw, 12px);
 }
-.win-result-primary,
+.win-result-primary {
+  flex: 0 0 auto;
+  font-size: clamp(22px, 2.8vw, 34px) !important;
+  font-weight: 950;
+  letter-spacing: -.025em;
+  line-height: 1;
+  white-space: nowrap;
+}
 .feature-status-primary {
   flex: 0 0 auto;
-  font-size: clamp(15px, 1.8vw, 21px);
+  font-size: clamp(18px, 2.25vw, 28px) !important;
   font-weight: 950;
   letter-spacing: -.025em;
   line-height: 1;
@@ -453,14 +460,17 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 }
 .win-result-details {
   min-width: 0;
-  font-size: clamp(9px, 1vw, 12px);
+  font-size: clamp(9px, 1.05vw, 13px);
   font-weight: 750;
   line-height: 1.12;
   text-align: left;
 }
 .win-result-feature {
-  font-size: 1.22em;
+  display: inline-block;
+  color: #8e4e12;
+  font-size: clamp(15px, 1.65vw, 21px);
   font-weight: 950;
+  line-height: 1;
 }
 .slot-feature-indicator.feature-active {
   display: flex;
@@ -475,8 +485,9 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   line-height: 1;
 }
 @media (max-width: 560px) {
-  .win-result-primary,
-  .feature-status-primary { font-size: clamp(12px, 3.6vw, 16px); }
+  .win-result-primary { font-size: clamp(18px, 5vw, 24px) !important; }
+  .feature-status-primary { font-size: clamp(16px, 4.5vw, 22px) !important; }
+  .win-result-feature { font-size: clamp(13px, 3.8vw, 18px); }
   .win-result-details,
   .feature-status-detail { font-size: clamp(7px, 2.2vw, 10px); }
 }
