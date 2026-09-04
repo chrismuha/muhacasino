@@ -124,11 +124,15 @@
                 </select>
                 <small>Winning slices award 1×, 2×, or 3× the credits needed for the current wager.</small>
             </div>
-            <div class="jackpot-config-setting">
-                <strong>Jackpot amounts and bet scaling</strong>
+            <div class="jackpot-config-setting jackpot-amounts-setting">
+                <strong>Jackpot amounts</strong>
                 <div class="jackpot-base-grid">
                     ${["Mini", "Minor", "Major", "Grand"].map((name) => `<label>${name}<input type="number" min="0.01" step="0.01" data-jackpot-base="${name.toLowerCase()}"></label>`).join("")}
                 </div>
+                <small>Set the base Mini, Minor, Major, and Grand awards.</small>
+            </div>
+            <div class="jackpot-config-setting jackpot-scaling-setting">
+                <strong>Jackpot bet scaling</strong>
                 <label class="jackpot-scale-toggle"><input id="jackpotScalingEnabled" type="checkbox" checked><span>Adjust jackpots with the total bet</span></label>
                 <label>Scaling method<select id="jackpotScalingMode"><option value="multiply">Multiply with bet</option><option value="increment">Add an amount per bet step</option></select></label>
                 <div class="jackpot-scale-grid">
@@ -152,6 +156,92 @@
                 <small>Choose one, several, or all rows. Doors are off by default.</small>
             </div>` : ""}`;
         settingsRoot.appendChild(settings);
+
+        const betSelect = document.getElementById("bet");
+        if (betSelect && !betSelect.closest(".bet-stepper")) {
+            const betSetting = betSelect.parentElement;
+            const stepper = document.createElement("div");
+            stepper.className = "bet-stepper";
+            betSelect.parentNode.insertBefore(stepper, betSelect);
+            stepper.appendChild(betSelect);
+
+            const makeStepButton = (direction) => {
+                const button = document.createElement("button");
+                const increase = direction > 0;
+                button.type = "button";
+                button.className = `slot-bet-step slot-bet-${increase ? "up" : "down"}`;
+                button.textContent = increase ? "▲" : "▼";
+                button.setAttribute("aria-label", `${increase ? "Increase" : "Decrease"} bet per line`);
+                button.title = `${increase ? "Increase" : "Decrease"} bet per line`;
+                button.addEventListener("click", () => {
+                    const nextIndex = Math.max(0, Math.min(betSelect.options.length - 1, betSelect.selectedIndex + direction));
+                    if (nextIndex === betSelect.selectedIndex) return;
+                    betSelect.selectedIndex = nextIndex;
+                    betSelect.dispatchEvent(new Event("change", { bubbles: true }));
+                    betSelect.focus();
+                });
+                return button;
+            };
+
+            stepper.prepend(makeStepButton(-1));
+            stepper.append(makeStepButton(1));
+
+            const presets = document.createElement("div");
+            presets.className = "bet-presets";
+            presets.setAttribute("aria-label", "Quick total bet presets");
+            const denomSelect = document.getElementById("denom");
+            const linesSelect = document.getElementById("lines");
+            const totalBetPresets = [
+                { total: 0.5, label: "50¢", bet: "5" },
+                { total: 1, label: "$1.00", bet: "10" },
+                { total: 1.8, label: "$1.80", bet: "18" },
+                { total: 5, label: "$5.00", bet: "50" },
+                { total: 10, label: "$10.00", bet: "100" },
+            ];
+            if (!Array.from(betSelect.options).some((option) => option.value === "18")) {
+                const option = new Option("18", "18");
+                const nextOption = Array.from(betSelect.options).find((candidate) => Number(candidate.value) > 18);
+                betSelect.insertBefore(option, nextOption || null);
+            }
+            totalBetPresets.forEach(({ total, label, bet }) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "bet-preset";
+                button.dataset.betTotal = String(total);
+                button.textContent = label;
+                button.setAttribute("aria-label", `Set total bet to ${label}`);
+                button.addEventListener("click", () => {
+                    if (denomSelect) denomSelect.value = "0.01";
+                    if (linesSelect) linesSelect.value = "10";
+                    betSelect.value = bet;
+                    denomSelect?.dispatchEvent(new Event("change", { bubbles: true }));
+                    linesSelect?.dispatchEvent(new Event("change", { bubbles: true }));
+                    betSelect.dispatchEvent(new Event("change", { bubbles: true }));
+                });
+                presets.appendChild(button);
+            });
+            const presetLabel = document.createElement("small");
+            presetLabel.className = "bet-presets-label";
+            presetLabel.textContent = "Total bet presets";
+            betSetting.appendChild(presetLabel);
+            betSetting.appendChild(presets);
+
+            const syncBetPresets = () => {
+                const currentTotal = Number(denomSelect?.value || 0) * Number(linesSelect?.value || 0) * Number(betSelect.value || 0);
+                presets.querySelectorAll(".bet-preset").forEach((button) => {
+                    const selected = Math.abs(Number(button.dataset.betTotal) - currentTotal) < 0.001;
+                    button.classList.toggle("is-selected", selected);
+                    button.setAttribute("aria-pressed", String(selected));
+                });
+            };
+            betSelect.addEventListener("change", syncBetPresets);
+            denomSelect?.addEventListener("change", syncBetPresets);
+            linesSelect?.addEventListener("change", syncBetPresets);
+            syncBetPresets();
+
+            betSetting.classList.add("slot-bet-control");
+            document.querySelector(".right")?.prepend(betSetting);
+        }
 
         document.body.insertAdjacentHTML("beforeend", `
             <button id="withdrawalButton" class="withdrawal-button" type="button" hidden>Withdraw</button>
@@ -213,7 +303,7 @@
         });
         odds.addEventListener("change", () => { state.wheelOdds = Number(odds.value); save(); });
         revealDoors?.addEventListener("change", () => { state.revealDoors = revealDoors.value; save(); });
-        document.querySelectorAll(".jackpot-config-setting input, .jackpot-config-setting select").forEach((control) => {
+        document.querySelectorAll(".jackpot-amounts-setting input, .jackpot-scaling-setting input, .jackpot-scaling-setting select").forEach((control) => {
             control.addEventListener("change", () => {
                 if (!state.jackpots) return;
                 state.jackpots.enabled = document.getElementById("jackpotScalingEnabled").checked;

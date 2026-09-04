@@ -513,6 +513,34 @@ window.addEventListener("message", (event) => {
   gameFrame.focus();
 });
 
+function syncPrettyPennyFrameWidth() {
+  if (activeGameId !== "pretty-penny") return;
+  const frameDocument = gameFrame.contentDocument;
+  if (!frameDocument?.documentElement || !frameDocument.body) return;
+  const frameWidth = Math.floor(frameDocument.documentElement.clientWidth);
+  if (frameWidth < 1) return;
+
+  const fixedWidth = `${frameWidth}px`;
+  frameDocument.documentElement.style.width = fixedWidth;
+  frameDocument.documentElement.style.maxWidth = fixedWidth;
+  frameDocument.body.style.width = fixedWidth;
+  frameDocument.body.style.maxWidth = fixedWidth;
+
+  const game = frameDocument.querySelector(".game");
+  const card = frameDocument.querySelector(".card");
+  if (game) {
+    game.style.width = "100%";
+    game.style.maxWidth = "100%";
+    game.style.marginInline = "0";
+  }
+  if (card) {
+    card.style.width = "100%";
+    card.style.maxWidth = "100%";
+  }
+}
+
+window.addEventListener("resize", syncPrettyPennyFrameWidth);
+
 gameFrame.addEventListener("load", () => {
   if (!activeGameId || gameFrame.src === "about:blank") return;
   window.clearTimeout(gameLoadTimer);
@@ -527,6 +555,9 @@ gameFrame.addEventListener("load", () => {
   } catch {
 
   }
+  syncPrettyPennyFrameWidth();
+  window.requestAnimationFrame(syncPrettyPennyFrameWidth);
+  window.setTimeout(syncPrettyPennyFrameWidth, 150);
   gameLoadState.hidden = true;
   if (slotGameIds.has(activeGameId)) {
     syncSlotModeToolbar(gameFrame.contentWindow?.slotExperience?.getDisplayMode());

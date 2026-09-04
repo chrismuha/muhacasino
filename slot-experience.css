@@ -52,7 +52,7 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   .hud > .right:has(> .withdrawal-button:not([hidden])) { grid-template-columns: repeat(5, minmax(110px, 1fr)); }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 700px) {
   .hud > .left, .hud > .right { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 560px) {
@@ -73,3 +73,133 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 .jackpot-scale-toggle input { width: 18px; flex: 0 0 18px; }
 .jackpot-config-setting > small { opacity: .72; line-height: 1.35; }
 @media (max-width: 480px) { .jackpot-base-grid, .jackpot-scale-grid { grid-template-columns: 1fr; } }
+
+/* Compact shared slot controls. Controls retain thumb-sized targets while
+   reducing the empty space between HUD rows. */
+.hud {
+  gap: 6px !important;
+}
+.hud > .left,
+.hud > .right {
+  gap: 6px !important;
+}
+.hud :is(.stat, .select, .credit-controls, .checkbox-setting) {
+  box-sizing: border-box;
+  min-height: 0;
+  padding: 6px 8px;
+}
+.hud .credit-controls {
+  display: grid;
+  grid-template-columns: max-content minmax(150px, 1fr) max-content;
+  align-items: center;
+  gap: 6px 8px;
+  margin: 0;
+}
+.hud .credit-controls > label,
+.hud .credit-controls > .overlay-note {
+  margin: 0;
+}
+.hud .credit-controls > .credit-row {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+}
+.hud :is(label, .muted) {
+  margin-block: 0 3px;
+  line-height: 1.15;
+}
+.hud :is(select, input[type="number"], input[type="text"]) {
+  box-sizing: border-box;
+  min-height: 40px;
+  padding-block: 6px;
+}
+.hud > .right > button {
+  min-height: 48px;
+  padding-block: 9px;
+}
+.hud :is(.auto-spin-hint, .auto-spin-countdown, .message) {
+  min-height: 0;
+  padding-block: 6px;
+  line-height: 1.25;
+}
+.bet-stepper {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px 44px;
+  width: 100%;
+  min-width: 0;
+  align-items: stretch;
+  gap: 6px;
+}
+.bet-stepper > #bet { grid-column: 1; grid-row: 1; }
+.bet-stepper > .slot-bet-down { grid-column: 2; grid-row: 1; }
+.bet-stepper > .slot-bet-up { grid-column: 3; grid-row: 1; }
+.hud > .right > .slot-bet-control {
+  grid-column: 1 / -1;
+  width: auto;
+  max-width: 100%;
+  min-width: 0;
+  padding: 7px 8px;
+}
+.slot-bet-control > label:first-child {
+  font-weight: 900;
+}
+.bet-stepper > #bet {
+  width: 100%;
+  min-width: 0;
+}
+.bet-stepper > .slot-bet-step {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  box-sizing: border-box;
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  place-items: center;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1;
+}
+.bet-presets {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  width: 100%;
+  min-width: 0;
+  margin-top: 6px;
+  gap: 5px;
+}
+.bet-presets-label {
+  display: block;
+  margin-top: 6px;
+  font-size: .72rem;
+  font-weight: 800;
+  opacity: .72;
+  text-transform: uppercase;
+}
+.bet-presets > .bet-preset {
+  display: grid;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 5px 2px;
+  place-items: center;
+  border-radius: 9px;
+  font-size: clamp(9px, 1.5vw, 12px);
+  line-height: 1;
+}
+.bet-presets > .bet-preset.is-selected {
+  filter: brightness(1.18) saturate(1.2);
+  outline: 3px solid currentColor;
+  outline-offset: -3px;
+}
+@media (max-width: 560px) {
+  .hud { gap: 5px !important; }
+  .hud > .left, .hud > .right { gap: 5px !important; }
+  .hud :is(.stat, .select, .credit-controls, .checkbox-setting) { padding: 5px 6px; }
+  .bet-presets { gap: 4px; }
+  .hud .credit-controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

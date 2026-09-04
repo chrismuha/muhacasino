@@ -3288,6 +3288,11 @@ body,
   min-width: 0;
 }
 
+body > .game {
+  margin-inline: 0;
+  overflow-x: clip;
+}
+
 html,
 body {
   overflow-x: hidden;
@@ -3315,6 +3320,41 @@ body {
   box-sizing: border-box;
   min-width: 0;
   max-width: 100%;
+}
+
+.reels,
+.hud,
+.left,
+.right {
+  width: auto;
+  justify-self: stretch;
+}
+
+.reels-wrap {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.reels-wrap > .reels,
+.reels-wrap > .hud {
+  box-sizing: border-box;
+  width: auto;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.hud > .left,
+.hud > .right {
+  box-sizing: border-box;
+  width: auto;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.right > button {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .title > span {
