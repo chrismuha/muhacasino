@@ -1190,6 +1190,7 @@ function openLastChanceOverlay() {
     if (window.slotExperience?.offerLuckyWheel({
         needed: requiredCreditUSD,
         wager: totalBetUSD,
+        denomination: getDenominationValue(),
         onAward: async (awardUSD) => {
             balance = clampBalanceUSD(balance + awardUSD);
             updateCreditsInsertedDisplay();

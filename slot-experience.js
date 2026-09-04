@@ -3,12 +3,20 @@
 
     const gameKey = location.pathname.split("/").filter(Boolean).slice(-2, -1)[0] || "slots";
     const storageKey = `muhaCasino.slotExperience.${gameKey}.v1`;
+    const defaultWheelPrizes = [
+        { type: "multiplier", value: 1 },
+        { type: "multiplier", value: 1.5 },
+        { type: "multiplier", value: 2 },
+        { type: "fixed", value: 10 },
+        { type: "multiplier", value: 3 },
+        { type: "jackpot", tier: "mini" },
+    ];
     const state = {
         displayMode: "credits",
         withdrawalDemo: false,
         luckyWheel: true,
         wheelOdds: 0.5,
-        wheelMultipliers: [1, 2, 3],
+        wheelPrizes: defaultWheelPrizes.map((prize) => ({ ...prize })),
         revealDoors: "off",
         revealDoorRows: [0, 1, 2, 3, 4],
         deposited: 100,
@@ -27,9 +35,14 @@
             : Boolean(saved.moneyMode);
         state.luckyWheel = saved.luckyWheel !== false;
         state.wheelOdds = [0.25, 0.5, 0.75, 1].includes(Number(saved.wheelOdds)) ? Number(saved.wheelOdds) : 0.5;
-        state.wheelMultipliers = Array.isArray(saved.wheelMultipliers) && saved.wheelMultipliers.length === 3
-            ? saved.wheelMultipliers.map((value, index) => Math.max(1, Number(value) || index + 1))
-            : [1, 2, 3];
+        state.wheelPrizes = Array.isArray(saved.wheelPrizes) && saved.wheelPrizes.length === 6
+            ? saved.wheelPrizes.map((prize, index) => normalizeWheelPrize(prize, defaultWheelPrizes[index]))
+            : defaultWheelPrizes.map((prize, index) => ({
+                ...prize,
+                ...(Array.isArray(saved.wheelMultipliers) && index < saved.wheelMultipliers.length
+                    ? { type: "multiplier", value: Math.max(1, Number(saved.wheelMultipliers[index]) || index + 1) }
+                    : {}),
+            }));
         state.revealDoors = ["off", "reels", "symbols"].includes(saved.revealDoors) ? saved.revealDoors : "off";
         state.revealDoorRows = Array.isArray(saved.revealDoorRows)
             ? [...new Set(saved.revealDoorRows.map(Number).filter((row) => Number.isInteger(row) && row >= 0 && row < 5))]
@@ -53,7 +66,7 @@
                 withdrawalDemo: state.withdrawalDemo,
                 luckyWheel: state.luckyWheel,
                 wheelOdds: state.wheelOdds,
-                wheelMultipliers: state.wheelMultipliers,
+                wheelPrizes: state.wheelPrizes,
                 revealDoors: state.revealDoors,
                 revealDoorRows: state.revealDoorRows,
                 jackpots: state.jackpots,
@@ -63,6 +76,51 @@
 
     function withdrawable() {
         return state.played + 0.0001 >= state.deposited ? Math.max(0, state.balance) : 0;
+    }
+
+    function normalizeWheelPrize(prize, fallback = { type: "multiplier", value: 1 }) {
+        const type = ["multiplier", "fixed", "jackpot"].includes(prize?.type) ? prize.type : fallback.type;
+        if (type === "jackpot") {
+            const tier = ["mini", "minor", "major", "grand"].includes(prize?.tier) ? prize.tier : (fallback.tier || "mini");
+            return { type, tier };
+        }
+        return { type, value: Math.max(type === "multiplier" ? 0.25 : 0.01, Number(prize?.value) || Number(fallback.value) || 1) };
+    }
+
+    function formatWheelPrize(prize) {
+        if (prize.type === "jackpot") return prize.tier.toUpperCase();
+        if (prize.type === "fixed") return money(prize.value);
+        return `${Number(prize.value).toLocaleString(undefined, { maximumFractionDigits: 2 })}×`;
+    }
+
+    function wheelPrizeEditor(prize, index) {
+        const value = prize.type === "jackpot" ? 1 : prize.value;
+        const tier = prize.type === "jackpot" ? prize.tier : "mini";
+        return `<div class="wheel-prize-card" data-wheel-editor="${index}" data-prize-type="${prize.type}">
+            <strong>Win ${index + 1}</strong>
+            <label>Type<select data-wheel-prize-type="${index}">
+                <option value="multiplier"${prize.type === "multiplier" ? " selected" : ""}>Bet multiplier</option>
+                <option value="fixed"${prize.type === "fixed" ? " selected" : ""}>Fixed value</option>
+                <option value="jackpot"${prize.type === "jackpot" ? " selected" : ""}>Jackpot</option>
+            </select></label>
+            <label class="wheel-prize-number">Amount<input type="number" min="0.01" max="1000000" step="0.25" value="${value}" data-wheel-prize-value="${index}"></label>
+            <label class="wheel-prize-tier">Tier<select data-wheel-prize-tier="${index}">
+                ${["mini", "minor", "major", "grand"].map((name) => `<option value="${name}"${tier === name ? " selected" : ""}>${name[0].toUpperCase()}${name.slice(1)}</option>`).join("")}
+            </select></label>
+        </div>`;
+    }
+
+    function getConfiguredJackpotAmount(tierName, wager, denomination = 0.01, fallback = 0.01) {
+        const config = state.jackpots;
+        const base = Number(config?.amounts?.[tierName] ?? fallback);
+        if (!config?.enabled) return Math.max(0.01, Math.round(base * 100) / 100);
+        const bet = Math.max(0.01, Number(wager) || config.baseWager);
+        const denominationFactor = Math.max(0.01, Number(denomination) || 0.01) / 0.01;
+        const scaledBet = bet * denominationFactor;
+        const amount = config.mode === "increment"
+            ? base + ((scaledBet - config.baseWager) / config.betStep) * config.stepAmount
+            : base * (scaledBet / config.baseWager);
+        return Math.max(0.01, Math.round(amount * 100) / 100);
     }
 
     function updateMoneyUi() {
@@ -133,9 +191,9 @@
             <div class="jackpot-config-setting slot-wheel-prizes-setting">
                 <strong>Lucky wheel winning wedges</strong>
                 <div class="wheel-prize-grid">
-                    ${state.wheelMultipliers.map((value, index) => `<label>Winning wedge ${index + 1}<input type="number" min="1" max="100" step="0.25" value="${value}" data-wheel-prize="${index}"></label>`).join("")}
+                    ${state.wheelPrizes.map(wheelPrizeEditor).join("")}
                 </div>
-                <small>Set each winning wedge's multiplier. The three 0× wedges remain no-award results; Win / Loss Ratio controls how often the wheel chooses a winning wedge.</small>
+                <small>Configure six winning wedges as bet multipliers, fixed values, or scaled jackpots. Six alternating 0× wedges remain no-award results; Win / Loss Ratio controls which group can be selected.</small>
             </div>
             <div class="jackpot-config-setting jackpot-amounts-setting">
                 <strong>Jackpot amounts</strong>
@@ -260,7 +318,7 @@
                 <div class="overlay-panel overlay-panel-compact slot-experience-panel lucky-wheel-panel">
                     <div class="overlay-head"><h3 id="luckyWheelTitle">Lucky Credit Wheel</h3><button type="button" class="overlay-close" data-close="luckyWheelOverlay">Close</button></div>
                     <p class="overlay-note">You are short on credits. Spin for a chance to keep playing.</p>
-                    <div class="lucky-wheel" aria-label="Lucky wheel with three configurable winning wedges and three no-award wedges"><div class="lucky-wheel-pointer">▼</div><div class="lucky-wheel-disc"><span data-wheel-value="0">${state.wheelMultipliers[0]}×</span><span>0×</span><span data-wheel-value="1">${state.wheelMultipliers[1]}×</span><span>0×</span><span data-wheel-value="2">${state.wheelMultipliers[2]}×</span><span>0×</span></div></div>
+                    <div class="lucky-wheel" aria-label="Lucky wheel with six configurable winning wedges and six no-award wedges"><div class="lucky-wheel-pointer">▼</div><div class="lucky-wheel-disc">${Array.from({ length: 12 }, (_, index) => index % 2 === 0 ? `<span data-wheel-value="${index / 2}">${formatWheelPrize(state.wheelPrizes[index / 2])}</span>` : "<span>0×</span>").join("")}</div></div>
                     <p id="luckyWheelResult" class="last-chance-summary">The wheel odds follow your setting.</p>
                     <button id="luckyWheelSpin" type="button">Spin Lucky Wheel</button>
                 </div>
@@ -301,16 +359,22 @@
             window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
         });
         odds.addEventListener("change", () => { state.wheelOdds = Number(odds.value); save(); });
-        document.querySelectorAll("[data-wheel-prize]").forEach((input) => {
-            input.addEventListener("change", () => {
-                const index = Number(input.dataset.wheelPrize);
-                const value = Math.max(1, Math.min(100, Number(input.value) || index + 1));
-                state.wheelMultipliers[index] = value;
-                input.value = String(value);
-                const wedge = document.querySelector(`[data-wheel-value="${index}"]`);
-                if (wedge) wedge.textContent = `${value}×`;
-                save();
-            });
+        const updateWheelPrize = (index) => {
+            const editor = document.querySelector(`[data-wheel-editor="${index}"]`);
+            const type = document.querySelector(`[data-wheel-prize-type="${index}"]`)?.value;
+            const valueInput = document.querySelector(`[data-wheel-prize-value="${index}"]`);
+            const tier = document.querySelector(`[data-wheel-prize-tier="${index}"]`)?.value;
+            state.wheelPrizes[index] = normalizeWheelPrize({ type, value: valueInput?.value, tier }, defaultWheelPrizes[index]);
+            if (editor) editor.dataset.prizeType = state.wheelPrizes[index].type;
+            if (valueInput && state.wheelPrizes[index].type !== "jackpot") valueInput.value = String(state.wheelPrizes[index].value);
+            const wedge = document.querySelector(`[data-wheel-value="${index}"]`);
+            if (wedge) wedge.textContent = formatWheelPrize(state.wheelPrizes[index]);
+            save();
+        };
+        state.wheelPrizes.forEach((_, index) => {
+            document.querySelector(`[data-wheel-prize-type="${index}"]`)?.addEventListener("change", () => updateWheelPrize(index));
+            document.querySelector(`[data-wheel-prize-value="${index}"]`)?.addEventListener("change", () => updateWheelPrize(index));
+            document.querySelector(`[data-wheel-prize-tier="${index}"]`)?.addEventListener("change", () => updateWheelPrize(index));
         });
         revealDoors?.addEventListener("change", () => { state.revealDoors = revealDoors.value; save(); });
         document.querySelectorAll(".jackpot-amounts-setting input, .jackpot-scaling-setting input, .jackpot-scaling-setting select").forEach((control) => {
@@ -355,11 +419,11 @@
     let pendingWheel = null;
     let luckyWheelUsed = false;
     let rescueRearmCredits = 0;
-    function offerLuckyWheel({ needed, wager, onAward }) {
+    function offerLuckyWheel({ needed, wager, denomination = 0.01, onAward }) {
         const currentWager = Math.max(0.01, Number(wager) || 0.01);
         const hasPlayedToDepletion = state.played > 0 && state.balance + 0.0001 < currentWager;
         if (!state.luckyWheel || luckyWheelUsed || pendingWheel || !hasPlayedToDepletion) return false;
-        pendingWheel = { needed: Math.max(0.01, needed), wager, onAward };
+        pendingWheel = { needed: Math.max(0.01, needed), wager, denomination, onAward };
         const overlay = document.getElementById("luckyWheelOverlay");
         const button = document.getElementById("luckyWheelSpin");
         const result = document.getElementById("luckyWheelResult");
@@ -375,11 +439,10 @@
             const attempt = pendingWheel;
             const disc = overlay.querySelector(".lucky-wheel-disc");
             const won = Math.random() < state.wheelOdds;
-            const multipliers = state.wheelMultipliers;
-            const multiplier = won ? multipliers[Math.floor(Math.random() * multipliers.length)] : 0;
-            const eligibleSlices = won ? [0, 2, 4] : [1, 3, 5];
+            const eligibleSlices = won ? [0, 2, 4, 6, 8, 10] : [1, 3, 5, 7, 9, 11];
             const slice = eligibleSlices[Math.floor(Math.random() * eligibleSlices.length)];
-            const sliceCenter = 30 + slice * 60;
+            const prizeIndex = won ? slice / 2 : -1;
+            const sliceCenter = 15 + slice * 30;
             disc.style.setProperty("--wheel-turn", `${1440 + (360 - sliceCenter)}deg`);
             disc.classList.add("spinning");
             window.setTimeout(async () => {
@@ -392,8 +455,13 @@
                     button.onclick = () => closeOverlay("luckyWheelOverlay");
                     return;
                 }
-                const award = Math.max(attempt.needed, attempt.needed * multiplier);
-                result.textContent = `Lucky win! ${money(award)} in simulated credits was added.`;
+                const prize = state.wheelPrizes[prizeIndex];
+                const award = prize.type === "jackpot"
+                    ? getConfiguredJackpotAmount(prize.tier, attempt.wager, attempt.denomination)
+                    : prize.type === "fixed"
+                        ? prize.value
+                        : attempt.needed * prize.value;
+                result.textContent = `Lucky win — ${formatWheelPrize(prize)}! ${money(award)} in simulated credits was added.`;
                 const callback = attempt.onAward;
                 await callback(award);
                 if (pendingWheel !== attempt) return;
@@ -513,16 +581,7 @@
             save();
         },
         getJackpotAmount(tier, wager, denomination = 0.01) {
-            const config = state.jackpots;
-            const base = Number(config?.amounts?.[tier.name.toLowerCase()] ?? tier.amountUSD);
-            if (!config?.enabled) return Math.max(0.01, Math.round(base * 100) / 100);
-            const bet = Math.max(0.01, Number(wager) || config.baseWager);
-            const denominationFactor = Math.max(0.01, Number(denomination) || 0.01) / 0.01;
-            const scaledBet = bet * denominationFactor;
-            const amount = config.mode === "increment"
-                ? base + ((scaledBet - config.baseWager) / config.betStep) * config.stepAmount
-                : base * (scaledBet / config.baseWager);
-            return Math.max(0.01, Math.round(amount * 100) / 100);
+            return getConfiguredJackpotAmount(tier.name.toLowerCase(), wager, denomination, tier.amountUSD);
         },
         offerLuckyWheel,
         closeReelDoors,

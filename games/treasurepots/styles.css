@@ -3902,7 +3902,12 @@ label {
   font-family: "Apple Color Emoji", "Segoe UI Emoji", system-ui, sans-serif;
   font-size: clamp(13px, 1.8vw, 20px);
 }
-.reels .jackpot-chip.jackpot-mini::before { content: "🪙"; }
+.reels .jackpot-chip.jackpot-mini::before {
+  content: "◆";
+  color: #ffe394;
+  background: #9b4f32;
+  font-family: Georgia, "Times New Roman", serif;
+}
 .reels .jackpot-chip.jackpot-minor::before { content: "☘️"; }
 .reels .jackpot-chip.jackpot-major::before { content: "🗝️"; }
 .reels .jackpot-chip.jackpot-grand::before { content: "🏆"; }
@@ -4048,9 +4053,16 @@ body {
   box-shadow: none;
 }
 
-.jackpot-pills > .jackpot-mini::before { background: #285c9d; }
+.jackpot-pills > .jackpot-mini::before {
+  color: #ffe394;
+  background: #9b4f32;
+  font-family: Georgia, "Times New Roman", serif;
+}
 .jackpot-pills > .jackpot-minor::before { background: #b8c8cd; }
-.jackpot-pills > .jackpot-major::before { background: #24704f; }
+.jackpot-pills > .jackpot-major::before {
+  color: #173f35;
+  background: #f1d36a;
+}
 .jackpot-pills > .jackpot-grand::before { background: #8c3d57; }
 
 .pot-feature {
@@ -4206,4 +4218,10 @@ body.slot-game-treasurepots .feature-status-primary {
 body.slot-game-treasurepots .feature-status-detail {
   color: #175342;
   font-size: clamp(9px, 1vw, 12px);
+}
+
+/* Keep the Major key legible at both jackpot-board and reel-chip sizes. */
+.reels .jackpot-chip.jackpot-major:not(.bonus-chip)::before {
+  color: #173f35;
+  background: #f1d36a !important;
 }
