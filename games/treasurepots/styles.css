@@ -3892,3 +3892,144 @@ label {
   .pots > .pot b { font-size: clamp(12px, 3.8vw, 16px); }
   .pots > .pot small { font-size: clamp(11px, 3.3vw, 14px); }
 }
+
+/* TreasurePots uses a deliberately flat visual language. */
+body {
+  background: #06231d;
+}
+
+.card {
+  border-color: #b78b31;
+  background: #073128;
+  box-shadow: none;
+}
+
+.title,
+.jackpot-board h3,
+.pot b,
+.pot small,
+.message,
+.slot-feature-indicator {
+  text-shadow: none !important;
+}
+
+.title-mark,
+.jackpot-board,
+.jackpot-pill,
+.pot-feature,
+.pot,
+.reels-wrap,
+.reels,
+.reels .cell,
+.reels .icon-container,
+.reels .scatter-chip,
+.reels .hold-coin,
+.reels .jackpot-chip,
+.reels .link-chip,
+.message,
+.slot-feature-indicator,
+.hud .stat,
+.hud .credit-controls,
+.hud .select,
+.hud button,
+.settings-panel,
+.overlay-panel,
+.feature-dialog {
+  box-shadow: none !important;
+}
+
+.jackpot-board {
+  background: #0c4235;
+}
+
+.jackpot-pills > .jackpot-pill {
+  background: #f3e1b3 !important;
+  box-shadow: none !important;
+}
+
+.jackpot-pills > .jackpot-pill::before {
+  box-shadow: none;
+}
+
+.jackpot-pills > .jackpot-mini::before { background: #285c9d; }
+.jackpot-pills > .jackpot-minor::before { background: #b8c8cd; }
+.jackpot-pills > .jackpot-major::before { background: #24704f; }
+.jackpot-pills > .jackpot-grand::before { background: #8c3d57; }
+
+.pot-feature {
+  background: #e9cd98;
+  box-shadow: none;
+}
+
+.pots > .pot {
+  background: #fff7df;
+  box-shadow: none;
+}
+
+.pots > .pot .pot-meter {
+  filter: none;
+}
+
+.pots > .pot[data-pot="0"] .pot-meter > span { background: #d56d2f !important; }
+.pots > .pot[data-pot="1"] .pot-meter > span { background: #31a969 !important; }
+.pots > .pot[data-pot="2"] .pot-meter > span { background: #daa927 !important; }
+
+.reels-wrap {
+  background: #082f27;
+}
+
+.reels {
+  background: #0b493b;
+}
+
+.reels .cell,
+.reels .icon-container {
+  background: #b9dfca;
+}
+
+.reels .cell.win {
+  background: #f4d36f;
+  box-shadow: none !important;
+  transform: none;
+}
+
+.reels .cell.hold-link-cell,
+.reels .cell[class*="jackpot-meter-cell-"] {
+  background: #f1dda8 !important;
+  box-shadow: none !important;
+}
+
+.reels .hold-coin-icon,
+.reels .jackpot-chip:not(.bonus-chip)::before {
+  box-shadow: none;
+}
+
+.reels .jackpot-chip,
+.reels .hold-coin,
+.reels .link-chip,
+.reels .scatter-chip,
+.reels .cell.link-win-cell {
+  animation: none !important;
+  transform: none !important;
+  filter: none;
+}
+
+.hud button,
+button:not(.info-btn) {
+  background: #d5a52f;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+#spin {
+  background: #15936f;
+}
+
+.hud .stat,
+.hud .credit-controls,
+.hud .select,
+.settings-panel,
+.overlay-panel,
+.feature-dialog {
+  background-image: none;
+}
