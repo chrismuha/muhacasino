@@ -3010,6 +3010,32 @@ label {
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='black' d='M6 48C9 23 27 8 50 8s41 15 44 40c-8-6-15-6-22 0-8-6-15-6-22 0-8-6-15-6-22 0-7-6-14-6-22 0Zm39-1h10v34c0 8 10 8 10 0h10c0 22-30 22-30 0V47Z'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
+/* Pretty Penny keeps both status rows compact while reserving their exact
+   footprint, so text changes never move the controls below them. */
+.reels-wrap > .reel-result {
+  height: clamp(44px, 5vw, 54px);
+  min-height: clamp(44px, 5vw, 54px);
+  max-height: clamp(44px, 5vw, 54px);
+}
+.reels-wrap > .slot-feature-indicator {
+  height: clamp(30px, 3.6vw, 38px);
+  min-height: clamp(30px, 3.6vw, 38px);
+  max-height: clamp(30px, 3.6vw, 38px);
+}
+
+@media (max-width: 700px) {
+  .reels-wrap > .reel-result {
+    height: 48px;
+    min-height: 48px;
+    max-height: 48px;
+  }
+  .reels-wrap > .slot-feature-indicator {
+    height: 32px;
+    min-height: 32px;
+    max-height: 32px;
+  }
+}
+
 /* Give each jackpot its own casino badge without shifting the centered label. */
 .jackpot-pills > .jackpot-pill::before {
   content: attr(data-icon);

@@ -202,11 +202,10 @@
             presets.className = "bet-presets";
             presets.setAttribute("aria-label", "Quick total bet presets");
             const totalBetPresets = [
-                { total: 0.1, label: "10¢", bet: "1" },
                 { total: 0.5, label: "50¢", bet: "5" },
-                { total: 1, label: "$1.00", bet: "10" },
-                { total: 2.5, label: "$2.50", bet: "25" },
-                { total: 10, label: "$10.00", bet: "100" },
+                { total: 1.5, label: "$1.50", bet: "15" },
+                { total: 4, label: "$4.00", bet: "40" },
+                { total: 8, label: "$8.00", bet: "80" },
             ];
             totalBetPresets.forEach(({ total, label, bet }) => {
                 const button = document.createElement("button");

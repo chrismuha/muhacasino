@@ -163,7 +163,7 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 }
 .bet-presets {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   width: 100%;
   min-width: 0;
   margin-top: 6px;
@@ -277,9 +277,9 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
-  height: clamp(30px, 3.6vw, 38px);
-  min-height: clamp(30px, 3.6vw, 38px);
-  max-height: clamp(30px, 3.6vw, 38px);
+  height: clamp(64px, 8vw, 88px);
+  min-height: clamp(64px, 8vw, 88px);
+  max-height: clamp(64px, 8vw, 88px);
   margin: 4px 0 0;
   padding: 4px 8px;
   border: 1px solid #bf8e37;
@@ -354,6 +354,11 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
     max-height: 68px;
     margin-top: 4px !important;
     padding: 5px 7px !important;
+  }
+  .reels-wrap > .slot-feature-indicator {
+    height: 68px;
+    min-height: 68px;
+    max-height: 68px;
   }
 }
 
