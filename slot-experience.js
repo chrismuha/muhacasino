@@ -149,10 +149,10 @@
                     <option value="reels">Cover selected rows</option>
                     <option value="symbols">Cover individual symbols in selected rows</option>
                 </select>
-                <fieldset class="penny-door-rows">
-                    <legend>Rows concealed</legend>
+                <div class="penny-door-rows" role="group" aria-labelledby="pennyDoorRowsTitle">
+                    <strong id="pennyDoorRowsTitle">Rows concealed</strong>
                     ${Array.from({ length: 5 }, (_, row) => `<label><input type="checkbox" data-penny-door-row="${row}"> Row ${row + 1}</label>`).join("")}
-                </fieldset>
+                </div>
                 <small>Choose one, several, or all rows. Doors are off by default.</small>
             </div>` : ""}`;
         settingsRoot.appendChild(settings);
