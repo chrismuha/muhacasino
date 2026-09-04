@@ -3,6 +3,9 @@
 .slot-withdrawal-setting span, .slot-wheel-setting span { display: grid; gap: .2rem; min-width: 0; }
 .slot-withdrawal-setting input, .slot-wheel-setting input { width: 18px; height: 18px; margin: 0; }
 .slot-withdrawal-setting small, .slot-wheel-setting small, .slot-wheel-odds-setting small { display: block; margin-top: .35rem; opacity: .72; }
+.wheel-prize-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+.wheel-prize-grid label { display: grid; gap: 4px; min-width: 0; font-size: .82rem; font-weight: 800; }
+.wheel-prize-grid input { box-sizing: border-box; width: 100%; min-width: 0; }
 .withdrawal-button { width: 100%; min-width: 0; padding: .8rem 1.15rem; border-radius: 999px; box-shadow: 0 8px 20px #0005; }
 @media (min-width: 901px) { .right:has(> .withdrawal-button:not([hidden])) { grid-template-columns: repeat(5, minmax(110px, 1fr)); } }
 @media (max-width: 900px) { .right > .withdrawal-button { grid-column: 1 / -1; } }
@@ -45,7 +48,7 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 .penny-reveal-doors.open .penny-symbol-doors i { opacity: 0; transform: rotateY(100deg) scale(.82); }
 .penny-reveal-doors.open .penny-symbol-doors i:nth-child(3n + 2) { transition-delay: .06s; }
 .penny-reveal-doors.open .penny-symbol-doors i:nth-child(3n) { transition-delay: .12s; }
-@media (max-width: 560px) { .withdrawal-totals { grid-template-columns: 1fr; } .lucky-wheel { width: min(230px, 68vw); } }
+@media (max-width: 560px) { .withdrawal-totals { grid-template-columns: 1fr; } .lucky-wheel { width: min(230px, 68vw); } .wheel-prize-grid { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .lucky-wheel-disc.spinning, .penny-door, .penny-symbol-doors i { transition-duration: .01ms; } }
 
 /* Shared slot HUD normalization. Keeps controls from collapsing into narrow

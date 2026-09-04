@@ -8,6 +8,7 @@
         withdrawalDemo: false,
         luckyWheel: true,
         wheelOdds: 0.5,
+        wheelMultipliers: [1, 2, 3],
         revealDoors: "off",
         revealDoorRows: [0, 1, 2, 3, 4],
         deposited: 100,
@@ -26,6 +27,9 @@
             : Boolean(saved.moneyMode);
         state.luckyWheel = saved.luckyWheel !== false;
         state.wheelOdds = [0.25, 0.5, 0.75, 1].includes(Number(saved.wheelOdds)) ? Number(saved.wheelOdds) : 0.5;
+        state.wheelMultipliers = Array.isArray(saved.wheelMultipliers) && saved.wheelMultipliers.length === 3
+            ? saved.wheelMultipliers.map((value, index) => Math.max(1, Number(value) || index + 1))
+            : [1, 2, 3];
         state.revealDoors = ["off", "reels", "symbols"].includes(saved.revealDoors) ? saved.revealDoors : "off";
         state.revealDoorRows = Array.isArray(saved.revealDoorRows)
             ? [...new Set(saved.revealDoorRows.map(Number).filter((row) => Number.isInteger(row) && row >= 0 && row < 5))]
@@ -49,6 +53,7 @@
                 withdrawalDemo: state.withdrawalDemo,
                 luckyWheel: state.luckyWheel,
                 wheelOdds: state.wheelOdds,
+                wheelMultipliers: state.wheelMultipliers,
                 revealDoors: state.revealDoors,
                 revealDoorRows: state.revealDoorRows,
                 jackpots: state.jackpots,
@@ -123,7 +128,14 @@
                     <option value="0.75">75% Win / 25% Loss</option>
                     <option value="1">100% Win / 0% Loss</option>
                 </select>
-                <small>Winning slices award 1×, 2×, or 3× the credits needed for the current wager.</small>
+                <small>Winning wedges award their configured multiplier of the credits needed for the current wager.</small>
+            </div>
+            <div class="jackpot-config-setting slot-wheel-prizes-setting">
+                <strong>Lucky wheel winning wedges</strong>
+                <div class="wheel-prize-grid">
+                    ${state.wheelMultipliers.map((value, index) => `<label>Winning wedge ${index + 1}<input type="number" min="1" max="100" step="0.25" value="${value}" data-wheel-prize="${index}"></label>`).join("")}
+                </div>
+                <small>Set each winning wedge's multiplier. The three 0× wedges remain no-award results; Win / Loss Ratio controls how often the wheel chooses a winning wedge.</small>
             </div>
             <div class="jackpot-config-setting jackpot-amounts-setting">
                 <strong>Jackpot amounts</strong>
@@ -248,7 +260,7 @@
                 <div class="overlay-panel overlay-panel-compact slot-experience-panel lucky-wheel-panel">
                     <div class="overlay-head"><h3 id="luckyWheelTitle">Lucky Credit Wheel</h3><button type="button" class="overlay-close" data-close="luckyWheelOverlay">Close</button></div>
                     <p class="overlay-note">You are short on credits. Spin for a chance to keep playing.</p>
-                    <div class="lucky-wheel" aria-label="Lucky wheel with alternating 1, 0, 2, 0, 3, and 0 times award wedges"><div class="lucky-wheel-pointer">▼</div><div class="lucky-wheel-disc"><span>1×</span><span>0×</span><span>2×</span><span>0×</span><span>3×</span><span>0×</span></div></div>
+                    <div class="lucky-wheel" aria-label="Lucky wheel with three configurable winning wedges and three no-award wedges"><div class="lucky-wheel-pointer">▼</div><div class="lucky-wheel-disc"><span data-wheel-value="0">${state.wheelMultipliers[0]}×</span><span>0×</span><span data-wheel-value="1">${state.wheelMultipliers[1]}×</span><span>0×</span><span data-wheel-value="2">${state.wheelMultipliers[2]}×</span><span>0×</span></div></div>
                     <p id="luckyWheelResult" class="last-chance-summary">The wheel odds follow your setting.</p>
                     <button id="luckyWheelSpin" type="button">Spin Lucky Wheel</button>
                 </div>
@@ -289,6 +301,17 @@
             window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
         });
         odds.addEventListener("change", () => { state.wheelOdds = Number(odds.value); save(); });
+        document.querySelectorAll("[data-wheel-prize]").forEach((input) => {
+            input.addEventListener("change", () => {
+                const index = Number(input.dataset.wheelPrize);
+                const value = Math.max(1, Math.min(100, Number(input.value) || index + 1));
+                state.wheelMultipliers[index] = value;
+                input.value = String(value);
+                const wedge = document.querySelector(`[data-wheel-value="${index}"]`);
+                if (wedge) wedge.textContent = `${value}×`;
+                save();
+            });
+        });
         revealDoors?.addEventListener("change", () => { state.revealDoors = revealDoors.value; save(); });
         document.querySelectorAll(".jackpot-amounts-setting input, .jackpot-scaling-setting input, .jackpot-scaling-setting select").forEach((control) => {
             control.addEventListener("change", () => {
@@ -331,6 +354,7 @@
 
     let pendingWheel = null;
     let luckyWheelUsed = false;
+    let rescueRearmCredits = 0;
     function offerLuckyWheel({ needed, wager, onAward }) {
         const currentWager = Math.max(0.01, Number(wager) || 0.01);
         const hasPlayedToDepletion = state.played > 0 && state.balance + 0.0001 < currentWager;
@@ -351,7 +375,7 @@
             const attempt = pendingWheel;
             const disc = overlay.querySelector(".lucky-wheel-disc");
             const won = Math.random() < state.wheelOdds;
-            const multipliers = [1, 2, 3];
+            const multipliers = state.wheelMultipliers;
             const multiplier = won ? multipliers[Math.floor(Math.random() * multipliers.length)] : 0;
             const eligibleSlices = won ? [0, 2, 4] : [1, 3, 5];
             const slice = eligibleSlices[Math.floor(Math.random() * eligibleSlices.length)];
@@ -506,9 +530,24 @@
         renderResultMessage,
         renderFeatureStatus,
         isLuckyWheelEnabled: () => state.luckyWheel && !luckyWheelUsed,
-        recordDeposit(amount) { if (amount > 0) state.deposited += amount; updateMoneyUi(); },
-        recordPlay(amount) { if (amount > 0) state.played += amount; updateMoneyUi(); },
+        recordDeposit(amount) {
+            if (amount > 0) {
+                state.deposited += amount;
+                if (luckyWheelUsed) rescueRearmCredits += amount;
+            }
+            updateMoneyUi();
+        },
+        recordPlay(amount) {
+            if (amount > 0) {
+                state.played += amount;
+                if (luckyWheelUsed && rescueRearmCredits + 0.0001 >= amount) {
+                    luckyWheelUsed = false;
+                    rescueRearmCredits = 0;
+                }
+            }
+            updateMoneyUi();
+        },
         setBalance(amount) { state.balance = Math.max(0, Number(amount) || 0); updateMoneyUi(); },
-        reset(balance = 100) { state.deposited = balance; state.played = 0; state.balance = balance; luckyWheelUsed = false; updateMoneyUi(); },
+        reset(balance = 100) { state.deposited = balance; state.played = 0; state.balance = balance; luckyWheelUsed = false; rescueRearmCredits = 0; updateMoneyUi(); },
     };
 })();
