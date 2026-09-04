@@ -407,6 +407,49 @@
         reels.parentElement?.classList.remove("penny-door-host");
     }
 
+    function renderResultMessage(element, message) {
+        if (!element) return;
+        const winMatch = /^WIN\s+(\S+)\s+—\s+(.+)$/.exec(message);
+        element.classList.toggle("has-win-breakdown", Boolean(winMatch));
+        element.setAttribute("aria-label", message.trim());
+        if (!winMatch) {
+            element.textContent = message;
+            return;
+        }
+        const primary = document.createElement("strong");
+        primary.className = "win-result-primary";
+        primary.textContent = `WIN ${winMatch[1]}`;
+        const details = document.createElement("span");
+        details.className = "win-result-details";
+        winMatch[2].split(" • ").forEach((text, index) => {
+            if (index) details.append(" • ");
+            const part = document.createElement("span");
+            part.className = /(FREE SPINS|BONUS|JACKPOT|WHEEL)/i.test(text)
+                ? "win-result-feature"
+                : "win-result-explanation";
+            part.textContent = text;
+            details.append(part);
+        });
+        element.replaceChildren(primary, details);
+    }
+
+    function renderFeatureStatus(element, primaryText = "", detailText = "") {
+        if (!element) return;
+        element.classList.toggle("feature-active", Boolean(primaryText));
+        element.setAttribute("aria-label", [primaryText, detailText].filter(Boolean).join(" — "));
+        if (!primaryText) {
+            element.replaceChildren();
+            return;
+        }
+        const primary = document.createElement("strong");
+        primary.className = "feature-status-primary";
+        primary.textContent = primaryText;
+        const detail = document.createElement("span");
+        detail.className = "feature-status-detail";
+        detail.textContent = detailText;
+        element.replaceChildren(primary, ...(detailText ? [detail] : []));
+    }
+
     injectUi();
     window.slotExperience = {
         formatAmount,
@@ -449,6 +492,8 @@
         offerLuckyWheel,
         closeReelDoors,
         revealReelDoors,
+        renderResultMessage,
+        renderFeatureStatus,
         isLuckyWheelEnabled: () => state.luckyWheel,
         recordDeposit(amount) { if (amount > 0) state.deposited += amount; updateMoneyUi(); },
         recordPlay(amount) { if (amount > 0) state.played += amount; updateMoneyUi(); },

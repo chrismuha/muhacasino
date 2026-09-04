@@ -427,17 +427,16 @@ function updateTotals() {
 }
 
 function clearMessage() {
-    messageEl.textContent = " ";
+    window.slotExperience?.renderResultMessage(messageEl, " ");
 }
 
 function setMessage(msg) {
-    messageEl.textContent = msg;
+    window.slotExperience?.renderResultMessage(messageEl, msg);
 }
 
 function updateFeatureStatus() {
     if (!featureStatusEl) return;
-    featureStatusEl.textContent = freeSpinsRemaining > 0 ? `FREE SPINS ${freeSpinsRemaining}` : "";
-    featureStatusEl.classList.toggle("feature-active", freeSpinsRemaining > 0);
+    window.slotExperience?.renderFeatureStatus(featureStatusEl, freeSpinsRemaining > 0 ? `FREE SPINS ${freeSpinsRemaining}` : "");
 }
 
 function getFeatureRate(select, fallback) {

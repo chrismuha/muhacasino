@@ -368,6 +368,50 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   text-align: center;
   overflow-wrap: anywhere;
 }
+.reels-wrap > .reel-result.has-win-breakdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 1vw, 12px);
+}
+.win-result-primary,
+.feature-status-primary {
+  flex: 0 0 auto;
+  font-size: clamp(15px, 1.8vw, 21px);
+  font-weight: 950;
+  letter-spacing: -.025em;
+  line-height: 1;
+  white-space: nowrap;
+}
+.win-result-details {
+  min-width: 0;
+  font-size: clamp(9px, 1vw, 12px);
+  font-weight: 750;
+  line-height: 1.12;
+  text-align: left;
+}
+.win-result-feature {
+  font-size: 1.22em;
+  font-weight: 950;
+}
+.slot-feature-indicator.feature-active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(5px, .8vw, 10px);
+}
+.feature-status-detail {
+  min-width: 0;
+  font-size: clamp(8px, 1vw, 11px);
+  font-weight: 800;
+  line-height: 1;
+}
+@media (max-width: 560px) {
+  .win-result-primary,
+  .feature-status-primary { font-size: clamp(12px, 3.6vw, 16px); }
+  .win-result-details,
+  .feature-status-detail { font-size: clamp(7px, 2.2vw, 10px); }
+}
 
 /* Jackpot scaling is a single compact settings page. Keep all controls visible
    together instead of creating a second scrollbar inside the dialog. */

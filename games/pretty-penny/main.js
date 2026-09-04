@@ -467,37 +467,20 @@ function updateJackpotDisplay(totalBetUSD = getActiveTotalBetUSD()) {
 }
 
 function clearMessage() {
-    messageEl.classList.remove("has-win-breakdown");
-    messageEl.removeAttribute("aria-label");
-    messageEl.textContent = " ";
+    window.slotExperience?.renderResultMessage(messageEl, " ");
 }
 
 function setMessage(msg) {
-    const winMatch = /^WIN\s+(\S+)\s+—\s+(.+)$/.exec(msg);
-    messageEl.classList.toggle("has-win-breakdown", Boolean(winMatch));
-    messageEl.setAttribute("aria-label", msg.trim());
-    if (!winMatch) {
-        messageEl.textContent = msg;
-        return;
-    }
-    const primary = document.createElement("strong");
-    primary.className = "win-result-primary";
-    primary.textContent = `WIN ${winMatch[1]}`;
-    const details = document.createElement("span");
-    details.className = "win-result-details";
-    details.textContent = winMatch[2];
-    messageEl.replaceChildren(primary, details);
+    window.slotExperience?.renderResultMessage(messageEl, msg);
 }
 
 function updateFeatureStatus() {
     if (!featureStatusEl) return;
-    const statuses = [];
-    if (freeSpinsRemaining > 0) statuses.push(`FREE SPINS ${freeSpinsRemaining}`);
-    if (heldGems.size > 0) statuses.push(gemHoldCyclePendingReset
+    const gemStatus = heldGems.size > 0 ? (gemHoldCyclePendingReset
         ? "GEMS RESET NEXT SPIN"
-        : `GEMS ${heldGems.size}/${COLS} · ${gemHoldSpinsRemaining} SPINS LEFT`);
-    featureStatusEl.textContent = statuses.join(" · ");
-    featureStatusEl.classList.toggle("feature-active", freeSpinsRemaining > 0 || heldGems.size > 0);
+        : `GEMS ${heldGems.size}/${COLS} · ${gemHoldSpinsRemaining} SPINS LEFT`) : "";
+    const primary = freeSpinsRemaining > 0 ? `FREE SPINS ${freeSpinsRemaining}` : (gemStatus ? "HOLD & WIN" : "");
+    window.slotExperience?.renderFeatureStatus(featureStatusEl, primary, gemStatus);
 }
 
 function getFeatureRate(select, fallback) {
