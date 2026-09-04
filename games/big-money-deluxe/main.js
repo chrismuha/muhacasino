@@ -424,8 +424,8 @@ function setMessage(msg) {
 
 function updateFeatureStatus() {
     if (!featureStatusEl) return;
-    const bonusActive = getFeatureRate(bonusGameOddsEl, 0.01) > 0;
-    featureStatusEl.textContent = `FREE SPINS ${freeSpinsRemaining} · BONUS GAME ${bonusActive ? "READY" : "OFF"}`;
+    featureStatusEl.hidden = freeSpinsRemaining <= 0;
+    featureStatusEl.textContent = freeSpinsRemaining > 0 ? `FREE SPINS ${freeSpinsRemaining}` : "";
     featureStatusEl.classList.toggle("feature-active", freeSpinsRemaining > 0);
 }
 
@@ -462,7 +462,7 @@ function shuffledCopy(values) {
 function chooseMatchJackpot() {
     const weightedTiers = JACKPOT_TIERS.map((tier) => ({ tier, weight: getTargetJackpotRate(tier) }));
     const totalWeight = weightedTiers.reduce((sum, item) => sum + item.weight, 0);
-    if (totalWeight <= 0 || Math.random() >= Math.min(1, totalWeight)) return null;
+    if (totalWeight <= 0) return JACKPOT_TIERS[0] || null;
     let roll = Math.random() * totalWeight;
     for (const item of weightedTiers) {
         roll -= item.weight;

@@ -33,7 +33,7 @@
 
                 </div>
                 <div id="message" class="message reel-result" role="status" aria-live="polite"></div>
-                <div id="featureStatus" class="slot-feature-indicator" role="status" aria-live="polite"></div>
+                <div id="featureStatus" class="slot-feature-indicator" role="status" aria-live="polite" hidden></div>
                 <div class="hud">
                     <div class="left">
                         <div class="stat"><span class="muted">Available Credits:</span> <b id="balance">—</b></div>
@@ -267,7 +267,7 @@
                     <h4>Free Spins and Bonus Plays</h4>
                     <p id="featureOddsRules">Free Spins and Bonus Plays settings are loading.</p>
                     <p>Free spins cost no credits and retain the denomination, active lines, and bet per line from the paid spin that awarded them. Their payouts are added to Available Credits. Free spins cannot retrigger either feature.</p>
-                    <p>Bonus Plays activates only when 3, 4, or 5 Bonus chips land from the left on an active payline, then randomly opens Neon Vaults or Match &amp; Win. Vault prizes are properly reshuffled every round. In Match &amp; Win, reveal cards and match three jackpot values; jackpot amounts and relative chances come from the current Jackpot Odds settings.</p>
+                    <p>Bonus Plays activates only when 3, 4, or 5 Bonus chips land from the left on an active payline, then randomly opens Neon Vaults or Match &amp; Win. Vault prizes are properly reshuffled every round. Match &amp; Win always contains a three-card jackpot match; its guaranteed tier is selected by the relative Jackpot Odds settings, so Mini is normally most common.</p>
                     <h4>Settings Guide</h4>
                     <p class="overlay-note"><strong>Session Stats Display:</strong> Chooses which stat boxes are visible (regular session totals, Net totals, or Actual Net totals).</p>
                     <p class="overlay-note"><strong>Winnings Only / Losses Only:</strong> Shows only regular session winnings or regular session losses.</p>
@@ -371,11 +371,11 @@
         </div>
     </div>
 
-    <link rel="stylesheet" href="../../slot-experience.css?v=1.9.6">
+    <link rel="stylesheet" href="../../slot-experience.css?v=1.9.7">
     <script src="../../interaction-lock.js?build=20260808-no-double-tap"></script>
     <script src="../../play-session.js?v=1.1.2"></script>
     <script src="../../slot-experience.js?v=1.10.2"></script>
-    <script src="main.js?v=1.4.0&amp;build=20260904-feature-meter"></script>
+    <script src="main.js?v=1.4.0&amp;build=20260904-guaranteed-match"></script>
 </body>
 
 </html>

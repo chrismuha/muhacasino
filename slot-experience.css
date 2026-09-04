@@ -249,7 +249,9 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
-  min-height: 2.5em;
+  height: clamp(64px, 8vw, 88px);
+  min-height: clamp(64px, 8vw, 88px);
+  max-height: clamp(64px, 8vw, 88px);
   margin: 5px 0 0 !important;
   padding: 7px 10px !important;
   display: flex;
@@ -264,7 +266,9 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   font-weight: 950 !important;
   opacity: 1 !important;
   text-shadow: none !important;
+  overflow-y: auto;
 }
+.reels-wrap > .slot-feature-indicator[hidden] { display: none !important; }
 .reels-wrap > .slot-feature-indicator {
   box-sizing: border-box;
   width: 100%;
@@ -336,7 +340,9 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   }
   .settings-stage { height: clamp(190px, 44dvh, 330px); }
   .reels-wrap > .reel-result {
-    min-height: 2.25em;
+    height: 68px;
+    min-height: 68px;
+    max-height: 68px;
     margin-top: 4px !important;
     padding: 5px 7px !important;
   }

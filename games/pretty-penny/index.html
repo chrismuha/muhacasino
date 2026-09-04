@@ -8,7 +8,7 @@
     <link rel="icon" href="../../icons/muha-brand-mark.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-  <link rel="stylesheet" href="styles.css?build=20260904-distinct-meter-icons-v12" />
+  <link rel="stylesheet" href="styles.css?build=20260904-larger-meter-icons-v13" />
 </head>
 
 <body>
@@ -23,10 +23,10 @@
             <section class="jackpot-board" aria-labelledby="jackpotBoardTitle">
                 <h3 id="jackpotBoardTitle">The Penny Reserve</h3>
                 <div class="jackpot-pills">
-                    <div class="jackpot-pill jackpot-mini" data-icon="★"><span>Mini</span><b id="jackpotMini">$250.00</b></div>
-                    <div class="jackpot-pill jackpot-minor" data-icon="◆"><span>Minor</span><b id="jackpotMinor">$1,000.00</b></div>
-                    <div class="jackpot-pill jackpot-major" data-icon="♛"><span>Major</span><b id="jackpotMajor">$5,000.00</b></div>
-                    <div class="jackpot-pill jackpot-grand" data-icon="✦"><span>Grand</span><b id="jackpotGrand">$25,000.00</b></div>
+                    <div class="jackpot-pill jackpot-mini" data-icon="⭐"><span>Mini</span><b id="jackpotMini">$250.00</b></div>
+                    <div class="jackpot-pill jackpot-minor" data-icon="💎"><span>Minor</span><b id="jackpotMinor">$1,000.00</b></div>
+                    <div class="jackpot-pill jackpot-major" data-icon="👑"><span>Major</span><b id="jackpotMajor">$5,000.00</b></div>
+                    <div class="jackpot-pill jackpot-grand" data-icon="✨"><span>Grand</span><b id="jackpotGrand">$25,000.00</b></div>
                 </div>
             </section>
             <section class="pot-feature" aria-label="Pretty Penny savings bonus progress">
@@ -37,7 +37,7 @@
                 <div class="pots" id="pots">
                     <div class="pot" data-pot="0" data-icon="👛"><div class="pot-meter"><span id="potFill0"></span></div><b>Pin Money</b><small id="potValue0">$5.00 • 0%</small></div>
                     <div class="pot" data-pot="1" data-icon="🥚"><div class="pot-meter"><span id="potFill1"></span></div><b>Nest Egg</b><small id="potValue1">$25.00 • 0%</small></div>
-                    <div class="pot" data-pot="2" data-icon="☂"><div class="pot-meter"><span id="potFill2"></span></div><b>Rainy Day</b><small id="potValue2">$100.00 • 0%</small></div>
+                    <div class="pot" data-pot="2" data-icon="☔"><div class="pot-meter"><span id="potFill2"></span></div><b>Rainy Day</b><small id="potValue2">$100.00 • 0%</small></div>
                 </div>
                 <p class="pot-rule">Fixed awards: Pin Money $5 • Nest Egg $25 • Rainy Day $100</p>
             </section>
@@ -46,7 +46,7 @@
 
                 </div>
                 <div id="message" class="message reel-result" role="status" aria-live="polite"></div>
-                <div id="featureStatus" class="slot-feature-indicator" role="status" aria-live="polite"></div>
+                <div id="featureStatus" class="slot-feature-indicator" role="status" aria-live="polite" hidden></div>
                 <div class="hud">
                     <div class="left">
                         <div class="stat"><span class="muted">Available Credits:</span> <b id="balance">—</b></div>
@@ -279,7 +279,7 @@
                     <h4>Free Spins and Reserve Wheel</h4>
                     <p id="featureOddsRules">Free Spins and Reserve Wheel settings are loading.</p>
                     <p>Free spins cost no credits and retain the denomination, active lines, and bet per line from the paid spin that awarded them. Their payouts are added to Available Credits. Free spins cannot retrigger either feature.</p>
-                    <p>The Pretty Penny bonus activates only when three, four, or five Reserve Wheel chips land from the left on an active payline, then randomly opens the Reserve Wheel or Match &amp; Win. Wheel odds remain fixed. In Match &amp; Win, reveal cards and match three jackpot values; jackpot amounts scale with the triggering bet and relative chances come from the current Jackpot Odds settings.</p>
+                    <p>The Pretty Penny bonus activates only when three, four, or five Reserve Wheel chips land from the left on an active payline, then randomly opens the Reserve Wheel or Match &amp; Win. Wheel odds remain fixed. Match &amp; Win always contains a three-card jackpot match; its guaranteed tier is selected by the relative Jackpot Odds settings, so Mini is normally most common, and its award scales with the triggering bet.</p>
                     <h4>Savings Banks &amp; Penny Chains</h4>
                     <p>The savings meters use separate symbols for quick recognition: a purse for Pin Money, an egg for Nest Egg, and an umbrella for Rainy Day. The Penny Reserve jackpots also use distinct tier badges: star for Mini, diamond for Minor, crown for Major, and sparkle for Grand.</p>
                     <p><strong>Three-Spin Gem Row:</strong> One reel row is selected for a three-spin Hold &amp; Win cycle. One or two valued gems land and remain held on each spin. Fill all five positions within those three spins to win the total of every displayed gem value in that row. If the row is not full after the third spin, its gems clear and a new three-spin cycle begins on the next spin.</p>
@@ -389,11 +389,11 @@
         </div>
     </div>
 
-    <link rel="stylesheet" href="../../slot-experience.css?v=1.9.6">
+    <link rel="stylesheet" href="../../slot-experience.css?v=1.9.7">
     <script src="../../interaction-lock.js?build=20260808-no-double-tap"></script>
     <script src="../../play-session.js?v=1.1.2"></script>
     <script src="../../slot-experience.js?v=1.10.2"></script>
-    <script src="main.js?v=1.4.0&amp;build=20260904-feature-meter"></script>
+    <script src="main.js?v=1.4.0&amp;build=20260904-guaranteed-match"></script>
 </body>
 
 </html>
