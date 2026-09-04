@@ -467,11 +467,26 @@ function updateJackpotDisplay(totalBetUSD = getActiveTotalBetUSD()) {
 }
 
 function clearMessage() {
+    messageEl.classList.remove("has-win-breakdown");
+    messageEl.removeAttribute("aria-label");
     messageEl.textContent = " ";
 }
 
 function setMessage(msg) {
-    messageEl.textContent = msg;
+    const winMatch = /^WIN\s+(\S+)\s+—\s+(.+)$/.exec(msg);
+    messageEl.classList.toggle("has-win-breakdown", Boolean(winMatch));
+    messageEl.setAttribute("aria-label", msg.trim());
+    if (!winMatch) {
+        messageEl.textContent = msg;
+        return;
+    }
+    const primary = document.createElement("strong");
+    primary.className = "win-result-primary";
+    primary.textContent = `WIN ${winMatch[1]}`;
+    const details = document.createElement("span");
+    details.className = "win-result-details";
+    details.textContent = winMatch[2];
+    messageEl.replaceChildren(primary, details);
 }
 
 function updateFeatureStatus() {
