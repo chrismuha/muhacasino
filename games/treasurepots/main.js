@@ -1263,6 +1263,7 @@ function getSettingsDefinitions() {
         { key: "maxBetCredits", title: "Max Bet Credits", element: maxBetUsesAvailableCreditsEl?.closest(".checkbox-setting") },
         { key: "winDelay", title: "Winning Highlight Delay", element: skipWinAnimationDelayEl?.closest(".checkbox-setting") },
         { key: "sessionStats", title: "Session Stats Display", element: sessionStatDisplayEl?.closest(".select") },
+        { key: "elapsedTime", title: "Time Elapsed", element: autoSpinElapsedEl },
         { key: "creditsInserted", title: "Money Added / Credits Inserted", element: creditsInsertedEl?.closest(".stat") },
         { key: "winOdds", title: "Regular Win Odds", element: winOddsEl?.closest(".select") },
         { key: "jackpotAmounts", title: "Jackpot Amounts", element: document.querySelector(".jackpot-amounts-setting") },
