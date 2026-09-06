@@ -504,7 +504,7 @@ function updateFeatureRules() {
     const linkTeaserRate = getFeatureRate(linkTeaserOddsEl, 0.03);
     const wager = getActiveTotalBetUSD();
     const jackpotAwards = JACKPOT_TIERS.map((tier) => `${tier.name} ${fmtUSD(getScaledJackpotAmount(tier, wager))}`).join(", ");
-    featureOddsRulesEl.textContent = `With the current settings, each paid spin has a ${(freeRate * 100).toFixed(0)}% chance to land 3–5 SCATTER chests and award ${getFreeSpinsAward()} free spins, a ${(bonusRate * 100).toFixed(0)}% chance to open the Emerald Wheel, and a ${(gemHoldRate * 100).toFixed(0)}% chance to trigger the three-spin Emerald Hold & Win Wild feature. Eligible winning spins have a ${(linkWinRate * 100).toFixed(0)}% chance to form a winning LINK chain; other spins have a ${(linkTeaserRate * 100).toFixed(0)}% chance to show a non-paying Not Connected chain. Wheel jackpot outcomes are ${jackpotAwards}.`;
+    featureOddsRulesEl.textContent = `With the current settings, each paid spin has a ${(freeRate * 100).toFixed(0)}% chance to land 3–5 SCATTER chests and award ${getFreeSpinsAward()} free spins, a ${(bonusRate * 100).toFixed(0)}% chance to land six BONUS symbols anywhere and open the wheel (50%) or Match & Win (50%), and a ${(gemHoldRate * 100).toFixed(0)}% chance to trigger the three-spin Emerald Hold & Win Wild feature. Eligible winning spins have a ${(linkWinRate * 100).toFixed(0)}% chance to form a winning LINK chain; other spins have a ${(linkTeaserRate * 100).toFixed(0)}% chance to show a non-paying Not Connected chain. Wheel jackpot outcomes are ${jackpotAwards}.`;
 }
 
 function setupFeatureUI() {
@@ -707,11 +707,11 @@ function createCell(symbol, isWinning = false) {
     if (symbol === BONUS_SYMBOL) {
         const chip = document.createElement("span");
         chip.className = "jackpot-chip bonus-chip";
-        chip.innerHTML = "<strong>Emerald</strong><span>Spin Wheel</span>";
+        chip.innerHTML = "<strong>BONUS</strong><span>6 TO PLAY</span>";
         chip.setAttribute("aria-hidden", "true");
         cell.appendChild(chip);
         cell.classList.add("jackpot-win", "bonus-win");
-        cell.setAttribute("aria-label", "Emerald Wheel trigger chip");
+        cell.setAttribute("aria-label", "Bonus symbol — six trigger a bonus");
         return cell;
     }
     if (symbol === SCATTER_SYMBOL) {
@@ -817,9 +817,10 @@ function renderOutcomeGrid(grid, winningPositions, jackpotWins, jackpotTeasers =
     const jackpotPositions = new Set();
     for (const jackpotWin of jackpotSymbols) {
         const position = preferredPositions.find(([r, c]) =>
-            !displayPositions.has(`${r},${c}`) && !jackpotPositions.has(`${r},${c}`)
+            !displayPositions.has(`${r},${c}`) && displayGrid[r][c] !== BONUS_SYMBOL && !jackpotPositions.has(`${r},${c}`)
         )
-            || preferredPositions.find(([r, c]) => !jackpotPositions.has(`${r},${c}`));
+            || preferredPositions.find(([r, c]) => displayGrid[r][c] !== BONUS_SYMBOL && !jackpotPositions.has(`${r},${c}`));
+        if (!position) continue;
         const [row, col] = position;
         displayGrid[row][col] = {
             jackpot: jackpotWin.name,
@@ -979,21 +980,18 @@ async function animatePotPop(popped) {
     popped.forEach((index) => document.querySelector(`.pot[data-pot="${index}"]`)?.classList.remove("popping"));
 }
 
-function addBonusChipWin(grid, linesActive) {
+function addBonusChipWin(grid) {
     const bonusGrid = grid.map((row) => [...row]);
-    const activeLineCount = Math.min(PAYLINES.length, Math.max(1, linesActive));
-    const lineIndex = Math.floor(Math.random() * activeLineCount);
-    const path = PAYLINES[lineIndex];
-    const count = 3 + Math.floor(Math.random() * 3);
+    // Preserve LINK, held Wild, and free-spin symbols already on the reels.
+    const positions = shuffledCopy(Array.from({ length: ROWS * COLS }, (_, index) =>
+        [Math.floor(index / COLS), index % COLS]
+    ).filter(([row, col]) => typeof grid[row][col] !== "object" && grid[row][col] !== "scatter"));
     const winningPositions = new Set();
-
-    for (let col = 0; col < count; col++) {
-        const row = path[col];
+    for (const [row, col] of positions.slice(0, 6)) {
         bonusGrid[row][col] = BONUS_SYMBOL;
         winningPositions.add(`${row},${col}`);
     }
-
-    return { grid: bonusGrid, lineIndex: lineIndex + 1, count, winningPositions };
+    return { grid: bonusGrid, count: winningPositions.size, winningPositions };
 }
 
 function getLineMatchResult(path, grid) {
@@ -1366,7 +1364,7 @@ function getSettingsDefinitions() {
         })),
         { key: "freeSpinsOdds", title: "Free Spins Odds", element: freeSpinsOddsEl?.closest(".select") },
         { key: "freeSpinsAward", title: "Free Spins Award", element: freeSpinsAwardEl?.closest(".select") },
-        { key: "bonusGameOdds", title: "Emerald Wheel Trigger Odds", element: bonusGameOddsEl?.closest(".select") },
+        { key: "bonusGameOdds", title: "Six BONUS Symbols Odds", element: bonusGameOddsEl?.closest(".select") },
         { key: "gemHoldOdds", title: "Emerald Hold & Win Wild Trigger Odds", element: gemHoldOddsEl?.closest(".select") },
         { key: "linkWinOdds", title: "Winning LINK Chain Odds", element: linkWinOddsEl?.closest(".select") },
         { key: "linkTeaserOdds", title: "Not Connected LINK Display Odds", element: linkTeaserOddsEl?.closest(".select") },
@@ -1946,9 +1944,6 @@ async function doSpin(options = {}) {
     const shouldWin = Math.random() < getTargetSpinWinRate();
     let grid = resolveSpinGrid(shouldWin);
     const bonusTriggered = !isFreeSpin && Math.random() < getFeatureRate(bonusGameOddsEl, 0.01);
-    const bonusResult = bonusTriggered ? addBonusChipWin(grid, wagerConfig.linesActive) : null;
-    if (bonusResult) grid = bonusResult.grid;
-    const { totalWinUSD: regularWinUSD, lineWins, winningPositions } = evaluateGrid(grid, wagerConfig);
     const linkResult = addLinkChips(grid, shouldWin, wagerConfig);
     grid = linkResult.grid;
     const freeSpinsTriggered = !isFreeSpin && Math.random() < getFeatureRate(freeSpinsOddsEl, 0.03);
@@ -1956,6 +1951,9 @@ async function doSpin(options = {}) {
     grid = scatterResult.grid;
     const gemResult = advanceGemHold(grid, wagerConfig, !isFreeSpin);
     grid = gemResult.grid;
+    const bonusResult = bonusTriggered ? addBonusChipWin(grid) : null;
+    if (bonusResult) grid = bonusResult.grid;
+    const { totalWinUSD: regularWinUSD, lineWins, winningPositions } = evaluateGrid(grid, wagerConfig);
     const displayWinningPositions = new Set(winningPositions);
     linkResult.winningPositions.forEach((position) => displayWinningPositions.add(position));
     scatterResult.winningPositions.forEach((position) => displayWinningPositions.add(position));
@@ -1965,7 +1963,8 @@ async function doSpin(options = {}) {
     const jackpotTeasers = resolveJackpotTeasers(jackpotWins, totalBetUSD);
     const jackpotWinUSD = jackpotWins.reduce((sum, jackpot) => sum + jackpot.amountUSD, 0);
     renderOutcomeGrid(grid, displayWinningPositions, jackpotWins, jackpotTeasers);
-    const bonusOutcome = bonusTriggered ? await playBonusGame(totalBetUSD) : null;
+    if (bonusResult?.count === 6) await new Promise((resolve) => setTimeout(resolve, 650));
+    const bonusOutcome = bonusResult?.count === 6 ? await playBonusGame(totalBetUSD) : null;
     const bonusWinUSD = bonusOutcome?.winUSD || 0;
     const potResult = advanceTreasurePots(!isFreeSpin ? linkResult.meterHits : []);
     const potWinUSD = potResult.winUSD;
@@ -1994,7 +1993,7 @@ async function doSpin(options = {}) {
         const linesText = lineWins
             .map(w => `Line ${w.lineIndex}: ${SYMBOL_LABELS[w.symbol] || w.symbol} × ${w.count} → ${fmtUSD(w.winUSD)}`)
             .concat(jackpotWins.map((jackpot) => `${jackpot.name.toUpperCase()} JACKPOT → ${fmtUSD(jackpot.amountUSD)}`))
-            .concat(bonusWinUSD ? [`EMERALD WHEEL ${bonusOutcome.label} → ${fmtUSD(bonusWinUSD)}`] : [])
+            .concat(bonusWinUSD ? [`BONUS × 6: ${bonusOutcome.label} → ${fmtUSD(bonusWinUSD)}`] : [])
             .concat(linkResult.winUSD ? [`LINK × ${linkResult.count} VALUES → ${fmtUSD(linkResult.winUSD)}`] : [])
             .concat(gemResult.winUSD ? [`EMERALD ROW ${gemResult.row} COMPLETE → ${fmtUSD(gemResult.winUSD)}`] : [])
             .concat(potWinUSD ? [`${potResult.popped.map((index) => SAVINGS_BANKS[index].name).join(" + ")} OPENED → ${fmtUSD(potWinUSD)}`] : [])

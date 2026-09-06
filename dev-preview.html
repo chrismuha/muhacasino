@@ -68,7 +68,7 @@
         <option value="834x1210">iPad Pro 11-inch</option>
         <option value="1032x1376">iPad Pro 13-inch</option>
         <option value="800x900">Foldable (Open)</option>
-        <option value="1080x1920" data-cabinet>Casino Cabinet · Portrait</option>
+        <option value="1080x1920" data-cabinet selected>Casino Cabinet · Portrait</option>
         <option value="1920x1080" data-cabinet>Casino Cabinet · Landscape</option>
         <option value="1280x1024" data-cabinet>Casino Cabinet · 5:4</option>
         <option value="320x568">Small Phone</option>
@@ -124,12 +124,37 @@
     function auditLayout() {
       const root = appPreview.contentDocument;
       if (!root) return;
-      const overflows = getDocuments(root).filter((doc) => {
+      const documents = getDocuments(root);
+      const overflows = documents.filter((doc) => {
         const element = doc.documentElement;
         return element.scrollWidth > element.clientWidth + 2;
       });
-      audit.textContent = overflows.length ? `⚠ ${overflows.length} horizontal overflow` : '✓ Width fits';
-      audit.classList.toggle('warning', Boolean(overflows.length));
+      const verticalOverflow = Math.max(0, ...documents.map((doc) => {
+        const element = doc.documentElement;
+        return element.scrollHeight - element.clientHeight;
+      }));
+      const widthStatus = overflows.length ? `⚠ ${overflows.length} horizontal overflow` : '✓ Width fits';
+      const heightStatus = verticalOverflow > 2 ? `Vertical scrolling: ${verticalOverflow}px` : 'Height fits';
+      const safeTop = parseFloat(root.defaultView.getComputedStyle(root.documentElement).getPropertyValue('--safe-area-inset-top')) || 0;
+      const safeBottom = parseFloat(root.defaultView.getComputedStyle(root.documentElement).getPropertyValue('--safe-area-inset-bottom')) || 0;
+      const clippedTitles = documents.flatMap(doc => Array.from(doc.querySelectorAll('.topbar .brand, .game-toolbar .game-identity, .title'))).filter(title => {
+        if (!title.getClientRects().length) return false;
+        const rect = title.getBoundingClientRect();
+        const win = title.ownerDocument.defaultView;
+        if (rect.right <= 0 || rect.left >= win.innerWidth || rect.bottom <= 0 || rect.top >= win.innerHeight) return false;
+        let top = rect.top;
+        let current = win;
+        while (current !== root.defaultView && current.frameElement) {
+          top += current.frameElement.getBoundingClientRect().top;
+          current = current.parent;
+        }
+        return top < safeTop - 1 || top + rect.height > root.defaultView.innerHeight - safeBottom + 1;
+      });
+      const titleStatus = clippedTitles.length ? `⚠ ${clippedTitles.length} titles outside safe height` : '✓ Titles clear of notch';
+      const status = `${widthStatus} · ${heightStatus} · ${titleStatus}`;
+      if (audit.textContent !== status) audit.textContent = status;
+      audit.title = 'Checks the app and embedded frames. Vertical scrolling shows the largest document height overflow; it may be intentional.';
+      audit.classList.toggle('warning', Boolean(overflows.length || clippedTitles.length));
     }
 
     function applySafeArea(option, cutout) {

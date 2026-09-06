@@ -1,3 +1,4 @@
+const BONUS_SYMBOL = "bonus";
 
 const SYMBOLS = ["💎", "🍀", "⭐", "🔔", "🍋", "🍒"];
 
@@ -470,7 +471,7 @@ function chooseMatchJackpot() {
     return weightedTiers.at(-1)?.tier || null;
 }
 
-function playMatchAndWinBonus() {
+function playMatchAndWinBonus(totalBetUSD) {
     const winningTier = chooseMatchJackpot();
     const symbols = winningTier
         ? [winningTier, winningTier, winningTier, ...JACKPOT_TIERS.filter((tier) => tier !== winningTier).flatMap((tier) => [tier, tier])]
@@ -494,7 +495,7 @@ function playMatchAndWinBonus() {
                 if (finished || button.disabled) return;
                 button.disabled = true;
                 button.className = `jackpot-${tier.name.toLowerCase()}`;
-                const awardUSD = getScaledJackpotAmount(tier);
+                const awardUSD = getScaledJackpotAmount(tier, totalBetUSD);
                 button.innerHTML = `<strong>${tier.name}</strong><span>${fmtUSD(awardUSD)}</span>`;
                 const count = (counts.get(tier.name) || 0) + 1;
                 counts.set(tier.name, count);
@@ -528,49 +529,63 @@ function updateFeatureRules() {
     const freeRate = getFeatureRate(freeSpinsOddsEl, 0.03);
     const bonusRate = getFeatureRate(bonusGameOddsEl, 0.01);
     const prizes = getBonusPrizeMultipliers().map((value) => `${value}x`).join(", ");
-    featureOddsRulesEl.textContent = `With the current settings, each paid spin independently has a ${(freeRate * 100).toFixed(0)}% win / ${((1 - freeRate) * 100).toFixed(0)}% loss chance to award ${getFreeSpinsAward()} free spins, and a ${(bonusRate * 100).toFixed(0)}% win / ${((1 - bonusRate) * 100).toFixed(0)}% loss chance to open Bonus Plays. The three shuffled prizes are ${prizes} the triggering bet.`;
+    featureOddsRulesEl.textContent = `With the current settings, each paid spin independently has a ${(freeRate * 100).toFixed(0)}% win / ${((1 - freeRate) * 100).toFixed(0)}% loss chance to award ${getFreeSpinsAward()} free spins, and a ${(bonusRate * 100).toFixed(0)}% win / ${((1 - bonusRate) * 100).toFixed(0)}% loss chance to open Bonus Plays. Six BONUS symbols anywhere on the reels open the wheel (50%) or Match & Win (50%). The three equally likely wheel prizes are ${prizes} the triggering bet.`;
 }
 
 function setupFeatureUI() {
     bonusOverlayEl = document.createElement("div");
     bonusOverlayEl.className = "feature-overlay";
     bonusOverlayEl.hidden = true;
-    bonusOverlayEl.innerHTML = `<div class="feature-dialog" role="dialog" aria-modal="true" aria-labelledby="bonusTitle"><h2 id="bonusTitle">Pick a Dollar Bill!</h2><p>Pick one bill to reveal a configured prize.</p><div class="bonus-choices"><button type="button">💵</button><button type="button">💵</button><button type="button">💵</button></div></div>`;
     bonusOverlayEl.addEventListener("keydown", (event) => {
         if (event.code !== "Space") return;
         event.preventDefault();
         event.stopPropagation();
+        if (event.target?.matches("button") && !event.target.disabled) event.target.click();
     });
     document.body.appendChild(bonusOverlayEl);
     updateFeatureStatus();
 }
 
-function playPickBonusGame(totalBetUSD) {
-    if (!bonusOverlayEl) return Promise.resolve(0);
+function playWheelBonusGame(totalBetUSD) {
     bonusOverlayEl.hidden = false;
-    const buttons = Array.from(bonusOverlayEl.querySelectorAll(".bonus-choices button"));
-    const prizes = shuffledCopy(getBonusPrizeMultipliers());
+    const prizes = getBonusPrizeMultipliers();
+    bonusOverlayEl.innerHTML = `<div class="feature-dialog slot-bonus-wheel-dialog" role="dialog" aria-modal="true" aria-labelledby="bonusTitle"><span class="slot-wheel-kicker">Big Money Bonus</span><h2 id="bonusTitle">Spin the Big Money Wheel</h2><p>Each wedge has an equal chance. Prizes multiply your triggering bet.</p><div class="slot-bonus-wheel-wrap"><span class="slot-bonus-pointer" aria-hidden="true"></span><div class="slot-bonus-wheel" role="img" aria-label="Prize wheel"><span>${prizes[0]}×</span><span>${prizes[1]}×</span><span>${prizes[2]}×</span></div><b class="slot-wheel-center" aria-hidden="true">$</b></div><div class="slot-wheel-odds" aria-label="Wheel prizes and odds">${prizes.map(prize => `<span><strong>${prize}× bet</strong><small>1 in 3 chance</small></span>`).join("")}</div><p class="wheel-result" aria-live="polite">Ready to spin!</p><button type="button" class="wheel-spin">Spin Wheel</button></div>`;
+    const wheel = bonusOverlayEl.querySelector(".slot-bonus-wheel");
+    const button = bonusOverlayEl.querySelector(".wheel-spin");
+    const result = bonusOverlayEl.querySelector(".wheel-result");
+    button.focus();
     return new Promise((resolve) => {
-        buttons.forEach((button, index) => {
-            button.disabled = false;
-            button.textContent = "💵";
-            button.onclick = () => {
-                const multiplier = prizes[index];
-                const winUSD = roundUSD(totalBetUSD * multiplier);
-                buttons.forEach((choice) => { choice.disabled = true; });
-                button.textContent = `${multiplier}×`;
-                setTimeout(() => {
-                    bonusOverlayEl.hidden = true;
-                    resolve(winUSD);
-                }, 900);
-            };
-        });
-        buttons[0]?.focus();
+        button.onclick = () => {
+            if (button.disabled) return;
+            button.disabled = true;
+            const index = Math.floor(Math.random() * prizes.length);
+            wheel.style.transform = `rotate(${2160 + 360 - (index * 120 + 60)}deg)`;
+            result.textContent = "Spinning…";
+            setTimeout(() => {
+                const winUSD = roundUSD(totalBetUSD * prizes[index]);
+                result.textContent = `${prizes[index]}× — ${fmtUSD(winUSD)}`;
+                setTimeout(() => { bonusOverlayEl.hidden = true; resolve(winUSD); }, 1400);
+            }, 3900);
+        };
     });
 }
 
 function playBonusGame(totalBetUSD) {
-    return Math.random() < 0.5 ? playPickBonusGame(totalBetUSD) : playMatchAndWinBonus();
+    return Math.random() < 0.5 ? playWheelBonusGame(totalBetUSD) : playMatchAndWinBonus(totalBetUSD);
+}
+
+function addBonusChipWin(grid) {
+    const bonusGrid = grid.map((row) => [...row]);
+    // Preserve LINK, held Wild, and free-spin symbols already on the reels.
+    const positions = shuffledCopy(Array.from({ length: ROWS * COLS }, (_, index) =>
+        [Math.floor(index / COLS), index % COLS]
+    ).filter(([row, col]) => typeof grid[row][col] !== "object" && grid[row][col] !== "scatter"));
+    const winningPositions = new Set();
+    for (const [row, col] of positions.slice(0, 6)) {
+        bonusGrid[row][col] = BONUS_SYMBOL;
+        winningPositions.add(`${row},${col}`);
+    }
+    return { grid: bonusGrid, count: winningPositions.size, winningPositions };
 }
 
 function getCreditStatusMessage(totalBetOverrideUSD = totalBetDisplayOverrideUSD) {
@@ -605,6 +620,11 @@ function createCell(content = "", isWinning = false) {
     const cell = document.createElement("div");
     cell.className = "cell";
     if (isWinning) cell.classList.add("win");
+    if (content === BONUS_SYMBOL) {
+        cell.innerHTML = '<span class="money-chip bonus-chip"><strong>BONUS</strong><span>6 TO PLAY</span></span>';
+        cell.setAttribute("aria-label", "Bonus symbol — six trigger a bonus");
+        return cell;
+    }
     if (content) {
         const chip = document.createElement("span");
         chip.className = "money-chip";
@@ -645,7 +665,7 @@ function renderBlankGrid() {
     renderGrid(createGrid(() => ""));
 }
 
-function renderWinningPayouts(lineWins, jackpotWins = []) {
+function renderWinningPayouts(lineWins, jackpotWins = [], bonusResult = null) {
     const payoutsByPosition = new Map();
 
     for (const win of lineWins) {
@@ -675,6 +695,14 @@ function renderWinningPayouts(lineWins, jackpotWins = []) {
         payoutsByPosition.set(`${row},${col}`, jackpotWin.amountUSD);
     }
 
+    if (bonusResult) {
+        const openPositions = shuffledCopy(preferredPositions.filter(([r, c], index, all) =>
+            !payoutGrid[r][c] && all.findIndex(([row, col]) => row === r && col === c) === index));
+        for (const [row, col] of openPositions.slice(0, 6)) {
+            payoutGrid[row][col] = BONUS_SYMBOL;
+            payoutsByPosition.set(`${row},${col}`, 0);
+        }
+    }
     renderGrid(payoutGrid, new Set(payoutsByPosition.keys()));
 }
 
@@ -1641,12 +1669,16 @@ async function doSpin(options = {}) {
 
 
     const shouldWin = Math.random() < getTargetSpinWinRate();
-    const grid = resolveSpinGrid(shouldWin);
+    let grid = resolveSpinGrid(shouldWin);
+    const bonusTriggered = !isFreeSpin && Math.random() < getFeatureRate(bonusGameOddsEl, 0.01);
+    const bonusResult = bonusTriggered ? addBonusChipWin(grid) : null;
+    if (bonusResult) grid = bonusResult.grid;
     const { totalWinUSD: regularWinUSD, lineWins } = evaluateGrid(grid, wagerConfig);
     const jackpotWins = resolveJackpotWins();
     const jackpotWinUSD = jackpotWins.reduce((sum, jackpot) => sum + jackpot.amountUSD, 0);
-    const bonusTriggered = !isFreeSpin && Math.random() < getFeatureRate(bonusGameOddsEl, 0.01);
-    const bonusWinUSD = bonusTriggered ? await playBonusGame(totalBetUSD) : 0;
+    renderWinningPayouts(lineWins, jackpotWins, bonusResult);
+    if (bonusResult?.count === 6) await new Promise((resolve) => setTimeout(resolve, 650));
+    const bonusWinUSD = bonusResult?.count === 6 ? await playBonusGame(totalBetUSD) : 0;
     const freeSpinsTriggered = !isFreeSpin && Math.random() < getFeatureRate(freeSpinsOddsEl, 0.03);
     const freeSpinsAwarded = getFreeSpinsAward();
     if (freeSpinsTriggered) {
@@ -1656,11 +1688,6 @@ async function doSpin(options = {}) {
     }
     const totalWinUSD = roundUSD(regularWinUSD + jackpotWinUSD + bonusWinUSD);
     const lossComponentUSD = isFreeSpin ? 0 : Math.max(totalBetUSD - totalWinUSD, 0);
-    if (totalWinUSD > 0) {
-        renderWinningPayouts(lineWins, jackpotWins);
-    } else {
-        renderBlankGrid();
-    }
     addSessionLosses(lossComponentUSD);
     addNetSessionLosses(lossComponentUSD);
     subtractNetSessionWinnings(lossComponentUSD);
