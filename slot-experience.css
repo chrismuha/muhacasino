@@ -1079,3 +1079,57 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
     font-size: 18px !important;
   }
 }
+
+/* Keep the quick-bet values at the largest practical size. The four controls
+   always share one row, so the viewport-based middle value grows until the
+   longest denomination-scaled amount approaches its available width. */
+.bet-presets > .bet-preset {
+  padding-inline: 2px !important;
+  font-size: clamp(15px, 4vw, 18px) !important;
+  font-weight: 900 !important;
+  letter-spacing: .01em;
+  white-space: nowrap;
+}
+
+/* Sub-jackpots read as three centered feature cards. Keeping every part in a
+   single centered column prevents the wordmarks from looking wrapped around
+   their shaped meters on narrow phones. */
+:is(.slot-game-pretty-penny, .slot-game-treasurepots)
+  .pot-feature > .pots > .pot {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: auto auto auto !important;
+  justify-items: center !important;
+  align-content: center !important;
+  min-height: 82px !important;
+  padding: 6px 4px !important;
+  gap: 2px !important;
+  text-align: center !important;
+}
+
+:is(.slot-game-pretty-penny, .slot-game-treasurepots)
+  .pot-feature > .pots > .pot .pot-meter {
+  grid-row: auto !important;
+  margin-inline: auto !important;
+}
+
+:is(.slot-game-pretty-penny, .slot-game-treasurepots)
+  .pot-feature > .pots > .pot > :is(b, small) {
+  display: block !important;
+  width: 100%;
+  min-width: 0;
+  margin: 0 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  text-wrap: nowrap !important;
+}
+
+:is(.slot-game-pretty-penny, .slot-game-treasurepots)
+  .pot-feature > .pots > .pot > b {
+  font-size: clamp(13px, 3.8vw, 19px) !important;
+}
+
+:is(.slot-game-pretty-penny, .slot-game-treasurepots)
+  .pot-feature > .pots > .pot > small {
+  font-size: clamp(13px, 3.5vw, 17px) !important;
+}
