@@ -451,8 +451,13 @@ function updateTotals() {
     window.slotExperience?.setBalance(balance);
     const canSpinNow = freeSpinsRemaining > 0 || balance >= totalBet;
     const canUseLastChance = balance < totalBet && (balance > 0 || window.slotExperience?.isLuckyWheelEnabled());
+    const wagerLocked = isSpinning || autoSpinRunning || freeSpinsRemaining > 0;
     spinBtn.disabled = autoSpinRunning ? false : (!(canSpinNow || canUseLastChance) || isSpinning);
-    maxBtn.disabled = isSpinning || autoSpinRunning;
+    maxBtn.disabled = wagerLocked;
+    denomEl.disabled = wagerLocked;
+    linesEl.disabled = wagerLocked;
+    betEl.disabled = wagerLocked;
+    document.querySelectorAll(".bet-preset").forEach((button) => { button.disabled = wagerLocked; });
     if (resetSessionBtn) resetSessionBtn.disabled = isSpinning || autoSpinRunning;
 }
 
