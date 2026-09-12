@@ -1713,8 +1713,11 @@ async function doSpin(options = {}) {
         const status = getCreditStatusMessage(options.totalBetOverrideUSD);
         if (status) creditHint = ` ${status}`;
         if (!options.silentNoWin) {
-            const featureText = freeSpinsTriggered ? ` ${freeSpinsAwarded} FREE SPINS AWARDED!` : "";
-            setMessage(`${isFreeSpin ? "Free spin" : "No win — try again!"}${featureText}${creditHint}`);
+            const featureOutcome = [
+                bonusResult?.count === 6 ? "BONUS PLAYS COMPLETED" : "",
+                freeSpinsTriggered ? `${freeSpinsAwarded} FREE SPINS AWARDED` : "",
+            ].filter(Boolean).join(" • ");
+            setMessage(`${featureOutcome ? `${featureOutcome}!` : (isFreeSpin ? "Free spin — no win." : "No win — try again!")}${creditHint}`);
         }
     }
 

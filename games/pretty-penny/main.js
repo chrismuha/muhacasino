@@ -1990,8 +1990,12 @@ async function doSpin(options = {}) {
         const status = getCreditStatusMessage(options.totalBetOverrideUSD);
         if (status) creditHint = ` ${status}`;
         if (!options.silentNoWin) {
-            const outcome = freeSpinsTriggered
-                ? `${freeSpinsAwarded} FREE SPINS AWARDED!`
+            const featureOutcome = [
+                bonusOutcome ? `BONUS PLAYS: ${bonusOutcome.label}` : "",
+                freeSpinsTriggered ? `${freeSpinsAwarded} FREE SPINS AWARDED` : "",
+            ].filter(Boolean).join(" • ");
+            const outcome = featureOutcome
+                ? `${featureOutcome}!`
                 : (isFreeSpin ? "Free spin — no win." : "No win — try again!");
             setMessage(`${outcome}${creditHint}`);
         }

@@ -1742,6 +1742,12 @@ body.overlay-open {
 .settings-page-count,
 .settings-page-title { text-align: center; }
 .settings-page-title { color: var(--accent2); margin: 8px 0 0; }
+
+.title {
+  justify-content: center;
+  min-height: 44px;
+  font-size: clamp(24pt, 5vw, 44pt);
+}
 .settings-stage { display: grid; align-items: start; min-height: 150px; }
 .settings-stage > * { width: 100%; margin: 0; }
 .settings-pin-row {

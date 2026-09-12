@@ -1085,7 +1085,7 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
    longest denomination-scaled amount approaches its available width. */
 .bet-presets > .bet-preset {
   padding-inline: 2px !important;
-  font-size: clamp(15px, 4vw, 18px) !important;
+  font-size: clamp(14px, 3.7vw, 17px) !important;
   font-weight: 900 !important;
   letter-spacing: .01em;
   white-space: nowrap;
@@ -1132,4 +1132,30 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 :is(.slot-game-pretty-penny, .slot-game-treasurepots)
   .pot-feature > .pots > .pot > small {
   font-size: clamp(13px, 3.5vw, 17px) !important;
+}
+
+/* Keep the wager controls close to the reels when there is no live outcome.
+   The status rows return automatically as soon as they contain a message. */
+.reels-wrap > .reel-result:empty,
+.reels-wrap > .slot-feature-indicator:empty,
+.reels-wrap > .slot-feature-indicator[hidden] {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+/* Denom includes a label, so let the adjacent quick-bet group use that same
+   full row height instead of leaving a label-sized strip above the buttons. */
+.slot-wager-row > .bet-presets {
+  align-self: stretch;
+  box-sizing: border-box;
+  padding-block: 3px;
+}
+
+.slot-wager-row > .bet-presets > .bet-preset {
+  height: 100%;
 }
