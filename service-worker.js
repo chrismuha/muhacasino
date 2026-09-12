@@ -1,4 +1,4 @@
-const CACHE_NAME = "muha-casino-shell-20260905-notch-v1";
+const CACHE_NAME = "muha-casino-shell-20260912-desktop-brand-v1";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -6,7 +6,6 @@ const APP_SHELL = [
   "./launcher.js",
   "./interaction-lock.js",
   "./manifest.webmanifest",
-  "./icons/favicon.svg",
   "./icons/icon-192.png",
   "./icons/icon-512.png"
 ];

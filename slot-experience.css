@@ -29,19 +29,8 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 .lucky-wheel-disc::after { content: "★"; position: absolute; z-index: 2; inset: 50% auto auto 50%; display: grid; width: 40px; height: 40px; place-items: center; translate: -50% -50%; border: 3px solid #fff6d9; border-radius: 50%; color: #fff6d9; background: #0c493b; font-size: 1rem; }
 .lucky-wheel-disc.spinning { transform: rotate(var(--wheel-turn)); transition: transform 1.5s cubic-bezier(.12,.75,.18,1); }
 .lucky-wheel-disc span { position: absolute; z-index: 1; display: grid; width: 19%; min-height: 18px; padding: 1px; place-items: center; translate: -50% -50%; text-align: center; color: #123e34; font-weight: 950; font-size: clamp(.54rem, 2.1vw, .72rem); line-height: 1; text-shadow: none; overflow-wrap: anywhere; }
-.lucky-wheel-disc span:nth-child(even) { color: #fff8df; }
-.lucky-wheel-disc span:nth-child(1) { left: 58.5%; top: 18.1%; }
-.lucky-wheel-disc span:nth-child(2) { left: 73.3%; top: 26.7%; }
-.lucky-wheel-disc span:nth-child(3) { left: 81.9%; top: 41.5%; }
-.lucky-wheel-disc span:nth-child(4) { left: 81.9%; top: 58.5%; }
-.lucky-wheel-disc span:nth-child(5) { left: 73.3%; top: 73.3%; }
-.lucky-wheel-disc span:nth-child(6) { left: 58.5%; top: 81.9%; }
-.lucky-wheel-disc span:nth-child(7) { left: 41.5%; top: 81.9%; }
-.lucky-wheel-disc span:nth-child(8) { left: 26.7%; top: 73.3%; }
-.lucky-wheel-disc span:nth-child(9) { left: 18.1%; top: 58.5%; }
-.lucky-wheel-disc span:nth-child(10) { left: 18.1%; top: 41.5%; }
-.lucky-wheel-disc span:nth-child(11) { left: 26.7%; top: 26.7%; }
-.lucky-wheel-disc span:nth-child(12) { left: 41.5%; top: 18.1%; }
+.lucky-wheel-disc span[data-wheel-result="loss"] { color: #fff8df; }
+.lucky-wheel-disc span[hidden] { display: none; }
 .lucky-wheel-panel .last-chance-summary { min-height: 2.6em; margin: .5rem 0 .75rem; font-size: clamp(1rem, 2vw, 1.2rem); font-weight: 850; }
 .lucky-wheel-panel #luckyWheelSpin { min-height: 48px; }
 .penny-door-host { position: relative; overflow: hidden; }
@@ -1009,6 +998,29 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   box-shadow: none !important;
 }
 
+.settings-panel label.checkbox-setting {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start !important;
+  gap: 10px !important;
+  padding: 13px 15px !important;
+}
+
+.settings-panel label.checkbox-setting > input[type="checkbox"] {
+  margin: 2px 0 0 !important;
+}
+
+.settings-panel label.checkbox-setting > span {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+}
+
+.settings-panel label.checkbox-setting > span > :is(strong, small) {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
 .settings-panel :is(select, input[type="number"], input[type="text"]) {
   min-height: 42px !important;
   border: 2px solid color-mix(in srgb, var(--accent, #7df9ff) 62%, var(--text, #fff)) !important;
@@ -1134,11 +1146,11 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   font-size: clamp(13px, 3.5vw, 17px) !important;
 }
 
-/* Keep the wager controls close to the reels when there is no live outcome.
-   The status rows return automatically as soon as they contain a message. */
-.reels-wrap > .reel-result:empty,
-.reels-wrap > .slot-feature-indicator:empty,
-.reels-wrap > .slot-feature-indicator[hidden] {
+/* Optional compact mode keeps wager controls close to idle reels.
+   It is disabled by default so result messages never shift the layout. */
+.collapse-empty-slot-results .reels-wrap > .reel-result:empty,
+.collapse-empty-slot-results .reels-wrap > .slot-feature-indicator:empty,
+.collapse-empty-slot-results .reels-wrap > .slot-feature-indicator[hidden] {
   display: none !important;
   height: 0 !important;
   min-height: 0 !important;

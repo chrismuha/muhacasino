@@ -1765,12 +1765,12 @@ body.overlay-open {
   min-height: calc(var(--reel-row-h) - 6px);
   max-width: none;
   max-height: none;
-  padding: 4px 7px;
-  gap: 0 5px;
+  padding: 2px 6px;
+  gap: 0 4px;
   border-width: 2px;
   border-radius: 8px;
-  color: #fff;
-  text-shadow: 0 1px 2px #000, 0 0 8px currentColor;
+  color: #07111d;
+  text-shadow: none;
   overflow: hidden;
 }
 
@@ -1779,11 +1779,11 @@ body.overlay-open {
   grid-column: 1;
   grid-row: 1 / 3;
   align-self: center;
-  color: var(--jackpot-color);
+  color: #07111d;
   font-size: clamp(18px, 3vw, 30px);
   line-height: 1;
   text-align: center;
-  text-shadow: 0 0 10px var(--jackpot-color);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .58);
 }
 
 .reels .jackpot-chip strong,
@@ -1793,8 +1793,9 @@ body.overlay-open {
   min-width: 0;
   margin: 0;
   overflow: hidden;
-  color: #fff;
-  line-height: 1;
+  color: #07111d;
+  font-weight: 950;
+  line-height: 1.12;
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1802,25 +1803,25 @@ body.overlay-open {
 
 .reels .jackpot-chip strong {
   align-self: end;
-  font-size: clamp(10px, 1.75vw, 16px);
+  font-size: clamp(9px, calc(var(--reel-row-h) * .24), 14px);
   letter-spacing: .08em;
 }
 
 .reels .jackpot-chip span {
   align-self: start;
-  margin-top: 3px;
-  font-size: clamp(10px, 1.55vw, 15px);
+  margin-top: 1px;
+  font-size: clamp(9px, calc(var(--reel-row-h) * .22), 13px);
 }
 
-.reels .jackpot-chip.jackpot-mini { background: linear-gradient(145deg, #075068, #071c36); }
-.reels .jackpot-chip.jackpot-minor { background: linear-gradient(145deg, #17652b, #092918); }
-.reels .jackpot-chip.jackpot-major { background: linear-gradient(145deg, #8a176f, #350d40); }
-.reels .jackpot-chip.jackpot-grand { background: linear-gradient(145deg, #9b6b08, #3c2a08); }
-.reels .jackpot-chip.bonus-chip { background: linear-gradient(145deg, #8c247f, #35103d); }
+.reels .jackpot-chip.jackpot-mini { background: linear-gradient(145deg, #e8fdff, #38dcf4 72%, #12a7c1); }
+.reels .jackpot-chip.jackpot-minor { background: linear-gradient(145deg, #efffed, #63ef72 72%, #2bb946); }
+.reels .jackpot-chip.jackpot-major { background: linear-gradient(145deg, #fff0fd, #f25cda 72%, #c62aad); }
+.reels .jackpot-chip.jackpot-grand { background: linear-gradient(145deg, #fffbe2, #ffdb55 72%, #e5a91c); }
+.reels .jackpot-chip.bonus-chip { background: linear-gradient(145deg, #fff0fd, #f06be2 72%, #bd35ae); }
 
 .reels .jackpot-chip.jackpot-teaser {
-  opacity: .72;
-  filter: saturate(.65) brightness(.82);
+  opacity: .76;
+  filter: saturate(.72) brightness(.9);
 }
 .settings-stage { display: grid; align-items: start; min-height: 150px; }
 .settings-stage > * { width: 100%; margin: 0; }

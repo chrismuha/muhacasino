@@ -17,6 +17,7 @@
         luckyWheel: true,
         wheelOdds: 0.5,
         wheelPrizes: defaultWheelPrizes.map((prize) => ({ ...prize })),
+        collapseEmptyResults: false,
         revealDoors: "off",
         revealDoorRows: [0, 1, 2, 3, 4],
         deposited: 100,
@@ -43,6 +44,7 @@
                     ? { type: "multiplier", value: Math.max(1, Number(saved.wheelMultipliers[index]) || index + 1) }
                     : {}),
             }));
+        state.collapseEmptyResults = saved.collapseEmptyResults === true;
         state.revealDoors = ["off", "reels", "symbols"].includes(saved.revealDoors) ? saved.revealDoors : "off";
         state.revealDoorRows = Array.isArray(saved.revealDoorRows)
             ? [...new Set(saved.revealDoorRows.map(Number).filter((row) => Number.isInteger(row) && row >= 0 && row < 5))]
@@ -67,6 +69,7 @@
                 luckyWheel: state.luckyWheel,
                 wheelOdds: state.wheelOdds,
                 wheelPrizes: state.wheelPrizes,
+                collapseEmptyResults: state.collapseEmptyResults,
                 revealDoors: state.revealDoors,
                 revealDoorRows: state.revealDoorRows,
                 jackpots: state.jackpots,
@@ -155,6 +158,43 @@
         save();
     }
 
+    function updateResultBarUi() {
+        document.body.classList.toggle("collapse-empty-slot-results", state.collapseEmptyResults);
+        const toggle = document.getElementById("collapseEmptyResultsToggle");
+        if (toggle) toggle.checked = state.collapseEmptyResults;
+    }
+
+    function getLuckyWheelSegments() {
+        const winArc = (state.wheelOdds * 360) / 6;
+        const lossArc = ((1 - state.wheelOdds) * 360) / 6;
+        let angle = 0;
+        return Array.from({ length: 12 }, (_, index) => {
+            const size = index % 2 === 0 ? winArc : lossArc;
+            const segment = { index, start: angle, end: angle + size, center: angle + (size / 2), size, won: index % 2 === 0 };
+            angle += size;
+            return segment;
+        });
+    }
+
+    function updateLuckyWheelUi() {
+        const disc = document.querySelector(".lucky-wheel-disc");
+        if (!disc) return;
+        const winColors = ["#f8e8bb", "#f2cc63", "#dcebdc", "#f3c58f", "#f8e8bb", "#f2cc63"];
+        const segments = getLuckyWheelSegments();
+        disc.style.background = `conic-gradient(${segments.map((segment) => {
+            const color = segment.won ? winColors[segment.index / 2] : "#167a5d";
+            return `${color} ${segment.start}deg ${segment.end}deg`;
+        }).join(",")})`;
+        disc.setAttribute("aria-label", `Lucky wheel with ${Math.round(state.wheelOdds * 100)}% winning area and ${Math.round((1 - state.wheelOdds) * 100)}% no-award area`);
+        disc.querySelectorAll("span").forEach((label, index) => {
+            const segment = segments[index];
+            const radians = segment.center * Math.PI / 180;
+            label.style.left = `${50 + Math.sin(radians) * 33}%`;
+            label.style.top = `${50 - Math.cos(radians) * 33}%`;
+            label.hidden = segment.size < 0.1;
+        });
+    }
+
     function closeOverlay(id) {
         const overlay = document.getElementById(id);
         if (overlay) overlay.hidden = true;
@@ -177,6 +217,10 @@
             <label class="checkbox-setting slot-wheel-setting">
                 <input id="luckyWheelToggle" type="checkbox" checked>
                 <span><strong>One rescue wheel when credits run out</strong><small>Available once per session after paid play leaves too few credits for the current wager.</small></span>
+            </label>
+            <label class="checkbox-setting slot-result-bars-setting">
+                <input id="collapseEmptyResultsToggle" type="checkbox">
+                <span><strong>Hide empty result bars</strong><small>Moves controls upward while idle, but the layout will shift when a result or feature message appears. Off by default.</small></span>
             </label>
             <div class="select slot-wheel-odds-setting">
                 <label for="luckyWheelOdds">Lucky Wheel Win / Loss Ratio</label>
@@ -318,7 +362,7 @@
                 <div class="overlay-panel overlay-panel-compact slot-experience-panel lucky-wheel-panel">
                     <div class="overlay-head"><h3 id="luckyWheelTitle">Lucky Credit Wheel</h3><button type="button" class="overlay-close" data-close="luckyWheelOverlay">Close</button></div>
                     <p class="overlay-note">You are short on credits. Spin for a chance to keep playing.</p>
-                    <div class="lucky-wheel" aria-label="Lucky wheel with six configurable winning wedges and six no-award wedges"><div class="lucky-wheel-pointer">▼</div><div class="lucky-wheel-disc">${Array.from({ length: 12 }, (_, index) => index % 2 === 0 ? `<span data-wheel-value="${index / 2}">${formatWheelPrize(state.wheelPrizes[index / 2])}</span>` : "<span>0×</span>").join("")}</div></div>
+                    <div class="lucky-wheel"><div class="lucky-wheel-pointer">▼</div><div class="lucky-wheel-disc">${Array.from({ length: 12 }, (_, index) => index % 2 === 0 ? `<span data-wheel-result="win" data-wheel-value="${index / 2}">${formatWheelPrize(state.wheelPrizes[index / 2])}</span>` : '<span data-wheel-result="loss">0×</span>').join("")}</div></div>
                     <p id="luckyWheelResult" class="last-chance-summary">The wheel odds follow your setting.</p>
                     <button id="luckyWheelSpin" type="button">Spin Lucky Wheel</button>
                 </div>
@@ -333,10 +377,12 @@
 
         const withdrawalToggle = document.getElementById("withdrawalDemoToggle");
         const wheelToggle = document.getElementById("luckyWheelToggle");
+        const resultBarsToggle = document.getElementById("collapseEmptyResultsToggle");
         const odds = document.getElementById("luckyWheelOdds");
         const revealDoors = document.getElementById("pennyRevealDoors");
         withdrawalToggle.checked = state.withdrawalDemo;
         wheelToggle.checked = state.luckyWheel;
+        resultBarsToggle.checked = state.collapseEmptyResults;
         odds.value = String(state.wheelOdds);
         if (revealDoors) revealDoors.value = state.revealDoors;
         const revealDoorRows = Array.from(document.querySelectorAll("[data-penny-door-row]"));
@@ -358,7 +404,16 @@
             save();
             window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
         });
-        odds.addEventListener("change", () => { state.wheelOdds = Number(odds.value); save(); });
+        resultBarsToggle.addEventListener("change", () => {
+            state.collapseEmptyResults = resultBarsToggle.checked;
+            updateResultBarUi();
+            save();
+        });
+        odds.addEventListener("change", () => {
+            state.wheelOdds = Number(odds.value);
+            updateLuckyWheelUi();
+            save();
+        });
         const updateWheelPrize = (index) => {
             const editor = document.querySelector(`[data-wheel-editor="${index}"]`);
             const type = document.querySelector(`[data-wheel-prize-type="${index}"]`)?.value;
@@ -414,6 +469,8 @@
             if (event.key !== "Tab") event.stopImmediatePropagation();
         }, true);
         updateMoneyUi();
+        updateResultBarUi();
+        updateLuckyWheelUi();
     }
 
     let pendingWheel = null;
@@ -439,10 +496,11 @@
             const attempt = pendingWheel;
             const disc = overlay.querySelector(".lucky-wheel-disc");
             const won = Math.random() < state.wheelOdds;
+            const segments = getLuckyWheelSegments();
             const eligibleSlices = won ? [0, 2, 4, 6, 8, 10] : [1, 3, 5, 7, 9, 11];
             const slice = eligibleSlices[Math.floor(Math.random() * eligibleSlices.length)];
             const prizeIndex = won ? slice / 2 : -1;
-            const sliceCenter = 15 + slice * 30;
+            const sliceCenter = segments[slice].center;
             disc.style.setProperty("--wheel-turn", `${1440 + (360 - sliceCenter)}deg`);
             disc.classList.add("spinning");
             window.setTimeout(async () => {
