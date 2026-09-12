@@ -11,7 +11,7 @@ const games = {
   },
   "neon-slots": {
     title: "Neon Slots",
-    version: "v1.3.1",
+    version: "v1.3.2",
     subtitle: "Electric Casino",
     path: "games/neon-slots/index.html",
     className: "card-neon",
@@ -79,7 +79,7 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_BUILD = "20260912-slot-interface-fixes";
+const SITE_BUILD = "20260912-neon-jackpot-cards";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
