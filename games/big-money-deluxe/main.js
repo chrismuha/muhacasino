@@ -560,17 +560,21 @@ function playWheelBonusGame(totalBetUSD) {
     const result = bonusOverlayEl.querySelector(".wheel-result");
     button.focus();
     return new Promise((resolve) => {
-        button.onclick = () => {
+        button.onclick = async () => {
             if (button.disabled) return;
             button.disabled = true;
             const index = Math.floor(Math.random() * prizes.length);
-            wheel.style.transform = `rotate(${2160 + 360 - (index * 120 + 60)}deg)`;
             result.textContent = "Spinning…";
-            setTimeout(() => {
+            try {
+                await window.slotExperience.spinWheel(wheel, 2160 + 360 - (index * 120 + 60));
                 const winUSD = roundUSD(totalBetUSD * prizes[index]);
                 result.textContent = `${prizes[index]}× — ${fmtUSD(winUSD)}`;
                 setTimeout(() => { bonusOverlayEl.hidden = true; resolve(winUSD); }, 1400);
-            }, 3900);
+            } catch (error) {
+                console.error("Bonus wheel failed", error);
+                bonusOverlayEl.hidden = true;
+                resolve(0);
+            }
         };
     });
 }

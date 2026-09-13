@@ -637,18 +637,15 @@ function playWheelBonusGame(totalBetUSD) {
     awardChipEl.replaceChildren();
     spinButton.disabled = false;
     return new Promise((resolve) => {
-        spinButton.onclick = () => {
+        spinButton.onclick = async () => {
             spinButton.disabled = true;
             resultEl.textContent = "Round and round…";
             const segment = chooseBonusWheelSegment();
             const targetPosition = (segment.start + segment.end) / 2;
             const targetDegrees = 360 - (targetPosition * 360);
             const finalRotation = (6 * 360) + targetDegrees;
-            requestAnimationFrame(() => {
-                wheel.style.transition = "transform 3.8s cubic-bezier(.12,.72,.12,1)";
-                wheel.style.transform = `rotate(${finalRotation}deg)`;
-            });
-            setTimeout(() => {
+            try {
+                await window.slotExperience.spinWheel(wheel, finalRotation);
                 const tier = segment.kind === "jackpot"
                     ? JACKPOT_TIERS.find((item) => item.name === segment.tier)
                     : null;
@@ -666,7 +663,11 @@ function playWheelBonusGame(totalBetUSD) {
                     bonusOverlayEl.hidden = true;
                     resolve({ winUSD, label });
                 }, 1400);
-            }, 3900);
+            } catch (error) {
+                console.error("Bonus wheel failed", error);
+                bonusOverlayEl.hidden = true;
+                resolve({ winUSD: 0, label: "BONUS WHEEL" });
+            }
         };
         spinButton.focus();
     });

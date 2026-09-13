@@ -96,6 +96,41 @@
         return `${Number(prize.value).toLocaleString(undefined, { maximumFractionDigits: 2 })}×`;
     }
 
+    function spinWheel(element, targetDegrees, duration = 3800) {
+        if (!element) return Promise.resolve();
+        const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+        const spinDuration = reduceMotion ? 0 : Math.max(0, Number(duration) || 0);
+        element.getAnimations?.().forEach((animation) => animation.cancel());
+        element.style.transition = "none";
+        element.style.transform = "rotate(0deg)";
+        // Force the reset to paint before applying the target transform. Mobile
+        // Safari otherwise sometimes batches both writes and skips the spin.
+        void element.offsetWidth;
+
+        return new Promise((resolve) => {
+            let finished = false;
+            const complete = () => {
+                if (finished) return;
+                finished = true;
+                element.removeEventListener("transitionend", onTransitionEnd);
+                window.clearTimeout(fallbackTimer);
+                resolve();
+            };
+            const onTransitionEnd = (event) => {
+                if (event.target === element && event.propertyName === "transform") complete();
+            };
+            const fallbackTimer = window.setTimeout(complete, spinDuration + 250);
+            element.addEventListener("transitionend", onTransitionEnd);
+            window.requestAnimationFrame(() => {
+                element.style.transition = spinDuration
+                    ? `transform ${spinDuration}ms cubic-bezier(.12,.72,.12,1)`
+                    : "none";
+                element.style.transform = `rotate(${targetDegrees}deg)`;
+                if (!spinDuration) complete();
+            });
+        });
+    }
+
     function wheelPrizeEditor(prize, index) {
         const value = prize.type === "jackpot" ? 1 : prize.value;
         const tier = prize.type === "jackpot" ? prize.tier : "mini";
@@ -642,6 +677,7 @@
             return getConfiguredJackpotAmount(tier.name.toLowerCase(), wager, denomination, tier.amountUSD);
         },
         offerLuckyWheel,
+        spinWheel,
         closeReelDoors,
         revealReelDoors,
         renderResultMessage,
