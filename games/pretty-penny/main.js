@@ -1338,7 +1338,7 @@ function getSettingsDefinitions() {
         { key: "withdrawalDemo", title: "Withdrawal Demonstration", element: document.getElementById("withdrawalDemoToggle")?.closest(".checkbox-setting") },
         { key: "luckyWheel", title: "Lucky Wheel", element: document.getElementById("luckyWheelToggle")?.closest(".checkbox-setting") },
         { key: "resultBars", title: "Result Bar Layout", element: document.getElementById("collapseEmptyResultsToggle")?.closest(".checkbox-setting") },
-        { key: "luckyWheelOdds", title: "Lucky Wheel Odds", element: document.getElementById("luckyWheelOdds")?.closest(".select") },
+        { key: "luckyWheelOdds", title: "Lucky Wheel Percentages", element: document.getElementById("luckyWheelWinPercentage")?.closest(".slot-wheel-odds-setting") },
         { key: "luckyWheelPrizes", title: "Lucky Wheel Winning Wedges", element: document.querySelector(".slot-wheel-prizes-setting") },
         { key: "revealDoors", title: "Pretty Penny Reveal Doors", element: document.getElementById("pennyRevealDoors")?.closest(".select") },
         { key: "adjustMoney", title: "Adjust Money", element: creditStepEl?.closest(".credit-controls") },
