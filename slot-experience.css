@@ -4,6 +4,10 @@
 .slot-withdrawal-setting input, .slot-wheel-setting input { width: 18px; height: 18px; margin: 0; }
 .slot-withdrawal-setting small, .slot-wheel-setting small, .slot-wheel-odds-setting small { display: block; margin-top: .35rem; opacity: .72; }
 .wheel-prize-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 8px; }
+.wheel-percentage-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+.wheel-percentage-grid label { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 6px; min-width: 0; font-weight: 850; }
+.wheel-percentage-grid label input { grid-column: 1; width: 100%; min-width: 0; box-sizing: border-box; }
+.wheel-percentage-grid label span { grid-column: 2; grid-row: 2; }
 .wheel-prize-card { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; min-width: 0; padding: 6px; border: 1px solid currentColor; border-radius: 9px; }
 .wheel-prize-card > strong { grid-column: 1 / -1; font-size: .78rem; }
 .wheel-prize-card label { display: grid; gap: 3px; min-width: 0; font-size: .7rem; font-weight: 800; }

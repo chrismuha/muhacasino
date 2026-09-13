@@ -453,6 +453,7 @@ function updateTotals() {
     const canSpinNow = freeSpinsRemaining > 0 || balance >= totalBet;
     const canUseLastChance = balance < totalBet && (balance > 0 || window.slotExperience?.isLuckyWheelEnabled());
     const wagerLocked = isSpinning || autoSpinRunning || freeSpinsRemaining > 0;
+    window.slotExperience?.setInteractionLocked(wagerLocked);
     spinBtn.disabled = autoSpinRunning ? false : (!(canSpinNow || canUseLastChance) || isSpinning);
     maxBtn.disabled = wagerLocked;
     denomEl.disabled = wagerLocked;

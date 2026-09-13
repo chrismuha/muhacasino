@@ -24,6 +24,7 @@
         played: 0,
         balance: 100,
         jackpots: null,
+        interactionLocked: false,
     };
 
     try {
@@ -35,7 +36,7 @@
             ? saved.withdrawalDemo
             : Boolean(saved.moneyMode);
         state.luckyWheel = saved.luckyWheel !== false;
-        state.wheelOdds = [0.25, 0.5, 0.75, 1].includes(Number(saved.wheelOdds)) ? Number(saved.wheelOdds) : 0.5;
+        state.wheelOdds = Math.min(0.99, Math.max(0.01, Number(saved.wheelOdds) || 0.5));
         state.wheelPrizes = Array.isArray(saved.wheelPrizes) && saved.wheelPrizes.length === 6
             ? saved.wheelPrizes.map((prize, index) => normalizeWheelPrize(prize, defaultWheelPrizes[index]))
             : defaultWheelPrizes.map((prize, index) => ({
@@ -233,7 +234,10 @@
     function closeOverlay(id) {
         const overlay = document.getElementById(id);
         if (overlay) overlay.hidden = true;
-        if (id === "luckyWheelOverlay") pendingWheel = null;
+        if (id === "luckyWheelOverlay") {
+            pendingWheel = null;
+            window.slotExperience?.setInteractionLocked(false);
+        }
         document.body.classList.remove("slot-experience-overlay-open");
         document.documentElement.classList.remove("slot-experience-overlay-open");
         document.getElementById(id === "withdrawalOverlay" ? "withdrawalButton" : "spin")?.focus();
@@ -258,14 +262,12 @@
                 <span><strong>Hide empty result bars</strong><small>Moves controls upward while idle, but the layout will shift when a result or feature message appears. Off by default.</small></span>
             </label>
             <div class="select slot-wheel-odds-setting">
-                <label for="luckyWheelOdds">Lucky Wheel Win / Loss Ratio</label>
-                <select id="luckyWheelOdds">
-                    <option value="0.25">25% Win / 75% Loss</option>
-                    <option value="0.5" selected>50% Win / 50% Loss</option>
-                    <option value="0.75">75% Win / 25% Loss</option>
-                    <option value="1">100% Win / 0% Loss</option>
-                </select>
-                <small>Winning wedges award their configured multiplier of the credits needed for the current wager.</small>
+                <strong>Lucky Wheel wedge percentages</strong>
+                <div class="wheel-percentage-grid">
+                    <label>Winning wedges<input id="luckyWheelWinPercentage" type="number" min="1" max="99" step="1" inputmode="numeric"><span>%</span></label>
+                    <label>No-award wedges<input id="luckyWheelLossPercentage" type="number" min="1" max="99" step="1" inputmode="numeric"><span>%</span></label>
+                </div>
+                <small>Set either share from 1% to 99%; the other updates automatically so the wheel always totals 100%. Each of the six matching wedges shares that area equally.</small>
             </div>
             <div class="jackpot-config-setting slot-wheel-prizes-setting">
                 <strong>Lucky wheel winning wedges</strong>
@@ -413,12 +415,17 @@
         const withdrawalToggle = document.getElementById("withdrawalDemoToggle");
         const wheelToggle = document.getElementById("luckyWheelToggle");
         const resultBarsToggle = document.getElementById("collapseEmptyResultsToggle");
-        const odds = document.getElementById("luckyWheelOdds");
+        const winPercentage = document.getElementById("luckyWheelWinPercentage");
+        const lossPercentage = document.getElementById("luckyWheelLossPercentage");
         const revealDoors = document.getElementById("pennyRevealDoors");
         withdrawalToggle.checked = state.withdrawalDemo;
         wheelToggle.checked = state.luckyWheel;
         resultBarsToggle.checked = state.collapseEmptyResults;
-        odds.value = String(state.wheelOdds);
+        const syncWheelPercentages = () => {
+            winPercentage.value = String(Math.round(state.wheelOdds * 100));
+            lossPercentage.value = String(100 - Math.round(state.wheelOdds * 100));
+        };
+        syncWheelPercentages();
         if (revealDoors) revealDoors.value = state.revealDoors;
         const revealDoorRows = Array.from(document.querySelectorAll("[data-penny-door-row]"));
         revealDoorRows.forEach((checkbox) => {
@@ -444,11 +451,16 @@
             updateResultBarUi();
             save();
         });
-        odds.addEventListener("change", () => {
-            state.wheelOdds = Number(odds.value);
+        const updateWheelPercentage = (changedInput) => {
+            const requested = Math.round(Number(changedInput.value) || 1);
+            const changedShare = Math.min(99, Math.max(1, requested));
+            state.wheelOdds = changedInput === winPercentage ? changedShare / 100 : (100 - changedShare) / 100;
+            syncWheelPercentages();
             updateLuckyWheelUi();
             save();
-        });
+        };
+        winPercentage.addEventListener("change", () => updateWheelPercentage(winPercentage));
+        lossPercentage.addEventListener("change", () => updateWheelPercentage(lossPercentage));
         const updateWheelPrize = (index) => {
             const editor = document.querySelector(`[data-wheel-editor="${index}"]`);
             const type = document.querySelector(`[data-wheel-prize-type="${index}"]`)?.value;
@@ -528,6 +540,7 @@
         button.onclick = () => {
             luckyWheelUsed = true;
             button.disabled = true;
+            window.slotExperience?.setInteractionLocked(true);
             const attempt = pendingWheel;
             const disc = overlay.querySelector(".lucky-wheel-disc");
             const won = Math.random() < state.wheelOdds;
@@ -543,6 +556,7 @@
                 disc.classList.remove("spinning");
                 if (!won) {
                     result.textContent = "No award this time. The one rescue spin for this session has been used.";
+                    window.slotExperience?.setInteractionLocked(false);
                     button.disabled = false;
                     button.textContent = "Close";
                     button.onclick = () => closeOverlay("luckyWheelOverlay");
@@ -558,6 +572,7 @@
                 const callback = attempt.onAward;
                 await callback(award);
                 if (pendingWheel !== attempt) return;
+                window.slotExperience?.setInteractionLocked(false);
                 button.disabled = false;
                 button.textContent = "Close";
                 button.onclick = () => closeOverlay("luckyWheelOverlay");
@@ -649,9 +664,18 @@
         formatAmount,
         getDisplayMode: () => state.displayMode,
         toggleDisplayMode() {
+            if (state.interactionLocked) return false;
             state.displayMode = state.displayMode === "money" ? "credits" : "money";
             updateMoneyUi();
             window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
+            return true;
+        },
+        isInteractionLocked: () => state.interactionLocked,
+        setInteractionLocked(locked) {
+            const next = Boolean(locked);
+            if (state.interactionLocked === next) return;
+            state.interactionLocked = next;
+            window.parent.postMessage({ type: "muha-slot-interaction-lock", locked: next }, window.location.origin);
         },
         configureJackpots(tiers, { baseWager = 0.5 } = {}) {
             const defaults = Object.fromEntries(tiers.map((tier) => [tier.name.toLowerCase(), Number(tier.amountUSD)]));

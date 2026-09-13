@@ -1,7 +1,7 @@
 const games = {
   "big-money-deluxe": {
     title: "Big Money Deluxe",
-    version: "v1.3.2",
+    version: "v1.3.3",
     subtitle: "Classic Cash",
     path: "games/big-money-deluxe/index.html",
     className: "card-money",
@@ -11,7 +11,7 @@ const games = {
   },
   "neon-slots": {
     title: "Neon Slots",
-    version: "v1.3.3",
+    version: "v1.3.4",
     subtitle: "Electric Casino",
     path: "games/neon-slots/index.html",
     className: "card-neon",
@@ -21,7 +21,7 @@ const games = {
   },
   "pretty-penny": {
     title: "Pretty Penny",
-    version: "v1.4.2",
+    version: "v1.4.3",
     subtitle: "Feature Game",
     path: "games/pretty-penny/index.html",
     className: "card-penny",
@@ -31,7 +31,7 @@ const games = {
   },
   treasurepots: {
     title: "TreasurePots",
-    version: "v1.3.2",
+    version: "v1.3.3",
     subtitle: "Hold & Link",
     path: "games/treasurepots/index.html",
     className: "card-treasure",
@@ -79,7 +79,7 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_BUILD = "20260913-wheel-spin-fix";
+const SITE_BUILD = "20260913-play-lock-wheel-percentages";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
@@ -101,7 +101,7 @@ const toolbarCollapseButton = document.querySelector("#toolbarCollapseButton");
 const slotModeToolbar = document.querySelector("#slotModeToolbar");
 const slotGameIds = new Set(["big-money-deluxe", "neon-slots", "pretty-penny", "treasurepots"]);
 
-function syncSlotModeToolbar(displayMode) {
+function syncSlotModeToolbar(displayMode, locked = false) {
   const moneyMode = displayMode === "money";
   const current = moneyMode ? "Real Money" : "Fake Money";
   const action = moneyMode ? "switch to fake money credits" : "switch to real money";
@@ -109,13 +109,20 @@ function syncSlotModeToolbar(displayMode) {
   slotModeToolbar.querySelector(".slot-mode-state").textContent = current;
   slotModeToolbar.setAttribute("aria-label", `${current} display; ${action}`);
   slotModeToolbar.title = `${current} display — ${action}`;
+  slotModeToolbar.disabled = locked;
+  slotModeToolbar.setAttribute("aria-disabled", String(locked));
+  if (locked) {
+    slotModeToolbar.setAttribute("aria-label", `${current} display; unavailable while a spin or feature is in progress`);
+    slotModeToolbar.title = `${current} display — locked during play`;
+  }
 }
 
 slotModeToolbar.addEventListener("click", () => {
   if (!slotGameIds.has(activeGameId)) return;
   const experience = gameFrame.contentWindow?.slotExperience;
+  if (experience?.isInteractionLocked()) return;
   experience?.toggleDisplayMode();
-  syncSlotModeToolbar(experience?.getDisplayMode());
+  syncSlotModeToolbar(experience?.getDisplayMode(), experience?.isInteractionLocked());
 });
 
 function setGameToolbarCollapsed(collapsed) {
@@ -505,6 +512,11 @@ bingoThemeChannel?.addEventListener("message", (event) => {
 
 window.addEventListener("message", (event) => {
   if (event.origin !== window.location.origin) return;
+  if (event.data?.type === "muha-slot-interaction-lock" && slotGameIds.has(activeGameId)) {
+    const experience = gameFrame.contentWindow?.slotExperience;
+    syncSlotModeToolbar(experience?.getDisplayMode(), Boolean(event.data.locked));
+    return;
+  }
   if (event.data?.type === "muha-bingo-appearance" && activeGameId === "bingo") {
     syncBingoAppearanceButton(event.data.appearance);
     return;
@@ -562,7 +574,8 @@ gameFrame.addEventListener("load", () => {
   window.setTimeout(syncPrettyPennyFrameWidth, 150);
   gameLoadState.hidden = true;
   if (slotGameIds.has(activeGameId)) {
-    syncSlotModeToolbar(gameFrame.contentWindow?.slotExperience?.getDisplayMode());
+    const experience = gameFrame.contentWindow?.slotExperience;
+    syncSlotModeToolbar(experience?.getDisplayMode(), experience?.isInteractionLocked());
   }
   if (!bingoToolbarControls.hidden) {
     sendBingoTheme(bingoThemeSelect.value);
