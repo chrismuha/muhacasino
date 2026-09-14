@@ -674,7 +674,9 @@ function playWheelBonusGame(totalBetUSD) {
     });
 }
 
-function playBonusGame(totalBetUSD) {
+function playBonusGame(totalBetUSD, choice = "random") {
+    if (choice === "wheel") return playWheelBonusGame(totalBetUSD);
+    if (choice === "match") return playMatchAndWinBonus(totalBetUSD);
     return Math.random() < 0.5 ? playWheelBonusGame(totalBetUSD) : playMatchAndWinBonus(totalBetUSD);
 }
 
@@ -686,7 +688,7 @@ async function buyInstantBonus(option = {}) {
     isSpinning = true; balance = clampBalanceUSD(balance - cost); window.slotExperience?.recordPlay(cost);
     addSessionLosses(cost); addNetSessionLosses(cost); subtractNetSessionWinnings(cost); adjustActualSessionNet(-cost); updateTotals();
     try {
-        const outcome = await playBonusGame(wager);
+        const outcome = await playBonusGame(wager, option.bonus);
         const award = roundUSD(Number(outcome?.winUSD ?? outcome) || 0);
         if (award > 0) { balance = clampBalanceUSD(balance + award); addSessionWinnings(award); addNetSessionWinnings(award); subtractNetSessionLosses(award); adjustActualSessionNet(award); }
         setMessage(`BONUS COMPLETE — Cost ${fmtUSD(cost)} • Award ${fmtUSD(award)}`);
@@ -2286,5 +2288,5 @@ document.addEventListener("keyup", (e) => {
     updateSessionStatsVisibility();
     updateRealtimeCreditMessage();
     bindSpinHold();
-    window.slotExperience?.configureBonusBuy({ getCost: () => roundUSD(getActiveTotalBetUSD() * 100), getOptions: () => Array.from(document.querySelectorAll(".bet-preset"), button => ({ wager: roundUSD(Number(button.dataset.betTotal) * getDenominationValue() / 0.01), cost: roundUSD(Number(button.dataset.betTotal) * getDenominationValue() / 0.01 * 100) })), canBuy: (option = {}) => !isSpinning && !autoSpinRunning && freeSpinsRemaining === 0 && balance >= roundUSD(Number(option.cost) || getActiveTotalBetUSD() * 100), buy: buyInstantBonus });
+    window.slotExperience?.configureBonusBuy({ getCost: () => 40, getOptions: () => [40, 80, 120].map((cost) => ({ wager: roundUSD(cost / 100), cost })), canBuy: (option = {}) => !isSpinning && !autoSpinRunning && freeSpinsRemaining === 0 && balance >= (Number(option.cost) || 40), buy: buyInstantBonus });
 })();

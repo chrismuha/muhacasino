@@ -11,7 +11,23 @@
         { type: "multiplier", value: 3 },
         { type: "jackpot", tier: "mini" },
     ];
-    const defaultWheelSizes = Array(12).fill(1);
+    const defaultWheelSizes = [10, 10, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8];
+
+    function normalizeWheelSizes(sizes) {
+        const normalized = Array.from({ length: 12 }, (_, index) => {
+            const value = Number(sizes?.[index]);
+            return Math.max(2, Math.min(78, Math.round((Number.isFinite(value) ? value : defaultWheelSizes[index]) / 2) * 2));
+        });
+        let difference = 100 - normalized.reduce((sum, size) => sum + size, 0);
+        while (difference !== 0) {
+            const direction = Math.sign(difference) * 2;
+            const index = normalized.findIndex((size) => direction > 0 ? size <= 76 : size >= 4);
+            if (index < 0) break;
+            normalized[index] += direction;
+            difference -= direction;
+        }
+        return normalized;
+    }
     const state = {
         displayMode: "credits",
         withdrawalDemo: false,
@@ -39,11 +55,7 @@
             : Boolean(saved.moneyMode);
         state.luckyWheel = saved.luckyWheel !== false;
         state.wheelOdds = Math.min(0.99, Math.max(0.01, Number(saved.wheelOdds) || 0.5));
-        state.wheelSizes = Array.isArray(saved.wheelSizes) && saved.wheelSizes.length === 12
-            ? saved.wheelSizes.map((size) => Math.max(0.1, Number(size) || 1))
-            : Array.from({ length: 12 }, (_, index) => index % 2 === 0
-                ? state.wheelOdds * 100 / 6
-                : (1 - state.wheelOdds) * 100 / 6);
+        state.wheelSizes = normalizeWheelSizes(saved.wheelSizes);
         state.wheelPrizes = Array.isArray(saved.wheelPrizes) && saved.wheelPrizes.length === 6
             ? saved.wheelPrizes.map((prize, index) => normalizeWheelPrize(prize, defaultWheelPrizes[index]))
             : defaultWheelPrizes.map((prize, index) => ({
@@ -209,10 +221,10 @@
     }
 
     function getLuckyWheelSegments() {
-        const totalSize = state.wheelSizes.reduce((sum, size) => sum + Math.max(0.1, Number(size) || 0.1), 0);
+        const totalSize = state.wheelSizes.reduce((sum, size) => sum + size, 0);
         let angle = 0;
         return Array.from({ length: 12 }, (_, index) => {
-            const size = (Math.max(0.1, Number(state.wheelSizes[index]) || 0.1) / totalSize) * 360;
+            const size = (state.wheelSizes[index] / totalSize) * 360;
             const segment = { index, start: angle, end: angle + size, center: angle + (size / 2), size, won: index % 2 === 0 };
             angle += size;
             return segment;
@@ -277,9 +289,9 @@
             <div class="select slot-wheel-odds-setting">
                 <strong>Lucky Wheel individual wedge sizes</strong>
                 <div class="wheel-percentage-grid">
-                    ${Array.from({ length: 12 }, (_, index) => `<label>${index % 2 === 0 ? `Win ${index / 2 + 1}` : `No award ${(index + 1) / 2}`}<input type="number" min="0.1" max="1000" step="0.1" inputmode="decimal" value="${state.wheelSizes[index]}" data-wheel-size="${index}"><span>parts</span></label>`).join("")}
+                    ${Array.from({ length: 12 }, (_, index) => `<label>${index % 2 === 0 ? `Win ${index / 2 + 1}` : `No award ${(index + 1) / 2}`}<input type="number" min="2" max="78" step="2" inputmode="numeric" value="${state.wheelSizes[index]}" data-wheel-size="${index}"><span>%</span></label>`).join("")}
                 </div>
-                <small id="luckyWheelSizeSummary">Every wedge is independently adjustable. Sizes are relative parts and normalized to 100% on the wheel.</small>
+                <small id="luckyWheelSizeSummary">Use even percentages across the 12 wedges. They always total exactly 100%.</small>
             </div>
             <div class="jackpot-config-setting slot-wheel-prizes-setting">
                 <strong>Lucky wheel winning wedges</strong>
@@ -399,7 +411,12 @@
             <div id="buyBonusOverlay" class="overlay slot-experience-overlay" role="dialog" aria-modal="true" aria-labelledby="buyBonusTitle" hidden>
                 <div class="overlay-panel overlay-panel-compact slot-experience-panel buy-bonus-panel">
                     <div class="overlay-head"><h3 id="buyBonusTitle">Buy a Bonus</h3><button type="button" class="overlay-close" data-close="buyBonusOverlay">Close</button></div>
-                    <p class="overlay-note">Choose the bonus purchase amount. The feature plays at the wager shown for that option.</p>
+                    <p class="overlay-note">Choose the bonus game, then choose the purchase amount. Higher purchases play the feature at a higher wager.</p>
+                    <div id="buyBonusTypes" class="buy-bonus-types" role="group" aria-label="Choose bonus game">
+                        <button type="button" data-bonus-type="wheel">Wheel</button>
+                        <button type="button" data-bonus-type="match">Match &amp; Win</button>
+                        <button type="button" data-bonus-type="random" class="is-selected" aria-pressed="true">Random</button>
+                    </div>
                     <div id="buyBonusOptions" class="buy-bonus-options"></div>
                 </div>
             </div>
@@ -448,7 +465,7 @@
         const syncWheelSizeSummary = () => {
             state.wheelOdds = getWheelGroupOdds();
             const summary = document.getElementById("luckyWheelSizeSummary");
-            if (summary) summary.textContent = `Every wedge is independently adjustable and normalized to 100%. Current total: ${Math.round(state.wheelOdds * 100)}% winning / ${Math.round((1 - state.wheelOdds) * 100)}% no award.`;
+            if (summary) summary.textContent = `100% allocated · ${Math.round(state.wheelOdds * 100)}% winning · ${Math.round((1 - state.wheelOdds) * 100)}% no award. Changing one wedge automatically rebalances the others.`;
         };
         syncWheelSizeSummary();
         if (revealDoors) revealDoors.value = state.revealDoors;
@@ -479,8 +496,21 @@
         document.querySelectorAll("[data-wheel-size]").forEach((input) => {
             input.addEventListener("change", () => {
                 const index = Number(input.dataset.wheelSize);
-                state.wheelSizes[index] = Math.min(1000, Math.max(0.1, Number(input.value) || 1));
-                input.value = String(state.wheelSizes[index]);
+                const next = Math.max(2, Math.min(78, Math.round((Number(input.value) || 2) / 2) * 2));
+                const previous = state.wheelSizes[index];
+                state.wheelSizes[index] = next;
+                let difference = previous - next;
+                const otherIndexes = Array.from({ length: 11 }, (_, offset) => (index + offset + 1) % 12);
+                while (difference !== 0) {
+                    const direction = Math.sign(difference) * 2;
+                    const target = otherIndexes.find((otherIndex) => direction > 0 ? state.wheelSizes[otherIndex] <= 76 : state.wheelSizes[otherIndex] >= 4);
+                    if (target == null) { state.wheelSizes[index] = previous; break; }
+                    state.wheelSizes[target] += direction;
+                    difference -= direction;
+                }
+                document.querySelectorAll("[data-wheel-size]").forEach((sizeInput) => {
+                    sizeInput.value = String(state.wheelSizes[Number(sizeInput.dataset.wheelSize)]);
+                });
                 syncWheelSizeSummary();
                 updateLuckyWheelUi();
                 save();
@@ -562,23 +592,38 @@
     function openBonusBuyOverlay() {
         const overlay = document.getElementById("buyBonusOverlay");
         const optionsRoot = document.getElementById("buyBonusOptions");
+        const typesRoot = document.getElementById("buyBonusTypes");
         if (!overlay || !optionsRoot || !bonusBuyConfig) return;
         const fallbackCost = Math.max(0.01, Number(bonusBuyConfig.getCost?.()) || 0.01);
         const options = getBonusBuyOptions();
-        const purchases = options.length ? options : [{ wager: fallbackCost / 100, cost: fallbackCost }];
+        const purchases = options.length ? options : [{ wager: fallbackCost / 100, cost: fallbackCost, multiple: 100 }];
+        let selectedBonus = "random";
+        typesRoot?.querySelectorAll("[data-bonus-type]").forEach((typeButton) => {
+            const selected = typeButton.dataset.bonusType === selectedBonus;
+            typeButton.classList.toggle("is-selected", selected);
+            typeButton.setAttribute("aria-pressed", String(selected));
+            typeButton.onclick = () => {
+                selectedBonus = typeButton.dataset.bonusType;
+                typesRoot.querySelectorAll("[data-bonus-type]").forEach((button) => {
+                    const isSelected = button === typeButton;
+                    button.classList.toggle("is-selected", isSelected);
+                    button.setAttribute("aria-pressed", String(isSelected));
+                });
+            };
+        });
         optionsRoot.innerHTML = "";
         purchases.forEach(({ wager, cost }) => {
             const button = document.createElement("button");
             button.type = "button";
             button.className = "buy-bonus-option";
             button.disabled = bonusBuyConfig.canBuy?.({ wager, cost }) === false;
-            button.innerHTML = `<strong>${formatAmount(cost)}</strong><span>${formatAmount(wager)} wager · 100× bet</span>`;
+            button.innerHTML = `<strong>${money(cost)}</strong><span>${money(wager)} feature wager · higher purchase, higher potential win</span>`;
             button.addEventListener("click", async () => {
                 if (button.disabled) return;
                 optionsRoot.querySelectorAll("button").forEach((optionButton) => { optionButton.disabled = true; });
                 try {
                     closeOverlay("buyBonusOverlay");
-                    await bonusBuyConfig.buy({ wager, cost });
+                    await bonusBuyConfig.buy({ wager, cost, bonus: selectedBonus });
                 } finally { updateBonusBuyButton(); }
             });
             optionsRoot.appendChild(button);
@@ -600,7 +645,7 @@
         button.hidden = false;
         button.disabled = state.interactionLocked || !hasAvailableOption;
         button.textContent = "Buy Bonus";
-        button.setAttribute("aria-label", `Choose a bonus purchase amount; current bet costs ${formatAmount(cost)}`);
+        button.setAttribute("aria-label", `Choose a bonus purchase amount starting at ${money(cost)}`);
     }
     function offerLuckyWheel({ needed, wager, denomination = 0.01, onAward }) {
         const currentWager = Math.max(0.01, Number(wager) || 0.01);

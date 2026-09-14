@@ -63,11 +63,14 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 .hud > .right > button { width: 100%; min-width: 0; }
 .buy-bonus-button { font-weight: 950; }
 .buy-bonus-panel { width: min(520px, 92vw); }
+.buy-bonus-types { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; margin-bottom: .75rem; }
+.buy-bonus-types button { min-height: 46px; }
+.buy-bonus-types button.is-selected { border-color: var(--cyan, #4dcdff); background: rgba(77, 205, 255, .2); box-shadow: inset 0 0 0 1px var(--cyan, #4dcdff); }
 .buy-bonus-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
 .buy-bonus-option { display: grid; gap: .2rem; min-height: 72px; padding: .75rem; text-align: center; }
 .buy-bonus-option strong { font-size: 1.15rem; }
 .buy-bonus-option span { font-size: .78rem; opacity: .8; }
-@media (max-width: 480px) { .buy-bonus-options { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .buy-bonus-types, .buy-bonus-options { grid-template-columns: 1fr; } }
 .hud > .right > :is(.auto-spin-hint, .auto-spin-countdown, .message) { grid-column: 1 / -1; width: 100%; min-width: 0; max-width: 100%; margin-inline: 0; text-align: center; overflow-wrap: anywhere; }
 .hud > .left > *, .hud > .right > * { min-width: 0; max-width: 100%; }
 .hud :is(select, input[type="number"], input[type="text"]) { max-width: 100%; }

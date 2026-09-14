@@ -432,8 +432,12 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   }
   .game-identity > .game-version { font-size: 6.75pt; line-height: 1; }
   .game-view:has(.slot-mode-toolbar:not([hidden])) .game-identity {
-    width: calc(100% - 280px);
-    max-width: calc(100% - 280px);
+    position: static;
+    left: auto;
+    flex: 1 1 0;
+    width: auto;
+    max-width: none;
+    transform: none;
   }
   .game-view:has(.slot-mode-toolbar:not([hidden])) .game-identity > strong {
     font-size: clamp(9pt, 3.7vw, 14pt);
@@ -674,8 +678,8 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
   .game-toolbar { box-sizing: border-box; height: auto; min-height: 56px; gap: 7px; padding: 6px 8px; }
   .back-button { flex: 0 0 42px; width: 42px; height: 42px; justify-content: center; box-sizing: border-box; padding: 0; font-size: 20pt; line-height: 1; }
   .back-button b { display: none; }
-  .game-identity { flex: 1 1 auto; gap: 5px; }
-  .game-identity > strong { font-size: 9pt; text-overflow: ellipsis; }
+  .game-identity { flex: 1 1 0; gap: 5px; overflow: hidden; }
+  .game-identity > strong { display: block; width: 100%; overflow: hidden; font-size: 9pt; text-overflow: ellipsis; white-space: nowrap; }
   .toolbar-bingo-controls { flex: 0 0 auto; gap: 5px; }
   .toolbar-theme-picker { flex: 0 0 auto; min-width: 0; }
   .toolbar-theme-picker select { box-sizing: border-box; width: clamp(112px, 34vw, 140px); min-width: 112px; max-width: 140px; padding-inline: 10px 25px; font-size: 8.5pt; text-overflow: clip; }
