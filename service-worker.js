@@ -1,4 +1,4 @@
-const CACHE_NAME = "muha-casino-shell-20260914-realistic-bonus-games-v7";
+const CACHE_NAME = "muha-casino-shell-20260914-rapid-match-taps-v9";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -6,10 +6,10 @@ const APP_SHELL = [
   "./launcher.js",
   "./interaction-lock.js",
   "./manifest.webmanifest",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
-  "./icons/icon-maskable-512.png",
-  "./icons/apple-touch-icon.png"
+  "./icons/muha-casino-192-v2.png",
+  "./icons/muha-casino-512-v2.png",
+  "./icons/muha-casino-maskable-v2.png",
+  "./icons/muha-casino-touch-v2.png"
 ];
 
 self.addEventListener("install", (event) => {

@@ -596,7 +596,7 @@ function playMatchAndWinBonus(totalBetUSD) {
             button.type = "button";
             button.textContent = "?";
             button.setAttribute("aria-label", "Hidden jackpot card");
-            button.onclick = () => {
+            const revealCard = () => {
                 if (finished || button.disabled) return;
                 button.disabled = true;
                 button.className = `jackpot-${tier.name.toLowerCase()}`;
@@ -615,6 +615,8 @@ function playMatchAndWinBonus(totalBetUSD) {
                     setTimeout(() => { overlay.remove(); resolve({ winUSD: 0, label: "MATCH & WIN" }); }, 1400);
                 }
             };
+            button.addEventListener("pointerdown", (event) => { event.preventDefault(); revealCard(); });
+            button.addEventListener("click", (event) => { if (event.detail === 0) revealCard(); });
             grid.appendChild(button);
         });
         grid.querySelector("button")?.focus();
