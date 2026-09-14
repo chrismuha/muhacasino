@@ -62,6 +62,12 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 .hud > .right { display: grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); grid-column: 1; grid-row: 1; width: 100%; min-width: 0; max-width: 100%; align-items: stretch; }
 .hud > .right > button { width: 100%; min-width: 0; }
 .buy-bonus-button { font-weight: 950; }
+.buy-bonus-panel { width: min(520px, 92vw); }
+.buy-bonus-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
+.buy-bonus-option { display: grid; gap: .2rem; min-height: 72px; padding: .75rem; text-align: center; }
+.buy-bonus-option strong { font-size: 1.15rem; }
+.buy-bonus-option span { font-size: .78rem; opacity: .8; }
+@media (max-width: 480px) { .buy-bonus-options { grid-template-columns: 1fr; } }
 .hud > .right > :is(.auto-spin-hint, .auto-spin-countdown, .message) { grid-column: 1 / -1; width: 100%; min-width: 0; max-width: 100%; margin-inline: 0; text-align: center; overflow-wrap: anywhere; }
 .hud > .left > *, .hud > .right > * { min-width: 0; max-width: 100%; }
 .hud :is(select, input[type="number"], input[type="text"]) { max-width: 100%; }

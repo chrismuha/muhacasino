@@ -679,9 +679,9 @@ function playBonusGame(totalBetUSD) {
     return Math.random() < 0.5 ? playWheelBonusGame(totalBetUSD) : playMatchAndWinBonus(totalBetUSD);
 }
 
-async function buyInstantBonus() {
-    const wager = getActiveTotalBetUSD();
-    const cost = roundUSD(wager * 100);
+async function buyInstantBonus(option = {}) {
+    const wager = roundUSD(Number(option.wager) || getActiveTotalBetUSD());
+    const cost = roundUSD(Number(option.cost) || wager * 100);
     if (isSpinning || autoSpinRunning || freeSpinsRemaining > 0) return;
     if (balance < cost) { setMessage(`Buy Bonus costs ${fmtUSD(cost)} (100× the current bet).`); return; }
     isSpinning = true; balance = clampBalanceUSD(balance - cost); window.slotExperience?.recordPlay(cost);
@@ -1368,7 +1368,7 @@ function getSettingsDefinitions() {
         { key: "withdrawalDemo", title: "Withdrawal Demonstration", element: document.getElementById("withdrawalDemoToggle")?.closest(".checkbox-setting") },
         { key: "luckyWheel", title: "Lucky Wheel", element: document.getElementById("luckyWheelToggle")?.closest(".checkbox-setting") },
         { key: "resultBars", title: "Result Bar Layout", element: document.getElementById("collapseEmptyResultsToggle")?.closest(".checkbox-setting") },
-        { key: "luckyWheelOdds", title: "Lucky Wheel Percentages", element: document.getElementById("luckyWheelWinPercentage")?.closest(".slot-wheel-odds-setting") },
+        { key: "luckyWheelOdds", title: "Lucky Wheel Wedge Sizes", element: document.querySelector(".slot-wheel-odds-setting") },
         { key: "luckyWheelPrizes", title: "Lucky Wheel Winning Wedges", element: document.querySelector(".slot-wheel-prizes-setting") },
         { key: "adjustMoney", title: "Adjust Money", element: creditStepEl?.closest(".credit-controls") },
         { key: "lines", title: "Lines", element: linesEl?.closest(".select") },
@@ -1463,6 +1463,11 @@ function setupSettingsOverlay() {
         localStorage.setItem(adjustMoneyMigrationKey, "1");
     }
     if (!Object.prototype.hasOwnProperty.call(settingsPins, "creditsInserted")) settingsPins.creditsInserted = true;
+    const wedgeSizesMigrationKey = `${SETTINGS_PIN_STORAGE_KEY}.wedgeSizesDefaultOff.${location.pathname}`;
+    if (!localStorage.getItem(wedgeSizesMigrationKey)) {
+        settingsPins.luckyWheelOdds = false;
+        localStorage.setItem(wedgeSizesMigrationKey, "1");
+    }
     saveSettingsPins();
 
     settingsOverlayEl = document.createElement("div");
@@ -2293,5 +2298,5 @@ document.addEventListener("keyup", (e) => {
     updateSessionStatsVisibility();
     updateRealtimeCreditMessage();
     bindSpinHold();
-    window.slotExperience?.configureBonusBuy({ getCost: () => roundUSD(getActiveTotalBetUSD() * 100), canBuy: () => !isSpinning && !autoSpinRunning && freeSpinsRemaining === 0 && balance >= roundUSD(getActiveTotalBetUSD() * 100), buy: buyInstantBonus });
+    window.slotExperience?.configureBonusBuy({ getCost: () => roundUSD(getActiveTotalBetUSD() * 100), getOptions: () => Array.from(document.querySelectorAll(".bet-preset"), button => ({ wager: roundUSD(Number(button.dataset.betTotal) * getDenominationValue() / 0.01), cost: roundUSD(Number(button.dataset.betTotal) * getDenominationValue() / 0.01 * 100) })), canBuy: (option = {}) => !isSpinning && !autoSpinRunning && freeSpinsRemaining === 0 && balance >= roundUSD(Number(option.cost) || getActiveTotalBetUSD() * 100), buy: buyInstantBonus });
 })();

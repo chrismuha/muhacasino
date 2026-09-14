@@ -81,9 +81,10 @@ async function check(game) {
         }
     }
     assert.match(source, /bonusResult\?\.count === 6 \? await playBonusGame\(totalBetUSD\)/);
-    assert.match(source, /function buyInstantBonus\(\)/, 'Every slot must expose an instant bonus purchase');
-    assert.match(source, /getActiveTotalBetUSD\(\) \* 100/, 'Bonus purchase must cost 100x the selected bet');
+    assert.match(source, /function buyInstantBonus\(option = \{\}\)/, 'Every slot must expose an amount-aware instant bonus purchase');
+    assert.match(source, /getOptions:.*\.bet-preset/, 'Every slot must expose its distinct bonus purchase amounts');
     assert.match(source, /configureBonusBuy/, 'Every slot must register its Buy Bonus button');
+    assert.match(extract(source, 'updateTotals'), /updateJackpotDisplay/, 'Every slot must refresh scaled jackpots when the bet changes');
     assert.doesNotMatch(source, /playPickBonusGame|addBonusChipWin\(grid, linesActive\)/);
     console.log(`${game}: six symbols, feature preservation, 50/50 selection, and payouts passed`);
 }

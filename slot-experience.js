@@ -396,6 +396,13 @@
         document.body.insertAdjacentHTML("beforeend", `
             <button id="buyBonus" class="buy-bonus-button" type="button" hidden>Buy Bonus</button>
             <button id="withdrawalButton" class="withdrawal-button" type="button" hidden>Withdraw</button>
+            <div id="buyBonusOverlay" class="overlay slot-experience-overlay" role="dialog" aria-modal="true" aria-labelledby="buyBonusTitle" hidden>
+                <div class="overlay-panel overlay-panel-compact slot-experience-panel buy-bonus-panel">
+                    <div class="overlay-head"><h3 id="buyBonusTitle">Buy a Bonus</h3><button type="button" class="overlay-close" data-close="buyBonusOverlay">Close</button></div>
+                    <p class="overlay-note">Choose the bonus purchase amount. The feature plays at the wager shown for that option.</p>
+                    <div id="buyBonusOptions" class="buy-bonus-options"></div>
+                </div>
+            </div>
             <div id="withdrawalOverlay" class="overlay slot-experience-overlay" role="dialog" aria-modal="true" aria-labelledby="withdrawalTitle" hidden>
                 <div class="overlay-panel overlay-panel-compact slot-experience-panel">
                     <div class="overlay-head"><h3 id="withdrawalTitle">Withdrawals not available right now</h3><button type="button" class="overlay-close" data-close="withdrawalOverlay">Close</button></div>
@@ -426,10 +433,9 @@
             actionArea.insertBefore(buyBonusButton, actionStatus);
             actionArea.insertBefore(withdrawalButton, actionStatus);
         }
-        buyBonusButton.addEventListener("click", async () => {
+        buyBonusButton.addEventListener("click", () => {
             if (!bonusBuyConfig || buyBonusButton.disabled) return;
-            buyBonusButton.disabled = true;
-            try { await bonusBuyConfig.buy(); } finally { updateBonusBuyButton(); }
+            openBonusBuyOverlay();
         });
 
         const withdrawalToggle = document.getElementById("withdrawalDemoToggle");
@@ -522,7 +528,7 @@
         });
         document.querySelectorAll(".slot-experience-overlay [data-close]").forEach((button) => button.addEventListener("click", () => closeOverlay(button.dataset.close)));
         document.addEventListener("keydown", (event) => {
-            const openOverlay = ["luckyWheelOverlay", "withdrawalOverlay"]
+            const openOverlay = ["buyBonusOverlay", "luckyWheelOverlay", "withdrawalOverlay"]
                 .map((id) => document.getElementById(id))
                 .find((overlay) => overlay && !overlay.hidden);
             if (!openOverlay) return;
@@ -544,14 +550,57 @@
     let rescueRearmCredits = 0;
     let bonusBuyConfig = null;
 
+    function getBonusBuyOptions() {
+        const configured = bonusBuyConfig?.getOptions?.();
+        const options = Array.isArray(configured) ? configured : [];
+        return options
+            .map((option) => ({ wager: Math.max(0.01, Number(option.wager) || 0.01), cost: Math.max(0.01, Number(option.cost) || 0.01) }))
+            .filter((option, index, all) => all.findIndex((item) => Math.abs(item.cost - option.cost) < 0.001) === index)
+            .sort((a, b) => a.cost - b.cost);
+    }
+
+    function openBonusBuyOverlay() {
+        const overlay = document.getElementById("buyBonusOverlay");
+        const optionsRoot = document.getElementById("buyBonusOptions");
+        if (!overlay || !optionsRoot || !bonusBuyConfig) return;
+        const fallbackCost = Math.max(0.01, Number(bonusBuyConfig.getCost?.()) || 0.01);
+        const options = getBonusBuyOptions();
+        const purchases = options.length ? options : [{ wager: fallbackCost / 100, cost: fallbackCost }];
+        optionsRoot.innerHTML = "";
+        purchases.forEach(({ wager, cost }) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "buy-bonus-option";
+            button.disabled = bonusBuyConfig.canBuy?.({ wager, cost }) === false;
+            button.innerHTML = `<strong>${formatAmount(cost)}</strong><span>${formatAmount(wager)} wager · 100× bet</span>`;
+            button.addEventListener("click", async () => {
+                if (button.disabled) return;
+                optionsRoot.querySelectorAll("button").forEach((optionButton) => { optionButton.disabled = true; });
+                try {
+                    closeOverlay("buyBonusOverlay");
+                    await bonusBuyConfig.buy({ wager, cost });
+                } finally { updateBonusBuyButton(); }
+            });
+            optionsRoot.appendChild(button);
+        });
+        overlay.hidden = false;
+        document.body.classList.add("slot-experience-overlay-open");
+        document.documentElement.classList.add("slot-experience-overlay-open");
+        optionsRoot.querySelector("button:not(:disabled)")?.focus();
+    }
+
     function updateBonusBuyButton() {
         const button = document.getElementById("buyBonus");
         if (!button || !bonusBuyConfig) return;
         const cost = Math.max(0.01, Number(bonusBuyConfig.getCost?.()) || 0.01);
+        const options = getBonusBuyOptions();
+        const hasAvailableOption = options.length
+            ? options.some((option) => bonusBuyConfig.canBuy?.(option) !== false)
+            : bonusBuyConfig.canBuy?.({ cost, wager: cost / 100 }) !== false;
         button.hidden = false;
-        button.disabled = state.interactionLocked || bonusBuyConfig.canBuy?.() === false;
-        button.textContent = `Buy Bonus · ${formatAmount(cost)}`;
-        button.setAttribute("aria-label", `Buy the instant bonus for ${formatAmount(cost)}`);
+        button.disabled = state.interactionLocked || !hasAvailableOption;
+        button.textContent = "Buy Bonus";
+        button.setAttribute("aria-label", `Choose a bonus purchase amount; current bet costs ${formatAmount(cost)}`);
     }
     function offerLuckyWheel({ needed, wager, denomination = 0.01, onAward }) {
         const currentWager = Math.max(0.01, Number(wager) || 0.01);
