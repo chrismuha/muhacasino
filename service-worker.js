@@ -1,4 +1,4 @@
-const CACHE_NAME = "muha-casino-shell-20260914-rapid-match-taps-v9";
+const CACHE_NAME = "muha-casino-shell-20260914-rounded-favicon-v10";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -9,7 +9,8 @@ const APP_SHELL = [
   "./icons/muha-casino-192-v2.png",
   "./icons/muha-casino-512-v2.png",
   "./icons/muha-casino-maskable-v2.png",
-  "./icons/muha-casino-touch-v2.png"
+  "./icons/muha-casino-touch-v2.png",
+  "./icons/rounded-browser-icon-v3.png"
 ];
 
 self.addEventListener("install", (event) => {
