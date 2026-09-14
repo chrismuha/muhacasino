@@ -86,6 +86,7 @@ async function check(game) {
     assert.match(source, /function buyInstantBonus\(option = \{\}\)/, 'Every slot must expose an amount-aware instant bonus purchase');
     assert.match(source, /getCost: \(\) => 40, getOptions:.*\[40, 80, 120\].*cost \/ 100/, 'Every slot must expose fixed $40, $80, and $120 bonus purchases with increasing feature wagers');
     assert.match(source, /configureBonusBuy/, 'Every slot must register its Buy Bonus button');
+    assert.match(source, /const board = shuffledCopy\(\[winningTier, winningTier, winningTier, \.\.\.decoys\.slice\(0, 6\)\]\)/, 'Match & Win must shuffle one guaranteed triple among six decoys');
     assert.match(extract(source, 'updateTotals'), /updateJackpotDisplay/, 'Every slot must refresh scaled jackpots when the bet changes');
     assert.doesNotMatch(source, /playPickBonusGame|addBonusChipWin\(grid, linesActive\)/);
     console.log(`${game}: six symbols, feature preservation, 50/50 selection, and payouts passed`);

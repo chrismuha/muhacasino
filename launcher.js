@@ -79,7 +79,7 @@ const categoryNames = {
   table: "Tabletop Games",
 };
 
-const SITE_BUILD = "20260914-bonus-choice-v5";
+const SITE_BUILD = "20260914-realistic-bonus-games-v7";
 const launcher = document.querySelector("#launcher");
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
@@ -170,27 +170,6 @@ let gameLoadTimer = 0;
 const bingoThemeChannel = "BroadcastChannel" in window
   ? new BroadcastChannel("muha-bingo-theme-sync")
   : null;
-
-function removeLegacyCasinoCaching() {
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.getRegistrations()
-      .then((registrations) => Promise.all(registrations.map((registration) => registration.unregister())))
-      .catch(() => {
-
-      });
-  }
-  if ("caches" in window) {
-    window.caches.keys()
-      .then((names) => Promise.all(
-        names
-          .filter((name) => name.startsWith("muha-casino-"))
-          .map((name) => window.caches.delete(name))
-      ))
-      .catch(() => {
-
-      });
-  }
-}
 
 function showSlide(index) {
   activeSlide = (index + slides.length) % slides.length;
@@ -604,7 +583,5 @@ window.addEventListener("popstate", () => {
 
 showSlide(0);
 restartSlider();
-removeLegacyCasinoCaching();
-
 const requestedGame = window.location.hash.slice(1);
 if (games[requestedGame]) launchGame(requestedGame, false);

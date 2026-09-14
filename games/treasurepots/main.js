@@ -580,10 +580,8 @@ function chooseMatchJackpot() {
 
 function playMatchAndWinBonus(totalBetUSD) {
     const winningTier = chooseMatchJackpot();
-    const symbols = winningTier
-        ? [winningTier, winningTier, winningTier, ...JACKPOT_TIERS.filter((tier) => tier !== winningTier).flatMap((tier) => [tier, tier])]
-        : [...JACKPOT_TIERS.flatMap((tier) => [tier, tier]), { name: "Blank", amountUSD: 0 }];
-    const board = shuffledCopy(symbols).slice(0, 9);
+    const decoys = shuffledCopy(JACKPOT_TIERS.filter((tier) => tier !== winningTier).flatMap((tier) => [tier, tier]));
+    const board = shuffledCopy([winningTier, winningTier, winningTier, ...decoys.slice(0, 6)]);
     const overlay = document.createElement("div");
     overlay.className = "feature-overlay match-win-overlay";
     overlay.innerHTML = `<div class="feature-dialog match-win-dialog" role="dialog" aria-modal="true" aria-labelledby="matchWinTitle"><h2 id="matchWinTitle">Match & Win</h2><p>Reveal the cards. Match three jackpot values to win that jackpot!</p><div class="match-win-grid"></div><p class="match-win-result" aria-live="polite">Pick a card to begin.</p></div>`;

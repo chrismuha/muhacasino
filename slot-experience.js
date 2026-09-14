@@ -117,7 +117,7 @@
         return `${Number(prize.value).toLocaleString(undefined, { maximumFractionDigits: 2 })}×`;
     }
 
-    function spinWheel(element, targetDegrees, duration = 3800) {
+    function spinWheel(element, targetDegrees, duration = 5600) {
         if (!element) return Promise.resolve();
         const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
         const spinDuration = reduceMotion ? 0 : Math.max(0, Number(duration) || 0);
@@ -127,6 +127,21 @@
         // Force the reset to paint before applying the target transform. Mobile
         // Safari otherwise sometimes batches both writes and skips the spin.
         void element.offsetWidth;
+
+        if (spinDuration && typeof element.animate === "function") {
+            const overshoot = targetDegrees + 8;
+            const animation = element.animate([
+                { transform: "rotate(0deg)", offset: 0, easing: "cubic-bezier(.55,.02,.82,.35)" },
+                { transform: "rotate(80deg)", offset: .12, easing: "linear" },
+                { transform: `rotate(${targetDegrees - 140}deg)`, offset: .72, easing: "cubic-bezier(.08,.68,.16,1)" },
+                { transform: `rotate(${overshoot}deg)`, offset: .94, easing: "ease-out" },
+                { transform: `rotate(${targetDegrees}deg)`, offset: 1 },
+            ], { duration: spinDuration, fill: "forwards" });
+            return animation.finished.catch(() => {}).then(() => {
+                element.style.transform = `rotate(${targetDegrees}deg)`;
+                animation.cancel();
+            });
+        }
 
         return new Promise((resolve) => {
             let finished = false;
@@ -415,9 +430,10 @@
                     <div id="buyBonusTypes" class="buy-bonus-types" role="group" aria-label="Choose bonus game">
                         <button type="button" data-bonus-type="wheel">Wheel</button>
                         <button type="button" data-bonus-type="match">Match &amp; Win</button>
-                        <button type="button" data-bonus-type="random" class="is-selected" aria-pressed="true">Random</button>
+                        <button type="button" data-bonus-type="random">Random</button>
                     </div>
                     <div id="buyBonusOptions" class="buy-bonus-options"></div>
+                    <button id="buyBonusConfirm" class="buy-bonus-confirm" type="button" disabled>Buy Selected Bonus</button>
                 </div>
             </div>
             <div id="withdrawalOverlay" class="overlay slot-experience-overlay" role="dialog" aria-modal="true" aria-labelledby="withdrawalTitle" hidden>
@@ -593,15 +609,19 @@
         const overlay = document.getElementById("buyBonusOverlay");
         const optionsRoot = document.getElementById("buyBonusOptions");
         const typesRoot = document.getElementById("buyBonusTypes");
-        if (!overlay || !optionsRoot || !bonusBuyConfig) return;
+        const confirmButton = document.getElementById("buyBonusConfirm");
+        if (!overlay || !optionsRoot || !typesRoot || !confirmButton || !bonusBuyConfig) return;
         const fallbackCost = Math.max(0.01, Number(bonusBuyConfig.getCost?.()) || 0.01);
         const options = getBonusBuyOptions();
         const purchases = options.length ? options : [{ wager: fallbackCost / 100, cost: fallbackCost, multiple: 100 }];
-        let selectedBonus = "random";
-        typesRoot?.querySelectorAll("[data-bonus-type]").forEach((typeButton) => {
-            const selected = typeButton.dataset.bonusType === selectedBonus;
-            typeButton.classList.toggle("is-selected", selected);
-            typeButton.setAttribute("aria-pressed", String(selected));
+        let selectedBonus = null;
+        let selectedPurchase = null;
+        const updateConfirmation = () => {
+            confirmButton.disabled = !selectedBonus || !selectedPurchase;
+        };
+        typesRoot.querySelectorAll("[data-bonus-type]").forEach((typeButton) => {
+            typeButton.classList.remove("is-selected");
+            typeButton.setAttribute("aria-pressed", "false");
             typeButton.onclick = () => {
                 selectedBonus = typeButton.dataset.bonusType;
                 typesRoot.querySelectorAll("[data-bonus-type]").forEach((button) => {
@@ -609,6 +629,7 @@
                     button.classList.toggle("is-selected", isSelected);
                     button.setAttribute("aria-pressed", String(isSelected));
                 });
+                updateConfirmation();
             };
         });
         optionsRoot.innerHTML = "";
@@ -617,17 +638,29 @@
             button.type = "button";
             button.className = "buy-bonus-option";
             button.disabled = bonusBuyConfig.canBuy?.({ wager, cost }) === false;
-            button.innerHTML = `<strong>${money(cost)}</strong><span>${money(wager)} feature wager · higher purchase, higher potential win</span>`;
-            button.addEventListener("click", async () => {
+            button.textContent = money(cost);
+            button.setAttribute("aria-pressed", "false");
+            button.addEventListener("click", () => {
                 if (button.disabled) return;
-                optionsRoot.querySelectorAll("button").forEach((optionButton) => { optionButton.disabled = true; });
-                try {
-                    closeOverlay("buyBonusOverlay");
-                    await bonusBuyConfig.buy({ wager, cost, bonus: selectedBonus });
-                } finally { updateBonusBuyButton(); }
+                selectedPurchase = { wager, cost };
+                optionsRoot.querySelectorAll("button").forEach((optionButton) => {
+                    const isSelected = optionButton === button;
+                    optionButton.classList.toggle("is-selected", isSelected);
+                    optionButton.setAttribute("aria-pressed", String(isSelected));
+                });
+                updateConfirmation();
             });
             optionsRoot.appendChild(button);
         });
+        confirmButton.onclick = async () => {
+            if (confirmButton.disabled || !selectedBonus || !selectedPurchase) return;
+            confirmButton.disabled = true;
+            try {
+                closeOverlay("buyBonusOverlay");
+                await bonusBuyConfig.buy({ ...selectedPurchase, bonus: selectedBonus });
+            } finally { updateBonusBuyButton(); }
+        };
+        updateConfirmation();
         overlay.hidden = false;
         document.body.classList.add("slot-experience-overlay-open");
         document.documentElement.classList.add("slot-experience-overlay-open");

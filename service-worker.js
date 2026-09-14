@@ -1,4 +1,4 @@
-const CACHE_NAME = "muha-casino-shell-20260914-bonus-choice-v5";
+const CACHE_NAME = "muha-casino-shell-20260914-realistic-bonus-games-v7";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -7,7 +7,9 @@ const APP_SHELL = [
   "./interaction-lock.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
-  "./icons/icon-512.png"
+  "./icons/icon-512.png",
+  "./icons/icon-maskable-512.png",
+  "./icons/apple-touch-icon.png"
 ];
 
 self.addEventListener("install", (event) => {
