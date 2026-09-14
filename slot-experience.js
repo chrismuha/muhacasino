@@ -11,11 +11,13 @@
         { type: "multiplier", value: 3 },
         { type: "jackpot", tier: "mini" },
     ];
+    const defaultWheelSizes = Array(12).fill(1);
     const state = {
         displayMode: "credits",
         withdrawalDemo: false,
         luckyWheel: true,
         wheelOdds: 0.5,
+        wheelSizes: [...defaultWheelSizes],
         wheelPrizes: defaultWheelPrizes.map((prize) => ({ ...prize })),
         collapseEmptyResults: false,
         revealDoors: "off",
@@ -37,6 +39,11 @@
             : Boolean(saved.moneyMode);
         state.luckyWheel = saved.luckyWheel !== false;
         state.wheelOdds = Math.min(0.99, Math.max(0.01, Number(saved.wheelOdds) || 0.5));
+        state.wheelSizes = Array.isArray(saved.wheelSizes) && saved.wheelSizes.length === 12
+            ? saved.wheelSizes.map((size) => Math.max(0.1, Number(size) || 1))
+            : Array.from({ length: 12 }, (_, index) => index % 2 === 0
+                ? state.wheelOdds * 100 / 6
+                : (1 - state.wheelOdds) * 100 / 6);
         state.wheelPrizes = Array.isArray(saved.wheelPrizes) && saved.wheelPrizes.length === 6
             ? saved.wheelPrizes.map((prize, index) => normalizeWheelPrize(prize, defaultWheelPrizes[index]))
             : defaultWheelPrizes.map((prize, index) => ({
@@ -69,6 +76,7 @@
                 withdrawalDemo: state.withdrawalDemo,
                 luckyWheel: state.luckyWheel,
                 wheelOdds: state.wheelOdds,
+                wheelSizes: state.wheelSizes,
                 wheelPrizes: state.wheelPrizes,
                 collapseEmptyResults: state.collapseEmptyResults,
                 revealDoors: state.revealDoors,
@@ -201,15 +209,20 @@
     }
 
     function getLuckyWheelSegments() {
-        const winArc = (state.wheelOdds * 360) / 6;
-        const lossArc = ((1 - state.wheelOdds) * 360) / 6;
+        const totalSize = state.wheelSizes.reduce((sum, size) => sum + Math.max(0.1, Number(size) || 0.1), 0);
         let angle = 0;
         return Array.from({ length: 12 }, (_, index) => {
-            const size = index % 2 === 0 ? winArc : lossArc;
+            const size = (Math.max(0.1, Number(state.wheelSizes[index]) || 0.1) / totalSize) * 360;
             const segment = { index, start: angle, end: angle + size, center: angle + (size / 2), size, won: index % 2 === 0 };
             angle += size;
             return segment;
         });
+    }
+
+    function getWheelGroupOdds() {
+        const total = state.wheelSizes.reduce((sum, size) => sum + size, 0);
+        const wins = state.wheelSizes.reduce((sum, size, index) => sum + (index % 2 === 0 ? size : 0), 0);
+        return total > 0 ? wins / total : 0.5;
     }
 
     function updateLuckyWheelUi() {
@@ -262,19 +275,18 @@
                 <span><strong>Hide empty result bars</strong><small>Moves controls upward while idle, but the layout will shift when a result or feature message appears. Off by default.</small></span>
             </label>
             <div class="select slot-wheel-odds-setting">
-                <strong>Lucky Wheel wedge percentages</strong>
+                <strong>Lucky Wheel individual wedge sizes</strong>
                 <div class="wheel-percentage-grid">
-                    <label>Winning wedges<input id="luckyWheelWinPercentage" type="number" min="1" max="99" step="1" inputmode="numeric"><span>%</span></label>
-                    <label>No-award wedges<input id="luckyWheelLossPercentage" type="number" min="1" max="99" step="1" inputmode="numeric"><span>%</span></label>
+                    ${Array.from({ length: 12 }, (_, index) => `<label>${index % 2 === 0 ? `Win ${index / 2 + 1}` : `No award ${(index + 1) / 2}`}<input type="number" min="0.1" max="1000" step="0.1" inputmode="decimal" value="${state.wheelSizes[index]}" data-wheel-size="${index}"><span>parts</span></label>`).join("")}
                 </div>
-                <small>Set either share from 1% to 99%; the other updates automatically so the wheel always totals 100%. Each of the six matching wedges shares that area equally.</small>
+                <small id="luckyWheelSizeSummary">Every wedge is independently adjustable. Sizes are relative parts and normalized to 100% on the wheel.</small>
             </div>
             <div class="jackpot-config-setting slot-wheel-prizes-setting">
                 <strong>Lucky wheel winning wedges</strong>
                 <div class="wheel-prize-grid">
                     ${state.wheelPrizes.map(wheelPrizeEditor).join("")}
                 </div>
-                <small>Configure six winning wedges as bet multipliers, fixed values, or scaled jackpots. Six alternating 0× wedges remain no-award results; Win / Loss Ratio controls which group can be selected.</small>
+                <small>Configure the six winning wedge awards here. The individual wedge-size controls above determine both each wedge's visible size and exact landing chance.</small>
             </div>
             <div class="jackpot-config-setting jackpot-amounts-setting">
                 <strong>Jackpot amounts</strong>
@@ -382,6 +394,7 @@
         }
 
         document.body.insertAdjacentHTML("beforeend", `
+            <button id="buyBonus" class="buy-bonus-button" type="button" hidden>Buy Bonus</button>
             <button id="withdrawalButton" class="withdrawal-button" type="button" hidden>Withdraw</button>
             <div id="withdrawalOverlay" class="overlay slot-experience-overlay" role="dialog" aria-modal="true" aria-labelledby="withdrawalTitle" hidden>
                 <div class="overlay-panel overlay-panel-compact slot-experience-panel">
@@ -406,26 +419,32 @@
             </div>`);
 
         const withdrawalButton = document.getElementById("withdrawalButton");
+        const buyBonusButton = document.getElementById("buyBonus");
         const actionArea = document.querySelector(".right");
         if (actionArea) {
             const actionStatus = actionArea.querySelector(".auto-spin-hint, .message");
+            actionArea.insertBefore(buyBonusButton, actionStatus);
             actionArea.insertBefore(withdrawalButton, actionStatus);
         }
+        buyBonusButton.addEventListener("click", async () => {
+            if (!bonusBuyConfig || buyBonusButton.disabled) return;
+            buyBonusButton.disabled = true;
+            try { await bonusBuyConfig.buy(); } finally { updateBonusBuyButton(); }
+        });
 
         const withdrawalToggle = document.getElementById("withdrawalDemoToggle");
         const wheelToggle = document.getElementById("luckyWheelToggle");
         const resultBarsToggle = document.getElementById("collapseEmptyResultsToggle");
-        const winPercentage = document.getElementById("luckyWheelWinPercentage");
-        const lossPercentage = document.getElementById("luckyWheelLossPercentage");
         const revealDoors = document.getElementById("pennyRevealDoors");
         withdrawalToggle.checked = state.withdrawalDemo;
         wheelToggle.checked = state.luckyWheel;
         resultBarsToggle.checked = state.collapseEmptyResults;
-        const syncWheelPercentages = () => {
-            winPercentage.value = String(Math.round(state.wheelOdds * 100));
-            lossPercentage.value = String(100 - Math.round(state.wheelOdds * 100));
+        const syncWheelSizeSummary = () => {
+            state.wheelOdds = getWheelGroupOdds();
+            const summary = document.getElementById("luckyWheelSizeSummary");
+            if (summary) summary.textContent = `Every wedge is independently adjustable and normalized to 100%. Current total: ${Math.round(state.wheelOdds * 100)}% winning / ${Math.round((1 - state.wheelOdds) * 100)}% no award.`;
         };
-        syncWheelPercentages();
+        syncWheelSizeSummary();
         if (revealDoors) revealDoors.value = state.revealDoors;
         const revealDoorRows = Array.from(document.querySelectorAll("[data-penny-door-row]"));
         revealDoorRows.forEach((checkbox) => {
@@ -451,16 +470,16 @@
             updateResultBarUi();
             save();
         });
-        const updateWheelPercentage = (changedInput) => {
-            const requested = Math.round(Number(changedInput.value) || 1);
-            const changedShare = Math.min(99, Math.max(1, requested));
-            state.wheelOdds = changedInput === winPercentage ? changedShare / 100 : (100 - changedShare) / 100;
-            syncWheelPercentages();
-            updateLuckyWheelUi();
-            save();
-        };
-        winPercentage.addEventListener("change", () => updateWheelPercentage(winPercentage));
-        lossPercentage.addEventListener("change", () => updateWheelPercentage(lossPercentage));
+        document.querySelectorAll("[data-wheel-size]").forEach((input) => {
+            input.addEventListener("change", () => {
+                const index = Number(input.dataset.wheelSize);
+                state.wheelSizes[index] = Math.min(1000, Math.max(0.1, Number(input.value) || 1));
+                input.value = String(state.wheelSizes[index]);
+                syncWheelSizeSummary();
+                updateLuckyWheelUi();
+                save();
+            });
+        });
         const updateWheelPrize = (index) => {
             const editor = document.querySelector(`[data-wheel-editor="${index}"]`);
             const type = document.querySelector(`[data-wheel-prize-type="${index}"]`)?.value;
@@ -523,6 +542,17 @@
     let pendingWheel = null;
     let luckyWheelUsed = false;
     let rescueRearmCredits = 0;
+    let bonusBuyConfig = null;
+
+    function updateBonusBuyButton() {
+        const button = document.getElementById("buyBonus");
+        if (!button || !bonusBuyConfig) return;
+        const cost = Math.max(0.01, Number(bonusBuyConfig.getCost?.()) || 0.01);
+        button.hidden = false;
+        button.disabled = state.interactionLocked || bonusBuyConfig.canBuy?.() === false;
+        button.textContent = `Buy Bonus · ${formatAmount(cost)}`;
+        button.setAttribute("aria-label", `Buy the instant bonus for ${formatAmount(cost)}`);
+    }
     function offerLuckyWheel({ needed, wager, denomination = 0.01, onAward }) {
         const currentWager = Math.max(0.01, Number(wager) || 0.01);
         const hasPlayedToDepletion = state.played > 0 && state.balance + 0.0001 < currentWager;
@@ -543,17 +573,14 @@
             window.slotExperience?.setInteractionLocked(true);
             const attempt = pendingWheel;
             const disc = overlay.querySelector(".lucky-wheel-disc");
-            const won = Math.random() < state.wheelOdds;
             const segments = getLuckyWheelSegments();
-            const eligibleSlices = won ? [0, 2, 4, 6, 8, 10] : [1, 3, 5, 7, 9, 11];
-            const slice = eligibleSlices[Math.floor(Math.random() * eligibleSlices.length)];
+            const roll = Math.random() * 360;
+            const slice = segments.findIndex((segment) => roll < segment.end);
+            const won = segments[slice].won;
             const prizeIndex = won ? slice / 2 : -1;
             const sliceCenter = segments[slice].center;
-            disc.style.setProperty("--wheel-turn", `${1440 + (360 - sliceCenter)}deg`);
-            disc.classList.add("spinning");
-            window.setTimeout(async () => {
+            spinWheel(disc, 2160 + (360 - sliceCenter), 4200).then(async () => {
                 if (pendingWheel !== attempt) return;
-                disc.classList.remove("spinning");
                 if (!won) {
                     result.textContent = "No award this time. The one rescue spin for this session has been used.";
                     window.slotExperience?.setInteractionLocked(false);
@@ -576,7 +603,7 @@
                 button.disabled = false;
                 button.textContent = "Close";
                 button.onclick = () => closeOverlay("luckyWheelOverlay");
-            }, 1500);
+            });
         };
         button.focus();
         return true;
@@ -675,8 +702,14 @@
             const next = Boolean(locked);
             if (state.interactionLocked === next) return;
             state.interactionLocked = next;
+            updateBonusBuyButton();
             window.parent.postMessage({ type: "muha-slot-interaction-lock", locked: next }, window.location.origin);
         },
+        configureBonusBuy(config) {
+            bonusBuyConfig = config;
+            updateBonusBuyButton();
+        },
+        updateBonusBuyButton,
         configureJackpots(tiers, { baseWager = 0.5 } = {}) {
             const defaults = Object.fromEntries(tiers.map((tier) => [tier.name.toLowerCase(), Number(tier.amountUSD)]));
             const saved = state.jackpots || {};
@@ -724,7 +757,7 @@
             }
             updateMoneyUi();
         },
-        setBalance(amount) { state.balance = Math.max(0, Number(amount) || 0); updateMoneyUi(); },
+        setBalance(amount) { state.balance = Math.max(0, Number(amount) || 0); updateMoneyUi(); updateBonusBuyButton(); },
         reset(balance = 100) { state.deposited = balance; state.played = 0; state.balance = balance; luckyWheelUsed = false; rescueRearmCredits = 0; updateMoneyUi(); },
     };
 })();

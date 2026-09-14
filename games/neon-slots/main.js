@@ -430,6 +430,7 @@ function updateTotals() {
     linesEl.disabled = wagerLocked;
     betEl.disabled = wagerLocked;
     document.querySelectorAll(".bet-preset").forEach((button) => { button.disabled = wagerLocked; });
+    window.slotExperience?.updateBonusBuyButton();
     if (resetSessionBtn) resetSessionBtn.disabled = isSpinning || autoSpinRunning;
 }
 
@@ -593,6 +594,26 @@ function playWheelBonusGame(totalBetUSD) {
 
 function playBonusGame(totalBetUSD) {
     return Math.random() < 0.5 ? playWheelBonusGame(totalBetUSD) : playMatchAndWinBonus(totalBetUSD);
+}
+
+async function buyInstantBonus() {
+    const wager = getActiveTotalBetUSD();
+    const cost = roundUSD(wager * 100);
+    if (isSpinning || autoSpinRunning || freeSpinsRemaining > 0) return;
+    if (balance < cost) { setMessage(`Buy Bonus costs ${fmtUSD(cost)} (100× the current bet).`); return; }
+    isSpinning = true;
+    balance = clampBalanceUSD(balance - cost);
+    window.slotExperience?.recordPlay(cost);
+    addSessionLosses(cost); addNetSessionLosses(cost); subtractNetSessionWinnings(cost); adjustActualSessionNet(-cost);
+    updateTotals();
+    try {
+        const award = roundUSD(Number(await playBonusGame(wager)) || 0);
+        if (award > 0) {
+            balance = clampBalanceUSD(balance + award);
+            addSessionWinnings(award); addNetSessionWinnings(award); subtractNetSessionLosses(award); adjustActualSessionNet(award);
+        }
+        setMessage(`BONUS COMPLETE — Cost ${fmtUSD(cost)} • Award ${fmtUSD(award)}`);
+    } finally { isSpinning = false; updateTotals(); }
 }
 
 function getCreditStatusMessage(totalBetOverrideUSD = totalBetDisplayOverrideUSD) {
@@ -1997,4 +2018,5 @@ document.addEventListener("keyup", (e) => {
     updateSessionStatsVisibility();
     updateRealtimeCreditMessage();
     bindSpinHold();
+    window.slotExperience?.configureBonusBuy({ getCost: () => roundUSD(getActiveTotalBetUSD() * 100), canBuy: () => !isSpinning && !autoSpinRunning && freeSpinsRemaining === 0 && balance >= roundUSD(getActiveTotalBetUSD() * 100), buy: buyInstantBonus });
 })();

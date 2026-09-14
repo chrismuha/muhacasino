@@ -57,6 +57,10 @@ async function check(game) {
             const nodes = { '.slot-bonus-wheel': { style: {} }, '.wheel-spin': { focus() {} }, '.wheel-result': {} };
             const timers = [];
             context.bonusOverlayEl = { hidden: true, querySelector: selector => nodes[selector] };
+            context.window = { slotExperience: { spinWheel: (wheel, rotation) => {
+                wheel.style.transform = `rotate(${rotation}deg)`;
+                return Promise.resolve();
+            } } };
             context.getBonusPrizeMultipliers = () => [2, 5, 10];
             context.roundUSD = amount => Math.round(amount * 100) / 100;
             context.fmtUSD = amount => `$${amount}`;
@@ -65,9 +69,10 @@ async function check(game) {
             const award = context.playWheelBonusGame(2.5);
             nodes['.wheel-spin'].onclick();
             nodes['.wheel-spin'].onclick();
-            assert.equal(timers.length, 1, 'Double click must not award twice');
-            timers.shift()();
+            assert.equal(timers.length, 0, 'Shared wheel animation must own the timing');
+            await new Promise((resolve) => setImmediate(resolve));
             assert.ok(nodes['.wheel-result'].textContent.includes(`${[2, 5, 10][index]}×`));
+            assert.equal(timers.length, 1, 'Result display delay must be scheduled once');
             timers.shift()();
             assert.equal(await award, [5, 12.5, 25][index]);
             assert.equal(context.bonusOverlayEl.hidden, true);
@@ -76,6 +81,9 @@ async function check(game) {
         }
     }
     assert.match(source, /bonusResult\?\.count === 6 \? await playBonusGame\(totalBetUSD\)/);
+    assert.match(source, /function buyInstantBonus\(\)/, 'Every slot must expose an instant bonus purchase');
+    assert.match(source, /getActiveTotalBetUSD\(\) \* 100/, 'Bonus purchase must cost 100x the selected bet');
+    assert.match(source, /configureBonusBuy/, 'Every slot must register its Buy Bonus button');
     assert.doesNotMatch(source, /playPickBonusGame|addBonusChipWin\(grid, linesActive\)/);
     console.log(`${game}: six symbols, feature preservation, 50/50 selection, and payouts passed`);
 }
