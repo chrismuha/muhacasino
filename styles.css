@@ -679,11 +679,12 @@ footer { display: flex; width: min(1280px, calc(100% - 48px)); align-items: cent
     box-shadow: 0 18px 50px rgba(0,0,0,.45);
     font-size: 11pt;
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
     transform: translateY(-8px);
     transition: opacity .2s, transform .2s;
   }
-  .topbar.nav-open .nav-links { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .topbar.nav-open .nav-links { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
   .nav-links a { padding: 11px 12px; border-radius: 10px; }
   .nav-links a:hover, .nav-links a:focus-visible { background: rgba(255,255,255,.1); }
   .browse-button { display: none; }

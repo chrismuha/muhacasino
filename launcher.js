@@ -1,7 +1,7 @@
 const games = {
   "big-money-deluxe": {
     title: "Big Money Deluxe",
-    version: "v1.3.4",
+    version: "v1.3.5",
     subtitle: "Classic Cash",
     path: "games/big-money-deluxe/index.html",
     className: "card-money",
@@ -11,7 +11,7 @@ const games = {
   },
   "neon-slots": {
     title: "Neon Slots",
-    version: "v1.3.6",
+    version: "v1.3.7",
     subtitle: "Electric Casino",
     path: "games/neon-slots/index.html",
     className: "card-neon",
@@ -21,7 +21,7 @@ const games = {
   },
   "pretty-penny": {
     title: "Pretty Penny",
-    version: "v1.4.4",
+    version: "v1.4.5",
     subtitle: "Feature Game",
     path: "games/pretty-penny/index.html",
     className: "card-penny",
@@ -31,7 +31,7 @@ const games = {
   },
   treasurepots: {
     title: "TreasurePots",
-    version: "v1.3.4",
+    version: "v1.3.5",
     subtitle: "Hold & Link",
     path: "games/treasurepots/index.html",
     className: "card-treasure",
@@ -98,7 +98,7 @@ function renderOverallStats() {
   }));
 }
 
-const SITE_BUILD = "20260919-mobile-nav-v1";
+const SITE_BUILD = "20260919-regression-fixes-v2";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");
@@ -386,6 +386,15 @@ function activeGameUrl() {
   return url.href;
 }
 
+function navigateGameFrame(url) {
+  if (!url) return;
+  try {
+    gameFrame.contentWindow.location.replace(url);
+  } catch {
+    gameFrame.src = url;
+  }
+}
+
 function launchGame(gameId, updateHistory = true) {
   const game = games[gameId];
   if (!game) return;
@@ -422,7 +431,7 @@ renderOverallStats();
     delete gameView.dataset.bingoTheme;
   }
   gameFrame.title = game.title;
-  gameFrame.src = activeGameUrl();
+  navigateGameFrame(activeGameUrl());
   launcher.hidden = true;
   gameView.hidden = false;
   document.body.classList.add("game-open");
@@ -616,7 +625,7 @@ reloadGameButton.addEventListener("click", () => {
   const url = activeGameUrl();
   if (!url) return showLauncher();
   showGameLoading();
-  gameFrame.src = url;
+  navigateGameFrame(url);
 });
 
 returnToLibraryFromError.addEventListener("click", showLauncher);
