@@ -1035,3 +1035,10 @@ body.game-open .game-view.toolbar-collapsed .game-load-state { inset-block-start
     height: calc(100dvh - 64px) !important;
   }
 }
+
+/* Give desktop hero labels comfortable clearance below the fixed navigation. */
+@media (min-width: 901px) and (min-height: 600px) {
+  .hero-slide .hero-content {
+    transform: translateY(42px);
+  }
+}

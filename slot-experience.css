@@ -1235,6 +1235,8 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   .pot-feature > .pots > .pot .pot-meter {
   grid-column: 1 !important;
   grid-row: 1 / 3 !important;
+  place-self: center !important;
+  margin: 0 !important;
   width: 30px !important;
   height: 30px !important;
 }
