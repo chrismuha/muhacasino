@@ -1,4 +1,4 @@
-const CACHE_NAME = "muha-casino-shell-20260919-rounded-icons-v11";
+const CACHE_NAME = "muha-casino-shell-20260919-slot-controls-v12";
 const APP_SHELL = [
   "./",
   "./index.html",

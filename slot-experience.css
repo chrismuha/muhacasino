@@ -59,9 +59,10 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
    columns when a game is hosted inside the casino iframe. */
 .hud { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; grid-auto-rows: max-content; width: 100%; height: auto; align-items: start; }
 .hud > .left { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-column: 1; grid-row: 2; width: 100%; min-width: 0; }
-.hud > .right { display: grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); grid-column: 1; grid-row: 1; width: 100%; min-width: 0; max-width: 100%; align-items: stretch; }
+.hud > .right { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-column: 1; grid-row: 1; width: 100%; min-width: 0; max-width: 100%; align-items: stretch; }
 .hud > .right > button { width: 100%; min-width: 0; }
-.buy-bonus-button { font-weight: 950; }
+.buy-bonus-button { display: block; font-weight: 950; }
+.buy-bonus-button[hidden] { display: none; }
 .buy-bonus-panel { width: min(520px, 92vw); max-height: calc(100dvh - 24px); overflow: hidden; }
 .buy-bonus-types, .buy-bonus-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .4rem; }
 .buy-bonus-types { margin-bottom: .5rem; }

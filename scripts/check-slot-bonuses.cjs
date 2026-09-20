@@ -94,4 +94,11 @@ async function check(game) {
 }
 (async () => {
     for (const game of ['pretty-penny', 'treasurepots', 'neon-slots', 'big-money-deluxe']) await check(game);
+    const shared = fs.readFileSync(path.join(__dirname, '..', 'slot-experience.js'), 'utf8');
+    const sharedStyles = fs.readFileSync(path.join(__dirname, '..', 'slot-experience.css'), 'utf8');
+    assert.match(shared, /Math\.pow\(1 - progress, 5\)/, 'Shared wheels must visibly decelerate instead of jumping to the result');
+    assert.match(shared, /data-wheel-size="\$\{index\}"/, 'Every rescue-wheel wedge must have its own size control');
+    assert.match(shared, /data-link-setting="minMultiplier"/, 'Link games must expose configurable chip ranges');
+    assert.match(shared, /lifetimeWagered/, 'Slot play must persist overall wager statistics');
+    assert.match(sharedStyles, /repeat\(5, minmax\(0, 1fr\)\)/, 'Buy Bonus must share the visible action row');
 })().catch(error => { console.error(error); process.exitCode = 1; });

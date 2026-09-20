@@ -450,7 +450,7 @@ function getBonusPrizeMultiplier(index) {
     const select = bonusPrizeSelectEls[index];
     const source = select?.value === "custom" ? bonusPrizeCustomEls[index]?.value : select?.value;
     const value = Number.parseFloat(source);
-    return Number.isFinite(value) && value > 0 ? value : [2, 5, 10][index];
+    return Number.isFinite(value) && value > 0 ? value : [10, 25, 50][index];
 }
 
 function getBonusPrizeMultipliers() {
@@ -1456,12 +1456,14 @@ function updateSessionStatsVisibility() {
 function addSessionWinnings(amountUSD) {
     if (!Number.isFinite(amountUSD) || amountUSD <= 0) return;
     sessionWinningsUSD += amountUSD;
+    window.slotExperience?.recordWin(amountUSD);
     updateSessionWinningsDisplay();
 }
 
 function addSessionLosses(amountUSD) {
     if (!Number.isFinite(amountUSD) || amountUSD <= 0) return;
     sessionLossesUSD += amountUSD;
+    window.slotExperience?.recordLoss(amountUSD);
     updateSessionLossesDisplay();
 }
 
@@ -1985,6 +1987,13 @@ document.addEventListener("keyup", (e) => {
 
 
 (function init() {
+    bonusPrizeSelectEls.forEach((select, index) => {
+        select?.querySelectorAll('option:not([value="custom"])').forEach((option) => {
+            option.value = String(Number(option.value) * 5);
+            option.textContent = `${option.value}x Bet`;
+        });
+        if (bonusPrizeCustomEls[index]) bonusPrizeCustomEls[index].value = String(Number(bonusPrizeCustomEls[index].value) * 5);
+    });
     setupSettingsOverlay();
     setupFeatureUI();
     [freeSpinsOddsEl, freeSpinsAwardEl, bonusGameOddsEl].forEach((select) => select?.addEventListener("change", () => {

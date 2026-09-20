@@ -185,10 +185,10 @@ const SAVINGS_BANKS = [
     { name: "Rainy Day", amountUSD: 100 },
 ];
 const BONUS_WHEEL_SEGMENTS = [
-    { kind: "coin", name: "Copper Penny", mark: "1×", multiplier: 1, weight: 0.35, start: 0, end: 0.35 },
-    { kind: "coin", name: "Lucky Nickel", mark: "2×", multiplier: 2, weight: 0.25, start: 0.35, end: 0.60 },
-    { kind: "coin", name: "Shiny Dime", mark: "5×", multiplier: 5, weight: 0.18, start: 0.60, end: 0.78 },
-    { kind: "coin", name: "Golden Quarter", mark: "10×", multiplier: 10, weight: 0.12, start: 0.78, end: 0.90 },
+    { kind: "coin", name: "Copper Penny", mark: "10×", multiplier: 10, weight: 0.35, start: 0, end: 0.35 },
+    { kind: "coin", name: "Lucky Nickel", mark: "25×", multiplier: 25, weight: 0.25, start: 0.35, end: 0.60 },
+    { kind: "coin", name: "Shiny Dime", mark: "50×", multiplier: 50, weight: 0.18, start: 0.60, end: 0.78 },
+    { kind: "coin", name: "Golden Quarter", mark: "100×", multiplier: 100, weight: 0.12, start: 0.78, end: 0.90 },
     { kind: "jackpot", tier: "Mini", weight: 0.07, start: 0.90, end: 0.97 },
     { kind: "jackpot", tier: "Minor", weight: 0.02, start: 0.97, end: 0.99 },
     { kind: "jackpot", tier: "Major", weight: 0.008, start: 0.99, end: 0.998 },
@@ -505,11 +505,12 @@ function updateFeatureRules() {
     const freeRate = getFeatureRate(freeSpinsOddsEl, 0.03);
     const bonusRate = getFeatureRate(bonusGameOddsEl, 0.01);
     const gemHoldRate = getFeatureRate(gemHoldOddsEl, GEM_HOLD_TRIGGER_RATE);
-    const linkWinRate = getFeatureRate(linkWinOddsEl, 0.10);
-    const linkTeaserRate = getFeatureRate(linkTeaserOddsEl, 0.03);
+    const linkSettings = window.slotExperience?.getLinkChipSettings?.() || { winChance: 10, teaserChance: 3 };
+    const linkWinRate = linkSettings.winChance / 100;
+    const linkTeaserRate = linkSettings.teaserChance / 100;
     const wager = getActiveTotalBetUSD();
     const jackpotAwards = JACKPOT_TIERS.map((tier) => `${tier.name} ${fmtUSD(getScaledJackpotAmount(tier, wager))}`).join(", ");
-    featureOddsRulesEl.textContent = `With the current settings, each paid spin independently has a ${(freeRate * 100).toFixed(0)}% win / ${((1 - freeRate) * 100).toFixed(0)}% loss chance to award ${getFreeSpinsAward()} free spins, a ${(bonusRate * 100).toFixed(0)}% win / ${((1 - bonusRate) * 100).toFixed(0)}% loss chance to land six BONUS symbols anywhere and open the wheel (50%) or Match & Win (50%), and a ${(gemHoldRate * 100).toFixed(0)}% chance to trigger the three-spin Hold & Win Wild feature. Eligible winning spins have a ${(linkWinRate * 100).toFixed(0)}% winning-LINK chance; spins without one have a ${(linkTeaserRate * 100).toFixed(0)}% chance to display a non-paying Not Connected chain. Regular wheel prizes are Copper Penny 1× bet (35%), Lucky Nickel 2× (25%), Shiny Dime 5× (18%), and Golden Quarter 10× (12%). Jackpot outcomes are ${jackpotAwards}, with odds Mini 7%, Minor 2%, Major 0.8%, and Grand 0.2%. Reel Jackpot Odds settings do not change the wheel.`;
+    featureOddsRulesEl.textContent = `With the current settings, each paid spin independently has a ${(freeRate * 100).toFixed(0)}% win / ${((1 - freeRate) * 100).toFixed(0)}% loss chance to award ${getFreeSpinsAward()} free spins, a ${(bonusRate * 100).toFixed(0)}% win / ${((1 - bonusRate) * 100).toFixed(0)}% loss chance to land six BONUS symbols anywhere and open the wheel (50%) or Match & Win (50%), and a ${(gemHoldRate * 100).toFixed(0)}% chance to trigger the three-spin Hold & Win Wild feature. Eligible winning spins have a ${(linkWinRate * 100).toFixed(0)}% winning-LINK chance; spins without one have a ${(linkTeaserRate * 100).toFixed(0)}% chance to display a non-paying Not Connected chain. Regular wheel prizes are 10×, 25×, 50×, and 100× bet. Jackpot outcomes are ${jackpotAwards}.`;
 }
 
 function setupFeatureUI() {
@@ -852,23 +853,26 @@ function spinOnce() {
 }
 
 function addLinkChips(grid, winningSpin, wagerConfig) {
+    const linkSettings = window.slotExperience?.getLinkChipSettings?.() || { minMultiplier: 1, maxMultiplier: 25, minCount: 2, maxCount: 4, winChance: 10, teaserChance: 3 };
     const displayGrid = grid.map((row) => [...row]);
     const winningPositions = new Set();
-    const activeChain = winningSpin && Math.random() < getFeatureRate(linkWinOddsEl, 0.10);
-    const showOrphan = !activeChain && Math.random() < getFeatureRate(linkTeaserOddsEl, 0.03);
+    const activeChain = winningSpin && Math.random() < linkSettings.winChance / 100;
+    const showOrphan = !activeChain && Math.random() < linkSettings.teaserChance / 100;
     if (!activeChain && !showOrphan) return { grid: displayGrid, winUSD: 0, winningPositions, count: 0, meterHits: [] };
 
     const row = Math.floor(Math.random() * ROWS);
     const startCol = activeChain ? 0 : 1 + Math.floor(Math.random() * (COLS - 1));
     const available = COLS - startCol - 1;
-    const valueCount = Math.max(0, Math.min(available, 2 + Math.floor(Math.random() * 3)));
+    const minCount = available > 0 ? Math.max(1, Math.min(available, linkSettings.minCount)) : 0;
+    const maxCount = Math.max(minCount, Math.min(available, linkSettings.maxCount));
+    const valueCount = available > 0 ? minCount + Math.floor(Math.random() * (maxCount - minCount + 1)) : 0;
     displayGrid[row][startCol] = { kind: "link", anchor: true, orphan: !activeChain };
     if (activeChain) winningPositions.add(`${row},${startCol}`);
 
     let winUSD = 0;
     const meterHits = [];
     for (let offset = 1; offset <= valueCount; offset++) {
-        const multiplier = [0.5, 1, 2, 3, 5, 10, 15][Math.floor(Math.random() * 7)];
+        const multiplier = linkSettings.minMultiplier + Math.random() * (linkSettings.maxMultiplier - linkSettings.minMultiplier);
         const value = roundUSD(Math.max(0.01, wagerConfig.totalBetUSD * multiplier));
         const meterIndex = Math.floor(Math.random() * SAVINGS_BANKS.length);
         displayGrid[row][startCol + offset] = { kind: "link", anchor: false, value, meterIndex, orphan: !activeChain };
@@ -1368,6 +1372,7 @@ function getSettingsDefinitions() {
         { key: "winOdds", title: "Regular Win Odds", element: winOddsEl?.closest(".select") },
         { key: "jackpotAmounts", title: "Jackpot Amounts", element: document.querySelector(".jackpot-amounts-setting") },
         { key: "jackpotScaling", title: "Jackpot Bet Scaling", element: document.querySelector(".jackpot-scaling-setting") },
+        { key: "linkChipSettings", title: "Winning Link Chip Values, Count & Timing", element: document.querySelector(".link-chip-settings") },
         ...JACKPOT_TIERS.map((tier) => ({
             key: `${tier.name.toLowerCase()}JackpotOdds`,
             title: `${tier.name} Jackpot Odds`,
@@ -1377,8 +1382,6 @@ function getSettingsDefinitions() {
         { key: "freeSpinsAward", title: "Free Spins Award", element: freeSpinsAwardEl?.closest(".select") },
         { key: "bonusGameOdds", title: "Six BONUS Symbols Odds", element: bonusGameOddsEl?.closest(".select") },
         { key: "gemHoldOdds", title: "Hold & Win Wild Trigger Odds", element: gemHoldOddsEl?.closest(".select") },
-        { key: "linkWinOdds", title: "Winning LINK Chain Odds", element: linkWinOddsEl?.closest(".select") },
-        { key: "linkTeaserOdds", title: "Not Connected LINK Display Odds", element: linkTeaserOddsEl?.closest(".select") },
     ].filter((setting) => setting.element);
 }
 
@@ -1709,12 +1712,14 @@ function updateSessionStatsVisibility() {
 function addSessionWinnings(amountUSD) {
     if (!Number.isFinite(amountUSD) || amountUSD <= 0) return;
     sessionWinningsUSD += amountUSD;
+    window.slotExperience?.recordWin(amountUSD);
     updateSessionWinningsDisplay();
 }
 
 function addSessionLosses(amountUSD) {
     if (!Number.isFinite(amountUSD) || amountUSD <= 0) return;
     sessionLossesUSD += amountUSD;
+    window.slotExperience?.recordLoss(amountUSD);
     updateSessionLossesDisplay();
 }
 
@@ -2289,4 +2294,5 @@ document.addEventListener("keyup", (e) => {
     updateRealtimeCreditMessage();
     bindSpinHold();
     window.slotExperience?.configureBonusBuy({ getCost: () => 40, getOptions: () => [40, 80, 120].map((cost) => ({ wager: roundUSD(cost / 100), cost })), canBuy: (option = {}) => !isSpinning && !autoSpinRunning && freeSpinsRemaining === 0 && balance >= (Number(option.cost) || 40), buy: buyInstantBonus });
+    window.slotExperience?.configureLinkChips();
 })();

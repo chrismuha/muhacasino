@@ -35,6 +35,10 @@
         wheelOdds: 0.5,
         wheelSizes: [...defaultWheelSizes],
         wheelPrizes: defaultWheelPrizes.map((prize) => ({ ...prize })),
+        linkChips: { minMultiplier: 1, maxMultiplier: 25, minCount: 2, maxCount: 4, winChance: 10, teaserChance: 3 },
+        lifetimeWagered: 0,
+        lifetimeWon: 0,
+        lifetimeLost: 0,
         collapseEmptyResults: false,
         revealDoors: "off",
         revealDoorRows: [0, 1, 2, 3, 4],
@@ -70,6 +74,10 @@
             ? [...new Set(saved.revealDoorRows.map(Number).filter((row) => Number.isInteger(row) && row >= 0 && row < 5))]
             : [0, 1, 2, 3, 4];
         state.jackpots = saved.jackpots && typeof saved.jackpots === "object" ? saved.jackpots : null;
+        state.linkChips = { ...state.linkChips, ...(saved.linkChips || {}) };
+        state.lifetimeWagered = Math.max(0, Number(saved.lifetimeWagered) || 0);
+        state.lifetimeWon = Math.max(0, Number(saved.lifetimeWon) || 0);
+        state.lifetimeLost = Math.max(0, Number(saved.lifetimeLost) || 0);
     } catch {  }
 
     function money(value) {
@@ -90,6 +98,10 @@
                 wheelOdds: state.wheelOdds,
                 wheelSizes: state.wheelSizes,
                 wheelPrizes: state.wheelPrizes,
+                linkChips: state.linkChips,
+                lifetimeWagered: state.lifetimeWagered,
+                lifetimeWon: state.lifetimeWon,
+                lifetimeLost: state.lifetimeLost,
                 collapseEmptyResults: state.collapseEmptyResults,
                 revealDoors: state.revealDoors,
                 revealDoorRows: state.revealDoorRows,
@@ -120,7 +132,7 @@
     function spinWheel(element, targetDegrees, duration = 5600) {
         if (!element) return Promise.resolve();
         const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-        const spinDuration = reduceMotion ? 0 : Math.max(0, Number(duration) || 0);
+        const spinDuration = reduceMotion ? Math.min(2600, Math.max(1800, Number(duration) || 0)) : Math.max(5200, Number(duration) || 0);
         element.getAnimations?.().forEach((animation) => animation.cancel());
         element.style.transition = "none";
         element.style.transform = "rotate(0deg)";
@@ -128,42 +140,16 @@
         // Safari otherwise sometimes batches both writes and skips the spin.
         void element.offsetWidth;
 
-        if (spinDuration && typeof element.animate === "function") {
-            const overshoot = targetDegrees + 8;
-            const animation = element.animate([
-                { transform: "rotate(0deg)", offset: 0, easing: "cubic-bezier(.55,.02,.82,.35)" },
-                { transform: "rotate(80deg)", offset: .12, easing: "linear" },
-                { transform: `rotate(${targetDegrees - 140}deg)`, offset: .72, easing: "cubic-bezier(.08,.68,.16,1)" },
-                { transform: `rotate(${overshoot}deg)`, offset: .94, easing: "ease-out" },
-                { transform: `rotate(${targetDegrees}deg)`, offset: 1 },
-            ], { duration: spinDuration, fill: "forwards" });
-            return animation.finished.catch(() => {}).then(() => {
-                element.style.transform = `rotate(${targetDegrees}deg)`;
-                animation.cancel();
-            });
-        }
-
         return new Promise((resolve) => {
-            let finished = false;
-            const complete = () => {
-                if (finished) return;
-                finished = true;
-                element.removeEventListener("transitionend", onTransitionEnd);
-                window.clearTimeout(fallbackTimer);
-                resolve();
+            const start = performance.now();
+            const animateFrame = (now) => {
+                const progress = Math.min(1, (now - start) / spinDuration);
+                const eased = 1 - Math.pow(1 - progress, 5);
+                element.style.transform = `rotate(${targetDegrees * eased}deg)`;
+                if (progress < 1) window.requestAnimationFrame(animateFrame);
+                else { element.style.transform = `rotate(${targetDegrees}deg)`; resolve(); }
             };
-            const onTransitionEnd = (event) => {
-                if (event.target === element && event.propertyName === "transform") complete();
-            };
-            const fallbackTimer = window.setTimeout(complete, spinDuration + 250);
-            element.addEventListener("transitionend", onTransitionEnd);
-            window.requestAnimationFrame(() => {
-                element.style.transition = spinDuration
-                    ? `transform ${spinDuration}ms cubic-bezier(.12,.72,.12,1)`
-                    : "none";
-                element.style.transform = `rotate(${targetDegrees}deg)`;
-                if (!spinDuration) complete();
-            });
+            window.requestAnimationFrame(animateFrame);
         });
     }
 
@@ -321,6 +307,18 @@
                     ${["Mini", "Minor", "Major", "Grand"].map((name) => `<label>${name}<input type="number" min="0.01" step="0.01" data-jackpot-base="${name.toLowerCase()}"></label>`).join("")}
                 </div>
                 <small>Set the base Mini, Minor, Major, and Grand awards.</small>
+            </div>
+            <div class="jackpot-config-setting link-chip-settings" hidden>
+                <strong>Winning Link chip controls</strong>
+                <div class="jackpot-scale-grid">
+                    <label>Minimum value (× bet)<input type="number" min="0.25" max="1000" step="0.25" data-link-setting="minMultiplier"></label>
+                    <label>Maximum value (× bet)<input type="number" min="0.25" max="1000" step="0.25" data-link-setting="maxMultiplier"></label>
+                    <label>Minimum chips<input type="number" min="1" max="4" step="1" data-link-setting="minCount"></label>
+                    <label>Maximum chips<input type="number" min="1" max="4" step="1" data-link-setting="maxCount"></label>
+                    <label>Winning Link chance %<input type="number" min="0" max="100" step="1" data-link-setting="winChance"></label>
+                    <label>Non-winning preview chance %<input type="number" min="0" max="100" step="1" data-link-setting="teaserChance"></label>
+                </div>
+                <small>Values scale with the current total bet. Set how many value chips may appear and how often winning and preview Links can occur.</small>
             </div>
             <div class="jackpot-config-setting jackpot-scaling-setting">
                 <strong>Jackpot bet scaling</strong>
@@ -548,6 +546,22 @@
             document.querySelector(`[data-wheel-prize-type="${index}"]`)?.addEventListener("change", () => updateWheelPrize(index));
             document.querySelector(`[data-wheel-prize-value="${index}"]`)?.addEventListener("change", () => updateWheelPrize(index));
             document.querySelector(`[data-wheel-prize-tier="${index}"]`)?.addEventListener("change", () => updateWheelPrize(index));
+        });
+        document.querySelectorAll("[data-link-setting]").forEach((input) => {
+            input.value = state.linkChips[input.dataset.linkSetting];
+            input.addEventListener("change", () => {
+                const key = input.dataset.linkSetting;
+                const integer = key.endsWith("Count") || key.endsWith("Chance");
+                state.linkChips[key] = integer ? Math.round(Number(input.value) || 0) : Math.max(.25, Number(input.value) || .25);
+                state.linkChips.minCount = Math.max(1, Math.min(4, state.linkChips.minCount));
+                state.linkChips.maxCount = Math.max(state.linkChips.minCount, Math.min(4, state.linkChips.maxCount));
+                state.linkChips.maxMultiplier = Math.max(state.linkChips.minMultiplier, state.linkChips.maxMultiplier);
+                state.linkChips.winChance = Math.max(0, Math.min(100, state.linkChips.winChance));
+                state.linkChips.teaserChance = Math.max(0, Math.min(100, state.linkChips.teaserChance));
+                document.querySelectorAll("[data-link-setting]").forEach((field) => { field.value = state.linkChips[field.dataset.linkSetting]; });
+                save();
+                window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
+            });
         });
         revealDoors?.addEventListener("change", () => { state.revealDoors = revealDoors.value; save(); });
         document.querySelectorAll(".jackpot-amounts-setting input, .jackpot-scaling-setting input, .jackpot-scaling-setting select").forEach((control) => {
@@ -836,6 +850,11 @@
             bonusBuyConfig = config;
             updateBonusBuyButton();
         },
+        configureLinkChips() {
+            const panel = document.querySelector(".link-chip-settings");
+            if (panel) panel.hidden = false;
+        },
+        getLinkChipSettings: () => ({ ...state.linkChips }),
         updateBonusBuyButton,
         configureJackpots(tiers, { baseWager = 0.5 } = {}) {
             const defaults = Object.fromEntries(tiers.map((tier) => [tier.name.toLowerCase(), Number(tier.amountUSD)]));
@@ -877,12 +896,22 @@
         recordPlay(amount) {
             if (amount > 0) {
                 state.played += amount;
+                state.lifetimeWagered += amount;
                 if (luckyWheelUsed && rescueRearmCredits + 0.0001 >= amount) {
                     luckyWheelUsed = false;
                     rescueRearmCredits = 0;
                 }
             }
             updateMoneyUi();
+            save();
+        },
+        recordWin(amount) {
+            if (amount > 0) state.lifetimeWon += amount;
+            save();
+        },
+        recordLoss(amount) {
+            if (amount > 0) state.lifetimeLost += amount;
+            save();
         },
         setBalance(amount) { state.balance = Math.max(0, Number(amount) || 0); updateMoneyUi(); updateBonusBuyButton(); },
         reset(balance = 100) { state.deposited = balance; state.played = 0; state.balance = balance; luckyWheelUsed = false; rescueRearmCredits = 0; updateMoneyUi(); },
