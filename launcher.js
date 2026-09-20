@@ -98,8 +98,35 @@ function renderOverallStats() {
   }));
 }
 
-const SITE_BUILD = "20260919-slot-controls-v12";
+const SITE_BUILD = "20260919-mobile-nav-v1";
 const launcher = document.querySelector("#launcher");
+const topbar = document.querySelector(".topbar");
+const navMenuButton = document.querySelector(".nav-menu-button");
+const primaryNavigation = document.querySelector("#primaryNavigation");
+
+function setNavigationOpen(open) {
+  const isOpen = Boolean(open);
+  topbar?.classList.toggle("nav-open", isOpen);
+  navMenuButton?.setAttribute("aria-expanded", String(isOpen));
+  navMenuButton?.setAttribute("aria-label", isOpen ? "Close navigation menu" : "Open navigation menu");
+}
+
+navMenuButton?.addEventListener("click", () => {
+  setNavigationOpen(!topbar.classList.contains("nav-open"));
+});
+primaryNavigation?.addEventListener("click", (event) => {
+  if (event.target.closest("a")) setNavigationOpen(false);
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") setNavigationOpen(false);
+});
+document.addEventListener("pointerdown", (event) => {
+  if (topbar?.classList.contains("nav-open") && !topbar.contains(event.target)) setNavigationOpen(false);
+});
+window.matchMedia("(min-width: 621px)").addEventListener?.("change", (event) => {
+  if (event.matches) setNavigationOpen(false);
+});
+
 const gameView = document.querySelector("#gameView");
 const gameFrame = document.querySelector("#gameFrame");
 const currentGame = document.querySelector("#currentGame");

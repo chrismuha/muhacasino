@@ -13,7 +13,7 @@
   <link rel="icon" href="icons/rounded-browser-icon-v3.png" type="image/png" sizes="192x192">
   <link rel="apple-touch-icon" href="icons/muha-casino-touch-v3.png" sizes="180x180">
   <link rel="manifest" href="manifest.webmanifest?v=20260919-rounded-icons-v3">
-  <link rel="stylesheet" href="styles.css?build=20260914-game-title-header-v2">
+  <link rel="stylesheet" href="styles.css?build=20260919-mobile-nav-v1">
   <link rel="stylesheet" href="safe-area.css?build=20260905-notch-v1">
 </head>
 <body>
@@ -23,7 +23,10 @@
         <span class="brand-mark" aria-hidden="true">M</span>
         <span>MUHA <b>CASINO</b></span>
       </a>
-      <div class="nav-links">
+      <button class="nav-menu-button" type="button" aria-expanded="false" aria-controls="primaryNavigation" aria-label="Open navigation menu">
+        <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+      </button>
+      <div class="nav-links" id="primaryNavigation">
         <a href="#featured">Featured</a>
         <a href="#games">Games</a>
         <a href="#categories">Categories</a>
@@ -272,7 +275,7 @@
   </section>
 
   <script src="interaction-lock.js?build=20260811-horizontal-rails"></script>
-  <script src="launcher.js?build=20260919-slot-controls-v12"></script>
+  <script src="launcher.js?build=20260919-mobile-nav-v1"></script>
   <script src="pwa.js?build=20260829-pwa-v1"></script>
 </body>
 </html>
