@@ -1,0 +1,34 @@
+{
+  "name": "muhacasino",
+  "private": true,
+  "description": "Muha Casino — slots, Bingo, and classic tabletop games in one game library.",
+  "scripts": {
+    "start": "vite --host 127.0.0.1 --port 5194 --strictPort --open",
+    "dev": "vite --host 127.0.0.1 --port 5194 --strictPort --open",
+    "dev:web": "vite --host 127.0.0.1 --port 5194 --strictPort --open /dev-preview.html",
+    "dev:mobile:web": "npm run dev:web",
+    "preview": "vite preview --host 127.0.0.1 --port 4173 --open",
+    "build": "vite build",
+    "build:web": "vite build",
+    "check": "node --check launcher.js && node --check statistics.js && node --check interaction-lock.js && node --check slot-experience.js && node --check about-history.js && node --check games/bingo/browser-bingo-api.js && node --check games/bingo/planet-hall-ui.js && node --check games/bingo/runtime-guard.js && node --check games/bingo/theme-switcher.js && node --check games/big-money-deluxe/main.js && node --check games/neon-slots/main.js && node --check games/pretty-penny/main.js && node --check games/treasurepots/main.js && node --check games/sorry/main.js && node --check games/sorry/ui/main.js && node --check games/yahtzee/main.js",
+    "cap:sync": "npm run build && npx cap sync",
+    "cap:sync:android": "npm run build && npx cap sync android",
+    "cap:sync:ios": "npm run build && npx cap sync ios",
+    "dev:android": "npm run cap:sync:android && npx cap open android",
+    "dev:ios": "npm run cap:sync:ios && npx cap open ios",
+    "mobile:sync": "npm run cap:sync",
+    "mobile:sync:android": "npm run cap:sync:android",
+    "mobile:sync:ios": "npm run cap:sync:ios",
+    "mobile:open:android": "npx cap open android",
+    "mobile:open:ios": "npx cap open ios"
+  },
+  "devDependencies": {
+    "vite": "^8.3.0"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/cli": "^8.5.2",
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/ios": "^8.5.2"
+  }
+}
