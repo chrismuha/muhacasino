@@ -1,0 +1,94 @@
+.info-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.info-links a {
+  padding: 10px 15px;
+  border-radius: 999px;
+  color: #c9cddd;
+  font-weight: 800;
+}
+
+.info-links a:is(:hover, :focus-visible),
+.info-links a[aria-current="page"] {
+  color: #071016;
+  background: var(--cyan);
+  outline: none;
+}
+
+.overall-stats-grid,
+.home-history-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.stats-filter {
+  display: flex;
+  gap: 9px;
+  margin: 0 0 22px;
+  padding: 10px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(12, 14, 25, .86);
+  scrollbar-width: thin;
+}
+
+.stats-filter button {
+  flex: 0 0 auto;
+  min-height: 42px;
+  padding: 9px 15px;
+  border: 1px solid #465373;
+  border-radius: 999px;
+  color: #f7f8ff;
+  background: #202940;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.stats-filter button:is(:hover, :focus-visible),
+.stats-filter button[aria-pressed="true"] {
+  color: #071016;
+  border-color: var(--cyan);
+  background: var(--cyan);
+  outline: none;
+}
+
+.overall-stats-grid.is-filtered { grid-template-columns: minmax(0, 640px); }
+
+.overall-stat-card,
+.home-history-list article {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 20px;
+  background: linear-gradient(150deg, var(--panel-2), var(--panel));
+  box-shadow: 0 18px 48px rgba(0,0,0,.2);
+}
+
+.overall-stat-card h2 { margin: 0 0 15px; font-size: 1.15rem; }
+.overall-stat-card div { display: flex; justify-content: space-between; gap: 10px; padding: 11px 0; border-top: 1px solid rgba(255,255,255,.09); }
+.overall-stat-card span { color: var(--muted); font-size: .88rem; }
+.overall-stat-card strong { font-variant-numeric: tabular-nums; }
+.overall-stat-card .positive { color: #61f0a8; }
+.overall-stat-card .negative { color: #ff8796; }
+
+.home-history-list time { color: var(--cyan); font-size: .8rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+.home-history-list h2 { margin: 9px 0; font-size: 1.12rem; }
+.home-history-list p { margin: 0; color: #c7cbda; line-height: 1.6; }
+
+@media (max-width: 700px) {
+  .about-topbar { align-items: flex-start; }
+  .info-links { justify-content: flex-end; }
+  .overall-stats-grid, .home-history-list { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 520px) {
+  .info-links { gap: 4px; }
+  .info-links a { padding: 8px 9px; font-size: .78rem; }
+}
