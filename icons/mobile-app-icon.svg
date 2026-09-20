@@ -5,6 +5,7 @@
       <stop offset="1" stop-color="#9a45ff"/>
     </linearGradient>
   </defs>
-  <rect width="512" height="512" fill="url(#background)"/>
+  <rect width="512" height="512" rx="112" fill="#070811"/>
+  <rect x="11" y="11" width="490" height="490" rx="107" fill="url(#background)"/>
   <text x="256" y="365" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="300" font-weight="900" text-anchor="middle">M</text>
 </svg>

@@ -662,12 +662,14 @@ function createCell(symbol, isWinning = false) {
         return cell;
     }
     if (typeof symbol === "object") {
+        const jackpotTier = symbol.jackpot.toLowerCase();
         const chip = document.createElement("span");
-        chip.className = `jackpot-chip jackpot-${symbol.jackpot.toLowerCase()}`;
+        chip.className = `jackpot-chip jackpot-${jackpotTier}`;
         if (symbol.teaser) chip.classList.add("jackpot-teaser");
         chip.innerHTML = `<strong>${symbol.jackpot}</strong><span>${fmtUSD(symbol.value)}</span>`;
         chip.setAttribute("aria-hidden", "true");
         cell.appendChild(chip);
+        cell.classList.add(`jackpot-meter-cell-${jackpotTier}`);
         if (symbol.teaser) {
             cell.classList.add("jackpot-teaser-cell");
             cell.setAttribute("aria-label", `${symbol.jackpot} jackpot symbol, no jackpot won`);

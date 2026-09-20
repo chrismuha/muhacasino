@@ -1,4 +1,4 @@
-const CACHE_NAME = "muha-casino-shell-20260914-rounded-favicon-v10";
+const CACHE_NAME = "muha-casino-shell-20260919-rounded-icons-v11";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -6,10 +6,10 @@ const APP_SHELL = [
   "./launcher.js",
   "./interaction-lock.js",
   "./manifest.webmanifest",
-  "./icons/muha-casino-192-v2.png",
-  "./icons/muha-casino-512-v2.png",
-  "./icons/muha-casino-maskable-v2.png",
-  "./icons/muha-casino-touch-v2.png",
+  "./icons/muha-casino-192-v3.png",
+  "./icons/muha-casino-512-v3.png",
+  "./icons/muha-casino-maskable-v3.png",
+  "./icons/muha-casino-touch-v3.png",
   "./icons/rounded-browser-icon-v3.png"
 ];
 
