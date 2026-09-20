@@ -1,0 +1,51 @@
+/* Real device insets, with overrides supplied by the mobile preview. */
+:root {
+  --casino-safe-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --casino-safe-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
+  --casino-safe-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --casino-safe-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+  --casino-toolbar-height: 64px;
+}
+/* The complete hosted game, including a collapsed header, stays inside the safe rectangle. */
+body.game-open #gameView {
+  position: fixed;
+  top: var(--casino-safe-top);
+  right: var(--casino-safe-right);
+  bottom: var(--casino-safe-bottom);
+  left: var(--casino-safe-left);
+  width: auto;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+}
+body.game-open #gameView .game-toolbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+body.game-open #gameView #gameFrame {
+  top: var(--casino-toolbar-height);
+  height: calc(100% - var(--casino-toolbar-height)) !important;
+}
+body.game-open #gameView .game-load-state { inset-block-start: var(--casino-toolbar-height); }
+body.game-open #gameView.toolbar-collapsed { --casino-toolbar-height: 28px; }
+#launcher { padding-top: var(--casino-safe-top); padding-bottom: var(--casino-safe-bottom); }
+#launcher .topbar { top: var(--casino-safe-top); width: min(1380px, calc(100% - 48px - var(--casino-safe-left) - var(--casino-safe-right))); left: calc(50% + (var(--casino-safe-left) - var(--casino-safe-right)) / 2); }
+@media (max-width: 600px) { :root { --casino-toolbar-height: 68px; } }
+@media (max-height: 500px) {
+  #launcher .topbar { height: 64px; }
+  #launcher .brand { font-size: 16px; }
+  #launcher .hero-content { padding-top: 20px; }
+  body.game-open #gameView .game-toolbar { max-height: var(--casino-toolbar-height); overflow-y: auto; }
+  body.game-open #gameView #currentGame { font-size: clamp(14px, 3vw, 20px); line-height: 1.1; }
+}
+/* Direct slot URLs also reserve space; hosted games use their parent's safe rectangle. */
+html.casino-standalone-slot body {
+  box-sizing: border-box;
+  border-top: var(--casino-safe-top) solid transparent;
+  border-right: var(--casino-safe-right) solid transparent;
+  border-bottom: var(--casino-safe-bottom) solid transparent;
+  border-left: var(--casino-safe-left) solid transparent;
+}

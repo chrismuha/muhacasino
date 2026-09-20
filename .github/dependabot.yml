@@ -1,0 +1,36 @@
+---
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 10
+  commit-message:
+    prefix: deps
+  rebase-strategy: auto
+  ignore:
+  - dependency-name: "*"
+    update-types:
+    - version-update:semver-major
+  - dependency-name: vue
+    versions:
+    - 3.5.42
+  - dependency-name: vue-router
+    versions:
+    - 5.3.0
+  - dependency-name: "@vitejs/plugin-vue"
+    versions:
+    - 5.2.4
+- package-ecosystem: github-actions
+  directory: "/"
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 10
+  commit-message:
+    prefix: actions
+  rebase-strategy: auto
+  ignore:
+  - dependency-name: "*"
+    update-types:
+    - version-update:semver-major

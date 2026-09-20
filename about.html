@@ -1,0 +1,816 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#070811">
+  <meta name="muha-build" content="20260816-slots-v120">
+  <meta name="description" content="Muha Casino version history and game release notes.">
+  <title>About & Version History | Muha Casino</title>
+  <link rel="icon" href="icons/rounded-browser-icon-v3.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="icons/muha-casino-touch-v3.png" sizes="180x180">
+  <link rel="stylesheet" href="about.css?build=20260816-slots-v120">
+</head>
+<body>
+  <header class="about-topbar">
+    <a class="about-brand" href="index.html">
+      <span aria-hidden="true">M</span>
+      <strong>MUHA <b>CASINO</b></strong>
+    </a>
+    <a class="back-link" href="index.html">← RETURN TO GAME LIBRARY</a>
+  </header>
+
+  <main>
+    <section class="about-hero">
+      <p class="eyebrow">Game release notes</p>
+      <h1>Game version history</h1>
+      <p>Each game keeps its own independent version history. Choose a game and then select a version pill to see its categorized changes.</p>
+    </section>
+
+    <nav class="history-nav" aria-label="Choose version history">
+      <a href="#big-money">Big Money</a>
+      <a href="#neon">Neon Slots</a>
+      <a href="#pretty-penny">Pretty Penny</a>
+      <a href="#treasurepots">Treasure Pots</a>
+      <a href="#bingo">Bingo</a>
+      <a href="#sorry">Sorry!</a>
+      <a href="#yahtzee">Yahtzee</a>
+    </nav>
+
+    <div class="history-grid">
+      <article id="big-money" class="history-card">
+        <header><span class="game-icon money">7</span><div><p>Slot game</p><h2>Big Money Deluxe</h2></div><b>v1.3.5</b></header>
+        <section><h3>v1.3.5 · 2026-09-19 · Larger wager controls</h3><ul><li>Made quick-bet chips substantially larger and easier to read and tap.</li><li>Kept browser Back and Forward navigation synchronized with the displayed game and casino header.</li><li>Preserved the full desktop navigation while preventing crowding at narrower desktop widths.</li></ul></section>
+        <section><h3>v1.3.4 · 2026-09-19 · Restored instant bonuses</h3><ul><li>Restored the always-visible Buy Bonus action with $40, $80, and $120 choices.</li><li>Made bonus wheels complete multiple revolutions and slow naturally before stopping.</li><li>Added individual even-percentage controls for all 12 rescue-wheel wedges while preserving an exact 100% total.</li><li>Increased regular bonus-wheel awards and added persistent overall win, loss, wager, and net tracking on the casino home screen.</li><li>Added a home-screen What's New history and refreshed the remaining installable icon artwork with rounded corners.</li></ul></section>
+        <section><h3>v1.3.3 · 2026-09-13 · Reliable and configurable wheels</h3><ul>
+          <li>Fixed bonus wheels that could skip their animation and remain stuck on the spinning result.</li>
+          <li>Locked the Fake Money / Real Money display switch for the entire spin, including bonus features and free spins.</li>
+          <li>Replaced preset rescue-wheel odds with linked 1–99% winning and no-award percentage controls that always share exactly 100% of the wheel.</li>
+          <li>Kept the new wheel percentage controls registered as a paginated, pinnable Settings page instead of exposing them unintentionally on the main game screen.</li>
+        </ul></section>
+        <section><h3>v1.3.2 · 2026-09-12 · Stable results and truthful wheel sizing</h3><ul>
+          <li>Reserved the result and feature rows by default to prevent the wager controls from jumping, with an optional Hide Empty Result Bars setting for compact play.</li>
+          <li>Made Lucky Credit Wheel wedge sizes and landing positions match the selected win/loss percentage.</li>
+          <li>Locked denomination, paylines, wager presets, and Max Bet for the full round, including bonus games and every awarded free spin.</li>
+          <li>Improved checkbox-setting spacing and unified mobile browser icons with the blue desktop Muha Casino mark.</li>
+        </ul></section>
+        <section><h3>v1.3.1 · 2026-09-12 · Compact controls and reliable feature results</h3><ul>
+          <li>Redesigned the casino-header Fake Money and Real Money switch as a wider, clearer mobile control with improved active-state feedback.</li>
+          <li>Collapsed unused result rows and tightened the quick-bet controls beside Denom so wagering stays close to the reels without sacrificing live win messages.</li>
+          <li>Prevented bonus and free-spin awards from being labeled as “No win” and fixed the result error that could leave Spin disabled after several rounds.</li>
+        </ul></section>
+        <section><h3>v1.3.0 · 2026-09-03 · Configurable jackpots and casino toolbar</h3><ul>
+          <li>Expanded Settings into a full-screen, safe-area-aware workspace with fixed navigation and independently scrolling page content.</li>
+          <li>Corrected the Lucky Wheel ratio selector so its default and saved 50% Win / 50% Loss option is always visibly selected.</li>
+          <li>Added editable Mini, Minor, Major, and Grand base amounts in Settings.</li>
+          <li>Added enabled-by-default bet scaling with configurable multiplier or fixed-increment behavior, reference bet, bet step, and step amount.</li>
+          <li>Moved the Fake/Real money switch into the casino toolbar, refreshed every monetary display when it changes, and improved compact game-title and collapse controls.</li>
+          <li>Made jackpot scaling compound denomination with total bet so raising either wager control increases displayed and awarded jackpots.</li>
+          <li>Replaced the Bet Per Line dropdown and arrow stepper with four direct Total Bet buttons: 50¢, $1.50, $4.00, and $8.00.</li>
+          <li>Enlarged the quick Total Bet button values to the maximum responsive size that remains safely contained on narrow phones and denomination-scaled wagers.</li>
+          <li>Placed a compact, always-visible Denomination selector beside the Total Bet buttons instead of using a separate pinnable settings page.</li>
+          <li>Restored Adjust Money as an optional home-screen setting that defaults off, while keyboard Up/Down adjustment remains available at all times.</li>
+          <li>Placed balanced 140 × 42px Spin, Max Bet, Reset Session, and Settings controls together in one four-button row.</li>
+          <li>Removed excess vertical spacing above and between the title, jackpots, meters, reels, and controls so the full play surface starts higher.</li>
+          <li>Restored a compact live Total Bet summary, kept denomination selected when changing wager presets, and made preset labels scale to show the actual wager at that denomination.</li>
+          <li>Made every odds and estimated-frequency setting opt-in on the home screen while retaining unrelated saved pin choices.</li>
+          <li>Rebuilt the last-chance credit wheel as a flat, high-contrast 12-wedge casino wheel whose six winning and six no-award segments each contain one centered result.</li>
+          <li>Limited the rescue wheel to one attempt per session after paid play exhausts the usable balance; Reset Session restores eligibility, and losing cannot be retried repeatedly.</li>
+          <li>Kept rescue-wheel win and loss results open until the player closes them, and made awarded credits return control without automatically spinning the reels.</li>
+          <li>Added persistent Settings controls for six winning wheel wedges, each independently configurable as a bet multiplier, fixed value, or scaled jackpot, alongside the existing win/loss ratio.</li>
+          <li>Compacted consumer-screen play while scaling reels, symbols, feature chips, jackpots, meters, results, bet controls, and action buttons up on full-size or touch-enabled casino cabinet displays.</li>
+          <li>Compacted the slot console and separated Jackpot Amounts from Jackpot Bet Scaling into independent settings pages.</li>
+          <li>Shortened mobile reels and feature spacing, stabilized differently sized settings pages, and added direct page jumping for faster navigation.</li>
+          <li>Moved high-contrast game results beneath the reels and added a compact status meter that stays empty until free spins are awarded.</li>
+          <li>Moved tap, hold, and Spacebar instructions into Game Rules; the home-screen row now appears only for live auto-spin status.</li>
+          <li>Made Time Elapsed an optional Settings item that defaults off on the home screen while continuing to track play time.</li>
+          <li>Clarified the casino-header display switch with an always-visible Fake Money or Real Money label, and added direct phone, tablet, and casino-cabinet previews with live width-overflow checking to the mobile web simulator.</li>
+          <li>Made WIN totals substantially oversized and gave awarded free spins, free plays, bonuses, and jackpots their own large emphasis above supporting payline explanations.</li>
+          <li>Improved Settings readability with larger labels and helper text, fully opaque colors, and theme-matched panels, fields, borders, and focus states.</li>
+          <li>Corrected pinned monetary-stat contrast inside dark Settings pages so labels and values remain fully legible after moving from the home HUD.</li>
+          <li>Enlarged sparse settings-page body values such as Time Elapsed and placed them in clear, full-width information cards while preserving the stable page height.</li>
+          <li>Refined Big Money Deluxe's game-specific payout board with brighter cash-reel cells and smaller, centered value and jackpot chips.</li>
+          <li>Expanded winning payout and jackpot coins to fill their reel cells and tightened the pulse animation so it remains fully contained.</li>
+          <li>Made Match &amp; Win always contain a winning jackpot set selected from relative configured tier frequencies, reserved fixed result and feature-bar heights, and kept the yellow feature bar empty until an award is active.</li>
+        </ul></section>
+        <section><h3>v1.2.0 · 2026-08-16 · Simulated money and Lucky Wheel update</h3><ul>
+          <li>Added an optional Money mode with a simulated withdrawal button and a clear unavailable-withdrawal notice.</li>
+          <li>Added session totals for deposited credits, paid wagers played, and the balance eligible after the full deposited amount has been played.</li>
+          <li>Replaced the insufficient-credit fallback with a configurable Lucky Credit Wheel, including adjustable win odds and a setting that restores the original behavior.</li>
+          <li>Improved overlay keyboard isolation, focus handling, responsive controls, short-screen scrolling, and reduced-motion support.</li>
+        </ul></section>
+        <section><h3>v1.1.3 · 2026-08-08 · Match &amp; Win bonus</h3><ul>
+          <li>Added a cash-themed Match &amp; Win as an alternative to Pick a Dollar Bill, using a 3×3 jackpot-value reveal board.</li>
+          <li>Connected its awards and tier likelihoods to Big Money Deluxe's current Mini, Minor, Major, and Grand settings.</li>
+          <li>Fixed Pick a Dollar Bill prizes staying in predictable positions by properly reshuffling them every round.</li>
+        </ul></section>
+        <section><h3>v1.1.2 · 2026-07-29 · Playtime and interface update</h3><ul>
+          <li>Added cumulative active-spin elapsed time for manual and automatic play.</li>
+          <li>Elapsed time pauses between spins and stays outside the win/loss outline.</li>
+          <li>Long result messages now wrap without clipping on smaller screens.</li>
+          <li>Improved jackpot-chip artwork, mobile layout, session tracking, and game scrolling.</li>
+        </ul></section>
+        <section><h3>v1.1.0 · 2026-07-12 · Cash-slot expansion</h3><ul>
+          <li>Added four independent jackpots, cash denominations, separate jackpot odds, paginated settings, pinned options, and clearer inserted-credit accounting.</li>
+          <li>Added Spacebar spin and hold-to-auto-spin, centered reel chips, refined jackpot artwork, responsive controls, and last-chance-spin behavior.</li>
+          <li>Expanded session statistics and denomination displays; Wild symbols were tested during development and later intentionally removed.</li>
+        </ul></section>
+        <section><h3>v1.0.1 · 2026-07-11 · Play and payout polish</h3><ul>
+          <li>Improved reel spacing, jackpot alignment, payout chips, mobile formatting, settings defaults, and jackpot frequency.</li>
+          <li>Added desktop keyboard play and repaired odds, statistics, balance increments, and credit calculations.</li>
+        </ul></section>
+        <section><h3>v1.0.0 · 2026-07-02 · Initial release</h3><p>Released the classic cash slot with paylines, credits, wagers, jackpots, and automatic spins.</p></section>
+      </article>
+
+      <article id="neon" class="history-card">
+        <header><span class="game-icon neon">ϟ</span><div><p>Slot game</p><h2>Neon Slots</h2></div><b>v1.3.7</b></header>
+        <section><h3>v1.3.7 · 2026-09-19 · Larger wager controls</h3><ul><li>Made quick-bet chips substantially larger and easier to read and tap.</li><li>Kept browser Back and Forward navigation synchronized with the displayed game and casino header.</li><li>Preserved the full desktop navigation while preventing crowding at narrower desktop widths.</li></ul></section>
+        <section><h3>v1.3.6 · 2026-09-19 · Restored instant bonuses</h3><ul><li>Restored the always-visible Buy Bonus action with $40, $80, and $120 choices.</li><li>Made bonus wheels complete multiple revolutions and slow naturally before stopping.</li><li>Added individual even-percentage controls for all 12 rescue-wheel wedges while preserving an exact 100% total.</li><li>Increased regular bonus-wheel awards and added persistent overall win, loss, wager, and net tracking on the casino home screen.</li></ul></section>
+        <section><h3>v1.3.5 · 2026-09-19 · Refined jackpot chips and rounded app icons</h3><ul>
+          <li>Matched Pretty Penny's full-cell jackpot chip and reel-box sizing so tier names and amounts remain unclipped.</li>
+          <li>Redesigned the Mini, Minor, Major, and Grand chips with clearer tier frames and Neon-specific colors.</li>
+          <li>Rounded the visible browser, Apple touch, installable PWA, and Bingo artwork while preserving the square source canvases required by each platform.</li>
+        </ul></section>
+        <section><h3>v1.3.4 · 2026-09-13 · Reliable and configurable wheels</h3><ul>
+          <li>Fixed bonus wheels that could skip their animation and remain stuck on the spinning result.</li>
+          <li>Locked the Fake Money / Real Money display switch for the entire spin, including bonus features and free spins.</li>
+          <li>Added linked 1–99% winning and no-award rescue-wheel controls that maintain a 100% total and resize wedges accurately.</li>
+          <li>Kept the new wheel percentage controls registered as a paginated, pinnable Settings page instead of exposing them unintentionally on the main game screen.</li>
+        </ul></section>
+        <section><h3>v1.3.3 · 2026-09-12 · Readable reel chips and truthful wheel sizing</h3><ul>
+          <li>Reworked reel jackpot and bonus chips with bright tier-colored surfaces, heavy dark lettering, safe line spacing, and clipping-free sizing.</li>
+          <li>Reserved the result and feature rows by default to prevent layout jumps, with an optional Hide Empty Result Bars setting.</li>
+          <li>Made Lucky Credit Wheel wedge sizes and landing positions match the selected win/loss percentage.</li>
+          <li>Locked denomination, paylines, wager presets, and Max Bet for the full round, including bonus games and every awarded free spin.</li>
+          <li>Improved checkbox-setting spacing and unified mobile browser icons with the blue desktop Muha Casino mark.</li>
+        </ul></section>
+        <section><h3>v1.3.2 · 2026-09-12 · Full-size neon jackpot cards</h3><ul>
+          <li>Rebuilt reel jackpots as full-height tier-colored cards instead of thin capsules that collapsed inside the symbol row.</li>
+          <li>Added bright borders, neon star badges, larger white jackpot names and values, and readable subdued styling for non-winning teaser chips.</li>
+        </ul></section>
+        <section><h3>v1.3.1 · 2026-09-12 · Larger title and reliable slot controls</h3><ul>
+          <li>Enlarged and centered the Neon Slots title to match the scale and alignment of the other slot games.</li>
+          <li>Redesigned the Fake Money and Real Money switch, removed empty result-area whitespace, and refined the quick-bet row beside Denom.</li>
+          <li>Prevented bonus and free-spin awards from being labeled as “No win” and repaired a bonus-result error that could leave Spin disabled.</li>
+        </ul></section>
+        <section><h3>v1.3.0 · 2026-09-03 · Configurable jackpots and casino toolbar</h3><ul>
+          <li>Expanded Settings into a full-screen, safe-area-aware workspace with fixed navigation and independently scrolling page content.</li>
+          <li>Corrected the Lucky Wheel ratio selector so its default and saved 50% Win / 50% Loss option is always visibly selected.</li>
+          <li>Added editable Mini, Minor, Major, and Grand base amounts in Settings.</li>
+          <li>Added enabled-by-default bet scaling with configurable multiplier or fixed-increment behavior, reference bet, bet step, and step amount.</li>
+          <li>Applied configured values consistently to the jackpot board, reel outcomes, teaser symbols, Match &amp; Win, and actual awards.</li>
+          <li>Moved the Fake/Real money switch into the compact casino toolbar and refreshed every monetary display when it changes.</li>
+          <li>Made jackpot scaling compound denomination with total bet so raising either wager control increases displayed and awarded jackpots.</li>
+          <li>Replaced the Bet Per Line dropdown and arrow stepper with four direct Total Bet buttons: 50¢, $1.50, $4.00, and $8.00.</li>
+          <li>Enlarged the quick Total Bet button values to the maximum responsive size that remains safely contained on narrow phones and denomination-scaled wagers.</li>
+          <li>Placed a compact, always-visible Denomination selector beside the Total Bet buttons instead of using a separate pinnable settings page.</li>
+          <li>Restored Adjust Money as an optional home-screen setting that defaults off, while keyboard Up/Down adjustment remains available at all times.</li>
+          <li>Placed balanced 140 × 42px Spin, Max Bet, Reset Session, and Settings controls together in one four-button row.</li>
+          <li>Removed excess vertical spacing above and between the title, jackpots, meters, reels, and controls so the full play surface starts higher.</li>
+          <li>Restored a compact live Total Bet summary, kept denomination selected when changing wager presets, and made preset labels scale to show the actual wager at that denomination.</li>
+          <li>Made every odds and estimated-frequency setting opt-in on the home screen while retaining unrelated saved pin choices.</li>
+          <li>Rebuilt the last-chance credit wheel as a flat, high-contrast 12-wedge casino wheel whose six winning and six no-award segments each contain one centered result.</li>
+          <li>Limited the rescue wheel to one attempt per session after paid play exhausts the usable balance; Reset Session restores eligibility, and losing cannot be retried repeatedly.</li>
+          <li>Kept rescue-wheel win and loss results open until the player closes them, and made awarded credits return control without automatically spinning the reels.</li>
+          <li>Added persistent Settings controls for six winning wheel wedges, each independently configurable as a bet multiplier, fixed value, or scaled jackpot, alongside the existing win/loss ratio.</li>
+          <li>Compacted consumer-screen play while scaling reels, symbols, feature chips, jackpots, meters, results, bet controls, and action buttons up on full-size or touch-enabled casino cabinet displays.</li>
+          <li>Reduced HUD height and separated jackpot base amounts from bet-scaling controls in the paginated settings.</li>
+          <li>Kept mobile play controls closer to the reels and added stable, direct navigation across every settings page.</li>
+          <li>Moved high-contrast game results beneath the reels and added a compact status meter that stays empty until free spins are awarded.</li>
+          <li>Moved tap, hold, and Spacebar instructions into Game Rules; the home-screen row now appears only for live auto-spin status.</li>
+          <li>Made Time Elapsed an optional Settings item that defaults off on the home screen while continuing to track play time.</li>
+          <li>Clarified the casino-header display switch with an always-visible Fake Money or Real Money label, and added direct phone, tablet, and casino-cabinet previews with live width-overflow checking to the mobile web simulator.</li>
+          <li>Made WIN totals substantially oversized and gave awarded free spins, free plays, bonuses, and jackpots their own large emphasis above supporting payline explanations.</li>
+          <li>Improved Settings readability with larger labels and helper text, fully opaque colors, and theme-matched panels, fields, borders, and focus states.</li>
+          <li>Corrected pinned monetary-stat contrast inside dark Settings pages so labels and values remain fully legible after moving from the home HUD.</li>
+          <li>Enlarged sparse settings-page body values such as Time Elapsed and placed them in clear, full-width information cards while preserving the stable page height.</li>
+          <li>Made Match &amp; Win always contain a winning jackpot set selected from relative configured tier frequencies, reserved fixed result and feature-bar heights, and kept the yellow feature bar empty until an award is active.</li>
+        </ul></section>
+        <section><h3>v1.2.0 · 2026-08-16 · Simulated money and Lucky Wheel update</h3><ul>
+          <li>Added an optional Money mode with simulated withdrawal controls and an unavailable-withdrawal notice.</li>
+          <li>Added deposited, played, and withdrawable session totals with a full-deposit play-through rule.</li>
+          <li>Added the configurable Lucky Credit Wheel for insufficient credits, plus a setting to restore the original fallback.</li>
+          <li>Improved the new overlays across keyboards, mobile screens, short windows, focus navigation, and reduced-motion preferences.</li>
+        </ul></section>
+        <section><h3>v1.1.3 · 2026-08-08 · Match &amp; Win bonus</h3><ul>
+          <li>Added a neon-styled Match &amp; Win as an alternative to Neon Vaults, using a 3×3 jackpot-value reveal board.</li>
+          <li>Connected its awards and tier likelihoods to Neon Slots' current Mini, Minor, Major, and Grand settings.</li>
+          <li>Fixed Neon Vault prizes staying in predictable positions by properly reshuffling them every round.</li>
+        </ul></section>
+        <section><h3>v1.1.2 · 2026-07-29 · Playtime and interface update</h3><ul>
+          <li>Added cumulative active-spin elapsed time with pause and resume behavior.</li>
+          <li>Separated elapsed time from the result outline and fixed responsive message clipping.</li>
+          <li>Added shared session tracking and improved cached-release loading.</li>
+          <li>Refined reel artwork, mobile controls, and in-game scrolling.</li>
+        </ul></section>
+        <section><h3>v1.1.0 · 2026-07-24 · Bonus and jackpot expansion</h3><ul>
+          <li>Added independent jackpots, reel-driven features, free spins, a pick bonus, configurable bonus frequency and prizes, and adjustable reel sizing.</li>
+          <li>Built hold-to-open and Spacebar auto-spin controls with countdowns, stop/reset behavior, mobile support, and crash recovery.</li>
+          <li>Added configurable odds, improved payouts, realistic win/loss behavior, session winnings, reset controls, and corrected credit deductions.</li>
+        </ul></section>
+        <section><h3>v1.0.1 · 2025-10-15 · Original slot refinement</h3><ul>
+          <li>Added available credits and session winnings, improved arrow feedback, keyboard shortcuts, trackpad support, and mobile layouts.</li>
+          <li>Refined reel presentation, metallic styling, payout messages, settings organization, and automatic-spin reliability.</li>
+        </ul></section>
+        <section><h3>v1.0.0 · 2025-08-24 · Initial release</h3><p>Released the neon casino slot with animated reels, paylines, jackpots, and configurable wagering.</p></section>
+      </article>
+
+      <article id="pretty-penny" class="history-card">
+        <header><span class="game-icon penny">¢</span><div><p>Feature slot</p><h2>Pretty Penny</h2></div><b>v1.4.5</b></header>
+        <section><h3>v1.4.5 · 2026-09-19 · Clearer compact controls</h3><ul><li>Made quick-bet chips substantially larger and easier to read and tap.</li><li>Allowed Pocket Money, Nest Egg, and Rainy Day sub-jackpots to use the same compact minimum height as the main jackpots.</li><li>Kept browser Back and Forward navigation synchronized with the displayed game and casino header.</li></ul></section>
+        <section><h3>v1.4.4 · 2026-09-19 · Richer configurable features</h3><ul><li>Restored Buy Bonus and realistic multi-revolution wheel slowdown.</li><li>Added individual even-percentage controls for all 12 rescue-wheel wedges while preserving an exact 100% total.</li><li>Raised regular bonus-wheel prizes to 10×, 25×, 50×, and 100× bet.</li><li>Added Link chip value-range, chip-count, win-frequency, and preview-frequency controls.</li><li>Added persistent overall win, loss, wager, and net tracking on the casino home screen.</li></ul></section>
+        <section><h3>v1.4.3 · 2026-09-13 · Reliable and configurable wheels</h3><ul>
+          <li>Fixed bonus wheels that could skip their animation and remain stuck on the spinning result.</li>
+          <li>Locked the Fake Money / Real Money display switch for the entire spin, including bonus features and free spins.</li>
+          <li>Added linked 1–99% winning and no-award rescue-wheel controls that maintain a 100% total and resize wedges accurately.</li>
+          <li>Kept the new wheel percentage controls registered as a paginated, pinnable Settings page instead of exposing them unintentionally on the main game screen.</li>
+        </ul></section>
+        <section><h3>v1.4.2 · 2026-09-12 · Stable results and truthful wheel sizing</h3><ul>
+          <li>Reserved the result and feature rows by default to prevent the wager controls from jumping, with an optional Hide Empty Result Bars setting for compact play.</li>
+          <li>Made Lucky Credit Wheel wedge sizes and landing positions match the selected win/loss percentage.</li>
+          <li>Locked denomination, paylines, wager presets, and Max Bet for the full round, including bonus games and every awarded free spin.</li>
+          <li>Improved checkbox-setting spacing and unified mobile browser icons with the blue desktop Muha Casino mark.</li>
+        </ul></section>
+        <section><h3>v1.4.1 · 2026-09-12 · Compact wagering and clearer feature wins</h3><ul>
+          <li>Redesigned the casino-header Fake Money and Real Money switch for clearer labels, stronger state feedback, and comfortable mobile use.</li>
+          <li>Removed unused result-area whitespace and refined the quick-bet buttons so the wager row sits neatly beside Denom.</li>
+          <li>Made bonus and free-spin awards take priority over loss copy, ensuring a feature win is never described as “No win.”</li>
+        </ul></section>
+        <section><h3>v1.4.0 · 2026-09-03 · Jackpot controls, title coin, and reel reliability</h3><ul>
+          <li>Expanded Settings into a full-screen, safe-area-aware workspace with fixed navigation and independently scrolling page content.</li>
+          <li>Corrected the Lucky Wheel ratio selector so its default and saved 50% Win / 50% Loss option is always visibly selected.</li>
+          <li>Added editable jackpot base amounts and enabled-by-default bet scaling with multiplier and fixed-increment modes.</li>
+          <li>Added configurable reference-bet, bet-step, and amount-per-step values and connected them to displays and actual awards.</li>
+          <li>Made jackpot scaling compound denomination with total bet so raising either wager control increases displayed and awarded jackpots.</li>
+          <li>Replaced the small title cent mark with a larger dedicated polished copper-penny emblem.</li>
+          <li>Removed reel-grid paint clipping so edge symbols, feature art, reveal doors, and winning effects remain fully visible.</li>
+          <li>Moved the Fake/Real money switch into the compact casino toolbar and protected the game title on mobile.</li>
+          <li>Corrected iframe, scrollbar-gutter, reel-frame, and button containment so the full game remains visible without controls slipping beneath the frame.</li>
+          <li>Replaced the Bet Per Line dropdown and arrow stepper with four direct Total Bet buttons: 50¢, $1.50, $4.00, and $8.00.</li>
+          <li>Enlarged the quick Total Bet button values to the maximum responsive size that remains safely contained, and centered each savings sub-jackpot's graphic, unwrapped name, and award value.</li>
+          <li>Placed a compact, always-visible Denomination selector beside the Total Bet buttons instead of using a separate pinnable settings page.</li>
+          <li>Restored Adjust Money as an optional home-screen setting that defaults off, while keyboard Up/Down adjustment remains available at all times.</li>
+          <li>Placed balanced 140 × 42px Spin, Max Bet, Reset Session, and Settings controls together in one four-button row.</li>
+          <li>Removed excess vertical spacing above and between the title, jackpots, meters, reels, and controls so the full play surface starts higher.</li>
+          <li>Restored a compact live Total Bet summary, kept denomination selected when changing wager presets, and made preset labels scale to show the actual wager at that denomination.</li>
+          <li>Made every odds and estimated-frequency setting opt-in on the home screen while retaining unrelated saved pin choices.</li>
+          <li>Rebuilt the last-chance credit wheel as a flat, high-contrast 12-wedge casino wheel whose six winning and six no-award segments each contain one centered result.</li>
+          <li>Limited the rescue wheel to one attempt per session after paid play exhausts the usable balance; Reset Session restores eligibility, and losing cannot be retried repeatedly.</li>
+          <li>Kept rescue-wheel win and loss results open until the player closes them, and made awarded credits return control without automatically spinning the reels.</li>
+          <li>Added persistent Settings controls for six winning wheel wedges, each independently configurable as a bet multiplier, fixed value, or scaled jackpot, alongside the existing win/loss ratio.</li>
+          <li>Compacted consumer-screen play while scaling reels, symbols, feature chips, jackpots, meters, results, bet controls, and action buttons up on full-size or touch-enabled casino cabinet displays.</li>
+          <li>Separated Jackpot Amounts and Jackpot Bet Scaling into different settings pages.</li>
+          <li>Compressed the tall mobile reel and feature layout, locked the settings stage against page-to-page jumping, and added an instant page selector.</li>
+          <li>Moved high-contrast win and loss results directly beneath the reels and added a compact indicator that shows only awarded free spins, held gems, and remaining gem spins.</li>
+          <li>Moved tap, hold, and Spacebar instructions into Game Rules; the home-screen row now appears only for live auto-spin status.</li>
+          <li>Made Time Elapsed an optional Settings item that defaults off on the home screen while continuing to track play time.</li>
+          <li>Clarified the casino-header display switch with an always-visible Fake Money or Real Money label, and added direct phone, tablet, and casino-cabinet previews with live width-overflow checking to the mobile web simulator.</li>
+          <li>Made WIN totals substantially oversized and gave awarded free spins, free plays, bonuses, and jackpots their own large emphasis above supporting payline explanations.</li>
+          <li>Improved Settings readability with larger labels and helper text, fully opaque colors, and theme-matched panels, fields, borders, and focus states.</li>
+          <li>Corrected pinned monetary-stat contrast inside dark Settings pages so labels and values remain fully legible after moving from the home HUD.</li>
+          <li>Enlarged sparse settings-page body values such as Time Elapsed and placed them in clear, full-width information cards while preserving the stable page height.</li>
+          <li>Rebuilt the Reveal Doors “Rows concealed” control as a clean settings subsection with larger checkbox tiles that wrap comfortably on phones.</li>
+          <li>Gave Mini, Minor, Major, and Grand larger, consistently sized star, diamond, crown, and sparkle badges. Rebuilt the savings graphics as the fill meters themselves: a coral purse for Pocket Money, a green egg for Nest Egg, and a blue umbrella for Rainy Day.</li>
+          <li>Made Match &amp; Win always contain a winning jackpot set selected from the relative configured tier frequencies, reserved a fixed result-panel height, and hid unearned free-spin and Reserve Wheel notices.</li>
+          <li>Replaced the Reserve Wheel's cent character with the polished Pretty Penny artwork and gave the result box and always-reserved yellow feature bar compact, fixed heights that do not jump.</li>
+          <li>Added purse, egg, and umbrella symbols to connected LINK values so each collected symbol advances only its matching savings meter, moved the Major crown onto a dark teal badge, and placed the Mini star on a distinct sapphire-blue badge.</li>
+          <li>Enlarged linked savings symbols and reorganized their reel chips so the meter shape, value, and destination label remain visible without clipping.</li>
+          <li>Enlarged the three savings-symbol backgrounds so their fills stay contained, replaced the outlined panel with a soft light-copper background, evened the green jackpot frame, and removed the decorative copper top and green footer strips.</li>
+          <li>Reduced Hold &amp; Win completion frequency by changing the second-gem chance from 50% to 12% per spin while retaining the three-spin cycle.</li>
+          <li>Changed Hold &amp; Win from a continuously active cycle to an adjustable 3%-default paid-spin trigger; its gems now substitute as Wilds and remain locked until completion or three-spin expiration.</li>
+          <li>Reduced default LINK frequency from 28% to 10% on eligible wins and reduced non-paying LINK teasers from 9% to 3%, while keeping both odds adjustable.</li>
+          <li>Simplified held-Wild and LINK reel chips to use clear feature artwork with one readable value, removing cramped duplicate captions while preserving accessible descriptions.</li>
+          <li>Removed visible savings-meter percentages and enlarged the Pocket Money, Nest Egg, and Rainy Day award values while retaining progress in the fill graphics and accessible meter labels.</li>
+          <li>Renamed Pin Money to Pocket Money and turned all three savings-meter names into larger, individually colored serif feature wordmarks instead of interface-style labels.</li>
+          <li>Integrated connected LINK values directly into meter-colored reel cards with clear savings artwork and larger amounts, removing the awkward inner chip and double-border treatment.</li>
+          <li>Enlarged held-Wild diamond artwork and dollar-value type, then centered every LINK and held-Wild icon-and-value group within its reel chip.</li>
+          <li>Rebuilt reel jackpots as integrated tier-colored cards with matching star, diamond, crown, and sparkle badges, removing the glossy nested jackpot capsules.</li>
+          <li>Made the leading WIN amount substantially larger than its line-by-line payout explanation so results have a clear visual hierarchy.</li>
+          <li>Flattened Pretty Penny throughout by removing bevels, dimensional gradients, raised edges, shadows, and transform effects while preserving its copper, teal, and cream palette.</li>
+          <li>Separated Pretty Penny's saved home-screen settings from Treasure Pots and made the Hold &amp; Win trigger estimate opt-in instead of showing it by default.</li>
+        </ul></section>
+        <section><h3>v1.3.0 · 2026-08-17 · Three-Spin Gem Row and reveal doors</h3><ul>
+          <li>Added a three-spin Hold &amp; Win cycle that selects one reel row and holds one or two newly landed gems after each spin.</li>
+          <li>Added displayed dollar values to held gems and a combined-value award when all five positions fill within the cycle.</li>
+          <li>Added live gem count and remaining-spin status, a full-row win animation, and an automatic fresh cycle after a win or an incomplete third spin.</li>
+          <li>Added Pretty Penny reveal doors with full-row and individual-symbol styles, plus settings to conceal any one row, any combination of rows, or all rows before the result opens.</li>
+        </ul></section>
+        <section><h3>v1.2.0 · 2026-08-16 · Simulated money and Lucky Wheel</h3><ul>
+          <li>Added optional Money mode with simulated withdrawal controls and deposited, played, and withdrawable session totals.</li>
+          <li>Added a full-deposit play-through rule and an unavailable-withdrawal explanation.</li>
+          <li>Added the configurable Lucky Credit Wheel for insufficient credits, with a switch that restores the original behavior.</li>
+          <li>Improved overlay sizing, keyboard isolation, focus handling, mobile controls, and reduced-motion support.</li>
+        </ul></section>
+        <section><h3>v1.1.3 · 2026-08-08 · Match &amp; Win bonus</h3><ul>
+          <li>Added Match &amp; Win alongside the Reserve Wheel, selected randomly whenever the bonus triggers.</li>
+          <li>Made the Pretty Penny reveal board use wager-scaled Penny Reserve values and the current Jackpot Odds tier weights.</li>
+          <li>Kept Reserve Wheel probabilities independent from the configurable reel and Match &amp; Win jackpot odds.</li>
+        </ul></section>
+        <section><h3>v1.1.2 · 2026-07-29 · Playtime and interface update</h3><ul>
+          <li>Added cumulative active-spin elapsed time across manual and automatic play.</li>
+          <li>Kept result messages readable and elapsed time outside the status outline.</li>
+          <li>Reworked jackpot and link symbols to fill reel cards cleanly without animation.</li>
+          <li>Kept the bonus wheel and savings-bank features usable on mobile screens.</li>
+        </ul></section>
+        <section><h3>v1.1.0 · 2026-07-28 · Pretty Penny redesign</h3><ul>
+          <li>Transformed the original Treasure Pots prototype into Pretty Penny with a complete savings-themed visual and gameplay redesign.</li>
+          <li>Added the custom symbol set, collectible banks, link prizes, jackpots, purchase controls, and bonus wheel.</li>
+          <li>Improved wheel visibility and controls for short and mobile screens before Muha Casino integration.</li>
+        </ul></section>
+        <section><h3>v1.0.0 · 2026-07-28 · Initial release</h3><p>Released the savings-themed feature slot with three banks, link prizes, jackpots, and a bonus wheel.</p></section>
+      </article>
+
+      <article id="treasurepots" class="history-card">
+        <header><span class="game-icon treasure">♦</span><div><p>Feature slot</p><h2>Treasure Pots</h2></div><b>v1.3.5</b></header>
+        <section><h3>v1.3.5 · 2026-09-19 · Clearer compact controls</h3><ul><li>Made quick-bet chips substantially larger and easier to read and tap.</li><li>Allowed Pocket Pot, Lucky Pot, and Royal Pot sub-jackpots to use the same compact minimum height as the main jackpots.</li><li>Kept browser Back and Forward navigation synchronized with the displayed game and casino header.</li></ul></section>
+        <section><h3>v1.3.4 · 2026-09-19 · Richer configurable features</h3><ul><li>Restored Buy Bonus and realistic multi-revolution wheel slowdown.</li><li>Added individual even-percentage controls for all 12 rescue-wheel wedges while preserving an exact 100% total.</li><li>Raised regular bonus-wheel prizes to 10×, 25×, 50×, and 100× bet.</li><li>Added Link chip value-range, chip-count, win-frequency, and preview-frequency controls.</li><li>Added persistent overall win, loss, wager, and net tracking on the casino home screen.</li></ul></section>
+        <section><h3>v1.3.3 · 2026-09-13 · Reliable and configurable wheels</h3><ul>
+          <li>Fixed bonus wheels that could skip their animation and remain stuck on the spinning result.</li>
+          <li>Locked the Fake Money / Real Money display switch for the entire spin, including bonus features and free spins.</li>
+          <li>Added linked 1–99% winning and no-award rescue-wheel controls that maintain a 100% total and resize wedges accurately.</li>
+          <li>Kept the new wheel percentage controls registered as a paginated, pinnable Settings page instead of exposing them unintentionally on the main game screen.</li>
+        </ul></section>
+        <section><h3>v1.3.2 · 2026-09-12 · Stable results and truthful wheel sizing</h3><ul>
+          <li>Reserved the result and feature rows by default to prevent the wager controls from jumping, with an optional Hide Empty Result Bars setting for compact play.</li>
+          <li>Made Lucky Credit Wheel wedge sizes and landing positions match the selected win/loss percentage.</li>
+          <li>Locked denomination, paylines, wager presets, and Max Bet for the full round, including bonus games and every awarded free spin.</li>
+          <li>Improved checkbox-setting spacing and unified mobile browser icons with the blue desktop Muha Casino mark.</li>
+        </ul></section>
+        <section><h3>v1.3.1 · 2026-09-12 · Compact wagering and clearer feature wins</h3><ul>
+          <li>Redesigned the casino-header Fake Money and Real Money switch for clearer labels, stronger state feedback, and comfortable mobile use.</li>
+          <li>Removed unused result-area whitespace and refined the quick-bet buttons so the wager row sits neatly beside Denom.</li>
+          <li>Made bonus and free-spin awards take priority over loss copy, ensuring a feature win is never described as “No win.”</li>
+        </ul></section>
+        <section><h3>v1.3.0 · 2026-09-03 · Configurable jackpots and casino toolbar</h3><ul>
+          <li>Expanded Settings into a full-screen, safe-area-aware workspace with fixed navigation and independently scrolling page content.</li>
+          <li>Corrected the Lucky Wheel ratio selector so its default and saved 50% Win / 50% Loss option is always visibly selected.</li>
+          <li>Added editable Mini, Minor, Major, and Grand base amounts in Settings.</li>
+          <li>Replaced fixed wager scaling with enabled-by-default multiplier or fixed-increment modes and configurable reference values.</li>
+          <li>Applied configured jackpot values consistently across the Emerald Vault board, reel awards, Treasure Pots Wheel, and Match &amp; Win.</li>
+          <li>Moved the Fake/Real money switch into the compact casino toolbar and refreshed every monetary display when it changes.</li>
+          <li>Made jackpot scaling compound denomination with total bet so raising either wager control increases displayed and awarded jackpots.</li>
+          <li>Replaced the Bet Per Line dropdown and arrow stepper with four direct Total Bet buttons: 50¢, $1.50, $4.00, and $8.00.</li>
+          <li>Enlarged the quick Total Bet button values to the maximum responsive size that remains safely contained, and centered each Treasure Pot sub-jackpot's graphic, unwrapped name, and award value.</li>
+          <li>Placed a compact, always-visible Denomination selector beside the Total Bet buttons instead of using a separate pinnable settings page.</li>
+          <li>Restored Adjust Money as an optional home-screen setting that defaults off, while keyboard Up/Down adjustment remains available at all times.</li>
+          <li>Placed balanced 140 × 42px Spin, Max Bet, Reset Session, and Settings controls together in one four-button row.</li>
+          <li>Removed excess vertical spacing above and between the title, jackpots, meters, reels, and controls so the full play surface starts higher.</li>
+          <li>Restored a compact live Total Bet summary, kept denomination selected when changing wager presets, and made preset labels scale to show the actual wager at that denomination.</li>
+          <li>Made every odds and estimated-frequency setting opt-in on the home screen while retaining unrelated saved pin choices.</li>
+          <li>Rebuilt the last-chance credit wheel as a flat, high-contrast 12-wedge casino wheel whose six winning and six no-award segments each contain one centered result.</li>
+          <li>Limited the rescue wheel to one attempt per session after paid play exhausts the usable balance; Reset Session restores eligibility, and losing cannot be retried repeatedly.</li>
+          <li>Kept rescue-wheel win and loss results open until the player closes them, and made awarded credits return control without automatically spinning the reels.</li>
+          <li>Added persistent Settings controls for six winning wheel wedges, each independently configurable as a bet multiplier, fixed value, or scaled jackpot, alongside the existing win/loss ratio.</li>
+          <li>Upgraded Pocket Pot, Lucky Pot, and Royal Pot to the same shaped-meter, feature-wordmark, and enlarged-value hierarchy as Pretty Penny, and matched its WIN, free-spin, and bonus-result hierarchy in Treasure Pots colors.</li>
+          <li>Moved the Treasure Pots Major key onto a bright gold badge on both the jackpot board and reel chips so its silhouette remains clear at compact sizes.</li>
+          <li>Compacted consumer-screen play while scaling reels, symbols, feature chips, jackpots, meters, results, bet controls, and action buttons up on full-size or touch-enabled casino cabinet displays.</li>
+          <li>Made the shared slot HUD more compact and placed jackpot amounts and bet scaling on separate settings pages.</li>
+          <li>Reduced mobile reel height and added stable, fast navigation to any settings page without repeatedly stepping through the list.</li>
+          <li>Moved high-contrast game results beneath the reels and added a compact status meter that stays empty until free spins are awarded.</li>
+          <li>Moved tap, hold, and Spacebar instructions into Game Rules; the home-screen row now appears only for live auto-spin status.</li>
+          <li>Made Time Elapsed an optional Settings item that defaults off on the home screen while continuing to track play time.</li>
+          <li>Clarified the casino-header display switch with an always-visible Fake Money or Real Money label, and added direct phone, tablet, and casino-cabinet previews with live width-overflow checking to the mobile web simulator.</li>
+          <li>Made WIN totals substantially oversized and gave awarded free spins, free plays, bonuses, and jackpots their own large emphasis above supporting payline explanations.</li>
+          <li>Improved Settings readability with larger labels and helper text, fully opaque colors, and theme-matched panels, fields, borders, and focus states.</li>
+          <li>Corrected pinned monetary-stat contrast inside dark Settings pages so labels and values remain fully legible after moving from the home HUD.</li>
+          <li>Enlarged sparse settings-page body values such as Time Elapsed and placed them in clear, full-width information cards while preserving the stable page height.</li>
+          <li>Matched Pretty Penny's polished award treatment with distinct jackpot badges, integrated Hold &amp; Link reel cells, and larger shaped Treasure Pot meters that fill inside their own silhouettes; each linked value now carries the matching pot graphic and advances that exact meter.</li>
+          <li>Flattened Treasure Pots throughout by removing bevels, dimensional gradients, raised edges, drop shadows, and transform-based button or award effects while retaining its emerald, gold, and cream identity.</li>
+          <li>Gave Treasure Pots its own flat treasure diamond, clover, key, and trophy jackpot symbols; replaced scattered Collect coins with 10%-default connected LINK chains and 3%-default teasers; and added a configurable three-spin Emerald Hold &amp; Win Wild row.</li>
+          <li>Made Match &amp; Win always contain a winning jackpot set selected from relative configured tier frequencies, reserved fixed result and feature-bar heights, and kept the yellow feature bar empty until an award is active.</li>
+          <li>Separated Treasure Pots' saved home-screen settings from Pretty Penny and made the Emerald Hold &amp; Win trigger estimate opt-in instead of showing it by default.</li>
+        </ul></section>
+        <section><h3>v1.2.0 · 2026-08-16 · Simulated money and Lucky Wheel update</h3><ul>
+          <li>Added optional Money mode with simulated withdrawal controls and an unavailable-withdrawal notice.</li>
+          <li>Added deposited, played, and withdrawable session totals governed by a full-deposit play-through rule.</li>
+          <li>Added the configurable Lucky Credit Wheel for insufficient credits, plus a setting to restore the original fallback.</li>
+          <li>Improved overlay interaction, responsive layouts, focus behavior, keyboard isolation, and reduced-motion support.</li>
+        </ul></section>
+        <section><h3>v1.1.3 · 2026-08-08 · Match &amp; Win bonus</h3><ul>
+          <li>Added Match &amp; Win alongside the Treasure Pots Wheel, selected randomly whenever the bonus triggers.</li>
+          <li>Made the Treasure Pots reveal board use wager-scaled Emerald Vault values and the current Jackpot Odds tier weights.</li>
+          <li>Kept Treasure Pots Wheel probabilities independent from the configurable reel and Match &amp; Win jackpot odds.</li>
+        </ul></section>
+        <section><h3>v1.1.2 · 2026-08-01 · Casino integration and Emerald Vault redesign</h3><ul>
+          <li>Added Treasure Pots to the casino library and featured-game slider with a dedicated green-and-gold presentation.</li>
+          <li>Redesigned the reels, jackpots, savings pots, Hold &amp; Link values, controls, symbols, and responsive layouts around the Emerald Vault theme.</li>
+          <li>Added three savings pots that advance after paid-spin LINK wins and award fixed $5, $25, and $100 prizes when full.</li>
+          <li>Added wager-scaled Mini, Minor, Major, and Grand jackpots plus a player-spun wheel with fixed coin and jackpot outcomes.</li>
+        </ul></section>
+        <section><h3>v1.0.0 · 2026-08-01 · Initial release</h3><p>Released the emerald feature slot with savings pots, linked values, wager-scaled jackpots, free spins, and the Treasure Pots bonus wheel.</p></section>
+      </article>
+
+      <article id="bingo" class="history-card featured-history">
+        <header><span class="game-icon bingo">B</span><div><p>Casino Hall</p><h2>Muha Bingo</h2></div><b>v1.1.11</b></header>
+        <section><h3>v1.1.11 · 2026-08-15–17 · Responsive Hall controls and footer reliability</h3>
+          <div class="release-groups">
+            <div class="release-group"><h4>Player Floor</h4><ul>
+              <li>Made Planet Hall 2 the default Bingo experience while preserving every saved theme choice.</li>
+              <li>Kept the winning-pattern footer visible, sticky, and independently collapsible in every theme.</li>
+              <li>Improved responsive game navigation, card scrolling, and mobile control access without allowing blank-page overscroll.</li>
+              <li>Made Recent Calls, Call History, counts, called-number labels, and empty states easier to read across themes.</li>
+            </ul></div>
+            <div class="release-group"><h4>Hall header and footer</h4><ul>
+              <li>Widened the theme selector on mobile and desktop, corrected its clipped label, and replaced the View control icon.</li>
+              <li>Made the View control open and close the overlay on alternating presses.</li>
+              <li>Aligned the header and footer collapse arrows with their bar peaks, removed the header arrow’s top outline, and preserved the footer tab shape.</li>
+              <li>Placed Ready to Play and New Game together on a dedicated header row without touching the Player Floor and Dealer controls.</li>
+              <li>Restored the Classic and Planet Hall 1 footers while keeping Planet Hall 2 as the footer-order reference.</li>
+            </ul></div>
+            <div class="release-group"><h4>Desktop layout fixes</h4><ul>
+              <li>Kept the Call History empty-state message inside its panel instead of clipping at the right edge.</li>
+              <li>Replaced the thin, high waiting dash with a thicker marker positioned closer to the current-ball number in every theme.</li>
+              <li>Kept the Classic Casino floor cards heading on one line beside its controls.</li>
+              <li>Expanded the device time-zone field, allowed its label layout to wrap safely, and improved header contrast.</li>
+              <li>Reserved stable space for all six Show card-count buttons so their numbers remain centered and uncut.</li>
+            </ul></div>
+            <div class="release-group"><h4>Planet Hall 2 polish</h4><ul>
+              <li>Removed unwanted blue divider lines from the embedded Hall header, waiting board, and footer.</li>
+              <li>Prevented the winning-pattern preview and description from clipping at compact desktop and mobile sizes.</li>
+              <li>Standardized the footer sequence as pattern preview, pattern text, then color guide, and enlarged the mobile footer controls.</li>
+              <li>Improved the pattern title, description, color-guide labels, and footer spacing while keeping the Good luck message secondary.</li>
+            </ul></div>
+            <div class="release-group"><h4>Casino shell and controls</h4><ul>
+              <li>Improved compact-window game navigation and kept the casino header collapse control independent of the running game.</li>
+              <li>Revealed mobile settings and controls that could previously be hidden or pushed outside the viewport.</li>
+              <li>Balanced card sorting, paging, view controls, and game status across supported desktop widths.</li>
+            </ul></div>
+            <div class="release-group"><h4>Reliability</h4><ul>
+              <li>Updated stylesheet cache keys with each responsive correction so deployed browsers load the current layout.</li>
+              <li>Kept shared Bingo behavior free of source-only comments and covered active helpers with syntax checks.</li>
+              <li>Verified the full Muha Casino JavaScript check suite after the release changes.</li>
+            </ul></div>
+          </div>
+        </section>
+        <section><h3>v1.1.10 · Updated 2026-08-11 · Mobile Hall viewport reliability update</h3>
+          <div class="release-groups">
+            <div class="release-group"><h4>Bingo on iPhone</h4><ul>
+              <li>Restored the Called, Player marked, and Free space daub indicators above the Planet Hall 2 winning-pattern preview.</li>
+              <li>Made Planet Hall 2 fill the available iPhone screen and contained scrolling inside the card area.</li>
+              <li>Fit all nine Planet Hall 2 actions into a non-scrolling three-by-three control grid.</li>
+              <li>Made the Classic Hall control panel fill the usable iPhone screen without oversized buttons or page scrolling.</li>
+              <li>Rebuilt the Dealer Console as a contained single-column mobile workspace so panels and controls no longer overlap or run off-screen.</li>
+              <li>Prevented Safari from restoring Planet Hall 2 below its viewport and leaving the Hall footer above an empty screen.</li>
+              <li>Locked the casino host viewport while playing so Chrome and Safari cannot scroll into black space beyond Bingo.</li>
+            </ul></div>
+            <div class="release-group"><h4>Casino home screen</h4><ul>
+              <li>Tightened mobile navigation spacing so Featured, Games, Categories, and About match the balanced desktop navigation.</li>
+              <li>Enlarged the featured-game left and right arrows for easier viewing and tapping on phones.</li>
+              <li>Balanced the in-game return control, game identity, version, and Bingo theme selector at compact window widths.</li>
+              <li>Added a session-only collapse control that hides only the casino game header without resizing or collapsing the running game; every new game opens with Return to Dashboard visible.</li>
+            </ul></div>
+            <div class="release-group"><h4>Theme and Hall reliability</h4><ul>
+              <li>Rebuilt dealer claim verification as a centered, mobile-safe overlay across every theme, with the Hall blurred and interaction-blocked behind it.</li>
+              <li>Restored the correct Classic, Planet Hall 1, and Planet Hall 2 identities so each theme keeps its own presentation and saved selection.</li>
+              <li>Unified every Dealer Console entry point on the same routed Dealer experience and removed the obsolete legacy Dealer overlay and pop-out preference.</li>
+              <li>Unified Planet Hall 2 Home and Dealer controls around one shared nine-button component so their sizing, icons, actions, and layout remain consistent.</li>
+              <li>Added a session-only compact mode for the Planet Hall 2 status and controls footer, which starts expanded whenever Hall 2 opens.</li>
+              <li>Kept the Hall 2 footer collapse control fully visible and tappable inside the status bar.</li>
+              <li>Restored Hall 2’s original compact nine-icon footer controls and removed the oversized side-panel replacement.</li>
+              <li>Made the footer collapse and restore its status information and original controls together as one stable unit.</li>
+              <li>Restored the dedicated blue View Controls side tab independently of the Hall 2 footer.</li>
+              <li>Kept all nine Hall 2 action controls exclusively in the footer in both its expanded and restored states.</li>
+              <li>Locked Hall 2 into explicit header, play-field, and footer rows so collapsing the footer or casino header cannot compress controls or leave black space.</li>
+              <li>Made Card Design open the same focused overlay in every Bingo theme instead of replacing the active Hall screen.</li>
+              <li>Kept Hall controls out of the way while View or Flashboard is open, then restored their previous open or collapsed state after choosing a card view or closing the overlay.</li>
+              <li>Kept theme switching from restoring duplicate Bingo navigation or branding inside the casino game window.</li>
+              <li>Matched shared Hall layout fixes across themes while preserving each theme's colors, typography, and visual character.</li>
+              <li>Kept Hall controls above game content, centered their overlays, and blurred and disabled the game surface while controls are open.</li>
+              <li>Stopped Hall content, card areas, and footers from creating nested scrolling or empty space beyond the game.</li>
+            </ul></div>
+            <div class="release-group"><h4>Dealer Console</h4><ul>
+              <li>Restored the Planet Hall 2 red Dealer action and made it reliably open the same-window Dealer Console.</li>
+              <li>Made Dealer and Audience headers scroll with their content on mobile instead of sticking over the workspace.</li>
+              <li>Standardized the professional centered B-I-N-G-O card headings and underline treatment across every Dealer Console.</li>
+              <li>Kept Find Card, Edit Game Setup, calling controls, status summaries, schedules, and special-ball settings inside their panels at narrow widths.</li>
+              <li>Improved Dealer helper text, manual ball-board labels, keyboard guidance, and dark-mode contrast.</li>
+              <li>Redesigned keyboard guidance as responsive key-and-action chips that stay paired without clipping or overlap.</li>
+            </ul></div>
+            <div class="release-group"><h4>Player Floor and footer polish</h4><ul>
+              <li>Contained elapsed time, current time, and the complete time-zone selector in one responsive panel.</li>
+              <li>Made Planet Hall 1 use a full-width time row and compact navigation at medium and desktop sizes, eliminating clipped fields and oversized gaps between controls.</li>
+              <li>Removed unwanted footer splitter bars and square panel corners while retaining rounded theme surfaces.</li>
+              <li>Kept Called, Player marked, and Free space labels readable, separated, and unwrapped in light and dark modes.</li>
+              <li>Balanced the Planet Hall 2 footer legend on compact and wide screens without clipping its labels.</li>
+              <li>Separated Hot Ball and Birthday Ball graphics from their headings and status labels at every supported size.</li>
+            </ul></div>
+            <div class="release-group"><h4>Current interface fixes</h4><ul>
+              <li>Stopped every mobile Bingo theme at the end of its game content instead of allowing blank-page overscroll.</li>
+              <li>Improved Hall 1 light- and dark-mode contrast for automatic calling, schedules, prizes, setup fields, and empty states.</li>
+              <li>Rebuilt Hall 1 recent calls as compact, readable Bingo balls with larger letters and a distinct newest-call ring.</li>
+              <li>Normalized Hall controls, special-ball placeholders, footer-ball states, mobile action sizing, and Classic navigation placement.</li>
+              <li>Kept Dealer statistics, headings, forms, shortcuts, and action rows aligned and readable on narrow screens.</li>
+              <li>Enlarged Recent Calls, Call History, called-number labels, and Bingo-ball values across every mobile theme.</li>
+              <li>Made Bingo-card instructions use clear dark text on their light panels instead of low-contrast yellow text.</li>
+              <li>Standardized the Muha Bingo wordmark everywhere by removing the separate circular M emblem.</li>
+            </ul></div>
+          </div>
+        </section>
+        <section><h3>v1.1.8 · 2026-08-07 · Prizes, unified Halls, Dealer planning, and responsive console update</h3>
+          <div class="release-groups">
+            <div class="release-group"><h4>Dealer planning</h4><ul>
+              <li>Linked the Schedule and Prizes displays directly to their matching Dealer settings.</li>
+              <li>Added optional automatic game starts at Dealer-selected dates and times.</li>
+              <li>Added individual winner prizes, exact winning-card assignments, and configured credit payouts.</li>
+            </ul></div>
+            <div class="release-group"><h4>Theme parity</h4><ul>
+              <li>Gave Planet Hall 2 the missing Trade and Next actions used by the other Bingo themes.</li>
+              <li>Changed Planet Hall 2 to nine equal-size controls in a three-by-three grid with Prizes immediately after Schedule.</li>
+              <li>Kept the same patterns, stamps, special balls, Dealer settings, and player actions available in every Bingo theme.</li>
+            </ul></div>
+            <div class="release-group"><h4>Dealer Console</h4><ul>
+              <li>Optimized the complete Dealer Console for wide, tablet, narrow, and short screens in every Bingo theme.</li>
+              <li>Made setup fields, command buttons, live calling controls, statistics, patterns, special balls, Schedule, and Prizes reflow without clipping.</li>
+              <li>Kept Dealer tabs reachable with horizontal scrolling and made manual ball controls wrap into touch-friendly mobile rows.</li>
+              <li>Contained winner verification and Dealer cards within the available viewport.</li>
+            </ul></div>
+            <div class="release-group"><h4>Hall cleanup</h4><ul>
+              <li>Removed the repeated Muha Bingo logo from every waiting flashboard while keeping the primary Hall header logo.</li>
+              <li>Kept Next and Bonanza Trade visible but disabled them with gray styling and a not-allowed cursor until they are functional.</li>
+            </ul></div>
+            <div class="release-group"><h4>Prizes</h4><ul>
+              <li>Added a distinct gold Prizes action to every Bingo theme.</li>
+              <li>Added an independent prize schedule, player overlay, and Dealer editor so prizes can evolve separately from events.</li>
+              <li>Kept the Prizes action directly after Schedule in the responsive Planet Hall 2 three-by-three control grid.</li>
+            </ul></div>
+            <div class="release-group"><h4>Special balls</h4><ul>
+              <li>Restored the dark-red Hot Ball and dark-blue Birthday Ball flashboard panels in every supported theme.</li>
+            </ul></div>
+            <div class="release-group"><h4>iPhone layout and reliability</h4><ul>
+              <li>Repaired the Audience window and Planet Hall 2 Audience Display layouts on iPhone.</li>
+              <li>Contained the Classic time-zone dropdown and elapsed-time progress bar within narrow screens.</li>
+              <li>Stopped the Player Floor footer from sticking over iPhone content.</li>
+              <li>Added safe edge gutters to Planet Hall 2 and kept its navigation bar clear of clipping.</li>
+              <li>Corrected Planet Hall 2 narrow-screen panel overflow and general mobile spacing.</li>
+              <li>Prevented Planet Hall Dealer Console buttons and controls from clipping.</li>
+              <li>Kept settings headers and special-ball legends inside their boxes.</li>
+              <li>Replaced the faint Undo last call glyph with a bold, readable return arrow.</li>
+              <li>Made Bingo startup accept the mounted game while Planet Hall 2 finishes building its themed wrapper.</li>
+              <li>Made the casino return control compact on mobile and added the Bingo version to the game header.</li>
+              <li>Restored the complete winning-pattern preview on iPhone Player Floor and Audience screens.</li>
+              <li>Aligned the Bingo featured title, description, and actions with every other game on the mobile home screen.</li>
+              <li>Moved the live winning-pattern card above the Audience call ball on iPhone and restored its highlighted pattern squares.</li>
+              <li>Kept the game version directly beside the game title in the casino header.</li>
+              <li>Made in-page and browser Back return immediately to the dashboard without loading an empty iframe.</li>
+              <li>Disabled double-tap zoom throughout the casino, games, and release-note version pills.</li>
+              <li>Separated special-ball and settings headings from their fieldset outlines on iPhone.</li>
+              <li>Restored the Planet Hall 2 footer pattern as a complete, centered five-by-five preview.</li>
+              <li>Rebuilt Player Floor and Dealer Console mobile workspaces as one-column layouts in every theme.</li>
+              <li>Bound iPhone scrolling to the active Bingo workspace so content cannot scroll into an empty black document area.</li>
+            </ul></div>
+          </div>
+        </section>
+        <section><h3>v1.1.7 · 2026-08-07 · Special balls and stamp options update</h3>
+          <div class="release-groups">
+            <div class="release-group"><h4>Stamp choices</h4><ul>
+              <li>Renamed Circle to Circle (Solid Color) so its customizable color behavior is clear.</li>
+              <li>Kept the rounded Splat and restored the original pointed design as Sharp Splat.</li>
+              <li>Made both Splat designs use the same player-mark, called-number, and Free Space color settings as Solid Color.</li>
+            </ul></div>
+            <div class="release-group"><h4>Special balls and flashboards</h4><ul>
+              <li>Added Dealer settings for Hot Ball and annual date-aware Birthday Ball numbers and prize multipliers.</li>
+              <li>Made active special-ball squares auto-stamp and count toward winning patterns like Free Space.</li>
+              <li>Applied the highest qualifying Hot Ball or Birthday Ball multiplier to the winner's actual prize payment.</li>
+              <li>Displayed Hot Ball and Birthday Ball with the same theme-matched flashboard treatment.</li>
+              <li>Kept the Planet Hall 2 waiting flashboard automatic and added an opt-in checkbox for Planet Hall and Classic.</li>
+            </ul></div>
+          </div>
+        </section>
+        <section><h3>v1.1.6 · 2026-08-07 · New patterns and Hall controls update</h3>
+          <div class="release-groups">
+            <div class="release-group"><h4>Patterns and stamps</h4><ul>
+              <li>Corrected Three Ladies to require three two-by-two ball clusters in any three card corners.</li>
+              <li>Rounded the Splat stamp into a soft-edged ink blot in every Bingo theme.</li>
+            </ul></div>
+            <div class="release-group"><h4>Player Hall</h4><ul>
+              <li>Added a full-stage Planet Hall 2 flashboard while the hall waits for the Dealer to start a game.</li>
+              <li>Kept inactive Hot Ball and Birthday Ball placeholders visible without adding configuration settings.</li>
+              <li>Restored the Classic sidebar button so it opens the complete viewport-safe Hall control panel.</li>
+            </ul></div>
+          </div>
+        </section>
+        <section><h3>v1.1.5 · 2026-08-07 · Responsive Hall and accessibility update</h3>
+          <div class="release-groups">
+            <div class="release-group"><h4>Player Hall</h4><ul>
+              <li>Optimized every Bingo theme to fit the available browser window without horizontal clipping.</li>
+              <li>Kept Bingo cards closely separated while allowing the card wall to adapt its columns to the window width.</li>
+              <li>Kept the Planet Hall 2 Flashboard visible alongside the cards at supported window sizes.</li>
+              <li>Rebuilt the Planet Hall 2 footer with a large square five-by-five pattern, readable details, an unobstructed legend, and a separate responsive control grid.</li>
+              <li>Kept the call ball round and centered in the same footer slot at every window size, with centered letter, hyphen, and number content across all themes.</li>
+              <li>Kept full Planet Hall 2 action labels at regular widths and used centered icons for all six actions on compact screens.</li>
+              <li>Made the Planet Hall 2 purchase terminal readable in narrow and short windows.</li>
+              <li>Prevented the live Away counter from repeatedly retriggering the interface so Bingo loads reliably.</li>
+              <li>Added Crazy Baseball Diamond, completed by marking the four bases of a diamond in any card corner.</li>
+              <li>Added distinct Church Cross and Christmas Tree winning patterns to every Bingo theme.</li>
+            </ul></div>
+            <div class="release-group"><h4>Dealer and card numbering</h4><ul>
+              <li>Added Dealer controls for the first card number and the numbering increment in every Bingo theme.</li>
+              <li>Changed untouched card-number defaults to the predictable sequence 1, 2, 3, 4, 5, 6 while preserving Dealer-customized numbering.</li>
+              <li>Removed the unexplained L2 card label and replaced Away with a larger live count of balls needed to complete the active pattern in every theme.</li>
+              <li>Synchronized Dealer-selected card numbers across rendered cards and connected Bingo windows.</li>
+              <li>Kept the Hall 1 Sort and paging controls inside the card stage at narrow widths.</li>
+            </ul></div>
+            <div class="release-group"><h4>Readability and controls</h4><ul>
+              <li>Made Planet Hall and Classic header actions, game titles, and screen labels larger and easier to read.</li>
+              <li>Changed the Hall 1 time-zone heading to high-contrast white and improved its selected-value contrast.</li>
+              <li>Moved Hall 1 player actions into a centered overlay that stays inside the viewport.</li>
+              <li>Kept the Hall 1 controls below the measured page header and pinned Hide Controls inside the overlay.</li>
+              <li>Separated Hall 1 close and expand arrows so they no longer overlap action buttons.</li>
+              <li>Replaced blocky Hall 1 screen and action labels with larger, smoother interface typography.</li>
+              <li>Made the four Hall 1 utility header actions equal in width with larger responsive labels.</li>
+              <li>Expanded the Hall 1 elapsed-time, current-time, and time-zone layout so every value fits without being squeezed.</li>
+              <li>Standardized every theme's Player Floor footer with a complete five-row pattern card, adjacent instructions, readable legend items, and theme-specific colors.</li>
+              <li>Expanded the Classic elapsed-time, current-time, and time-zone panel across the header with a full rounded blue outline so every label and value remains visible.</li>
+              <li>Removed the shared white backing behind the Classic screen-navigation buttons.</li>
+              <li>Enlarged and modernized the Call next number and Start auto call controls.</li>
+              <li>Enlarged the Auto-call Speed label, selector, and selected value in Hall 1 and Classic.</li>
+              <li>Separated the Hall 1 utility and screen-navigation rows and removed the shared white navigation backing.</li>
+              <li>Gave Ready to play a clearer high-contrast green status treatment.</li>
+              <li>Changed the active Muha Bingo title beside Game Library to white.</li>
+            </ul></div>
+          </div>
+        </section>
+        <section><h3>v1.1.4 · 2026-07-31 · Complete Hall experience update</h3>
+          <div class="release-groups">
+            <div class="release-group"><h4>Player Hall</h4><ul>
+              <li>Redesigned Planet Hall 2 so cards sit closer together with the Flashboard positioned beside them.</li>
+              <li>Made the Flashboard a compact five-column board that remains visible without unnecessary page scrolling.</li>
+              <li>Added the active winning-pattern panel to the Planet Hall footer and used the available footer space effectively.</li>
+              <li>Redesigned the Planet Hall 2 purchase screen after the physical hall terminal.</li>
+              <li>Made one card the default purchase quantity while keeping three cards as the default Player Hall view.</li>
+              <li>Restored the View action and retained all one-through-six-card view choices.</li>
+              <li>Removed the redundant Controls/Setup action and widened the Dealer action into its space.</li>
+              <li>Removed the redundant Planet Hall 2 Theme button from the side-control panel.</li>
+            </ul></div>
+            <div class="release-group"><h4>Dealer and Audience</h4><ul>
+              <li>Matched the Planet Hall 2 Dealer Console to the dark Hall design and added a true light presentation with white surfaces and dark text.</li>
+              <li>Corrected Dealer Console contrast across House Controls, statistics, setup steps, tabs, forms, and incorrect-call tracking.</li>
+              <li>Made the Classic light-mode House Controls heading consistently black, including after dynamic rerenders.</li>
+              <li>Added hover feedback to Dealer Console controls in both appearance modes.</li>
+              <li>Added a persistent Dealer event editor and a player-facing Bingo Schedule list.</li>
+              <li>Required every scheduled event to include a title and at least a date or time.</li>
+              <li>Added saved schedule entries with formatted dates and times plus Dealer-side deletion.</li>
+              <li>Kept the Planet Hall 2 Audience call ball fully above the footer and corrected light/dark Audience contrast.</li>
+            </ul></div>
+            <div class="release-group"><h4>Cards and Daubers</h4><ul>
+              <li>Corrected Bingo-card number contrast in Card Design and on rendered Player Hall cards.</li>
+              <li>Corrected Card Design headings, subheaders, instructions, field values, and free-space visibility.</li>
+              <li>Standardized the same compact spiked Splat shape across Planet Hall 2, Planet Hall, and Classic.</li>
+              <li>Kept Splat colors distinct for player marks, called numbers, off-pattern calls, and free spaces.</li>
+              <li>Expanded the dauber picker from 14 to 42 saved designs.</li>
+              <li>Added screenshot-inspired animals, ocean life, lucky symbols, spiritual symbols, and novelty daubers.</li>
+              <li>Simplified symbol rendering so every theme uses the same crisp, persistent dauber implementation.</li>
+            </ul></div>
+            <div class="release-group"><h4>Layout and Reliability</h4><ul>
+              <li>Rebuilt the Bingo header rows so time, theme mode, Card Design, readiness, New Game, and screen tabs no longer collide.</li>
+              <li>Contained the time-zone selector inside the header at narrower widths and increased zoom.</li>
+              <li>Restored Player Hall scrolling while keeping the header and footer controls clear of game content.</li>
+              <li>Corrected Player Cards, Current Call, waiting-state, call-history, and section-heading contrast across all themes.</li>
+              <li>Synchronized header geometry across Player Floor, Dealer Console, Audience Display, and Card Design.</li>
+              <li>Removed obsolete diagnostics, stale service-worker code, duplicate automation files, and unused game assets.</li>
+              <li>Expanded automated syntax checks to cover every active Bingo helper and release-history script.</li>
+            </ul></div>
+          </div>
+        </section>
+        <section><h3>v1.1.3 · 2026-07-31 · Player and dealer usability</h3><ul>
+          <li>Made the Bingo Player Hall the default screen when launching from the casino.</li>
+          <li>Added a guided 1–6 card-purchase flow with unlimited test credits.</li>
+          <li>Expanded the Player Hall Flashboard to fill its section in every theme.</li>
+          <li>Made three cards the startup default in every theme while keeping session changes available.</li>
+          <li>Made the Classic Hall action dock compact and repaired dark-mode contrast.</li>
+          <li>Corrected the remaining low-contrast text and controls in Classic Hall light mode.</li>
+          <li>Stopped Classic Hall controls from covering cards and corrected remaining dark-mode states.</li>
+          <li>Made Planet Hall light and dark modes visually distinct without shifting the time panel.</li>
+          <li>Fit all card-view choices and actions into the dialog while retaining scroll support.</li>
+          <li>Restored direct theme switching from the full-screen Planet Hall 2 layout.</li>
+          <li>Made the Player Hall 2 Dealer Console ball bright and clearly readable.</li>
+          <li>Made winning-pattern names, descriptions, and selection cards substantially larger.</li>
+          <li>Made the pattern, player, card, and winner summary larger plain text.</li>
+          <li>Made the Call History heading, count, message, and called numbers easier to read.</li>
+          <li>Made credit balances, prize figures, and their labels substantially larger.</li>
+          <li>Replaced blocky card-header lettering with clean, high-contrast interface type.</li>
+          <li>Redesigned card footers as large, high-contrast status bands.</li>
+          <li>Made pattern, distance-to-Bingo, and card instruction text substantially clearer.</li>
+          <li>Fixed light-mode time-zone contrast and made each left-to-Bingo count prominent.</li>
+          <li>Made Call, Automatic Play, and Undo controls readable in every state.</li>
+          <li>Enlarged Directed Play instructions, summaries, input, and action buttons.</li>
+          <li>Made uncalled, called, and selected Dealer choices clearly distinguishable.</li>
+          <li>Made the complete 75-ball board use the full available Dealer width.</li>
+          <li>Expanded card rows and the Player Cards section so every number remains visible.</li>
+          <li>Made the complete Sort Cards control readable in every Hall layout.</li>
+          <li>Kept every Manual Draw column and ball inside its available section.</li>
+          <li>Made Card Design headings, instructions, fields, values, and symbols readable.</li>
+          <li>Stopped the 75-ball board from becoming squeezed in Planet Hall themes.</li>
+          <li>Made Classic Start Auto Call states and the Recent Calls heading clearly readable.</li>
+          <li>Kept side controls, bottom actions, and the centered time panel from covering Hall content at shorter heights or increased zoom.</li>
+          <li>Made claim decisions dealer-controlled and stopped every calling method when a card reaches Bingo.</li>
+          <li>Finished pop-out headings, call-history balls, Dealer balls, Auto Call icons, and light/dark time-zone arrow contrast.</li>
+          <li>Fixed Show Cards selections so native button clicks are saved immediately.</li>
+          <li>Made Dealer a full-screen overlay by default.</li>
+          <li>Added an optional separate Dealer window under Settings.</li>
+          <li>Required Dealer setup before starting a game.</li>
+          <li>Hid setup after calling begins while retaining Dealer tabs.</li>
+          <li>Added larger Dealer controls, clearer steps, and responsive layouts.</li>
+          <li>Gave Planet, Classic, and Current distinct high-contrast Dealer designs.</li>
+          <li>Made Audience calls and controls readable across every theme.</li>
+          <li>Made all three header action buttons readable across every theme.</li>
+          <li>Made the Player Floor call ball readable and prevented Theme-button overlap.</li>
+          <li>Audited shared controls and corrected Sort Cards contrast in every theme.</li>
+          <li>Made Auto-call Speed and every pagination box readable in all themes.</li>
+          <li>Enlarged the current pagination range numbers.</li>
+          <li>Kept Cancel fixed below the scrollable card-view choices.</li>
+          <li>Made dauber choices smaller and replaced the blocky Next button.</li>
+          <li>Added occasional incorrect Bingo claims, automatic rejection, and a tally.</li>
+          <li>Redesigned the Muha Bingo logo with brighter, more readable lettering.</li>
+          <li>Removed the unnecessary subtitle from every Hall theme.</li>
+          <li>Made the Player Hall 2 footer call ball substantially larger.</li>
+          <li>Centered the unlimited symbol directly above the Credits label.</li>
+        </ul></section>
+        <section><h3>v1.1.2 · 2026-07-30 · Hall expansion</h3>
+          <div class="release-groups">
+            <div class="release-group"><h4>Themes</h4><ul>
+              <li>Added Planet Hall 2, Planet Hall, and Classic, with Planet Hall 2 as the default.</li>
+              <li>Restored complete rendering in every theme and gave each interface independent, readable color roots.</li>
+              <li>Added a custom CSS-rendered Muha Bingo logo and large Bootstrap Icons throughout the Hall.</li>
+              <li>Separated native Light/Dark palettes from Hall themes and synchronized theme changes across every connected screen.</li>
+            </ul></div>
+            <div class="release-group"><h4>Dealer tools</h4><ul>
+              <li>Added dedicated Start, Dealer, Controls / Setup, View, Options, Purchase, and Schedule controls.</li>
+              <li>Restored the complete Dealer Console and game setup in a connected browser window that does not cover the Hall.</li>
+              <li>Added live synchronization for settings, cards, calls, winners, corrections, and focused window controls.</li>
+              <li>Improved Dealer contrast, expanded the Flashboard, and added two confirmation steps before approving claims.</li>
+              <li>Added a persistent Return to Player Hall control that focuses the existing casino player window or reopens it when necessary.</li>
+              <li>Stabilized named Dealer and Player windows, moved pop-out controls into a reserved dock, and added visible startup recovery instead of blank white pages.</li>
+              <li>Matched Dealer, Audience, and Player pop-out palettes to the selected Hall theme and aligned their theme selector with the Player Hall’s top-right placement.</li>
+              <li>Made Return to Player Hall close the Dealer pop-out and focus the actual casino tab, reset live rounds on browser refresh while preserving appearance preferences, and standardized setup/start button dimensions.</li>
+              <li>Removed the duplicate theme rebroadcast path that could repeatedly switch layouts and leave Bingo unresponsive.</li>
+            </ul></div>
+            <div class="release-group"><h4>Gameplay</h4><ul>
+              <li>Added 1–6 card views, automatic closest-to-Bingo sorting, distance labels, Flashboard, and three called-number states.</li>
+              <li>Added ball tapping, persistent preferences, 1-away/2-away indicators, and a prominent Bingo alert.</li>
+              <li>Made Start Game use safe randomized defaults when custom setup is skipped.</li>
+              <li>Added Solid Color, Circle, glossy Splat, and other saved dauber designs for called, marked, and free squares.</li>
+              <li>Changed older-theme controls into an arrow drawer that starts open and collapses after play begins.</li>
+            </ul></div>
+            <div class="release-group"><h4>Reliability</h4><ul>
+              <li>Corrected unconfigured-screen overlap, footer sizing, startup rendering, and return-to-Hall behavior.</li>
+              <li>Removed the stale in-page Dealer takeover and kept the dedicated Dealer tab on its real console.</li>
+              <li>Removed stale service-worker caching and forced reused Bingo windows onto the current build.</li>
+              <li>Made the theme selector mount consistently in Dealer, Audience, and player pop-outs.</li>
+              <li>Added launcher recovery controls without changing the v1.1.2 release number.</li>
+            </ul></div>
+          </div>
+        </section>
+        <section><h3>v1.1.1 · 2026-07-29 · Casino integration and reliability</h3><ul>
+          <li>Integrated Muha Bingo into the shared Muha Casino launcher and game-library navigation.</li>
+          <li>Connected Player Floor, Dealer Console, Audience Display, and Card Design routing for browser play.</li>
+          <li>Added persistent Hall preferences, portable asset paths, shared session timing, and responsive browser layouts.</li>
+          <li>Improved startup, window switching, and recovery behavior before the three-theme Hall expansion.</li>
+        </ul></section>
+        <section><h3>v1.1.0 · 2026-07-29 · Hall operations</h3><ul>
+          <li>Expanded the original Bingo application with player-floor, dealer-console, audience-display, and card-design screens.</li>
+          <li>Added round setup, patterns, manual and automatic calling, winner verification, credits, prizes, player lookup, printing, and pop-out displays.</li>
+          <li>Added mobile layouts, shared playtime, card sorting, more winning patterns, portable assets, and the Muha Bingo rebrand.</li>
+        </ul></section>
+        <section><h3>v1.0.1 · 2026-07-27 · Player and dealer refinement</h3><ul>
+          <li>Improved card presentation, live call status, player navigation, dealer workflows, results, winner review, and responsive operation.</li>
+          <li>Prepared the standalone Electron hall for portable browser integration into Muha Casino.</li>
+        </ul></section>
+        <section><h3>v1.0.0 · 2026-07-24 · Initial release</h3><p>Added 75-ball Bingo with player cards, automatic ranking, winning patterns, live calling, dealer controls, and audience displays. Renamed Lucky Hall Bingo to Muha Bingo.</p></section>
+      </article>
+
+      <article id="sorry" class="history-card">
+        <header><span class="game-icon sorry">♟</span><div><p>Tabletop game</p><h2>Sorry!</h2></div><b>v1.0.2</b></header>
+        <section><h3>v1.0.2 · 2026-07-29 · Casino integration</h3><ul>
+          <li>Integrated the game into the dedicated Tabletop category.</li>
+          <li>Restored board scrolling so every pawn route and control remains reachable after the casino scrollbar refinements.</li>
+          <li>Applied shared interaction, cache, and responsive launcher improvements to the Sorry! board.</li>
+        </ul></section>
+        <section><h3>v1.0.1 · 2025-10-19 · Board and rules refinement</h3><ul>
+          <li>Redesigned the complete board in CSS and repaired card drawing, board inconsistencies, pawn movement, starts, homes, slides, and safety zones.</li>
+          <li>Restored the start circles and home stars and corrected the rule allowing pawns to leave Start on any legal number or Sorry! card.</li>
+        </ul></section>
+        <section><h3>v1.0.0 · 2025-10-16 · Initial release</h3><p>Added the classic board game with its complete board, cards, pawn movement, turns, and game rules.</p></section>
+      </article>
+
+      <article id="yahtzee" class="history-card">
+        <header><span class="game-icon yahtzee">⚄</span><div><p>Tabletop game</p><h2>Yahtzee</h2></div><b>v1.0.2</b></header>
+        <section><h3>v1.0.2 · 2026-07-29 · Casino integration</h3><ul>
+          <li>Integrated Yahtzee into the dedicated Tabletop category.</li>
+          <li>Restored scorecard scrolling so every category remains reachable after the casino scrollbar refinements.</li>
+          <li>Applied shared interaction, cache, and responsive launcher improvements to the Yahtzee table.</li>
+        </ul></section>
+        <section><h3>v1.0.1 · 2025-09-24 · Dice and round refinement</h3><ul>
+          <li>Redesigned the dice for a more realistic appearance with hover and active motion and added the upper-section header.</li>
+          <li>Repaired automatic roll resets between rounds, added movable dice interaction, and refined scoring and layout behavior.</li>
+        </ul></section>
+        <section><h3>v1.0.0 · 2025-09-24 · Initial release</h3><p>Added the classic five-dice game with rolling, holds, scoring categories, bonuses, and full score tracking.</p></section>
+      </article>
+    </div>
+  </main>
+
+  <footer><span>MUHA CASINO</span><a href="index.html">RETURN TO GAME LIBRARY</a></footer>
+  <script src="interaction-lock.js?build=20260808-no-double-tap"></script>
+  <script src="about-history.js?build=20260808-bingo-iphone-v18"></script>
+</body>
+</html>
