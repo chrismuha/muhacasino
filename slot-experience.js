@@ -80,14 +80,12 @@
         state.lifetimeLost = Math.max(0, Number(saved.lifetimeLost) || 0);
     } catch {  }
 
-    const MAX_DISPLAY_AMOUNT = 999_999_999_999_999;
+    const MAX_JACKPOT_AMOUNT = 3_000_000;
 
     function compactAmount(value) {
-        const amount = Math.min(MAX_DISPLAY_AMOUNT, Math.max(0, Number(value) || 0));
+        const amount = Math.min(MAX_JACKPOT_AMOUNT, Math.max(0, Number(value) || 0));
         if (amount < 10_000) return amount.toFixed(2);
         const scales = [
-            [1_000_000_000_000, "Trillion"],
-            [1_000_000_000, "Billion"],
             [1_000_000, "Million"],
             [1_000, "Thousand"],
         ];
@@ -190,14 +188,14 @@
     function getConfiguredJackpotAmount(tierName, wager, denomination = 0.01, fallback = 0.01) {
         const config = state.jackpots;
         const base = Number(config?.amounts?.[tierName] ?? fallback);
-        if (!config?.enabled) return Math.min(MAX_DISPLAY_AMOUNT, Math.max(0.01, Math.round(base * 100) / 100));
+        if (!config?.enabled) return Math.min(MAX_JACKPOT_AMOUNT, Math.max(0.01, Math.round(base * 100) / 100));
         const bet = Math.max(0.01, Number(wager) || config.baseWager);
         const denominationFactor = Math.max(0.01, Number(denomination) || 0.01) / 0.01;
         const scaledBet = bet * denominationFactor;
         const amount = config.mode === "increment"
             ? base + ((scaledBet - config.baseWager) / config.betStep) * config.stepAmount
             : base * (scaledBet / config.baseWager);
-        return Math.min(MAX_DISPLAY_AMOUNT, Math.max(0.01, Math.round(amount * 100) / 100));
+        return Math.min(MAX_JACKPOT_AMOUNT, Math.max(0.01, Math.round(amount * 100) / 100));
     }
 
     function updateMoneyUi() {
@@ -321,7 +319,7 @@
             <div class="jackpot-config-setting jackpot-amounts-setting">
                 <strong>Jackpot amounts</strong>
                 <div class="jackpot-base-grid">
-                    ${["Mini", "Minor", "Major", "Grand"].map((name) => `<label>${name}<input type="number" min="0.01" max="${MAX_DISPLAY_AMOUNT}" step="0.01" data-jackpot-base="${name.toLowerCase()}"></label>`).join("")}
+                    ${["Mini", "Minor", "Major", "Grand"].map((name) => `<label>${name}<input type="number" min="0.01" max="${MAX_JACKPOT_AMOUNT}" step="0.01" data-jackpot-base="${name.toLowerCase()}"></label>`).join("")}
                 </div>
                 <small>Set the base Mini, Minor, Major, and Grand awards.</small>
             </div>
