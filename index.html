@@ -13,7 +13,7 @@
   <link rel="icon" href="icons/rounded-browser-icon-v3.png" type="image/png" sizes="192x192">
   <link rel="apple-touch-icon" href="icons/muha-casino-touch-v3.png" sizes="180x180">
   <link rel="manifest" href="manifest.webmanifest?v=20260919-rounded-icons-v3">
-  <link rel="stylesheet" href="styles.css?build=20260919-jackpot-centering-v3">
+  <link rel="stylesheet" href="styles.css?build=20260919-dedicated-info-pages-v4">
   <link rel="stylesheet" href="safe-area.css?build=20260905-notch-v1">
 </head>
 <body>
@@ -30,8 +30,8 @@
         <a href="#featured">Featured</a>
         <a href="#games">Games</a>
         <a href="#categories">Categories</a>
-        <a href="#statistics">Statistics</a>
-        <a href="#whats-new">What's New</a>
+        <a href="statistics.html">Statistics</a>
+        <a href="release-notes.html">Release Notes</a>
         <a href="about.html">About</a>
       </div>
       <button class="browse-button" type="button" data-scroll-to="games">Browse games</button>
@@ -214,30 +214,12 @@
       <div id="categoryRail" class="game-rail"></div>
     </section>
 
-    <section id="statistics" class="content-section home-info-section">
-      <div class="section-heading"><div><p class="section-kicker">All-time local play</p><h2>Game statistics</h2></div></div>
-      <p class="home-section-copy">Totals are saved on this device and update whenever you return from a slot game.</p>
-      <div id="overallStatsGrid" class="overall-stats-grid"></div>
-    </section>
-
-    <section id="whats-new" class="content-section home-info-section">
-      <div class="section-heading"><div><p class="section-kicker">Home screen history</p><h2>What's New</h2></div></div>
-      <div class="home-history-list">
-        <article><time>September 19, 2026</time><h3>Responsive navigation and larger wagers</h3><p>Added a compact mobile menu without changing the full desktop navigation, enlarged quick-bet chips throughout the slot library, compacted feature sub-jackpots, and kept browser Back navigation synchronized with the displayed game.</p></article>
-        <article><time>September 19, 2026</time><h3>Rounded icon system and slot access</h3><p>Refreshed browser and installable icons, restored visible Buy Bonus access, and added home-screen statistics and this history.</p></article>
-        <article><time>September 14, 2026</time><h3>Game library alignment and identity</h3><p>Restored the left-aligned game slider, improved mobile launcher spacing, and returned full game titles beside version numbers in the game header.</p></article>
-        <article><time>September 12, 2026</time><h3>Mobile app presentation</h3><p>Unified the launcher favicon and Apple touch artwork, improved safe-area behavior, and refined compact navigation controls.</p></article>
-        <article><time>September 5, 2026</time><h3>Phone and tablet layout</h3><p>Added notch-safe spacing, mobile viewport corrections, and more dependable full-height game framing.</p></article>
-        <article><time>August 29, 2026</time><h3>Installable casino</h3><p>Added the web app manifest, offline shell, install icons, and standalone launch support.</p></article>
-        <article><time>August 11, 2026</time><h3>Smoother game browsing</h3><p>Improved horizontal rails, swipe behavior, game loading feedback, and launcher-to-game transitions.</p></article>
-      </div>
-    </section>
-
     <footer>
       <a class="brand footer-brand" href="#"><span class="brand-mark">M</span><span>MUHA <b>CASINO</b></span></a>
       <div class="footer-meta">
         <p>For entertainment only. All credits and prizes are simulated.</p>
-        <a href="about.html" aria-label="Open game release notes">Game release notes</a>
+        <a href="release-notes.html">Home release notes</a>
+        <a href="about.html" aria-label="Open game version history">Game version history</a>
       </div>
     </footer>
   </main>
@@ -276,7 +258,7 @@
   </section>
 
   <script src="interaction-lock.js?build=20260811-horizontal-rails"></script>
-  <script src="launcher.js?build=20260919-regression-fixes-v2"></script>
+  <script src="launcher.js?build=20260919-dedicated-info-pages-v4"></script>
   <script src="pwa.js?build=20260829-pwa-v1"></script>
 </body>
 </html>

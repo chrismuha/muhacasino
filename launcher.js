@@ -81,24 +81,7 @@ const categoryNames = {
 
 const slotGameIds = new Set(["big-money-deluxe", "neon-slots", "pretty-penny", "treasurepots"]);
 
-function renderOverallStats() {
-  const root = document.querySelector("#overallStatsGrid");
-  if (!root) return;
-  const money = (value) => `$${Number(value || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  root.replaceChildren(...Array.from(slotGameIds, (gameId) => {
-    let stats = {};
-    try { stats = JSON.parse(localStorage.getItem(`muhaCasino.slotExperience.${gameId}.v1`) || "{}"); } catch { }
-    const wagered = Math.max(0, Number(stats.lifetimeWagered) || 0);
-    const won = Math.max(0, Number(stats.lifetimeWon) || 0);
-    const lost = Math.max(0, Number(stats.lifetimeLost) || 0);
-    const card = document.createElement("article");
-    card.className = `overall-stat-card ${games[gameId].className}`;
-    card.innerHTML = `<h3>${games[gameId].title}</h3><div><span>Won overall</span><strong>${money(won)}</strong></div><div><span>Lost overall</span><strong>${money(lost)}</strong></div><div><span>Wagered overall</span><strong>${money(wagered)}</strong></div><div><span>Net</span><strong class="${won - wagered >= 0 ? "positive" : "negative"}">${money(won - wagered)}</strong></div>`;
-    return card;
-  }));
-}
-
-const SITE_BUILD = "20260919-regression-fixes-v2";
+const SITE_BUILD = "20260919-dedicated-info-pages-v4";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");
@@ -351,7 +334,6 @@ function showLauncher(updateHistory = true) {
   bingoToolbarControls.hidden = true;
   slotModeToolbar.hidden = true;
   document.title = "Muha Casino";
-  renderOverallStats();
   if (updateHistory) history.replaceState(null, "", window.location.pathname);
   restartSlider();
 }
@@ -402,7 +384,6 @@ function launchGame(gameId, updateHistory = true) {
   window.clearInterval(sliderTimer);
   activeGameId = gameId;
 setGameToolbarCollapsed(false);
-renderOverallStats();
   showGameLoading();
   currentGame.textContent = game.title;
   currentGameVersion.textContent = game.version;

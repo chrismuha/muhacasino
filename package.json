@@ -10,7 +10,7 @@
     "preview": "vite preview --host 127.0.0.1 --port 4173 --open",
     "build": "vite build",
     "build:web": "vite build",
-    "check": "node --check launcher.js && node --check interaction-lock.js && node --check slot-experience.js && node --check about-history.js && node --check games/bingo/browser-bingo-api.js && node --check games/bingo/planet-hall-ui.js && node --check games/bingo/runtime-guard.js && node --check games/bingo/theme-switcher.js && node --check games/big-money-deluxe/main.js && node --check games/neon-slots/main.js && node --check games/pretty-penny/main.js && node --check games/treasurepots/main.js && node --check games/sorry/main.js && node --check games/sorry/ui/main.js && node --check games/yahtzee/main.js",
+    "check": "node --check launcher.js && node --check statistics.js && node --check interaction-lock.js && node --check slot-experience.js && node --check about-history.js && node --check games/bingo/browser-bingo-api.js && node --check games/bingo/planet-hall-ui.js && node --check games/bingo/runtime-guard.js && node --check games/bingo/theme-switcher.js && node --check games/big-money-deluxe/main.js && node --check games/neon-slots/main.js && node --check games/pretty-penny/main.js && node --check games/treasurepots/main.js && node --check games/sorry/main.js && node --check games/sorry/ui/main.js && node --check games/yahtzee/main.js",
     "cap:sync": "npm run build && npx cap sync",
     "cap:sync:android": "npm run build && npx cap sync android",
     "cap:sync:ios": "npm run build && npx cap sync ios",

@@ -1,9 +1,14 @@
-const CACHE_NAME = "muha-casino-shell-20260919-slot-controls-v12";
+const CACHE_NAME = "muha-casino-shell-20260919-info-pages-v13";
 const APP_SHELL = [
   "./",
   "./index.html",
+  "./statistics.html",
+  "./release-notes.html",
   "./styles.css",
+  "./about.css",
+  "./home-info.css",
   "./launcher.js",
+  "./statistics.js",
   "./interaction-lock.js",
   "./manifest.webmanifest",
   "./icons/muha-casino-192-v3.png",
