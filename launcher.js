@@ -1,7 +1,7 @@
 const games = {
   "big-money-deluxe": {
     title: "Big Money Deluxe",
-    version: "v1.3.5",
+    version: "v1.3.6",
     subtitle: "Classic Cash",
     path: "games/big-money-deluxe/index.html",
     className: "card-money",
@@ -11,7 +11,7 @@ const games = {
   },
   "neon-slots": {
     title: "Neon Slots",
-    version: "v1.3.7",
+    version: "v1.3.8",
     subtitle: "Electric Casino",
     path: "games/neon-slots/index.html",
     className: "card-neon",
@@ -21,7 +21,7 @@ const games = {
   },
   "pretty-penny": {
     title: "Pretty Penny",
-    version: "v1.4.5",
+    version: "v1.4.6",
     subtitle: "Feature Game",
     path: "games/pretty-penny/index.html",
     className: "card-penny",
@@ -31,7 +31,7 @@ const games = {
   },
   treasurepots: {
     title: "TreasurePots",
-    version: "v1.3.5",
+    version: "v1.3.6",
     subtitle: "Hold & Link",
     path: "games/treasurepots/index.html",
     className: "card-treasure",

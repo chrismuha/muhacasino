@@ -1218,12 +1218,12 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 /* Reel award chips previously filled their cells but retained tiny labels.
    Scale both their award name and value across every slot theme. */
 .reels :is(.money-chip, .jackpot-chip, .link-chip, .hold-coin) > strong {
-  font-size: clamp(14px, 2vw, 21px) !important;
+  font-size: clamp(17px, 2.45vw, 27px) !important;
   line-height: 1 !important;
 }
 
 .reels :is(.money-chip, .jackpot-chip, .link-chip, .hold-coin) > span {
-  font-size: clamp(12px, 1.65vw, 18px) !important;
+  font-size: clamp(15px, 2.05vw, 23px) !important;
   line-height: 1 !important;
 }
 

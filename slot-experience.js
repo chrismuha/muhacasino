@@ -80,12 +80,29 @@
         state.lifetimeLost = Math.max(0, Number(saved.lifetimeLost) || 0);
     } catch {  }
 
+    const MAX_DISPLAY_AMOUNT = 999_999_999_999_999;
+
+    function compactAmount(value) {
+        const amount = Math.min(MAX_DISPLAY_AMOUNT, Math.max(0, Number(value) || 0));
+        if (amount < 10_000) return amount.toFixed(2);
+        const scales = [
+            [1_000_000_000_000, "Trillion"],
+            [1_000_000_000, "Billion"],
+            [1_000_000, "Million"],
+            [1_000, "Thousand"],
+        ];
+        const [divisor, label] = scales.find(([threshold]) => amount >= threshold);
+        const scaled = amount / divisor;
+        const digits = scaled >= 100 ? 0 : scaled >= 10 ? 1 : 2;
+        return `${scaled.toFixed(digits).replace(/\.0+$|(?<=\.[0-9])0$/, "")} ${label}`;
+    }
+
     function money(value) {
-        return `$${Number(value || 0).toFixed(2)}`;
+        return `$${compactAmount(value)}`;
     }
 
     function formatAmount(value) {
-        const amount = Number(value || 0).toFixed(2);
+        const amount = compactAmount(value);
         return state.displayMode === "money" ? `$${amount}` : `${amount} cr`;
     }
 
@@ -173,14 +190,14 @@
     function getConfiguredJackpotAmount(tierName, wager, denomination = 0.01, fallback = 0.01) {
         const config = state.jackpots;
         const base = Number(config?.amounts?.[tierName] ?? fallback);
-        if (!config?.enabled) return Math.max(0.01, Math.round(base * 100) / 100);
+        if (!config?.enabled) return Math.min(MAX_DISPLAY_AMOUNT, Math.max(0.01, Math.round(base * 100) / 100));
         const bet = Math.max(0.01, Number(wager) || config.baseWager);
         const denominationFactor = Math.max(0.01, Number(denomination) || 0.01) / 0.01;
         const scaledBet = bet * denominationFactor;
         const amount = config.mode === "increment"
             ? base + ((scaledBet - config.baseWager) / config.betStep) * config.stepAmount
             : base * (scaledBet / config.baseWager);
-        return Math.max(0.01, Math.round(amount * 100) / 100);
+        return Math.min(MAX_DISPLAY_AMOUNT, Math.max(0.01, Math.round(amount * 100) / 100));
     }
 
     function updateMoneyUi() {
@@ -304,7 +321,7 @@
             <div class="jackpot-config-setting jackpot-amounts-setting">
                 <strong>Jackpot amounts</strong>
                 <div class="jackpot-base-grid">
-                    ${["Mini", "Minor", "Major", "Grand"].map((name) => `<label>${name}<input type="number" min="0.01" step="0.01" data-jackpot-base="${name.toLowerCase()}"></label>`).join("")}
+                    ${["Mini", "Minor", "Major", "Grand"].map((name) => `<label>${name}<input type="number" min="0.01" max="${MAX_DISPLAY_AMOUNT}" step="0.01" data-jackpot-base="${name.toLowerCase()}"></label>`).join("")}
                 </div>
                 <small>Set the base Mini, Minor, Major, and Grand awards.</small>
             </div>

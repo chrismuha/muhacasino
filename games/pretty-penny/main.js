@@ -690,7 +690,7 @@ async function buyInstantBonus(option = {}) {
     addSessionLosses(cost); addNetSessionLosses(cost); subtractNetSessionWinnings(cost); adjustActualSessionNet(-cost); updateTotals();
     try {
         const outcome = await playBonusGame(wager, option.bonus);
-        const award = roundUSD(Number(outcome?.winUSD ?? outcome) || 0);
+        const award = Math.max(cost, roundUSD(Number(outcome?.winUSD ?? outcome) || 0));
         if (award > 0) { balance = clampBalanceUSD(balance + award); addSessionWinnings(award); addNetSessionWinnings(award); subtractNetSessionLosses(award); adjustActualSessionNet(award); }
         setMessage(`BONUS COMPLETE — Cost ${fmtUSD(cost)} • Award ${fmtUSD(award)}`);
     } finally { isSpinning = false; updateTotals(); }

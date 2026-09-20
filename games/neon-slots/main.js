@@ -610,7 +610,7 @@ async function buyInstantBonus(option = {}) {
     addSessionLosses(cost); addNetSessionLosses(cost); subtractNetSessionWinnings(cost); adjustActualSessionNet(-cost);
     updateTotals();
     try {
-        const award = roundUSD(Number(await playBonusGame(wager, option.bonus)) || 0);
+        const award = Math.max(cost, roundUSD(Number(await playBonusGame(wager, option.bonus)) || 0));
         if (award > 0) {
             balance = clampBalanceUSD(balance + award);
             addSessionWinnings(award); addNetSessionWinnings(award); subtractNetSessionLosses(award); adjustActualSessionNet(award);
