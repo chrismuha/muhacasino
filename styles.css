@@ -79,6 +79,14 @@ a { color: inherit; text-decoration: none; }
 .nav-links { display: flex; gap: clamp(18px, 2.25vw, 34px); color: #d7dae6; font-size: 12.5pt; font-weight: 800; }
 .nav-links a:hover { color: white; }
 
+@media (min-width: 901px) and (max-width: 1180px) {
+  .topbar { width: calc(100% - 32px); gap: 16px; }
+  .brand { flex: 0 0 auto; font-size: 12.5pt; }
+  .nav-links { min-width: 0; gap: clamp(10px, 1.5vw, 18px); font-size: clamp(9.5pt, 1.25vw, 11pt); }
+  .nav-links a { white-space: nowrap; }
+  .browse-button { flex: 0 0 auto; padding-inline: 14px; font-size: 10pt; }
+}
+
 .nav-menu-button {
   display: none;
   width: 44px;
