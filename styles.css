@@ -146,7 +146,9 @@ a { color: inherit; text-decoration: none; }
   text-align: left;
 }
 .money-slide .hero-content { transform: none; }
-.eyebrow, .section-kicker { margin: 0 0 13px; color: var(--cyan); font-size: 9pt; font-weight: 950; letter-spacing: .22em; text-transform: uppercase; }
+.eyebrow, .section-kicker { margin: 0 0 13px; color: var(--cyan); font-weight: 950; letter-spacing: .22em; text-transform: uppercase; }
+.eyebrow { font-size: clamp(13pt, 1.55vw, 17pt); }
+.section-kicker { font-size: 9pt; }
 
 .hero h1 {
   position: relative;
@@ -1016,9 +1018,12 @@ body.game-open .game-view.toolbar-collapsed .game-load-state { inset-block-start
   }
 }
 
-/* Give desktop hero labels comfortable clearance below the fixed navigation. */
+/* Reserve real layout space below desktop navigation instead of visually
+   translating content into the same hero grid area. */
 @media (min-width: 901px) and (min-height: 600px) {
-  .hero-slide .hero-content {
-    transform: translateY(42px);
+  .hero-slide {
+    align-items: start;
+    padding-top: 168px;
+    padding-bottom: 72px;
   }
 }
