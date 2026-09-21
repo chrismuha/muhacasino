@@ -1213,6 +1213,24 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 
 .slot-wager-row > .bet-presets > .bet-preset {
   height: 100%;
+  min-height: clamp(56px, 7vw, 72px) !important;
+  border-radius: clamp(12px, 2vw, 20px) !important;
+  font-size: clamp(17px, 4vw, 23px) !important;
+}
+
+/* Keep every five-row slot reel comfortably readable. Several game themes
+   still carry old compact-height overrides, and the shared mobile rule above
+   reduced their symbol tiles to as little as 24px. */
+.reels {
+  --reel-row-h: clamp(48px, 6vw, 76px) !important;
+  --reel-row-gap: clamp(4px, .65vw, 8px) !important;
+}
+
+@media (max-width: 700px) {
+  .reels {
+    --reel-row-h: clamp(44px, 12vw, 58px) !important;
+    --reel-row-gap: 5px !important;
+  }
 }
 
 /* Reel award chips previously filled their cells but retained tiny labels.

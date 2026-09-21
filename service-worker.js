@@ -1,4 +1,4 @@
-const CACHE_NAME = "muha-casino-shell-20260920-wager-scaling-v17";
+const CACHE_NAME = "muha-casino-shell-20260921-rounded-icon-large-chips-v18";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -15,7 +15,7 @@ const APP_SHELL = [
   "./icons/muha-casino-512-v3.png",
   "./icons/muha-casino-maskable-v3.png",
   "./icons/muha-casino-touch-v3.png",
-  "./icons/rounded-browser-icon-v3.png"
+  "./icons/round-browser-icon-v4.svg"
 ];
 
 self.addEventListener("install", (event) => {
