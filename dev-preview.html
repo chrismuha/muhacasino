@@ -26,6 +26,34 @@
     main { flex: 1 1 auto; min-height: 0; padding: 28px; overflow: auto; scrollbar-width: none; display: grid; place-items: start center; }
     main::-webkit-scrollbar { display: none; }
     .device { position: relative; padding: 10px; border-radius: 24px; background: #080a0e; box-shadow: 0 18px 60px #000b, 0 0 0 1px #3a4353; transition: width .2s, height .2s; }
+    .app-screen { width: 100%; height: 100%; }
+    .cabinet-screen { display: none; position: relative; overflow: hidden; border: 8px solid #11151d; border-radius: 16px; background: radial-gradient(circle at 50% 20%, #394a78, #121722 58%, #080a0e); box-shadow: inset 0 0 0 1px #4f5b70, 0 8px 24px #0009; color: #dce7ff; }
+    .cabinet-screen::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, #fff0 0 5px, #9fc5ff0a 6px); pointer-events: none; }
+    .device.cabinet { --cabinet-width: 1080px; --cabinet-height: 1920px; width: calc(var(--cabinet-width) + 96px); height: auto; padding: 28px 38px 48px; display: grid; gap: 16px; border-radius: 54px 54px 30px 30px; background: linear-gradient(90deg, #090b10, #293041 4%, #111620 12% 88%, #293041 96%, #090b10); box-shadow: 0 30px 90px #000d, inset 0 0 0 2px #515d72, inset 0 0 45px #000; }
+    .device.cabinet .cabinet-screen { display: grid; }
+    .device.cabinet .cabinet-topper { min-height: 180px; height: calc(var(--cabinet-height) * .18); place-items: center; border-radius: 44px 44px 16px 16px; background: radial-gradient(ellipse at center, #8a52ff, #29205c 48%, #090b16 78%); text-align: center; text-transform: uppercase; }
+    .cabinet-topper strong { position: relative; display: block; font-size: max(28px, calc(var(--cabinet-width) * .055)); letter-spacing: .12em; text-shadow: 0 0 24px #d8c2ff; }
+    .cabinet-topper span { position: relative; display: block; margin-top: 12px; color: #f8dc72; font-size: max(14px, calc(var(--cabinet-width) * .018)); font-weight: 900; letter-spacing: .18em; }
+    .device.cabinet .cabinet-upper { min-height: 280px; height: calc(var(--cabinet-height) * .42); align-content: center; gap: 24px; padding: 36px; background: radial-gradient(circle at 50% 50%, #22636f, #102c3d 48%, #080b11 78%); }
+    .cabinet-upper h2 { position: relative; margin: 0; text-align: center; text-transform: uppercase; letter-spacing: .16em; font-size: max(22px, calc(var(--cabinet-width) * .032)); }
+    .cabinet-jackpots { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+    .cabinet-jackpot { min-width: 0; padding: 20px 10px; border: 2px solid #f3cd57; border-radius: 14px; background: #070b12c9; text-align: center; }
+    .cabinet-jackpot span, .cabinet-jackpot strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cabinet-jackpot span { color: #f3cd57; font-size: max(12px, calc(var(--cabinet-width) * .014)); text-transform: uppercase; }
+    .cabinet-jackpot strong { margin-top: 8px; font-size: max(18px, calc(var(--cabinet-width) * .026)); }
+    .cabinet-empty { position: relative; grid-column: 1 / -1; text-align: center; color: #aeb8ca; font-size: max(18px, calc(var(--cabinet-width) * .024)); }
+    .device.cabinet .app-screen { position: relative; box-sizing: content-box; width: var(--cabinet-width); height: var(--cabinet-height); border: 10px solid #07090d; border-radius: 18px; overflow: hidden; box-shadow: 0 0 0 2px #566176, 0 12px 30px #000b; }
+    .device.cabinet .cabinet-controls { min-height: 260px; height: calc(var(--cabinet-height) * .3); padding: 34px; align-content: center; gap: 24px; transform: perspective(900px) rotateX(16deg); transform-origin: top; background: linear-gradient(#202838, #0e121a); }
+    .cabinet-meters { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .cabinet-meter { padding: 14px; border: 1px solid #52627f; border-radius: 12px; background: #070a10; text-align: center; }
+    .cabinet-meter span, .cabinet-meter strong { display: block; }
+    .cabinet-meter span { color: #91a0bc; font-size: max(11px, calc(var(--cabinet-width) * .012)); text-transform: uppercase; }
+    .cabinet-meter strong { margin-top: 5px; font-size: max(16px, calc(var(--cabinet-width) * .022)); }
+    .cabinet-buttons { position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+    .cabinet-buttons button { height: auto; min-height: 76px; border-width: 3px; border-radius: 999px; font-size: max(14px, calc(var(--cabinet-width) * .016)); font-weight: 950; text-transform: uppercase; }
+    .cabinet-buttons .spin-control { border-color: #f5d64a; background: #b71f35; color: white; box-shadow: 0 0 22px #e3284b99; }
+    .cabinet-buttons button:disabled { opacity: .38; cursor: not-allowed; }
+    .device.cabinet .screen-cutout, .device.cabinet .home-indicator { display: none; }
     .screen-cutout { position: absolute; z-index: 2; left: 50%; background: #050506; transform: translateX(-50%); pointer-events: none; transition: opacity .15s, transform .15s; }
     .screen-cutout.island { top: 19px; width: 116px; height: 32px; border-radius: 999px; box-shadow: inset 0 0 0 1px #18181b, 0 1px 3px #0008; }
     .screen-cutout.notch { top: 10px; width: 154px; height: 31px; border-radius: 0 0 18px 18px; }
@@ -68,9 +96,10 @@
         <option value="834x1210">iPad Pro 11-inch</option>
         <option value="1032x1376">iPad Pro 13-inch</option>
         <option value="800x900">Foldable (Open)</option>
-        <option value="1080x1920" data-cabinet selected>Casino Cabinet · Portrait</option>
-        <option value="1920x1080" data-cabinet>Casino Cabinet · Landscape</option>
-        <option value="1280x1024" data-cabinet>Casino Cabinet · 5:4</option>
+        <option value="344x882" data-cutout="punch">Foldable (Closed)</option>
+        <option value="1080x1920" data-cabinet selected>Casino Cabinet · 4-screen Portrait</option>
+        <option value="1920x1080" data-cabinet>Casino Cabinet · 4-screen Landscape</option>
+        <option value="1280x1024" data-cabinet>Casino Cabinet · 4-screen 5:4</option>
         <option value="320x568">Small Phone</option>
         <option value="custom">Custom</option>
       </select>
@@ -88,7 +117,12 @@
     <span class="dimensions" id="dimensions"></span>
     <span class="audit" id="audit" role="status">Checking layout…</span>
   </header>
-  <main><div class="device" id="device"><div class="screen-cutout none" id="screen-cutout" aria-hidden="true"></div><div class="home-indicator hidden" id="home-indicator" aria-hidden="true"></div><iframe id="app-preview" src="/" title="Muha Casino application"></iframe></div></main>
+  <main><div class="device" id="device">
+    <section class="cabinet-screen cabinet-topper" aria-label="Casino topper display"><div><strong id="cabinet-game-name">Muha Casino</strong><span id="cabinet-topper-status">Choose a slot game</span></div></section>
+    <section class="cabinet-screen cabinet-upper" aria-label="Casino upper display"><h2>Progressive jackpots</h2><div class="cabinet-jackpots" id="cabinet-jackpots"><p class="cabinet-empty">Live jackpot values appear here during slot play.</p></div></section>
+    <div class="app-screen"><div class="screen-cutout none" id="screen-cutout" aria-hidden="true"></div><div class="home-indicator hidden" id="home-indicator" aria-hidden="true"></div><iframe id="app-preview" src="/" title="Muha Casino application"></iframe></div>
+    <section class="cabinet-screen cabinet-controls" aria-label="Casino control deck touchscreen"><div class="cabinet-meters"><div class="cabinet-meter"><span>Credits</span><strong id="cabinet-balance">—</strong></div><div class="cabinet-meter"><span>Total bet</span><strong id="cabinet-bet">—</strong></div><div class="cabinet-meter"><span>Game status</span><strong id="cabinet-result">Ready</strong></div></div><div class="cabinet-buttons"><button type="button" data-cabinet-action="denom-down">Denom −</button><button type="button" data-cabinet-action="bet-down">Bet −</button><button class="spin-control" type="button" data-cabinet-action="spin">Spin</button><button type="button" data-cabinet-action="bet-up">Bet +</button><button type="button" data-cabinet-action="denom-up">Denom +</button></div></section>
+  </div></main>
   <script>
     const $ = (selector) => document.querySelector(selector);
     const preview = $('#preview');
@@ -106,9 +140,79 @@
     const screenCutout = $('#screen-cutout');
     const homeIndicator = $('#home-indicator');
     const appPreview = $('#app-preview');
+    const slotPreviewValues = new Set(['/#big-money-deluxe', '/#neon-slots', '/#pretty-penny', '/#treasurepots']);
+    const cabinetGameName = $('#cabinet-game-name');
+    const cabinetTopperStatus = $('#cabinet-topper-status');
+    const cabinetJackpots = $('#cabinet-jackpots');
+    const cabinetBalance = $('#cabinet-balance');
+    const cabinetBet = $('#cabinet-bet');
+    const cabinetResult = $('#cabinet-result');
 
     preview.addEventListener('change', () => {
       appPreview.src = preview.value;
+      updateCabinetScreens();
+    });
+
+    function getSlotDocument() {
+      if (!slotPreviewValues.has(preview.value)) return null;
+      try {
+        return appPreview.contentDocument?.querySelector('#gameFrame')?.contentDocument || null;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function setCabinetControlsEnabled(enabled) {
+      document.querySelectorAll('[data-cabinet-action]').forEach((button) => { button.disabled = !enabled; });
+    }
+
+    function updateCabinetScreens() {
+      if (!device.classList.contains('cabinet')) return;
+      const gameDocument = getSlotDocument();
+      const gameName = preview.selectedOptions[0]?.textContent || 'Muha Casino';
+      cabinetGameName.textContent = gameName;
+      if (!gameDocument) {
+        cabinetTopperStatus.textContent = slotPreviewValues.has(preview.value) ? 'Loading slot displays…' : 'Choose a slot game';
+        cabinetJackpots.innerHTML = '<p class="cabinet-empty">Select Big Money Deluxe, Neon Slots, Pretty Penny, or Treasure Pots to activate all cabinet screens.</p>';
+        cabinetBalance.textContent = '—'; cabinetBet.textContent = '—'; cabinetResult.textContent = 'Ready';
+        setCabinetControlsEnabled(false);
+        return;
+      }
+      cabinetTopperStatus.textContent = 'Live cabinet play';
+      const jackpotNodes = [...gameDocument.querySelectorAll('.jackpot-pill')].slice(0, 4);
+      cabinetJackpots.replaceChildren(...jackpotNodes.map((node) => {
+        const item = document.createElement('div'); item.className = 'cabinet-jackpot';
+        const label = document.createElement('span'); label.textContent = node.querySelector('span')?.textContent?.trim() || 'Jackpot';
+        const amount = document.createElement('strong'); amount.textContent = node.querySelector('b')?.textContent?.trim() || '—';
+        item.append(label, amount); return item;
+      }));
+      if (!jackpotNodes.length) cabinetJackpots.innerHTML = '<p class="cabinet-empty">Jackpot display is starting…</p>';
+      cabinetBalance.textContent = gameDocument.querySelector('#balance')?.textContent?.trim() || '—';
+      cabinetBet.textContent = gameDocument.querySelector('#totalBet')?.textContent?.trim() || '—';
+      cabinetResult.textContent = gameDocument.querySelector('#message')?.textContent?.trim() || gameDocument.querySelector('#featureStatus')?.textContent?.trim() || 'Ready';
+      const spin = gameDocument.querySelector('#spin');
+      setCabinetControlsEnabled(Boolean(spin));
+      document.querySelector('[data-cabinet-action="spin"]').disabled = !spin || spin.disabled;
+    }
+
+    function stepSelect(select, direction) {
+      if (!select || select.disabled) return;
+      const next = Math.max(0, Math.min(select.options.length - 1, select.selectedIndex + direction));
+      if (next === select.selectedIndex) return;
+      select.selectedIndex = next;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    document.querySelector('.cabinet-buttons').addEventListener('click', (event) => {
+      const action = event.target.closest('[data-cabinet-action]')?.dataset.cabinetAction;
+      const gameDocument = getSlotDocument();
+      if (!action || !gameDocument) return;
+      if (action === 'spin') gameDocument.querySelector('#spin')?.click();
+      if (action === 'denom-down') stepSelect(gameDocument.querySelector('#denom'), -1);
+      if (action === 'denom-up') stepSelect(gameDocument.querySelector('#denom'), 1);
+      if (action === 'bet-down') stepSelect(gameDocument.querySelector('#bet'), -1);
+      if (action === 'bet-up') stepSelect(gameDocument.querySelector('#bet'), 1);
+      window.setTimeout(updateCabinetScreens, 50);
     });
 
     function getDocuments(rootDocument) {
@@ -187,9 +291,17 @@
       const h = Math.max(320, Number(nextHeight) || 874);
       width.value = w;
       height.value = h;
-      device.style.width = `${w + 20}px`;
-      device.style.height = `${h + 20}px`;
-      dimensions.textContent = `${w} × ${h} CSS px`;
+      const isCabinet = preset.selectedOptions[0]?.hasAttribute('data-cabinet');
+      device.classList.toggle('cabinet', isCabinet);
+      if (isCabinet) {
+        device.style.removeProperty('width'); device.style.removeProperty('height');
+        device.style.setProperty('--cabinet-width', `${w}px`); device.style.setProperty('--cabinet-height', `${h}px`);
+      } else {
+        device.style.removeProperty('--cabinet-width'); device.style.removeProperty('--cabinet-height');
+        device.style.width = `${w + 20}px`; device.style.height = `${h + 20}px`;
+      }
+      dimensions.textContent = `${w} × ${h} CSS px${isCabinet ? ' main display · 4 live screens' : ''}`;
+      updateCabinetScreens();
     }
 
     function applyPreset() {
@@ -220,8 +332,10 @@
     appPreview.addEventListener('load', () => {
       applyPreset();
       window.setTimeout(auditLayout, 900);
+      window.setTimeout(updateCabinetScreens, 900);
     });
     window.setInterval(auditLayout, 1500);
+    window.setInterval(updateCabinetScreens, 500);
     applyPreset();
   </script>
 </body>
