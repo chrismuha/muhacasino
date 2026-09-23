@@ -841,6 +841,131 @@
     }
 
     injectUi();
+    function initializeCabinetBridge() {
+        let hostDocument;
+        try {
+            hostDocument = window.top !== window && window.top.document;
+        } catch (_) {
+            return;
+        }
+        const device = hostDocument?.querySelector("#device");
+        const upper = hostDocument?.querySelector(".cabinet-upper");
+        const controls = hostDocument?.querySelector(".cabinet-controls");
+        if (!device || !upper || !controls) return;
+
+        const rootStyle = getComputedStyle(document.documentElement);
+        const bodyStyle = getComputedStyle(document.body);
+        const themeValue = (primary, secondary, fallback) =>
+            rootStyle.getPropertyValue(primary).trim()
+            || rootStyle.getPropertyValue(secondary).trim()
+            || fallback;
+        const gameTitle = document.querySelector(".title")?.textContent?.replace(/\s+/g, " ").trim()
+            || document.title;
+
+        let hostStyle = hostDocument.querySelector("#slot-cabinet-game-theme");
+        if (!hostStyle) {
+            hostStyle = hostDocument.createElement("style");
+            hostStyle.id = "slot-cabinet-game-theme";
+            hostDocument.head.append(hostStyle);
+        }
+        hostStyle.textContent = `
+          .device.cabinet[data-slot-game] .cabinet-topper {
+            color: var(--slot-cabinet-text); background: radial-gradient(ellipse at center, color-mix(in srgb, var(--slot-cabinet-accent2) 58%, var(--slot-cabinet-card)), var(--slot-cabinet-card) 50%, var(--slot-cabinet-bg) 82%);
+          }
+          .device.cabinet[data-slot-game] .cabinet-upper {
+            color: var(--slot-cabinet-text); background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--slot-cabinet-accent) 24%, var(--slot-cabinet-card)), var(--slot-cabinet-card) 55%, var(--slot-cabinet-bg) 90%);
+          }
+          .device.cabinet[data-slot-game] .cabinet-controls { background: linear-gradient(color-mix(in srgb, var(--slot-cabinet-card) 90%, white 7%), var(--slot-cabinet-bg)); }
+          .device.cabinet[data-slot-game] .cabinet-upper h2 { color: var(--slot-cabinet-accent2); text-shadow: 0 0 18px color-mix(in srgb, var(--slot-cabinet-accent2) 55%, transparent); }
+          .cabinet-live-stats { position:relative; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+          .cabinet-live-stat { min-width:0; padding:20px 12px; border:2px solid var(--slot-cabinet-accent); border-radius:14px; color:var(--slot-cabinet-text); background:color-mix(in srgb,var(--slot-cabinet-card) 88%,transparent); text-align:center; }
+          .cabinet-live-stat span,.cabinet-live-stat strong { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+          .cabinet-live-stat span { color:var(--slot-cabinet-accent); font-size:max(12px,calc(var(--cabinet-width)*.014)); text-transform:uppercase; }
+          .cabinet-live-stat strong { margin-top:8px; font-size:max(18px,calc(var(--cabinet-width)*.026)); }
+          .cabinet-buttons .cabinet-game-action { border-color:var(--slot-cabinet-accent2); background:var(--slot-cabinet-card); color:var(--slot-cabinet-text); }
+        `;
+
+        const setTheme = () => {
+            device.dataset.slotGame = gameKey;
+            device.style.setProperty("--slot-cabinet-bg", themeValue("--bg", "--game-bg", bodyStyle.backgroundColor));
+            device.style.setProperty("--slot-cabinet-card", themeValue("--card", "--game-surface", "#171d2b"));
+            device.style.setProperty("--slot-cabinet-accent", themeValue("--accent", "--gold", "#62d9df"));
+            device.style.setProperty("--slot-cabinet-accent2", themeValue("--accent2", "--win", "#f3cd57"));
+            device.style.setProperty("--slot-cabinet-text", themeValue("--text", "--game-text", bodyStyle.color));
+        };
+
+        const ensureControl = (action, label, sourceSelector) => {
+            const container = controls.querySelector(".cabinet-buttons");
+            if (!container || container.querySelector(`[data-slot-cabinet-action="${action}"]`)) return;
+            const button = hostDocument.createElement("button");
+            button.type = "button";
+            button.className = "cabinet-game-action";
+            button.dataset.slotCabinetAction = action;
+            button.textContent = label;
+            button.addEventListener("click", () => document.querySelector(sourceSelector)?.click());
+            container.append(button);
+        };
+
+        const render = () => {
+            if (!device.classList.contains("cabinet")) {
+                document.body.classList.remove("cabinet-game-surface");
+                return;
+            }
+            document.body.classList.add("cabinet-game-surface");
+            setTheme();
+            const title = hostDocument.querySelector("#cabinet-game-name");
+            if (title) title.textContent = gameTitle;
+            const status = hostDocument.querySelector("#cabinet-topper-status");
+            if (status) status.textContent = "Live cabinet play";
+            const heading = upper.querySelector("h2");
+            if (heading) heading.textContent = `${gameTitle} Stats`;
+            let stats = upper.querySelector(".cabinet-live-stats");
+            if (!stats) {
+                stats = hostDocument.createElement("div");
+                stats.className = "cabinet-live-stats";
+                const jackpots = upper.querySelector(".cabinet-jackpots");
+                if (jackpots) jackpots.hidden = true;
+                upper.append(stats);
+            }
+            const values = [
+                ["Credits", document.querySelector("#balance")?.textContent?.trim() || "—"],
+                ["Total bet", document.querySelector("#totalBet")?.textContent?.trim() || "—"],
+                ["Game status", document.querySelector("#message")?.textContent?.trim() || document.querySelector("#featureStatus")?.textContent?.trim() || "Ready"],
+                ["Money added", document.querySelector("#creditsInserted")?.textContent?.trim() || "—"],
+                ["Elapsed", document.querySelector("#autoSpinElapsed")?.textContent?.replace(/^Time elapsed:\s*/i, "").trim() || "00:00"],
+                ["Denomination", document.querySelector("#denom option:checked")?.textContent?.trim() || "—"],
+            ];
+            stats.replaceChildren(...values.map(([label, value]) => {
+                const card = hostDocument.createElement("div");
+                card.className = "cabinet-live-stat";
+                const name = hostDocument.createElement("span"); name.textContent = label;
+                const output = hostDocument.createElement("strong"); output.textContent = value;
+                card.append(name, output);
+                return card;
+            }));
+            ensureControl("max", "Max Bet", "#max");
+            ensureControl("reset", "Reset Session", "#resetSession");
+            ensureControl("settings", "Settings", "#settingsButton");
+        };
+
+        render();
+        const renderTimer = window.setInterval(render, 200);
+        window.addEventListener("pagehide", () => {
+            window.clearInterval(renderTimer);
+            document.body.classList.remove("cabinet-game-surface");
+            delete device.dataset.slotGame;
+            ["bg", "card", "accent", "accent2", "text"].forEach((name) => device.style.removeProperty(`--slot-cabinet-${name}`));
+            upper.querySelector(".cabinet-live-stats")?.remove();
+            const jackpots = upper.querySelector(".cabinet-jackpots");
+            if (jackpots) jackpots.hidden = false;
+            const heading = upper.querySelector("h2");
+            if (heading) heading.textContent = "Progressive jackpots";
+            controls.querySelectorAll("[data-slot-cabinet-action]").forEach((button) => button.remove());
+        }, { once: true });
+    }
+
+    initializeCabinetBridge();
+
     window.slotExperience = {
         formatAmount,
         getDisplayMode: () => state.displayMode,

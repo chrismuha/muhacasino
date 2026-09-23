@@ -81,6 +81,21 @@ const categoryNames = {
 
 const slotGameIds = new Set(["big-money-deluxe", "neon-slots", "pretty-penny", "treasurepots"]);
 
+function syncHostedCabinetScreens(gameId = null) {
+  let hostDocument;
+  try {
+    hostDocument = window.top !== window ? window.top.document : null;
+  } catch {
+    return;
+  }
+  const device = hostDocument?.querySelector("#device");
+  const controlsScreen = hostDocument?.querySelector(".cabinet-controls");
+  if (!device || !controlsScreen) return;
+  const nonSlotGameActive = Boolean(gameId && games[gameId] && !slotGameIds.has(gameId));
+  controlsScreen.style.display = nonSlotGameActive ? "none" : "";
+  device.classList.toggle("cabinet-non-slot-game", nonSlotGameActive);
+}
+
 const SITE_BUILD = "20260919-dedicated-info-pages-v4";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
@@ -333,6 +348,7 @@ function showLauncher(updateHistory = true) {
   document.body.classList.remove("game-open");
   bingoToolbarControls.hidden = true;
   slotModeToolbar.hidden = true;
+  syncHostedCabinetScreens();
   document.title = "Muha Casino";
   if (updateHistory) history.replaceState(null, "", window.location.pathname);
   restartSlider();
@@ -383,6 +399,7 @@ function launchGame(gameId, updateHistory = true) {
 
   window.clearInterval(sliderTimer);
   activeGameId = gameId;
+  syncHostedCabinetScreens(gameId);
 setGameToolbarCollapsed(false);
   showGameLoading();
   currentGame.textContent = game.title;

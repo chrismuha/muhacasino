@@ -1218,6 +1218,42 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   font-size: clamp(17px, 4vw, 23px) !important;
 }
 
+/* A slot hosted by the four-screen cabinet contributes only its playable
+   reel surface to the main display. The shared cabinet bridge places the
+   title, live statistics, and controls on their dedicated displays. */
+body.cabinet-game-surface,
+body.cabinet-game-surface > .game,
+body.cabinet-game-surface > .game > .card {
+  width: 100% !important;
+  height: 100dvh !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+body.cabinet-game-surface > .game > .card {
+  padding: 0 !important;
+}
+body.cabinet-game-surface :is(.title, .jackpot-board, .pot-feature, .hud, .footer) {
+  display: none !important;
+}
+body.cabinet-game-surface .reels-wrap {
+  display: grid !important;
+  width: 100% !important;
+  height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  grid-template-rows: minmax(0, 1fr) !important;
+}
+body.cabinet-game-surface .reels {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  grid-template-rows: repeat(5, minmax(0, 1fr)) !important;
+  border-radius: 0 !important;
+}
+body.cabinet-game-surface .reels-wrap > :is(.reel-result, .slot-feature-indicator) {
+  display: none !important;
+}
+
 /* Keep every five-row slot reel comfortably readable. Several game themes
    still carry old compact-height overrides, and the shared mobile rule above
    reduced their symbol tiles to as little as 24px. */
