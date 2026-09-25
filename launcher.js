@@ -341,6 +341,7 @@ document.querySelectorAll(".game-rail").forEach((rail) => {
 
 function showLauncher(updateHistory = true) {
   window.clearTimeout(gameLoadTimer);
+  gameFrame.contentWindow?.slotExperience?.releaseCabinetScreens?.();
   activeGameId = null;
   gameLoadState.hidden = true;
   gameView.hidden = true;
@@ -398,6 +399,9 @@ function launchGame(gameId, updateHistory = true) {
   if (!game) return;
 
   window.clearInterval(sliderTimer);
+  if (!slotGameIds.has(gameId)) {
+    gameFrame.contentWindow?.slotExperience?.releaseCabinetScreens?.();
+  }
   activeGameId = gameId;
   syncHostedCabinetScreens(gameId);
 setGameToolbarCollapsed(false);

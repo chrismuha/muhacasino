@@ -957,9 +957,7 @@
             ensureControl("settings", "Settings", "#settingsButton");
         };
 
-        render();
-        const renderTimer = window.setInterval(render, 200);
-        window.addEventListener("pagehide", () => {
+        const releaseCabinetScreens = () => {
             window.clearInterval(renderTimer);
             document.body.classList.remove("cabinet-game-surface");
             delete device.dataset.slotGame;
@@ -970,6 +968,23 @@
             const heading = upper.querySelector("h2");
             if (heading) heading.textContent = "Progressive jackpots";
             controls.querySelectorAll("[data-slot-cabinet-action]").forEach((button) => button.remove());
+        };
+
+        render();
+        const renderTimer = window.setInterval(render, 200);
+        window.slotExperienceReleaseCabinetScreens = releaseCabinetScreens;
+        window.addEventListener("pagehide", () => {
+            window.clearInterval(renderTimer);
+            document.body.classList.remove("cabinet-game-surface");
+            let anotherSlotIsLoading = false;
+            try {
+                const launcherDocument = window.parent.document;
+                anotherSlotIsLoading = launcherDocument.body.classList.contains("game-open")
+                    && !launcherDocument.querySelector("#slotModeToolbar")?.hidden;
+            } catch (_) {
+                // If the host cannot be inspected, clean up this bridge normally.
+            }
+            if (!anotherSlotIsLoading) releaseCabinetScreens();
         }, { once: true });
     }
 
@@ -979,6 +994,7 @@
         formatAmount,
         getDisplayMode: () => state.displayMode,
         isCabinetScreen,
+        releaseCabinetScreens: () => window.slotExperienceReleaseCabinetScreens?.(),
         toggleDisplayMode() {
             if (state.interactionLocked) return false;
             state.displayMode = state.displayMode === "money" ? "credits" : "money";

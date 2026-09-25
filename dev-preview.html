@@ -156,7 +156,10 @@
     function getSlotDocument() {
       if (!slotPreviewValues.has(preview.value)) return null;
       try {
-        return appPreview.contentDocument?.querySelector('#gameFrame')?.contentDocument || null;
+        const launcherDocument = appPreview.contentDocument;
+        const gameView = launcherDocument?.querySelector('#gameView');
+        if (!launcherDocument?.body.classList.contains('game-open') || gameView?.hidden) return null;
+        return launcherDocument.querySelector('#gameFrame')?.contentDocument || null;
       } catch (_) {
         return null;
       }
@@ -168,6 +171,7 @@
 
     function updateCabinetScreens() {
       if (!device.classList.contains('cabinet')) return;
+      if (device.dataset.slotGame) return;
       const gameDocument = getSlotDocument();
       const gameName = preview.selectedOptions[0]?.textContent || 'Muha Casino';
       cabinetGameName.textContent = gameName;
