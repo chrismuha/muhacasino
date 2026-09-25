@@ -164,6 +164,8 @@ let settingsItems = [];
 let settingsPins = {};
 const SETTINGS_PIN_STORAGE_KEY = "bigMoneyDeluxe.settingsPins.v2";
 const LEGACY_SETTINGS_PIN_STORAGE_KEY = "bigMoneyDeluxe.settingsPins.v1";
+const IS_CABINET_SCREEN = window.slotExperience?.isCabinetScreen?.() === true;
+const ACTIVE_SETTINGS_PIN_STORAGE_KEY = `${SETTINGS_PIN_STORAGE_KEY}${IS_CABINET_SCREEN ? ".cabinet" : ""}`;
 
 
 let sessionWinningsUSD = 0;
@@ -1131,7 +1133,7 @@ function getSettingsDefinitions() {
 
 function saveSettingsPins() {
     try {
-        localStorage.setItem(SETTINGS_PIN_STORAGE_KEY, JSON.stringify(settingsPins));
+        localStorage.setItem(ACTIVE_SETTINGS_PIN_STORAGE_KEY, JSON.stringify(settingsPins));
     } catch {
 
     }
@@ -1183,21 +1185,21 @@ function closeSettingsOverlay() {
 
 function setupSettingsOverlay() {
     try {
-        const savedPins = localStorage.getItem(SETTINGS_PIN_STORAGE_KEY);
-        settingsPins = JSON.parse(savedPins || localStorage.getItem(LEGACY_SETTINGS_PIN_STORAGE_KEY) || "{}");
+        const savedPins = localStorage.getItem(ACTIVE_SETTINGS_PIN_STORAGE_KEY);
+        const legacyPins = IS_CABINET_SCREEN ? null : localStorage.getItem(LEGACY_SETTINGS_PIN_STORAGE_KEY);
+        settingsPins = JSON.parse(savedPins || legacyPins || "{}");
         if (!savedPins) Object.keys(settingsPins).filter((key) => /Odds$/i.test(key)).forEach((key) => delete settingsPins[key]);
     } catch {
         settingsPins = {};
     }
-    if (!Object.prototype.hasOwnProperty.call(settingsPins, "denomination")) {
-        settingsPins.denomination = true;
+    const defaultHomePin = !IS_CABINET_SCREEN;
+    const homeDefaultMigrationKey = `${ACTIVE_SETTINGS_PIN_STORAGE_KEY}.screenDefaults.v1.${location.pathname}`;
+    if (!localStorage.getItem(homeDefaultMigrationKey)) {
+        settingsPins.denomination = defaultHomePin;
+        settingsPins.adjustMoney = defaultHomePin;
+        settingsPins.creditsInserted = defaultHomePin;
+        localStorage.setItem(homeDefaultMigrationKey, "1");
     }
-    const adjustMoneyMigrationKey = `${SETTINGS_PIN_STORAGE_KEY}.adjustMoneyDefaultOff.${location.pathname}`;
-    if (!localStorage.getItem(adjustMoneyMigrationKey)) {
-        settingsPins.adjustMoney = false;
-        localStorage.setItem(adjustMoneyMigrationKey, "1");
-    }
-    if (!Object.prototype.hasOwnProperty.call(settingsPins, "creditsInserted")) settingsPins.creditsInserted = true;
     const wedgeSizesMigrationKey = `${SETTINGS_PIN_STORAGE_KEY}.wedgeSizesDefaultOff.${location.pathname}`;
     if (!localStorage.getItem(wedgeSizesMigrationKey)) {
         settingsPins.luckyWheelOdds = false;

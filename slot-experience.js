@@ -841,6 +841,15 @@
     }
 
     injectUi();
+    function isCabinetScreen() {
+        try {
+            return window.top !== window
+                && window.top.document.querySelector("#device")?.classList.contains("cabinet");
+        } catch (_) {
+            return false;
+        }
+    }
+
     function initializeCabinetBridge() {
         let hostDocument;
         try {
@@ -969,6 +978,7 @@
     window.slotExperience = {
         formatAmount,
         getDisplayMode: () => state.displayMode,
+        isCabinetScreen,
         toggleDisplayMode() {
             if (state.interactionLocked) return false;
             state.displayMode = state.displayMode === "money" ? "credits" : "money";
