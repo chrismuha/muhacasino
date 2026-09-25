@@ -62,6 +62,9 @@
     .home-indicator { position: absolute; z-index: 2; bottom: 17px; left: 50%; width: 126px; height: 5px; border-radius: 999px; background: #09090b; box-shadow: 0 0 0 1px #fff2; transform: translateX(-50%); pointer-events: none; }
     .home-indicator.hidden { display: none; }
     iframe { display: block; width: 100%; height: 100%; border: 0; border-radius: 15px; background: #080808; }
+    /* The cabinet screen already owns the rounded clipping boundary. Keeping a
+       second radius on its iframe exposes the dark backing at all four corners. */
+    .device.cabinet iframe { border-radius: 0; }
     @media (max-width: 700px) { main { padding: 14px; } .toolbar { position: static; } }
   </style>
 </head>
