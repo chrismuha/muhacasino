@@ -49,7 +49,7 @@
     .cabinet-meter span, .cabinet-meter strong { display: block; }
     .cabinet-meter span { color: #91a0bc; font-size: max(11px, calc(var(--cabinet-width) * .012)); text-transform: uppercase; }
     .cabinet-meter strong { margin-top: 5px; font-size: max(16px, calc(var(--cabinet-width) * .022)); }
-    .cabinet-buttons { position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+    .cabinet-buttons { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
     .cabinet-buttons button { height: auto; min-height: 76px; border-width: 3px; border-radius: 999px; font-size: max(14px, calc(var(--cabinet-width) * .016)); font-weight: 950; text-transform: uppercase; }
     .cabinet-buttons .spin-control { border-color: #f5d64a; background: #b71f35; color: white; box-shadow: 0 0 22px #e3284b99; }
     .cabinet-buttons button:disabled { opacity: .38; cursor: not-allowed; }
@@ -124,7 +124,7 @@
     <section class="cabinet-screen cabinet-topper" aria-label="Casino topper display"><div><strong id="cabinet-game-name">Muha Casino</strong><span id="cabinet-topper-status">Choose a slot game</span></div></section>
     <section class="cabinet-screen cabinet-upper" aria-label="Casino upper display"><h2>Progressive jackpots</h2><div class="cabinet-jackpots" id="cabinet-jackpots"><p class="cabinet-empty">Live jackpot values appear here during slot play.</p></div></section>
     <div class="app-screen"><div class="screen-cutout none" id="screen-cutout" aria-hidden="true"></div><div class="home-indicator hidden" id="home-indicator" aria-hidden="true"></div><iframe id="app-preview" src="/" title="Muha Casino application"></iframe></div>
-    <section class="cabinet-screen cabinet-controls" aria-label="Casino control deck touchscreen"><div class="cabinet-meters"><div class="cabinet-meter"><span>Credits</span><strong id="cabinet-balance">—</strong></div><div class="cabinet-meter"><span>Total bet</span><strong id="cabinet-bet">—</strong></div><div class="cabinet-meter"><span>Game status</span><strong id="cabinet-result">Ready</strong></div></div><div class="cabinet-buttons"><button type="button" data-cabinet-action="denom-down">Denom −</button><button type="button" data-cabinet-action="bet-down">Bet −</button><button class="spin-control" type="button" data-cabinet-action="spin">Spin</button><button type="button" data-cabinet-action="bet-up">Bet +</button><button type="button" data-cabinet-action="denom-up">Denom +</button></div></section>
+    <section class="cabinet-screen cabinet-controls" aria-label="Casino control deck touchscreen"><div class="cabinet-meters"><div class="cabinet-meter"><span>Credits</span><strong id="cabinet-balance">—</strong></div><div class="cabinet-meter"><span>Total bet</span><strong id="cabinet-bet">—</strong></div><div class="cabinet-meter"><span>Game status</span><strong id="cabinet-result">Ready</strong></div></div><div class="cabinet-buttons"><button type="button" data-cabinet-action="credit-down">Credits −</button><button type="button" data-cabinet-action="denom-down">Denom −</button><button type="button" data-cabinet-action="bet-down">Bet −</button><button class="spin-control" type="button" data-cabinet-action="spin">Spin</button><button type="button" data-cabinet-action="bet-up">Bet +</button><button type="button" data-cabinet-action="denom-up">Denom +</button><button type="button" data-cabinet-action="credit-up">Credits +</button><button type="button" data-cabinet-action="settings">Settings</button></div></section>
   </div></main>
   <script>
     const $ = (selector) => document.querySelector(selector);
@@ -157,7 +157,6 @@
     });
 
     function getSlotDocument() {
-      if (!slotPreviewValues.has(preview.value)) return null;
       try {
         const launcherDocument = appPreview.contentDocument;
         const gameView = launcherDocument?.querySelector('#gameView');
@@ -172,10 +171,30 @@
       document.querySelectorAll('[data-cabinet-action]').forEach((button) => { button.disabled = !enabled; });
     }
 
+    function syncCabinetControlState(gameDocument) {
+      const sources = {
+        'credit-down': '#creditDown',
+        'credit-up': '#creditUp',
+        'denom-down': '#denom',
+        'denom-up': '#denom',
+        'bet-down': '#bet',
+        'bet-up': '#bet',
+        spin: '#spin',
+        settings: '#settingsButton',
+      };
+      document.querySelectorAll('[data-cabinet-action]').forEach((button) => {
+        const source = gameDocument?.querySelector(sources[button.dataset.cabinetAction]);
+        button.disabled = !source || Boolean(source.disabled);
+      });
+    }
+
     function updateCabinetScreens() {
       if (!device.classList.contains('cabinet')) return;
-      if (device.dataset.slotGame) return;
       const gameDocument = getSlotDocument();
+      if (device.dataset.slotGame) {
+        syncCabinetControlState(gameDocument);
+        return;
+      }
       const gameName = preview.selectedOptions[0]?.textContent || 'Muha Casino';
       cabinetGameName.textContent = gameName;
       if (!gameDocument) {
@@ -199,9 +218,7 @@
       cabinetBalance.textContent = gameDocument.querySelector('#balance')?.textContent?.trim() || '—';
       cabinetBet.textContent = gameDocument.querySelector('#totalBet')?.textContent?.trim() || '—';
       cabinetResult.textContent = gameDocument.querySelector('#message')?.textContent?.trim() || gameDocument.querySelector('#featureStatus')?.textContent?.trim() || 'Ready';
-      const spin = gameDocument.querySelector('#spin');
-      setCabinetControlsEnabled(Boolean(spin));
-      document.querySelector('[data-cabinet-action="spin"]').disabled = !spin || spin.disabled;
+      syncCabinetControlState(gameDocument);
     }
 
     function stepSelect(select, direction) {
@@ -221,6 +238,9 @@
       if (action === 'denom-up') stepSelect(gameDocument.querySelector('#denom'), 1);
       if (action === 'bet-down') stepSelect(gameDocument.querySelector('#bet'), -1);
       if (action === 'bet-up') stepSelect(gameDocument.querySelector('#bet'), 1);
+      if (action === 'credit-down') gameDocument.querySelector('#creditDown')?.click();
+      if (action === 'credit-up') gameDocument.querySelector('#creditUp')?.click();
+      if (action === 'settings') gameDocument.querySelector('#settingsButton')?.click();
       window.setTimeout(updateCabinetScreens, 50);
     });
 

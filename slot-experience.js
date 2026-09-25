@@ -951,7 +951,7 @@
 
         const ensureControl = (action, label, sourceSelector) => {
             const container = controls.querySelector(".cabinet-buttons");
-            if (!container || container.querySelector(`[data-slot-cabinet-action="${action}"]`)) return;
+            if (!container || container.querySelector(`[data-slot-cabinet-action="${action}"], [data-cabinet-action="${action}"]`)) return;
             const button = hostDocument.createElement("button");
             button.type = "button";
             button.className = "cabinet-game-action";
@@ -1036,6 +1036,9 @@
                 "denom-up": ["#denom", 1],
                 "bet-down": ["#bet", -1],
                 "bet-up": ["#bet", 1],
+                "credit-down": ["#creditDown", -1],
+                "credit-up": ["#creditUp", 1],
+                "settings": ["#settingsButton", 0],
             };
             controls.querySelectorAll("[data-cabinet-action]").forEach((button) => {
                 const action = button.dataset.cabinetAction;
