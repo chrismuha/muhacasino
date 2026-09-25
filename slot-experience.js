@@ -82,25 +82,27 @@
 
     const MAX_JACKPOT_AMOUNT = 3_000_000;
 
-    function compactAmount(value) {
+    function numericAmount(value) {
         const amount = Math.min(MAX_JACKPOT_AMOUNT, Math.max(0, Number(value) || 0));
-        if (amount < 10_000) return amount.toFixed(2);
-        const scales = [
-            [1_000_000, "Million"],
-            [1_000, "Thousand"],
-        ];
-        const [divisor, label] = scales.find(([threshold]) => amount >= threshold);
-        const scaled = amount / divisor;
-        const digits = scaled >= 100 ? 0 : scaled >= 10 ? 1 : 2;
-        return `${scaled.toFixed(digits).replace(/\.0+$|(?<=\.[0-9])0$/, "")} ${label}`;
+        return amount.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+            useGrouping: true,
+        });
     }
 
     function money(value) {
-        return `$${compactAmount(value)}`;
+        return `$${numericAmount(value)}`;
     }
 
     function formatAmount(value) {
-        const amount = compactAmount(value);
+        const amount = numericAmount(value);
+        return state.displayMode === "money" ? `$${amount}` : `${amount} cr`;
+    }
+
+    function formatJackpotAmount(value) {
+        const amount = Math.min(MAX_JACKPOT_AMOUNT, Math.max(0, Math.round(Number(value) || 0)))
+            .toLocaleString("en-US", { maximumFractionDigits: 0, useGrouping: true });
         return state.displayMode === "money" ? `$${amount}` : `${amount} cr`;
     }
 
@@ -864,10 +866,10 @@
 
         const rootStyle = getComputedStyle(document.documentElement);
         const bodyStyle = getComputedStyle(document.body);
-        const themeValue = (primary, secondary, fallback) =>
-            rootStyle.getPropertyValue(primary).trim()
-            || rootStyle.getPropertyValue(secondary).trim()
-            || fallback;
+        const themeValue = (...values) => {
+            const fallback = values.pop();
+            return values.map((name) => rootStyle.getPropertyValue(name).trim()).find(Boolean) || fallback;
+        };
         const gameTitle = document.querySelector(".title")?.textContent?.replace(/\s+/g, " ").trim()
             || document.title;
 
@@ -892,15 +894,59 @@
           .cabinet-live-stat span { color:var(--slot-cabinet-accent); font-size:max(12px,calc(var(--cabinet-width)*.014)); text-transform:uppercase; }
           .cabinet-live-stat strong { margin-top:8px; font-size:max(18px,calc(var(--cabinet-width)*.026)); }
           .cabinet-buttons .cabinet-game-action { border-color:var(--slot-cabinet-accent2); background:var(--slot-cabinet-card); color:var(--slot-cabinet-text); }
+          .cabinet-live-prizes { position:relative; display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; }
+          .cabinet-live-prize { min-width:0; padding:10px 8px; border:2px solid var(--slot-cabinet-accent2); border-radius:12px; background:color-mix(in srgb,var(--slot-cabinet-card) 92%,transparent); text-align:center; }
+          .cabinet-live-prize span,.cabinet-live-prize strong { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+          .cabinet-live-prize span { color:var(--slot-cabinet-accent); font-size:max(10px,calc(var(--cabinet-width)*.011)); font-weight:900; text-transform:uppercase; }
+          .cabinet-live-prize strong { margin-top:4px; color:var(--slot-cabinet-text); font-size:max(15px,calc(var(--cabinet-width)*.019)); }
+          .cabinet-pinned-settings { position:relative; display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; }
+          .cabinet-pinned-setting { min-width:0; padding:10px 12px; border:2px solid var(--slot-cabinet-accent); border-radius:12px; background:color-mix(in srgb,var(--slot-cabinet-card) 92%,transparent); color:var(--slot-cabinet-text); }
+          .cabinet-pinned-setting :is(label,.muted) { display:block; margin-bottom:5px; color:var(--slot-cabinet-accent2); font-size:max(11px,calc(var(--cabinet-width)*.012)); font-weight:800; }
+          .cabinet-pinned-setting :is(select,input,button) { max-width:100%; min-height:34px; font:inherit; }
         `;
 
         const setTheme = () => {
             device.dataset.slotGame = gameKey;
-            device.style.setProperty("--slot-cabinet-bg", themeValue("--bg", "--game-bg", bodyStyle.backgroundColor));
-            device.style.setProperty("--slot-cabinet-card", themeValue("--card", "--game-surface", "#171d2b"));
-            device.style.setProperty("--slot-cabinet-accent", themeValue("--accent", "--gold", "#62d9df"));
-            device.style.setProperty("--slot-cabinet-accent2", themeValue("--accent2", "--win", "#f3cd57"));
-            device.style.setProperty("--slot-cabinet-text", themeValue("--text", "--game-text", bodyStyle.color));
+            device.style.setProperty("--slot-cabinet-bg", themeValue("--cabinet-bg", "--bg", "--game-bg", bodyStyle.backgroundColor));
+            device.style.setProperty("--slot-cabinet-card", themeValue("--cabinet-card", "--card", "--game-surface", "#171d2b"));
+            device.style.setProperty("--slot-cabinet-accent", themeValue("--cabinet-accent", "--accent", "--gold", "#62d9df"));
+            device.style.setProperty("--slot-cabinet-accent2", themeValue("--cabinet-accent2", "--accent2", "--win", "#f3cd57"));
+            device.style.setProperty("--slot-cabinet-text", themeValue("--cabinet-text", "--text", "--game-text", bodyStyle.color));
+        };
+
+        const syncPinnedSettings = () => {
+            const pinned = [...document.querySelectorAll('[data-home-pinned="true"]')];
+            const signature = pinned.map((element) => element.dataset.homeSettingKey).join("|");
+            let panel = controls.querySelector(".cabinet-pinned-settings");
+            if (!pinned.length) { panel?.remove(); return; }
+            if (!panel) {
+                panel = hostDocument.createElement("div");
+                panel.className = "cabinet-pinned-settings";
+                controls.append(panel);
+            }
+            if (panel.dataset.signature === signature) return;
+            panel.dataset.signature = signature;
+            panel.replaceChildren(...pinned.map((source) => {
+                const copy = source.cloneNode(true);
+                copy.classList.add("cabinet-pinned-setting");
+                copy.querySelectorAll("[id]").forEach((node) => node.removeAttribute("id"));
+                copy.querySelectorAll("[for]").forEach((node) => node.removeAttribute("for"));
+                const sourceControls = [...source.querySelectorAll("input,select,button")];
+                [...copy.querySelectorAll("input,select,button")].forEach((control, index) => {
+                    const original = sourceControls[index];
+                    if (!original) return;
+                    control.disabled = original.disabled;
+                    if ("value" in control) control.value = original.value;
+                    if ("checked" in control) control.checked = original.checked;
+                    control.addEventListener("click", () => { if (control.tagName === "BUTTON") original.click(); });
+                    control.addEventListener("change", () => {
+                        if ("value" in original) original.value = control.value;
+                        if ("checked" in original) original.checked = control.checked;
+                        original.dispatchEvent(new Event("change", { bubbles: true }));
+                    });
+                });
+                return copy;
+            }));
         };
 
         const ensureControl = (action, label, sourceSelector) => {
@@ -915,6 +961,35 @@
             container.append(button);
         };
 
+        const numericPrizeValue = (value) => {
+            const text = String(value || "").trim();
+            return /\d/.test(text) ? text : "$0.00";
+        };
+
+        const syncPrizeValues = () => {
+            const sources = [
+                ...document.querySelectorAll(".jackpot-pill"),
+                ...document.querySelectorAll(".pot"),
+            ];
+            let panel = upper.querySelector(".cabinet-live-prizes");
+            if (!panel) {
+                panel = hostDocument.createElement("div");
+                panel.className = "cabinet-live-prizes";
+                upper.append(panel);
+            }
+            panel.replaceChildren(...sources.map((source, index) => {
+                const card = hostDocument.createElement("div");
+                card.className = "cabinet-live-prize";
+                const label = hostDocument.createElement("span");
+                const isSubJackpot = source.classList.contains("pot");
+                label.textContent = source.querySelector(isSubJackpot ? "b" : "span")?.textContent?.trim() || `Prize ${index + 1}`;
+                const value = hostDocument.createElement("strong");
+                value.textContent = numericPrizeValue(source.querySelector(isSubJackpot ? "small" : "b")?.textContent);
+                card.append(label, value);
+                return card;
+            }));
+        };
+
         const render = () => {
             if (!device.classList.contains("cabinet")) {
                 document.body.classList.remove("cabinet-game-surface");
@@ -927,13 +1002,14 @@
             const status = hostDocument.querySelector("#cabinet-topper-status");
             if (status) status.textContent = "Live cabinet play";
             const heading = upper.querySelector("h2");
-            if (heading) heading.textContent = `${gameTitle} Stats`;
+            if (heading) heading.textContent = `${gameTitle} Jackpots & Stats`;
+            syncPrizeValues();
             let stats = upper.querySelector(".cabinet-live-stats");
             if (!stats) {
                 stats = hostDocument.createElement("div");
                 stats.className = "cabinet-live-stats";
                 const jackpots = upper.querySelector(".cabinet-jackpots");
-                if (jackpots) jackpots.hidden = true;
+                if (jackpots) jackpots.style.display = "none";
                 upper.append(stats);
             }
             const values = [
@@ -955,6 +1031,18 @@
             ensureControl("max", "Max Bet", "#max");
             ensureControl("reset", "Reset Session", "#resetSession");
             ensureControl("settings", "Settings", "#settingsButton");
+            const cabinetActions = {
+                "denom-down": ["#denom", -1],
+                "denom-up": ["#denom", 1],
+                "bet-down": ["#bet", -1],
+                "bet-up": ["#bet", 1],
+            };
+            controls.querySelectorAll("[data-cabinet-action]").forEach((button) => {
+                const action = button.dataset.cabinetAction;
+                if (action === "spin") button.disabled = Boolean(document.querySelector("#spin")?.disabled);
+                else if (cabinetActions[action]) button.disabled = Boolean(document.querySelector(cabinetActions[action][0])?.disabled);
+            });
+            syncPinnedSettings();
         };
 
         const releaseCabinetScreens = () => {
@@ -963,11 +1051,13 @@
             delete device.dataset.slotGame;
             ["bg", "card", "accent", "accent2", "text"].forEach((name) => device.style.removeProperty(`--slot-cabinet-${name}`));
             upper.querySelector(".cabinet-live-stats")?.remove();
+            upper.querySelector(".cabinet-live-prizes")?.remove();
             const jackpots = upper.querySelector(".cabinet-jackpots");
-            if (jackpots) jackpots.hidden = false;
+            if (jackpots) jackpots.style.removeProperty("display");
             const heading = upper.querySelector("h2");
             if (heading) heading.textContent = "Progressive jackpots";
             controls.querySelectorAll("[data-slot-cabinet-action]").forEach((button) => button.remove());
+            controls.querySelector(".cabinet-pinned-settings")?.remove();
         };
 
         render();
@@ -992,6 +1082,7 @@
 
     window.slotExperience = {
         formatAmount,
+        formatJackpotAmount,
         getDisplayMode: () => state.displayMode,
         isCabinetScreen,
         releaseCabinetScreens: () => window.slotExperienceReleaseCabinetScreens?.(),

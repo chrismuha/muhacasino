@@ -1149,6 +1149,8 @@ function saveSettingsPins() {
 
 function placeSettingsOnHome() {
     for (const setting of settingsItems) {
+        setting.element.dataset.homePinned = String(Boolean(settingsPins[setting.key]));
+        setting.element.dataset.homeSettingKey = setting.key;
         if (settingsPins[setting.key]) {
             setting.marker.parentNode.insertBefore(setting.element, setting.marker.nextSibling);
         } else {

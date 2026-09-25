@@ -1250,6 +1250,12 @@ body.cabinet-game-surface .reels {
   grid-template-rows: repeat(5, minmax(0, 1fr)) !important;
   border-radius: 0 !important;
 }
+body.cabinet-game-surface .reels .cell {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none !important;
+  border-radius: 0 !important;
+}
 body.cabinet-game-surface .reels-wrap > :is(.reel-result, .slot-feature-indicator) {
   display: none !important;
 }

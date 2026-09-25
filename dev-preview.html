@@ -187,10 +187,12 @@
       cabinetJackpots.replaceChildren(...jackpotNodes.map((node) => {
         const item = document.createElement('div'); item.className = 'cabinet-jackpot';
         const label = document.createElement('span'); label.textContent = node.querySelector('span')?.textContent?.trim() || 'Jackpot';
-        const amount = document.createElement('strong'); amount.textContent = node.querySelector('b')?.textContent?.trim() || '—';
+        const amount = document.createElement('strong');
+        const rawAmount = node.querySelector('b')?.textContent?.trim() || '';
+        amount.textContent = /\d/.test(rawAmount) ? rawAmount : '$0.00';
         item.append(label, amount); return item;
       }));
-      if (!jackpotNodes.length) cabinetJackpots.innerHTML = '<p class="cabinet-empty">Jackpot display is starting…</p>';
+      if (!jackpotNodes.length) cabinetJackpots.innerHTML = '<div class="cabinet-jackpot"><span>Jackpot</span><strong>$0.00</strong></div>';
       cabinetBalance.textContent = gameDocument.querySelector('#balance')?.textContent?.trim() || '—';
       cabinetBet.textContent = gameDocument.querySelector('#totalBet')?.textContent?.trim() || '—';
       cabinetResult.textContent = gameDocument.querySelector('#message')?.textContent?.trim() || gameDocument.querySelector('#featureStatus')?.textContent?.trim() || 'Ready';

@@ -2037,6 +2037,11 @@ button:hover { filter: brightness(1.12); }
   --accent: #bd623f;
   --accent2: #26756c;
   --text: #173f3b;
+  --cabinet-bg: #f8f1e2;
+  --cabinet-card: #fff9ec;
+  --cabinet-accent: #bd623f;
+  --cabinet-accent2: #26756c;
+  --cabinet-text: #173f3b;
   --muted: #6e7770;
   --win: #ffd56a;
   --danger: #a93f42;
