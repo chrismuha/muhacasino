@@ -31,6 +31,7 @@
     const state = {
         displayMode: "credits",
         withdrawalDemo: false,
+        buyBonusEnabled: true,
         luckyWheel: true,
         wheelOdds: 0.5,
         wheelSizes: [...defaultWheelSizes],
@@ -57,6 +58,7 @@
         state.withdrawalDemo = typeof saved.withdrawalDemo === "boolean"
             ? saved.withdrawalDemo
             : Boolean(saved.moneyMode);
+        state.buyBonusEnabled = saved.buyBonusEnabled !== false;
         state.luckyWheel = saved.luckyWheel !== false;
         state.wheelOdds = Math.min(0.99, Math.max(0.01, Number(saved.wheelOdds) || 0.5));
         state.wheelSizes = normalizeWheelSizes(saved.wheelSizes);
@@ -111,6 +113,7 @@
             localStorage.setItem(storageKey, JSON.stringify({
                 displayMode: state.displayMode,
                 withdrawalDemo: state.withdrawalDemo,
+                buyBonusEnabled: state.buyBonusEnabled,
                 luckyWheel: state.luckyWheel,
                 wheelOdds: state.wheelOdds,
                 wheelSizes: state.wheelSizes,
@@ -293,6 +296,10 @@
             <label class="checkbox-setting slot-withdrawal-setting">
                 <input id="withdrawalDemoToggle" type="checkbox">
                 <span><strong>Withdrawal demonstration</strong><small>Show the separate simulated withdrawal experience.</small></span>
+            </label>
+            <label class="checkbox-setting slot-buy-bonus-setting">
+                <input id="buyBonusToggle" type="checkbox" checked>
+                <span><strong>Show Buy Bonus button</strong><small>Show or hide Buy Bonus on the game screen and casino cabinet controls.</small></span>
             </label>
             <label class="checkbox-setting slot-wheel-setting">
                 <input id="luckyWheelToggle" type="checkbox" checked>
@@ -485,10 +492,12 @@
         });
 
         const withdrawalToggle = document.getElementById("withdrawalDemoToggle");
+        const buyBonusToggle = document.getElementById("buyBonusToggle");
         const wheelToggle = document.getElementById("luckyWheelToggle");
         const resultBarsToggle = document.getElementById("collapseEmptyResultsToggle");
         const revealDoors = document.getElementById("pennyRevealDoors");
         withdrawalToggle.checked = state.withdrawalDemo;
+        buyBonusToggle.checked = state.buyBonusEnabled;
         wheelToggle.checked = state.luckyWheel;
         resultBarsToggle.checked = state.collapseEmptyResults;
         const syncWheelSizeSummary = () => {
@@ -511,6 +520,11 @@
         withdrawalToggle.addEventListener("change", () => {
             state.withdrawalDemo = withdrawalToggle.checked;
             updateMoneyUi();
+        });
+        buyBonusToggle.addEventListener("change", () => {
+            state.buyBonusEnabled = buyBonusToggle.checked;
+            updateBonusBuyButton();
+            save();
         });
         wheelToggle.addEventListener("change", () => {
             state.luckyWheel = wheelToggle.checked;
@@ -704,7 +718,7 @@
         const hasAvailableOption = options.length
             ? options.some((option) => bonusBuyConfig.canBuy?.(option) !== false)
             : bonusBuyConfig.canBuy?.({ cost, wager: cost / 100 }) !== false;
-        button.hidden = false;
+        button.hidden = !state.buyBonusEnabled;
         button.disabled = state.interactionLocked || !hasAvailableOption;
         button.textContent = "Buy Bonus";
         button.setAttribute("aria-label", `Choose a bonus purchase amount starting at ${money(cost)}`);
@@ -992,6 +1006,8 @@
             ensureControl("max", "Max Bet", "#max");
             ensureControl("reset", "Reset Session", "#resetSession");
             ensureControl("settings", "Settings", "#settingsButton");
+            if (state.buyBonusEnabled) ensureControl("buy-bonus", "Buy Bonus", "#buyBonus");
+            else controls.querySelector('[data-slot-cabinet-action="buy-bonus"]')?.remove();
             const cabinetActions = {
                 "denom-down": ["#denom", -1],
                 "denom-up": ["#denom", 1],
@@ -1006,6 +1022,9 @@
                 if (action === "spin") button.disabled = Boolean(document.querySelector("#spin")?.disabled);
                 else if (cabinetActions[action]) button.disabled = Boolean(document.querySelector(cabinetActions[action][0])?.disabled);
             });
+            const cabinetBuyBonus = controls.querySelector('[data-slot-cabinet-action="buy-bonus"]');
+            const buyBonus = document.querySelector("#buyBonus");
+            if (cabinetBuyBonus) cabinetBuyBonus.disabled = !buyBonus || buyBonus.hidden || buyBonus.disabled;
             controls.querySelector(".cabinet-pinned-settings")?.remove();
             const pinRow = document.querySelector(".settings-pin-row");
             if (pinRow) pinRow.style.display = "none";

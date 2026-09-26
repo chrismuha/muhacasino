@@ -1256,8 +1256,54 @@ body.cabinet-game-surface .reels .cell {
   max-height: none !important;
   border-radius: 0 !important;
 }
+body.cabinet-game-surface .reels .cell > .icon-container {
+  margin: 8px !important;
+  width: calc(100% - 16px) !important;
+  height: calc(100% - 16px) !important;
+  max-width: calc(100% - 16px) !important;
+  max-height: calc(100% - 16px) !important;
+  font-size: clamp(72px, 10vw, 150px) !important;
+}
+body.cabinet-game-surface .reels .symbol-art::before {
+  font-size: clamp(72px, 10vw, 150px) !important;
+}
 body.cabinet-game-surface .reels-wrap > :is(.reel-result, .slot-feature-indicator) {
   display: none !important;
+}
+
+/* Cabinet displays have substantially more room than consumer screens. Keep
+   prompts, bonus choices, wheels, and pick cards legible at standing distance. */
+body.cabinet-game-surface :is(.overlay, .feature-overlay) {
+  padding: 48px !important;
+  place-items: center !important;
+}
+body.cabinet-game-surface :is(.overlay-panel, .overlay-panel-compact, .feature-dialog, .match-win-dialog, .wheel-dialog, .slot-bonus-wheel-dialog) {
+  box-sizing: border-box !important;
+  width: min(900px, 92vw) !important;
+  max-width: none !important;
+  max-height: calc(100dvh - 96px) !important;
+  padding: clamp(38px, 4vw, 64px) !important;
+  border-radius: 30px !important;
+  font-size: clamp(21px, 2.25vw, 30px) !important;
+  overflow: auto !important;
+}
+body.cabinet-game-surface :is(.overlay-panel, .feature-dialog) h2,
+body.cabinet-game-surface :is(.overlay-panel, .feature-dialog) h3 {
+  font-size: clamp(38px, 4.8vw, 62px) !important;
+}
+body.cabinet-game-surface :is(.overlay-panel, .feature-dialog) :is(button, select, input) {
+  min-height: 62px !important;
+  font-size: clamp(20px, 2.2vw, 28px) !important;
+}
+body.cabinet-game-surface :is(.bonus-wheel-wrap, .slot-bonus-wheel-wrap, .lucky-wheel) {
+  width: min(590px, 64vw, 52dvh) !important;
+}
+body.cabinet-game-surface .match-win-grid {
+  max-width: 720px !important;
+  gap: 20px !important;
+}
+body.cabinet-game-surface .match-win-grid button {
+  min-height: 140px !important;
 }
 
 /* Keep every five-row slot reel comfortably readable. Several game themes
