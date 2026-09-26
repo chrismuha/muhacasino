@@ -72,6 +72,31 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 .buy-bonus-option { display: grid; text-align: center; }
 .buy-bonus-option strong { font-size: 1.15rem; }
 .buy-bonus-option span { font-size: .78rem; opacity: .8; }
+.wheel-pointer-pick-overlay { box-sizing:border-box; padding:8px; overflow:hidden; }
+.wheel-pointer-pick-panel { box-sizing:border-box; display:flex; width:min(960px,calc(100vw - 16px)); max-width:none; max-height:calc(100dvh - 16px); padding:clamp(12px,2.5vw,24px); flex-direction:column; gap:0; overflow:hidden !important; text-align:center; }
+.wheel-pointer-pick-panel > h2 { position:relative; z-index:2; margin:0 0 12px; }
+.wheel-pointer-pick-panel > p { position:relative; z-index:2; margin:0; line-height:1.35; }
+.wheel-pointer-pick-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(10px,2vw,20px); width:min(100%,560px); min-height:0; margin:clamp(12px,2vh,22px) auto; }
+.wheel-pointer-pick-grid button { position:relative; justify-self:center; width:min(100%,150px); aspect-ratio:2.5/3.5; min-width:0; min-height:0; padding:clamp(4px,1vw,10px); border:5px double currentColor; border-radius:16px; background:linear-gradient(145deg,#fff8df,#e8c86f); color:#40260b; box-shadow:0 6px 0 #5c3518,0 9px 18px #0007; font-size:clamp(.78rem,1.8vw,1.1rem); font-weight:950; line-height:1.1; opacity:0; transform:translateY(-22px) scale(.92); }
+.wheel-pointer-pick-grid button.is-dealt { opacity:1; transform:none; transition:opacity .28s ease,transform .34s ease,filter .25s ease; }
+.wheel-pointer-pick-grid button:not(.is-revealed)::after { content:"♠ ♥ ♦ ♣"; position:absolute; inset:12px; display:grid; place-items:center; border:2px solid currentColor; border-radius:10px; font-size:clamp(16px,2vw,25px); letter-spacing:.1em; }
+.wheel-pointer-pick-grid button:not(.is-revealed) { font-size:0; }
+.wheel-pointer-pick-grid button.is-revealed { background:linear-gradient(145deg,#fffdf4,#d8a73d); transform:translateY(-3px); }
+.wheel-pointer-pick-grid button.is-flipping { transform:translateY(-3px) rotateY(180deg); }
+.wheel-pointer-pick-grid button.is-flipping.is-revealed { transform:translateY(-3px) rotateY(0); transition:transform .42s ease; }
+.wheel-pointer-pick-grid button:disabled:not(.is-loser) { opacity:1; filter:none; }
+.wheel-pointer-pick-grid button.is-winner { filter:none; outline:6px solid #71f39a; box-shadow:0 0 34px #71f39a,0 8px 0 #24653a; }
+.wheel-pointer-pick-grid button.is-loser { filter:blur(3px) grayscale(.75); opacity:.42; transform:scale(.94); }
+.wheel-pointer-pick-result { display:block; min-height:1.5em; font-size:1.35rem; }
+@media (max-width:600px) {
+  .wheel-pointer-pick-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin:10px auto; }
+  .wheel-pointer-pick-grid button { border-width:3px; border-radius:10px; box-shadow:0 4px 0 #5c3518; }
+  .wheel-pointer-pick-grid button:not(.is-revealed)::after { inset:6px; font-size:clamp(10px,3.5vw,16px); }
+  .wheel-pointer-pick-result { font-size:1rem; }
+}
+.wheel-pointer-odds-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:10px 0; }
+.wheel-pointer-odds-grid label { display:grid; grid-template-columns:1fr auto; gap:5px; align-items:center; }
+.wheel-pointer-odds-grid input { min-width:0; width:100%; }
 .hud > .right > :is(.auto-spin-hint, .auto-spin-countdown, .message) { grid-column: 1 / -1; width: 100%; min-width: 0; max-width: 100%; margin-inline: 0; text-align: center; overflow-wrap: anywhere; }
 .hud > .left > *, .hud > .right > * { min-width: 0; max-width: 100%; }
 .hud :is(select, input[type="number"], input[type="text"]) { max-width: 100%; }
@@ -1304,6 +1329,23 @@ body.cabinet-game-surface .match-win-grid {
 }
 body.cabinet-game-surface .match-win-grid button {
   min-height: 140px !important;
+}
+body.cabinet-game-surface .wheel-pointer-pick-overlay {
+  padding: 8px !important;
+  overflow: hidden !important;
+}
+body.cabinet-game-surface .wheel-pointer-pick-panel {
+  width: min(1040px, calc(100vw - 16px)) !important;
+  max-height: calc(100dvh - 16px) !important;
+  padding: clamp(14px, 2vw, 24px) !important;
+  overflow: hidden !important;
+}
+body.cabinet-game-surface .wheel-pointer-pick-panel h2 {
+  margin-bottom: 6px !important;
+  font-size: clamp(28px, 3.4vw, 42px) !important;
+}
+body.cabinet-game-surface .wheel-pointer-pick-grid button {
+  min-height: 0 !important;
 }
 
 /* Keep every five-row slot reel comfortably readable. Several game themes

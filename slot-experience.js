@@ -36,6 +36,7 @@
         wheelOdds: 0.5,
         wheelSizes: [...defaultWheelSizes],
         wheelPrizes: defaultWheelPrizes.map((prize) => ({ ...prize })),
+        pointerOdds: [60, 30, 10],
         linkChips: { minMultiplier: 1, maxMultiplier: 25, minCount: 2, maxCount: 4, winChance: 10, teaserChance: 3 },
         lifetimeWagered: 0,
         lifetimeWon: 0,
@@ -62,6 +63,9 @@
         state.luckyWheel = saved.luckyWheel !== false;
         state.wheelOdds = Math.min(0.99, Math.max(0.01, Number(saved.wheelOdds) || 0.5));
         state.wheelSizes = normalizeWheelSizes(saved.wheelSizes);
+        state.pointerOdds = Array.isArray(saved.pointerOdds) && saved.pointerOdds.length === 3
+            ? saved.pointerOdds.map((value, index) => Math.max(0, Number(value) || [60, 30, 10][index]))
+            : [60, 30, 10];
         state.wheelPrizes = Array.isArray(saved.wheelPrizes) && saved.wheelPrizes.length === 6
             ? saved.wheelPrizes.map((prize, index) => normalizeWheelPrize(prize, defaultWheelPrizes[index]))
             : defaultWheelPrizes.map((prize, index) => ({
@@ -118,6 +122,7 @@
                 wheelOdds: state.wheelOdds,
                 wheelSizes: state.wheelSizes,
                 wheelPrizes: state.wheelPrizes,
+                pointerOdds: state.pointerOdds,
                 linkChips: state.linkChips,
                 lifetimeWagered: state.lifetimeWagered,
                 lifetimeWon: state.lifetimeWon,
@@ -170,6 +175,94 @@
                 else { element.style.transform = `rotate(${targetDegrees}deg)`; resolve(); }
             };
             window.requestAnimationFrame(animateFrame);
+        });
+    }
+
+    function pickWheelPointerCount() {
+        const totalOdds = state.pointerOdds.reduce((sum, value) => sum + value, 0) || 1;
+        let roll = Math.random() * totalOdds;
+        let winningValue = 1;
+        for (let index = 0; index < state.pointerOdds.length; index++) {
+            roll -= state.pointerOdds[index];
+            if (roll <= 0) { winningValue = index + 1; break; }
+        }
+        const pointerLabel = `${winningValue} ${winningValue === 1 ? "POINTER" : "POINTERS"}`;
+        const values = [
+            { key: "winner-star", value: winningValue, label: `★ ${pointerLabel}` },
+            { key: "winner-star", value: winningValue, label: `★ ${pointerLabel}` },
+            { key: "winner-diamond", value: winningValue, label: `◆ ${pointerLabel}` },
+            { key: "winner-diamond", value: winningValue, label: `◆ ${pointerLabel}` },
+            { key: "winner-circle", value: winningValue, label: `● ${pointerLabel}` },
+            { key: "winner-circle", value: winningValue, label: `● ${pointerLabel}` },
+        ];
+        for (let index = values.length - 1; index > 0; index--) {
+            const swapIndex = Math.floor(Math.random() * (index + 1));
+            [values[index], values[swapIndex]] = [values[swapIndex], values[index]];
+        }
+        const overlay = document.createElement("div");
+        overlay.className = "overlay wheel-pointer-pick-overlay";
+        overlay.innerHTML = `<div class="overlay-panel wheel-pointer-pick-panel" role="dialog" aria-modal="true"><h2>Pick &amp; Match Pointers</h2><p>Match two cards to choose how many pointers play the wheel.</p><div class="wheel-pointer-pick-grid"></div><strong class="wheel-pointer-pick-result">Pick a card</strong></div>`;
+        document.body.append(overlay);
+        const grid = overlay.querySelector(".wheel-pointer-pick-grid");
+        const result = overlay.querySelector(".wheel-pointer-pick-result");
+        const firstByValue = new Map();
+        let finished = false;
+        let acceptingPick = false;
+        return new Promise((resolve) => {
+            values.forEach((card, index) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.textContent = "?";
+                button.disabled = true;
+                button.style.setProperty("--deal-index", index);
+                button.onclick = () => {
+                    if (finished || !acceptingPick || button.classList.contains("is-revealed")) return;
+                    acceptingPick = false;
+                    button.disabled = true;
+                    button.classList.add("is-revealed", "is-flipping");
+                    button.textContent = card.label;
+                    button.setAttribute("aria-label", card.label);
+                    const firstMatch = firstByValue.get(card.key);
+                    if (!firstMatch) {
+                        firstByValue.set(card.key, button);
+                        result.textContent = "Keep picking — find its match";
+                        setTimeout(() => {
+                            button.classList.remove("is-flipping");
+                            acceptingPick = true;
+                        }, 480);
+                        return;
+                    }
+                    finished = true;
+                    firstMatch.classList.add("is-winner");
+                    button.classList.add("is-winner");
+                    grid.querySelectorAll("button").forEach((card) => {
+                        card.disabled = true;
+                        if (!card.classList.contains("is-winner")) card.classList.add("is-loser");
+                    });
+                    result.textContent = `${card.value} ${card.value === 1 ? "POINTER" : "POINTERS"} WON!`;
+                    setTimeout(() => { overlay.remove(); resolve(card.value); }, 1900);
+                };
+                grid.append(button);
+                setTimeout(() => button.classList.add("is-dealt"), 120 * index);
+            });
+            setTimeout(() => {
+                grid.querySelectorAll("button").forEach((button) => { button.disabled = false; });
+                acceptingPick = true;
+                result.textContent = "Pick a card";
+                grid.querySelector("button")?.focus();
+            }, values.length * 120 + 320);
+        });
+    }
+
+    function showWheelPointers(wrap, count, pointerClass) {
+        wrap?.querySelectorAll(`.${pointerClass}`).forEach((pointer) => pointer.remove());
+        const positions = count === 1 ? [50] : count === 2 ? [42, 58] : [35, 50, 65];
+        positions.forEach((left) => {
+            const pointer = document.createElement("span");
+            pointer.className = pointerClass;
+            pointer.style.left = `${left}%`;
+            pointer.setAttribute("aria-hidden", "true");
+            wrap?.append(pointer);
         });
     }
 
@@ -305,6 +398,13 @@
                 <input id="luckyWheelToggle" type="checkbox" checked>
                 <span><strong>One rescue wheel when credits run out</strong><small>Available once per session after paid play leaves too few credits for the current wager.</small></span>
             </label>
+            <div class="select slot-pointer-odds-setting">
+                <strong>Wheel pointer match chances</strong>
+                <div class="wheel-pointer-odds-grid">
+                    ${state.pointerOdds.map((value, index) => `<label>${index + 1} pointer${index ? "s" : ""}<input type="number" min="0" max="100" step="1" inputmode="numeric" value="${value}" data-pointer-odds="${index}"><span>%</span></label>`).join("")}
+                </div>
+                <small id="wheelPointerOddsSummary">Relative chances are normalized automatically.</small>
+            </div>
             <label class="checkbox-setting slot-result-bars-setting">
                 <input id="collapseEmptyResultsToggle" type="checkbox">
                 <span><strong>Hide empty result bars</strong><small>Moves controls upward while idle, but the layout will shift when a result or feature message appears. Off by default.</small></span>
@@ -536,6 +636,17 @@
             updateResultBarUi();
             save();
         });
+        const syncPointerOdds = () => {
+            document.querySelectorAll("[data-pointer-odds]").forEach((input) => {
+                state.pointerOdds[Number(input.dataset.pointerOdds)] = Math.max(0, Math.min(100, Number(input.value) || 0));
+            });
+            const total = state.pointerOdds.reduce((sum, value) => sum + value, 0) || 1;
+            const summary = document.getElementById("wheelPointerOddsSummary");
+            if (summary) summary.textContent = state.pointerOdds.map((value, index) => `${index + 1}: ${Math.round(value / total * 100)}%`).join(" · ");
+            save();
+        };
+        document.querySelectorAll("[data-pointer-odds]").forEach((input) => input.addEventListener("change", syncPointerOdds));
+        syncPointerOdds();
         document.querySelectorAll("[data-wheel-size]").forEach((input) => {
             input.addEventListener("change", () => {
                 const index = Number(input.dataset.wheelSize);
@@ -714,12 +825,15 @@
         const button = document.getElementById("buyBonus");
         if (!button || !bonusBuyConfig) return;
         const cost = Math.max(0.01, Number(bonusBuyConfig.getCost?.()) || 0.01);
-        const options = getBonusBuyOptions();
-        const hasAvailableOption = options.length
-            ? options.some((option) => bonusBuyConfig.canBuy?.(option) !== false)
-            : bonusBuyConfig.canBuy?.({ cost, wager: cost / 100 }) !== false;
         button.hidden = !state.buyBonusEnabled;
-        button.disabled = state.interactionLocked || !hasAvailableOption;
+        // Keep the chooser accessible even when the current balance cannot
+        // afford a purchase. The overlay communicates availability by
+        // disabling individual amounts instead of making this button inert.
+        // The chooser is always available. Its amount buttons call canBuy with
+        // the current game state, and buyInstantBonus performs the same guard
+        // again before charging, so a reel-control lock must not strand this
+        // launcher after a completed spin.
+        button.disabled = false;
         button.textContent = "Buy Bonus";
         button.setAttribute("aria-label", `Choose a bonus purchase amount starting at ${money(cost)}`);
     }
@@ -907,6 +1021,7 @@
           .cabinet-live-stat span,.cabinet-live-stat strong { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
           .cabinet-live-stat span { color:var(--slot-cabinet-accent); font-size:max(12px,calc(var(--cabinet-width)*.014)); text-transform:uppercase; }
           .cabinet-live-stat strong { margin-top:8px; font-size:max(18px,calc(var(--cabinet-width)*.026)); }
+          .cabinet-live-stat.is-game-status strong { overflow:visible; text-overflow:clip; white-space:normal; overflow-wrap:anywhere; line-height:1.15; }
           .cabinet-buttons .cabinet-game-action { border-color:var(--slot-cabinet-accent2); background:var(--slot-cabinet-card); color:var(--slot-cabinet-text); }
           .cabinet-live-prizes { position:relative; display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; }
           .cabinet-live-prize { min-width:0; padding:10px 8px; border:2px solid var(--slot-cabinet-accent2); border-radius:12px; background:color-mix(in srgb,var(--slot-cabinet-card) 92%,transparent); text-align:center; }
@@ -995,9 +1110,14 @@
                 ["Elapsed", document.querySelector("#autoSpinElapsed")?.textContent?.replace(/^Time elapsed:\s*/i, "").trim() || "00:00"],
                 ["Denomination", document.querySelector("#denom option:checked")?.textContent?.trim() || "—"],
             ];
+            const cabinetBalance = hostDocument.querySelector("#cabinet-balance");
+            const cabinetBet = hostDocument.querySelector("#cabinet-bet");
+            if (cabinetBalance) cabinetBalance.textContent = values[0][1];
+            if (cabinetBet) cabinetBet.textContent = values[1][1];
             stats.replaceChildren(...values.map(([label, value]) => {
                 const card = hostDocument.createElement("div");
                 card.className = "cabinet-live-stat";
+                if (label === "Game status") card.classList.add("is-game-status");
                 const name = hostDocument.createElement("span"); name.textContent = label;
                 const output = hostDocument.createElement("strong"); output.textContent = value;
                 card.append(name, output);
@@ -1122,6 +1242,8 @@
         },
         offerLuckyWheel,
         spinWheel,
+        pickWheelPointerCount,
+        showWheelPointers,
         closeReelDoors,
         revealReelDoors,
         renderResultMessage,

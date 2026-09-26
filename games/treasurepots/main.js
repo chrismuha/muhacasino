@@ -524,20 +524,11 @@ function setupFeatureUI() {
         <div class="feature-dialog wheel-dialog" role="dialog" aria-modal="true" aria-labelledby="bonusTitle">
             <span class="wheel-kicker">Treasure Pots Bonus</span>
             <h2 id="bonusTitle">Spin the Treasure Pots Wheel</h2>
-            <p>Most spins win a coin prize. Emerald Vault jackpots are rare.</p>
             <div class="bonus-wheel-wrap">
                 <span class="wheel-pointer" aria-hidden="true"></span>
                 <div class="bonus-wheel" aria-label="Jackpot wheel">
                     <span class="wheel-center">¢</span>
                 </div>
-            </div>
-            <div class="wheel-odds" aria-label="Wheel odds">
-                <span><i class="coin-mark coin-copper">1×</i><b>Copper Coin</b>35%</span>
-                <span><i class="coin-mark coin-nickel">2×</i><b>Lucky Coin</b>25%</span>
-                <span><i class="coin-mark coin-dime">5×</i><b>Ruby Coin</b>18%</span>
-                <span><i class="coin-mark coin-quarter">10×</i><b>Golden Coin</b>12%</span>
-                <span><b>Mini Jackpot</b>7%</span><span><b>Minor Jackpot</b>2%</span>
-                <span><b>Major Jackpot</b>0.8%</span><span><b>Grand Jackpot</b>0.2%</span>
             </div>
             <div class="wheel-award-chip" aria-live="polite" hidden></div>
             <p class="wheel-result" aria-live="polite">Ready to spin!</p>
@@ -627,13 +618,15 @@ function playMatchAndWinBonus(totalBetUSD) {
     });
 }
 
-function playWheelBonusGame(totalBetUSD) {
+async function playWheelBonusGame(totalBetUSD) {
     if (!bonusOverlayEl) return Promise.resolve(0);
+    const pointerCount = await window.slotExperience.pickWheelPointerCount();
     bonusOverlayEl.hidden = false;
     const wheel = bonusOverlayEl.querySelector(".bonus-wheel");
     const spinButton = bonusOverlayEl.querySelector(".wheel-spin");
     const resultEl = bonusOverlayEl.querySelector(".wheel-result");
     const awardChipEl = bonusOverlayEl.querySelector(".wheel-award-chip");
+    window.slotExperience.showWheelPointers(bonusOverlayEl.querySelector(".bonus-wheel-wrap"), pointerCount, "wheel-pointer");
     wheel.style.transition = "none";
     wheel.style.transform = "rotate(0deg)";
     resultEl.textContent = "Ready to spin!";
@@ -654,11 +647,12 @@ function playWheelBonusGame(totalBetUSD) {
                 const tier = segment.kind === "jackpot"
                     ? JACKPOT_TIERS.find((item) => item.name === segment.tier)
                     : null;
-                const winUSD = tier
+                const singleWinUSD = tier
                     ? getScaledJackpotAmount(tier, totalBetUSD)
                     : roundUSD(Math.max(0.01, totalBetUSD * segment.multiplier));
+                const winUSD = roundUSD(singleWinUSD * pointerCount);
                 const label = tier ? `${tier.name.toUpperCase()} JACKPOT` : `${segment.name.toUpperCase()} ${segment.mark}`;
-                resultEl.textContent = `${label} — ${fmtUSD(winUSD)}`;
+                resultEl.textContent = `${pointerCount} pointer${pointerCount === 1 ? "" : "s"} × ${label} — ${fmtUSD(winUSD)}`;
                 if (tier) {
                     awardChipEl.className = `wheel-award-chip jackpot-${tier.name.toLowerCase()}`;
                     awardChipEl.innerHTML = `<strong>${tier.name}</strong><span>${fmtUSD(winUSD)}</span>`;
@@ -693,7 +687,7 @@ async function buyInstantBonus(option = {}) {
     addSessionLosses(cost); addNetSessionLosses(cost); subtractNetSessionWinnings(cost); adjustActualSessionNet(-cost); updateTotals();
     try {
         const outcome = await playBonusGame(wager, option.bonus);
-        const award = Math.max(cost, roundUSD(Number(outcome?.winUSD ?? outcome) || 0));
+        const award = Math.max(roundUSD(cost * 0.25), roundUSD(Number(outcome?.winUSD ?? outcome) || 0));
         if (award > 0) { balance = clampBalanceUSD(balance + award); addSessionWinnings(award); addNetSessionWinnings(award); subtractNetSessionLosses(award); adjustActualSessionNet(award); }
         setMessage(`BONUS COMPLETE — Cost ${fmtUSD(cost)} • Award ${fmtUSD(award)}`);
     } finally { isSpinning = false; updateTotals(); }
@@ -1376,6 +1370,7 @@ function getSettingsDefinitions() {
         { key: "withdrawalDemo", title: "Withdrawal Demonstration", element: document.getElementById("withdrawalDemoToggle")?.closest(".checkbox-setting") },
         { key: "buyBonusButton", title: "Buy Bonus Button", element: document.getElementById("buyBonusToggle")?.closest(".checkbox-setting") },
         { key: "luckyWheel", title: "Lucky Wheel", element: document.getElementById("luckyWheelToggle")?.closest(".checkbox-setting") },
+        { key: "pointerOdds", title: "Wheel Pointer Match Chances", element: document.querySelector(".slot-pointer-odds-setting") },
         { key: "resultBars", title: "Result Bar Layout", element: document.getElementById("collapseEmptyResultsToggle")?.closest(".checkbox-setting") },
         { key: "luckyWheelOdds", title: "Lucky Wheel Wedge Sizes", element: document.querySelector(".slot-wheel-odds-setting") },
         { key: "luckyWheelPrizes", title: "Lucky Wheel Winning Wedges", element: document.querySelector(".slot-wheel-prizes-setting") },

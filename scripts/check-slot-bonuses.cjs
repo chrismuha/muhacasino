@@ -4,7 +4,8 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 function extract(source, name) {
-    const start = source.indexOf(`function ${name}(`);
+    const asyncStart = source.indexOf(`async function ${name}(`);
+    const start = asyncStart >= 0 ? asyncStart : source.indexOf(`function ${name}(`);
     assert.ok(start >= 0, `Missing ${name}`);
     return source.slice(start, source.indexOf('\n}', start) + 2);
 }
@@ -59,7 +60,7 @@ async function check(game) {
             const nodes = { '.slot-bonus-wheel': { style: {} }, '.wheel-spin': { focus() {} }, '.wheel-result': {} };
             const timers = [];
             context.bonusOverlayEl = { hidden: true, querySelector: selector => nodes[selector] };
-            context.window = { slotExperience: { spinWheel: (wheel, rotation) => {
+            context.window = { slotExperience: { pickWheelPointerCount: () => Promise.resolve(1), showWheelPointers() {}, spinWheel: (wheel, rotation) => {
                 wheel.style.transform = `rotate(${rotation}deg)`;
                 return Promise.resolve();
             } } };
@@ -69,6 +70,7 @@ async function check(game) {
             context.setTimeout = callback => timers.push(callback);
             context.Math.random = () => (index + 0.5) / 3;
             const award = context.playWheelBonusGame(2.5);
+            await new Promise((resolve) => setImmediate(resolve));
             nodes['.wheel-spin'].onclick();
             nodes['.wheel-spin'].onclick();
             assert.equal(timers.length, 0, 'Shared wheel animation must own the timing');
@@ -100,5 +102,6 @@ async function check(game) {
     assert.match(shared, /data-wheel-size="\$\{index\}"/, 'Every rescue-wheel wedge must have its own size control');
     assert.match(shared, /data-link-setting="minMultiplier"/, 'Link games must expose configurable chip ranges');
     assert.match(shared, /lifetimeWagered/, 'Slot play must persist overall wager statistics');
+    assert.match(shared, /function updateBonusBuyButton[\s\S]*?button\.disabled = false;/, 'Buy Bonus chooser must remain available after a completed spin');
     assert.match(sharedStyles, /repeat\(5, minmax\(0, 1fr\)\)/, 'Buy Bonus must share the visible action row');
 })().catch(error => { console.error(error); process.exitCode = 1; });

@@ -44,7 +44,7 @@
     .cabinet-empty { position: relative; grid-column: 1 / -1; text-align: center; color: #aeb8ca; font-size: max(18px, calc(var(--cabinet-width) * .024)); }
     .device.cabinet .app-screen { position: relative; box-sizing: content-box; width: var(--cabinet-width); height: var(--cabinet-height); border: 10px solid #07090d; border-radius: 18px; overflow: hidden; box-shadow: 0 0 0 2px #566176, 0 12px 30px #000b; }
     .device.cabinet .cabinet-controls { min-height: 260px; height: calc(var(--cabinet-height) * .3); padding: 34px; align-content: center; gap: 24px; transform: perspective(900px) rotateX(16deg); transform-origin: top; background: linear-gradient(#202838, #0e121a); }
-    .cabinet-meters { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .cabinet-meters { position: relative; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
     .cabinet-meter { padding: 14px; border: 1px solid #52627f; border-radius: 12px; background: #070a10; text-align: center; }
     .cabinet-meter span, .cabinet-meter strong { display: block; }
     .cabinet-meter span { color: #91a0bc; font-size: max(11px, calc(var(--cabinet-width) * .012)); text-transform: uppercase; }
@@ -129,7 +129,7 @@
     <section class="cabinet-screen cabinet-topper" aria-label="Casino topper display"><div><strong id="cabinet-game-name">Muha Casino</strong><span id="cabinet-topper-status">Choose a slot game</span></div></section>
     <section class="cabinet-screen cabinet-upper" aria-label="Casino upper display"><h2>Progressive jackpots</h2><div class="cabinet-jackpots" id="cabinet-jackpots"><p class="cabinet-empty">Live jackpot values appear here during slot play.</p></div></section>
     <div class="app-screen"><div class="screen-cutout none" id="screen-cutout" aria-hidden="true"></div><div class="home-indicator hidden" id="home-indicator" aria-hidden="true"></div><iframe id="app-preview" src="/" title="Muha Casino application"></iframe></div>
-    <section class="cabinet-screen cabinet-controls" aria-label="Casino control deck touchscreen"><div class="cabinet-meters"><div class="cabinet-meter"><span>Credits</span><strong id="cabinet-balance">—</strong></div><div class="cabinet-meter"><span>Total bet</span><strong id="cabinet-bet">—</strong></div><div class="cabinet-meter"><span>Game status</span><strong id="cabinet-result">Ready</strong></div></div><div class="cabinet-buttons"><button type="button" data-cabinet-action="credit-down">Credits −</button><button type="button" data-cabinet-action="denom-down">Denom −</button><button type="button" data-cabinet-action="bet-down">Bet −</button><button class="spin-control" type="button" data-cabinet-action="spin">Spin</button><button type="button" data-cabinet-action="bet-up">Bet +</button><button type="button" data-cabinet-action="denom-up">Denom +</button><button type="button" data-cabinet-action="credit-up">Credits +</button><button type="button" data-cabinet-action="settings">Settings</button></div></section>
+    <section class="cabinet-screen cabinet-controls" aria-label="Casino control deck touchscreen"><div class="cabinet-meters"><div class="cabinet-meter"><span>Credits</span><strong id="cabinet-balance">—</strong></div><div class="cabinet-meter"><span>Total bet</span><strong id="cabinet-bet">—</strong></div></div><div class="cabinet-buttons"><button type="button" data-cabinet-action="credit-down">Credits −</button><button type="button" data-cabinet-action="denom-down">Denom −</button><button type="button" data-cabinet-action="bet-down">Bet −</button><button class="spin-control" type="button" data-cabinet-action="spin">Spin</button><button type="button" data-cabinet-action="bet-up">Bet +</button><button type="button" data-cabinet-action="denom-up">Denom +</button><button type="button" data-cabinet-action="credit-up">Credits +</button><button type="button" data-cabinet-action="settings">Settings</button></div></section>
   </div></main>
   <script>
     const $ = (selector) => document.querySelector(selector);
@@ -154,7 +154,6 @@
     const cabinetJackpots = $('#cabinet-jackpots');
     const cabinetBalance = $('#cabinet-balance');
     const cabinetBet = $('#cabinet-bet');
-    const cabinetResult = $('#cabinet-result');
 
     preview.addEventListener('change', () => {
       appPreview.src = preview.value;
@@ -205,7 +204,7 @@
       if (!gameDocument) {
         cabinetTopperStatus.textContent = slotPreviewValues.has(preview.value) ? 'Loading slot displays…' : 'Choose a slot game';
         cabinetJackpots.innerHTML = '<p class="cabinet-empty">Select Big Money Deluxe, Neon Slots, Pretty Penny, or Treasure Pots to activate all cabinet screens.</p>';
-        cabinetBalance.textContent = '—'; cabinetBet.textContent = '—'; cabinetResult.textContent = 'Ready';
+        cabinetBalance.textContent = '—'; cabinetBet.textContent = '—';
         setCabinetControlsEnabled(false);
         return;
       }
@@ -222,7 +221,6 @@
       if (!jackpotNodes.length) cabinetJackpots.innerHTML = '<div class="cabinet-jackpot"><span>Jackpot</span><strong>$0.00</strong></div>';
       cabinetBalance.textContent = gameDocument.querySelector('#balance')?.textContent?.trim() || '—';
       cabinetBet.textContent = gameDocument.querySelector('#totalBet')?.textContent?.trim() || '—';
-      cabinetResult.textContent = gameDocument.querySelector('#message')?.textContent?.trim() || gameDocument.querySelector('#featureStatus')?.textContent?.trim() || 'Ready';
       syncCabinetControlState(gameDocument);
     }
 

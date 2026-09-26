@@ -567,13 +567,15 @@ function setupFeatureUI() {
     updateFeatureStatus();
 }
 
-function playWheelBonusGame(totalBetUSD) {
+async function playWheelBonusGame(totalBetUSD) {
+    const pointerCount = await window.slotExperience.pickWheelPointerCount();
     bonusOverlayEl.hidden = false;
     const prizes = getBonusPrizeMultipliers();
-    bonusOverlayEl.innerHTML = `<div class="feature-dialog slot-bonus-wheel-dialog" role="dialog" aria-modal="true" aria-labelledby="bonusTitle"><span class="slot-wheel-kicker">Neon Bonus</span><h2 id="bonusTitle">Spin the Neon Wheel</h2><p>Each wedge has an equal chance. Prizes multiply your triggering bet.</p><div class="slot-bonus-wheel-wrap"><span class="slot-bonus-pointer" aria-hidden="true"></span><div class="slot-bonus-wheel" role="img" aria-label="Prize wheel"><span>${prizes[0]}×</span><span>${prizes[1]}×</span><span>${prizes[2]}×</span></div><b class="slot-wheel-center" aria-hidden="true">★</b></div><div class="slot-wheel-odds" aria-label="Wheel prizes and odds">${prizes.map(prize => `<span><strong>${prize}× bet</strong><small>1 in 3 chance</small></span>`).join("")}</div><p class="wheel-result" aria-live="polite">Ready to spin!</p><button type="button" class="wheel-spin">Spin Wheel</button></div>`;
+    bonusOverlayEl.innerHTML = `<div class="feature-dialog slot-bonus-wheel-dialog" role="dialog" aria-modal="true" aria-labelledby="bonusTitle"><span class="slot-wheel-kicker">Neon Bonus</span><h2 id="bonusTitle">Spin the Neon Wheel</h2><div class="slot-bonus-wheel-wrap"><span class="slot-bonus-pointer" aria-hidden="true"></span><div class="slot-bonus-wheel" role="img" aria-label="Prize wheel"><span>${prizes[0]}×</span><span>${prizes[1]}×</span><span>${prizes[2]}×</span></div><b class="slot-wheel-center" aria-hidden="true">★</b></div><p class="wheel-result" aria-live="polite">Ready to spin!</p><button type="button" class="wheel-spin">Spin Wheel</button></div>`;
     const wheel = bonusOverlayEl.querySelector(".slot-bonus-wheel");
     const button = bonusOverlayEl.querySelector(".wheel-spin");
     const result = bonusOverlayEl.querySelector(".wheel-result");
+    window.slotExperience.showWheelPointers(bonusOverlayEl.querySelector(".slot-bonus-wheel-wrap"), pointerCount, "slot-bonus-pointer");
     button.focus();
     return new Promise((resolve) => {
         button.onclick = async () => {
@@ -583,8 +585,8 @@ function playWheelBonusGame(totalBetUSD) {
             result.textContent = "Spinning…";
             try {
                 await window.slotExperience.spinWheel(wheel, 2160 + 360 - (index * 120 + 60));
-                const winUSD = roundUSD(totalBetUSD * prizes[index]);
-                result.textContent = `${prizes[index]}× — ${fmtUSD(winUSD)}`;
+                const winUSD = roundUSD(totalBetUSD * prizes[index] * pointerCount);
+                result.textContent = `${pointerCount} pointer${pointerCount === 1 ? "" : "s"} × ${prizes[index]}× — ${fmtUSD(winUSD)}`;
                 setTimeout(() => { bonusOverlayEl.hidden = true; resolve(winUSD); }, 1400);
             } catch (error) {
                 console.error("Bonus wheel failed", error);
@@ -612,7 +614,7 @@ async function buyInstantBonus(option = {}) {
     addSessionLosses(cost); addNetSessionLosses(cost); subtractNetSessionWinnings(cost); adjustActualSessionNet(-cost);
     updateTotals();
     try {
-        const award = Math.max(cost, roundUSD(Number(await playBonusGame(wager, option.bonus)) || 0));
+        const award = Math.max(roundUSD(cost * 0.25), roundUSD(Number(await playBonusGame(wager, option.bonus)) || 0));
         if (award > 0) {
             balance = clampBalanceUSD(balance + award);
             addSessionWinnings(award); addNetSessionWinnings(award); subtractNetSessionLosses(award); adjustActualSessionNet(award);
@@ -1115,6 +1117,7 @@ function getSettingsDefinitions() {
         { key: "withdrawalDemo", title: "Withdrawal Demonstration", element: document.getElementById("withdrawalDemoToggle")?.closest(".checkbox-setting") },
         { key: "buyBonusButton", title: "Buy Bonus Button", element: document.getElementById("buyBonusToggle")?.closest(".checkbox-setting") },
         { key: "luckyWheel", title: "Lucky Wheel", element: document.getElementById("luckyWheelToggle")?.closest(".checkbox-setting") },
+        { key: "pointerOdds", title: "Wheel Pointer Match Chances", element: document.querySelector(".slot-pointer-odds-setting") },
         { key: "resultBars", title: "Result Bar Layout", element: document.getElementById("collapseEmptyResultsToggle")?.closest(".checkbox-setting") },
         { key: "luckyWheelOdds", title: "Lucky Wheel Wedge Sizes", element: document.querySelector(".slot-wheel-odds-setting") },
         { key: "luckyWheelPrizes", title: "Lucky Wheel Winning Wedges", element: document.querySelector(".slot-wheel-prizes-setting") },
