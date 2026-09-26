@@ -50,9 +50,14 @@
     .cabinet-meter span { color: #91a0bc; font-size: max(11px, calc(var(--cabinet-width) * .012)); text-transform: uppercase; }
     .cabinet-meter strong { margin-top: 5px; font-size: max(16px, calc(var(--cabinet-width) * .022)); }
     .cabinet-buttons { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
-    .cabinet-buttons button { height: auto; min-height: 76px; border-width: 3px; border-radius: 999px; font-size: max(14px, calc(var(--cabinet-width) * .016)); font-weight: 950; text-transform: uppercase; }
+    .cabinet-buttons button { height: auto; min-height: 76px; border-width: 3px; border-radius: 999px; font-size: max(14px, calc(var(--cabinet-width) * .016)); font-weight: 950; text-transform: uppercase; transition: filter 90ms ease, transform 90ms ease, box-shadow 90ms ease; transform-origin: center; will-change: transform, filter; }
     .cabinet-buttons .spin-control { border-color: #f5d64a; background: #b71f35; color: white; box-shadow: 0 0 22px #e3284b99; }
     .cabinet-buttons button:disabled { opacity: .38; cursor: not-allowed; }
+    .device.cabinet .cabinet-buttons button:not(:disabled):active { filter: brightness(1.3); transform: translateY(5px) scale(.95); box-shadow: inset 0 5px 12px #0008, 0 0 18px currentColor; }
+    @media (prefers-reduced-motion: reduce) {
+      .device.cabinet .cabinet-buttons button { transition: none; }
+      .device.cabinet .cabinet-buttons button:not(:disabled):active { transform: none; }
+    }
     .device.cabinet .screen-cutout, .device.cabinet .home-indicator { display: none; }
     .screen-cutout { position: absolute; z-index: 2; left: 50%; background: #050506; transform: translateX(-50%); pointer-events: none; transition: opacity .15s, transform .15s; }
     .screen-cutout.island { top: 19px; width: 116px; height: 32px; border-radius: 999px; box-shadow: inset 0 0 0 1px #18181b, 0 1px 3px #0008; }
@@ -229,7 +234,8 @@
       select.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
-    document.querySelector('.cabinet-buttons').addEventListener('click', (event) => {
+    const cabinetButtons = document.querySelector('.cabinet-buttons');
+    cabinetButtons.addEventListener('click', (event) => {
       const action = event.target.closest('[data-cabinet-action]')?.dataset.cabinetAction;
       const gameDocument = getSlotDocument();
       if (!action || !gameDocument) return;

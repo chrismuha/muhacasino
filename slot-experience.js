@@ -899,10 +899,6 @@
           .cabinet-live-prize span,.cabinet-live-prize strong { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
           .cabinet-live-prize span { color:var(--slot-cabinet-accent); font-size:max(10px,calc(var(--cabinet-width)*.011)); font-weight:900; text-transform:uppercase; }
           .cabinet-live-prize strong { margin-top:4px; color:var(--slot-cabinet-text); font-size:max(15px,calc(var(--cabinet-width)*.019)); }
-          .cabinet-pinned-settings { position:relative; display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; }
-          .cabinet-pinned-setting { min-width:0; padding:10px 12px; border:2px solid var(--slot-cabinet-accent); border-radius:12px; background:color-mix(in srgb,var(--slot-cabinet-card) 92%,transparent); color:var(--slot-cabinet-text); }
-          .cabinet-pinned-setting :is(label,.muted) { display:block; margin-bottom:5px; color:var(--slot-cabinet-accent2); font-size:max(11px,calc(var(--cabinet-width)*.012)); font-weight:800; }
-          .cabinet-pinned-setting :is(select,input,button) { max-width:100%; min-height:34px; font:inherit; }
         `;
 
         const setTheme = () => {
@@ -912,41 +908,6 @@
             device.style.setProperty("--slot-cabinet-accent", themeValue("--cabinet-accent", "--accent", "--gold", "#62d9df"));
             device.style.setProperty("--slot-cabinet-accent2", themeValue("--cabinet-accent2", "--accent2", "--win", "#f3cd57"));
             device.style.setProperty("--slot-cabinet-text", themeValue("--cabinet-text", "--text", "--game-text", bodyStyle.color));
-        };
-
-        const syncPinnedSettings = () => {
-            const pinned = [...document.querySelectorAll('[data-home-pinned="true"]')];
-            const signature = pinned.map((element) => element.dataset.homeSettingKey).join("|");
-            let panel = controls.querySelector(".cabinet-pinned-settings");
-            if (!pinned.length) { panel?.remove(); return; }
-            if (!panel) {
-                panel = hostDocument.createElement("div");
-                panel.className = "cabinet-pinned-settings";
-                controls.append(panel);
-            }
-            if (panel.dataset.signature === signature) return;
-            panel.dataset.signature = signature;
-            panel.replaceChildren(...pinned.map((source) => {
-                const copy = source.cloneNode(true);
-                copy.classList.add("cabinet-pinned-setting");
-                copy.querySelectorAll("[id]").forEach((node) => node.removeAttribute("id"));
-                copy.querySelectorAll("[for]").forEach((node) => node.removeAttribute("for"));
-                const sourceControls = [...source.querySelectorAll("input,select,button")];
-                [...copy.querySelectorAll("input,select,button")].forEach((control, index) => {
-                    const original = sourceControls[index];
-                    if (!original) return;
-                    control.disabled = original.disabled;
-                    if ("value" in control) control.value = original.value;
-                    if ("checked" in control) control.checked = original.checked;
-                    control.addEventListener("click", () => { if (control.tagName === "BUTTON") original.click(); });
-                    control.addEventListener("change", () => {
-                        if ("value" in original) original.value = control.value;
-                        if ("checked" in original) original.checked = control.checked;
-                        original.dispatchEvent(new Event("change", { bubbles: true }));
-                    });
-                });
-                return copy;
-            }));
         };
 
         const ensureControl = (action, label, sourceSelector) => {
@@ -1045,7 +1006,9 @@
                 if (action === "spin") button.disabled = Boolean(document.querySelector("#spin")?.disabled);
                 else if (cabinetActions[action]) button.disabled = Boolean(document.querySelector(cabinetActions[action][0])?.disabled);
             });
-            syncPinnedSettings();
+            controls.querySelector(".cabinet-pinned-settings")?.remove();
+            const pinRow = document.querySelector(".settings-pin-row");
+            if (pinRow) pinRow.style.display = "none";
         };
 
         const releaseCabinetScreens = () => {
@@ -1061,6 +1024,7 @@
             if (heading) heading.textContent = "Progressive jackpots";
             controls.querySelectorAll("[data-slot-cabinet-action]").forEach((button) => button.remove());
             controls.querySelector(".cabinet-pinned-settings")?.remove();
+            document.querySelector(".settings-pin-row")?.style.removeProperty("display");
         };
 
         render();
