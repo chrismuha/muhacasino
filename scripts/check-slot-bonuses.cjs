@@ -103,5 +103,6 @@ async function check(game) {
     assert.match(shared, /data-link-setting="minMultiplier"/, 'Link games must expose configurable chip ranges');
     assert.match(shared, /lifetimeWagered/, 'Slot play must persist overall wager statistics');
     assert.match(shared, /function updateBonusBuyButton[\s\S]*?button\.disabled = false;/, 'Buy Bonus chooser must remain available after a completed spin');
+    assert.match(shared, /if \(window\.top === window\) return;\s*hostDocument = window\.top\.document;/, 'Cabinet bridge must safely skip directly opened slot pages');
     assert.match(sharedStyles, /repeat\(5, minmax\(0, 1fr\)\)/, 'Buy Bonus must share the visible action row');
 })().catch(error => { console.error(error); process.exitCode = 1; });

@@ -983,7 +983,8 @@
     function initializeCabinetBridge() {
         let hostDocument;
         try {
-            hostDocument = window.top !== window && window.top.document;
+            if (window.top === window) return;
+            hostDocument = window.top.document;
         } catch (_) {
             return;
         }
