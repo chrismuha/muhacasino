@@ -33,8 +33,8 @@
     .device.cabinet { --cabinet-width: 1080px; --cabinet-height: 1920px; width: calc(var(--cabinet-width) + 96px); height: auto; padding: 28px 38px 48px; display: grid; gap: 16px; border-radius: 54px 54px 30px 30px; background: linear-gradient(90deg, #090b10, #293041 4%, #111620 12% 88%, #293041 96%, #090b10); box-shadow: 0 30px 90px #000d, inset 0 0 0 2px #515d72, inset 0 0 45px #000; }
     .device.cabinet .cabinet-screen { display: grid; }
     .device.cabinet .cabinet-topper { min-height: 180px; height: calc(var(--cabinet-height) * .18); place-items: center; border-radius: 44px 44px 16px 16px; background: radial-gradient(ellipse at center, #8a52ff, #29205c 48%, #090b16 78%); text-align: center; text-transform: uppercase; }
-    .cabinet-topper strong { position: relative; display: block; font-size: max(28px, calc(var(--cabinet-width) * .055)); letter-spacing: .12em; text-shadow: 0 0 24px #d8c2ff; }
-    .cabinet-topper span { position: relative; display: block; margin-top: 12px; color: #f8dc72; font-size: max(14px, calc(var(--cabinet-width) * .018)); font-weight: 900; letter-spacing: .18em; }
+    .cabinet-topper strong { position: relative; display: block; font-size: max(32px, min(calc(var(--cabinet-width) * .065), calc(var(--cabinet-height) * .075))); letter-spacing: .12em; text-shadow: 0 0 24px #d8c2ff; }
+    #cabinet-topper-status { position: relative; display: block; margin-top: 12px; color: #f8dc72; font-size: max(14px, calc(var(--cabinet-width) * .018)); font-weight: 900; letter-spacing: .18em; }
     .device.cabinet .cabinet-upper { min-height: 280px; height: calc(var(--cabinet-height) * .42); align-content: center; gap: 24px; padding: 36px; background: radial-gradient(circle at 50% 50%, #22636f, #102c3d 48%, #080b11 78%); }
     .cabinet-upper h2 { position: relative; margin: 0; text-align: center; text-transform: uppercase; letter-spacing: .16em; font-size: max(22px, calc(var(--cabinet-width) * .032)); }
     .cabinet-jackpots { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
@@ -60,7 +60,7 @@
     .device.cabinet.cabinet-landscape { gap: 12px; padding-block: 22px 36px; border-radius: 38px 38px 24px 24px; }
     .device.cabinet.cabinet-landscape .cabinet-topper { min-height: 112px; height: calc(var(--cabinet-height) * .14); border-radius: 30px 30px 12px 12px; }
     .device.cabinet.cabinet-landscape .cabinet-topper strong { font-size: clamp(34px, calc(var(--cabinet-height) * .058), 62px); }
-    .device.cabinet.cabinet-landscape .cabinet-topper span { margin-top: 5px; font-size: clamp(13px, calc(var(--cabinet-height) * .018), 20px); }
+    .device.cabinet.cabinet-landscape #cabinet-topper-status { margin-top: 5px; font-size: clamp(13px, calc(var(--cabinet-height) * .018), 20px); }
     .device.cabinet.cabinet-landscape .cabinet-upper { min-height: 330px; height: calc(var(--cabinet-height) * .38); align-content: stretch; gap: 12px; padding: 18px 28px; }
     .device.cabinet.cabinet-landscape .cabinet-upper h2 { font-size: clamp(22px, calc(var(--cabinet-height) * .03), 34px); line-height: 1.1; }
     .device.cabinet.cabinet-landscape .cabinet-live-prizes { gap: 8px; }

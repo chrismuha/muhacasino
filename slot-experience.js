@@ -1036,22 +1036,22 @@
             color:#fffaf0; background:radial-gradient(ellipse at center, color-mix(in srgb,var(--slot-cabinet-accent2) 48%,#111923), color-mix(in srgb,var(--slot-cabinet-accent) 22%,#091015) 56%,#05080d 88%);
           }
           .device.cabinet[data-slot-game] .cabinet-topper strong { color:#fffaf0; text-shadow:0 0 24px color-mix(in srgb,var(--slot-cabinet-accent) 58%,transparent),0 2px 3px #000; }
-          .device.cabinet[data-slot-game] .cabinet-topper span { color:#ffe08a; text-shadow:0 1px 3px #000,0 0 14px color-mix(in srgb,var(--slot-cabinet-accent2) 55%,transparent); }
-          .cabinet-title-art { display:flex; width:100%; align-items:center; justify-content:center; gap:.22em; font-size:inherit; line-height:.92; }
+          .device.cabinet[data-slot-game] #cabinet-topper-status { color:#ffe08a; text-shadow:0 1px 3px #000,0 0 14px color-mix(in srgb,var(--slot-cabinet-accent2) 55%,transparent); }
+          .cabinet-title-art { display:flex; width:100%; max-width:96%; margin-inline:auto; align-items:center; justify-content:center; gap:.22em; font-size:inherit; line-height:.92; }
           .cabinet-title-art .title-mark { flex:0 0 auto; object-fit:contain; color:var(--slot-cabinet-accent); filter:drop-shadow(0 0 12px color-mix(in srgb,var(--slot-cabinet-accent) 55%,transparent)); }
           .cabinet-title-art.slot-title-big-money-deluxe { color:#f6d778; font-family:Georgia,"Times New Roman",serif; letter-spacing:.12em; text-shadow:0 2px 0 #513b12,0 0 18px #e7bd546b; }
           .cabinet-title-art.slot-title-neon-slots { color:#fff; letter-spacing:.08em; animation:cabinet-neon-title-cycle 2.4s linear infinite; }
           .cabinet-title-art.slot-title-pretty-penny { color:#fff0bd; letter-spacing:.08em; text-shadow:0 2px 0 #5c2f12,0 4px 12px #0009; }
-          .cabinet-title-art.slot-title-pretty-penny .title-mark { width:1.72em; height:1.72em; flex-basis:1.72em; }
+          .cabinet-title-art.slot-title-pretty-penny .title-mark { width:1.6em; height:1.6em; flex-basis:1.6em; }
           .cabinet-title-art.slot-title-treasurepots { color:#ffe69a; letter-spacing:.08em; text-shadow:0 2px 0 #3c2904,0 0 24px #e6b83f70; }
-          .cabinet-title-art.slot-title-treasurepots .title-mark { display:inline-grid; width:1.1em; height:1.1em; flex-basis:1.1em; place-items:center; border:3px double #fff4cf; border-radius:50%; color:#fff8e5; background:#bd623f; box-shadow:0 3px 0 #83402a; font-family:Georgia,"Times New Roman",serif; font-size:.42em; font-style:normal; line-height:1; filter:none; }
+          .cabinet-title-art.slot-title-treasurepots .title-mark { display:inline-grid; width:2.62em; height:2.62em; flex-basis:2.62em; place-items:center; border:3px double #fff4cf; border-radius:50%; color:#fff8e5; background:#bd623f; box-shadow:0 3px 0 #83402a; font-family:Georgia,"Times New Roman",serif; font-size:.42em; font-style:normal; line-height:1; filter:none; }
           .device.cabinet[data-slot-game] .cabinet-upper {
             color: var(--slot-cabinet-text); background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--slot-cabinet-accent) 24%, var(--slot-cabinet-card)), var(--slot-cabinet-card) 55%, var(--slot-cabinet-bg) 90%);
           }
           .device.cabinet[data-slot-game] .cabinet-controls { background: linear-gradient(color-mix(in srgb, var(--slot-cabinet-card) 90%, white 7%), var(--slot-cabinet-bg)); }
           .device.cabinet[data-slot-game] .cabinet-upper h2 { color: var(--slot-cabinet-accent2); text-shadow: 0 0 18px color-mix(in srgb, var(--slot-cabinet-accent2) 55%, transparent); }
           .device.cabinet[data-slot-game="neon-slots"] :is(.cabinet-topper,.cabinet-upper,.cabinet-controls) { border-color:#7df9ff; background:radial-gradient(circle at 50% 42%,#18223b 0%,#0b0f17 58%,#05070d 100%); animation:cabinet-neon-surface-cycle 2.4s linear infinite; }
-          .device.cabinet[data-slot-game="neon-slots"] .cabinet-topper span { color:#7df9ff; animation:cabinet-neon-title-cycle 2.4s linear infinite reverse; }
+          .device.cabinet[data-slot-game="neon-slots"] #cabinet-topper-status { color:#7df9ff; animation:cabinet-neon-title-cycle 2.4s linear infinite reverse; }
           .device.cabinet[data-slot-game="neon-slots"] .cabinet-upper h2 { color:#fff; animation:cabinet-neon-title-cycle 2.4s linear infinite; }
           .device.cabinet[data-slot-game="neon-slots"] :is(.cabinet-live-stat,.cabinet-live-prize,.cabinet-meter) { border-color:#7df9ff; box-shadow:0 0 8px #7df9ff99,inset 0 0 12px #7df9ff1f; }
           .device.cabinet[data-slot-game="neon-slots"] .cabinet-buttons button { border-color:#7df9ff; color:#fff; background:#121828; text-shadow:0 0 7px #7df9ff; box-shadow:0 0 9px #7df9ff80,inset 0 0 10px #7df9ff1f; animation:cabinet-neon-control-cycle 2.4s linear infinite; }
