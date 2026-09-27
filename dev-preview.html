@@ -178,6 +178,7 @@
     const cabinetJackpots = $('#cabinet-jackpots');
     const cabinetBalance = $('#cabinet-balance');
     const cabinetBet = $('#cabinet-bet');
+    const cabinetControls = document.querySelector('.cabinet-controls');
 
     preview.addEventListener('change', () => {
       appPreview.src = preview.value;
@@ -219,6 +220,9 @@
     function updateCabinetScreens() {
       if (!device.classList.contains('cabinet')) return;
       const gameDocument = getSlotDocument();
+      const slotGameActive = Boolean(gameDocument && device.dataset.slotGame);
+      cabinetControls.style.display = slotGameActive ? '' : 'none';
+      device.classList.toggle('cabinet-non-slot-game', !slotGameActive);
       if (device.dataset.slotGame) {
         syncCabinetControlState(gameDocument);
         return;

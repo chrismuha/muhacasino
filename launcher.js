@@ -91,9 +91,9 @@ function syncHostedCabinetScreens(gameId = null) {
   const device = hostDocument?.querySelector("#device");
   const controlsScreen = hostDocument?.querySelector(".cabinet-controls");
   if (!device || !controlsScreen) return;
-  const nonSlotGameActive = Boolean(gameId && games[gameId] && !slotGameIds.has(gameId));
-  controlsScreen.style.display = nonSlotGameActive ? "none" : "";
-  device.classList.toggle("cabinet-non-slot-game", nonSlotGameActive);
+  const slotGameActive = Boolean(gameId && games[gameId] && slotGameIds.has(gameId));
+  controlsScreen.style.display = slotGameActive ? "" : "none";
+  device.classList.toggle("cabinet-non-slot-game", !slotGameActive);
 }
 
 const SITE_BUILD = "20260919-dedicated-info-pages-v4";
