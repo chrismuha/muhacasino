@@ -1380,6 +1380,36 @@ body.cabinet-game-surface .wheel-pointer-pick-grid button {
   line-height: 1 !important;
 }
 
+/* Cabinet feature symbols must grow with the same scale as ordinary reel
+   artwork. Their labels previously kept the consumer-screen caps above. */
+body.cabinet-game-surface .reels {
+  --cabinet-reel-symbol-size: clamp(72px, 10vw, 150px);
+}
+
+body.cabinet-game-surface .reels .cell > .icon-container,
+body.cabinet-game-surface .reels .symbol-art::before {
+  font-size: var(--cabinet-reel-symbol-size) !important;
+}
+
+body.cabinet-game-surface .reels :is(.money-chip, .jackpot-chip, .link-chip, .hold-coin, .hold-gem, .scatter-chip) {
+  font-size: calc(var(--cabinet-reel-symbol-size) * .24) !important;
+}
+
+body.cabinet-game-surface .reels :is(.money-chip, .jackpot-chip, .link-chip, .hold-coin, .hold-gem, .scatter-chip) > strong {
+  font-size: calc(var(--cabinet-reel-symbol-size) * .25) !important;
+  line-height: .95 !important;
+}
+
+body.cabinet-game-surface .reels :is(.money-chip, .jackpot-chip, .link-chip, .hold-coin, .hold-gem, .scatter-chip) > span:not(.gem-stone) {
+  font-size: calc(var(--cabinet-reel-symbol-size) * .17) !important;
+  line-height: .95 !important;
+}
+
+body.cabinet-game-surface .reels :is(.link-chain-icon, .link-meter-icon, .hold-coin-icon, .gem-stone) {
+  font-size: calc(var(--cabinet-reel-symbol-size) * .34) !important;
+  line-height: 1 !important;
+}
+
 /* Keep the three progressive feature awards as compact as the main jackpot
    row while retaining a clear meter, name, and amount. */
 :is(.slot-game-pretty-penny, .slot-game-treasurepots)
