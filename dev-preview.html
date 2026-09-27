@@ -284,7 +284,10 @@
       const documents = [rootDocument];
       rootDocument.querySelectorAll('iframe').forEach((frame) => {
         try {
-          if (frame.contentDocument) documents.push(...getDocuments(frame.contentDocument));
+          const frameStyle = rootDocument.defaultView.getComputedStyle(frame);
+          const hidden = frame.closest('[hidden]') || !frame.getClientRects().length
+            || frameStyle.display === 'none' || frameStyle.visibility === 'hidden' || Number(frameStyle.opacity) === 0;
+          if (!hidden && frame.contentDocument) documents.push(...getDocuments(frame.contentDocument));
         } catch (_) {}
       });
       return documents;
