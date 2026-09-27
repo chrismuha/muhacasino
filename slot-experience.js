@@ -592,6 +592,15 @@
             actionArea.insertBefore(buyBonusButton, actionStatus);
             actionArea.insertBefore(withdrawalButton, actionStatus);
         }
+        const matchSpinPresentation = () => {
+            const spinButton = document.getElementById("spin");
+            if (!spinButton) return;
+            const spinStyle = getComputedStyle(spinButton);
+            ["background", "backgroundColor", "backgroundImage", "borderColor", "borderStyle", "borderWidth", "borderRadius", "boxShadow", "color", "fontFamily", "fontWeight", "letterSpacing", "textTransform"]
+                .forEach((property) => { buyBonusButton.style[property] = spinStyle[property]; });
+        };
+        matchSpinPresentation();
+        window.addEventListener("resize", matchSpinPresentation);
         buyBonusButton.addEventListener("click", () => {
             if (!bonusBuyConfig || buyBonusButton.disabled) return;
             openBonusBuyOverlay();
@@ -1028,6 +1037,12 @@
           }
           .device.cabinet[data-slot-game] .cabinet-topper strong { color:#fffaf0; text-shadow:0 0 24px color-mix(in srgb,var(--slot-cabinet-accent) 58%,transparent),0 2px 3px #000; }
           .device.cabinet[data-slot-game] .cabinet-topper span { color:#ffe08a; text-shadow:0 1px 3px #000,0 0 14px color-mix(in srgb,var(--slot-cabinet-accent2) 55%,transparent); }
+          .cabinet-title-art { display:flex; width:100%; align-items:center; justify-content:center; gap:.22em; font-size:inherit; line-height:.92; }
+          .cabinet-title-art .title-mark { flex:0 0 auto; width:.95em; height:.95em; object-fit:contain; color:var(--slot-cabinet-accent); filter:drop-shadow(0 0 12px color-mix(in srgb,var(--slot-cabinet-accent) 55%,transparent)); }
+          .cabinet-title-art.slot-title-big-money-deluxe { color:#f6d778; font-family:Georgia,"Times New Roman",serif; letter-spacing:.12em; text-shadow:0 2px 0 #513b12,0 0 18px #e7bd546b; }
+          .cabinet-title-art.slot-title-neon-slots { color:#fff; letter-spacing:.08em; text-shadow:0 0 5px #39ff14,0 0 14px #25dff3,0 0 28px #f25cda; }
+          .cabinet-title-art.slot-title-pretty-penny { color:#fff0bd; letter-spacing:.08em; text-shadow:0 2px 0 #5c2f12,0 4px 12px #0009; }
+          .cabinet-title-art.slot-title-treasurepots { color:#ffe69a; letter-spacing:.08em; text-shadow:0 2px 0 #3c2904,0 0 24px #e6b83f70; }
           .device.cabinet[data-slot-game] .cabinet-upper {
             color: var(--slot-cabinet-text); background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--slot-cabinet-accent) 24%, var(--slot-cabinet-card)), var(--slot-cabinet-card) 55%, var(--slot-cabinet-bg) 90%);
           }
@@ -1054,6 +1069,22 @@
             device.style.setProperty("--slot-cabinet-accent", themeValue("--cabinet-accent", "--accent", "--gold", "#62d9df"));
             device.style.setProperty("--slot-cabinet-accent2", themeValue("--cabinet-accent2", "--accent2", "--win", "#f3cd57"));
             device.style.setProperty("--slot-cabinet-text", themeValue("--cabinet-text", "--text", "--game-text", bodyStyle.color));
+        };
+
+        const renderCabinetTitle = () => {
+            const target = hostDocument.querySelector("#cabinet-game-name");
+            if (!target || target.dataset.cabinetTitleGame === gameKey) return;
+            const source = document.querySelector(".title");
+            const artwork = hostDocument.createElement("span");
+            artwork.className = `cabinet-title-art slot-title-${gameKey}`;
+            [...source.childNodes].forEach((node) => {
+                if (node.nodeType === Node.ELEMENT_NODE && node.matches("button")) return;
+                const clone = hostDocument.importNode(node, true);
+                if (node.nodeType === Node.ELEMENT_NODE && node.matches("img")) clone.src = node.src;
+                artwork.append(clone);
+            });
+            target.replaceChildren(artwork);
+            target.dataset.cabinetTitleGame = gameKey;
         };
 
         const ensureControl = (action, label, sourceSelector) => {
@@ -1104,8 +1135,7 @@
             }
             document.body.classList.add("cabinet-game-surface");
             setTheme();
-            const title = hostDocument.querySelector("#cabinet-game-name");
-            if (title) title.textContent = gameTitle;
+            renderCabinetTitle();
             const status = hostDocument.querySelector("#cabinet-topper-status");
             if (status) status.textContent = "Live cabinet play";
             const heading = upper.querySelector("h2");
@@ -1171,6 +1201,8 @@
             window.clearInterval(renderTimer);
             document.body.classList.remove("cabinet-game-surface");
             delete device.dataset.slotGame;
+            const title = hostDocument.querySelector("#cabinet-game-name");
+            if (title) delete title.dataset.cabinetTitleGame;
             ["bg", "card", "accent", "accent2", "text"].forEach((name) => device.style.removeProperty(`--slot-cabinet-${name}`));
             upper.querySelector(".cabinet-live-stats")?.remove();
             upper.querySelector(".cabinet-live-prizes")?.remove();

@@ -63,6 +63,16 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 .hud > .right > button { width: 100%; min-width: 0; }
 .buy-bonus-button { display: block; font-weight: 950; }
 .buy-bonus-button[hidden] { display: none; }
+.hud > .right > :is(#spin, #buyBonus) {
+  box-sizing: border-box;
+  width: min(100%, 140px) !important;
+  max-width: 140px !important;
+  min-height: 42px !important;
+  padding: 6px 8px !important;
+  justify-self: center;
+  font-size: clamp(11px, 1.3vw, 14px) !important;
+  line-height: 1.05 !important;
+}
 .buy-bonus-panel { width: min(520px, 92vw); max-height: calc(100dvh - 24px); overflow: hidden; }
 .buy-bonus-types, .buy-bonus-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .4rem; }
 .buy-bonus-types { margin-bottom: .5rem; }
@@ -135,6 +145,7 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 
 @media (max-width: 700px) {
   .hud > .left, .hud > .right { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hud > .right > :is(#spin, #buyBonus) { width: 100% !important; max-width: none !important; }
 }
 @media (max-width: 560px) {
   .hud > .left { grid-template-columns: minmax(0, 1fr); }
@@ -1005,7 +1016,7 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
     min-height: 56px !important;
     font-size: 18px !important;
   }
-  .hud > .right > :is(#spin, #max, #resetSession, #settingsButton) {
+  .hud > .right > :is(#spin, #buyBonus, #max, #resetSession, #settingsButton) {
     width: min(100%, 190px);
     max-width: 190px;
   }
