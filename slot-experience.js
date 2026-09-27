@@ -64,8 +64,14 @@
         state.wheelOdds = Math.min(0.99, Math.max(0.01, Number(saved.wheelOdds) || 0.5));
         state.wheelSizes = normalizeWheelSizes(saved.wheelSizes);
         state.pointerOdds = Array.isArray(saved.pointerOdds) && saved.pointerOdds.length === 3
-            ? saved.pointerOdds.map((value, index) => Math.max(0, Number(value) || [60, 30, 10][index]))
+            ? saved.pointerOdds.map((value, index) => {
+                const numericValue = Number(value);
+                return Number.isFinite(numericValue)
+                    ? Math.max(0, Math.min(100, numericValue))
+                    : [60, 30, 10][index];
+            })
             : [60, 30, 10];
+        if (state.pointerOdds.every((value) => value === 0)) state.pointerOdds = [60, 30, 10];
         state.wheelPrizes = Array.isArray(saved.wheelPrizes) && saved.wheelPrizes.length === 6
             ? saved.wheelPrizes.map((prize, index) => normalizeWheelPrize(prize, defaultWheelPrizes[index]))
             : defaultWheelPrizes.map((prize, index) => ({
@@ -640,7 +646,13 @@
             document.querySelectorAll("[data-pointer-odds]").forEach((input) => {
                 state.pointerOdds[Number(input.dataset.pointerOdds)] = Math.max(0, Math.min(100, Number(input.value) || 0));
             });
-            const total = state.pointerOdds.reduce((sum, value) => sum + value, 0) || 1;
+            if (state.pointerOdds.every((value) => value === 0)) {
+                state.pointerOdds = [60, 30, 10];
+                document.querySelectorAll("[data-pointer-odds]").forEach((input) => {
+                    input.value = String(state.pointerOdds[Number(input.dataset.pointerOdds)]);
+                });
+            }
+            const total = state.pointerOdds.reduce((sum, value) => sum + value, 0);
             const summary = document.getElementById("wheelPointerOddsSummary");
             if (summary) summary.textContent = state.pointerOdds.map((value, index) => `${index + 1}: ${Math.round(value / total * 100)}%`).join(" · ");
             save();
@@ -836,6 +848,8 @@
         button.disabled = false;
         button.textContent = "Buy Bonus";
         button.setAttribute("aria-label", `Choose a bonus purchase amount starting at ${money(cost)}`);
+        const overlay = document.getElementById("buyBonusOverlay");
+        if (overlay && !overlay.hidden) openBonusBuyOverlay();
     }
     function offerLuckyWheel({ needed, wager, denomination = 0.01, onAward }) {
         const currentWager = Math.max(0.01, Number(wager) || 0.01);
