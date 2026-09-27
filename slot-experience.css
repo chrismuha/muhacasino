@@ -784,7 +784,10 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 /* Only the four primary actions are narrower; their original height, padding,
    grid, and touch behavior remain unchanged. */
 .hud > .right {
-  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(4, minmax(0, 140px)) !important;
+  justify-content: center;
+  column-gap: 4px !important;
+  row-gap: 5px !important;
 }
 .hud > .right > :is(#spin, #max, #resetSession, #settingsButton) {
   box-sizing: border-box;
@@ -795,6 +798,16 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   font-size: clamp(11px, 1.3vw, 14px);
   line-height: 1.05;
   justify-self: center;
+}
+@media (max-width: 700px) {
+  .hud > .right {
+    grid-template-columns: repeat(2, minmax(0, 140px)) !important;
+  }
+}
+@media (max-width: 360px) {
+  .hud > .right {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
 }
 .hud .credit-controls .credit-row {
   grid-template-columns: minmax(0, 1fr) 30px 30px !important;
