@@ -35,6 +35,7 @@
     .device.cabinet .cabinet-topper { min-height: 180px; height: calc(var(--cabinet-height) * .18); place-items: center; border-radius: 44px 44px 16px 16px; background: radial-gradient(ellipse at center, #8a52ff, #29205c 48%, #090b16 78%); text-align: center; text-transform: uppercase; }
     .cabinet-topper strong { position: relative; display: block; font-size: max(32px, min(calc(var(--cabinet-width) * .065), calc(var(--cabinet-height) * .075))); letter-spacing: .12em; text-shadow: 0 0 24px #d8c2ff; }
     #cabinet-topper-status { position: relative; display: block; margin-top: 12px; color: #f8dc72; font-size: max(14px, calc(var(--cabinet-width) * .018)); font-weight: 900; letter-spacing: .18em; }
+    #cabinet-topper-status:empty { display: none; }
     .device.cabinet .cabinet-upper { min-height: 280px; height: calc(var(--cabinet-height) * .42); align-content: center; gap: 24px; padding: 36px; background: radial-gradient(circle at 50% 50%, #22636f, #102c3d 48%, #080b11 78%); }
     .cabinet-upper h2 { position: relative; margin: 0; text-align: center; text-transform: uppercase; letter-spacing: .16em; font-size: max(22px, calc(var(--cabinet-width) * .032)); }
     .cabinet-jackpots { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
@@ -238,7 +239,7 @@
         setCabinetControlsEnabled(false);
         return;
       }
-      cabinetTopperStatus.textContent = 'Live cabinet play';
+      cabinetTopperStatus.textContent = '';
       const jackpotNodes = [...gameDocument.querySelectorAll('.jackpot-pill')].slice(0, 4);
       cabinetJackpots.replaceChildren(...jackpotNodes.map((node) => {
         const item = document.createElement('div'); item.className = 'cabinet-jackpot';

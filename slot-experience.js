@@ -1148,7 +1148,7 @@
             setTheme();
             renderCabinetTitle();
             const status = hostDocument.querySelector("#cabinet-topper-status");
-            if (status) status.textContent = "Live cabinet play";
+            if (status) status.textContent = "";
             const heading = upper.querySelector("h2");
             if (heading) heading.textContent = `${gameTitle} Jackpots & Stats`;
             syncPrizeValues();
