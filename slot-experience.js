@@ -1045,7 +1045,7 @@
           .cabinet-title-art.slot-title-pretty-penny { color:#fff0bd; letter-spacing:.08em; text-shadow:0 2px 0 #5c2f12,0 4px 12px #0009; }
           .cabinet-title-art.slot-title-pretty-penny .title-mark { width:1.6em; height:1.6em; flex-basis:1.6em; }
           .cabinet-title-art.slot-title-treasurepots { color:#ffe69a; letter-spacing:.08em; text-shadow:0 2px 0 #3c2904,0 0 24px #e6b83f70; }
-          .cabinet-title-art.slot-title-treasurepots .title-mark { display:inline-grid; width:2.62em; height:2.62em; flex-basis:2.62em; place-items:center; border:3px double #fff4cf; border-radius:50%; color:#fff8e5; background:#bd623f; box-shadow:0 3px 0 #83402a; font-family:Georgia,"Times New Roman",serif; font-size:.42em; font-style:normal; line-height:1; filter:none; }
+          .cabinet-title-art.slot-title-treasurepots .title-mark { display:inline-grid; width:1.34em; height:1.34em; flex-basis:1.34em; place-items:center; border:3px double #fff4cf; border-radius:50%; color:#fff8e5; background:#bd623f; box-shadow:0 3px 0 #83402a; font-family:Georgia,"Times New Roman",serif; font-size:.82em; font-style:normal; line-height:1; filter:none; }
           .device.cabinet[data-slot-game] .cabinet-upper {
             color: var(--slot-cabinet-text); background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--slot-cabinet-accent) 24%, var(--slot-cabinet-card)), var(--slot-cabinet-card) 55%, var(--slot-cabinet-bg) 90%);
           }
