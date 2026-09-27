@@ -339,6 +339,24 @@ document.querySelectorAll(".game-rail").forEach((rail) => {
   }, { passive: false });
 });
 
+function moveLibraryGameFocus(direction) {
+  const cards = [...document.querySelectorAll("#allGames > .game-card")];
+  if (!cards.length) return;
+  const focusedCard = document.activeElement?.closest?.("#allGames > .game-card");
+  const currentIndex = focusedCard ? cards.indexOf(focusedCard) : (direction > 0 ? -1 : 0);
+  const nextCard = cards[(currentIndex + direction + cards.length) % cards.length];
+  nextCard.focus({ preventScroll: true });
+  nextCard.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+}
+
+document.addEventListener("keydown", (event) => {
+  if (launcher.hidden || event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+  if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+  if (event.target.closest?.("input, select, textarea, [contenteditable='true']")) return;
+  event.preventDefault();
+  moveLibraryGameFocus(event.key === "ArrowRight" ? 1 : -1);
+});
+
 function showLauncher(updateHistory = true) {
   window.clearTimeout(gameLoadTimer);
   gameFrame.contentWindow?.slotExperience?.releaseCabinetScreens?.();

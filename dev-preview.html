@@ -179,6 +179,8 @@
     const cabinetBalance = $('#cabinet-balance');
     const cabinetBet = $('#cabinet-bet');
     const cabinetControls = document.querySelector('.cabinet-controls');
+    let clippedTitleSignature = '';
+    let clippedTitleConfirmations = 0;
 
     preview.addEventListener('change', () => {
       appPreview.src = preview.value;
@@ -304,6 +306,8 @@
       const safeBottom = parseFloat(root.defaultView.getComputedStyle(root.documentElement).getPropertyValue('--safe-area-inset-bottom')) || 0;
       const clippedTitles = documents.flatMap(doc => Array.from(doc.querySelectorAll('.topbar .brand, .game-toolbar .game-identity, .title'))).filter(title => {
         if (!title.getClientRects().length) return false;
+        const titleStyle = title.ownerDocument.defaultView.getComputedStyle(title);
+        if (titleStyle.visibility === 'hidden' || Number(titleStyle.opacity) === 0 || title.closest('[hidden]')) return false;
         const rect = title.getBoundingClientRect();
         const win = title.ownerDocument.defaultView;
         if (rect.right <= 0 || rect.left >= win.innerWidth || rect.bottom <= 0 || rect.top >= win.innerHeight) return false;
@@ -315,11 +319,16 @@
         }
         return top < safeTop - 1 || top + rect.height > root.defaultView.innerHeight - safeBottom + 1;
       });
-      const titleStatus = clippedTitles.length ? `⚠ ${clippedTitles.length} titles outside safe height` : '✓ Titles clear of notch';
+      const nextTitleSignature = clippedTitles.map(title => `${title.ownerDocument.URL}:${title.textContent.trim()}`).join('|');
+      if (nextTitleSignature && nextTitleSignature === clippedTitleSignature) clippedTitleConfirmations += 1;
+      else clippedTitleConfirmations = nextTitleSignature ? 1 : 0;
+      clippedTitleSignature = nextTitleSignature;
+      const confirmedClippedTitles = clippedTitleConfirmations >= 2 ? clippedTitles : [];
+      const titleStatus = confirmedClippedTitles.length ? `⚠ ${confirmedClippedTitles.length} titles outside safe height` : '✓ Titles clear of notch';
       const status = `${widthStatus} · ${heightStatus} · ${titleStatus}`;
       if (audit.textContent !== status) audit.textContent = status;
       audit.title = 'Checks the app and embedded frames. Vertical scrolling shows the largest document height overflow; it may be intentional.';
-      audit.classList.toggle('warning', Boolean(overflows.length || clippedTitles.length));
+      audit.classList.toggle('warning', Boolean(overflows.length || confirmedClippedTitles.length));
     }
 
     function applySafeArea(option, cutout) {
