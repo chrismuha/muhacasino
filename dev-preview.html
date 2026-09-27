@@ -25,7 +25,8 @@
     .cutout-size.hidden { display: none; }
     main { flex: 1 1 auto; min-height: 0; padding: 28px; overflow: auto; scrollbar-width: none; display: grid; place-items: start center; }
     main::-webkit-scrollbar { display: none; }
-    .device { position: relative; padding: 10px; border-radius: 24px; background: #080a0e; box-shadow: 0 18px 60px #000b, 0 0 0 1px #3a4353; transition: width .2s, height .2s; }
+    .device-stage { position: relative; flex: 0 0 auto; transition: width .2s, height .2s; }
+    .device { position: absolute; inset: 0 auto auto 0; padding: 10px; border-radius: 24px; background: #080a0e; box-shadow: 0 18px 60px #000b, 0 0 0 1px #3a4353; transform: scale(var(--preview-scale, 1)); transform-origin: top left; transition: width .2s, height .2s, transform .2s; }
     .app-screen { width: 100%; height: 100%; }
     .cabinet-screen { display: none; position: relative; overflow: hidden; border: 8px solid #11151d; border-radius: 16px; background: radial-gradient(circle at 50% 20%, #394a78, #121722 58%, #080a0e); box-shadow: inset 0 0 0 1px #4f5b70, 0 8px 24px #0009; color: #dce7ff; }
     .cabinet-screen::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, #fff0 0 5px, #9fc5ff0a 6px); pointer-events: none; }
@@ -54,6 +55,27 @@
     .cabinet-buttons .spin-control { border-color: #f5d64a; background: #b71f35; color: white; box-shadow: 0 0 22px #e3284b99; }
     .cabinet-buttons button:disabled { opacity: .38; cursor: not-allowed; }
     .device.cabinet .cabinet-buttons button:not(:disabled):active { filter: brightness(1.3); transform: translateY(5px) scale(.95); box-shadow: inset 0 5px 12px #0008, 0 0 18px currentColor; }
+    /* A landscape cabinet is wide but not tall. Use the horizontal space for
+       compact information bands instead of applying portrait proportions. */
+    .device.cabinet.cabinet-landscape { gap: 12px; padding-block: 22px 36px; border-radius: 38px 38px 24px 24px; }
+    .device.cabinet.cabinet-landscape .cabinet-topper { min-height: 112px; height: calc(var(--cabinet-height) * .14); border-radius: 30px 30px 12px 12px; }
+    .device.cabinet.cabinet-landscape .cabinet-topper strong { font-size: clamp(34px, calc(var(--cabinet-height) * .058), 62px); }
+    .device.cabinet.cabinet-landscape .cabinet-topper span { margin-top: 5px; font-size: clamp(13px, calc(var(--cabinet-height) * .018), 20px); }
+    .device.cabinet.cabinet-landscape .cabinet-upper { min-height: 330px; height: calc(var(--cabinet-height) * .38); align-content: stretch; gap: 12px; padding: 18px 28px; }
+    .device.cabinet.cabinet-landscape .cabinet-upper h2 { font-size: clamp(22px, calc(var(--cabinet-height) * .03), 34px); line-height: 1.1; }
+    .device.cabinet.cabinet-landscape .cabinet-live-prizes { gap: 8px; }
+    .device.cabinet.cabinet-landscape .cabinet-live-prize { padding: 7px 8px; }
+    .device.cabinet.cabinet-landscape .cabinet-live-prize span { font-size: clamp(10px, calc(var(--cabinet-height) * .011), 13px); }
+    .device.cabinet.cabinet-landscape .cabinet-live-prize strong { margin-top: 2px; font-size: clamp(15px, calc(var(--cabinet-height) * .018), 21px); }
+    .device.cabinet.cabinet-landscape .cabinet-live-stats { gap: 8px; }
+    .device.cabinet.cabinet-landscape .cabinet-live-stat { padding: 8px 10px; border-radius: 10px; }
+    .device.cabinet.cabinet-landscape .cabinet-live-stat span { font-size: clamp(10px, calc(var(--cabinet-height) * .011), 13px); }
+    .device.cabinet.cabinet-landscape .cabinet-live-stat strong { margin-top: 3px; font-size: clamp(17px, calc(var(--cabinet-height) * .023), 26px); }
+    .device.cabinet.cabinet-landscape .cabinet-controls { min-height: 230px; height: calc(var(--cabinet-height) * .27); padding: 20px 28px; gap: 12px; transform: none; }
+    .device.cabinet.cabinet-landscape .cabinet-meters { gap: 10px; }
+    .device.cabinet.cabinet-landscape .cabinet-meter { padding: 8px 12px; }
+    .device.cabinet.cabinet-landscape .cabinet-buttons { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 9px; }
+    .device.cabinet.cabinet-landscape .cabinet-buttons button { min-height: 54px; padding: 7px 10px; border-width: 2px; font-size: clamp(12px, calc(var(--cabinet-height) * .014), 16px); line-height: 1.05; }
     @media (prefers-reduced-motion: reduce) {
       .device.cabinet .cabinet-buttons button { transition: none; }
       .device.cabinet .cabinet-buttons button:not(:disabled):active { transform: none; }
@@ -125,12 +147,12 @@
     <span class="dimensions" id="dimensions"></span>
     <span class="audit" id="audit" role="status">Checking layout…</span>
   </header>
-  <main><div class="device" id="device">
+  <main id="preview-canvas"><div class="device-stage" id="device-stage"><div class="device" id="device">
     <section class="cabinet-screen cabinet-topper" aria-label="Casino topper display"><div><strong id="cabinet-game-name">Muha Casino</strong><span id="cabinet-topper-status">Choose a slot game</span></div></section>
     <section class="cabinet-screen cabinet-upper" aria-label="Casino upper display"><h2>Progressive jackpots</h2><div class="cabinet-jackpots" id="cabinet-jackpots"><p class="cabinet-empty">Live jackpot values appear here during slot play.</p></div></section>
     <div class="app-screen"><div class="screen-cutout none" id="screen-cutout" aria-hidden="true"></div><div class="home-indicator hidden" id="home-indicator" aria-hidden="true"></div><iframe id="app-preview" src="/" title="Muha Casino application"></iframe></div>
     <section class="cabinet-screen cabinet-controls" aria-label="Casino control deck touchscreen"><div class="cabinet-meters"><div class="cabinet-meter"><span>Credits</span><strong id="cabinet-balance">—</strong></div><div class="cabinet-meter"><span>Total bet</span><strong id="cabinet-bet">—</strong></div></div><div class="cabinet-buttons"><button type="button" data-cabinet-action="credit-down">Credits −</button><button type="button" data-cabinet-action="denom-down">Denom −</button><button type="button" data-cabinet-action="bet-down">Bet −</button><button class="spin-control" type="button" data-cabinet-action="spin">Spin</button><button type="button" data-cabinet-action="bet-up">Bet +</button><button type="button" data-cabinet-action="denom-up">Denom +</button><button type="button" data-cabinet-action="credit-up">Credits +</button><button type="button" data-cabinet-action="settings">Settings</button></div></section>
-  </div></main>
+  </div></div></main>
   <script>
     const $ = (selector) => document.querySelector(selector);
     const preview = $('#preview');
@@ -143,6 +165,8 @@
     const cutoutWidth = $('#cutout-width');
     const cutoutHeight = $('#cutout-height');
     const device = $('#device');
+    const deviceStage = $('#device-stage');
+    const previewCanvas = $('#preview-canvas');
     const dimensions = $('#dimensions');
     const audit = $('#audit');
     const screenCutout = $('#screen-cutout');
@@ -326,6 +350,7 @@
       height.value = h;
       const isCabinet = preset.selectedOptions[0]?.hasAttribute('data-cabinet');
       device.classList.toggle('cabinet', isCabinet);
+      device.classList.toggle('cabinet-landscape', isCabinet && w > h);
       if (isCabinet) {
         device.style.removeProperty('width'); device.style.removeProperty('height');
         device.style.setProperty('--cabinet-width', `${w}px`); device.style.setProperty('--cabinet-height', `${h}px`);
@@ -335,6 +360,19 @@
       }
       dimensions.textContent = `${w} × ${h} CSS px${isCabinet ? ' main display · 4 live screens' : ''}`;
       updateCabinetScreens();
+      window.requestAnimationFrame(fitPreview);
+    }
+
+    function fitPreview() {
+      const naturalWidth = device.offsetWidth;
+      const naturalHeight = device.offsetHeight;
+      if (!naturalWidth || !naturalHeight) return;
+      const canvasStyle = getComputedStyle(previewCanvas);
+      const availableWidth = Math.max(240, previewCanvas.clientWidth - parseFloat(canvasStyle.paddingLeft) - parseFloat(canvasStyle.paddingRight));
+      const scale = device.classList.contains('cabinet') ? Math.min(1, availableWidth / naturalWidth) : 1;
+      device.style.setProperty('--preview-scale', scale.toFixed(4));
+      deviceStage.style.width = `${Math.ceil(naturalWidth * scale)}px`;
+      deviceStage.style.height = `${Math.ceil(naturalHeight * scale)}px`;
     }
 
     function applyPreset() {
@@ -369,6 +407,9 @@
     });
     window.setInterval(auditLayout, 1500);
     window.setInterval(updateCabinetScreens, 500);
+    new ResizeObserver(fitPreview).observe(previewCanvas);
+    new ResizeObserver(fitPreview).observe(device);
+    window.addEventListener('resize', fitPreview);
     applyPreset();
   </script>
 </body>
