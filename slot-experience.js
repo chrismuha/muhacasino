@@ -1038,11 +1038,13 @@
           .device.cabinet[data-slot-game] .cabinet-topper strong { color:#fffaf0; text-shadow:0 0 24px color-mix(in srgb,var(--slot-cabinet-accent) 58%,transparent),0 2px 3px #000; }
           .device.cabinet[data-slot-game] .cabinet-topper span { color:#ffe08a; text-shadow:0 1px 3px #000,0 0 14px color-mix(in srgb,var(--slot-cabinet-accent2) 55%,transparent); }
           .cabinet-title-art { display:flex; width:100%; align-items:center; justify-content:center; gap:.22em; font-size:inherit; line-height:.92; }
-          .cabinet-title-art .title-mark { flex:0 0 auto; width:.95em; height:.95em; object-fit:contain; color:var(--slot-cabinet-accent); filter:drop-shadow(0 0 12px color-mix(in srgb,var(--slot-cabinet-accent) 55%,transparent)); }
+          .cabinet-title-art .title-mark { flex:0 0 auto; object-fit:contain; color:var(--slot-cabinet-accent); filter:drop-shadow(0 0 12px color-mix(in srgb,var(--slot-cabinet-accent) 55%,transparent)); }
           .cabinet-title-art.slot-title-big-money-deluxe { color:#f6d778; font-family:Georgia,"Times New Roman",serif; letter-spacing:.12em; text-shadow:0 2px 0 #513b12,0 0 18px #e7bd546b; }
           .cabinet-title-art.slot-title-neon-slots { color:#fff; letter-spacing:.08em; text-shadow:0 0 5px #39ff14,0 0 14px #25dff3,0 0 28px #f25cda; }
           .cabinet-title-art.slot-title-pretty-penny { color:#fff0bd; letter-spacing:.08em; text-shadow:0 2px 0 #5c2f12,0 4px 12px #0009; }
+          .cabinet-title-art.slot-title-pretty-penny .title-mark { width:1.72em; height:1.72em; flex-basis:1.72em; }
           .cabinet-title-art.slot-title-treasurepots { color:#ffe69a; letter-spacing:.08em; text-shadow:0 2px 0 #3c2904,0 0 24px #e6b83f70; }
+          .cabinet-title-art.slot-title-treasurepots .title-mark { display:inline-grid; width:1.1em; height:1.1em; flex-basis:1.1em; place-items:center; border:3px double #fff4cf; border-radius:50%; color:#fff8e5; background:#bd623f; box-shadow:0 3px 0 #83402a; font-family:Georgia,"Times New Roman",serif; font-size:.42em; font-style:normal; line-height:1; filter:none; }
           .device.cabinet[data-slot-game] .cabinet-upper {
             color: var(--slot-cabinet-text); background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--slot-cabinet-accent) 24%, var(--slot-cabinet-card)), var(--slot-cabinet-card) 55%, var(--slot-cabinet-bg) 90%);
           }

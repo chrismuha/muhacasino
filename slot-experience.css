@@ -109,7 +109,7 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 .wheel-pointer-odds-grid input { min-width:0; width:100%; }
 .hud > .right > :is(.auto-spin-hint, .auto-spin-countdown, .message) { grid-column: 1 / -1; width: 100%; min-width: 0; max-width: 100%; margin-inline: 0; text-align: center; overflow-wrap: anywhere; }
 .hud > .left > *, .hud > .right > * { min-width: 0; max-width: 100%; }
-.hud :is(select, input[type="number"], input[type="text"]) { max-width: 100%; }
+.hud :is(select, input[type="number"], input[type="text"]) { width: 100%; min-width: 0; max-width: 100%; }
 
 /* Keep ordinary reel artwork inside its tile at every responsive row height.
    Feature and jackpot chips retain their purpose-built full-cell layouts. */
@@ -307,6 +307,15 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   min-height: 40px;
   padding-block: 6px;
 }
+.hud .select {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+.hud .select select {
+  display: block;
+  padding-inline: 10px 28px;
+}
 .hud > .right > button {
   min-height: 48px;
   padding-block: 9px;
@@ -457,6 +466,7 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   .hud { gap: 5px !important; }
   .hud > .left, .hud > .right { gap: 5px !important; }
   .hud :is(.stat, .select, .credit-controls, .checkbox-setting) { padding: 5px 6px; }
+  .hud .select select { padding-inline: 8px 24px; }
   .slot-wager-row { grid-template-columns: minmax(0, 1fr) 70px; gap: 4px; }
   .bet-presets { gap: 3px; }
   .hud .credit-controls {
@@ -510,6 +520,11 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
+}
+.settings-stage > * {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* The outcome belongs to the reel surface, not the controls beneath it. */
@@ -1085,6 +1100,9 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 }
 
 .settings-panel :is(.select, .checkbox-setting, .credit-controls, .jackpot-config-setting, .slot-wheel-setting, .slot-withdrawal-setting, .penny-door-rows) {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
   border: 1px solid color-mix(in srgb, var(--accent, #7df9ff) 45%, var(--text, #fff)) !important;
   background: color-mix(in srgb, var(--card, #121828) 91%, var(--text, #fff) 9%) !important;
   box-shadow: none !important;
@@ -1114,7 +1132,13 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
 }
 
 .settings-panel :is(select, input[type="number"], input[type="text"]) {
+  box-sizing: border-box;
+  display: block;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
   min-height: 42px !important;
+  padding-inline: 12px 32px !important;
   border: 2px solid color-mix(in srgb, var(--accent, #7df9ff) 62%, var(--text, #fff)) !important;
   color: var(--text, #eef4ff) !important;
   background: color-mix(in srgb, var(--card, #121828) 84%, var(--text, #fff) 16%) !important;
@@ -1176,6 +1200,10 @@ html.slot-experience-overlay-open, body.slot-experience-overlay-open { overflow:
   }
   .settings-panel :is(small, .overlay-note, .muted, .jackpot-config-setting > small) {
     font-size: 12px !important;
+  }
+  .settings-panel select {
+    padding-inline: 10px 26px !important;
+    font-size: clamp(12px, 4vw, 16px) !important;
   }
   .settings-panel .settings-stage > .auto-spin-countdown {
     min-height: 60px;
