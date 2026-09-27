@@ -33,7 +33,8 @@
     .device.cabinet { --cabinet-width: 1080px; --cabinet-height: 1920px; width: calc(var(--cabinet-width) + 96px); height: auto; padding: 28px 38px 48px; display: grid; gap: 16px; border-radius: 54px 54px 30px 30px; background: linear-gradient(90deg, #090b10, #293041 4%, #111620 12% 88%, #293041 96%, #090b10); box-shadow: 0 30px 90px #000d, inset 0 0 0 2px #515d72, inset 0 0 45px #000; }
     .device.cabinet .cabinet-screen { display: grid; }
     .device.cabinet .cabinet-topper { min-height: 180px; height: calc(var(--cabinet-height) * .18); place-items: center; border-radius: 44px 44px 16px 16px; background: radial-gradient(ellipse at center, #8a52ff, #29205c 48%, #090b16 78%); text-align: center; text-transform: uppercase; }
-    .cabinet-topper strong { position: relative; display: block; font-size: max(32px, min(calc(var(--cabinet-width) * .065), calc(var(--cabinet-height) * .075))); letter-spacing: .12em; text-shadow: 0 0 24px #d8c2ff; }
+    .cabinet-topper > div { box-sizing: border-box; width: 100%; min-width: 0; }
+    .cabinet-topper strong { position: relative; display: block; width: 100%; min-width: 0; white-space: nowrap; font-size: max(32px, min(calc(var(--cabinet-width) * .065), calc(var(--cabinet-height) * .075))); letter-spacing: .12em; text-shadow: 0 0 24px #d8c2ff; }
     #cabinet-topper-status { position: relative; display: block; margin-top: 12px; color: #f8dc72; font-size: max(14px, calc(var(--cabinet-width) * .018)); font-weight: 900; letter-spacing: .18em; }
     #cabinet-topper-status:empty { display: none; }
     .device.cabinet .cabinet-upper { min-height: 280px; height: calc(var(--cabinet-height) * .42); align-content: center; gap: 24px; padding: 36px; background: radial-gradient(circle at 50% 50%, #22636f, #102c3d 48%, #080b11 78%); }

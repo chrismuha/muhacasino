@@ -1037,7 +1037,8 @@
           }
           .device.cabinet[data-slot-game] .cabinet-topper strong { color:#fffaf0; text-shadow:0 0 24px color-mix(in srgb,var(--slot-cabinet-accent) 58%,transparent),0 2px 3px #000; }
           .device.cabinet[data-slot-game] #cabinet-topper-status { color:#ffe08a; text-shadow:0 1px 3px #000,0 0 14px color-mix(in srgb,var(--slot-cabinet-accent2) 55%,transparent); }
-          .cabinet-title-art { display:flex; width:100%; max-width:96%; margin-inline:auto; align-items:center; justify-content:center; gap:.22em; font-size:inherit; line-height:.92; }
+          .cabinet-title-art { display:flex; width:100%; max-width:96%; margin-inline:auto; flex-wrap:nowrap; align-items:center; justify-content:center; gap:.22em; white-space:nowrap; font-size:inherit; line-height:.92; }
+          .cabinet-title-art > span:not(.title-mark) { flex:0 0 auto; white-space:nowrap; }
           .cabinet-title-art .title-mark { flex:0 0 auto; object-fit:contain; color:var(--slot-cabinet-accent); filter:drop-shadow(0 0 12px color-mix(in srgb,var(--slot-cabinet-accent) 55%,transparent)); }
           .cabinet-title-art.slot-title-big-money-deluxe { color:#f6d778; font-family:Georgia,"Times New Roman",serif; letter-spacing:.12em; text-shadow:0 2px 0 #513b12,0 0 18px #e7bd546b; }
           .cabinet-title-art.slot-title-neon-slots { color:#fff; letter-spacing:.08em; animation:cabinet-neon-title-cycle 2.4s linear infinite; }
