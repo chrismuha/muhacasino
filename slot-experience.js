@@ -1024,8 +1024,10 @@
         }
         hostStyle.textContent = `
           .device.cabinet[data-slot-game] .cabinet-topper {
-            color: var(--slot-cabinet-text); background: radial-gradient(ellipse at center, color-mix(in srgb, var(--slot-cabinet-accent2) 58%, var(--slot-cabinet-card)), var(--slot-cabinet-card) 50%, var(--slot-cabinet-bg) 82%);
+            color:#fffaf0; background:radial-gradient(ellipse at center, color-mix(in srgb,var(--slot-cabinet-accent2) 48%,#111923), color-mix(in srgb,var(--slot-cabinet-accent) 22%,#091015) 56%,#05080d 88%);
           }
+          .device.cabinet[data-slot-game] .cabinet-topper strong { color:#fffaf0; text-shadow:0 0 24px color-mix(in srgb,var(--slot-cabinet-accent) 58%,transparent),0 2px 3px #000; }
+          .device.cabinet[data-slot-game] .cabinet-topper span { color:#ffe08a; text-shadow:0 1px 3px #000,0 0 14px color-mix(in srgb,var(--slot-cabinet-accent2) 55%,transparent); }
           .device.cabinet[data-slot-game] .cabinet-upper {
             color: var(--slot-cabinet-text); background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--slot-cabinet-accent) 24%, var(--slot-cabinet-card)), var(--slot-cabinet-card) 55%, var(--slot-cabinet-bg) 90%);
           }

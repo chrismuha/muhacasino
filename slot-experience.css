@@ -1267,6 +1267,11 @@ body.cabinet-game-surface .reels-wrap {
   margin: 0 !important;
   padding: 0 !important;
   grid-template-rows: minmax(0, 1fr) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--cabinet-bg, var(--game-bg, #080b11)) !important;
+  box-shadow: none !important;
+  clip-path: none !important;
 }
 body.cabinet-game-surface .reels {
   width: 100% !important;
