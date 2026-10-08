@@ -1,7 +1,7 @@
 {
   "name": "muhacasino",
   "private": true,
-  "description": "Muha Casino — slots, Bingo, and classic tabletop games in one game library.",
+  "description": "Muha Casino \u2014 slots, Bingo, and classic tabletop games in one game library.",
   "scripts": {
     "start": "vite --host 127.0.0.1 --port 5194 --strictPort --open",
     "dev": "vite --host 127.0.0.1 --port 5194 --strictPort --open",
@@ -30,5 +30,14 @@
     "@capacitor/cli": "^8.5.2",
     "@capacitor/core": "^8.5.2",
     "@capacitor/ios": "^8.5.2"
+  },
+  "overrides": {
+    "source-map-js": "1.2.2",
+    "brace-expansion@1": "1.1.21",
+    "brace-expansion@2": "2.1.7",
+    "brace-expansion@5": "5.0.12",
+    "xcode": {
+      "uuid": "11.1.1"
+    }
   }
 }

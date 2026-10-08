@@ -1,3 +1,4 @@
+# BEGIN MCR shared ignore rules
 # Dependencies
 node_modules/
 
@@ -53,8 +54,6 @@ release/*
 !release/.gitkeep
 
 # Native mobile build output
-/android/
-/ios/
 android/.gradle/
 android/**/build/
 ios/build/
@@ -77,3 +76,33 @@ Electron Framework.framework/
 # Dropbox numbered dependency and conflict copies
 node_modules */
 *conflicted copy*
+# END MCR shared ignore rules
+.DS_Store
+node_modules/
+*.log
+*.tmp
+*.temp
+*.bak
+*.old
+*.orig
+*.rej
+*.swp
+*.swo
+*~
+.cache/
+.npm/
+.nyc_output/
+.vite/
+coverage/
+dist/
+out/
+*.lcov
+*.tgz
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+report.*.json
