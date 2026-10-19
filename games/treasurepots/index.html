@@ -261,7 +261,7 @@
             <div class="overlay-content">
                 <div class="overlay-nav" aria-label="Overlay pages">
                     <button id="overlayPrev" type="button" class="overlay-arrow" aria-label="Previous page">&#8592;</button>
-                    <span id="overlayPageLabel" class="overlay-page-label" aria-live="polite">Page 1 of 2</span>
+                    <span id="overlayPageLabel" class="overlay-page-label" aria-live="polite">Page 1 of 3</span>
                     <button id="overlayNext" type="button" class="overlay-arrow" aria-label="Next page">&#8594;</button>
                 </div>
 
@@ -272,15 +272,16 @@
                     <p>The Treasure Pots wild substitutes for any regular symbol from the left. All-wild hits pay the wild row.</p>
                     <p>Reel jackpots use a shared event independent from regular Win Odds. The highest selected Jackpot Odds value sets the chance that at least one reel jackpot occurs, while each tier retains its selected chance. Multiple reel jackpots and a regular line win can occur together. When every tier is set to 1%, the overall reel-jackpot chance is 1% per spin.</p>
                     <p>On rare non-jackpot spins, one or two unlit jackpot chips may appear as near misses. These display-only chips do not award a jackpot or change the configured jackpot odds.</p>
-                    <p>Emerald Vault jackpots scale upward with the total bet. At total bets up to $0.50, the guaranteed minimums are Mini $250, Minor $1,000, Major $5,000, and Grand $25,000. Above $0.50, every tier increases in direct proportion to the total bet. The Mini always remains greater than the $100 Royal Pot award.</p>
+                    <p>Mini, Minor, Major, and Grand use the amounts shown above the reels. Settings lets you change their base amounts and enable or disable bet scaling. Multiplier mode scales with the total bet; increment mode adjusts by the configured amount per bet step relative to the reference bet. Amounts may decrease below the reference bet and are capped at 3,000,000. Denomination is already included in total bet and is not applied a second time.</p>
                     <h4>Free Spins and Emerald Wheel</h4>
                     <p id="featureOddsRules">Free Spins and Emerald Wheel settings are loading.</p>
                     <p>Free spins cost no credits and retain the denomination, active lines, and bet per line from the paid spin that awarded them. Their payouts are added to Available Credits. Free spins cannot retrigger either feature.</p>
-                    <p>The Treasure Pots bonus activates only when six BONUS symbols land anywhere on the reels in one paid spin, then makes a 50/50 choice between the Treasure Pots Wheel or Match &amp; Win. Wheel odds remain fixed. Match &amp; Win always contains a three-card jackpot match; its guaranteed tier is selected by the relative Jackpot Odds settings, so Mini is normally most common, and its award scales with the triggering bet.</p>
+                    <p>Six BONUS symbols anywhere on the reels in one paid spin trigger one of three equally likely games: the bonus wheel, Match &amp; Win, or Diamond Collector. Buy Bonus also lets you choose a game directly or select Random. Match &amp; Win has nine hidden cards with one guaranteed three-card jackpot match; reveal cards until three match. Relative Jackpot Odds settings select the guaranteed tier, and the award uses the configured jackpot value for the feature wager.</p>
                     <h4>Savings Pots &amp; Emerald Links</h4>
-                    <p>Only a winning LINK chain on a paid spin can attempt to advance the savings banks. On each qualifying LINK win, Pocket Pot has a 72% chance to gain 2–6%, Lucky Pot has a 48% chance to gain 2–6%, and Royal Pot has a 28% chance to gain 2–6%. Their fixed awards are $5, $25, and $100. A bank opens only after its own meter reaches 100%, then resets to 0%. Unfinished banks keep their progress. Free-spin LINK wins do not advance the banks.</p>
-                    <p>A winning LINK starts in the first reel and connects two to four value cards across one row. Each value carries the Pocket, Lucky, or Royal symbol and advances that matching meter. A Not Connected chain can appear as a non-paying teaser.</p>
+                    <p>Connected LINK values on paid spins advance only the matching Pocket, Lucky, or Royal meter by 2–6% per value. The fixed pot awards are $5, $25, and $100. A pot pays when its meter reaches 100% and then resets to 0%; unfinished pots keep their progress. Free-spin LINK wins do not advance pots.</p>
+                    <p>A winning LINK starts in the first reel and connects a configurable number of value cards across one row. Each value carries the Pocket, Lucky, or Royal symbol and advances that matching meter. A Not Connected chain can appear as a non-paying teaser.</p>
                     <p>Emerald Hold &amp; Win selects one row for three spins. One or occasionally two held wild emeralds land per spin and remain until the feature ends. Filling all five positions awards their combined displayed values; otherwise they reset after the third spin.</p>
+                    <h4>LINK Controls and Reveal Doors</h4><p>Winning Link chip controls set the value range, chip-count range, winning chance, and non-paying preview chance. Values scale with total bet. Reveal Doors optionally conceals selected reel rows or their individual symbols until the spin reveals them; it changes presentation only.</p>
                     <h4>Settings Guide</h4>
                     <p class="overlay-note"><strong>Session Stats Display:</strong> Chooses which stat boxes are visible (regular session totals, Net totals, or Actual Net totals).</p>
                     <p class="overlay-note"><strong>Winnings Only / Losses Only:</strong> Shows only regular session winnings or regular session losses.</p>
@@ -297,16 +298,16 @@
                     <p class="overlay-note"><strong>Win Odds:</strong> Sets the target chance that a spin resolves as a win. Winning payout amounts still come from the paytable.</p>
                     <p class="overlay-note"><strong>Free Spins Win / Loss Ratio:</strong> Sets the independent chance that a paid spin awards free spins.</p>
                     <p class="overlay-note"><strong>Number of Free Spins Awarded:</strong> Sets how many free games are added when the feature triggers.</p>
-                    <p class="overlay-note"><strong>Six BONUS Symbols Win / Loss Ratio:</strong> Sets the independent chance that a paid spin lands a winning line of Emerald Wheel chips and opens the TreasurePots wheel. It does not alter the fixed 90% regular-coin / 10% jackpot outcome mix.</p>
+                    <p class="overlay-note"><strong>Six BONUS Symbols Win / Loss Ratio:</strong> Sets the independent chance that a paid spin lands six BONUS symbols anywhere and starts a random bonus wheel, Match &amp; Win, or Diamond Collector game. It does not change their internal rules.</p>
                     <p class="overlay-note"><strong>Winning LINK Chain Win / Loss Ratio:</strong> Sets the chance that an eligible winning spin replaces part of a reel row with a first-reel LINK and connected value chips.</p>
                     <p class="overlay-note"><strong>Not Connected LINK Display Ratio:</strong> Sets the chance that a spin without a winning LINK displays a colorful, non-paying “Not Connected” LINK chain.</p>
-                    <p class="overlay-note"><strong>Jackpot Odds:</strong> Controls jackpots that appear directly on the reels only. Each tier offers presets shown as “1 in N spins,” plus Custom percentage controls. These settings do not alter the bonus wheel. Jackpot dollar values scale with total bet using $0.50 as the base wager, but never fall below the displayed minimums. Custom odds clear on Reset Session or page reload.</p>
+                    <p class="overlay-note"><strong>Jackpot Odds:</strong> Controls reel-jackpot chances and the relative tier weights for Match &amp; Win. Each tier offers presets shown as “1 in N spins,” plus Custom percentage controls. These settings do not alter the bonus wheel. Jackpot values follow the configured base amounts and bet-scaling settings. Custom odds clear on Reset Session or page reload.</p>
                     <p class="overlay-note"><strong>Settings:</strong> Opens the paginated settings dialog. Use Show this setting on the home screen to pin optional settings. Denomination always remains beside the Total Bet buttons.</p>
                     <p class="overlay-note"><strong>Adjust Credit + ▲/▼:</strong> Sets how much credit to add/remove per click, scaled by denomination.</p>
                     <p class="overlay-note"><strong>Skip Winning Highlight Delay:</strong> Removes the auto-spin pause after winning reels are highlighted.</p>
                     <p class="overlay-note"><strong>Spin:</strong> Plays one round using current settings and deducts the total bet first. On desktop, tap Spacebar for one spin or hold it for auto spin; Spacebar does not scroll the page.</p>
                     <p class="overlay-note"><strong>Time Elapsed:</strong> Tracks active play time and is hidden from the home screen by default. Pin it from Settings whenever you want it visible.</p>
-                    <p class="overlay-note"><strong>Max Bet:</strong> Sets the highest bet per line and all 10 lines by default. If Max Bet uses available credits is enabled, it keeps your current lines and denomination, ignores the Bet Per Line dropdown, and spins all available credits as one custom wager.</p>
+                    <p class="overlay-note"><strong>Max Bet:</strong> Sets the highest bet per line and all 10 lines by default. If Max Bet uses available credits is enabled, it keeps your current lines and denomination, selects all available credits as one custom wager. Press Spin to play; Max Bet does not start a spin.</p>
                     <h4>Definition: Bernoulli Trial</h4>
                     <p class="overlay-note">A Bernoulli trial is a random experiment with exactly two possible outcomes: success and failure.</p>
                     <p class="overlay-note">The probability of success, p, stays constant for each independent trial. It models binary events like coin flips, pass/fail tests, purchases, and slot win/loss outcomes.</p>
@@ -363,6 +364,26 @@
                     <p class="overlay-note">Highlighted cells represent currently active paylines.</p>
                     <div class="lines-preview lines-preview-overlay" id="linesPreviewOverlay" aria-hidden="true"></div>
                 </div>
+                <div class="overlay-section" data-info-page="2" hidden>
+                    <h4>Diamond Collector</h4>
+                    <p>Start with 10 free spins on a 2×2 board, with one diamond already collected. Every spin uses one free spin. New diamonds land randomly in empty positions and stay held; a new diamond alone does not add or reset spins.</p>
+                    <p>Collect every diamond to complete a board, bank its awards, and add 3 free spins to the spins remaining. Start a fresh board at the next size: 2×2 → 3×3 → 4×4 → 5×5. Completing a 5×5 board banks its awards, adds 3 spins, and starts another fresh 5×5 board.</p>
+                    <p>Each diamond displays its actual credit or money prize value, not a multiplier. Prize values scale with the feature wager. The bonus ends when free spins reach zero; the final award includes banked boards and held diamonds on the unfinished board. Choose Collect to finish. These spins belong to Diamond Collector and are separate from the regular reel free-spin feature.</p>
+                    <h4>Buy Bonus</h4>
+                    <p>Choose Wheel, Match &amp; Win, Diamond Collector, or Random, then a $40, $80, or $120 purchase. Their feature wagers are $0.40, $0.80, and $1.20 respectively. Random chooses equally among the three games. The cost is deducted before play. The credited award is at least 25% of the purchase cost. Purchases require enough credits and are unavailable during a spin, auto spin, or regular reel free spins. Buy Bonus can be hidden in Settings.</p>
+                    <h4>Bonus Wheel Awards</h4><p>The wheel selects 10× bet with 35% chance, 25× with 25%, 50× with 18%, and 100× with 12%. Jackpot segment chances are Mini 7%, Minor 2%, Major 0.8%, and Grand 0.2%. Jackpot amounts use your configured values and feature wager. These fixed segment chances are separate from reel-jackpot odds and the rescue-wheel settings.</p>
+                    <h4>Wheel Pointers</h4>
+                    <p>Before the bonus wheel, match two cards to reveal 1, 2, or 3 pointers. Settings controls the relative chances, initially 60%, 30%, and 10%. The wheel award is the selected segment award multiplied by the pointer count. These settings do not affect Match &amp; Win or Diamond Collector.</p>
+                    <h4>Lucky Credit Wheel and Low Credits</h4>
+                    <p>After paid play leaves too few credits for the current wager, the optional Lucky Credit Wheel offers one rescue attempt. If the rescue wheel is unavailable or already used, a low-credit prompt can offer to add the shortfall and spin, or keep the current bet. Its 12 rescue-wheel wedges have individually adjustable even-percentage sizes totaling 100%; six winning wedges can award wager multiples, fixed values, or configured jackpots, and six award nothing. Wedge sizes determine their actual chances. Results remain open until closed; winning does not start another spin automatically. Reset Session restores eligibility; adding enough credits and then wagering them can rearm the rescue attempt.</p>
+                    <h4>Display, Withdrawals, and Statistics</h4>
+                    <p>Fake Money and Real Money change credit/money formatting only. All credits, prizes, and withdrawals are simulated. The optional withdrawal demo allows a simulated withdrawal after the amount played reaches the amount deposited. Overall wagered, won, lost, and net totals are saved separately from session counters.</p>
+                    <h4>Controls and Settings</h4>
+                    <p>Hold Spin or, on desktop, Spacebar to start auto spin. Use Cancel to stop auto spin. Tap Spacebar for a single spin when auto spin is off. Wager controls stay locked while a round and its features resolve. Reset Session resets the current session. Settings has page navigation and optional home-screen pins, with separate cabinet pins when the game is hosted in a casino cabinet. Denomination stays beside the quick total-bet buttons.</p>
+                    <p>Hide Empty Result Bars collapses unused result space. Skip Winning Highlight Delay shortens pauses during auto spin. Settings also controls session-stat visibility, regular win chances, free-spin chances and awards, six-BONUS trigger chances, jackpot odds and scaling, wheel pointer chances, and rescue-wheel prizes and wedge sizes. Feature games have their own rules; changing regular Win Odds does not change every feature probability.</p>
+                    <h4>Phone, Tablet, and Casino Displays</h4>
+                    <p>Bonus dialogs support narrow screens, landscape scrolling, safe-area spacing, and touch controls, both directly and inside the casino game frame. Scroll inside a dialog to reach content or actions on short screens. Use the casino header to return to the library or collapse the header for more game space.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -386,10 +407,10 @@
         </div>
     </div>
 
-    <link rel="stylesheet" href="../../slot-experience.css?v=1.20.8&amp;build=20261019-diamond-values-v3">
+    <link rel="stylesheet" href="../../slot-experience.css?v=1.20.8&amp;build=20261019-info-guide-v4">
     <script src="../../interaction-lock.js?build=20260808-no-double-tap"></script>
-    <script src="../../slot-experience.js?v=1.20.17&amp;build=20261019-diamond-values-v3"></script>
-    <script src="main.js?v=1.4.2&amp;build=20261019-diamond-values-v3"></script>
+    <script src="../../slot-experience.js?v=1.20.17&amp;build=20261019-info-guide-v4"></script>
+    <script src="main.js?v=1.4.2&amp;build=20261019-info-guide-v4"></script>
 </body>
 
 </html>

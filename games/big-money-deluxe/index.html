@@ -248,7 +248,7 @@
             <div class="overlay-content">
                 <div class="overlay-nav" aria-label="Overlay pages">
                     <button id="overlayPrev" type="button" class="overlay-arrow" aria-label="Previous page">&#8592;</button>
-                    <span id="overlayPageLabel" class="overlay-page-label" aria-live="polite">Page 1 of 2</span>
+                    <span id="overlayPageLabel" class="overlay-page-label" aria-live="polite">Page 1 of 3</span>
                     <button id="overlayNext" type="button" class="overlay-arrow" aria-label="Next page">&#8594;</button>
                 </div>
 
@@ -259,11 +259,11 @@
                     <p>During a spin, the reels show dollar chips only. A winning spin finishes with one animated chip for each winning line, labeled with that line's dollar payout. Payouts that land in the same position are combined.</p>
                     <p>A losing spin finishes with all reel positions blank.</p>
                     <p>Jackpots use a shared event that is independent from regular Win Odds. The highest selected Jackpot Odds value sets the chance that at least one jackpot occurs, while each tier retains its selected chance and multiple tiers can be awarded together. When every tier is set to 1%, the overall jackpot chance is 1% per spin. Regular wins never display jackpot chips.</p>
-                    <p>Fixed awards are Mini ($10), Minor ($100), Major ($1,000), and Grand ($10,000). Jackpot awards do not change with the bet or denomination. Each successful roll displays its own colored chip with the jackpot name and amount.</p>
+                    <p>Mini, Minor, Major, and Grand use the amounts shown above the reels. Settings lets you change their base amounts and enable or disable bet scaling. Multiplier mode scales with the total bet; increment mode adjusts by the configured amount per bet step relative to the reference bet. Amounts may decrease below the reference bet and are capped at 3,000,000. Denomination is already included in total bet and is not applied a second time.</p>
                     <h4>Free Spins and Bonus Plays</h4>
                     <p id="featureOddsRules">Free Spins and Bonus Plays settings are loading.</p>
                     <p>Free spins cost no credits and retain the denomination, active lines, and bet per line from the paid spin that awarded them. Their payouts are added to Available Credits. Free spins cannot retrigger either feature.</p>
-                    <p>Six BONUS symbols anywhere on the reels in one paid spin open either the Big Money Wheel (50%) or Match &amp; Win (50%). Each wheel wedge has an equal chance. Match &amp; Win always contains a three-card jackpot match; its guaranteed tier is selected by the relative Jackpot Odds settings, so Mini is normally most common.</p>
+                    <p>Six BONUS symbols anywhere on the reels in one paid spin trigger one of three equally likely games: the bonus wheel, Match &amp; Win, or Diamond Collector. Buy Bonus also lets you choose a game directly or select Random. Match &amp; Win has nine hidden cards with one guaranteed three-card jackpot match; reveal cards until three match. Relative Jackpot Odds settings select the guaranteed tier, and the award uses the configured jackpot value for the feature wager.</p>
                     <h4>Settings Guide</h4>
                     <p class="overlay-note"><strong>Session Stats Display:</strong> Chooses which stat boxes are visible (regular session totals, Net totals, or Actual Net totals).</p>
                     <p class="overlay-note"><strong>Winnings Only / Losses Only:</strong> Shows only regular session winnings or regular session losses.</p>
@@ -280,7 +280,7 @@
                     <p class="overlay-note"><strong>Win Odds:</strong> Sets the target chance that a spin resolves as a win. Winning payout amounts still come from the paytable.</p>
                     <p class="overlay-note"><strong>Free Spins Win / Loss Ratio:</strong> Sets the independent chance that a paid spin awards free spins.</p>
                     <p class="overlay-note"><strong>Number of Free Spins Awarded:</strong> Sets how many free games are added when the feature triggers.</p>
-                    <p class="overlay-note"><strong>Bonus Plays Win / Loss Ratio:</strong> Sets the chance that a paid spin lands six BONUS symbols and opens the wheel (50%) or Match &amp; Win (50%).</p>
+                    <p class="overlay-note"><strong>Bonus Plays Win / Loss Ratio:</strong> Sets the independent chance that a paid spin lands six BONUS symbols anywhere and starts a random bonus wheel, Match &amp; Win, or Diamond Collector game. It does not change their internal rules.</p>
                     <p class="overlay-note"><strong>Bonus Plays Prizes:</strong> Sets the three equally likely wheel multiplier awards. Choose Custom to type any positive multiplier.</p>
                     <p class="overlay-note"><strong>Jackpot Odds:</strong> Each tier offers realistic preset odds shown as “1 in N spins,” plus Custom percentage controls. Custom odds clear on Reset Session or page reload.</p>
                     <p class="overlay-note"><strong>Settings:</strong> Opens the paginated settings dialog. Use Show this setting on the home screen to pin optional settings. Denomination always remains beside the Total Bet buttons.</p>
@@ -288,7 +288,7 @@
                     <p class="overlay-note"><strong>Skip Winning Highlight Delay:</strong> Removes the auto-spin pause after the winning payout chips animate.</p>
                     <p class="overlay-note"><strong>Spin:</strong> Plays one round using current settings and deducts the total bet first. On desktop, tap Spacebar for one spin or hold it for auto spin; Spacebar does not scroll the page.</p>
                     <p class="overlay-note"><strong>Time Elapsed:</strong> Tracks active play time and is hidden from the home screen by default. Pin it from Settings whenever you want it visible.</p>
-                    <p class="overlay-note"><strong>Max Bet:</strong> Sets the highest bet per line and all 10 lines by default. If Max Bet uses available credits is enabled, it keeps your current lines and denomination, ignores the Bet Per Line dropdown, and spins all available credits as one custom wager.</p>
+                    <p class="overlay-note"><strong>Max Bet:</strong> Sets the highest bet per line and all 10 lines by default. If Max Bet uses available credits is enabled, it keeps your current lines and denomination, selects all available credits as one custom wager. Press Spin to play; Max Bet does not start a spin.</p>
                     <h4>Definition: Bernoulli Trial</h4>
                     <p class="overlay-note">A Bernoulli trial is a random experiment with exactly two possible outcomes: success and failure.</p>
                     <p class="overlay-note">The probability of success, p, stays constant for each independent trial. It models binary events like coin flips, pass/fail tests, purchases, and slot win/loss outcomes.</p>
@@ -346,6 +346,25 @@
                     <p class="overlay-note">Highlighted cells represent currently active paylines.</p>
                     <div class="lines-preview lines-preview-overlay" id="linesPreviewOverlay" aria-hidden="true"></div>
                 </div>
+                <div class="overlay-section" data-info-page="2" hidden>
+                    <h4>Diamond Collector</h4>
+                    <p>Start with 10 free spins on a 2×2 board, with one diamond already collected. Every spin uses one free spin. New diamonds land randomly in empty positions and stay held; a new diamond alone does not add or reset spins.</p>
+                    <p>Collect every diamond to complete a board, bank its awards, and add 3 free spins to the spins remaining. Start a fresh board at the next size: 2×2 → 3×3 → 4×4 → 5×5. Completing a 5×5 board banks its awards, adds 3 spins, and starts another fresh 5×5 board.</p>
+                    <p>Each diamond displays its actual credit or money prize value, not a multiplier. Prize values scale with the feature wager. The bonus ends when free spins reach zero; the final award includes banked boards and held diamonds on the unfinished board. Choose Collect to finish. These spins belong to Diamond Collector and are separate from the regular reel free-spin feature.</p>
+                    <h4>Buy Bonus</h4>
+                    <p>Choose Wheel, Match &amp; Win, Diamond Collector, or Random, then a $40, $80, or $120 purchase. Their feature wagers are $0.40, $0.80, and $1.20 respectively. Random chooses equally among the three games. The cost is deducted before play. The credited award is at least 25% of the purchase cost. Purchases require enough credits and are unavailable during a spin, auto spin, or regular reel free spins. Buy Bonus can be hidden in Settings.</p>
+                    <h4>Wheel Pointers</h4>
+                    <p>Before the bonus wheel, match two cards to reveal 1, 2, or 3 pointers. Settings controls the relative chances, initially 60%, 30%, and 10%. The wheel award is the selected segment award multiplied by the pointer count. These settings do not affect Match &amp; Win or Diamond Collector.</p>
+                    <h4>Lucky Credit Wheel and Low Credits</h4>
+                    <p>After paid play leaves too few credits for the current wager, the optional Lucky Credit Wheel offers one rescue attempt. If the rescue wheel is unavailable or already used, a low-credit prompt can offer to add the shortfall and spin, or keep the current bet. Its 12 rescue-wheel wedges have individually adjustable even-percentage sizes totaling 100%; six winning wedges can award wager multiples, fixed values, or configured jackpots, and six award nothing. Wedge sizes determine their actual chances. Results remain open until closed; winning does not start another spin automatically. Reset Session restores eligibility; adding enough credits and then wagering them can rearm the rescue attempt.</p>
+                    <h4>Display, Withdrawals, and Statistics</h4>
+                    <p>Fake Money and Real Money change credit/money formatting only. All credits, prizes, and withdrawals are simulated. The optional withdrawal demo allows a simulated withdrawal after the amount played reaches the amount deposited. Overall wagered, won, lost, and net totals are saved separately from session counters.</p>
+                    <h4>Controls and Settings</h4>
+                    <p>Hold Spin or, on desktop, Spacebar to start auto spin. Use Cancel to stop auto spin. Tap Spacebar for a single spin when auto spin is off. Wager controls stay locked while a round and its features resolve. Reset Session resets the current session. Settings has page navigation and optional home-screen pins, with separate cabinet pins when the game is hosted in a casino cabinet. Denomination stays beside the quick total-bet buttons.</p>
+                    <p>Hide Empty Result Bars collapses unused result space. Skip Winning Highlight Delay shortens pauses during auto spin. Settings also controls session-stat visibility, regular win chances, free-spin chances and awards, six-BONUS trigger chances, jackpot odds and scaling, wheel pointer chances, and rescue-wheel prizes and wedge sizes. Feature games have their own rules; changing regular Win Odds does not change every feature probability.</p>
+                    <h4>Phone, Tablet, and Casino Displays</h4>
+                    <p>Bonus dialogs support narrow screens, landscape scrolling, safe-area spacing, and touch controls, both directly and inside the casino game frame. Scroll inside a dialog to reach content or actions on short screens. Use the casino header to return to the library or collapse the header for more game space.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -369,10 +388,10 @@
         </div>
     </div>
 
-    <link rel="stylesheet" href="../../slot-experience.css?v=1.20.8&amp;build=20261019-diamond-values-v3">
+    <link rel="stylesheet" href="../../slot-experience.css?v=1.20.8&amp;build=20261019-info-guide-v4">
     <script src="../../interaction-lock.js?build=20260808-no-double-tap"></script>
-    <script src="../../slot-experience.js?v=1.20.17&amp;build=20261019-diamond-values-v3"></script>
-    <script src="main.js?v=1.4.2&amp;build=20261019-diamond-values-v3"></script>
+    <script src="../../slot-experience.js?v=1.20.17&amp;build=20261019-info-guide-v4"></script>
+    <script src="main.js?v=1.4.2&amp;build=20261019-info-guide-v4"></script>
 </body>
 
 </html>

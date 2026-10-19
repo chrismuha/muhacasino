@@ -538,7 +538,7 @@ function updateFeatureRules() {
     const freeRate = getFeatureRate(freeSpinsOddsEl, 0.03);
     const bonusRate = getFeatureRate(bonusGameOddsEl, 0.01);
     const prizes = getBonusPrizeMultipliers().map((value) => `${value}x`).join(", ");
-    featureOddsRulesEl.textContent = `With the current settings, each paid spin independently has a ${(freeRate * 100).toFixed(0)}% win / ${((1 - freeRate) * 100).toFixed(0)}% loss chance to award ${getFreeSpinsAward()} free spins, and a ${(bonusRate * 100).toFixed(0)}% win / ${((1 - bonusRate) * 100).toFixed(0)}% loss chance to open Bonus Plays. Six BONUS symbols anywhere on the reels open the wheel (50%) or Match & Win (50%). The three equally likely wheel prizes are ${prizes} the triggering bet.`;
+    featureOddsRulesEl.textContent = `With the current settings, each paid spin independently has a ${(freeRate * 100).toFixed(0)}% win / ${((1 - freeRate) * 100).toFixed(0)}% loss chance to award ${getFreeSpinsAward()} free spins, and a ${(bonusRate * 100).toFixed(0)}% win / ${((1 - bonusRate) * 100).toFixed(0)}% loss chance to open Bonus Plays. Six BONUS symbols anywhere on the reels choose equally among the bonus wheel, Match & Win, and Diamond Collector. The three equally likely wheel prizes are ${prizes} the triggering bet.`;
 }
 
 function setupFeatureUI() {

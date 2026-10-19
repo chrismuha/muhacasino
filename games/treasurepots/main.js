@@ -513,7 +513,7 @@ function updateFeatureRules() {
     const linkTeaserRate = linkSettings.teaserChance / 100;
     const wager = getActiveTotalBetUSD();
     const jackpotAwards = JACKPOT_TIERS.map((tier) => `${tier.name} ${fmtUSD(getScaledJackpotAmount(tier, wager))}`).join(", ");
-    featureOddsRulesEl.textContent = `With the current settings, each paid spin has a ${(freeRate * 100).toFixed(0)}% chance to land 3–5 SCATTER chests and award ${getFreeSpinsAward()} free spins, a ${(bonusRate * 100).toFixed(0)}% chance to land six BONUS symbols anywhere and open the wheel (50%) or Match & Win (50%), and a ${(gemHoldRate * 100).toFixed(0)}% chance to trigger the three-spin Emerald Hold & Win Wild feature. Eligible winning spins have a ${(linkWinRate * 100).toFixed(0)}% chance to form a winning LINK chain; other spins have a ${(linkTeaserRate * 100).toFixed(0)}% chance to show a non-paying Not Connected chain. Wheel jackpot outcomes are ${jackpotAwards}.`;
+    featureOddsRulesEl.textContent = `With the current settings, each paid spin has a ${(freeRate * 100).toFixed(0)}% chance to land 3–5 SCATTER chests and award ${getFreeSpinsAward()} free spins, a ${(bonusRate * 100).toFixed(0)}% chance to land six BONUS symbols anywhere and choose equally among the bonus wheel, Match & Win, and Diamond Collector, and a ${(gemHoldRate * 100).toFixed(0)}% chance to trigger the three-spin Emerald Hold & Win Wild feature. Eligible winning spins have a ${(linkWinRate * 100).toFixed(0)}% chance to form a winning LINK chain; other spins have a ${(linkTeaserRate * 100).toFixed(0)}% chance to show a non-paying Not Connected chain. Wheel jackpot outcomes are ${jackpotAwards}.`;
 }
 
 function setupFeatureUI() {
