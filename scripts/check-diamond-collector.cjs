@@ -21,6 +21,7 @@ function setup(random) {
     const dry = setup(() => 0.99);
     const result = dry.context.playDiamondCollector(2);
     assert.equal(dry.state.interactionLocked, true);
+    assert.equal(dry.nodes['.diamond-collector-board'].children[0].textContent, "◆ 2", "Diamonds display their actual award value");
     for (let i = 0; i < 9; i++) dry.button().onclick();
     assert.equal(dry.button().textContent, "Free Spin");
     assert.match(dry.nodes['.diamond-collector-status'].textContent, /1 free spins left/);

@@ -799,17 +799,18 @@
         let size = 2;
         let freeSpins = 10;
         let banked = 0;
-        let cells = [1, 0, 0, 0];
+        const diamondValue = (weight) => Math.max(0.01, Math.round(weight * wager * 100) / 100);
+        let cells = [diamondValue(1), 0, 0, 0];
         let complete = false;
         const sum = () => cells.reduce((value, cell) => value + cell, 0);
-        const award = () => Math.round((banked + sum()) * wager * 100) / 100;
+        const award = () => Math.round((banked + sum()) * 100) / 100;
         const render = (message = "") => {
             board.style.setProperty("--diamond-size", size);
             board.replaceChildren(...cells.map((value) => {
                 const cell = document.createElement("div");
                 cell.className = `diamond-collector-cell${value ? " is-held" : ""}`;
-                cell.textContent = value ? `◆ ${value}×` : "·";
-                cell.setAttribute("aria-label", value ? `Held diamond, ${value} times wager` : "Empty space");
+                cell.textContent = value ? `◆ ${formatAmount(value)}` : "·";
+                cell.setAttribute("aria-label", value ? `Held diamond worth ${formatAmount(value)}` : "Empty space");
                 return cell;
             }));
             status.textContent = `${message}${size}×${size} board · ${freeSpins} free spins left`;
@@ -843,7 +844,7 @@
                 cells = cells.map((value) => {
                     if (value || Math.random() >= 0.28) return value;
                     landed = true;
-                    return [1, 2, 3, 5, 10][Math.floor(Math.random() * 5)];
+                    return diamondValue([1, 2, 3, 5, 10][Math.floor(Math.random() * 5)]);
                 });
                 let message = landed ? "New diamonds! " : "No new diamonds. ";
                 if (cells.every(Boolean)) {
