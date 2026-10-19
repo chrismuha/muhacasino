@@ -692,6 +692,8 @@ function createCell(symbol, isWinning = false) {
 }
 
 function resolveJackpotWins() {
+    const scheduled = window.slotExperience?.resolveScheduledJackpots(JACKPOT_TIERS, getActiveTotalBetUSD());
+    if (scheduled !== null && scheduled !== undefined) return scheduled;
     const jackpotTiers = JACKPOT_TIERS.map((tier) => ({
         tier,
         rate: getTargetJackpotRate(tier)
@@ -704,6 +706,7 @@ function resolveJackpotWins() {
 }
 
 function resolveJackpotTeasers(jackpotWins) {
+    if (window.slotExperience?.isJackpotScheduleEnabled()) return [];
     if (jackpotWins.length > 0 || Math.random() >= JACKPOT_TEASER_RATE) return [];
     const teaserCount = Math.random() < 0.1 ? 2 : 1;
     const shuffledTiers = [...JACKPOT_TIERS].sort(() => Math.random() - 0.5);
@@ -901,7 +904,9 @@ function updateGameOddsDisplay() {
 
     casinoAdvantageTextEl.textContent =
         `Configured spin resolution: win ${fmtPercent(targetSpinWinRate)}, loss ${fmtPercent(1 - targetSpinWinRate)}. ` +
-        `Independent jackpot chances: ${jackpotOddsText}. Multiple jackpots and a regular win can occur together.`;
+        (window.slotExperience?.isJackpotScheduleEnabled()
+            ? "Reel jackpots use guaranteed paid-wager thresholds instead of random odds. See Jackpot Wager Thresholds in Settings; bonus jackpot prizes keep their own rules."
+            : `Independent jackpot chances: ${jackpotOddsText}. Multiple jackpots and a regular win can occur together.`);
 
     winLossOddsTextEl.textContent =
         `Current ${linesActive}-line paytable model: per-line win ${fmtPercent(lineWinProb)} (${fmtOneIn(lineWinProb)}), ` +
@@ -1131,6 +1136,7 @@ function getSettingsDefinitions() {
         { key: "elapsedTime", title: "Time Elapsed", element: autoSpinElapsedEl },
         { key: "creditsInserted", title: "Money Added / Credits Inserted", element: creditsInsertedEl?.closest(".stat") },
         { key: "winOdds", title: "Regular Win Odds", element: winOddsEl?.closest(".select") },
+        { key: "jackpotSchedule", title: "Jackpot Wager Thresholds", element: document.querySelector(".jackpot-schedule-setting") },
         { key: "jackpotAmounts", title: "Jackpot Amounts", element: document.querySelector(".jackpot-amounts-setting") },
         { key: "jackpotScaling", title: "Jackpot Bet Scaling", element: document.querySelector(".jackpot-scaling-setting") },
         ...JACKPOT_TIERS.map((tier) => ({
@@ -1710,7 +1716,7 @@ async function doSpin(options = {}) {
         updateFeatureStatus();
     } else {
         balance = clampBalanceUSD(balance - totalBetUSD);
-        window.slotExperience?.recordPlay(totalBetUSD);
+        window.slotExperience?.recordPlay(totalBetUSD, { jackpotEligible: true });
     }
     updateTotals();
 
@@ -1759,7 +1765,7 @@ async function doSpin(options = {}) {
 
         const linesText = lineWins
             .map(w => `Line ${w.lineIndex}: ${w.symbol} × ${w.count} → ${fmtUSD(w.winUSD)}`)
-            .concat(jackpotWins.map((jackpot) => `${jackpot.name.toUpperCase()} JACKPOT → ${fmtUSD(jackpot.amountUSD)}`))
+            .concat(jackpotWins.map((jackpot) => `${jackpot.name.toUpperCase()} JACKPOT${jackpot.hitCount > 1 ? ` ×${jackpot.hitCount}` : ""} → ${fmtUSD(jackpot.amountUSD)}`))
             .concat(bonusWinUSD ? [`BONUS × ${bonusResult.count} → ${fmtUSD(bonusWinUSD)}`] : [])
             .concat(freeSpinsTriggered ? [`${freeSpinsAwarded} FREE SPINS AWARDED`] : [])
             .join(" • ");

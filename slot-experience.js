@@ -28,6 +28,53 @@
         }
         return normalized;
     }
+    const jackpotScheduleDefaults = { mini: 10, minor: 100, major: 1000, grand: 25000 };
+
+    function thresholdCents(value, fallback) {
+        const amount = Number(value);
+        return Math.round(Math.max(0.01, Math.min(1_000_000_000,
+            Number.isFinite(amount) && amount > 0 ? amount : fallback)) * 100);
+    }
+
+    function normalizeJackpotSchedule(saved = {}) {
+        return {
+            enabled: saved.enabled === true,
+            tiers: Object.fromEntries(Object.entries(jackpotScheduleDefaults).map(([name, fallback]) => {
+                const tier = saved.tiers?.[name] || {};
+                return [name, {
+                    enabled: tier.enabled !== false,
+                    firstCents: thresholdCents(Number(tier.firstCents) / 100, fallback),
+                    repeatCents: thresholdCents(Number(tier.repeatCents) / 100, fallback),
+                    spentCents: Math.max(0, Math.min(Number.MAX_SAFE_INTEGER, Math.floor(Number(tier.spentCents) || 0))),
+                    hitCount: Math.max(0, Math.floor(Number(tier.hitCount) || 0)),
+                    pendingCount: Math.max(0, Math.floor(Number(tier.pendingCount) || 0)),
+                }];
+            })),
+        };
+    }
+
+    // All accounting uses integer cents so repeated small wagers hit exactly.
+    function advanceJackpotSchedule(schedule, amount) {
+        if (!schedule.enabled || !Number.isFinite(amount) || amount <= 0) return;
+        const cents = Math.round(amount * 100);
+        Object.values(schedule.tiers).forEach((tier) => {
+            if (!tier.enabled) return;
+            tier.spentCents = Math.min(Number.MAX_SAFE_INTEGER, tier.spentCents + cents);
+            const earned = tier.spentCents < tier.firstCents ? 0
+                : 1 + Math.floor((tier.spentCents - tier.firstCents) / tier.repeatCents);
+            tier.pendingCount += Math.max(0, earned - tier.hitCount);
+            tier.hitCount = earned;
+        });
+    }
+
+    function resetJackpotScheduleProgress(schedule) {
+        Object.values(schedule.tiers).forEach((tier) => {
+            tier.spentCents = 0;
+            tier.hitCount = 0;
+            tier.pendingCount = 0;
+        });
+    }
+
     const state = {
         displayMode: "credits",
         withdrawalDemo: false,
@@ -48,6 +95,7 @@
         played: 0,
         balance: 100,
         jackpots: null,
+        jackpotSchedule: normalizeJackpotSchedule(),
         interactionLocked: false,
     };
 
@@ -85,6 +133,7 @@
         state.revealDoorRows = Array.isArray(saved.revealDoorRows)
             ? [...new Set(saved.revealDoorRows.map(Number).filter((row) => Number.isInteger(row) && row >= 0 && row < 5))]
             : [0, 1, 2, 3, 4];
+        state.jackpotSchedule = normalizeJackpotSchedule(saved.jackpotSchedule);
         state.jackpots = saved.jackpots && typeof saved.jackpots === "object" ? saved.jackpots : null;
         state.linkChips = { ...state.linkChips, ...(saved.linkChips || {}) };
         state.lifetimeWagered = Math.max(0, Number(saved.lifetimeWagered) || 0);
@@ -137,6 +186,7 @@
                 revealDoors: state.revealDoors,
                 revealDoorRows: state.revealDoorRows,
                 jackpots: state.jackpots,
+                jackpotSchedule: state.jackpotSchedule,
             }));
         } catch {  }
     }
@@ -428,6 +478,20 @@
                     ${state.wheelPrizes.map(wheelPrizeEditor).join("")}
                 </div>
                 <small>Configure the six winning wedge awards here. The individual wedge-size controls above determine both each wedge's visible size and exact landing chance.</small>
+            </div>
+            <div class="jackpot-config-setting jackpot-schedule-setting">
+                <strong>Jackpot wager thresholds</strong>
+                <label class="jackpot-schedule-toggle"><input id="jackpotScheduleEnabled" type="checkbox"><span>Trigger reel jackpots by total paid wagers</span></label>
+                <p class="overlay-note">Off: normal random reel jackpots. On: guaranteed jackpots at the thresholds below, independent of wins or losses. Counts paid reel wagers only; deposits, free spins, and Buy Bonus costs do not count. Prizes still use Jackpot Amounts and Bet Scaling. Bonus-game jackpot prizes keep their own rules. A tier switched off here does not pay reel jackpots while threshold mode is on.</p>
+                <p class="overlay-note">First hit is the amount wagered before the first payout. Repeat interval is the additional amount wagered between later payouts. Example: first $10, then every additional $25,000. Enabling starts from the saved progress, without counting earlier wagers. Turning off pauses progress. Editing an amount restarts that tier’s progress; Reset Session clears all progress. Progress and settings are saved separately for each slot.</p>
+                <div class="jackpot-schedule-tiers">
+                    ${Object.entries(jackpotScheduleDefaults).map(([name]) => `<fieldset class="jackpot-schedule-tier"><legend>${name[0].toUpperCase() + name.slice(1)}</legend>
+                        <label class="jackpot-schedule-toggle"><input type="checkbox" data-schedule-tier="${name}"><span>Schedule ${name} jackpot</span></label>
+                        <label>First hit after ($ wagered)<input type="number" min="0.01" max="1000000000" step="0.01" inputmode="decimal" data-schedule-first="${name}" aria-label="${name} first jackpot wager threshold"></label>
+                        <label>Repeat every additional ($ wagered)<input type="number" min="0.01" max="1000000000" step="0.01" inputmode="decimal" data-schedule-repeat="${name}" aria-label="${name} repeat jackpot wager interval"></label>
+                        <p class="jackpot-schedule-progress" data-schedule-progress="${name}"></p>
+                    </fieldset>`).join("")}
+                </div>
             </div>
             <div class="jackpot-config-setting jackpot-amounts-setting">
                 <strong>Jackpot amounts</strong>
@@ -741,6 +805,32 @@
                 window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
             });
         });
+        syncJackpotScheduleUi();
+        document.querySelectorAll(".jackpot-schedule-setting input").forEach((input) => {
+            const commitScheduleInput = () => {
+                if (state.interactionLocked) { syncJackpotScheduleUi(); return; }
+                const schedule = state.jackpotSchedule;
+                if (input.id === "jackpotScheduleEnabled") schedule.enabled = input.checked;
+                else if (input.dataset.scheduleTier) schedule.tiers[input.dataset.scheduleTier].enabled = input.checked;
+                else {
+                    const name = input.dataset.scheduleFirst || input.dataset.scheduleRepeat;
+                    const tier = schedule.tiers[name];
+                    const key = input.dataset.scheduleFirst ? "firstCents" : "repeatCents";
+                    const nextValue = thresholdCents(input.value, tier[key] / 100);
+                    if (nextValue !== tier[key]) {
+                        tier[key] = nextValue;
+                        tier.spentCents = 0;
+                        tier.hitCount = 0;
+                        tier.pendingCount = 0;
+                    }
+                }
+                syncJackpotScheduleUi();
+                save();
+                window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
+            };
+            input.addEventListener("change", commitScheduleInput);
+            input.addEventListener("blur", commitScheduleInput);
+        });
         withdrawalButton.addEventListener("click", () => {
             updateMoneyUi();
             document.getElementById("withdrawalOverlay").hidden = false;
@@ -858,6 +948,42 @@
                 render(message);
             };
         });
+    }
+
+    function formatThresholdMoney(cents) {
+        return `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    function syncJackpotScheduleUi() {
+        const root = document.querySelector(".jackpot-schedule-setting");
+        if (!root) return;
+        const schedule = state.jackpotSchedule;
+        document.getElementById("jackpotScheduleEnabled").checked = schedule.enabled;
+        root.querySelectorAll("input").forEach((input) => { input.disabled = state.interactionLocked; });
+        Object.entries(schedule.tiers).forEach(([name, tier]) => {
+            root.querySelector(`[data-schedule-tier="${name}"]`).checked = tier.enabled;
+            root.querySelector(`[data-schedule-first="${name}"]`).value = String(tier.firstCents / 100);
+            root.querySelector(`[data-schedule-repeat="${name}"]`).value = String(tier.repeatCents / 100);
+            const next = tier.hitCount === 0 ? tier.firstCents : tier.firstCents + tier.hitCount * tier.repeatCents;
+            root.querySelector(`[data-schedule-progress="${name}"]`).textContent =
+                `${schedule.enabled && tier.enabled ? "Counting" : "Paused"} · Wagered ${formatThresholdMoney(tier.spentCents)} · Next at ${formatThresholdMoney(next)} · ${formatThresholdMoney(Math.max(0, next - tier.spentCents))} remaining · ${tier.hitCount} hit(s)`;
+        });
+    }
+
+    function resolveScheduledJackpots(tiers, wager) {
+        if (!state.jackpotSchedule.enabled) return null;
+        const awards = [];
+        tiers.forEach((tier) => {
+            const scheduled = state.jackpotSchedule.tiers[tier.name.toLowerCase()];
+            if (!scheduled?.enabled || scheduled.pendingCount === 0) return;
+            const hitCount = scheduled.pendingCount;
+            scheduled.pendingCount = 0;
+            const perHit = getConfiguredJackpotAmount(tier.name.toLowerCase(), wager, 0.01, tier.amountUSD);
+            awards.push({ ...tier, amountUSD: Math.round(perHit * hitCount * 100) / 100, hitCount });
+        });
+        save();
+        syncJackpotScheduleUi();
+        return awards;
     }
 
     function getBonusBuyOptions() {
@@ -1354,6 +1480,7 @@
             const next = Boolean(locked);
             if (state.interactionLocked === next) return;
             state.interactionLocked = next;
+            syncJackpotScheduleUi();
             updateBonusBuyButton();
             window.parent.postMessage({ type: "muha-slot-interaction-lock", locked: next }, window.location.origin);
         },
@@ -1390,6 +1517,8 @@
         getJackpotAmount(tier, wager, denomination = 0.01) {
             return getConfiguredJackpotAmount(tier.name.toLowerCase(), wager, denomination, tier.amountUSD);
         },
+        resolveScheduledJackpots,
+        isJackpotScheduleEnabled: () => state.jackpotSchedule.enabled,
         playDiamondCollector,
         offerLuckyWheel,
         spinWheel,
@@ -1407,9 +1536,13 @@
             }
             updateMoneyUi();
         },
-        recordPlay(amount) {
+        recordPlay(amount, { jackpotEligible = false } = {}) {
             if (amount > 0) {
                 state.played += amount;
+                if (jackpotEligible) {
+                    advanceJackpotSchedule(state.jackpotSchedule, amount);
+                    syncJackpotScheduleUi();
+                }
                 state.lifetimeWagered += amount;
                 if (luckyWheelUsed && rescueRearmCredits + 0.0001 >= amount) {
                     luckyWheelUsed = false;
@@ -1428,6 +1561,6 @@
             save();
         },
         setBalance(amount) { state.balance = Math.max(0, Number(amount) || 0); updateMoneyUi(); updateBonusBuyButton(); },
-        reset(balance = 100) { state.deposited = balance; state.played = 0; state.balance = balance; luckyWheelUsed = false; rescueRearmCredits = 0; updateMoneyUi(); },
+        reset(balance = 100) { resetJackpotScheduleProgress(state.jackpotSchedule); syncJackpotScheduleUi(); save(); state.deposited = balance; state.played = 0; state.balance = balance; luckyWheelUsed = false; rescueRearmCredits = 0; updateMoneyUi(); },
     };
 })();
