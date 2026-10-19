@@ -28,13 +28,23 @@ async function check(game) {
     }
     context.playWheelBonusGame = bet => ['wheel', bet];
     context.playMatchAndWinBonus = bet => ['match', bet];
+    context.window = { slotExperience: { playDiamondCollector: bet => Promise.resolve(bet * 10) } };
     vm.runInContext(extract(source, 'playBonusGame'), context);
     assert.deepEqual(context.playBonusGame(2.5, 'wheel'), ['wheel', 2.5]);
     assert.deepEqual(context.playBonusGame(2.5, 'match'), ['match', 2.5]);
-    for (const [roll, expected] of [[0, 'wheel'], [0.499999, 'wheel'], [0.5, 'match'], [0.999999, 'match']]) {
+    const objectAward = game === 'pretty-penny' || game === 'treasurepots';
+    const checkDiamonds = async () => {
+        const outcome = await context.playBonusGame(2.5, 'diamonds');
+        assert.equal(objectAward ? outcome.winUSD : outcome, 25);
+    };
+    await checkDiamonds();
+    for (const [roll, expected] of [[0, 'wheel'], [0.33332, 'wheel'], [0.33334, 'match'], [0.66665, 'match']]) {
         context.Math.random = () => roll;
         assert.deepEqual(context.playBonusGame(2.5), [expected, 2.5]);
     }
+    context.Math.random = () => 0.999999;
+    const randomDiamond = await context.playBonusGame(2.5);
+    assert.equal(objectAward ? randomDiamond.winUSD : randomDiamond, 25);
     if (game !== 'big-money-deluxe') {
         context.renderGrid = grid => { context.displayed = grid; };
         vm.runInContext(extract(source, 'renderOutcomeGrid'), context);
@@ -92,7 +102,7 @@ async function check(game) {
     assert.match(source, /button\.addEventListener\("pointerdown".*revealCard/, 'Match & Win cards must reveal immediately on pointer down for rapid tapping');
     assert.match(extract(source, 'updateTotals'), /updateJackpotDisplay/, 'Every slot must refresh scaled jackpots when the bet changes');
     assert.doesNotMatch(source, /playPickBonusGame|addBonusChipWin\(grid, linesActive\)/);
-    console.log(`${game}: six symbols, feature preservation, 50/50 selection, and payouts passed`);
+    console.log(`${game}: six symbols, feature preservation, three-way selection, and payouts passed`);
 }
 (async () => {
     for (const game of ['pretty-penny', 'treasurepots', 'neon-slots', 'big-money-deluxe']) await check(game);

@@ -598,9 +598,11 @@ async function playWheelBonusGame(totalBetUSD) {
 }
 
 function playBonusGame(totalBetUSD, choice = "random") {
+    if (choice === "diamonds") return window.slotExperience.playDiamondCollector(totalBetUSD);
     if (choice === "wheel") return playWheelBonusGame(totalBetUSD);
     if (choice === "match") return playMatchAndWinBonus(totalBetUSD);
-    return Math.random() < 0.5 ? playWheelBonusGame(totalBetUSD) : playMatchAndWinBonus(totalBetUSD);
+    const bonuses = ["wheel", "match", "diamonds"];
+    return playBonusGame(totalBetUSD, bonuses[Math.floor(Math.random() * bonuses.length)]);
 }
 
 async function buyInstantBonus(option = {}) {

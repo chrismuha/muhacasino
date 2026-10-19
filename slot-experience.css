@@ -1503,3 +1503,65 @@ body.cabinet-game-surface .reels :is(.link-chain-icon, .link-meter-icon, .hold-c
   align-self: start;
   font-size: clamp(10px, 2.7vw, 14px) !important;
 }
+
+.buy-bonus-types { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.diamond-collector-overlay { z-index: 10000; }
+.diamond-collector-panel { width: min(520px, 94vw); max-height: 94dvh; overflow: auto; text-align: center; }
+.diamond-collector-panel > p { line-height: 1.5; }
+.diamond-collector-status { margin: .75rem 0; min-height: 2.5em; color: #a5edff; }
+.diamond-collector-board { display: grid; grid-template-columns: repeat(var(--diamond-size), minmax(0, 1fr)); gap: .4rem; width: min(100%, 360px); margin: auto; }
+.diamond-collector-cell { display: grid; place-items: center; aspect-ratio: 1; border: 1px solid #496475; border-radius: .6rem; background: #102736; color: #829baa; font-size: clamp(.75rem, 3vw, 1.3rem); }
+.diamond-collector-cell.is-held { color: #d6faff; border-color: #60d9fa; background: linear-gradient(145deg, #155e79, #132b51); box-shadow: inset 0 0 12px #53d9ff44; font-weight: 800; }
+.diamond-collector-total { font-size: 1.2rem; font-weight: 800; }
+.diamond-collector-spin { min-width: 180px; min-height: 48px; }
+
+/* Shared dialogs must remain reachable in phones, landscape, and casino iframes. */
+:is(.slot-experience-overlay, .diamond-collector-overlay, .wheel-pointer-pick-overlay),
+.feature-overlay:has(.match-win-dialog) {
+  box-sizing: border-box;
+  padding: max(8px, env(safe-area-inset-top, 0px)) max(8px, env(safe-area-inset-right, 0px)) max(8px, env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+:is(.slot-experience-panel, .wheel-pointer-pick-panel, .match-win-dialog) {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  max-height: calc(100dvh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  overflow-wrap: anywhere;
+}
+.buy-bonus-panel { height: auto; overflow-y: auto; }
+.buy-bonus-types button, .buy-bonus-option, .buy-bonus-confirm,
+.slot-experience-panel .overlay-close { min-height: 44px; min-width: 0; touch-action: manipulation; }
+.wheel-pointer-pick-panel { overflow-y: auto !important; }
+.wheel-pointer-pick-grid { flex-shrink: 0; }
+.match-win-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); min-width: 0; }
+.match-win-grid button { min-width: 0; overflow-wrap: anywhere; touch-action: manipulation; }
+.diamond-collector-panel { height: auto; background: #102030; color: #eefaff; }
+.diamond-collector-panel > h3 { color: inherit; }
+.diamond-collector-panel > p { margin-block: .6rem; }
+.diamond-collector-spin { max-width: 100%; touch-action: manipulation; }
+@media (max-height: 500px) {
+  .diamond-collector-board { width: min(100%, 240px); }
+  .diamond-collector-panel { padding: 12px; }
+  .diamond-collector-status { min-height: 0; margin-block: .4rem; }
+  .match-win-dialog { padding: 12px; }
+  .match-win-grid { gap: 6px; margin-block: 10px; }
+  .match-win-grid button { min-height: 52px; }
+  .wheel-pointer-pick-grid { width: min(100%, 360px); }
+}
+@media (max-width: 380px) {
+  .buy-bonus-panel { padding: 12px; }
+  .buy-bonus-types button { font-size: .85rem; }
+  .diamond-collector-board { gap: .25rem; }
+}
+/* Constrain the overlay grid track itself when a vertical scrollbar is present. */
+:is(.slot-experience-overlay, .diamond-collector-overlay, .wheel-pointer-pick-overlay),
+.feature-overlay:has(.match-win-dialog) {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+}
+.diamond-collector-panel { width: min(520px, 100%); }

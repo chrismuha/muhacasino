@@ -556,6 +556,7 @@
                     <div id="buyBonusTypes" class="buy-bonus-types" role="group" aria-label="Choose bonus game">
                         <button type="button" data-bonus-type="wheel">Wheel</button>
                         <button type="button" data-bonus-type="match">Match &amp; Win</button>
+                        <button type="button" data-bonus-type="diamonds">Diamond Collector</button>
                         <button type="button" data-bonus-type="random">Random</button>
                     </div>
                     <div id="buyBonusOptions" class="buy-bonus-options"></div>
@@ -770,6 +771,93 @@
     let luckyWheelUsed = false;
     let rescueRearmCredits = 0;
     let bonusBuyConfig = null;
+
+    // One shared feature keeps board rules and awards consistent across every slot.
+    function playDiamondCollector(totalBetUSD) {
+        const wager = Math.max(0.01, Number(totalBetUSD) || 0.01);
+        const previousFocus = document.activeElement;
+        const wasLocked = state.interactionLocked;
+        const overlay = document.createElement("div");
+        overlay.className = "overlay diamond-collector-overlay";
+        overlay.setAttribute("role", "dialog");
+        overlay.setAttribute("aria-modal", "true");
+        overlay.setAttribute("aria-labelledby", "diamondCollectorTitle");
+        overlay.innerHTML = `<div class="overlay-panel slot-experience-panel diamond-collector-panel">
+            <h3 id="diamondCollectorTitle">◆ Diamond Collector</h3>
+            <p>Fill the board to grow: 2×2 → 3×3 → 4×4 → 5×5. Diamonds stay held until the board fills. Start with 10 free spins. Every spin uses one. A full board banks its awards and adds 3 free spins on a new board. The bonus ends when your free spins run out. At 5×5, full boards restart at 5×5.</p>
+            <div class="diamond-collector-status" role="status" aria-live="polite"></div>
+            <div class="diamond-collector-board" aria-label="Diamond collection board"></div>
+            <p class="diamond-collector-total"></p>
+            <button type="button" class="diamond-collector-spin">Free Spin</button>
+        </div>`;
+        document.body.appendChild(overlay);
+        window.slotExperience.setInteractionLocked(true);
+        const board = overlay.querySelector(".diamond-collector-board");
+        const status = overlay.querySelector(".diamond-collector-status");
+        const total = overlay.querySelector(".diamond-collector-total");
+        const button = overlay.querySelector("button");
+        let size = 2;
+        let freeSpins = 10;
+        let banked = 0;
+        let cells = [1, 0, 0, 0];
+        let complete = false;
+        const sum = () => cells.reduce((value, cell) => value + cell, 0);
+        const award = () => Math.round((banked + sum()) * wager * 100) / 100;
+        const render = (message = "") => {
+            board.style.setProperty("--diamond-size", size);
+            board.replaceChildren(...cells.map((value) => {
+                const cell = document.createElement("div");
+                cell.className = `diamond-collector-cell${value ? " is-held" : ""}`;
+                cell.textContent = value ? `◆ ${value}×` : "·";
+                cell.setAttribute("aria-label", value ? `Held diamond, ${value} times wager` : "Empty space");
+                return cell;
+            }));
+            status.textContent = `${message}${size}×${size} board · ${freeSpins} free spins left`;
+            total.textContent = `Collected: ${formatAmount(award())}`;
+            button.textContent = complete ? `Collect ${formatAmount(award())}` : "Free Spin";
+        };
+        render();
+        button.focus();
+        return new Promise((resolve) => {
+            // Keep keyboard play within the active feature, including embedded cabinets.
+            const handleKey = (event) => {
+                if (event.key === "Tab") { event.preventDefault(); button.focus(); }
+                else if (event.key === "Escape") { event.preventDefault(); event.stopImmediatePropagation(); }
+                else if (event.key === " " || event.key === "Enter") {
+                    event.preventDefault(); event.stopImmediatePropagation(); button.click();
+                }
+            };
+            document.addEventListener("keydown", handleKey, true);
+            button.onclick = () => {
+                if (complete) {
+                    const winUSD = award();
+                    document.removeEventListener("keydown", handleKey, true);
+                    overlay.remove();
+                    window.slotExperience.setInteractionLocked(wasLocked);
+                    previousFocus?.focus();
+                    resolve(winUSD);
+                    return;
+                }
+                freeSpins -= 1;
+                let landed = false;
+                cells = cells.map((value) => {
+                    if (value || Math.random() >= 0.28) return value;
+                    landed = true;
+                    return [1, 2, 3, 5, 10][Math.floor(Math.random() * 5)];
+                });
+                let message = landed ? "New diamonds! " : "No new diamonds. ";
+                if (cells.every(Boolean)) {
+                    banked += sum();
+                    size = Math.min(5, size + 1);
+                    cells = Array(size * size).fill(0);
+                    freeSpins += 3;
+                    message = "Board complete! Awards banked. Fresh board + 3 free spins. ";
+                }
+                if (freeSpins === 0) { complete = true; message = "Bonus game over! "; }
+                render(message);
+            };
+        });
+    }
 
     function getBonusBuyOptions() {
         const configured = bonusBuyConfig?.getOptions?.();
@@ -1301,6 +1389,7 @@
         getJackpotAmount(tier, wager, denomination = 0.01) {
             return getConfiguredJackpotAmount(tier.name.toLowerCase(), wager, denomination, tier.amountUSD);
         },
+        playDiamondCollector,
         offerLuckyWheel,
         spinWheel,
         pickWheelPointerCount,
