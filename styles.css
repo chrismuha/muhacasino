@@ -1027,3 +1027,7 @@ body.game-open .game-view.toolbar-collapsed .game-load-state { inset-block-start
     padding-bottom: 72px;
   }
 }
+
+/* Keep the library's visual center stable when a browser adds a scrollbar. */
+html { scrollbar-gutter: stable both-edges; }
+#launcher { width: 100%; margin-inline: auto; }

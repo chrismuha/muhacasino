@@ -1565,3 +1565,119 @@ body.cabinet-game-surface .reels :is(.link-chain-icon, .link-meter-icon, .hold-c
   justify-items: center;
 }
 .diamond-collector-panel { width: min(520px, 100%); }
+
+/* Center the entire playable slot surface, not only its dialogs. Auto margins
+   center vertically when it fits and stay zero when the page needs scrolling. */
+body:not(.cabinet-game-surface) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+body:not(.cabinet-game-surface) > .game {
+  flex: 0 0 auto;
+  width: min(100%, 1440px) !important;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: auto !important;
+  align-items: start;
+}
+body:not(.cabinet-game-surface) > .game > .card {
+  width: 100%;
+  min-width: 0;
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+/* Generic info panels use a two-row grid. A diamond dialog has six sections;
+   give each its natural height so wrapped instructions cannot overlap status. */
+.diamond-collector-panel {
+  display: flex !important;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  height: auto !important;
+}
+.diamond-collector-panel > * {
+  position: static;
+  flex: 0 0 auto;
+  min-width: 0;
+  margin-block: 0 !important;
+}
+.diamond-collector-panel > :is(h3, p, .diamond-collector-status) {
+  height: auto;
+  max-height: none;
+  line-height: 1.5;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.diamond-collector-panel > .diamond-collector-status { min-height: 0; }
+.diamond-collector-panel > .diamond-collector-board { margin-inline: auto; }
+.diamond-collector-cell {
+  min-width: 0;
+  padding: 4px;
+  text-align: center;
+  overflow-wrap: anywhere;
+  font-size: clamp(.65rem, 2.2vw, 1rem);
+  line-height: 1.3;
+}
+html { scrollbar-gutter: stable both-edges; }
+.slot-experience-settings [hidden] { display: none !important; }
+
+/* Prevent intrinsic grid widths from cropping the fifth reel or HUD controls. */
+body:not(.cabinet-game-surface) .game > .card,
+body:not(.cabinet-game-surface) .reels-wrap {
+  min-width: 0;
+  max-width: 100%;
+  grid-template-columns: minmax(0, 1fr);
+}
+body:not(.cabinet-game-surface) .reels {
+  min-width: 0;
+  max-width: 100%;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+/* Info and feature dialogs center against the full viewport, with their own
+   reachable scroll area when content is taller than the available space. */
+.overlay:not(.settings-overlay), .feature-overlay {
+  box-sizing: border-box;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: max(10px, env(safe-area-inset-top, 0px)) max(10px, env(safe-area-inset-right, 0px)) max(10px, env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-left, 0px));
+}
+.overlay:not(.settings-overlay) > .overlay-panel,
+.feature-overlay > .feature-dialog {
+  min-width: 0;
+  max-width: 100%;
+  max-height: calc(100dvh - 20px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  margin-inline: auto;
+}
+#previewOverlay > .overlay-panel { width: min(760px, 100%); }
+#previewOverlay :is(.overlay-head, .overlay-content, .overlay-section) { min-width: 0; }
+#previewOverlay .overlay-head h3 { min-width: 0; overflow-wrap: anywhere; }
+#previewOverlay .overlay-section { overflow-wrap: anywhere; }
+
+/* Native fields follow each game's designed palette regardless of OS mode. */
+html:has(body:is(.slot-game-neon-slots, .slot-game-big-money-deluxe)) { color-scheme: dark; }
+html:has(body:is(.slot-game-pretty-penny, .slot-game-treasurepots)) { color-scheme: light; }
+.diamond-collector-panel { color-scheme: dark; }
+.diamond-collector-panel .diamond-collector-spin {
+  color: #102030;
+  background: #a5edff;
+  border-color: #a5edff;
+}
+
+/* Keep the diamond mark on its own line instead of crowding prize text. */
+.diamond-collector-cell.is-held { gap: 2px; align-content: center; }
+.diamond-collector-cell.is-held::before { content: "◆"; display: block; line-height: 1; }
+/* Component display rules must not resurrect intentionally hidden controls. */
+[hidden] { display: none !important; }
+/* Let the board share vertical space with its instructions and actions. */
+.diamond-collector-board { width: min(100%, 360px, 40dvh); }
+.diamond-collector-cell { font-size: clamp(.625rem, calc(4rem / var(--diamond-size)), 1rem); }
+@media (max-height: 500px) {
+  .diamond-collector-board { width: min(100%, 240px); }
+}

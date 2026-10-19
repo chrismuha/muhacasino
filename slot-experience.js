@@ -784,7 +784,7 @@
         overlay.setAttribute("aria-labelledby", "diamondCollectorTitle");
         overlay.innerHTML = `<div class="overlay-panel slot-experience-panel diamond-collector-panel">
             <h3 id="diamondCollectorTitle">◆ Diamond Collector</h3>
-            <p>Fill the board to grow: 2×2 → 3×3 → 4×4 → 5×5. Diamonds stay held until the board fills. Start with 10 free spins. Every spin uses one. A full board banks its awards and adds 3 free spins on a new board. The bonus ends when your free spins run out. At 5×5, full boards restart at 5×5.</p>
+            <p>Start with 10 free spins. Diamonds stay held. Complete each board to bank its values, add 3 spins, and grow from 2×2 to 5×5. Full 5×5 boards restart at 5×5. Collect your total when spins run out.</p>
             <div class="diamond-collector-status" role="status" aria-live="polite"></div>
             <div class="diamond-collector-board" aria-label="Diamond collection board"></div>
             <p class="diamond-collector-total"></p>
@@ -809,7 +809,7 @@
             board.replaceChildren(...cells.map((value) => {
                 const cell = document.createElement("div");
                 cell.className = `diamond-collector-cell${value ? " is-held" : ""}`;
-                cell.textContent = value ? `◆ ${formatAmount(value)}` : "·";
+                cell.textContent = value ? formatAmount(value) : "·";
                 cell.setAttribute("aria-label", value ? `Held diamond worth ${formatAmount(value)}` : "Empty space");
                 return cell;
             }));
