@@ -1718,3 +1718,5 @@ html:has(body:is(.slot-game-pretty-penny, .slot-game-treasurepots)) { color-sche
 .feature-win-breakdown { list-style: none; padding: 0; width: 100%; }
 .feature-win-breakdown li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 10px 0; border-top: 1px solid #ffffff40; color: #fff9e8; overflow-wrap: anywhere; }
 .feature-win-panel .feature-win-close { width: min(100%, 300px); min-height: 48px; background: #ffdf8a; color: #102030; border-color: #ffdf8a; touch-action: manipulation; }
+.sticky-link-settings > label:not(.jackpot-schedule-toggle) { display: grid; gap: 6px; margin-top: 12px; }
+.sticky-link-settings input[type="number"] { min-width: 0; width: 100%; min-height: 44px; }

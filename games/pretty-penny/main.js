@@ -214,6 +214,9 @@ let gemHoldRow = 0;
 let gemHoldSpinsRemaining = 0;
 let gemHoldActive = false;
 let heldGems = new Map();
+let stickyLinkRow = null;
+let stickyLinkSpinsRemaining = 0;
+let stickyLinkDisplayedRow = null;
 let gemHoldCyclePendingReset = false;
 const potFillEls = [0, 1, 2].map((index) => document.getElementById(`potFill${index}`));
 const potValueEls = [0, 1, 2].map((index) => document.getElementById(`potValue${index}`));
@@ -489,8 +492,10 @@ function updateFeatureStatus() {
     const gemStatus = heldGems.size > 0 ? (gemHoldCyclePendingReset
         ? "GEMS RESET NEXT SPIN"
         : `GEMS ${heldGems.size}/${COLS} · ${gemHoldSpinsRemaining} SPINS LEFT`) : "";
-    const primary = freeSpinsRemaining > 0 ? `FREE SPINS ${freeSpinsRemaining}` : (gemStatus ? "HOLD & WIN" : "");
-    window.slotExperience?.renderFeatureStatus(featureStatusEl, primary, gemStatus);
+    const linkStatus = stickyLinkDisplayedRow !== null
+        ? `STICKY LINK ROW ${stickyLinkDisplayedRow + 1} · ${stickyLinkSpinsRemaining} SPINS LEFT` : "";
+    const primary = freeSpinsRemaining > 0 ? `FREE SPINS ${freeSpinsRemaining}` : (gemStatus ? "HOLD & WIN" : (linkStatus ? "STICKY LINK" : ""));
+    window.slotExperience?.renderFeatureStatus(featureStatusEl, primary, [gemStatus, linkStatus].filter(Boolean).join(" · "));
 }
 
 function getFeatureRate(select, fallback) {
@@ -743,12 +748,12 @@ function createCell(symbol, isWinning = false) {
         const chip = document.createElement("span");
         chip.className = `link-chip ${symbol.anchor ? "link-anchor" : `link-value link-meter-value-${symbol.meterIndex}`} ${symbol.orphan ? "link-orphan" : ""}`;
         chip.innerHTML = symbol.anchor
-            ? `<i class="link-chain-icon" aria-hidden="true">↗</i><strong>LINK</strong><span class="chip-caption">${symbol.orphan ? "NOT CONNECTED" : "START"}</span>`
+            ? `<i class="link-chain-icon" aria-hidden="true">↗</i><strong>LINK</strong><span class="chip-caption">${symbol.sticky ? (symbol.spinsRemaining ? `HELD · ${symbol.spinsRemaining} LEFT` : "LAST SPIN") : (symbol.orphan ? "NOT CONNECTED" : "START")}</span>`
             : `<i class="link-meter-icon link-meter-${symbol.meterIndex}" aria-hidden="true"></i><strong>${fmtUSD(symbol.value)}</strong><span class="chip-caption">${symbol.orphan ? "NOT CONNECTED" : SAVINGS_BANKS[symbol.meterIndex].name.toUpperCase()}</span>`;
         cell.appendChild(chip);
         cell.classList.add(symbol.orphan ? "link-teaser-cell" : "link-win-cell");
         if (!symbol.anchor) cell.classList.add(`link-meter-cell-${symbol.meterIndex}`);
-        cell.setAttribute("aria-label", symbol.anchor ? "Link chip" : `${SAVINGS_BANKS[symbol.meterIndex].name} linked value ${fmtUSD(symbol.value)}`);
+        cell.setAttribute("aria-label", symbol.anchor ? (symbol.sticky ? `Sticky LINK anchor, ${symbol.spinsRemaining} spins left` : "Link chip") : `${SAVINGS_BANKS[symbol.meterIndex].name} linked value ${fmtUSD(symbol.value)}`);
         return cell;
     }
     if (symbol?.kind === "gem") {
@@ -825,9 +830,9 @@ function renderOutcomeGrid(grid, winningPositions, jackpotWins, jackpotTeasers =
     const jackpotPositions = new Set();
     for (const jackpotWin of jackpotSymbols) {
         const position = preferredPositions.find(([r, c]) =>
-            displayGrid[r][c]?.kind !== "gem" && !displayPositions.has(`${r},${c}`) && displayGrid[r][c] !== BONUS_SYMBOL && !jackpotPositions.has(`${r},${c}`)
+            displayGrid[r][c]?.kind !== "gem" && !displayPositions.has(`${r},${c}`) && displayGrid[r][c] !== BONUS_SYMBOL && typeof displayGrid[r][c] !== "object" && !jackpotPositions.has(`${r},${c}`)
         )
-            || preferredPositions.find(([r, c]) => displayGrid[r][c]?.kind !== "gem" && displayGrid[r][c] !== BONUS_SYMBOL && !jackpotPositions.has(`${r},${c}`));
+            || preferredPositions.find(([r, c]) => displayGrid[r][c]?.kind !== "gem" && displayGrid[r][c] !== BONUS_SYMBOL && typeof displayGrid[r][c] !== "object" && !jackpotPositions.has(`${r},${c}`));
         if (!position) continue;
         const [row, col] = position;
         displayGrid[row][col] = {
@@ -856,21 +861,36 @@ function spinOnce() {
     return createGrid(() => choiceWeighted(WEIGHTS));
 }
 
-function addLinkChips(grid, winningSpin, wagerConfig) {
+function addLinkChips(grid, winningSpin, wagerConfig, canTrigger = true) {
     const linkSettings = window.slotExperience?.getLinkChipSettings?.() || { minMultiplier: 1, maxMultiplier: 25, minCount: 2, maxCount: 4, winChance: 10, teaserChance: 3 };
     const displayGrid = grid.map((row) => [...row]);
     const winningPositions = new Set();
-    const activeChain = winningSpin && Math.random() < linkSettings.winChance / 100;
+    const stickySettings = window.slotExperience?.getStickyLinkSettings?.() || { enabled: true, triggerChance: 3, spins: 5 };
+    stickyLinkDisplayedRow = null;
+    if (!stickySettings.enabled || stickyLinkSpinsRemaining === 0) resetStickyLinkCycle();
+    const availableRows = Array.from({ length: ROWS }, (_, row) => row)
+        .filter((row) => !gemHoldActive || gemHoldCyclePendingReset || row !== gemHoldRow);
+    if (stickySettings.enabled && stickyLinkRow === null && canTrigger
+        && availableRows.length && Math.random() < stickySettings.triggerChance / 100) {
+        stickyLinkRow = availableRows[Math.floor(Math.random() * availableRows.length)];
+        stickyLinkSpinsRemaining = stickySettings.spins;
+    }
+    const sticky = stickyLinkRow !== null && stickyLinkSpinsRemaining > 0;
+    const activeChain = sticky || (winningSpin && Math.random() < linkSettings.winChance / 100);
     const showOrphan = !activeChain && Math.random() < linkSettings.teaserChance / 100;
     if (!activeChain && !showOrphan) return { grid: displayGrid, winUSD: 0, winningPositions, count: 0, meterHits: [] };
 
-    const row = Math.floor(Math.random() * ROWS);
+    const row = sticky ? stickyLinkRow : availableRows[Math.floor(Math.random() * availableRows.length)];
+    if (sticky) {
+        stickyLinkDisplayedRow = row;
+        stickyLinkSpinsRemaining -= 1;
+    }
     const startCol = activeChain ? 0 : 1 + Math.floor(Math.random() * (COLS - 1));
     const available = COLS - startCol - 1;
     const minCount = available > 0 ? Math.max(1, Math.min(available, linkSettings.minCount)) : 0;
     const maxCount = Math.max(minCount, Math.min(available, linkSettings.maxCount));
     const valueCount = available > 0 ? minCount + Math.floor(Math.random() * (maxCount - minCount + 1)) : 0;
-    displayGrid[row][startCol] = { kind: "link", anchor: true, orphan: !activeChain };
+    displayGrid[row][startCol] = { kind: "link", anchor: true, orphan: !activeChain, sticky, spinsRemaining: sticky ? stickyLinkSpinsRemaining : 0 };
     if (activeChain) winningPositions.add(`${row},${startCol}`);
 
     let winUSD = 0;
@@ -886,7 +906,13 @@ function addLinkChips(grid, winningSpin, wagerConfig) {
             winningPositions.add(`${row},${startCol + offset}`);
         }
     }
-    return { grid: displayGrid, winUSD, winningPositions, count: valueCount, meterHits };
+    return { grid: displayGrid, winUSD, winningPositions, count: valueCount, meterHits, sticky, row, spinsRemaining: stickyLinkSpinsRemaining };
+}
+
+function resetStickyLinkCycle() {
+    stickyLinkRow = null;
+    stickyLinkSpinsRemaining = 0;
+    stickyLinkDisplayedRow = null;
 }
 
 function resetGemHoldCycle() {
@@ -898,7 +924,8 @@ function resetGemHoldCycle() {
 
 function startGemHoldCycle() {
     gemHoldActive = true;
-    gemHoldRow = Math.floor(Math.random() * ROWS);
+    const rows = Array.from({ length: ROWS }, (_, row) => row).filter((row) => row !== stickyLinkDisplayedRow);
+    gemHoldRow = rows[Math.floor(Math.random() * rows.length)];
     gemHoldSpinsRemaining = GEM_HOLD_SPINS;
     heldGems = new Map();
     gemHoldCyclePendingReset = false;
@@ -1073,6 +1100,7 @@ function evaluateGrid(grid, wagerConfig = getWagerConfig()) {
 function animateSpin(durationMs = 600) {
     const start = performance.now();
     function frame(t) {
+        if (t - start >= durationMs) return;
         const grid = createGrid(() => randomSymbol());
         renderGrid(grid);
         if (t - start < durationMs) requestAnimationFrame(frame);
@@ -1381,6 +1409,7 @@ function getSettingsDefinitions() {
         { key: "jackpotSchedule", title: "Jackpot Wager Thresholds", element: document.querySelector(".jackpot-schedule-setting") },
         { key: "jackpotAmounts", title: "Jackpot Amounts", element: document.querySelector(".jackpot-amounts-setting") },
         { key: "jackpotScaling", title: "Jackpot Bet Scaling", element: document.querySelector(".jackpot-scaling-setting") },
+        { key: "stickyLink", title: "Sticky LINK Row", element: document.querySelector(".sticky-link-settings") },
         { key: "linkChipSettings", title: "Winning Link Chip Values, Count & Timing", element: document.querySelector(".link-chip-settings") },
         ...JACKPOT_TIERS.map((tier) => ({
             key: `${tier.name.toLowerCase()}JackpotOdds`,
@@ -1797,8 +1826,10 @@ function resetSessionState() {
     updateAutoSpinElapsed();
     freeSpinsRemaining = 0;
     freeSpinWagerConfig = null;
+    freeSpinWinTotalUSD = 0;
     potProgress = [0, 0, 0];
     resetGemHoldCycle();
+    resetStickyLinkCycle();
     updatePotDisplay();
     updateFeatureStatus();
     resetCustomJackpotOdds();
@@ -1977,7 +2008,7 @@ async function doSpin(options = {}) {
     const shouldWin = Math.random() < getTargetSpinWinRate();
     let grid = resolveSpinGrid(shouldWin);
     const bonusTriggered = !isFreeSpin && Math.random() < getFeatureRate(bonusGameOddsEl, 0.01);
-    const linkResult = addLinkChips(grid, shouldWin, wagerConfig);
+    const linkResult = addLinkChips(grid, shouldWin, wagerConfig, !isFreeSpin);
     grid = linkResult.grid;
     const gemResult = advanceGemHold(grid, wagerConfig, !isFreeSpin);
     grid = gemResult.grid;
@@ -2057,7 +2088,7 @@ async function doSpin(options = {}) {
             { label: "Bonus game", amountUSD: bonusWinUSD },
             ...potResult.popped.map((index) => ({ label: SAVINGS_BANKS[index].name, amountUSD: SAVINGS_BANKS[index].amountUSD })),
             { label: "Hold & Win Wild", amountUSD: gemResult.winUSD },
-            { label: "LINK feature", amountUSD: linkResult.winUSD },
+            { label: linkResult.sticky ? "Sticky LINK row" : "LINK feature", amountUSD: linkResult.winUSD },
         ];
     updateTotals();
     updateAllSessionDisplays();
@@ -2222,6 +2253,8 @@ payInfoBtn?.addEventListener("click", () => {
 });
 document.addEventListener("keydown", handleEsc);
 window.addEventListener("slot-experience-settings-change", () => {
+    if (!window.slotExperience?.getStickyLinkSettings().enabled) resetStickyLinkCycle();
+    updateFeatureStatus();
     updateTotals();
     updateAllSessionDisplays();
     updateCreditStepEffect();

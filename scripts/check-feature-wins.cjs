@@ -92,6 +92,16 @@ async function checkGame(game) {
     closeWin();
     await lastFreeSpin;
     assert.equal(ctx.freeSpinWagerConfig, null);
+    // A delayed animation callback must not overwrite an already rendered result.
+    const frames = [];
+    let renders = 0;
+    const animation = vm.createContext({ Math, performance: { now: () => 0 }, requestAnimationFrame: fn => frames.push(fn), createGrid: () => [], randomSymbol: () => 'normal', renderGrid: () => { renders++; } });
+    vm.runInContext(extract(source, 'animateSpin'), animation);
+    animation.animateSpin(650);
+    frames.shift()(100);
+    assert.equal(renders, 1);
+    frames.shift()(800);
+    assert.equal(renders, 1, 'Late animation frame must not repaint the final outcome');
     assert.match(extract(source, 'buyInstantBonus'), /await window\.slotExperience\?\.showFeatureWin/);
 }
 (async () => {

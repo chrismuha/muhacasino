@@ -98,6 +98,16 @@
         });
     }
 
+    function normalizeStickyLinkSettings(saved = {}) {
+        const chance = Number(saved.triggerChance);
+        const duration = Number(saved.spins);
+        return {
+            enabled: saved.enabled !== false,
+            triggerChance: Number.isFinite(chance) ? Math.min(100, Math.max(0, chance)) : 3,
+            spins: Number.isFinite(duration) ? Math.min(100, Math.max(1, Math.round(duration))) : 5,
+        };
+    }
+
     const state = {
         displayMode: "credits",
         withdrawalDemo: false,
@@ -107,6 +117,7 @@
         wheelSizes: [...defaultWheelSizes],
         wheelPrizes: defaultWheelPrizes.map((prize) => ({ ...prize })),
         pointerOdds: [60, 30, 10],
+        stickyLink: normalizeStickyLinkSettings(),
         linkChips: { minMultiplier: 1, maxMultiplier: 25, minCount: 2, maxCount: 4, winChance: 10, teaserChance: 3 },
         lifetimeWagered: 0,
         lifetimeWon: 0,
@@ -158,6 +169,7 @@
             : [0, 1, 2, 3, 4];
         state.jackpotSchedule = normalizeJackpotSchedule(saved.jackpotSchedule);
         state.jackpots = saved.jackpots && typeof saved.jackpots === "object" ? saved.jackpots : null;
+        state.stickyLink = normalizeStickyLinkSettings(saved.stickyLink);
         state.linkChips = { ...state.linkChips, ...(saved.linkChips || {}) };
         state.lifetimeWagered = Math.max(0, Number(saved.lifetimeWagered) || 0);
         state.lifetimeWon = Math.max(0, Number(saved.lifetimeWon) || 0);
@@ -202,6 +214,7 @@
                 wheelPrizes: state.wheelPrizes,
                 pointerOdds: state.pointerOdds,
                 linkChips: state.linkChips,
+                stickyLink: state.stickyLink,
                 lifetimeWagered: state.lifetimeWagered,
                 lifetimeWon: state.lifetimeWon,
                 lifetimeLost: state.lifetimeLost,
@@ -524,6 +537,13 @@
                 </div>
                 <small>Set the base Mini, Minor, Major, and Grand awards.</small>
             </div>
+            <div class="jackpot-config-setting sticky-link-settings" hidden>
+                <strong>Sticky LINK Row</strong>
+                <label class="jackpot-schedule-toggle"><input id="stickyLinkEnabled" type="checkbox"><span>Enable sticky LINK row</span></label>
+                <label>Trigger chance per paid spin (%)<input id="stickyLinkChance" type="number" min="0" max="100" step="0.1" inputmode="decimal" aria-label="Sticky LINK trigger chance percent"></label>
+                <label>How many reel spins to hold<input id="stickyLinkSpins" type="number" min="1" max="100" step="1" inputmode="numeric" aria-label="Sticky LINK hold duration"></label>
+                <p class="overlay-note">A random paid spin can hold a first-reel LINK anchor in one row. It is a LINK, not a wild. The anchor stays in that row while fresh connected values roll and pay each turn, even if the regular symbols lose. Default: 3% trigger chance and 5 reel spins, including the trigger spin. Active holds also use a turn on regular free spins; bonus-game turns do not use a turn. Sticky LINK and held-Wild rows stay separate. Paid-spin value chips advance their matching pots; free-spin values do not. Duration edits apply to the next hold; turning off clears the current hold before the next spin. Reset Session clears active holds. These settings are saved per slot.</p>
+            </div>
             <div class="jackpot-config-setting link-chip-settings" hidden>
                 <strong>Winning Link chip controls</strong>
                 <div class="jackpot-scale-grid">
@@ -829,6 +849,22 @@
                 window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
             });
         });
+        syncStickyLinkUi();
+        document.querySelectorAll(".sticky-link-settings input").forEach((input) => {
+            const commit = () => {
+                if (state.interactionLocked) { syncStickyLinkUi(); return; }
+                state.stickyLink = normalizeStickyLinkSettings({
+                    enabled: document.getElementById("stickyLinkEnabled").checked,
+                    triggerChance: document.getElementById("stickyLinkChance").value,
+                    spins: document.getElementById("stickyLinkSpins").value,
+                });
+                syncStickyLinkUi();
+                save();
+                window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
+            };
+            input.addEventListener("change", commit);
+            input.addEventListener("blur", commit);
+        });
         syncJackpotScheduleUi();
         document.querySelectorAll(".jackpot-schedule-setting input").forEach((input) => {
             const commitScheduleInput = () => {
@@ -976,6 +1012,15 @@
                 render(message);
             };
         });
+    }
+
+    function syncStickyLinkUi() {
+        const enabled = document.getElementById("stickyLinkEnabled");
+        if (!enabled) return;
+        enabled.checked = state.stickyLink.enabled;
+        document.getElementById("stickyLinkChance").value = String(state.stickyLink.triggerChance);
+        document.getElementById("stickyLinkSpins").value = String(state.stickyLink.spins);
+        document.querySelectorAll(".sticky-link-settings input").forEach((input) => { input.disabled = state.interactionLocked; });
     }
 
     function showFeatureWin({ title = "Bonus Win!", entries = [] } = {}) {
@@ -1564,6 +1609,7 @@
             const next = Boolean(locked);
             if (state.interactionLocked === next) return;
             state.interactionLocked = next;
+            syncStickyLinkUi();
             syncJackpotScheduleUi();
             updateBonusBuyButton();
             window.parent.postMessage({ type: "muha-slot-interaction-lock", locked: next }, window.location.origin);
@@ -1575,7 +1621,10 @@
         configureLinkChips() {
             const panel = document.querySelector(".link-chip-settings");
             if (panel) panel.hidden = false;
+            const sticky = document.querySelector(".sticky-link-settings");
+            if (sticky) sticky.hidden = false;
         },
+        getStickyLinkSettings: () => ({ ...state.stickyLink }),
         getLinkChipSettings: () => ({ ...state.linkChips }),
         updateBonusBuyButton,
         configureJackpots(tiers, { baseWager = 0.5 } = {}) {

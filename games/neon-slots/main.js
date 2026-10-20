@@ -835,6 +835,7 @@ function evaluateGrid(grid, wagerConfig = getWagerConfig()) {
 function animateSpin(durationMs = 600) {
     const start = performance.now();
     function frame(t) {
+        if (t - start >= durationMs) return;
         const grid = createGrid(() => randomSymbol());
         renderGrid(grid);
         if (t - start < durationMs) requestAnimationFrame(frame);
