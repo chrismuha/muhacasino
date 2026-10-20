@@ -206,6 +206,7 @@ let actualSessionNetUSD = 0;
 let creditsInsertedUSD = INITIAL_CREDITS_USD;
 let freeSpinsRemaining = 0;
 let freeSpinWagerConfig = null;
+let freeSpinWinTotalUSD = 0;
 let featureStatusEl = document.getElementById("featureStatus");
 let bonusOverlayEl = null;
 let potProgress = [0, 0, 0];
@@ -691,6 +692,8 @@ async function buyInstantBonus(option = {}) {
         const award = Math.max(roundUSD(cost * 0.25), roundUSD(Number(outcome?.winUSD ?? outcome) || 0));
         if (award > 0) { balance = clampBalanceUSD(balance + award); addSessionWinnings(award); addNetSessionWinnings(award); subtractNetSessionLosses(award); adjustActualSessionNet(award); }
         setMessage(`BONUS COMPLETE — Cost ${fmtUSD(cost)} • Award ${fmtUSD(award)}`);
+        updateTotals();
+        await window.slotExperience?.showFeatureWin({ title: "Bonus Complete!", entries: [{ label: "Purchased bonus", amountUSD: award }] });
     } finally { isSpinning = false; updateTotals(); }
 }
 
@@ -1999,6 +2002,7 @@ async function doSpin(options = {}) {
     const freeSpinsTriggered = !isFreeSpin && Math.random() < getFeatureRate(freeSpinsOddsEl, 0.03);
     const freeSpinsAwarded = getFreeSpinsAward();
     if (freeSpinsTriggered) {
+        freeSpinWinTotalUSD = 0;
         freeSpinsRemaining += freeSpinsAwarded;
         freeSpinWagerConfig = { ...wagerConfig };
         updateFeatureStatus();
@@ -2043,6 +2047,22 @@ async function doSpin(options = {}) {
             setMessage(`${outcome}${creditHint}`);
         }
     }
+
+    if (isFreeSpin) freeSpinWinTotalUSD = roundUSD(freeSpinWinTotalUSD + totalWinUSD);
+    const freeSpinsComplete = isFreeSpin && freeSpinsRemaining === 0;
+    const featureAwards = freeSpinsComplete
+        ? [{ label: "Free spins total", amountUSD: freeSpinWinTotalUSD }]
+        : [
+            ...jackpotWins.map((jackpot) => ({ label: `${jackpot.name} Jackpot${jackpot.hitCount > 1 ? ` ×${jackpot.hitCount}` : ""}`, amountUSD: jackpot.amountUSD })),
+            { label: "Bonus game", amountUSD: bonusWinUSD },
+            ...potResult.popped.map((index) => ({ label: SAVINGS_BANKS[index].name, amountUSD: SAVINGS_BANKS[index].amountUSD })),
+            { label: "Hold & Win Wild", amountUSD: gemResult.winUSD },
+            { label: "LINK feature", amountUSD: linkResult.winUSD },
+        ];
+    updateTotals();
+    updateAllSessionDisplays();
+    pauseSpinElapsedTimer();
+    await window.slotExperience?.showFeatureWin({ title: freeSpinsComplete ? "Free Spins Complete!" : "Feature Win!", entries: featureAwards });
 
     isSpinning = false;
     pauseSpinElapsedTimer();

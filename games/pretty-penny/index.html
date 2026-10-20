@@ -373,9 +373,12 @@
                     <p>Collect every diamond to complete a board, bank its awards, and add 3 free spins to the spins remaining. Start a fresh board at the next size: 2×2 → 3×3 → 4×4 → 5×5. Completing a 5×5 board banks its awards, adds 3 spins, and starts another fresh 5×5 board.</p>
                     <p>Each diamond displays its actual credit or money prize value, not a multiplier. Prize values scale with the feature wager. The bonus ends when free spins reach zero; the final award includes banked boards and held diamonds on the unfinished board. Choose Collect to finish. These spins belong to Diamond Collector and are separate from the regular reel free-spin feature.</p>
                     <h4>Jackpot Wager Thresholds</h4>
-                    <p>This optional Settings page replaces random main-reel jackpot rolls with guaranteed payouts based on total paid reel wagers. It starts off, preserving normal behavior. Each tier has its own schedule toggle, first-hit amount, repeat interval, and progress display. Wins and losses do not change the counter; deposits, free spins, and bonus purchases do not add to it. Bonus wheel and Match &amp; Win jackpot prizes remain separate. Disabled tiers do not pay main-reel jackpots while threshold mode is on.</p>
-                    <p>For example, set Mini to first hit after $10 and repeat every additional $25,000: it pays on the spin that takes counted wagers to $10, then $25,010, $50,010, and so on. Overruns carry forward, and a large wager can earn several hits or several tiers at once. Awards follow Jackpot Amounts and Bet Scaling; the threshold controls when they pay, not their prize size.</p>
+                    <p>This optional Settings page replaces random main-reel jackpot rolls with guaranteed payouts based on total paid reel wagers. It starts off, preserving normal behavior. Each tier has its own schedule toggle, five-step wager sequence, and progress display. Set a first-hit amount followed by additional wager amounts for hits 2, 3, 4, and 5; the fifth interval then repeats. Wins and losses do not change the counter; deposits, free spins, and bonus purchases do not add to it. Bonus wheel and Match &amp; Win jackpot prizes remain separate. Disabled tiers do not pay main-reel jackpots while threshold mode is on.</p>
+                    <p>For example, set Mini to $10 first, then $25,000, $50, $100, and $500 additional wagers: it pays at cumulative totals of $10, $25,010, $25,060, $25,160, and $25,660, then every additional $500. Every jackpot tier and every slot keeps its own sequence. Existing first/repeat settings are preserved as equivalent five-step schedules. Overruns carry forward, and a large wager can earn several hits or several tiers at once. Awards follow Jackpot Amounts and Bet Scaling; the threshold controls when they pay, not their prize size.</p>
                     <p>Progress and configuration are saved per slot. Turning a schedule off pauses its counter and restores normal random reel jackpots when the overall mode is off. Editing a threshold restarts that tier’s counter; Reset Session clears all counters while retaining configured amounts. Amounts cannot be edited during an active round.</p>
+                    <h4>Feature Win Overlay</h4>
+                    <p>Bonus-game wins, reel jackpots, pot payouts, Hold &amp; Win Wild awards, and winning LINK features show a large win amount with a breakdown. Purchased bonuses show the amount actually credited, including their minimum return. Regular reel free spins show the whole batch’s winnings when the final free spin finishes; it is a recap of amounts already credited, not an extra payout.</p>
+                    <p>Choose Close to return to play. The overlay stays open until dismissed, and auto spin waits for it. Simultaneous feature wins share one breakdown; ordinary paid-spin line wins continue to use the reel result message. Long result panels scroll on short screens.</p>
                     <h4>Buy Bonus</h4>
                     <p>Choose Wheel, Match &amp; Win, Diamond Collector, or Random, then a $40, $80, or $120 purchase. Their feature wagers are $0.40, $0.80, and $1.20 respectively. Random chooses equally among the three games. The cost is deducted before play. The credited award is at least 25% of the purchase cost. Purchases require enough credits and are unavailable during a spin, auto spin, or regular reel free spins. Buy Bonus can be hidden in Settings.</p>
                     <h4>Bonus Wheel Awards</h4><p>The wheel selects 10× bet with 35% chance, 25× with 25%, 50× with 18%, and 100× with 12%. Jackpot segment chances are Mini 7%, Minor 2%, Major 0.8%, and Grand 0.2%. Jackpot amounts use your configured values and feature wager. These fixed segment chances are separate from reel-jackpot odds and the rescue-wheel settings.</p>
@@ -414,10 +417,10 @@
         </div>
     </div>
 
-    <link rel="stylesheet" href="../../slot-experience.css?v=1.20.8&amp;build=20261019-jackpot-thresholds-v3">
+    <link rel="stylesheet" href="../../slot-experience.css?v=1.20.8&amp;build=20261019-feature-win-schedules-v1">
     <script src="../../interaction-lock.js?build=20260808-no-double-tap"></script>
-    <script src="../../slot-experience.js?v=1.20.17&amp;build=20261019-jackpot-thresholds-v3"></script>
-    <script src="main.js?v=1.4.2&amp;build=20261019-jackpot-thresholds-v3"></script>
+    <script src="../../slot-experience.js?v=1.20.17&amp;build=20261019-feature-win-schedules-v1"></script>
+    <script src="main.js?v=1.4.2&amp;build=20261019-feature-win-schedules-v1"></script>
 </body>
 
 </html>

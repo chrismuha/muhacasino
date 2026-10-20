@@ -21,7 +21,7 @@ const context = vm.createContext({
     state: { played: 0, lifetimeWagered: 0 },
     getConfiguredJackpotAmount: name => ({ mini: 10, minor: 100, major: 1000, grand: 10000 })[name],
 });
-for (const name of ['thresholdCents', 'normalizeJackpotSchedule', 'advanceJackpotSchedule', 'resetJackpotScheduleProgress', 'resolveScheduledJackpots']) {
+for (const name of ['thresholdCents', 'normalizeJackpotSchedule', 'jackpotMiddleIntervals', 'earnedScheduledJackpots', 'nextScheduledJackpotAt', 'advanceJackpotSchedule', 'resetJackpotScheduleProgress', 'resolveScheduledJackpots']) {
     // resolveScheduledJackpots ends at getBonusBuyOptions; all extracted code is function declarations.
     vm.runInContext(sharedFunction(name), context);
 }
@@ -85,6 +85,26 @@ for (const invalid of [NaN, Infinity, -10, 0]) {
     context.advanceJackpotSchedule(schedule, invalid);
     assert.equal(schedule.tiers.mini.spentCents, before);
 }
+// Five separate intervals per tier, followed by repeats of the fifth interval.
+schedule = fresh();
+schedule.enabled = true;
+schedule.tiers.mini.firstCents = 1000;
+schedule.tiers.mini.middleCents = [2500000, 5000, 10000];
+schedule.tiers.mini.repeatCents = 50000;
+context.state.jackpotSchedule = schedule;
+let expectedCents = 0;
+for (const interval of [1000, 2500000, 5000, 10000, 50000, 50000]) {
+    context.advanceJackpotSchedule(schedule, (interval - 1) / 100);
+    assert.equal(schedule.tiers.mini.pendingCount, 0);
+    context.advanceJackpotSchedule(schedule, 0.01);
+    expectedCents += interval;
+    assert.equal(schedule.tiers.mini.spentCents, expectedCents);
+    assert.equal(schedule.tiers.mini.pendingCount, 1);
+    context.resolveScheduledJackpots(tiers, 1);
+    assert.ok(context.nextScheduledJackpotAt(schedule.tiers.mini) > expectedCents);
+}
+assert.equal(schedule.tiers.mini.hitCount, 6);
+assert.deepEqual(Array.from(context.normalizeJackpotSchedule(JSON.parse(JSON.stringify(schedule))).tiers.mini.middleCents), [2500000, 5000, 10000]);
 for (const game of ['pretty-penny', 'treasurepots', 'neon-slots', 'big-money-deluxe']) {
     const source = fs.readFileSync(path.join(__dirname, '../games', game, 'main.js'), 'utf8');
     const start = source.indexOf('function resolveJackpotWins(');

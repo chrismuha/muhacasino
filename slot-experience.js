@@ -45,12 +45,36 @@
                     enabled: tier.enabled !== false,
                     firstCents: thresholdCents(Number(tier.firstCents) / 100, fallback),
                     repeatCents: thresholdCents(Number(tier.repeatCents) / 100, fallback),
+                    middleCents: Array.isArray(tier.middleCents) ? Array.from({ length: 3 }, (_, index) =>
+                        thresholdCents(Number(tier.middleCents[index]) / 100, Number(tier.repeatCents) / 100 || fallback)) : null,
                     spentCents: Math.max(0, Math.min(Number.MAX_SAFE_INTEGER, Math.floor(Number(tier.spentCents) || 0))),
                     hitCount: Math.max(0, Math.floor(Number(tier.hitCount) || 0)),
                     pendingCount: Math.max(0, Math.floor(Number(tier.pendingCount) || 0)),
                 }];
             })),
         };
+    }
+
+    function jackpotMiddleIntervals(tier) {
+        return tier.middleCents || [tier.repeatCents, tier.repeatCents, tier.repeatCents];
+    }
+
+    function earnedScheduledJackpots(tier) {
+        if (tier.spentCents < tier.firstCents) return 0;
+        let remaining = tier.spentCents - tier.firstCents;
+        let earned = 1;
+        for (const interval of jackpotMiddleIntervals(tier)) {
+            if (remaining < interval) return earned;
+            remaining -= interval;
+            earned += 1;
+        }
+        return earned + Math.floor(remaining / tier.repeatCents);
+    }
+
+    function nextScheduledJackpotAt(tier) {
+        const middle = jackpotMiddleIntervals(tier);
+        return tier.firstCents + middle.slice(0, Math.min(3, tier.hitCount)).reduce((sum, value) => sum + value, 0)
+            + Math.max(0, tier.hitCount - 3) * tier.repeatCents;
     }
 
     // All accounting uses integer cents so repeated small wagers hit exactly.
@@ -60,8 +84,7 @@
         Object.values(schedule.tiers).forEach((tier) => {
             if (!tier.enabled) return;
             tier.spentCents = Math.min(Number.MAX_SAFE_INTEGER, tier.spentCents + cents);
-            const earned = tier.spentCents < tier.firstCents ? 0
-                : 1 + Math.floor((tier.spentCents - tier.firstCents) / tier.repeatCents);
+            const earned = earnedScheduledJackpots(tier);
             tier.pendingCount += Math.max(0, earned - tier.hitCount);
             tier.hitCount = earned;
         });
@@ -483,12 +506,13 @@
                 <strong>Jackpot wager thresholds</strong>
                 <label class="jackpot-schedule-toggle"><input id="jackpotScheduleEnabled" type="checkbox"><span>Trigger reel jackpots by total paid wagers</span></label>
                 <p class="overlay-note">Off: normal random reel jackpots. On: guaranteed jackpots at the thresholds below, independent of wins or losses. Counts paid reel wagers only; deposits, free spins, and Buy Bonus costs do not count. Prizes still use Jackpot Amounts and Bet Scaling. Bonus-game jackpot prizes keep their own rules. A tier switched off here does not pay reel jackpots while threshold mode is on.</p>
-                <p class="overlay-note">First hit is the amount wagered before the first payout. Repeat interval is the additional amount wagered between later payouts. Example: first $10, then every additional $25,000. Enabling starts from the saved progress, without counting earlier wagers. Turning off pauses progress. Editing an amount restarts that tier’s progress; Reset Session clears all progress. Progress and settings are saved separately for each slot.</p>
+                <p class="overlay-note">Set five successive wager amounts for each tier: the first-hit amount, then additional wagers for hits 2, 3, 4, and 5. After hit 5, the fifth interval repeats. Example: $10 first, then $25,000, $50, $100, and $500 more; later hits repeat every additional $500. Enabling starts from the saved progress, without counting earlier wagers. Turning off pauses progress. Editing an amount restarts that tier’s progress; Reset Session clears all progress. Progress and settings are saved separately for each slot.</p>
                 <div class="jackpot-schedule-tiers">
                     ${Object.entries(jackpotScheduleDefaults).map(([name]) => `<fieldset class="jackpot-schedule-tier"><legend>${name[0].toUpperCase() + name.slice(1)}</legend>
                         <label class="jackpot-schedule-toggle"><input type="checkbox" data-schedule-tier="${name}"><span>Schedule ${name} jackpot</span></label>
                         <label>First hit after ($ wagered)<input type="number" min="0.01" max="1000000000" step="0.01" inputmode="decimal" data-schedule-first="${name}" aria-label="${name} first jackpot wager threshold"></label>
-                        <label>Repeat every additional ($ wagered)<input type="number" min="0.01" max="1000000000" step="0.01" inputmode="decimal" data-schedule-repeat="${name}" aria-label="${name} repeat jackpot wager interval"></label>
+                        ${[2, 3, 4].map((hit, index) => `<label>Hit ${hit}: additional wager ($)<input type="number" min="0.01" max="1000000000" step="0.01" inputmode="decimal" data-schedule-step="${name}-${index}" data-schedule-name="${name}" data-schedule-index="${index}" aria-label="${name} jackpot hit ${hit} additional wager"></label>`).join("")}
+                        <label>Hit 5 and later: additional wager ($)<input type="number" min="0.01" max="1000000000" step="0.01" inputmode="decimal" data-schedule-repeat="${name}" aria-label="${name} repeat jackpot wager interval"></label>
                         <p class="jackpot-schedule-progress" data-schedule-progress="${name}"></p>
                     </fieldset>`).join("")}
                 </div>
@@ -813,12 +837,16 @@
                 if (input.id === "jackpotScheduleEnabled") schedule.enabled = input.checked;
                 else if (input.dataset.scheduleTier) schedule.tiers[input.dataset.scheduleTier].enabled = input.checked;
                 else {
-                    const name = input.dataset.scheduleFirst || input.dataset.scheduleRepeat;
+                    const name = input.dataset.scheduleFirst || input.dataset.scheduleRepeat || input.dataset.scheduleName;
                     const tier = schedule.tiers[name];
                     const key = input.dataset.scheduleFirst ? "firstCents" : "repeatCents";
-                    const nextValue = thresholdCents(input.value, tier[key] / 100);
-                    if (nextValue !== tier[key]) {
-                        tier[key] = nextValue;
+                    const index = input.dataset.scheduleIndex === undefined ? null : Number(input.dataset.scheduleIndex);
+                    const previous = index === null ? tier[key] : jackpotMiddleIntervals(tier)[index];
+                    const nextValue = thresholdCents(input.value, previous / 100);
+                    if (nextValue !== previous) {
+                        if (!tier.middleCents) tier.middleCents = [...jackpotMiddleIntervals(tier)];
+                        if (index === null) tier[key] = nextValue;
+                        else { tier.middleCents = [...jackpotMiddleIntervals(tier)]; tier.middleCents[index] = nextValue; }
                         tier.spentCents = 0;
                         tier.hitCount = 0;
                         tier.pendingCount = 0;
@@ -950,6 +978,59 @@
         });
     }
 
+    function showFeatureWin({ title = "Bonus Win!", entries = [] } = {}) {
+        const awards = entries.filter((entry) => Number.isFinite(entry.amountUSD) && entry.amountUSD > 0);
+        if (!awards.length) return Promise.resolve();
+        const total = Math.round(awards.reduce((sum, entry) => sum + entry.amountUSD, 0) * 100) / 100;
+        const previousFocus = document.activeElement;
+        const wasLocked = state.interactionLocked;
+        const overlay = document.createElement("div");
+        overlay.className = "overlay feature-win-overlay";
+        overlay.setAttribute("role", "dialog");
+        overlay.setAttribute("aria-modal", "true");
+        overlay.setAttribute("aria-labelledby", "featureWinTitle");
+        overlay.innerHTML = `<div class="overlay-panel feature-win-panel"><div aria-hidden="true" class="feature-win-mark">★</div><h2 id="featureWinTitle"></h2><p class="feature-win-caption">You won</p><strong class="feature-win-amount"></strong><ul class="feature-win-breakdown"></ul><p class="feature-win-note">Your winnings have been added to your credits.</p><button type="button" class="feature-win-close">Close</button></div>`;
+        overlay.querySelector("h2").textContent = title;
+        const formatWin = (value) => {
+            const amount = value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            return state.displayMode === "money" ? `$${amount}` : `${amount} cr`;
+        };
+        overlay.querySelector(".feature-win-amount").textContent = formatWin(total);
+        const list = overlay.querySelector("ul");
+        awards.forEach((entry) => {
+            const row = document.createElement("li");
+            const label = document.createElement("span");
+            label.textContent = entry.label;
+            const amount = document.createElement("strong");
+            amount.textContent = formatWin(entry.amountUSD);
+            row.append(label, amount);
+            list.appendChild(row);
+        });
+        document.body.appendChild(overlay);
+        window.slotExperience.setInteractionLocked(true);
+        const close = overlay.querySelector("button");
+        close.focus();
+        return new Promise((resolve) => {
+            let closed = false;
+            const finish = () => {
+                if (closed) return;
+                closed = true;
+                document.removeEventListener("keydown", handleKey, true);
+                overlay.remove();
+                window.slotExperience.setInteractionLocked(wasLocked);
+                if (previousFocus?.isConnected) previousFocus.focus();
+                resolve();
+            };
+            const handleKey = (event) => {
+                event.stopImmediatePropagation();
+                if (event.key === "Tab") { event.preventDefault(); close.focus(); }
+                else if (["Escape", "Enter", " "].includes(event.key)) { event.preventDefault(); finish(); }
+            };
+            document.addEventListener("keydown", handleKey, true);
+            close.onclick = finish;
+        });
+    }
+
     function formatThresholdMoney(cents) {
         return `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
@@ -964,7 +1045,10 @@
             root.querySelector(`[data-schedule-tier="${name}"]`).checked = tier.enabled;
             root.querySelector(`[data-schedule-first="${name}"]`).value = String(tier.firstCents / 100);
             root.querySelector(`[data-schedule-repeat="${name}"]`).value = String(tier.repeatCents / 100);
-            const next = tier.hitCount === 0 ? tier.firstCents : tier.firstCents + tier.hitCount * tier.repeatCents;
+            jackpotMiddleIntervals(tier).forEach((value, index) => {
+                root.querySelector(`[data-schedule-step="${name}-${index}"]`).value = String(value / 100);
+            });
+            const next = nextScheduledJackpotAt(tier);
             root.querySelector(`[data-schedule-progress="${name}"]`).textContent =
                 `${schedule.enabled && tier.enabled ? "Counting" : "Paused"} · Wagered ${formatThresholdMoney(tier.spentCents)} · Next at ${formatThresholdMoney(next)} · ${formatThresholdMoney(Math.max(0, next - tier.spentCents))} remaining · ${tier.hitCount} hit(s)`;
         });
@@ -1517,6 +1601,7 @@
         getJackpotAmount(tier, wager, denomination = 0.01) {
             return getConfiguredJackpotAmount(tier.name.toLowerCase(), wager, denomination, tier.amountUSD);
         },
+        showFeatureWin,
         resolveScheduledJackpots,
         isJackpotScheduleEnabled: () => state.jackpotSchedule.enabled,
         playDiamondCollector,

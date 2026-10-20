@@ -1692,3 +1692,29 @@ html:has(body:is(.slot-game-pretty-penny, .slot-game-treasurepots)) { color-sche
 .jackpot-schedule-toggle input[type="checkbox"] { flex: 0 0 22px; width: 22px !important; height: 22px; min-height: 0 !important; }
 .jackpot-schedule-progress { margin-bottom: 0; line-height: 1.5; overflow-wrap: anywhere; }
 @media (max-width: 600px) { .jackpot-schedule-tiers { grid-template-columns: minmax(0, 1fr); } }
+
+/* Win acknowledgments stay open until dismissed, independently of game theme. */
+.overlay.feature-win-overlay { z-index: 30000; background: #030913d9; }
+.overlay-panel.feature-win-panel {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: min(680px, 100%);
+  height: auto !important;
+  padding: clamp(20px, 4vw, 40px);
+  text-align: center;
+  color: #fff9e8;
+  background: #102030;
+  border: 2px solid #edc665;
+  color-scheme: dark;
+  overflow-y: auto;
+}
+.feature-win-panel > * { flex: 0 0 auto; min-width: 0; max-width: 100%; margin: 0; }
+.feature-win-panel h2 { color: #fff9e8; font-size: clamp(24px, 5vw, 42px); line-height: 1.15; }
+.feature-win-mark { color: #ffdf8a; font-size: 48px; line-height: 1; }
+.feature-win-caption, .feature-win-note { color: #eef6ff; line-height: 1.5; }
+.feature-win-amount { color: #ffdf8a; font-size: clamp(32px, 8vw, 72px); line-height: 1.15; overflow-wrap: anywhere; }
+.feature-win-breakdown { list-style: none; padding: 0; width: 100%; }
+.feature-win-breakdown li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 10px 0; border-top: 1px solid #ffffff40; color: #fff9e8; overflow-wrap: anywhere; }
+.feature-win-panel .feature-win-close { width: min(100%, 300px); min-height: 48px; background: #ffdf8a; color: #102030; border-color: #ffdf8a; touch-action: manipulation; }
