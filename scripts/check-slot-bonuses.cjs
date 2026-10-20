@@ -1,3 +1,4 @@
+const roundWinUSD = require('./slot-test-currency.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -12,7 +13,7 @@ function extract(source, name) {
 
 async function check(game) {
     const source = fs.readFileSync(path.join(__dirname, '..', 'games', game, 'main.js'), 'utf8');
-    const context = vm.createContext({ ROWS: 5, COLS: 5, BONUS_SYMBOL: 'bonus', Math: Object.create(Math) });
+    const context = vm.createContext({ roundWinUSD, ROWS: 5, COLS: 5, BONUS_SYMBOL: 'bonus', Math: Object.create(Math) });
     vm.runInContext(extract(source, 'shuffledCopy') + '\n' + extract(source, 'addBonusChipWin'), context);
     for (let spin = 0; spin < 200; spin++) {
         // Simultaneous features leave ten regular cells available for six bonuses.
@@ -88,7 +89,7 @@ async function check(game) {
             assert.ok(nodes['.wheel-result'].textContent.includes(`${[2, 5, 10][index]}×`));
             assert.equal(timers.length, 1, 'Result display delay must be scheduled once');
             timers.shift()();
-            assert.equal(await award, [5, 12.5, 25][index]);
+            assert.equal(await award, [5, 13, 25][index]);
             assert.equal(context.bonusOverlayEl.hidden, true);
             const rotation = Number(nodes['.slot-bonus-wheel'].style.transform.match(/rotate\((.*)deg\)/)[1]);
             assert.equal((rotation + index * 120 + 60) % 360, 0, 'Winning wedge must align with pointer');

@@ -226,6 +226,10 @@ function roundUSD(value) {
     return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
 }
 
+function roundWinUSD(value) {
+    return window.slotExperience.roundWinUSD(value);
+}
+
 function clampBalanceUSD(value) {
     return roundUSD(Math.max(0, value));
 }
@@ -586,7 +590,7 @@ async function playWheelBonusGame(totalBetUSD) {
             result.textContent = "Spinning…";
             try {
                 await window.slotExperience.spinWheel(wheel, 2160 + 360 - (index * 120 + 60));
-                const winUSD = roundUSD(totalBetUSD * prizes[index] * pointerCount);
+                const winUSD = roundWinUSD(totalBetUSD * prizes[index] * pointerCount);
                 result.textContent = `${pointerCount} pointer${pointerCount === 1 ? "" : "s"} × ${prizes[index]}× — ${fmtUSD(winUSD)}`;
                 setTimeout(() => { bonusOverlayEl.hidden = true; resolve(winUSD); }, 1400);
             } catch (error) {
@@ -617,7 +621,7 @@ async function buyInstantBonus(option = {}) {
     addSessionLosses(cost); addNetSessionLosses(cost); subtractNetSessionWinnings(cost); adjustActualSessionNet(-cost);
     updateTotals();
     try {
-        const award = Math.max(roundUSD(cost * 0.25), roundUSD(Number(await playBonusGame(wager, option.bonus)) || 0));
+        const award = Math.max(roundWinUSD(cost * 0.25), roundWinUSD(Number(await playBonusGame(wager, option.bonus)) || 0));
         if (award > 0) {
             balance = clampBalanceUSD(balance + award);
             addSessionWinnings(award); addNetSessionWinnings(award); subtractNetSessionLosses(award); adjustActualSessionNet(award);
@@ -817,7 +821,7 @@ function evaluateGrid(grid, wagerConfig = getWagerConfig()) {
 
         if (count >= 3 && PAYTABLE[symbol]?.[count]) {
             const multiplier = PAYTABLE[symbol][count];
-            const winUSD = roundUSD(multiplier * betPerLine * denom);
+            const winUSD = roundWinUSD(multiplier * betPerLine * denom);
             totalWinUSD = roundUSD(totalWinUSD + winUSD);
 
             lineWins.push({ lineIndex: li + 1, count, symbol, winUSD });
@@ -874,6 +878,9 @@ function getPerLineOddsAndReturn() {
     const totalWeight = Object.values(WEIGHTS).reduce((sum, w) => sum + w, 0);
     let lineWinProb = 0;
     let lineExpectedReturn = 0;
+    const wager = getWagerConfig();
+    const lineWagerUSD = wager.totalBetUSD / Math.max(1, wager.linesActive);
+    const roundedMultiplier = (multiplier) => lineWagerUSD > 0 ? roundWinUSD(multiplier * lineWagerUSD) / lineWagerUSD : 0;
 
     for (const symbol of SYMBOLS) {
         const p = (WEIGHTS[symbol] || 0) / totalWeight;
@@ -883,9 +890,9 @@ function getPerLineOddsAndReturn() {
 
         lineWinProb += p3;
         lineExpectedReturn +=
-            (PAYTABLE[symbol]?.[3] || 0) * p3 * (1 - p) +
-            (PAYTABLE[symbol]?.[4] || 0) * p4 * (1 - p) +
-            (PAYTABLE[symbol]?.[5] || 0) * p5;
+            roundedMultiplier(PAYTABLE[symbol]?.[3] || 0) * p3 * (1 - p) +
+            roundedMultiplier(PAYTABLE[symbol]?.[4] || 0) * p4 * (1 - p) +
+            roundedMultiplier(PAYTABLE[symbol]?.[5] || 0) * p5;
     }
 
     return {
@@ -914,7 +921,7 @@ function updateGameOddsDisplay() {
 
     winLossOddsTextEl.textContent =
         `Current ${linesActive}-line paytable model: per-line win ${fmtPercent(lineWinProb)} (${fmtOneIn(lineWinProb)}), ` +
-        `per-line loss ${fmtPercent(lineLossProb)}, model RTP ${fmtPercent(returnToPlayer)} / house edge ${fmtPercent(casinoAdvantage)}. ` +
+        `per-line loss ${fmtPercent(lineLossProb)}, whole-dollar payout model RTP ${fmtPercent(returnToPlayer)} / house edge ${fmtPercent(casinoAdvantage)}. ` +
         `Wild substitution increases actual hit frequency beyond this rough model.`;
 }
 
@@ -1754,7 +1761,7 @@ async function doSpin(options = {}) {
         freeSpinWagerConfig = { ...wagerConfig };
         updateFeatureStatus();
     }
-    const totalWinUSD = roundUSD(regularWinUSD + jackpotWinUSD + bonusWinUSD);
+    const totalWinUSD = roundWinUSD(regularWinUSD + jackpotWinUSD + bonusWinUSD);
     const lossComponentUSD = isFreeSpin ? 0 : Math.max(totalBetUSD - totalWinUSD, 0);
     addSessionLosses(lossComponentUSD);
     addNetSessionLosses(lossComponentUSD);

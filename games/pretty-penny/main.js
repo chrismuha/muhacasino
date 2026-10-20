@@ -256,6 +256,10 @@ function roundUSD(value) {
     return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
 }
 
+function roundWinUSD(value) {
+    return window.slotExperience.roundWinUSD(value);
+}
+
 function clampBalanceUSD(value) {
     return roundUSD(Math.max(0, value));
 }
@@ -654,8 +658,8 @@ async function playWheelBonusGame(totalBetUSD) {
                     : null;
                 const singleWinUSD = tier
                     ? getScaledJackpotAmount(tier, totalBetUSD)
-                    : roundUSD(Math.max(0.01, totalBetUSD * segment.multiplier));
-                const winUSD = roundUSD(singleWinUSD * pointerCount);
+                    : roundWinUSD(totalBetUSD * segment.multiplier);
+                const winUSD = roundWinUSD(singleWinUSD * pointerCount);
                 const label = tier ? `${tier.name.toUpperCase()} JACKPOT` : `${segment.name.toUpperCase()} ${segment.mark}`;
                 resultEl.textContent = `${pointerCount} pointer${pointerCount === 1 ? "" : "s"} × ${label} — ${fmtUSD(winUSD)}`;
                 if (tier) {
@@ -694,7 +698,7 @@ async function buyInstantBonus(option = {}) {
     addSessionLosses(cost); addNetSessionLosses(cost); subtractNetSessionWinnings(cost); adjustActualSessionNet(-cost); updateTotals();
     try {
         const outcome = await playBonusGame(wager, option.bonus);
-        const award = Math.max(roundUSD(cost * 0.25), roundUSD(Number(outcome?.winUSD ?? outcome) || 0));
+        const award = Math.max(roundWinUSD(cost * 0.25), roundWinUSD(Number(outcome?.winUSD ?? outcome) || 0));
         if (award > 0) { balance = clampBalanceUSD(balance + award); addSessionWinnings(award); addNetSessionWinnings(award); subtractNetSessionLosses(award); adjustActualSessionNet(award); }
         setMessage(`BONUS COMPLETE — Cost ${fmtUSD(cost)} • Award ${fmtUSD(award)}`);
         updateTotals();
@@ -897,7 +901,7 @@ function addLinkChips(grid, winningSpin, wagerConfig, canTrigger = true) {
     const meterHits = [];
     for (let offset = 1; offset <= valueCount; offset++) {
         const multiplier = linkSettings.minMultiplier + Math.random() * (linkSettings.maxMultiplier - linkSettings.minMultiplier);
-        const value = roundUSD(Math.max(0.01, wagerConfig.totalBetUSD * multiplier));
+        const value = roundWinUSD(wagerConfig.totalBetUSD * multiplier);
         const meterIndex = Math.floor(Math.random() * SAVINGS_BANKS.length);
         displayGrid[row][startCol + offset] = { kind: "link", anchor: false, value, meterIndex, orphan: !activeChain };
         if (activeChain) {
@@ -957,7 +961,7 @@ function advanceGemHold(grid, wagerConfig, canTrigger = true) {
     const gemsToLand = Math.min(emptyColumns.length, Math.random() < GEM_DOUBLE_LAND_CHANCE ? 2 : 1);
     emptyColumns.slice(0, gemsToLand).forEach((col) => {
         const multiplier = GEM_VALUE_MULTIPLIERS[Math.floor(Math.random() * GEM_VALUE_MULTIPLIERS.length)];
-        heldGems.set(col, roundUSD(Math.max(0.01, wagerConfig.totalBetUSD * multiplier)));
+        heldGems.set(col, roundWinUSD(wagerConfig.totalBetUSD * multiplier));
     });
 
     gemHoldSpinsRemaining -= 1;
@@ -1082,7 +1086,7 @@ function evaluateGrid(grid, wagerConfig = getWagerConfig()) {
 
         if (count >= 3 && PAYTABLE[symbol]?.[count]) {
             const multiplier = PAYTABLE[symbol][count];
-            const winUSD = roundUSD(multiplier * betPerLine * denom);
+            const winUSD = roundWinUSD(multiplier * betPerLine * denom);
             totalWinUSD = roundUSD(totalWinUSD + winUSD);
 
             lineWins.push({ lineIndex: li + 1, count, symbol, winUSD });
@@ -1139,6 +1143,9 @@ function getPerLineOddsAndReturn() {
     const totalWeight = Object.values(WEIGHTS).reduce((sum, w) => sum + w, 0);
     let lineWinProb = 0;
     let lineExpectedReturn = 0;
+    const wager = getWagerConfig();
+    const lineWagerUSD = wager.totalBetUSD / Math.max(1, wager.linesActive);
+    const roundedMultiplier = (multiplier) => lineWagerUSD > 0 ? roundWinUSD(multiplier * lineWagerUSD) / lineWagerUSD : 0;
 
     for (const symbol of SYMBOLS) {
         const p = (WEIGHTS[symbol] || 0) / totalWeight;
@@ -1148,9 +1155,9 @@ function getPerLineOddsAndReturn() {
 
         lineWinProb += p3;
         lineExpectedReturn +=
-            (PAYTABLE[symbol]?.[3] || 0) * p3 * (1 - p) +
-            (PAYTABLE[symbol]?.[4] || 0) * p4 * (1 - p) +
-            (PAYTABLE[symbol]?.[5] || 0) * p5;
+            roundedMultiplier(PAYTABLE[symbol]?.[3] || 0) * p3 * (1 - p) +
+            roundedMultiplier(PAYTABLE[symbol]?.[4] || 0) * p4 * (1 - p) +
+            roundedMultiplier(PAYTABLE[symbol]?.[5] || 0) * p5;
     }
 
     return {
@@ -1179,7 +1186,7 @@ function updateGameOddsDisplay() {
 
     winLossOddsTextEl.textContent =
         `Current ${linesActive}-line paytable model: per-line win ${fmtPercent(lineWinProb)} (${fmtOneIn(lineWinProb)}), ` +
-        `per-line loss ${fmtPercent(lineLossProb)}, model RTP ${fmtPercent(returnToPlayer)} / house edge ${fmtPercent(casinoAdvantage)}. ` +
+        `per-line loss ${fmtPercent(lineLossProb)}, whole-dollar payout model RTP ${fmtPercent(returnToPlayer)} / house edge ${fmtPercent(casinoAdvantage)}. ` +
         `Wild substitution increases actual hit frequency beyond this rough model.`;
 }
 
@@ -2038,7 +2045,7 @@ async function doSpin(options = {}) {
         freeSpinWagerConfig = { ...wagerConfig };
         updateFeatureStatus();
     }
-    const totalWinUSD = roundUSD(regularWinUSD + jackpotWinUSD + bonusWinUSD + linkResult.winUSD + potWinUSD + gemResult.winUSD);
+    const totalWinUSD = roundWinUSD(regularWinUSD + jackpotWinUSD + bonusWinUSD + linkResult.winUSD + potWinUSD + gemResult.winUSD);
     const lossComponentUSD = isFreeSpin ? 0 : Math.max(totalBetUSD - totalWinUSD, 0);
     addSessionLosses(lossComponentUSD);
     addNetSessionLosses(lossComponentUSD);

@@ -30,6 +30,12 @@
     }
     const jackpotScheduleDefaults = { mini: 10, minor: 100, major: 1000, grand: 25000 };
 
+    // Award policy only: wagers, deposits, and threshold counters retain cents.
+    function roundWinUSD(value) {
+        const amount = Number(value);
+        return Number.isFinite(amount) && amount > 0 ? Math.max(1, Math.ceil(amount - 1e-9)) : 0;
+    }
+
     function thresholdCents(value, fallback) {
         const amount = Number(value);
         return Math.round(Math.max(0.01, Math.min(1_000_000_000,
@@ -237,7 +243,8 @@
             const tier = ["mini", "minor", "major", "grand"].includes(prize?.tier) ? prize.tier : (fallback.tier || "mini");
             return { type, tier };
         }
-        return { type, value: Math.max(type === "multiplier" ? 0.25 : 0.01, Number(prize?.value) || Number(fallback.value) || 1) };
+        const value = Number(prize?.value) || Number(fallback.value) || 1;
+        return { type, value: type === "fixed" ? roundWinUSD(value) || 1 : Math.max(0.25, value) };
     }
 
     function formatWheelPrize(prize) {
@@ -368,7 +375,7 @@
                 <option value="fixed"${prize.type === "fixed" ? " selected" : ""}>Fixed value</option>
                 <option value="jackpot"${prize.type === "jackpot" ? " selected" : ""}>Jackpot</option>
             </select></label>
-            <label class="wheel-prize-number">Amount<input type="number" min="0.01" max="1000000" step="0.25" value="${value}" data-wheel-prize-value="${index}"></label>
+            <label class="wheel-prize-number">Amount<input type="number" min="${prize.type === "fixed" ? 1 : 0.25}" max="1000000" step="${prize.type === "fixed" ? 1 : 0.25}" value="${value}" data-wheel-prize-value="${index}"></label>
             <label class="wheel-prize-tier">Tier<select data-wheel-prize-tier="${index}">
                 ${["mini", "minor", "major", "grand"].map((name) => `<option value="${name}"${tier === name ? " selected" : ""}>${name[0].toUpperCase()}${name.slice(1)}</option>`).join("")}
             </select></label>
@@ -378,12 +385,12 @@
     function getConfiguredJackpotAmount(tierName, wager, _denomination = 0.01, fallback = 0.01) {
         const config = state.jackpots;
         const base = Number(config?.amounts?.[tierName] ?? fallback);
-        if (!config?.enabled) return Math.min(MAX_JACKPOT_AMOUNT, Math.max(0.01, Math.round(base * 100) / 100));
+        if (!config?.enabled) return Math.min(MAX_JACKPOT_AMOUNT, roundWinUSD(base));
         const bet = Math.max(0.01, Number(wager) || config.baseWager);
         const amount = config.mode === "increment"
             ? base + ((bet - config.baseWager) / config.betStep) * config.stepAmount
             : base * (bet / config.baseWager);
-        return Math.min(MAX_JACKPOT_AMOUNT, Math.max(0.01, Math.round(amount * 100) / 100));
+        return Math.min(MAX_JACKPOT_AMOUNT, roundWinUSD(Math.max(1, amount)));
     }
 
     function updateMoneyUi() {
@@ -533,7 +540,7 @@
             <div class="jackpot-config-setting jackpot-amounts-setting">
                 <strong>Jackpot amounts</strong>
                 <div class="jackpot-base-grid">
-                    ${["Mini", "Minor", "Major", "Grand"].map((name) => `<label>${name}<input type="number" min="0.01" max="${MAX_JACKPOT_AMOUNT}" step="0.01" data-jackpot-base="${name.toLowerCase()}"></label>`).join("")}
+                    ${["Mini", "Minor", "Major", "Grand"].map((name) => `<label>${name}<input type="number" min="1" max="${MAX_JACKPOT_AMOUNT}" step="1" data-jackpot-base="${name.toLowerCase()}"></label>`).join("")}
                 </div>
                 <small>Set the base Mini, Minor, Major, and Grand awards.</small>
             </div>
@@ -807,7 +814,11 @@
             const tier = document.querySelector(`[data-wheel-prize-tier="${index}"]`)?.value;
             state.wheelPrizes[index] = normalizeWheelPrize({ type, value: valueInput?.value, tier }, defaultWheelPrizes[index]);
             if (editor) editor.dataset.prizeType = state.wheelPrizes[index].type;
-            if (valueInput && state.wheelPrizes[index].type !== "jackpot") valueInput.value = String(state.wheelPrizes[index].value);
+            if (valueInput && state.wheelPrizes[index].type !== "jackpot") {
+                valueInput.value = String(state.wheelPrizes[index].value);
+                valueInput.min = state.wheelPrizes[index].type === "fixed" ? "1" : "0.25";
+                valueInput.step = state.wheelPrizes[index].type === "fixed" ? "1" : "0.25";
+            }
             const wedge = document.querySelector(`[data-wheel-value="${index}"]`);
             if (wedge) wedge.textContent = formatWheelPrize(state.wheelPrizes[index]);
             save();
@@ -843,7 +854,7 @@
                 state.jackpots.betStep = Math.max(0.01, Number(document.getElementById("jackpotBetStep").value) || 0.5);
                 state.jackpots.stepAmount = Math.max(0, Number(document.getElementById("jackpotStepAmount").value) || 0);
                 document.querySelectorAll("[data-jackpot-base]").forEach((input) => {
-                    state.jackpots.amounts[input.dataset.jackpotBase] = Math.max(0.01, Number(input.value) || 0.01);
+                    state.jackpots.amounts[input.dataset.jackpotBase] = roundWinUSD(Number(input.value)) || 1;
                 });
                 save();
                 window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
@@ -953,7 +964,7 @@
         let size = 2;
         let freeSpins = 10;
         let banked = 0;
-        const diamondValue = (weight) => Math.max(0.01, Math.round(weight * wager * 100) / 100);
+        const diamondValue = (weight) => roundWinUSD(weight * wager);
         let cells = [diamondValue(1), 0, 0, 0];
         let complete = false;
         const sum = () => cells.reduce((value, cell) => value + cell, 0);
@@ -1241,11 +1252,11 @@
                     return;
                 }
                 const prize = state.wheelPrizes[prizeIndex];
-                const award = prize.type === "jackpot"
+                const award = roundWinUSD(prize.type === "jackpot"
                     ? getConfiguredJackpotAmount(prize.tier, attempt.wager, attempt.denomination)
                     : prize.type === "fixed"
                         ? prize.value
-                        : attempt.needed * prize.value;
+                        : attempt.needed * prize.value);
                 result.textContent = `Lucky win — ${formatWheelPrize(prize)}! ${money(award)} in simulated credits was added.`;
                 const callback = attempt.onAward;
                 await callback(award);
@@ -1592,6 +1603,7 @@
     initializeCabinetBridge();
 
     window.slotExperience = {
+        roundWinUSD,
         formatAmount,
         formatJackpotAmount,
         getDisplayMode: () => state.displayMode,
@@ -1637,7 +1649,7 @@
                 betStep: Math.max(0.01, Number(saved.betStep) || baseWager),
                 stepAmount: Math.max(0, Number(saved.stepAmount) || 10),
                 amounts: Object.fromEntries(Object.entries({ ...defaults, ...(saved.amounts || {}) })
-                    .map(([name, amount]) => [name, Math.max(0.01, Number(amount) || defaults[name] || 0.01)])),
+                    .map(([name, amount]) => [name, roundWinUSD(Number(amount) || defaults[name] || 1)])),
             };
             document.getElementById("jackpotScalingEnabled").checked = state.jackpots.enabled;
             document.getElementById("jackpotScalingMode").value = state.jackpots.mode;

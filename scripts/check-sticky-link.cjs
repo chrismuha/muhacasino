@@ -1,3 +1,4 @@
+const roundWinUSD = require('./slot-test-currency.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -10,7 +11,7 @@ function extract(source, name) {
 const shared = fs.readFileSync(path.join(__dirname, '../slot-experience.js'), 'utf8');
 const settingsStart = shared.indexOf('    function normalizeStickyLinkSettings(');
 const settingsEnd = shared.indexOf('\n    }', settingsStart) + 6;
-const settingsContext = vm.createContext({ Math, Number });
+const settingsContext = vm.createContext({ roundWinUSD, Math, Number });
 vm.runInContext(shared.slice(settingsStart, settingsEnd), settingsContext);
 assert.equal(settingsContext.normalizeStickyLinkSettings().triggerChance, 3);
 assert.equal(settingsContext.normalizeStickyLinkSettings().spins, 5);
@@ -22,8 +23,8 @@ assert.equal(settingsContext.normalizeStickyLinkSettings({ spins: 0 }).spins, 1)
 for (const game of ['pretty-penny', 'treasurepots']) {
     const source = fs.readFileSync(path.join(__dirname, '../games', game, 'main.js'), 'utf8');
     const sticky = { enabled: true, triggerChance: 100, spins: 5 };
-    const links = { minMultiplier: 1, maxMultiplier: 2, minCount: 2, maxCount: 2, winChance: 0, teaserChance: 0 };
-    const context = vm.createContext({
+    const links = { minMultiplier: 1, maxMultiplier: 10, minCount: 2, maxCount: 2, winChance: 0, teaserChance: 0 };
+    const context = vm.createContext({ roundWinUSD,
         Math: Object.assign(Object.create(Math), { random: () => 0 }), Set, Map, Array,
         ROWS: 5, COLS: 5, GEM_HOLD_SPINS: 3, SCATTER_SYMBOL: 'scatter',
         gemHoldActive: true, gemHoldRow: 0, gemHoldCyclePendingReset: false,
@@ -39,7 +40,7 @@ for (const game of ['pretty-penny', 'treasurepots']) {
     for (let turn = 0; turn < 5; turn++) {
         const input = grid();
         const before = JSON.stringify(input);
-        const result = context.addLinkChips(input, false, { totalBetUSD: 1 }, turn === 0);
+        const result = context.addLinkChips(input, false, { totalBetUSD: 0.4 }, turn === 0);
         assert.equal(result.sticky, true, 'A sticky anchor pays independently of regular Win Odds');
         assert.notEqual(result.row, 0, 'Sticky LINK must avoid the active held-Wild row');
         heldRow ??= result.row;

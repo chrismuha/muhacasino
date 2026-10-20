@@ -1,3 +1,4 @@
+const roundWinUSD = require('./slot-test-currency.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -13,7 +14,7 @@ function sharedFunction(name) {
     if (stateStart >= 0 && (end < 0 || stateStart < end)) end = stateStart;
     return shared.slice(start, end);
 }
-const context = vm.createContext({
+const context = vm.createContext({ roundWinUSD,
     Math, Number, Object,
     jackpotScheduleDefaults: { mini: 10, minor: 100, major: 1000, grand: 25000 },
     save() {}, syncJackpotScheduleUi() {}, updateMoneyUi() {},
@@ -109,7 +110,7 @@ for (const game of ['pretty-penny', 'treasurepots', 'neon-slots', 'big-money-del
     const source = fs.readFileSync(path.join(__dirname, '../games', game, 'main.js'), 'utf8');
     const start = source.indexOf('function resolveJackpotWins(');
     const end = source.indexOf('\n}', start) + 2;
-    const gameContext = vm.createContext({
+    const gameContext = vm.createContext({ roundWinUSD,
         Math: Object.assign(Object.create(Math), { random: () => 0 }),
         JACKPOT_TIERS: tiers, getActiveTotalBetUSD: () => 1, getScaledJackpotAmount: tier => tier.amountUSD,
         getTargetJackpotRate: () => 1,

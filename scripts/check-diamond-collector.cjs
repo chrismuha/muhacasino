@@ -1,3 +1,4 @@
+const roundWinUSD = require('./slot-test-currency.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
@@ -11,13 +12,19 @@ function setup(random) {
     let first = true;
     const listeners = new Set();
     const state = { interactionLocked: false };
-    const context = vm.createContext({ Math: Object.assign(Object.create(Math), { random }), Promise, state,
+    const context = vm.createContext({ roundWinUSD, Math: Object.assign(Object.create(Math), { random }), Promise, state,
         document: { activeElement: element(), createElement() { if (first) { first = false; return overlay; } return element(); }, body: { appendChild() {} }, addEventListener(k, fn) { listeners.add(fn); }, removeEventListener(k, fn) { listeners.delete(fn); } },
         window: { slotExperience: { setInteractionLocked(value) { state.interactionLocked = value; } } }, formatAmount: value => String(value) });
     vm.runInContext(source.slice(start, end), context);
     return { context, overlay, nodes, state, listeners, button: () => nodes.button };
 }
 (async () => {
+    const fractional = setup(() => 0.99);
+    const fractionalResult = fractional.context.playDiamondCollector(0.4);
+    assert.equal(fractional.nodes['.diamond-collector-board'].children[0].textContent, '1');
+    for (let i = 0; i < 10; i++) fractional.button().onclick();
+    fractional.button().onclick();
+    assert.equal(await fractionalResult, 1, 'A fractional-wager diamond must still pay at least $1');
     const dry = setup(() => 0.99);
     const result = dry.context.playDiamondCollector(2);
     assert.equal(dry.state.interactionLocked, true);

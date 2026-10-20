@@ -1,3 +1,4 @@
+const roundWinUSD = require('./slot-test-currency.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -16,7 +17,7 @@ async function checkDialog() {
     let first = true;
     const listeners = new Set();
     const state = { interactionLocked: false };
-    const context = vm.createContext({ Math, Number, Promise, state, formatAmount: amount => `${amount} cr`,
+    const context = vm.createContext({ roundWinUSD, Math, Number, Promise, state, formatAmount: amount => `${amount} cr`,
         window: { slotExperience: { setInteractionLocked(value) { state.interactionLocked = value; } } },
         document: { activeElement: element(), createElement() { if (first) { first = false; return overlay; } return element(); }, body: element(), addEventListener(key, fn) { listeners.add(fn); }, removeEventListener(key, fn) { listeners.delete(fn); } },
     });
@@ -45,7 +46,7 @@ async function checkGame(game) {
     let closeWin;
     const notices = [];
     const values = { totalBetUSD: 0.5 };
-    const ctx = vm.createContext({ Math: Object.assign(Object.create(Math), { random: () => 1 }), Number, Set, Promise,
+    const ctx = vm.createContext({ roundWinUSD, Math: Object.assign(Object.create(Math), { random: () => 1 }), Number, Set, Promise,
         isSpinning: false, autoSpinRunning: false, balance: 100, freeSpinsRemaining: 0, freeSpinWagerConfig: null, freeSpinWinTotalUSD: 0,
         totalBetDisplayOverrideUSD: null, freeSpinsOddsEl: {}, bonusGameOddsEl: {}, reelsEl: {}, SYMBOL_LABELS: {}, SAVINGS_BANKS: [{ name: 'Pocket', amountUSD: 6 }],
         getWagerConfig: () => values, getFeatureRate: () => 0, getFreeSpinsAward: () => 8, getTargetSpinWinRate: () => 0,
@@ -95,7 +96,7 @@ async function checkGame(game) {
     // A delayed animation callback must not overwrite an already rendered result.
     const frames = [];
     let renders = 0;
-    const animation = vm.createContext({ Math, performance: { now: () => 0 }, requestAnimationFrame: fn => frames.push(fn), createGrid: () => [], randomSymbol: () => 'normal', renderGrid: () => { renders++; } });
+    const animation = vm.createContext({ roundWinUSD, Math, performance: { now: () => 0 }, requestAnimationFrame: fn => frames.push(fn), createGrid: () => [], randomSymbol: () => 'normal', renderGrid: () => { renders++; } });
     vm.runInContext(extract(source, 'animateSpin'), animation);
     animation.animateSpin(650);
     frames.shift()(100);
