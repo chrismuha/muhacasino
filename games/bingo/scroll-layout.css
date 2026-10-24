@@ -209,3 +209,16 @@ html[data-bingo-theme="planet"] body>main.planet-hall-shell:not(.planet-footer-c
 html[data-bingo-theme="planet"] body>main.planet-hall-shell:not(.planet-footer-collapsed)>.planet-status-bar>.planet-footer-collapse,
 html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]) body #app>.app-shell:has(>.game-layout)>.app-footer>.native-pattern-collapse{top:0!important}
 html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]):not(.native-pattern-collapsed) body #app>.app-shell:has(>.game-layout)>.app-footer{min-height:0!important}
+
+/* Fill tall displays and center the ball against the entire footer width. */
+html[data-bingo-theme="planet"] body>main.planet-hall-shell{display:flex!important;flex-direction:column!important}
+html[data-bingo-theme="planet"] body>main.planet-hall-shell>.planet-terminal-header{flex:0 0 auto!important}
+html[data-bingo-theme="planet"] body>main.planet-hall-shell:not(.planet-footer-collapsed)>.planet-play-surface{flex:1 0 auto!important}
+html[data-bingo-theme="planet"] body>main.planet-hall-shell:not(.planet-footer-collapsed)>.planet-status-bar{flex:0 0 auto!important;align-self:stretch!important}
+html[data-bingo-theme="planet"] body>main.planet-hall-shell.planet-footer-collapsed>.planet-play-surface{flex:0 0 auto!important}
+html[data-bingo-theme="planet"] body>main.planet-hall-shell.planet-round-idle>.planet-play-surface>.planet-idle-flashboard{height:100%!important;min-height:0!important;grid-template-rows:auto minmax(0,1fr)!important}
+html[data-bingo-theme="planet"] body>main.planet-hall-shell .planet-pattern-box>.planet-pattern-legend{justify-content:flex-start!important}
+@media(min-width:700px){
+ html[data-bingo-theme="planet"] body>main.planet-hall-shell:not(.planet-footer-collapsed)>.planet-status-bar{grid-template-columns:minmax(0,1fr) 100px minmax(0,1fr)!important}
+ html[data-bingo-theme="planet"] body>main.planet-hall-shell:not(.planet-footer-collapsed)>.planet-status-bar>.planet-footer-controls{width:min(100%,340px)!important;justify-self:end!important}
+}

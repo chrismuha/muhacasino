@@ -243,7 +243,7 @@
     const usePlanetHall2Surface = selectedTheme === "planet" && !isPopout;
     if (planetHallShell) {
       planetHallShell.hidden = !usePlanetHall2Surface;
-      planetHallShell.style.setProperty("display", usePlanetHall2Surface ? "block" : "none", "important");
+      planetHallShell.style.setProperty("display", usePlanetHall2Surface ? "flex" : "none", "important");
     }
     if (app) {
       app.style.setProperty("display", usePlanetHall2Surface ? "none" : "block", "important");
