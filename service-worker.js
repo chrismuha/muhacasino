@@ -1,4 +1,4 @@
-const CACHE_NAME = "muha-casino-shell-20261024-ui-release-v40";
+const CACHE_NAME = "muha-casino-shell-20261024-bingo-footer-v43";
 const APP_SHELL = [
   "./",
   "./index.html",

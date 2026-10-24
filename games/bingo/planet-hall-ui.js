@@ -290,6 +290,7 @@
     const setFooterCollapsed = (collapsed) => {
       const footerCollapse = shell.querySelector(".planet-footer-collapse");
       shell.classList.toggle("planet-footer-collapsed", collapsed);
+      shell.scrollTop = 0;
       footerCollapse.setAttribute("aria-expanded", String(!collapsed));
       footerCollapse.setAttribute("aria-label", collapsed ? "Expand Hall footer" : "Collapse Hall footer");
       footerCollapse.title = collapsed ? "Expand Hall footer" : "Collapse Hall footer";
