@@ -1,4 +1,4 @@
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261023-deal-release-notes-v24';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261024-ui-release-v40';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
 let state,visible=false,busy=false;
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -34,13 +34,23 @@ async function play(c){if(!visible||state.plays>=3)return;let mode=await choose(
 async function rearrange(){if(!visible)return;let wilds=me().props.filter(c=>c.colors.length>1);if(!wilds.length)return;let c=await choose('Move a wild property',[['Cancel',null],...wilds.map(c=>[label(c),c])]);if(!c)return;let color=await colorFor(c);if(color!==c.color){c.color=color;normalize(me());log(`${me().name} moved a wild to ${GROUPS[color].name}.`)}}
 async function end(){while(me().hand.length>7){visible=false;render();let c=await choose(`${me().name}: discard down to seven`,me().hand.map(c=>[label(c),c]));remove(me().hand,c);state.discard.push(c)}state.turn=(state.turn+1)%state.players.length;state.plays=0;visible=false;draw(state,me(),me().hand.length?2:5);log(`${me().name} begins their turn.`)}
 function setup() {
-  $('#game').innerHTML = `<form class="setup" id="setup-form" novalidate>
-    <p class="eyebrow">MAKE YOUR NEXT MOVE</p><h2>A full deck. A table of rivals.</h2>
-    <p>Local pass-and-play for 2–4 people. Build your bank, collect colorful properties, and steal the winning set.</p>
-    <p class="setup-required">Choose 2–4 players and enter a different name for everyone. All player names are required.</p>
-    <label for="count">Players <select id="count" required><option>2</option><option>3</option><option>4</option></select></label>
-    <div id="names"></div><button id="start" type="submit" class="primary">Deal the cards →</button>
+  $('#setup-content').innerHTML = `<form class="setup" id="setup-form" novalidate>
+    <section data-wizard-step="1"><h3>How many players?</h3><p>Play together on this device, passing it between turns.</p><label for="count">Players <select id="count" required><option>2</option><option>3</option><option>4</option></select></label></section>
+    <section data-wizard-step="2" hidden><h3>Who’s at the table?</h3><p class="setup-required">Enter a different name for everyone. All player names are required.</p><div id="names"></div></section>
+    <section data-wizard-step="3" hidden><h3>Ready to deal?</h3><p>Each player gets five private cards. The first player draws two more to start.</p><ul id="wizard-review"></ul><p id="wizard-replace" hidden>Dealing starts a new game and replaces the current one.</p></section>
+    <div class="wizard-actions"><button id="wizard-back" type="button" hidden>← Back</button><button id="start" type="submit" class="primary">Continue →</button></div>
   </form>`;
+  let wizardStep = 1;
+  function showStep(step) {
+    wizardStep = step;
+    document.querySelectorAll('[data-wizard-step]').forEach(section=>section.hidden=Number(section.dataset.wizardStep)!==step);
+    $('#wizard-progress').textContent = `Step ${step} of 3 · ${['Players', 'Names', 'Review'][step-1]}`;
+    $('#wizard-back').hidden = step === 1;
+    $('#start').textContent = step === 3 ? 'Deal the cards →' : 'Continue →';
+    if(step === 2) $('#names input')?.focus();
+    if(step === 3) $('#start').focus();
+  }
+  $('#wizard-back').onclick=()=>showStep(wizardStep-1);
   function names() {
     const previous = [...document.querySelectorAll('#names input')].map(input=>input.value);
     $('#names').innerHTML = Array.from({length:Number($('#count').value)}, (_,i)=>`
@@ -54,10 +64,14 @@ function setup() {
   }
   $('#count').onchange = names;
   names();
+  showStep(1);
+  $('#setup-wizard').showModal();
+  $('#count').focus();
   let validating = false;
   $('#setup-form').onsubmit = async event => {
     event.preventDefault();
     if (validating) return;
+    if(wizardStep === 1) {showStep(2);return;}
     const inputs = [...document.querySelectorAll('#names input')];
     const playerNames = inputs.map(input=>input.value.trim());
     const count = Number($('#count').value);
@@ -87,16 +101,26 @@ function setup() {
       firstInvalid.focus();
       return;
     }
+    if(wizardStep === 2) {
+      $('#wizard-review').innerHTML=playerNames.map((name,index)=>`<li><span>Player ${index+1}</span> <strong>${esc(name)}</strong></li>`).join('');
+      $('#wizard-replace').hidden = !state;
+      showStep(3);
+      return;
+    }
     state = createGame(playerNames);
+    $('#setup-wizard').close();
+    $('#log').innerHTML='';
+    $('.history').hidden=false;
     visible = false;
     draw(state, me(), 2);
     log('Cards dealt. First to three different complete colors wins.');
     render();
   };
 }
-$('#new').onclick=async()=>{if(busy||$('#choice').open)return;if(state&&!state.winner&&!await choose('Start a new game?',[['Keep playing',false],['New game',true]],'The current game will be lost.'))return;state=null;$('#log').innerHTML='';setup()};
+$('#new').onclick=()=>{if(busy||$('#choice').open||$('#setup-wizard').open||$('#table-viewer').open)return;setup()};
+$('#wizard-cancel').onclick=()=>$('#setup-wizard').close();
 $('#rules').onclick=()=>openTableViewer('rules');
-$('#game-release-notes').onclick=()=>openTableViewer('release-notes');setup();
+$('.history').hidden=true;
 
 // A device preference shared by all seats; no hand or game state is stored.
 const tableColor = document.querySelector('#table-color');
@@ -213,10 +237,10 @@ function showCardDesign() {
   designIndex = (designIndex + filtered.length) % filtered.length;
   const card = filtered[designIndex];
   const colors = card.action === 'house' ? ['#22824b'] : card.action === 'hotel' ? ['#c83737'] : card.colors?.map(color=>GROUPS[color].color) || [card.type === 'money' ? '#d6ba62' : '#dc6a55'];
-  $('#table-view-content').innerHTML = `<div class="catalog-browser-tools"><label for="catalog-type">Type</label><select id="catalog-type"><option value="all">All cards</option><option value="property">Properties</option><option value="action">Action cards</option><option value="money">Money</option></select><span class="catalog-position" aria-live="polite">${designIndex+1} / ${filtered.length}</span></div><div class="catalog-stage">
+  $('#table-view-content').innerHTML = `<div class="catalog-browser-tools"><label for="catalog-type">Type</label><select id="catalog-type"><option value="all">All cards</option><option value="property">Properties</option><option value="action">Action cards</option><option value="money">Money</option></select><span class="catalog-position" aria-live="polite">${designIndex+1} / ${filtered.length}</span><span class="catalog-copy-count">Deck: ${card.copies} ${card.copies===1?'copy':'copies'}</span></div><div class="catalog-stage">
     <button type="button" id="design-previous" class="catalog-arrow" aria-label="Previous card design">‹</button>
     <article class="catalog-face" data-building="${card.action || ''}" aria-label="${esc(card.name)} card">
-      <div class="catalog-value">${card.value}M <span>${esc(card.type==='property'&&card.colors.length>1?'WILD':card.type.toUpperCase())} · ${card.copies}×</span></div>
+      <div class="catalog-value">${card.value}M <span>${esc(card.type==='property'&&card.colors.length>1?'WILD':card.type.toUpperCase())}</span></div>
       <div class="catalog-stripe" aria-hidden="true" style="background:linear-gradient(90deg,${[...colors,colors.at(-1)].join(',')})"></div>
       <h3>${esc(card.name)}</h3><ul>${compactCardFacts(card).map(fact=>`<li>${esc(fact)}</li>`).join('')}</ul>
     </article><button type="button" id="design-next" class="catalog-arrow" aria-label="Next card design">›</button></div>`;
@@ -235,11 +259,11 @@ document.addEventListener('keydown', event => {
 });
 
 function compactCardFacts(card) {
-  if (card.type === 'money') return ['Put this card in your bank. Use banked money to pay debts; no change is given.'];
+  if (card.type === 'money') return ['Bank this money to pay debts. No change is given.'];
   if (card.type === 'property') {
-    if (card.colors.length === 10) return ['Use in any property color set. Move it on your turn.', 'No cash value. Cannot pay debts or form a full set using only zero-value wilds.'];
-    return [card.colors.length > 1 ? 'Use either color; move on your turn.' : 'Collect this color set.', ...card.colors.map(color=>`${GROUPS[color].name}: set of ${GROUPS[color].names.length}. Rent ${GROUPS[color].rent.map(value=>value+'M').join('/')} .`)];
+    if (card.colors.length === 10) return ['Any property color. Move on your turn.', 'No cash value. Needs a valued property to complete a set.'];
+    return card.colors.map(color=>`${GROUPS[color].name} · ${GROUPS[color].names.length} to complete. Rent ${GROUPS[color].rent.map(value=>value+'M').join('/')} .`);
   }
-  if (card.action === 'rent') return [card.colors.length === 10 ? 'One opponent pays rent on any color you own.' : `All opponents pay rent on ${card.colors.map(color=>GROUPS[color].name).join(' or ')} properties you own.`, 'Use the set’s rent value. Double the Rent costs another play.', `Or bank for ${card.value}M.`];
-  return [card.description, `Or bank for ${card.value}M.`];
+  if (card.action === 'rent') return [card.colors.length === 10 ? 'Charge one opponent rent on any color you own.' : `Charge all opponents rent on ${card.colors.map(color=>GROUPS[color].name).join(' or ')}.`, `Or bank: ${card.value}M.`];
+  return [card.description, `Or bank: ${card.value}M.`];
 }

@@ -101,7 +101,7 @@ function syncHostedCabinetScreens(gameId = null) {
   device.classList.toggle("cabinet-non-slot-game", !slotGameActive);
 }
 
-const SITE_BUILD = "20261023-deal-release-v3";
+const SITE_BUILD = "20261024-ui-release-v40";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");
@@ -429,6 +429,7 @@ function launchGame(gameId, updateHistory = true) {
   syncHostedCabinetScreens(gameId);
 setGameToolbarCollapsed(false);
   showGameLoading();
+  gameView.classList.toggle("tabletop-game", game.categories.includes("table"));
   currentGame.textContent = game.title;
   currentGameVersion.textContent = game.version;
   bingoToolbarControls.hidden = gameId !== "bingo";

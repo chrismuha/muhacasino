@@ -13,7 +13,7 @@
 * { box-sizing: border-box; }
 html {
   scroll-behavior: smooth;
-  scrollbar-gutter: stable;
+  scrollbar-gutter: auto;
 }
 
 body {
@@ -1028,8 +1028,8 @@ body.game-open .game-view.toolbar-collapsed .game-load-state { inset-block-start
   }
 }
 
-/* Keep the library's visual center stable when a browser adds a scrollbar. */
-html { scrollbar-gutter: stable both-edges; }
+/* Let featured backgrounds reach the browser edges without artificial gutters. */
+html { scrollbar-gutter: auto; }
 #launcher { width: 100%; margin-inline: auto; }
 
 .card-deal .card-visual { background: linear-gradient(140deg, #164c3c, #0b211e); color: #eed18c; }
@@ -1047,3 +1047,29 @@ html { scrollbar-gutter: stable both-edges; }
 .new-game-badge{position:absolute;z-index:3;top:16px;right:16px;padding:5px 9px;border-radius:20px;background:#ffe297;color:#173f31;font-size:11px;font-weight:900;letter-spacing:1px;box-shadow:0 3px 12px #0005}
 /* Cover art fills the entire featured section at every aspect ratio. */
 .deal-slide .deal-art{background-size:cover;background-position:center;background-repeat:no-repeat}
+
+/* Every game gets a full title; optional controls receive their own grid area. */
+#gameView:not(.toolbar-collapsed){--casino-toolbar-height:68px}
+#gameView:not(.toolbar-collapsed) .game-toolbar{display:grid;grid-template-columns:max-content minmax(0,1fr) auto 44px;align-items:center;gap:12px;height:var(--casino-toolbar-height);min-height:var(--casino-toolbar-height);padding:6px 12px}
+#gameView .back-button{grid-column:1;grid-row:1}
+#gameView .game-identity{grid-column:2;grid-row:1;display:grid;grid-template-columns:minmax(0,1fr);align-content:center;align-items:center;justify-items:center;gap:3px;position:static;transform:none;width:100%;max-width:none;min-width:0;overflow:visible;pointer-events:auto}
+#gameView .game-identity>#currentGame{width:100%;font-size:clamp(20px,2.8vw,28px);font-weight:900;line-height:1.15;text-align:center;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:break-word}
+#gameView .game-identity>.game-version{width:auto;font-size:12px;line-height:1.1;text-align:center;overflow:visible;text-overflow:clip}
+#gameView:not(.toolbar-collapsed) .toolbar-collapse-button{position:static;grid-column:4;grid-row:1;transform:none;width:44px;height:44px}
+#gameView .slot-mode-toolbar,#gameView .toolbar-bingo-controls{grid-column:3;grid-row:1;margin:0;justify-self:end}
+@media(max-width:900px){
+ #gameView:not(.toolbar-collapsed) .game-toolbar{grid-template-columns:44px minmax(0,1fr) 44px;gap:8px;padding:6px 8px}
+ #gameView .back-button{width:44px;height:44px;min-width:44px;padding:0;display:flex;align-items:center;justify-content:center}
+ #gameView .back-button b{display:none}
+ #gameView:not(.toolbar-collapsed) .toolbar-collapse-button{grid-column:3}
+ #gameView .game-identity>#currentGame{font-size:clamp(20px,3vw,26px)}
+ #gameView:has(.slot-mode-toolbar:not([hidden])):not(.toolbar-collapsed),#gameView:has(.toolbar-bingo-controls:not([hidden])):not(.toolbar-collapsed){--casino-toolbar-height:124px}
+ #gameView:has(.slot-mode-toolbar:not([hidden])):not(.toolbar-collapsed) .game-toolbar,#gameView:has(.toolbar-bingo-controls:not([hidden])):not(.toolbar-collapsed) .game-toolbar{grid-template-rows:50px 50px}
+ #gameView .slot-mode-toolbar,#gameView .toolbar-bingo-controls{grid-column:1 / -1;grid-row:2;justify-self:center;max-width:100%;margin:0}
+ #gameView .slot-mode-toolbar{flex-direction:row;width:auto;min-height:44px;padding:5px 12px;gap:10px}
+ #gameView .slot-mode-toolbar span{min-width:auto;width:auto;font-size:12px}
+}
+
+/* A larger, heavier return arrow across every hosted game. */
+#gameView .back-button>span{display:inline-flex;align-items:center;justify-content:center;font-size:32px;font-weight:1000;line-height:1;-webkit-text-stroke:.7px currentColor}
+#gameView .back-button{min-height:44px}
