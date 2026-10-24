@@ -13,7 +13,7 @@
   <link rel="icon" href="icons/round-browser-icon-v4.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/muha-casino-touch-v3.png" sizes="180x180">
   <link rel="manifest" href="manifest.webmanifest?v=20260919-rounded-icons-v3">
-  <link rel="stylesheet" href="styles.css?build=20261019-centered-layout-v5">
+  <link rel="stylesheet" href="styles.css?build=20261023-deal-release-v3">
   <link rel="stylesheet" href="safe-area.css?build=20260905-notch-v1">
 </head>
 <body>
@@ -39,6 +39,18 @@
 
     <section id="featured" class="hero" aria-label="Featured games">
       <div id="heroTrack" class="hero-track">
+        <article class="hero-slide deal-slide" data-hero-game="monopoly-deal">
+          <div class="hero-content">
+            <p class="eyebrow">New at the table · 2–4 players</p>
+            <h1><span class="hero-title-line">Monopoly</span><em class="hero-title-line">Deal</em></h1>
+            <p>Collect your colors. Steal the perfect set. Bring your best poker face to this fast-playing card game.</p>
+            <div class="hero-actions">
+              <button class="primary-button" type="button" data-game="monopoly-deal">▶ Play now</button>
+              <a class="secondary-button" href="#games">View all games</a>
+            </div>
+          </div>
+          <div class="hero-art deal-art" aria-hidden="true"></div>
+        </article>
         <article class="hero-slide money-slide" data-hero-game="big-money-deluxe">
           <div class="hero-glow"></div>
           <div class="hero-content">
@@ -172,6 +184,11 @@
           <span class="card-details"><strong>Sorry!</strong><small>Classic Board Game</small></span>
           <span class="card-play">▶</span>
         </button>
+        <button class="game-card card-deal" type="button" data-game="monopoly-deal">
+          <span class="card-visual"><span class="mini-reels">M DEAL M</span><i>▣</i></span>
+          <span class="new-game-badge">NEW</span><span class="card-details"><strong>Monopoly Deal</strong><small>2–4 Player Card Game</small></span>
+          <span class="card-play">▶</span>
+        </button>
         <button class="game-card card-yahtzee" type="button" data-game="yahtzee">
           <span class="card-visual"><span class="mini-reels">⚄ ⚅ ⚄</span><i>⚂</i></span>
           <span class="card-details"><strong>Yahtzee</strong><small>Classic Dice Game</small></span>
@@ -201,7 +218,7 @@
           <span class="category-icon">●</span><strong>Casino Hall</strong><small>1 game</small>
         </button>
         <button class="category-card category-table" type="button" data-category="table">
-          <span class="category-icon">⚄</span><strong>Tabletop Games</strong><small>2 games</small>
+          <span class="category-icon">⚄</span><strong>Tabletop Games</strong><small>3 games</small>
         </button>
       </div>
     </section>
@@ -258,7 +275,7 @@
   </section>
 
   <script src="interaction-lock.js?build=20260811-horizontal-rails"></script>
-  <script src="launcher.js?build=20260927-library-arrow-navigation-v1"></script>
+  <script src="launcher.js?build=20261023-deal-release-v3"></script>
   <script src="pwa.js?build=20260829-pwa-v1"></script>
 </body>
 </html>

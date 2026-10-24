@@ -1031,3 +1031,19 @@ body.game-open .game-view.toolbar-collapsed .game-load-state { inset-block-start
 /* Keep the library's visual center stable when a browser adds a scrollbar. */
 html { scrollbar-gutter: stable both-edges; }
 #launcher { width: 100%; margin-inline: auto; }
+
+.card-deal .card-visual { background: linear-gradient(140deg, #164c3c, #0b211e); color: #eed18c; }
+
+/* Monopoly Deal artwork is shared by static and dynamically created cards. */
+.card-deal .card-visual{background:linear-gradient(0deg,#071e19ed 0%,transparent 65%),url('games/monopoly-deal/assets/cover.jpg') center 42% / cover no-repeat}
+.card-deal .mini-reels,.card-deal .card-visual i{display:none}
+.card-deal .card-visual::after{content:'MONOPOLY\A DEAL';white-space:pre;position:absolute;top:18px;left:20px;padding:8px 12px;border-radius:7px;background:#c73630;color:#fff;font-size:20px;font-weight:950;line-height:1.05;letter-spacing:1px;box-shadow:0 4px 18px #0006;transform:rotate(-4deg)}
+.deal-slide{background:#09251d}
+.deal-slide .hero-content{position:relative;z-index:2}
+.deal-slide .hero-content h1 em{color:#ffcf8a}
+.deal-slide .deal-art{position:absolute;inset:0;width:100%;height:100%;max-width:none;transform:none;background:linear-gradient(90deg,#09251d 0%,#09251de8 30%,#09251d10 70%),url('games/monopoly-deal/assets/cover.jpg') right center / auto 100% no-repeat;pointer-events:none}
+@media(max-width:700px){.deal-slide .deal-art{background:linear-gradient(0deg,#09251df5 0%,#09251dc9 40%,#09251d44 100%),url('games/monopoly-deal/assets/cover.jpg') center top / cover no-repeat;opacity:1}.deal-slide .hero-content{text-shadow:0 2px 8px #0008}}
+
+.new-game-badge{position:absolute;z-index:3;top:16px;right:16px;padding:5px 9px;border-radius:20px;background:#ffe297;color:#173f31;font-size:11px;font-weight:900;letter-spacing:1px;box-shadow:0 3px 12px #0005}
+/* Cover art fills the entire featured section at every aspect ratio. */
+.deal-slide .deal-art{background-size:cover;background-position:center;background-repeat:no-repeat}

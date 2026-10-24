@@ -1,4 +1,9 @@
 const games = {
+  "monopoly-deal": {
+    title: "Monopoly Deal", version: "v1.0.0", subtitle: "2–4 Player Card Game",
+    path: "games/monopoly-deal/index.html", className: "card-deal",
+    reels: "M DEAL M", icon: "▣", categories: ["table"],
+  },
   "big-money-deluxe": {
     title: "Big Money Deluxe",
     version: "v1.3.7",
@@ -96,7 +101,7 @@ function syncHostedCabinetScreens(gameId = null) {
   device.classList.toggle("cabinet-non-slot-game", !slotGameActive);
 }
 
-const SITE_BUILD = "20260919-dedicated-info-pages-v4";
+const SITE_BUILD = "20261023-deal-release-v3";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");
@@ -468,6 +473,7 @@ function gameCard(gameId) {
   card.dataset.game = gameId;
   card.innerHTML = `
     <span class="card-visual"><span class="mini-reels">${game.reels}</span><i>${game.icon}</i></span>
+    ${gameId === "monopoly-deal" ? '<span class="new-game-badge">NEW</span>' : ""}
     <span class="card-details"><strong>${game.title}</strong><small>${game.subtitle}</small></span>
     <span class="card-play">▶</span>
   `;
