@@ -140,7 +140,9 @@
     };
     [document.documentElement, ...document.querySelectorAll("#app, #app .app-shell")].forEach((element) => {
       Object.entries(values).forEach(([property, value]) => {
-        element.style.setProperty(property, value, "important");
+        if (element.style.getPropertyValue(property) !== value || element.style.getPropertyPriority(property) !== 'important') {
+          element.style.setProperty(property, value, "important");
+        }
       });
     });
     document.querySelectorAll("[data-solid-color]").forEach((input) => {
@@ -533,8 +535,8 @@
       if (!planetCredit.querySelector("strong") || !planetCredit.querySelector("span")) {
         planetCredit.innerHTML = "<strong>∞</strong><span>CREDITS</span>";
       }
-      planetCredit.querySelector("strong").textContent = "∞";
-      planetCredit.querySelector("span").textContent = "CREDITS";
+      if (planetCredit.querySelector('strong').textContent !== '∞') planetCredit.querySelector('strong').textContent = '∞';
+      if (planetCredit.querySelector('span').textContent !== 'CREDITS') planetCredit.querySelector('span').textContent = 'CREDITS';
     }
   }
 
@@ -1857,6 +1859,63 @@
     }
   }
 
+  let nativeFooterSyncQueued = false;
+  function queueNativeFooterSync() {
+    if (nativeFooterSyncQueued) return;
+    nativeFooterSyncQueued = true;
+    window.requestAnimationFrame(() => {
+      nativeFooterSyncQueued = false;
+      syncNativeFooterBall();
+    });
+  }
+  function syncNativeFooterBall() {
+    let ball = document.querySelector('body > .native-footer-ball');
+    const nativeTheme = ['classic', 'current'].includes(document.documentElement.dataset.bingoTheme);
+    const footer = document.querySelector('#app .app-shell:has(> .game-layout) > .app-footer');
+    const source = document.querySelector('#app .game-layout .bingo-ball');
+    if (!nativeTheme || !footer || !source) {
+      if (ball && !ball.hidden) ball.hidden = true;
+      return;
+    }
+    if (!ball) {
+      ball = document.createElement('div');
+      ball.className = 'native-footer-ball';
+      ball.setAttribute('role', 'img');
+      ball.innerHTML = '<span class="native-footer-letter"></span><strong></strong>';
+      // Keep this display outside Vue's DOM and its app-wide mutation observer.
+      ball.hidden = true;
+      document.body.append(ball);
+    }
+    const letter = source.querySelector('.ball-letter, span, small')?.textContent?.trim() || '—';
+    const number = source.querySelector('strong')?.textContent?.trim() || '#';
+    const targetLetter = ball.querySelector('.native-footer-letter');
+    const targetNumber = ball.querySelector('strong');
+    if (targetLetter.textContent !== letter) targetLetter.textContent = letter;
+    if (targetNumber.textContent !== number) targetNumber.textContent = number;
+    const description = /^\d+$/.test(number) ? `Current ball ${letter} ${number}` : 'No ball called yet';
+    if (ball.getAttribute('aria-label') !== description) ball.setAttribute('aria-label', description);
+    const rect = footer.getBoundingClientRect();
+    const smallScreen = window.matchMedia('(max-width: 699px)').matches;
+    const pattern = footer.querySelector('.footer-pattern')?.getBoundingClientRect();
+    const top = smallScreen && pattern ? pattern.bottom + 8 : rect.top + rect.height / 2 - 40;
+    const visible = !document.documentElement.classList.contains('native-pattern-collapsed') &&
+      document.documentElement.classList.contains('hall-controls-collapsed') &&
+      rect.height > 0 && top >= rect.top && top + 80 <= rect.bottom + 1;
+    if (ball.hidden === visible) ball.hidden = !visible;
+    const topValue = `${Math.round(top)}px`;
+    if (ball.style.top !== topValue) ball.style.top = topValue;
+    const leftValue = `${Math.round(rect.left + rect.width / 2)}px`;
+    if (ball.style.left !== leftValue) ball.style.left = leftValue;
+    if (!source._nativeFooterObserver) {
+      source._nativeFooterObserver = new MutationObserver(queueNativeFooterSync);
+      source._nativeFooterObserver.observe(source, {childList:true,subtree:true,characterData:true});
+    }
+  }
+  window.addEventListener('resize', queueNativeFooterSync);
+  document.addEventListener('scroll', queueNativeFooterSync, true);
+  document.addEventListener('click', queueNativeFooterSync, true);
+  document.addEventListener('change', queueNativeFooterSync, true);
+
   function restoreSavedPreferences() {
     applySolidColors();
     restoreCardView();
@@ -1873,6 +1932,7 @@
     monitorScheduledStarts();
     syncIncorrectBingoClaims();
     mountNativePatternCollapse();
+    queueNativeFooterSync();
   }
 
   function openScheduleOverlay() {
@@ -2103,10 +2163,25 @@
     restoreCardView();
 
     const app = document.querySelector("#app");
-    if (app) new MutationObserver(() => {
-      if (!overlay.querySelector(".view-flashboard-panel").hidden) renderFlashboard();
-      restoreSavedPreferences();
-    }).observe(app, { childList: true, subtree: true, attributes: true });
+    if (app) {
+      let restoreFrame = 0;
+      const watchOptions = {childList:true,subtree:true,attributes:true};
+      const preferenceObserver = new MutationObserver(() => {
+        if (restoreFrame) return;
+        restoreFrame = window.requestAnimationFrame(() => {
+          restoreFrame = 0;
+          // Do not feed our own DOM adjustments back into the same observer.
+          preferenceObserver.disconnect();
+          try {
+            if (!overlay.querySelector('.view-flashboard-panel').hidden) renderFlashboard();
+            restoreSavedPreferences();
+          } finally {
+            preferenceObserver.observe(app, watchOptions);
+          }
+        });
+      });
+      preferenceObserver.observe(app, watchOptions);
+    }
   }
 
   function openDaubOptions() {
@@ -2304,7 +2379,7 @@
       brand = document.createElement("span");
       brand.className = "bingo-popout-brand";
       brand.setAttribute("aria-label", "Muha Bingo");
-      brand.innerHTML = '<strong>MUHA</strong><b>BINGO</b><small>v1.1.11</small>';
+      brand.innerHTML = '<strong>MUHA</strong><b>BINGO</b><small>v3.2.0</small>';
       returnButton?.insertAdjacentElement("afterend", brand);
     }
     let appearanceButton = toolbar.querySelector(".window-appearance-button");

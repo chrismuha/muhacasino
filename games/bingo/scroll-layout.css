@@ -222,3 +222,68 @@ html[data-bingo-theme="planet"] body>main.planet-hall-shell .planet-pattern-box>
  html[data-bingo-theme="planet"] body>main.planet-hall-shell:not(.planet-footer-collapsed)>.planet-status-bar{grid-template-columns:minmax(0,1fr) 100px minmax(0,1fr)!important}
  html[data-bingo-theme="planet"] body>main.planet-hall-shell:not(.planet-footer-collapsed)>.planet-status-bar>.planet-footer-controls{width:min(100%,340px)!important;justify-self:end!important}
 }
+
+/* Native themes use a compact footer with a live ball at its actual center. */
+html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]) body #app>.app-shell:has(>.game-layout)>.game-layout{flex:1 0 auto!important}
+html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]):not(.native-pattern-collapsed) body #app>.app-shell:has(>.game-layout)>.app-footer{
+ display:grid!important;grid-template-columns:minmax(0,1fr) 100px minmax(0,1fr)!important;grid-template-rows:repeat(4,max-content)!important;align-items:center!important;align-content:start!important;gap:6px 18px!important;height:auto!important;min-height:0!important;padding:34px 18px 12px!important;
+}
+html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]):not(.native-pattern-collapsed) body #app>.app-shell:has(>.game-layout)>.app-footer>.footer-pattern{
+ grid-column:1!important;grid-row:1 / span 4!important;align-self:center!important;flex:none!important;width:100%!important;min-width:0!important;margin:0!important;padding:0!important;border:0!important;
+}
+html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]):not(.native-pattern-collapsed) body #app>.app-shell:has(>.game-layout)>.app-footer>span{
+ grid-column:3!important;display:flex!important;align-items:center!important;justify-self:start!important;width:auto!important;min-width:0!important;height:auto!important;min-height:0!important;max-height:none!important;padding:0!important;margin:0!important;gap:8px!important;font-size:18px!important;line-height:1.3!important;
+}
+html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]):not(.native-pattern-collapsed) body #app>.app-shell:has(>.game-layout)>.app-footer>span:nth-of-type(1){grid-row:1!important}
+html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]):not(.native-pattern-collapsed) body #app>.app-shell:has(>.game-layout)>.app-footer>span:nth-of-type(2){grid-row:2!important}
+html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]):not(.native-pattern-collapsed) body #app>.app-shell:has(>.game-layout)>.app-footer>span:nth-of-type(3){grid-row:3!important}
+html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]):not(.native-pattern-collapsed) body #app>.app-shell:has(>.game-layout)>.app-footer>small{
+ grid-column:3!important;grid-row:4!important;justify-self:start!important;width:auto!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;font-size:16px!important;line-height:1.3!important;
+}
+html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]) body>.native-footer-ball{
+ position:fixed;left:50%;transform:translateX(-50%);z-index:41;display:grid;grid-template-rows:auto auto;align-content:center;justify-items:center;box-sizing:border-box;width:80px;height:80px;gap:2px;border:6px solid #b72825;border-radius:50%;background:#fff8e5;box-shadow:0 3px 12px #0004;color:#14213a;text-align:center;pointer-events:none;
+}
+body>.native-footer-ball[hidden]{display:none!important}
+.native-footer-ball .native-footer-letter{font-size:16px;line-height:1}.native-footer-ball>strong{font-size:28px;line-height:1}
+@media(max-width:699px){
+ html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]):not(.native-pattern-collapsed) body #app>.app-shell:has(>.game-layout)>.app-footer{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:max-content 80px repeat(4,max-content)!important;gap:8px!important;padding-inline:12px!important}
+ html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]):not(.native-pattern-collapsed) body #app>.app-shell:has(>.game-layout)>.app-footer>.footer-pattern{grid-column:1!important;grid-row:1!important}
+ html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]):not(.native-pattern-collapsed) body #app>.app-shell:has(>.game-layout)>.app-footer>span{grid-column:1!important}
+ html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]):not(.native-pattern-collapsed) body #app>.app-shell:has(>.game-layout)>.app-footer>span:nth-of-type(1){grid-row:3!important}
+ html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]):not(.native-pattern-collapsed) body #app>.app-shell:has(>.game-layout)>.app-footer>span:nth-of-type(2){grid-row:4!important}
+ html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]):not(.native-pattern-collapsed) body #app>.app-shell:has(>.game-layout)>.app-footer>span:nth-of-type(3){grid-row:5!important}
+ html:is([data-bingo-theme="classic"],[data-bingo-theme="current"]):not(.native-pattern-collapsed) body #app>.app-shell:has(>.game-layout)>.app-footer>small{grid-column:1!important;grid-row:6!important}
+}
+
+/* Footer content changes should never restart a fade or position animation. */
+html[data-bingo-theme] :is(.app-footer,.planet-status-bar,.native-footer-ball){animation:none!important;transition:none!important}
+
+/* A flashboard is one complete board, never a scrolling list of numbers. */
+html[data-bingo-theme="planet"] body>main.planet-hall-shell.planet-round-idle{overflow:hidden!important}
+html[data-bingo-theme="planet"] body>main.planet-hall-shell.planet-round-idle>.planet-play-surface{
+ flex:1 1 0!important;height:0!important;min-height:0!important;max-height:none!important;grid-template-rows:minmax(0,1fr)!important;overflow:hidden!important;
+}
+html[data-bingo-theme="planet"] body>main.planet-hall-shell.planet-round-idle:not(.planet-footer-collapsed)>.planet-status-bar{max-height:40dvh!important}
+html[data-bingo-theme="planet"] body>main.planet-hall-shell.planet-round-idle>.planet-play-surface>.planet-idle-flashboard{
+ box-sizing:border-box!important;height:100%!important;min-height:0!important;max-height:100%!important;grid-template-rows:minmax(0,30%) minmax(0,1fr)!important;overflow:hidden!important;
+}
+html[data-bingo-theme="planet"] body>main.planet-hall-shell .planet-idle-flashboard>header{
+ min-height:0!important;max-height:100%!important;overflow:hidden!important;padding:4px!important;
+}
+html[data-bingo-theme="planet"] body>main.planet-hall-shell .planet-idle-number-board{
+ height:100%!important;min-height:0!important;max-height:100%!important;grid-template-columns:repeat(15,minmax(0,1fr))!important;grid-template-rows:repeat(5,minmax(0,1fr))!important;overflow:hidden!important;container-type:size;
+}
+html[data-bingo-theme="planet"] body>main.planet-hall-shell .planet-idle-number-board>span{font-size:clamp(8px,min(4cqw,12cqh),30px)!important;line-height:1!important;overflow:hidden!important}
+.view-flashboard-panel:not([hidden]){box-sizing:border-box!important;min-height:0!important;height:100%!important;max-height:100dvh!important;overflow:hidden!important;grid-template-rows:auto minmax(0,1fr) auto!important}
+.view-flashboard-grid{
+ box-sizing:border-box!important;min-width:0!important;min-height:0!important;overflow:hidden!important;grid-template-columns:repeat(15,minmax(0,1fr))!important;grid-template-rows:repeat(5,minmax(0,1fr))!important;gap:clamp(2px,.4vw,7px)!important;padding:clamp(4px,1vw,18px)!important;container-type:size;
+}
+.view-flashboard-grid>span{min-width:0!important;min-height:0!important;font-size:clamp(8px,min(4cqw,12cqh),32px)!important;line-height:1!important;overflow:hidden!important}
+@media(max-width:600px) and (min-height:500px){
+ .view-flashboard-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;grid-template-rows:repeat(15,minmax(0,1fr))!important}
+ .view-flashboard-grid>span{font-size:clamp(8px,min(8cqw,4cqh),28px)!important}
+}
+.other-theme-waiting-flashboard{grid-template-rows:minmax(0,30%) minmax(0,1fr)!important;overflow:hidden!important}
+.other-theme-waiting-flashboard>header{min-height:0!important;overflow:hidden!important}
+.other-theme-number-board{height:100%!important;min-height:0!important;overflow:hidden!important;container-type:size}
+.other-theme-number-board>span{font-size:clamp(8px,min(4cqw,12cqh),30px)!important;line-height:1!important;overflow:hidden!important}

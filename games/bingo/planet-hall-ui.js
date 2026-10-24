@@ -101,14 +101,18 @@
   }
 
   function renderNumberBoard(board, calledNumbers, latestNumber) {
-    board.replaceChildren();
-    for (let number = 1; number <= 75; number += 1) {
-      const cell = document.createElement("span");
-      cell.textContent = String(number);
-      cell.classList.toggle("called", calledNumbers.has(number));
-      cell.classList.toggle("latest", number === latestNumber);
-      board.append(cell);
+    if (board.children.length !== 75) {
+      const cells = Array.from({length:75}, (_, index) => {
+        const cell = document.createElement('span');
+        cell.textContent = String(index + 1);
+        return cell;
+      });
+      board.replaceChildren(...cells);
     }
+    [...board.children].forEach((cell, index) => {
+      cell.classList.toggle('called', calledNumbers.has(index + 1));
+      cell.classList.toggle('latest', index + 1 === latestNumber);
+    });
   }
 
   function syncPlanetHall() {
@@ -119,22 +123,28 @@
 
     const sourceAppShell = document.querySelector("#app .app-shell");
     const appearance = sourceAppShell?.classList.contains("theme-light") ? "light" : "dark";
-    const legendInk = appearance === "light" ? "#17243a" : "#ffffff";
-    shell.dataset.appearance = appearance;
-    shell.querySelectorAll(".planet-legend-item, .planet-legend-label").forEach((label) => {
-      label.style.setProperty("color", legendInk, "important");
-      label.style.setProperty("-webkit-text-fill-color", legendInk, "important");
-      label.style.setProperty("text-shadow", "none", "important");
-      label.style.setProperty("opacity", "1", "important");
-    });
-    shell.querySelectorAll(".planet-free-item, .planet-free-item .planet-legend-label").forEach((freeLabel) => {
-      freeLabel.style.setProperty("color", legendInk, "important");
-      freeLabel.style.setProperty("-webkit-text-fill-color", legendInk, "important");
-    });
+    if (shell.dataset.appearance !== appearance) {
+      const legendInk = appearance === "light" ? "#17243a" : "#ffffff";
+      shell.dataset.appearance = appearance;
+      shell.querySelectorAll(".planet-legend-item, .planet-legend-label").forEach((label) => {
+        label.style.setProperty("color", legendInk, "important");
+        label.style.setProperty("-webkit-text-fill-color", legendInk, "important");
+        label.style.setProperty("text-shadow", "none", "important");
+        label.style.setProperty("opacity", "1", "important");
+      });
+      shell.querySelectorAll(".planet-free-item, .planet-free-item .planet-legend-label").forEach((freeLabel) => {
+        freeLabel.style.setProperty("color", legendInk, "important");
+        freeLabel.style.setProperty("-webkit-text-fill-color", legendInk, "important");
+      });
+    }
 
     const wall = shell.querySelector(".planet-card-wall");
     const empty = shell.querySelector(".planet-empty");
-    wall.replaceChildren(...sourceCards.map(cardCopy));
+    const cardSnapshot = sourceCards.map((card, index) => `${cardSerial(index)}:${card.outerHTML}`).join('');
+    if (wall._sourceSnapshot !== cardSnapshot) {
+      wall.replaceChildren(...sourceCards.map(cardCopy));
+      wall._sourceSnapshot = cardSnapshot;
+    }
     empty.hidden = sourceCards.length > 0;
 
     const roundActive = document.documentElement.classList.contains("dealer-round-active");
@@ -150,28 +160,34 @@
     const latestLetter = sourceBall?.querySelector("span, small")?.textContent?.trim() || "—";
     const latestNumber = /^\d+$/.test(latestText) ? Number(latestText) : null;
     const ballMarker = shell.querySelector(".planet-current-ball small");
-    ballMarker.textContent = latestNumber ? latestLetter : "—";
+    const markerText = latestNumber ? latestLetter : "—";
+    if (ballMarker.textContent !== markerText) ballMarker.textContent = markerText;
     ballMarker.classList.toggle("is-placeholder", !latestNumber);
     ballMarker.closest(".planet-current-ball")?.classList.toggle("has-placeholder", !latestNumber);
     const currentBall = shell.querySelector(".planet-current-ball");
-    currentBall.querySelector("strong").textContent = latestNumber ? latestText : "#";
-    currentBall.setAttribute("aria-label", latestNumber ? `Current ball ${latestLetter} ${latestText}` : "No ball called yet");
+    const numberText = latestNumber ? latestText : "#";
+    if (currentBall.querySelector("strong").textContent !== numberText) currentBall.querySelector("strong").textContent = numberText;
+    const ballLabel = latestNumber ? `Current ball ${latestLetter} ${latestText}` : "No ball called yet";
+    if (currentBall.getAttribute("aria-label") !== ballLabel) currentBall.setAttribute("aria-label", ballLabel);
     renderNumberBoard(shell.querySelector(".planet-number-board"), activeCalledNumbers(sourceCards), latestNumber);
     renderNumberBoard(shell.querySelector(".planet-idle-number-board"), activeCalledNumbers(sourceCards), latestNumber);
 
     const patternCopy = shell.querySelector(".planet-pattern-copy");
     const sourcePattern = document.querySelector("#app .footer-pattern");
-    if (patternCopy && sourcePattern) {
+    if (patternCopy && sourcePattern && patternCopy._sourceSnapshot !== sourcePattern.outerHTML) {
       patternCopy.replaceChildren(sourcePattern.cloneNode(true));
+      patternCopy._sourceSnapshot = sourcePattern.outerHTML;
     }
 
     const darkMode = document.querySelector("#app .app-shell")?.classList.contains("theme-dark");
     const modeButton = shell.querySelector(".planet-mode-trigger");
     if (modeButton) {
-      modeButton.innerHTML = darkMode
+      const modeMarkup = darkMode
         ? '<span aria-hidden="true">☀</span> LIGHT'
         : '<span aria-hidden="true">☾</span> DARK';
-      modeButton.setAttribute("aria-label", darkMode ? "Use light mode" : "Use dark mode");
+      if (modeButton.innerHTML !== modeMarkup) modeButton.innerHTML = modeMarkup;
+      const modeLabel = darkMode ? "Use light mode" : "Use dark mode";
+      if (modeButton.getAttribute("aria-label") !== modeLabel) modeButton.setAttribute("aria-label", modeLabel);
     }
   }
 
