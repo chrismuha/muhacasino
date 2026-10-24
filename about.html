@@ -480,7 +480,7 @@
         <section><h3>v3.2.0 · 2026-08-15–17 · Responsive Hall controls and footer reliability</h3>
           <div class="release-groups">
             <div class="release-group"><h4>Player Floor</h4><ul>
-              <li>Restored vertical scrolling for player cards and winning patterns across all three themes and screen sizes; kept pattern previews square and separated footer text, legends, and controls into responsive rows. Tightened footer spacing and removed the misplaced red placeholder line. Made Planet Hall 2’s flashboard fill the available play area when its footer is collapsed, reset its scroll position on collapse/expand, and centered the current-ball contents. Centered the ball itself against the full footer width and expanded the flashboard to remove unused space below the footer on large displays. Added a synchronized centered footer ball to Planet Hall 1 and Classic and replaced their oversized footer legends with compact rows. Prevented footer flashing by preserving unchanged card, pattern, and number-board nodes and preventing preference-observer feedback.</li>
+              <li>Restored vertical scrolling for player cards and winning patterns across all three themes and screen sizes; kept pattern previews square and separated footer text, legends, and controls into responsive rows. Tightened footer spacing and removed the misplaced red placeholder line. Made Planet Hall 2’s flashboard fill the available play area when its footer is collapsed, reset its scroll position on collapse/expand, and centered the current-ball contents. Centered the ball itself against the full footer width and expanded the flashboard to remove unused space below the footer on large displays. Added a synchronized centered footer ball to Planet Hall 1 and Classic and replaced their oversized footer legends with compact rows. Prevented footer flashing by preserving unchanged card, pattern, and number-board nodes and preventing preference-observer feedback. Reserved space for the collapsed Planet Hall 2 footer so the last flashboard row stays visible, verified all 75 numbers in every theme’s flashboard, and corrected footer arrows to show the next action.</li>
               <li>Made Planet Hall 2 the default Bingo experience while preserving every saved theme choice.</li>
               <li>Kept the winning-pattern footer sticky and independently collapsible in Planet Hall 2, Planet Hall 1, and Classic, with internally scrollable contents on short screens.</li>
               <li>Improved responsive game navigation, card scrolling, and mobile control access without allowing blank-page overscroll.</li>
@@ -582,7 +582,8 @@
             </ul></div>
           </div>
         </section>
-        <section><h3>v3.0.0 · 2026-08-07 · Prizes, unified Halls, Dealer planning, and responsive console update</h3>
+        <section><h3>v3.0.0 · 2026-08-07 · Unified Halls, prizes, patterns, and accessibility</h3>
+<div class="merged-release-group"><h4>Prizes, unified Halls, Dealer planning, and responsive console update</h4>
           <div class="release-groups">
             <div class="release-group"><h4>Dealer planning</h4><ul>
               <li>Linked the Schedule and Prizes displays directly to their matching Dealer settings.</li>
@@ -635,8 +636,8 @@
               <li>Bound iPhone scrolling to the active Bingo workspace so content cannot scroll into an empty black document area.</li>
             </ul></div>
           </div>
-        </section>
-        <section><h3>v2.4.0 · 2026-08-07 · Special balls and stamp options update</h3>
+        </div>
+<div class="merged-release-group"><h4>Special balls and stamp options update</h4>
           <div class="release-groups">
             <div class="release-group"><h4>Stamp choices</h4><ul>
               <li>Renamed Circle to Circle (Solid Color) so its customizable color behavior is clear.</li>
@@ -651,8 +652,8 @@
               <li>Kept the Planet Hall 2 waiting flashboard automatic and added an opt-in checkbox for Planet Hall and Classic.</li>
             </ul></div>
           </div>
-        </section>
-        <section><h3>v2.3.0 · 2026-08-07 · New patterns and Hall controls update</h3>
+        </div>
+<div class="merged-release-group"><h4>New patterns and Hall controls update</h4>
           <div class="release-groups">
             <div class="release-group"><h4>Patterns and stamps</h4><ul>
               <li>Corrected Three Ladies to require three two-by-two ball clusters in any three card corners.</li>
@@ -664,8 +665,8 @@
               <li>Restored the Classic sidebar button so it opens the complete viewport-safe Hall control panel.</li>
             </ul></div>
           </div>
-        </section>
-        <section><h3>v2.2.0 · 2026-08-07 · Responsive Hall and accessibility update</h3>
+        </div>
+<div class="merged-release-group"><h4>Responsive Hall and accessibility update</h4>
           <div class="release-groups">
             <div class="release-group"><h4>Player Hall</h4><ul>
               <li>Optimized every Bingo theme to fit the available browser window without horizontal clipping.</li>
@@ -705,8 +706,13 @@
               <li>Changed the active Muha Bingo title beside Game Library to white.</li>
             </ul></div>
           </div>
+        </div>
         </section>
-        <section><h3>v2.1.0 · 2026-07-31 · Complete Hall experience update</h3>
+
+
+
+        <section><h3>v2.1.0 · 2026-07-31 · Complete Hall experience and player/dealer usability</h3>
+<div class="merged-release-group"><h4>Complete Hall experience update</h4>
           <div class="release-groups">
             <div class="release-group"><h4>Player Hall</h4><ul>
               <li>Redesigned Planet Hall 2 so cards sit closer together with the Flashboard positioned beside them.</li>
@@ -747,8 +753,8 @@
               <li>Expanded automated syntax checks to cover every active Bingo helper and release-history script.</li>
             </ul></div>
           </div>
-        </section>
-        <section><h3>v2.0.0 · 2026-07-31 · Player and dealer usability</h3><ul>
+        </div>
+<div class="merged-release-group"><h4>Player and dealer usability</h4><ul>
           <li>Made the Bingo Player Hall the default screen when launching from the casino.</li>
           <li>Added a guided 1–6 card-purchase flow with unlimited test credits.</li>
           <li>Expanded the Player Hall Flashboard to fill its section in every theme.</li>
@@ -801,7 +807,9 @@
           <li>Removed the unnecessary subtitle from every Hall theme.</li>
           <li>Made the Player Hall 2 footer call ball substantially larger.</li>
           <li>Centered the unlimited symbol directly above the Credits label.</li>
-        </ul></section>
+        </ul></div>
+        </section>
+
         <section><h3>v1.4.0 · 2026-07-30 · Hall expansion</h3>
           <div class="release-groups">
             <div class="release-group"><h4>Themes</h4><ul>
@@ -837,17 +845,20 @@
             </ul></div>
           </div>
         </section>
-        <section><h3>v1.3.0 · 2026-07-29 · Casino integration and reliability</h3><ul>
+        <section><h3>v1.3.0 · 2026-07-29 · Casino integration, reliability, and Hall operations</h3>
+<div class="merged-release-group"><h4>Casino integration and reliability</h4><ul>
           <li>Integrated Muha Bingo into the shared Muha Casino launcher and game-library navigation.</li>
           <li>Connected Player Floor, Dealer Console, Audience Display, and Card Design routing for browser play.</li>
           <li>Added persistent Hall preferences, portable asset paths, shared session timing, and responsive browser layouts.</li>
           <li>Improved startup, window switching, and recovery behavior before the three-theme Hall expansion.</li>
-        </ul></section>
-        <section><h3>v1.2.0 · 2026-07-29 · Hall operations</h3><ul>
+        </ul></div>
+<div class="merged-release-group"><h4>Hall operations</h4><ul>
           <li>Expanded the original Bingo application with player-floor, dealer-console, audience-display, and card-design screens.</li>
           <li>Added round setup, patterns, manual and automatic calling, winner verification, credits, prizes, player lookup, printing, and pop-out displays.</li>
           <li>Added mobile layouts, shared playtime, card sorting, more winning patterns, portable assets, and the Muha Bingo rebrand.</li>
-        </ul></section>
+        </ul></div>
+        </section>
+
         <section><h3>v1.1.0 · 2026-07-27 · Player and dealer refinement</h3><ul>
           <li>Improved card presentation, live call status, player navigation, dealer workflows, results, winner review, and responsive operation.</li>
           <li>Prepared the standalone Electron hall for portable browser integration into Muha Casino.</li>

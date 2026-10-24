@@ -287,3 +287,19 @@ html[data-bingo-theme="planet"] body>main.planet-hall-shell .planet-idle-number-
 .other-theme-waiting-flashboard>header{min-height:0!important;overflow:hidden!important}
 .other-theme-number-board{height:100%!important;min-height:0!important;overflow:hidden!important;container-type:size}
 .other-theme-number-board>span{font-size:clamp(8px,min(4cqw,12cqh),30px)!important;line-height:1!important;overflow:hidden!important}
+
+/* Footer arrows show the direction of the next action. */
+html[data-bingo-theme] body :is(#app,main.planet-hall-shell) :is(.planet-footer-collapse,.native-pattern-collapse)[aria-expanded="true"]>span{
+ clip-path:polygon(0 0,50% 100%,100% 0)!important;transform:none!important;transition:none!important;
+}
+html[data-bingo-theme] body :is(#app,main.planet-hall-shell) :is(.planet-footer-collapse,.native-pattern-collapse)[aria-expanded="false"]>span{
+ clip-path:polygon(0 100%,50% 0,100% 100%)!important;transform:none!important;transition:none!important;
+}
+
+/* Reserve the collapsed footer's height instead of covering the last number row. */
+html[data-bingo-theme="planet"] body>main.planet-hall-shell.planet-round-idle.planet-footer-collapsed>.planet-status-bar{
+ position:relative!important;inset:auto!important;flex:0 0 36px!important;box-sizing:border-box!important;height:36px!important;min-height:36px!important;max-height:36px!important;margin:0!important;
+}
+html[data-bingo-theme="planet"] body>main.planet-hall-shell.planet-round-idle>.planet-play-surface{
+ box-sizing:border-box!important;min-width:0!important;align-content:stretch!important;
+}
