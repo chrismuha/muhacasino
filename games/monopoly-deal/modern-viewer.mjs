@@ -1,4 +1,4 @@
-import {modernFace} from './modern-ui.mjs?build=20261025-deal-1-4-details-v52';
+import {modernFace} from './modern-ui.mjs?build=20261025-deal-stacks-v53';
 import {GROUPS,properties,complete,sets,rent} from './engine.mjs?build=20261023-deal-buildings-v22';
 
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -49,11 +49,27 @@ export function modernViewerContent(state, view) {
   if (view.kind === 'properties') {
     const player = state.players[view.ownerIndex];
     const groups = Object.entries(GROUPS).filter(([color]) => view.cards.some(card => card.color === color));
-    const cards = groups.length ? groups.map(([color,group]) => `<section class="modern-property-section" style="--set-color:${group.color}" aria-label="${group.name} properties"><header class="modern-property-heading"><h3 data-fit-label>${group.name}</h3><span>${properties(player,color).length}/${group.names.length}${complete(player,color) ? ' · Complete' : ''} · Rent ${rent(player,color)}M</span></header>${gallery(view.cards.filter(card => card.color === color))}</section>`).join('') : empty('No properties yet', 'Properties and buildings appear here after they are played.');
+    const cards = groups.length ? groups.map(([color,group]) => {
+      const held=view.cards.filter(card=>card.color===color),done=complete(player,color);
+      const active=held.length-1;
+      return `<section class="modern-property-section property-stack-page" data-page-break="before" data-page-title="${esc(group.name)}" data-stack-active="${active}" style="--set-color:${group.color};--stack-gaps:${Math.max(1,held.length-1)}" aria-label="${esc(group.name)} property stack"><header class="modern-property-heading"><h3>${esc(group.name)}</h3><span class="property-set-status ${done?'is-complete':''}">${done?'✓ Complete set':`${properties(player,color).length}/${group.names.length} properties`} · Rent ${rent(player,color)}M</span></header><div class="property-stack" role="group" aria-label="${esc(group.name)} cards">${held.map((card,index)=>`<button type="button" class="property-stack-card ${index===active?'is-active':''}" data-stack-index="${index}" data-stack-name="${esc(card.name)}" data-stack-value="${card.value}" style="--stack-index:${index}" aria-label="View ${esc(card.name)}, ${card.value}M" aria-pressed="${index===active}">${modernFace(card)}</button>`).join('')}</div><div class="property-stack-controls"><button type="button" data-stack-shift="-1" aria-label="Previous card in this set" ${held.length<2?'disabled':''}>←</button><span class="property-stack-position" role="status">${active+1} / ${held.length}</span><button type="button" data-stack-shift="1" aria-label="Next card in this set" ${held.length<2?'disabled':''}>→</button></div><p class="property-stack-caption">${esc(held[active].name)} · ${held[active].value}M</p></section>`;
+    }).join('') : empty('No properties yet', 'Properties and buildings appear here after they are played.');
     return `${cards}<section class="modern-view-summary" data-page-break="before" data-page-title="Details" aria-label="Property details"><div><span class="modern-summary-label">Property details</span><span>Complete colors</span><strong>${sets(player).length}<small> / 3</small></strong><span>${plural(player.props.length, 'property')} · ${plural(player.buildings.length, 'building')}</span></div><p>Collect three complete colors to win. Each group shows its current rent, including buildings.</p></section>`;
   }
   if (view.key === 'activity') {
     return `<div class="modern-activity-heading"><h3>At the table</h3><p>Most recent event first.</p></div>${view.activity.length ? `<ol class="modern-activity-list">${view.activity.map(event => `<li>${esc(event)}</li>`).join('')}</ol>` : empty('No activity yet', 'Game events appear here as you play.')}`;
   }
   return '';
+}
+
+// Stack browsing changes only which public card is in front, never game state.
+export function browsePropertyStack(event){
+ const control=event.target.closest('[data-stack-index],[data-stack-shift]');
+ if(!control)return;
+ const section=control.closest('.property-stack-page'),cards=[...section.querySelectorAll('[data-stack-index]')];
+ const index=control.hasAttribute('data-stack-index')?Number(control.dataset.stackIndex):(Number(section.dataset.stackActive)+Number(control.dataset.stackShift)+cards.length)%cards.length;
+ section.dataset.stackActive=String(index);
+ cards.forEach((card,i)=>{card.classList.toggle('is-active',i===index);card.setAttribute('aria-pressed',String(i===index));});
+ section.querySelector('.property-stack-position').textContent=`${index+1} / ${cards.length}`;
+ section.querySelector('.property-stack-caption').textContent=`${cards[index].dataset.stackName} · ${cards[index].dataset.stackValue}M`;
 }

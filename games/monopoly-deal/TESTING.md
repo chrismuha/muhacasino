@@ -30,3 +30,5 @@ Selection checks cover single-click/tap actions without enlargement, deliberate 
 Public-card paging checks cover full artwork and descriptions within phone panes, pointer swipes, and precise trackpad deltas. Enlarged-card checks compare the same dimensions and content containment across designs on phone and desktop. Launcher checks keep arrows within the first phone screen and verify one slide per trackpad burst. The guide and release notes describe the current controls and the limits of same-tab recovery and planned save features.
 
 Properties-ordering checks verify cards on the first page and completion/property/building totals on a separate final Details page, across phone and desktop sizes and after switching to a player with no properties.
+
+Property-stack checks cover one page per color, overlapping cards, buildings kept with their set, inspecting members without changing game state, complete-set badges on the table, and a separate final Details page on phone and desktop.

@@ -443,3 +443,24 @@ dialog button,#preview-close{outline-offset:-4px}
  [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .money-medallion{width:150px;height:150px;margin:16px auto}
  [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .any-color-disc{width:100px;height:100px;margin:12px auto}
 }
+
+/* A color group is one physical stack and one page, including its buildings. */
+[data-theme=modern] .property-stack-page{margin:0;padding-top:6px;min-width:0;--stack-card-height:min(clamp(100px,22dvh,150px),max(80px,calc(var(--content-page-height,400px) - 190px)));--stack-height:clamp(105px,calc(var(--content-page-height,400px) - 155px),300px)}
+[data-theme=modern] .property-stack-page .modern-property-heading{margin-bottom:8px;gap:4px}
+[data-theme=modern] .property-stack-page .modern-property-heading h3{font-size:18px;line-height:1.25}
+[data-theme=modern] .property-set-status{font-size:13px}
+[data-theme=modern] .property-set-status.is-complete{color:#ffe297;font-weight:800}
+[data-theme=modern] .property-stack{position:relative;width:100%;height:calc(var(--stack-card-height) + var(--stack-gaps)*var(--stack-step));margin:0;--stack-step:min(24px,calc((var(--stack-height) - var(--stack-card-height))/var(--stack-gaps)))}
+[data-theme=modern] .property-stack-card{position:absolute;top:calc(var(--stack-index)*var(--stack-step));left:50%;transform:translateX(-50%);width:calc(var(--stack-card-height)*.69);height:var(--stack-card-height);padding:0;border:0;border-radius:6px;background:transparent;z-index:calc(var(--stack-index) + 1);box-shadow:0 2px 5px #001a3d66;touch-action:pan-y pinch-zoom}
+[data-theme=modern] .property-stack-card.is-active{top:calc(var(--stack-gaps)*var(--stack-step));z-index:100}
+[data-theme=modern] .property-stack-card .deal-face{pointer-events:none}
+[data-theme=modern] .property-stack-card:focus-visible{outline-offset:-3px}
+[data-theme=modern] .property-stack-controls{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:6px}
+[data-theme=modern] .property-stack-controls button{min-height:40px;min-width:44px;padding:4px 10px;font-size:20px}
+[data-theme=modern] .property-stack-position{font-size:13px;white-space:nowrap}
+[data-theme=modern] .property-stack-caption{font-size:13px;line-height:1.3;text-align:center;margin:4px 0 0;color:#e8f3ff}
+[data-theme=modern] .current-properties .asset-panel-heading{flex-wrap:wrap;gap:4px}
+[data-theme=modern] .current-properties .asset-progress{display:inline-block;font-size:11px;padding:3px 6px}
+[data-theme=modern] .current-properties:not([data-complete-sets="0"]) .asset-progress{background:#ffe297;color:#123959;font-weight:800}
+
+[data-theme=modern] .property-stack-page .property-set-status{display:block}

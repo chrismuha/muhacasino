@@ -585,13 +585,13 @@ test('Properties starts with cards and ends with a dedicated Details page, inclu
  for(const viewport of [{width:390,height:650},{width:320,height:568},{width:1440,height:900}]){
   const p=await open(viewport);await fixture(p,'hotel',2);await p.locator('.current-properties').click();
   await p.locator('.content-page-nav span').waitFor();await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,100)));
-  assert.ok(await p.locator('#table-view-content .modern-public-card').count()>0,'Property cards come first');
+  assert.ok(await p.locator('#table-view-content .property-stack-card').count()>0,'Property cards come first');
   assert.equal(await p.locator('#table-view-content [aria-label="Property details"]').count(),0);
   let steps=0;while(!await p.locator('.content-page-nav button').last().isDisabled()){
    await p.locator('.content-page-nav button').last().click();assert.ok(++steps<20);
   }
   assert.match(await p.locator('.content-page-nav span').innerText(),/Details$/);
-  assert.equal(await p.locator('#table-view-content .modern-public-card').count(),0,'Details does not share a card page');
+  assert.equal(await p.locator('#table-view-content .property-stack-card').count(),0,'Details does not share a card page');
   assert.match(await p.locator('[aria-label="Property details"]').innerText(),/Complete colors/);
   assert.match(await p.locator('[aria-label="Property details"]').innerText(),/2 properties · 1 building/);
   assert.ok(await p.locator('#table-view-content').evaluate(el=>el.scrollHeight<=el.clientHeight+1));
@@ -601,4 +601,48 @@ test('Properties starts with cards and ends with a dedicated Details page, inclu
   assert.match(await p.locator('[aria-label="Property details"]').innerText(),/0 properties · 0 buildings/);
   await close(p);
  }
+});
+
+test('property stacks keep complete sets together and Properties displays the complete-set count',async()=>{
+ for(const viewport of [{width:390,height:650},{width:320,height:568},{width:1440,height:900}]){
+  const p=await open(viewport);await fixture(p,'hotel',2);
+  await p.evaluate(()=>{const s=window.__dealTest.state;for(const name of ['Electric Company','Water Works','Reading Railroad']){const i=s.draw.findIndex(c=>c.name===name);s.players[0].props.push(s.draw.splice(i,1)[0]);}window.__dealTest.render()});
+  assert.equal(await p.locator('.current-properties').getAttribute('data-complete-sets'),'2');
+  assert.equal(await p.locator('.current-properties .asset-progress').innerText(),'2 complete sets');assert.equal(await p.locator('.current-properties .asset-progress').isVisible(),true);
+  const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));await p.locator('.current-properties').click();await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,100)));
+  const groups=[];
+  while(true){
+   const stack=p.locator('.property-stack-page');
+   if(await stack.count()){
+    assert.equal(await stack.count(),1);groups.push(await stack.getAttribute('aria-label'));
+    const pane=await p.locator('#table-view-content').evaluate(el=>({height:el.clientHeight,scroll:el.scrollHeight}));assert.ok(pane.scroll<=pane.height+1,`${viewport.width}: ${JSON.stringify(pane)}`);
+    const cards=stack.locator('[data-stack-index]');
+    if((await stack.getAttribute('aria-label')).startsWith('Brown')){
+     assert.equal(await cards.count(),3,'Both properties and House share the Brown page');assert.match(await stack.innerText(),/Complete set/);
+     const positions=await cards.evaluateAll(nodes=>nodes.map(n=>n.getBoundingClientRect().toJSON()));assert.ok(positions[0].bottom>positions[1].top,'Cards overlap as a stack');
+     await cards.first().click({position:{x:10,y:2}});assert.equal(await cards.first().getAttribute('aria-pressed'),'true');const caption=await stack.locator('.property-stack-caption').innerText();await stack.locator('[data-stack-shift="1"]').click();assert.notEqual(await stack.locator('.property-stack-caption').innerText(),caption);
+     await stack.locator('[data-stack-index="1"]').focus();await p.keyboard.press('Enter');assert.equal(await stack.locator('[data-stack-index="1"]').getAttribute('aria-pressed'),'true');
+     const page=await p.locator('.content-page-nav span').innerText(),r=await stack.locator('.is-active').boundingBox();await p.mouse.move(r.x+r.width/2,r.y+r.height/2);await p.mouse.down();await p.mouse.move(r.x+r.width/2-60,r.y+r.height/2,{steps:8});await p.mouse.up();assert.notEqual(await p.locator('.content-page-nav span').innerText(),page);await p.locator('.content-page-nav button').first().click();
+    }
+   }
+   if(await p.locator('.content-page-nav button').last().isDisabled())break;
+   await p.locator('.content-page-nav button').last().click();
+  }
+  assert.deepEqual(groups,['Brown property stack','Railroad property stack','Utility property stack']);assert.match(await p.locator('.content-page-nav span').innerText(),/Details$/);
+  if(artifacts)await shot(p,`property-stack-${viewport.width}`);
+  assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);await conservation(p);await close(p);
+ }
+});
+
+test('a crowded monopoly stays one stack page and all members remain inspectable',async()=>{
+ const p=await open({width:320,height:568});await fixture(p,'hotel',2);
+ await p.evaluate(()=>{const s=window.__dealTest.state;for(const c of [...s.draw].filter(c=>c.type==='property'&&c.colors.length>1)){s.draw.splice(s.draw.indexOf(c),1);c.color='brown';s.players[0].props.push(c);}window.__dealTest.render()});
+ await p.locator('.current-properties').click();await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,100)));
+ assert.equal(await p.locator('.current-properties .asset-progress').innerText(),'1 complete set');
+ const count=await p.locator('[data-stack-index]').count();assert.ok(count>10);assert.match(await p.locator('.content-page-nav span').innerText(),/Page 1 of 2/);
+ assert.ok(await p.locator('#table-view-content').evaluate(el=>el.scrollHeight<=el.clientHeight+1));
+ for(let i=0;i<count;i++){
+  await p.locator('[data-stack-shift="1"]').click();assert.equal(await p.locator('[data-stack-index].is-active').getAttribute('data-stack-index'),String(i));
+ }
+ if(artifacts)await shot(p,'crowded-monopoly-stack');await conservation(p);await close(p);
 });

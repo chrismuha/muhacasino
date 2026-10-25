@@ -67,8 +67,8 @@ export function modernBoard(state,visible,selectedId,flipped,expanded=false,turn
  <button class="current-bank" data-table-view="bank-${state.turn}" aria-haspopup="dialog" aria-label="${esc(player.name)}’s bank: ${bankTotal}M, ${player.bank.length} banked cards">
  <span class="asset-panel-heading"><span class="asset-panel-title">Bank</span></span><strong class="bank-balance">${bankTotal}<span class="bank-unit">M</span></strong>
  <span class="bank-miniatures">${player.bank.slice(-4).map(publicCard).join('')||'<span class="asset-empty">Empty</span>'}</span><span class="asset-count">${player.bank.length} cards</span></button>
- <button class="current-properties" data-table-view="properties-${state.turn}" aria-haspopup="dialog" aria-label="${esc(player.name)}’s properties: ${player.props.length} cards, ${completeSets} of 3 complete colors">
- <span class="asset-panel-heading"><span class="asset-panel-title">Properties</span><span class="asset-progress" aria-hidden="true">${completeSets}/3 sets</span></span>
+ <button class="current-properties" data-complete-sets="${completeSets}" data-table-view="properties-${state.turn}" aria-haspopup="dialog" aria-label="${esc(player.name)}’s properties: ${player.props.length} cards, ${completeSets} of 3 complete colors">
+ <span class="asset-panel-heading"><span class="asset-panel-title">Properties</span><span class="asset-progress">${completeSets} complete set${completeSets===1?'':'s'}</span></span>
  <span class="own-groups">${propertyGroups(player)||'<span class="asset-empty">None yet</span>'}</span><span class="asset-count">${player.props.length} properties · ${player.buildings.length} buildings</span></button>
  </div>
  <div class="current-stats"><span class="coin" aria-hidden="true">M</span><b>${bankTotal}M</b><span>▱ ×${player.hand.length}</span>

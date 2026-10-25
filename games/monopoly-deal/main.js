@@ -1,10 +1,10 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-deal-1-4-details-v52';
-import {paginateViewer} from './view-pages.mjs?build=20261025-deal-1-4-details-v52';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-deal-1-4-details-v52';
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-deal-1-4-details-v52';
-import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-deal-1-4-details-v52';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-deal-1-4-details-v52';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-deal-1-4-details-v52';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-deal-stacks-v53';
+import {paginateViewer} from './view-pages.mjs?build=20261025-deal-stacks-v53';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-deal-stacks-v53';
+import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-deal-stacks-v53';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-deal-stacks-v53';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-deal-stacks-v53';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-deal-stacks-v53';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 let lastCardTap=null;
@@ -586,6 +586,7 @@ $('#table-view-category').onchange = event => {
   showTableView(Number(event.target.value));
   if($('#table-viewer').dataset.modernPublic === 'true')revealModernSection()?.focus({preventScroll:true});
 };
+$('#table-view-content').addEventListener('click',browsePropertyStack);
 $('#table-view-close').onclick = () => $('#table-viewer').close();
 $('#table-viewer').addEventListener('keydown', event => {
   if (['INPUT', 'SELECT', 'TEXTAREA'].includes(event.target.tagName)) return;
