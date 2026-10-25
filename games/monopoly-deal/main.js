@@ -1,9 +1,9 @@
-import {paginateViewer} from './view-pages.mjs?build=20261025-clean-mobile';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-clean-mobile';
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-clean-mobile';
-import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-clean-mobile';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-clean-mobile';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-clean-mobile';
+import {paginateViewer} from './view-pages.mjs?build=20261025-deal-toolbar';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-deal-toolbar';
+import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-deal-toolbar';
+import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-deal-toolbar';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-deal-toolbar';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-deal-toolbar';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false;
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -446,8 +446,9 @@ $('#table-viewer').addEventListener('keydown', event => {
     event.preventDefault();
     const direction = event.key === 'ArrowLeft' ? -1 : 1;
     if (tableViews()[tableViewIndex].key === 'cards') {designIndex += direction;showCardDesign();} else {
-      showTableView(tableViewIndex + direction);
-      revealModernSection()?.focus({preventScroll:true});
+      const buttons=$('#table-viewer .content-page-nav')?.querySelectorAll('button');
+      const button=buttons?.[direction<0?0:1];
+      if(button&&!button.disabled)button.click();
     }
   }
 });
@@ -527,3 +528,24 @@ const labelResizeObserver=new ResizeObserver(entries=>{
  if(Math.abs(width-lastLabelWidth)>.5){lastLabelWidth=width;scheduleLabelFit();}
 });
 labelResizeObserver.observe(document.querySelector('main'));
+
+// Keep direct URLs usable; hosted games use the casino's single utility bar.
+if(window.parent!==window){
+ document.documentElement.classList.add('casino-hosted');
+ const appearance=document.createElement('dialog');
+ appearance.id='appearance-dialog';
+ appearance.setAttribute('aria-labelledby','appearance-title');
+ appearance.innerHTML='<div class="wizard-heading"><h2 id="appearance-title">Table appearance</h2><button type="button">Close</button></div>';
+ const close=appearance.querySelector('button');
+ close.onclick=()=>appearance.close();
+ appearance.append(document.querySelector('.table-settings'));
+ document.body.append(appearance);
+ window.addEventListener('message',event=>{
+  if(event.source!==window.parent||event.origin!==location.origin||event.data?.type!=='muha-deal-command')return;
+  if(busy){showToast('Finish the current action or computer turn first.');return;}
+  if(document.querySelector('dialog[open]'))return;
+  if(event.data.command==='new')setup();
+  if(event.data.command==='guide')openTableViewer('rules');
+  if(event.data.command==='appearance'){appearance.showModal();close.focus({preventScroll:true});}
+ });
+}

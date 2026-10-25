@@ -178,3 +178,34 @@
  [data-theme=modern] .hand-hidden .table-privacy{grid-template-columns:minmax(0,1fr)}
  [data-theme=modern] .hand-hidden .table-privacy button{grid-column:1;grid-row:3;justify-self:end}
 }
+
+/* Reserve a real column for each setup label instead of a 100%-wide select. */
+#setup-wizard label[for=opponent-mode],#setup-wizard label[for=count]{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:12px;min-width:0;max-width:100%;overflow:visible}
+#setup-wizard #opponent-mode,#setup-wizard #count{width:100%;min-width:0;max-width:100%;font-size:16px}
+@media(max-width:600px){
+ [data-theme=modern] body{background-attachment:scroll;min-height:100dvh}
+ #setup-wizard{max-height:calc(100dvh - 16px);margin:auto;padding:12px}
+ #setup-wizard .setup{margin:12px 0;padding:12px}
+ #setup-wizard .setup p{font-size:16px;line-height:1.45;margin-block:12px}
+ #setup-wizard h3{font-size:20px}
+ #setup-wizard .wizard-actions{margin-top:14px;padding-top:12px}
+ #setup-wizard #start{min-height:44px;font-size:16px}
+ #setup-wizard .wizard-heading h2{font-size:24px}
+}
+
+/* Categories select sections; the sole Previous/Next pair pages their content. */
+#table-viewer .table-view-footer,[data-theme=modern] #table-viewer .table-view-footer{display:none}
+[data-theme=modern] #table-viewer[open]{grid-template-rows:auto auto auto minmax(0,1fr)}
+[data-theme=modern] #table-viewer .modern-section-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;overflow:visible;padding:0}
+[data-theme=modern] #table-viewer .modern-section-nav button{min-width:0;min-height:44px;padding:8px 6px;font-size:15px;font-weight:700;line-height:1.3;white-space:nowrap;border-radius:8px;text-align:center}
+[data-theme=modern] #table-viewer .table-view-body{border:0;border-radius:0;box-shadow:none;background:transparent}
+[data-theme=modern] .modern-activity-list li{border:1px solid #85c2ff44;border-left-width:1px;background:transparent;box-shadow:none;border-radius:8px;padding:12px;font-size:16px;line-height:1.5}
+@media(max-width:600px){
+ [data-theme=modern] #table-viewer .modern-section-nav{grid-template-columns:repeat(3,minmax(0,1fr))}
+ [data-theme=modern] #table-viewer .modern-section-nav button{font-size:15px;padding:8px 4px}
+}
+
+.casino-hosted .game-topbar,.casino-hosted .appearance-settings,.casino-hosted .masthead{display:none!important}
+#appearance-dialog{max-height:calc(100dvh - 16px);overflow:auto}
+#appearance-dialog .table-settings{margin-top:12px}
+#appearance-dialog .wizard-heading h2{font-size:22px}

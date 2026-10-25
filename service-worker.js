@@ -1,4 +1,4 @@
-const CACHE_NAME = "muha-casino-shell-20261025-aligned-pages";
+const CACHE_NAME = "muha-casino-shell-20261025-deal-toolbar";
 const APP_SHELL = [
   "./",
   "./index.html",

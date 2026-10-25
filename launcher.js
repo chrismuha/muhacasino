@@ -172,8 +172,25 @@ slotModeToolbar.addEventListener("click", () => {
   syncSlotModeToolbar(experience?.getDisplayMode(), experience?.isInteractionLocked());
 });
 
+// Safari's browser bars and keyboard change the visible viewport independently
+// of the layout viewport. Give the hosted frame a definite pixel-sized parent.
+function syncGameViewport() {
+ const viewport=window.visualViewport;
+ const height=viewport?.height || window.innerHeight;
+ const top=viewport?.offsetTop || 0;
+ document.documentElement.style.setProperty('--casino-visible-height',`${height}px`);
+ document.documentElement.style.setProperty('--casino-visible-top',`${top}px`);
+}
+window.addEventListener('resize',syncGameViewport);
+window.addEventListener('pageshow',syncGameViewport);
+window.visualViewport?.addEventListener('resize',syncGameViewport);
+window.visualViewport?.addEventListener('scroll',syncGameViewport);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncGameViewport();});
+syncGameViewport();
+
 function setGameToolbarCollapsed(collapsed) {
   gameView.classList.toggle("toolbar-collapsed", collapsed);
+  syncGameViewport();
   toolbarCollapseButton.setAttribute("aria-expanded", String(!collapsed));
   toolbarCollapseButton.setAttribute("aria-label", collapsed ? "Expand game header" : "Collapse game header");
   toolbarCollapseButton.title = collapsed ? "Expand game header" : "Collapse game header";
@@ -491,6 +508,7 @@ setGameToolbarCollapsed(false);
   currentGame.textContent = game.title;
   currentGameVersion.textContent = game.version;
   bingoToolbarControls.hidden = gameId !== "bingo";
+  document.querySelector("#dealToolbarControls").hidden=gameId!=="monopoly-deal";
   slotModeToolbar.hidden = !slotGameIds.has(gameId);
   if (gameId === "bingo") {
     let selectedTheme = "planet";
@@ -519,6 +537,7 @@ setGameToolbarCollapsed(false);
   launcher.hidden = true;
   gameView.hidden = false;
   document.body.classList.add("game-open");
+  syncGameViewport();
   document.title = `${game.title} | Muha Casino`;
 
   if (updateHistory) history.pushState({ gameId }, "", `#${gameId}`);
@@ -726,3 +745,11 @@ showSlide(0);
 restartSlider();
 const requestedGame = window.location.hash.slice(1);
 if (games[requestedGame]) launchGame(requestedGame, false);
+
+// The shared collapsible bar owns hosted Monopoly Deal's utility controls.
+document.querySelectorAll('[data-deal-command]').forEach(button=>{
+ button.addEventListener('click',()=>{
+  if(activeGameId!=='monopoly-deal')return;
+  gameFrame.contentWindow?.postMessage({type:'muha-deal-command',command:button.dataset.dealCommand},location.origin);
+ });
+});

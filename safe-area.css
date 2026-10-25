@@ -49,3 +49,32 @@ html.casino-standalone-slot body {
   border-bottom: var(--casino-safe-bottom) solid transparent;
   border-left: var(--casino-safe-left) solid transparent;
 }
+
+/* A definite visible-viewport height avoids delayed percentage-height layout on iOS. */
+body.game-open #gameView:not([hidden]){
+ display:flex;flex-direction:column;
+ top:calc(var(--casino-visible-top,0px) + var(--casino-safe-top));
+ bottom:auto;
+ height:calc(var(--casino-visible-height,100dvh) - var(--casino-safe-top) - var(--casino-safe-bottom));
+}
+body.game-open #gameView .game-toolbar{
+ position:relative;top:auto;left:auto;right:auto;
+ flex:0 0 var(--casino-toolbar-height);height:var(--casino-toolbar-height);min-height:0;
+}
+body.game-open #gameView #gameFrame{
+ position:relative;top:auto;right:auto;left:auto;
+ flex:1 1 0;height:0!important;min-height:0;max-height:100%;width:100%;
+}
+
+.toolbar-deal-controls[hidden]{display:none}
+.toolbar-deal-controls{display:flex;gap:8px;align-items:center;justify-content:flex-end;grid-column:3;grid-row:1;min-width:0}
+.toolbar-deal-controls button{min-height:44px;padding:8px 12px;border:1px solid #7283a4;border-radius:8px;background:#17233b;color:#fff;font:700 14px/1.2 system-ui;white-space:nowrap;cursor:pointer}
+.toolbar-deal-controls button:hover{background:#263c60}
+.toolbar-deal-controls button:focus-visible{outline:2px solid #ffe297;outline-offset:2px}
+@media(max-width:900px){
+ body.game-open #gameView:has(.toolbar-deal-controls:not([hidden])):not(.toolbar-collapsed){--casino-toolbar-height:116px}
+ body.game-open #gameView:has(.toolbar-deal-controls:not([hidden])):not(.toolbar-collapsed) .game-toolbar{grid-template-rows:48px 48px;gap:4px 8px}
+ #gameView .toolbar-deal-controls{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;gap:6px}
+ #gameView .toolbar-deal-controls[hidden]{display:none}
+ #gameView .toolbar-deal-controls button{padding:6px 4px;font-size:13px}
+}

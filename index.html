@@ -14,8 +14,8 @@
   <link rel="apple-touch-icon" href="icons/muha-casino-touch-v3.png" sizes="180x180">
   <link rel="manifest" href="manifest.webmanifest?v=20260919-rounded-icons-v3">
   <link rel="stylesheet" href="styles.css?build=20261024-bingo-sticky-v42">
-  <link rel="stylesheet" href="safe-area.css?build=20260905-notch-v1">
-  <link rel="stylesheet" href="featured-layout.css?build=20261025-featured-layout-preview">
+  <link rel="stylesheet" href="safe-area.css?build=20261025-deal-toolbar">
+  <link rel="stylesheet" href="featured-layout.css?build=20261025-deal-toolbar">
 </head>
 <body>
   <main id="launcher">
@@ -261,6 +261,7 @@
         <button id="bingoViewButton" class="toolbar-view-button" type="button" aria-label="Choose Bingo card view" title="Choose Bingo card view"><span class="view-layout-icon" aria-hidden="true"><i></i><i></i><i></i><i></i></span><b>VIEW</b></button>
         <button id="bingoAppearanceButton" class="toolbar-appearance-button" type="button" aria-label="Use dark mode" title="Use dark mode"><span aria-hidden="true">☾</span><b>DARK</b></button>
       </div>
+      <div id="dealToolbarControls" class="toolbar-deal-controls" hidden aria-label="Monopoly Deal controls"><button type="button" data-deal-command="new">New game</button><button type="button" data-deal-command="appearance">Appearance</button><button type="button" data-deal-command="guide">Game guide</button></div>
       <button id="toolbarCollapseButton" class="toolbar-collapse-button bar-collapse-chevron" type="button" aria-expanded="true" aria-label="Collapse game header" title="Collapse game header"><span aria-hidden="true"></span></button>
     </div>
     <iframe id="gameFrame" title="Selected slot game" width="100%" allow="fullscreen"></iframe>
@@ -278,7 +279,7 @@
   </section>
 
   <script src="interaction-lock.js?build=20260811-horizontal-rails"></script>
-  <script src="launcher.js?build=20261025-featured-layout-preview"></script>
+  <script src="launcher.js?build=20261025-deal-toolbar"></script>
   <script src="pwa.js?build=20260829-pwa-v1"></script>
 </body>
 </html>
