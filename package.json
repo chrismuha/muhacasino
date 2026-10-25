@@ -25,7 +25,7 @@
     "mobile:sync:ios": "npm run cap:sync:ios",
     "mobile:open:android": "npx cap open android",
     "mobile:open:ios": "npx cap open ios",
-    "test:monopoly-deal": "node --test games/monopoly-deal/engine.test.mjs games/monopoly-deal/ui.test.cjs"
+    "test:monopoly-deal": "node --test games/monopoly-deal/engine.test.mjs games/monopoly-deal/ai.test.mjs games/monopoly-deal/ui.test.cjs"
   },
   "devDependencies": {
     "playwright": "^1.64.1",

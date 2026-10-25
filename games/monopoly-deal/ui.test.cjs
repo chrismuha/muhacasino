@@ -691,3 +691,38 @@ test('manual discard and inline property inspection',async()=>{
  await p.locator('.current-properties').dispatchEvent('pointerdown',{button:0,clientX:10,clientY:10});
  await p.locator('#table-viewer[open]').waitFor();await close(p);
 });
+
+test('Flip animates both wild faces and updates hand artwork without spending a play',async()=>{
+ const p=await open();await fixture(p,'wild');await p.locator('[data-card]').first().dblclick();
+ const before=await p.locator('.modern-hand-card.is-active .wild-half').first().getAttribute('style');
+ await p.locator('#flip-card').click();
+ assert.notEqual(await p.locator('.modern-hand-card.is-active .wild-half').first().getAttribute('style'),before);
+ for(const selector of ['.selected-table-card > .deal-face','.modern-hand-card.is-active > .deal-face']){
+  assert.equal(await p.locator(selector).evaluate(el=>el.getAnimations().some(a=>a.effect.getKeyframes()[0].transform==='rotate(180deg)')),true);
+ }
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);
+ await p.waitForTimeout(450);await p.locator('#flip-card').click();
+ assert.equal(await p.locator('.modern-hand-card.is-active .wild-half').first().getAttribute('style'),before);
+ await conservation(p);await close(p);
+});
+
+test('AI difficulty setup, review, saved deal and human mode',async()=>{
+ const p=await open();
+ for(const difficulty of ['easy','normal']){
+  if(!(await p.locator('#setup-wizard').evaluate(el=>el.open)))await p.locator('#new').click();
+  assert.equal(await p.locator('#ai-difficulty').inputValue(),'normal');
+  await p.locator('#opponent-mode').selectOption('human');assert.equal(await p.locator('#ai-difficulty-field').isVisible(),false);
+  await p.locator('#opponent-mode').selectOption('ai');await p.locator('#ai-difficulty').selectOption(difficulty);
+  await p.locator('#count').selectOption('3');await p.locator('#start').click();await p.locator('#player-name-0').fill('Chris');await p.locator('#start').click();
+  assert.match(await p.locator('#wizard-review').innerText(),difficulty==='easy'?/AI opponent · Easy/:/AI opponent · Normal/);
+  await p.locator('#wizard-back').click();await p.locator('#wizard-back').click();assert.equal(await p.locator('#ai-difficulty').inputValue(),difficulty);
+  await p.locator('#start').click();await p.locator('#start').click();await p.locator('#start').click();
+  assert.deepEqual(await p.evaluate(()=>window.__dealTest.state.players.filter(p=>p.isAI).map(p=>p.aiDifficulty)),[difficulty,difficulty]);
+  await p.reload();await p.waitForFunction(()=>window.__dealTest);
+  assert.deepEqual(await p.evaluate(()=>window.__dealTest.state.players.filter(p=>p.isAI).map(p=>p.aiDifficulty)),[difficulty,difficulty]);
+ }
+ await p.evaluate(()=>{const s=window.__dealTest.state;s.players.filter(p=>p.isAI).forEach(p=>delete p.aiDifficulty);sessionStorage.setItem('muha-deal-session-v1',JSON.stringify(s))});
+ await p.reload();await p.waitForFunction(()=>window.__dealTest);
+ assert.deepEqual(await p.evaluate(()=>window.__dealTest.state.players.filter(p=>p.isAI).map(p=>p.aiDifficulty)),['easy','easy']);
+ await close(p);
+});

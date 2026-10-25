@@ -1,10 +1,10 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-discard-properties-v55';
-import {paginateViewer} from './view-pages.mjs?build=20261025-discard-properties-v55';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-discard-properties-v55';
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-discard-properties-v55';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-discard-properties-v55';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-discard-properties-v55';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-discard-properties-v55';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-ai-difficulty-v56';
+import {paginateViewer} from './view-pages.mjs?build=20261025-ai-difficulty-v56';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-ai-difficulty-v56';
+import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-ai-difficulty-v56';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-ai-difficulty-v56';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-ai-difficulty-v56';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-ai-difficulty-v56';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -14,7 +14,7 @@ let turnHandoff=true;
 let detachCatalogNavigation=()=>{};
 // Keep the last completed action in this tab if Safari reloads the frame.
 const sessionKey='muha-deal-session-v1';
-try { const saved=JSON.parse(sessionStorage.getItem(sessionKey)||'null'); if(saved?.players?.length>=2 && Array.isArray(saved.draw) && Array.isArray(saved.discard) && saved.players[saved.turn])state=saved; } catch {}
+try { const saved=JSON.parse(sessionStorage.getItem(sessionKey)||'null'); if(saved?.players?.length>=2 && Array.isArray(saved.draw) && Array.isArray(saved.discard) && saved.players[saved.turn]){state=saved;state.players.forEach(player=>{if(player.isAI&&!player.aiDifficulty)player.aiDifficulty='easy'})} } catch {}
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let detachHandSorting = () => {};
 let toastTimer;
@@ -277,7 +277,17 @@ function render(){
   showToast(`${cards.length} card${cards.length===1?'':'s'} discarded.`);
  });
  $('#move').onclick=()=>run(rearrange);
- $('#flip-card').onclick=()=>{previewFlipped=!previewFlipped;render()};
+ $('#flip-card').onclick=()=>{
+  previewFlipped=!previewFlipped;
+  render();
+  // Two-color wilds turn end over end so the chosen color becomes upright.
+  const faces=document.querySelectorAll('.selected-table-card > .deal-face,.modern-hand-card.is-active > .deal-face');
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  for(const face of faces)face.animate(
+   reduced?[{opacity:.55},{opacity:1}]:[{transform:'rotate(180deg)'},{transform:'rotate(0deg)'}],
+   {duration:reduced?100:420,easing:'cubic-bezier(.22,.7,.25,1)'}
+  );
+ };
  for(const [id,mode] of [['bank-card','bank'],['play-card','play']]){
    $('#'+id).onclick=()=>{const card=me().hand.find(c=>c.id===selectedCardId);run(()=>play(card,mode,mode==='play'&&card?.type==='property'&&card.colors.length===2?card.colors[previewFlipped?1:0]:null))};
  }
@@ -391,7 +401,7 @@ window.addEventListener('pagehide',()=>{setupViewport?.removeEventListener('resi
 $('#setup-wizard').addEventListener('focusin',syncSetupViewport);
 function setup() {
   $('#setup-content').innerHTML = `<form class="setup" id="setup-form" novalidate>
-    <section data-wizard-step="1"><h3>Choose your opponents</h3><label for="opponent-mode">Mode <select id="opponent-mode"><option value="ai" selected>Human vs AI</option><option value="human">Human vs human</option></select></label><p>Choose the total number of players. In AI mode, the other seats are computer opponents.</p><label for="count">Players <select id="count" required><option>2</option><option>3</option><option>4</option></select></label></section>
+    <section data-wizard-step="1"><h3>Choose your opponents</h3><label for="opponent-mode">Mode <select id="opponent-mode"><option value="ai" selected>Human vs AI</option><option value="human">Human vs human</option></select></label><p>Choose the total number of players. In AI mode, the other seats are computer opponents.</p><div id="ai-difficulty-field"><label for="ai-difficulty">Difficulty <select id="ai-difficulty" aria-describedby="ai-difficulty-help"><option value="easy">Easy</option><option value="normal" selected>Normal</option></select></label><p id="ai-difficulty-help">Easy uses the original computer strategy. Normal builds different color sets and targets opponents close to winning.</p></div><label for="count">Players <select id="count" required><option>2</option><option>3</option><option>4</option></select></label></section>
     <section data-wizard-step="2" hidden><h3>Who’s at the table?</h3><p class="setup-required">Enter a different name for everyone. All player names are required.</p><div id="names"></div></section>
     <section data-wizard-step="3" hidden><h3>Ready to deal?</h3><p>Each player gets five private cards. The first player draws two more to start.</p><ul id="wizard-review"></ul><p id="wizard-replace" hidden>Dealing starts a new game and replaces the current one.</p></section>
     <div class="wizard-actions"><button id="wizard-back" type="button" hidden>← Back</button><button id="start" type="submit" class="primary">Continue →</button></div>
@@ -423,7 +433,7 @@ function setup() {
     }));
   }
   $('#count').onchange = names;
-  $('#opponent-mode').onchange = names;
+  $('#opponent-mode').onchange = ()=>{const human=$('#opponent-mode').value==='human';$('#ai-difficulty-field').hidden=human;$('#ai-difficulty').disabled=human;names()};
   names();
   showStep(1);
   syncSetupViewport();
@@ -466,13 +476,13 @@ function setup() {
       return;
     }
     if(wizardStep === 2) {
-      $('#wizard-review').innerHTML=playerNames.map((name,index)=>`<li><span>${$('#opponent-mode').value==='ai'&&index>0?'AI opponent':'Player '+(index+1)}</span> <strong>${esc(name)}</strong></li>`).join('');
+      $('#wizard-review').innerHTML=playerNames.map((name,index)=>`<li><span>${$('#opponent-mode').value==='ai'&&index>0?`AI opponent · ${$('#ai-difficulty').value==='easy'?'Easy':'Normal'}`:'Player '+(index+1)}</span> <strong>${esc(name)}</strong></li>`).join('');
       $('#wizard-replace').hidden = !state;
       showStep(3);
       return;
     }
     state = createGame(playerNames);
-    state.players.forEach((player,i)=>player.isAI=$('#opponent-mode').value==='ai'&&i>0);
+    state.players.forEach((player,i)=>{player.isAI=$('#opponent-mode').value==='ai'&&i>0;if(player.isAI)player.aiDifficulty=$('#ai-difficulty').value;});
     selectedCardIds.clear();selectedCardId=null;previewFlipped=false;previewExpanded=false;lastCardTap=null;
     $('#setup-wizard').close();
     $('#log').innerHTML='';
@@ -481,6 +491,7 @@ function setup() {
     turnHandoff=!visible;
     draw(state, me(), 2);
     log('Cards dealt. First to three different complete colors wins.');
+    if(state.players.some(p=>p.isAI))log(`Computer difficulty: ${$('#ai-difficulty').value==='easy'?'Easy':'Normal'}.`);
     render();
     if(window.parent!==window)window.parent.postMessage({type:'muha-deal-started'},location.origin);
   };

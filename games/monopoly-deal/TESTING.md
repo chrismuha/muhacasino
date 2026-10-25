@@ -34,3 +34,6 @@ Properties-ordering checks verify cards on the first page and completion/propert
 Property-stack checks cover one page per color, overlapping cards, buildings kept with their set, inspecting members without changing game state, complete-set badges on the table, and a separate final Details page on phone and desktop.
 
 Selection-feedback checks verify lifted/checkmarked selections, selecting and deselecting several cards, clearing all, retaining unplayed selections, single-card action consumption, aligned action icon columns, unambiguous numbered-player payment text, and turn-limit/handoff toasts.
+
+
+AI difficulty coverage verifies that Easy retains the original strategy and Normal develops different color sets and prioritizes winning steals. UI checks cover difficulty selection, setup review, Back navigation, hiding difficulty in human-only mode, same-tab reload persistence, and migration of older deals to Easy. Flip checks verify animation on both the hand card and enlarged preview, updated color artwork, and no play cost.
