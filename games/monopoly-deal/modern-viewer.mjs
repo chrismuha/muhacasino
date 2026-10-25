@@ -1,4 +1,4 @@
-import {modernFace} from './modern-ui.mjs?build=20261025-deal-toolbar';
+import {modernFace} from './modern-ui.mjs?build=20261025-settings-preview';
 import {GROUPS,properties,complete,sets,rent} from './engine.mjs?build=20261023-deal-buildings-v22';
 
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

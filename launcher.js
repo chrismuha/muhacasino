@@ -101,7 +101,7 @@ function syncHostedCabinetScreens(gameId = null) {
   device.classList.toggle("cabinet-non-slot-game", !slotGameActive);
 }
 
-const SITE_BUILD = "20261024-ui-release-v40";
+const SITE_BUILD = "20261025-deal-mobile-v41";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");
@@ -174,10 +174,17 @@ slotModeToolbar.addEventListener("click", () => {
 
 // Safari's browser bars and keyboard change the visible viewport independently
 // of the layout viewport. Give the hosted frame a definite pixel-sized parent.
+let activeGameId = null;
+let dealLayoutHeight=0, dealLayoutWidth=0;
 function syncGameViewport() {
  const viewport=window.visualViewport;
- const height=viewport?.height || window.innerHeight;
- const top=viewport?.offsetTop || 0;
+ let height=viewport?.height || window.innerHeight;
+ const editing=activeGameId==='monopoly-deal' && gameFrame.contentDocument?.activeElement?.matches('input:not([disabled]),textarea,[contenteditable=true]');
+ if(activeGameId==='monopoly-deal'){
+  if(!editing || dealLayoutWidth!==window.innerWidth || !dealLayoutHeight){dealLayoutHeight=height;dealLayoutWidth=window.innerWidth;}
+  if(editing)height=Math.max(height,dealLayoutHeight);
+ }
+ const top=editing?0:(viewport?.offsetTop || 0);
  document.documentElement.style.setProperty('--casino-visible-height',`${height}px`);
  document.documentElement.style.setProperty('--casino-visible-top',`${top}px`);
  if(!gameView.hidden && document.body.classList.contains('game-open')){
@@ -283,7 +290,7 @@ if (featuredSection) {
   document.fonts?.addEventListener('loadingdone', scheduleFeaturedLayout);
 }
 let lastHeroWheelAt = 0;
-let activeGameId = null;
+
 let gameLoadTimer = 0;
 const bingoThemeChannel = "BroadcastChannel" in window
   ? new BroadcastChannel("muha-bingo-theme-sync")
@@ -755,7 +762,7 @@ returnToLibraryFromError.addEventListener("click", showLauncher);
 
 window.addEventListener("popstate", () => {
   const gameId = window.location.hash.slice(1);
-  if (games[gameId]) launchGame(gameId, false);
+  if (games[gameId]) { if(activeGameId!==gameId)launchGame(gameId, false); }
   else showLauncher(false);
 });
 

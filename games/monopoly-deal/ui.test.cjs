@@ -238,3 +238,28 @@ test('touch and live rotation keep selection, controls, labels, and hand privacy
  }
  await p.locator('#play-card').tap();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.length),1);await p.locator('#hide').tap();await p.setViewportSize({width:844,height:390});assert.equal(await p.locator('#game [data-card]').count(),0);await p.locator('#reveal').tap();assert.equal(await p.locator('#game [data-card]').count(),6);await close(p);
 });
+
+test('hiding and reloading preserve the completed deal and keep hands private',async()=>{
+ const p=await open({width:390,height:844});await fixture(p);
+ await p.locator('[data-card]').first().click();await p.locator('#play-card').click();await idle(p);
+ const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
+ await p.locator('#hide').click();await p.locator('#reveal').click();
+ assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
+ await p.reload();await p.locator('#reveal').waitFor();
+ assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
+ assert.equal(await p.locator('#game [data-card]').count(),0);
+ await p.locator('#reveal').click();assert.equal(await p.locator('#game [data-card]').count(),6);
+ await close(p);
+});
+
+test('hosted keyboard and header collapse preserve the frame',async()=>{
+ const p=await open({width:390,height:844});await p.goto(origin+'/index.html#monopoly-deal');
+ const frame=p.frameLocator('#gameFrame');await frame.locator('#ready-new').waitFor();
+ await frame.locator('#ready-new').click();await frame.locator('#start').click();await frame.locator('#names input').first().focus();
+ const height=await p.locator('#gameFrame').evaluate(el=>el.clientHeight);
+ await p.evaluate(()=>{Object.defineProperty(visualViewport,'height',{configurable:true,value:400});visualViewport.dispatchEvent(new Event('resize'));});
+ assert.equal(await p.locator('#gameFrame').evaluate(el=>el.clientHeight),height);
+ await frame.locator('#wizard-cancel').click();await frame.locator('body').evaluate(el=>el.dataset.sessionMarker='same-document');
+ await p.locator('#toolbarCollapseButton').click();await p.locator('#toolbarCollapseButton').click();
+ assert.equal(await frame.locator('body').getAttribute('data-session-marker'),'same-document');await close(p);
+});

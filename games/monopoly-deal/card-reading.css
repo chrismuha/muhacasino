@@ -209,3 +209,27 @@
 #appearance-dialog{max-height:calc(100dvh - 16px);overflow:auto}
 #appearance-dialog .table-settings{margin-top:12px}
 #appearance-dialog .wizard-heading h2{font-size:22px}
+
+.upcoming-game-settings{margin-top:20px;padding-top:16px;border-top:1px solid #91b9de55;text-align:left}
+.upcoming-game-settings h3{font-size:20px;margin:0 0 8px}
+.upcoming-game-settings p{font-size:15px;line-height:1.5;margin:0 0 16px;color:inherit}
+.upcoming-game-settings label{display:flex;justify-content:space-between;gap:12px;font-size:15px;margin-bottom:6px}
+.upcoming-game-settings label span{font-size:12px;color:#c3d5eb;white-space:nowrap}
+.upcoming-game-settings input{width:100%;min-width:0;max-width:100%;font-size:16px;min-height:44px}
+.upcoming-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.upcoming-actions button{min-width:0;min-height:44px;padding:8px;font-size:15px;white-space:nowrap;opacity:.55;cursor:default}
+
+/* Reading faces grow with their copy; long property names use complete lines. */
+[data-theme=modern] .deal-face[data-reading=true] .reading-property-title{white-space:normal;overflow:visible;overflow-wrap:anywhere}
+[data-theme=modern] .has-selection .selected-table-card{max-height:none}
+@media(max-width:600px){
+ [data-theme=modern] .modern-hand-card{flex-basis:clamp(96px,28cqw,140px);margin-right:8px}
+ [data-theme=modern] .has-selection .deal-stage{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto}
+ [data-theme=modern] .has-selection .card-stage{grid-column:1;grid-row:1}
+ [data-theme=modern] .has-selection .selected-table-card{max-width:440px}
+ [data-theme=modern] .has-selection .deal-actions{grid-column:1;grid-row:2;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:space-between;gap:8px}
+ [data-theme=modern] .has-selection .round-action,[data-theme=modern] .has-selection #end.round-action{flex-direction:column;gap:4px;font-size:14px}
+ [data-theme=modern] .has-selection .action-disc{width:44px}
+ [data-theme=modern] .has-selection .plays-dots{width:100%;justify-content:center;padding:0}
+ [data-theme=modern] .has-selection .draw-deck{grid-column:1;grid-row:3}
+}

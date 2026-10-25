@@ -1,11 +1,14 @@
-import {paginateViewer} from './view-pages.mjs?build=20261025-deal-toolbar';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-deal-toolbar';
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-deal-toolbar';
-import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-deal-toolbar';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-deal-toolbar';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-deal-toolbar';
+import {paginateViewer} from './view-pages.mjs?build=20261025-deal-mobile-v41';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-deal-mobile-v41';
+import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-deal-mobile-v41';
+import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-deal-mobile-v41';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-deal-mobile-v41';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-deal-mobile-v41';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false;
+// Keep the last completed action in this tab if Safari reloads the frame.
+const sessionKey='muha-deal-session-v1';
+try { const saved=JSON.parse(sessionStorage.getItem(sessionKey)||'null'); if(saved?.players?.length>=2 && Array.isArray(saved.draw) && Array.isArray(saved.discard) && saved.players[saved.turn])state=saved; } catch {}
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let detachHandSorting = () => {};
 let toastTimer;
@@ -135,6 +138,7 @@ function renderClassic(){if(!state)return;const handScroll=$('.cards')?.scrollLe
  $('#reveal')?.addEventListener('click',()=>{visible=true;render()});$('#hide')?.addEventListener('click',()=>{visible=false;render()});$('#end').onclick=()=>run(end);$('#move').onclick=()=>run(rearrange);document.querySelectorAll('#game [data-card]').forEach(b=>b.onclick=()=>run(()=>play(p.hand.find(c=>c.id===+b.dataset.card))));document.querySelectorAll('#game [data-table-view]').forEach(b=>b.onclick=()=>openTableViewer(b.dataset.tableView));
 }
 function render(){
+ if(state&&!busy){try{sessionStorage.setItem(sessionKey,JSON.stringify(state));}catch{}}
  detachHandSorting();
  detachHandSorting = () => {};
  if(!state){
@@ -207,7 +211,7 @@ async function rearrange(){if(!visible)return;let wilds=me().props.filter(c=>c.c
 async function end(){while(me().hand.length>7){visible=false;render();let c=await choose(`${me().name}: discard down to seven`,me().hand.map(c=>[label(c),c]));remove(me().hand,c);state.discard.push(c)}state.turn=(state.turn+1)%state.players.length;state.plays=0;visible=false;draw(state,me(),me().hand.length?2:5);log(`${me().name} begins their turn.`)}
 function setup() {
   $('#setup-content').innerHTML = `<form class="setup" id="setup-form" novalidate>
-    <section data-wizard-step="1"><h3>Choose your opponents</h3><label for="opponent-mode">Mode <select id="opponent-mode"><option value="human">Human vs human</option><option value="ai">Human vs AI</option></select></label><p>Choose the total number of players. In AI mode, the other seats are computer opponents.</p><label for="count">Players <select id="count" required><option>2</option><option>3</option><option>4</option></select></label></section>
+    <section data-wizard-step="1"><h3>Choose your opponents</h3><label for="opponent-mode">Mode <select id="opponent-mode"><option value="ai" selected>Human vs AI</option><option value="human">Human vs human</option></select></label><p>Choose the total number of players. In AI mode, the other seats are computer opponents.</p><label for="count">Players <select id="count" required><option>2</option><option>3</option><option>4</option></select></label></section>
     <section data-wizard-step="2" hidden><h3>Who’s at the table?</h3><p class="setup-required">Enter a different name for everyone. All player names are required.</p><div id="names"></div></section>
     <section data-wizard-step="3" hidden><h3>Ready to deal?</h3><p>Each player gets five private cards. The first player draws two more to start.</p><ul id="wizard-review"></ul><p id="wizard-replace" hidden>Dealing starts a new game and replaces the current one.</p></section>
     <div class="wizard-actions"><button id="wizard-back" type="button" hidden>← Back</button><button id="start" type="submit" class="primary">Continue →</button></div>
@@ -529,16 +533,26 @@ const labelResizeObserver=new ResizeObserver(entries=>{
 });
 labelResizeObserver.observe(document.querySelector('main'));
 
+// Planned desktop game management is presentation only; it performs no file I/O.
+function upcomingGameSettings(){
+ const section=document.createElement('section');
+ section.className='upcoming-game-settings';
+ section.setAttribute('aria-labelledby','upcoming-title');
+ section.innerHTML=`<h3 id="upcoming-title">Coming soon</h3><p>Named games, saved games, backup, and restore are planned for the desktop app. These features are not available yet. The current deal recovers in this tab after a reload; hands stay hidden until revealed.</p><label for="planned-game-name">Game name <span>Coming soon</span></label><input id="planned-game-name" type="text" placeholder="Name your game" disabled aria-describedby="upcoming-title"><div class="upcoming-actions">${['Save game','Load game','Backup','Restore'].map(label=>`<button type="button" aria-disabled="true" data-unavailable-reason="${label} is coming soon for the desktop app.">${label}</button>`).join('')}</div>`;
+ return section;
+}
+
 // Keep direct URLs usable; hosted games use the casino's single utility bar.
 if(window.parent!==window){
  document.documentElement.classList.add('casino-hosted');
  const appearance=document.createElement('dialog');
  appearance.id='appearance-dialog';
  appearance.setAttribute('aria-labelledby','appearance-title');
- appearance.innerHTML='<div class="wizard-heading"><h2 id="appearance-title">Table appearance</h2><button type="button">Close</button></div>';
+ appearance.innerHTML='<div class="wizard-heading"><h2 id="appearance-title">Game settings</h2><button type="button">Close</button></div>';
  const close=appearance.querySelector('button');
  close.onclick=()=>appearance.close();
  appearance.append(document.querySelector('.table-settings'));
+ appearance.append(upcomingGameSettings());
  document.body.append(appearance);
  window.addEventListener('message',event=>{
   if(event.source!==window.parent||event.origin!==location.origin||event.data?.type!=='muha-deal-command')return;
@@ -548,4 +562,10 @@ if(window.parent!==window){
   if(event.data.command==='guide')openTableViewer('rules');
   if(event.data.command==='appearance'){appearance.showModal();close.focus({preventScroll:true});}
  });
+}
+
+if(window.parent===window){
+ const settings=document.querySelector('.appearance-settings');
+ settings.querySelector('summary').textContent='Game settings';
+ settings.append(upcomingGameSettings());
 }
