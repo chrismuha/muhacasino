@@ -1173,6 +1173,7 @@ test('history popup preserves the phone table and deck and toolbar labels are re
 test('orange deck remains visible and play dots distinguish current, completed and unused plays',async()=>{
  const p=await open({width:420,height:742});await fixture(p,'hand',2);
  assert.match(await p.locator('.deal-card-back.deck-icon').innerText(),/MONOPOLY\s+DEAL/);
+ assert.ok(await p.locator('.deck-icon b').evaluate(el=>{const range=document.createRange();range.selectNodeContents(el);const text=range.getBoundingClientRect(),card=el.closest('.deck-icon').getBoundingClientRect();return text.left>=card.left+3&&text.right<=card.right-3&&text.bottom<=card.bottom-3}), 'deck branding fits inside its card border');
  for(let plays=0;plays<=3;plays++){
   await p.evaluate(plays=>{window.__dealTest.state.plays=plays;window.__dealTest.render()},plays);
   assert.equal(await p.locator('.plays-dots .used').count(),plays);

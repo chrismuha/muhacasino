@@ -659,8 +659,8 @@ dialog button,#preview-close{outline-offset:-4px}
 }
 /* Restore the recognizable orange Monopoly Deal card back in every table state. */
 #game .draw-deck .deal-card-back.deck-icon{display:flex;flex:0 0 auto;width:48px;height:68px;aspect-ratio:auto;margin:0 auto;padding:4px;border:3px solid #fff;font-size:8px;font-weight:900;line-height:1.05;text-align:center}
-#game .draw-deck .deck-icon .card-back-city{font-size:24px;line-height:1;margin-bottom:3px}
-#game .draw-deck .deck-icon b{font-size:8px;font-weight:900;letter-spacing:.1px}
+#game .draw-deck .deck-icon .card-back-city{flex:0 0 28px;height:28px;aspect-ratio:auto;font-size:24px;line-height:1;margin-bottom:3px}
+#game .draw-deck .deck-icon b{display:block;flex:0 0 auto;width:100%;font-size:6px;font-weight:900;letter-spacing:-.2px;line-height:1.2;white-space:nowrap}
 /* Dots identify completed plays, the current play, and unused plays. */
 [data-theme=modern] .deal-table .plays-dots i{background:#000;opacity:1;border:1px solid #fff7;box-shadow:none}
 [data-theme=modern] .deal-table .plays-dots i.used{background:#fff;opacity:1;animation:none}
