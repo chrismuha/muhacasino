@@ -1,4 +1,4 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-selection-feedback-v54';
+import {attachHorizontalNavigation,isViewportZoomed} from './horizontal-nav.mjs?build=20261025-readable-viewers-v60';
 // Paginate rendered content without shrinking text or hiding oversized items.
 let dispose = () => {};
 export function paginateViewer(dialog,content){
@@ -10,7 +10,7 @@ export function paginateViewer(dialog,content){
  nav.innerHTML='<button type="button">← Previous</button><span role="status" aria-live="polite"></span><button type="button">Next →</button>';
  const [previous,next]=nav.querySelectorAll('button'),label=nav.querySelector('span');
  content.before(nav);
- let pages=[],index=0,frame,active=true;
+ let pages=[],index=0,frame,active=true,lastWidth=innerWidth,lastHeight=innerHeight;
  dialog.classList.add('has-content-pages');
  function show(){
   content.replaceChildren(...pages[index]);content.scrollTop=0;
@@ -20,9 +20,13 @@ export function paginateViewer(dialog,content){
  }
  function rebuild(){
   if(!dialog.open)return;
-  const old=index;index=0;
+  const old=index,oldScroll=content.scrollTop;index=0;
+  for(const section of content.querySelectorAll('.property-stack-page')){
+   const slot=originals.findIndex(node=>node.matches('.property-stack-page')&&node.getAttribute('aria-label')===section.getAttribute('aria-label'));
+   if(slot>=0)originals[slot]=section.cloneNode(true);
+  }
   const top=content.getBoundingClientRect().top;
-  const bottom=Math.min(window.visualViewport?.height||innerHeight,dialog.getBoundingClientRect().bottom);
+  const bottom=Math.min(innerHeight,dialog.getBoundingClientRect().bottom);
   const footer=dialog.querySelector('.table-view-footer');
   const footerHeight=footer&&getComputedStyle(footer).display!=='none'?footer.getBoundingClientRect().height:0;
   const height=Math.max(100,bottom-top-footerHeight-24);
@@ -55,7 +59,7 @@ export function paginateViewer(dialog,content){
    if(!fits()&&pages.at(-1).length){pages.push([]);content.replaceChildren(unit);}
    pages.at(-1).push(unit);
   }
-  index=Math.min(old,pages.length-1);show();
+  index=Math.min(old,pages.length-1);show();content.scrollTop=oldScroll;
  }
  function navigate(direction){
   const target=index+direction;
@@ -66,7 +70,14 @@ export function paginateViewer(dialog,content){
  previous.onclick=()=>navigate(-1);
  next.onclick=()=>navigate(1);
  const detachNavigation=attachHorizontalNavigation(content,navigate);
- const schedule=()=>{if(!active)return;cancelAnimationFrame(frame);frame=requestAnimationFrame(rebuild);};
+ const schedule=event=>{
+  if(!active)return;
+  // Pinching changes the visual viewport, not the layout. Keep the live cards.
+  if(isViewportZoomed())return;
+  if(event&&innerWidth===lastWidth&&innerHeight===lastHeight)return;
+  lastWidth=innerWidth;lastHeight=innerHeight;
+  cancelAnimationFrame(frame);frame=requestAnimationFrame(rebuild);
+ };
  window.addEventListener('resize',schedule);
  window.visualViewport?.addEventListener('resize',schedule);
  document.fonts?.ready.then(schedule);

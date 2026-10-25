@@ -1,10 +1,10 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-card-headers-v59';
-import {paginateViewer} from './view-pages.mjs?build=20261025-card-headers-v59';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-card-headers-v59';
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-card-headers-v59';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-card-headers-v59';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-card-headers-v59';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-card-headers-v59';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-readable-viewers-v60';
+import {paginateViewer} from './view-pages.mjs?build=20261025-readable-viewers-v60';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-readable-viewers-v60';
+import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-readable-viewers-v60';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-readable-viewers-v60';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-readable-viewers-v60';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-readable-viewers-v60';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();

@@ -454,14 +454,14 @@ test('double tapping a hand card opens preview and closing keeps every hand card
  await p.locator('[data-card]').nth(1).tap();assert.equal(await p.locator('#bank-card').getAttribute('aria-disabled'),'false');assert.equal(await p.locator('.selected-table-card').count(),0);
  await close(p);
 });
-test('Monopoly Deal collapses the casino header only after dealing; expansion keeps the game',async()=>{
+test('Monopoly Deal starts with a collapsed casino header; expansion keeps the game and other games start expanded',async()=>{
  const p=await open({width:390,height:700});await p.goto(origin+'/index.html#monopoly-deal');
  const frame=p.frameLocator('#gameFrame');await frame.locator('#ready-new').waitFor();
- assert.equal(await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded'),'true');
+ assert.equal(await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded'),'false');
  await p.evaluate(()=>window.postMessage({type:'muha-deal-started'},location.origin));
- assert.equal(await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded'),'true');
+ assert.equal(await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded'),'false');
  await frame.locator('#ready-new').click();await frame.locator('#start').click();await frame.locator('#names input').first().fill('Chris');await frame.locator('#start').click();
- assert.equal(await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded'),'true');
+ assert.equal(await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded'),'false');
  await frame.locator('#start').click();await p.waitForFunction(()=>document.querySelector('#toolbarCollapseButton').getAttribute('aria-expanded')==='false');
  const dealt=await frame.locator('.modern-hand-card').count();assert.equal(dealt,7);
  await p.locator('#toolbarCollapseButton').click();assert.equal(await frame.locator('.modern-hand-card').count(),dealt);
@@ -615,14 +615,14 @@ test('property stacks keep complete sets together and Properties displays the co
    const stack=p.locator('.property-stack-page');
    if(await stack.count()){
     assert.equal(await stack.count(),1);groups.push(await stack.getAttribute('aria-label'));
-    const pane=await p.locator('#table-view-content').evaluate(el=>({height:el.clientHeight,scroll:el.scrollHeight}));assert.ok(pane.scroll<=pane.height+1,`${viewport.width}: ${JSON.stringify(pane)}`);
+    assert.equal(await stack.locator('[data-stack-index]:visible').count(),1,'One complete reading card is shown');
     const cards=stack.locator('[data-stack-index]');
     if((await stack.getAttribute('aria-label')).startsWith('Brown')){
      assert.equal(await cards.count(),3,'Both properties and House share the Brown page');assert.match(await stack.innerText(),/Complete set/);
-     const positions=await cards.evaluateAll(nodes=>nodes.map(n=>n.getBoundingClientRect().toJSON()));assert.ok(positions[0].bottom>positions[1].top,'Cards overlap as a stack');
-     await cards.first().click({position:{x:10,y:2}});assert.equal(await cards.first().getAttribute('aria-pressed'),'true');const caption=await stack.locator('.property-stack-caption').innerText();await stack.locator('[data-stack-shift="1"]').click();assert.notEqual(await stack.locator('.property-stack-caption').innerText(),caption);
-     await stack.locator('[data-stack-index="1"]').focus();await p.keyboard.press('Enter');assert.equal(await stack.locator('[data-stack-index="1"]').getAttribute('aria-pressed'),'true');
-     const page=await p.locator('.content-page-nav span').innerText(),r=await stack.locator('.is-active').boundingBox();await p.mouse.move(r.x+r.width/2,r.y+r.height/2);await p.mouse.down();await p.mouse.move(r.x+r.width/2-60,r.y+r.height/2,{steps:8});await p.mouse.up();assert.notEqual(await p.locator('.content-page-nav span').innerText(),page);await p.locator('.content-page-nav button').first().click();
+     const active=stack.locator('.property-stack-card.is-active');const bounds=await active.boundingBox();assert.ok(bounds.width>=220&&bounds.height>=406,'Card is large enough to read');
+     const caption=await stack.locator('.property-stack-caption').innerText();await stack.locator('[data-stack-shift="1"]').click();assert.notEqual(await stack.locator('.property-stack-caption').innerText(),caption);
+     assert.equal(await stack.locator('[data-stack-index]:visible').count(),1);await stack.locator('[data-stack-shift="1"]').focus();await p.keyboard.press('Enter');
+
     }
    }
    if(await p.locator('.content-page-nav button').last().isDisabled())break;
@@ -640,7 +640,7 @@ test('a crowded monopoly stays one stack page and all members remain inspectable
  await p.locator('.current-properties').dblclick();await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,100)));
  assert.equal(await p.locator('.current-properties .asset-progress').innerText(),'1 complete set');
  const count=await p.locator('[data-stack-index]').count();assert.ok(count>10);assert.match(await p.locator('.content-page-nav span').innerText(),/Page 1 of 2/);
- assert.ok(await p.locator('#table-view-content').evaluate(el=>el.scrollHeight<=el.clientHeight+1));
+ assert.equal(await p.locator('[data-stack-index]:visible').count(),1);
  for(let i=0;i<count;i++){
   await p.locator('[data-stack-shift="1"]').click();assert.equal(await p.locator('[data-stack-index].is-active').getAttribute('data-stack-index'),String(i));
  }
@@ -754,13 +754,17 @@ test('bank details groups identical cards with quantities and preserves balance'
  }
 });
 
-test('refresh restores casino navigation and New game for a saved deal',async()=>{
+test('refresh starts collapsed with an accessible expand control and New game',async()=>{
  const p=await open({width:390,height:700});await p.goto(origin+'/index.html#monopoly-deal');
  const frame=p.frameLocator('#gameFrame');await frame.locator('#ready-new').click();await frame.locator('#start').click();await frame.locator('#player-name-0').fill('Chris');await frame.locator('#start').click();await frame.locator('#start').click();
  await p.waitForFunction(()=>document.querySelector('#toolbarCollapseButton').getAttribute('aria-expanded')==='false');
  await frame.locator('body').evaluate(()=>location.reload());
- await p.waitForFunction(()=>document.querySelector('#toolbarCollapseButton').getAttribute('aria-expanded')==='true');
+ await p.waitForFunction(()=>document.querySelector('#toolbarCollapseButton').getAttribute('aria-expanded')==='false');
  await frame.locator('#reveal').waitFor();
+ await p.reload();await frame.locator('#reveal').waitFor();
+ assert.equal(await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded'),'false');
+ assert.equal(await p.locator('#toolbarCollapseButton').isVisible(),true);
+ await p.locator('#toolbarCollapseButton').click();
  assert.equal(await p.locator('#backButton').isVisible(),true);
  await p.locator('[data-deal-command="new"]').click();await frame.locator('#setup-wizard[open]').waitFor();await frame.locator('#wizard-cancel').click();
  await p.locator('#backButton').click();assert.equal(await p.locator('#gameView').isVisible(),false);await close(p);
@@ -771,7 +775,7 @@ test('an embedded game without a casino toolbar retains its own navigation after
  await p.route('**/test-embed.html',route=>route.fulfill({contentType:'text/html',body:'<iframe id="embedded" src="/games/monopoly-deal/" style="width:100%;height:800px"></iframe>'}));
  await p.goto(origin+'/test-embed.html');const frame=p.frameLocator('#embedded');
  await frame.locator('#new').waitFor();assert.equal(await frame.locator('.game-topbar').isVisible(),true);
- await frame.locator('body').evaluate(()=>location.reload());await frame.locator('#new').waitFor();
+ await Promise.all([p.waitForEvent('framenavigated',f=>f.url().includes('/games/monopoly-deal/')),frame.locator('body').evaluate(()=>location.reload())]);await frame.locator('#new').waitFor();
  assert.equal(await frame.locator('.game-topbar a').isVisible(),true);await frame.locator('#new').click();await frame.locator('#setup-wizard[open]').waitFor();await close(p);
 });
 
@@ -798,7 +802,7 @@ test('iPhone 17 and Pro family keep normal play within the visible portrait scre
    if(hosted){
     await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();
     game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));
-    await p.locator('#toolbarCollapseButton').click();
+    if(await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded')==='true')await p.locator('#toolbarCollapseButton').click();
    }
    for(const kind of ['hand','hotel']){
     await fixture(game,kind,4);
@@ -890,4 +894,50 @@ test('enlarged property and action headers stay on one line',async()=>{
   }
   await close(p);
  }
+});
+
+test('Bank and Properties show full reading cards and preserve live content through pinch zoom',async()=>{
+ for(const viewport of [{width:320,height:568},{width:420,height:780},{width:1440,height:900}]){
+  const p=await open(viewport,undefined,{isMobile:true,hasTouch:true});await fixture(p,'hotel',2);
+  await p.evaluate(()=>{const s=window.__dealTest.state;for(const fn of [c=>c.type==='money'&&c.value===2,c=>c.action==='debt'])s.players[0].bank.push(s.draw.splice(s.draw.findIndex(fn),1)[0]);window.__dealTest.render()});
+  for(const kind of ['properties','bank']){
+   await p.locator(kind==='properties'?'.current-properties':'.current-bank')[kind==='properties'?'dblclick':'click']();
+   await p.locator('.content-page-nav span').waitFor();await p.waitForTimeout(100);
+   if(kind==='bank')while(await p.locator('.modern-public-face [data-reading=true]').count()===0)await p.locator('.content-page-nav button').last().click();
+   else await p.locator('[data-stack-shift="1"]').click();
+   const face=p.locator(kind==='properties'?'.property-stack-card.is-active .deal-face':'.modern-public-face .deal-face').first();
+   assert.equal(await face.getAttribute('data-reading'),'true');
+   const size=await face.boundingBox();assert.ok(size.width>=220&&size.height>=406,`${kind}: ${JSON.stringify(size)}`);
+   if(kind==='properties')assert.ok(await face.locator('.reading-rent').evaluate(el=>parseFloat(getComputedStyle(el).fontSize)>=16));
+   await shot(p,`reading-${kind}-${viewport.width}`);
+   const saved=await p.locator('#table-view-content').evaluate(el=>{el.scrollTop=80;window.__zoomContent=el.firstElementChild;return {html:el.innerHTML,scroll:el.scrollTop,page:document.querySelector('.content-page-nav span').textContent}});
+   let session;
+   if(process.env.DEAL_QA_BROWSER==='webkit')await p.evaluate(()=>{Object.defineProperty(visualViewport,'scale',{configurable:true,value:2});visualViewport.dispatchEvent(new Event('resize'))});
+   else{session=await p.context().newCDPSession(p);await session.send('Emulation.setPageScaleFactor',{pageScaleFactor:2})}
+   await p.waitForTimeout(120);
+   assert.deepEqual(await p.locator('#table-view-content').evaluate(el=>({same:el.firstElementChild===window.__zoomContent,html:el.innerHTML,scroll:el.scrollTop,page:document.querySelector('.content-page-nav span').textContent})),{same:true,...saved});
+   if(session){await session.send('Emulation.setPageScaleFactor',{pageScaleFactor:1});await session.detach()}else await p.evaluate(()=>{delete visualViewport.scale;visualViewport.dispatchEvent(new Event('resize'))});
+   if(kind==='properties'&&viewport.width===1440){const active=await p.locator('.property-stack-page').getAttribute('data-stack-active');await p.setViewportSize({width:1280,height:900});await p.waitForTimeout(120);assert.equal(await p.locator('.property-stack-page').getAttribute('data-stack-active'),active);}
+   await p.locator('#table-view-close').click();await conservation(p);
+  }
+  await close(p);
+ }
+});
+
+test('casino-hosted property zoom preserves frame height and the selected card',async()=>{
+ const p=await open({width:420,height:780},undefined,{isMobile:true,hasTouch:true});await p.goto(origin+'/index.html#monopoly-deal');
+ const frame=p.frameLocator('#gameFrame');await frame.locator('#ready-new').waitFor();const game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));
+ await fixture(game,'hotel',2);await frame.locator('.current-properties').dblclick();await frame.locator('.content-page-nav span').waitFor();await p.waitForTimeout(100);
+ await frame.locator('[data-stack-shift="1"]').click();
+ const height=await p.locator('#gameFrame').evaluate(el=>el.getBoundingClientRect().height);
+ const saved=await frame.locator('#table-view-content').evaluate(el=>{window.__zoomContent=el.firstElementChild;return el.innerHTML});
+ let session;
+ if(process.env.DEAL_QA_BROWSER==='webkit')await p.evaluate(()=>{Object.defineProperty(visualViewport,'scale',{configurable:true,value:2});visualViewport.dispatchEvent(new Event('resize'))});
+ else{session=await p.context().newCDPSession(p);await session.send('Emulation.setPageScaleFactor',{pageScaleFactor:2})}
+ await p.waitForTimeout(150);
+ assert.equal(await p.locator('#gameFrame').evaluate(el=>el.getBoundingClientRect().height),height);
+ assert.equal(await frame.locator('#table-view-content').evaluate(el=>el.firstElementChild===window.__zoomContent),true);
+ assert.equal(await frame.locator('#table-view-content').innerHTML(),saved);
+ if(session){await session.send('Emulation.setPageScaleFactor',{pageScaleFactor:1});await session.detach()}
+ await conservation(game);await close(p);
 });

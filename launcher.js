@@ -101,7 +101,7 @@ function syncHostedCabinetScreens(gameId = null) {
   device.classList.toggle("cabinet-non-slot-game", !slotGameActive);
 }
 
-const SITE_BUILD = "20261025-card-headers-v59";
+const SITE_BUILD = "20261025-readable-viewers-v60";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");
@@ -178,6 +178,7 @@ let activeGameId = null;
 let dealLayoutHeight=0, dealLayoutWidth=0;
 function syncGameViewport() {
  const viewport=window.visualViewport;
+ if(activeGameId==='monopoly-deal'&&(viewport?.scale||1)!==1)return;
  let height=viewport?.height || window.innerHeight;
  const editing=activeGameId==='monopoly-deal' && gameFrame.contentDocument?.activeElement?.matches('input:not([disabled]),textarea,[contenteditable=true]');
  if(activeGameId==='monopoly-deal'){
@@ -517,7 +518,7 @@ function launchGame(gameId, updateHistory = true) {
   }
   activeGameId = gameId;
   syncHostedCabinetScreens(gameId);
-setGameToolbarCollapsed(false);
+  setGameToolbarCollapsed(gameId === "monopoly-deal");
   showGameLoading();
   gameView.classList.toggle("tabletop-game", game.categories.includes("table"));
   currentGame.textContent = game.title;
@@ -669,7 +670,7 @@ window.addEventListener("message", (event) => {
   if (event.origin !== window.location.origin) return;
   if(event.data?.type==='muha-deal-ready'){
    if(event.source===gameFrame.contentWindow&&activeGameId==='monopoly-deal'){
-    setGameToolbarCollapsed(false);
+    setGameToolbarCollapsed(true);
     gameFrame.contentWindow.postMessage({type:'muha-deal-host-ready'},location.origin);
    }
    return;

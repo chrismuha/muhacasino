@@ -514,3 +514,34 @@ dialog button,#preview-close{outline-offset:-4px}
  [data-theme=modern] .deal-hand .modern-hand-card{flex-basis:60px}
  [data-theme=modern] .deal-hand .cards{padding-top:16px;padding-bottom:6px}
 }
+
+/* Public collections use full reading cards, never miniature artwork. */
+[data-theme=modern] #table-viewer[data-modern-public=true] .modern-public-card:has([data-reading=true]){display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+[data-theme=modern] #table-viewer[data-modern-public=true] .modern-public-face:has([data-reading=true]){width:min(100%,280px);max-width:280px;aspect-ratio:auto;container-type:inline-size}
+[data-theme=modern] #table-viewer .property-stack{display:grid;place-items:start center;height:auto;min-height:0;touch-action:pan-y pinch-zoom}
+[data-theme=modern] #table-viewer .property-stack-card{display:none;position:relative;top:auto;left:auto;transform:none;width:min(100%,280px);height:auto;aspect-ratio:auto;container-type:inline-size}
+[data-theme=modern] #table-viewer .property-stack-card.is-active{display:block;top:auto}
+[data-theme=modern] #table-viewer .deal-face[data-reading=true]{min-height:406px;height:auto;overflow:visible}
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .face-property-top,
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .face-action-top,
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .face-money-top,
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .face-money-bottom{height:72px}
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-property-title{font-size:18px;white-space:normal;overflow:visible;overflow-wrap:normal;padding:10px 8px;line-height:1.3}
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-color{font-size:18px}
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-rent{font-size:16px;line-height:1.35}
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-rent th,
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-rent td{padding:8px 4px}
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .face-instructions{font-size:16px;line-height:1.4;padding:12px}
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .action-medallion,
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .money-medallion{width:150px;height:150px;margin:14px auto}
+[data-theme=modern] #table-viewer .property-stack-controls{position:sticky;bottom:0;padding:8px;background:#05265e;z-index:101}
+[data-theme=modern] #table-viewer[data-modern-public=true] .modern-public-grid:has([data-reading=true]){grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-rent caption{font-size:18px}
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-rent thead th,
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-full-label{font-size:16px}
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .face-value{width:72px}
+[data-theme=modern] #table-viewer[data-modern-public=true] .modern-public-copy h3{font-size:18px}
+[data-theme=modern] #table-viewer[data-modern-public=true] .modern-public-copy p,
+[data-theme=modern] #table-viewer[data-modern-public=true] .modern-card-value,
+[data-theme=modern] #table-viewer .property-stack-caption,
+[data-theme=modern] #table-viewer .property-set-status{font-size:16px;line-height:1.4}
