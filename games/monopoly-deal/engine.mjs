@@ -41,3 +41,6 @@ export function buildingSets(player, action) {
     (action === 'house' || player.buildings.some(card => card.color === color && card.action === 'house'))
   );
 }
+
+export const canBank=card=>card?.type==='money';
+export const hasPayableAssets=player=>[...player.bank,...player.props,...player.buildings].some(card=>card.value>0);

@@ -868,8 +868,18 @@
       </article>
 
       <article id="monopoly-deal" class="history-card">
-        <header><span class="game-icon">▣</span><div><p>New tabletop game · 2–4 players</p><h2>Monopoly Deal</h2></div><b>v1.4.0</b></header>
-        <section><h3>v1.4.0 · 2026-10-25 · Properties first and Details last</h3><ul>
+        <header><span class="game-icon">▣</span><div><p>New tabletop game · 2–4 players</p><h2>Monopoly Deal</h2></div><b>v1.5.0</b></header>
+        <section><h3>v1.5.0 · 2026-10-25 · Recovery, action summary, and regression coverage</h3><ul>
+          <li>Secondary table labels and unavailable-control text are white for contrast, with small labels raised to a readable minimum size. The user guide and card facts now match all v1.5 controls and money-only banking rules.</li>
+          <li>Tap a wild directly in your own Properties box to change its color without opening Manage.</li>
+          <li>Rent requires opponents with money or payable properties. Assetless opponents are excluded, and blocked rent uses no card or play.</li>
+          <li>Selected cards show their actual card-face preview. Mobile property cards use compact readable faces with arrows below them instead of oversized cards and overlay controls.</li>
+          <li>Only money cards may be banked manually, including by computer opponents. Action cards must be played, held, or discarded; legacy banked cards keep their cash value.</li>
+
+          <li>Saved AI turns resume from completed-move checkpoints. Refreshing during a payment restores and replays only the unfinished action, preventing duplicate card transfers or charges.</li>
+          <li>A compact action summary shows remaining plays and Undo availability; expand it to read the latest action and hand controls.</li>
+          <li>Updated UI regression tests for current selection, privacy, prompt wrapping, and readable card views. Very short landscape dialogs scroll rather than clipping their content.</li>
+
           <li>Refreshing a finished game returns to the top and shows clear New game and Game Library controls, including after a computer wins.</li>
           <li>Added Cancel action and Escape for unfinished personal actions, with cards and plays restored. Undo reverses completed moves within the current turn until another player responds or pays. Required responses remain mandatory.</li>
           <li>Difficulty controls fit within setup on narrow screens. Long property and player names wrap in action prompts instead of clipping or requiring sideways scrolling.</li>

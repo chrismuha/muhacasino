@@ -1,4 +1,4 @@
-import {GROUPS,properties,complete,sets,rent,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
+import {GROUPS,properties,complete,sets,rent,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261025-v15-table-rules-v64';
 // Decisions use only this seat's hand and the public table.
 export function propertyScore(player,card,color){
  const count=properties(player,color).length;
@@ -25,7 +25,7 @@ export function cardScore(card,player,opponents){
  if(card.action==='breaker')return opponents.some(p=>sets(p).length)?150:0;
  if(card.action==='sly'||card.action==='forced')return opponents.some(p=>p.props.some(c=>!complete(p,c.color)))&&(card.action!=='forced'||player.props.some(c=>!complete(player,c.color)))?45:0;
  if(card.action==='house'||card.action==='hotel')return buildingSets(player,card.action).length?30:0;
- if(card.action==='rent')return card.colors.some(color=>properties(player,color).length)?28:0;
+ if(card.action==='rent')return opponents.some(hasPayableAssets)&&card.colors.some(color=>properties(player,color).length)?28:0;
  if(card.action==='debt'||card.action==='birthday')return 25;
  return 0;
 }
@@ -34,6 +34,6 @@ export function aiPlay(player,opponents){
  if(!ranked.length)return null;
  const {card,score}=ranked[0];
  if(score>0)return {card,mode:card.type==='money'?'bank':'play',color:card.type==='property'?[...card.colors].sort((a,b)=>propertyScore(player,card,b)-propertyScore(player,card,a))[0]:null};
- const bankable=player.hand.filter(c=>c.type!=='property'&&c.action!=='no').sort((a,b)=>b.value-a.value)[0];
+ const bankable=player.hand.filter(c=>canBank(c)).sort((a,b)=>b.value-a.value)[0];
  return bankable?{card:bankable,mode:'bank'}:null;
 }

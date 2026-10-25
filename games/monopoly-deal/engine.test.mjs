@@ -23,3 +23,9 @@ test('buildings require full street sets, exclude railroads and utilities, and r
  assert.ok(!buildingSets(p,'house').includes('green'));
  assert.deepEqual(buildingSets(p,'pass'),[]);
 });
+
+test('money-only banking and payable rent assets exclude zero-value wilds',async()=>{
+ const {canBank,hasPayableAssets}=await import('./engine.mjs');
+ assert.equal(canBank({type:'money',value:1}),true);assert.equal(canBank({type:'action',value:4}),false);assert.equal(canBank({type:'property',value:4}),false);
+ const p={bank:[],props:[],buildings:[]};assert.equal(hasPayableAssets(p),false);p.props.push({value:0});assert.equal(hasPayableAssets(p),false);p.props.push({value:1});assert.equal(hasPayableAssets(p),true);
+});

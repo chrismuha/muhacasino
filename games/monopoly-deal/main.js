@@ -1,11 +1,11 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-undo-recovery-v62';
-import {paginateViewer} from './view-pages.mjs?build=20261025-undo-recovery-v62';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-undo-recovery-v62';
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-undo-recovery-v62';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-undo-recovery-v62';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-undo-recovery-v62';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-undo-recovery-v62';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-v15-table-rules-v64';
+import {paginateViewer} from './view-pages.mjs?build=20261025-v15-table-rules-v64';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-v15-table-rules-v64';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261025-v15-table-rules-v64';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-v15-table-rules-v64';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-v15-table-rules-v64';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-v15-table-rules-v64';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261025-v15-table-rules-v64';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -15,7 +15,13 @@ class CancelAction extends Error {}
 let turnHandoff=true;
 let detachCatalogNavigation=()=>{};
 // Keep the last completed action in this tab if Safari reloads the frame.
-const sessionKey='muha-deal-session-v1';
+const sessionKey='muha-deal-session-v1',pendingKey='muha-deal-pending-v1';
+let recoveredPending=false;
+try{recoveredPending=sessionStorage.getItem(pendingKey)==='1';}catch{}
+function saveGame(pending=false){
+ if(!state)return;
+ try{sessionStorage.setItem(sessionKey,JSON.stringify(state));if(pending)sessionStorage.setItem(pendingKey,'1');else sessionStorage.removeItem(pendingKey);}catch{}
+}
 if('scrollRestoration' in history)history.scrollRestoration='manual';
 window.addEventListener('pageshow',()=>requestAnimationFrame(()=>window.scrollTo(0,0)));
 
@@ -59,8 +65,8 @@ function updateUnavailableControls() {
    else if(button.id === 'preview-previous'||button.id === 'preview-next')reason = hiddenHand || (me().hand.length<2 ? 'This is the only card in your hand.' : '');
    else if(button.id === 'move')reason = hiddenHand || (document.documentElement.dataset.theme==='classic'&&!me().props.some(card=>card.colors.length>1)?'You have no wild properties on the table to rearrange.':'');
    else if(button.id === 'flip-card')reason = hiddenHand || (!selected ? 'Select a two-color wild property card to flip it.' : '') || noPlays || (selected.type !== 'property' || selected.colors.length !== 2 ? 'Only two-color wild property cards can be flipped.' : '');
-   else if(button.id === 'bank-card')reason = hiddenHand || (!selected ? 'Select a money or action card to bank.' : '') || noPlays || (selected.type === 'property' ? 'Property cards cannot be banked. Play this card as a property.' : '');
-   else if(button.id === 'play-card')reason = hiddenHand || (!selected ? 'Select a property or action card to play.' : '') || noPlays || (selected.type === 'money' ? 'Money cards can only be banked, not played.' : '');
+   else if(button.id === 'bank-card')reason = hiddenHand || (!selected ? 'Select a money card to bank.' : '') || noPlays || (!canBank(selected) ? 'Only money cards can be banked. Play or discard action cards.' : '');
+   else if(button.id === 'play-card')reason = hiddenHand || (!selected ? 'Select a property or action card to play.' : '') || noPlays || (selected.type === 'money' ? 'Money cards can only be banked, not played.' : '') || (selected.action==='rent'&&!opponents().some(hasPayableAssets)?'No opponent has money or payable properties for rent.':'');
    else if(button.hasAttribute('data-card') && document.documentElement.dataset.theme === 'classic')reason = noPlays;
   }
   button.disabled = false;
@@ -89,7 +95,7 @@ function wireHandSorting() {
    const element=document.elementFromPoint(x,y)?.closest('.current-bank,.current-properties');
    if(!element)return null;
    const card=player.hand.find(card=>card.id===cardId),mode=element.matches('.current-bank')?'bank':'play';
-   const reason=state.plays>=3?'You have used all three plays. Pass to end your turn.':mode==='bank'&&card?.type==='property'?'Property cards cannot be banked. Drop onto Properties.':mode==='play'&&card?.type==='money'?'Money cards belong in the Bank.':'';
+   const reason=state.plays>=3?'You have used all three plays. Pass to end your turn.':mode==='bank'&&!canBank(card)?'Only money cards can be banked. Play or discard this card.':mode==='play'&&card?.type==='money'?'Money cards belong in the Bank.':'';
    return {element,mode,allowed:!reason,reason};
   },
   onDrop(cardId,target){
@@ -203,6 +209,7 @@ function wireGameOverControls(){
  $('#game-restart')?.addEventListener('click',setup);
 }
 function renderClassic(){if(!state)return;const handScroll=$('.cards')?.scrollLeft || 0;const p=me();$('#game').innerHTML=`<div class="players">${state.players.map((x,i)=>`<section class="player ${i===state.turn?'active':''}"><h3>${esc(x.name)} ${i===state.turn?'◆':''}</h3><div class="meta"><span>Bank <b>${x.bank.reduce((a,c)=>a+c.value,0)}M</b></span><span>${x.hand.length} cards</span><span class="badge">${sets(x).length} / 3 sets</span></div><div class="player-inspect"><button type="button" data-table-view="bank-${i}">Bank cards</button><button type="button" data-table-view="properties-${i}">Properties</button></div><div class="groups">${Object.entries(GROUPS).filter(([k])=>properties(x,k).length).map(([k,g])=>`<div class="group ${complete(x,k)?'done':''}" style="--color:${g.color}"><strong>${g.name} ${properties(x,k).length}/${g.names.length}</strong>${properties(x,k).map(c=>`<div>${esc(c.name)}</div>`).join('')}<small>Rent ${rent(x,k)}M ${x.buildings.filter(c=>c.color===k).map(c=>`<span class="building-label" data-building="${c.action}">${esc(c.name)}</span>`).join(' ')}</small></div>`).join('')||'<p>No properties yet</p>'}</div></section>`).join('')}</div><div class="turnbar"><div><strong>${esc(p.name)}’s turn</strong><div class="meta">${3-state.plays} plays left · ${state.draw.length} in draw pile · Discard: ${esc(state.discard.at(-1)?.name||'Empty')}</div></div><div><button type="button" data-table-view="discard">Discard pile</button><button type="button" data-table-view="activity">View table</button><button id="move">Rearrange wilds</button> <button id="undo" type="button">Undo</button> <button id="end" class="primary">End turn →</button></div></div><section class="hand">${visible?`<h2>${esc(p.name)}’s hand</h2><p id="hand-sort-help" class="hand-hint">Tap a card to play or bank it. Drag to sort; hold first on touch. Swipe to scroll, or use Alt+Left/Right to reorder the focused card.</p><div class="cards" tabindex="0" role="region" aria-label="Your hand; scroll sideways for more cards" aria-describedby="hand-sort-help">${p.hand.map(cardHTML).join('')||'<p>Your hand is empty.</p>'}</div>`:p.isAI?`<div class="privacy" role="status"><h2>${esc(p.name)}’s turn</h2><p>Computer turn…</p></div>`:`<div class="privacy"><h2>${turnHandoff?'Pass the device to':'Return the device to'} ${esc(p.name)}</h2><p>Only this player should view their hand.</p><button id="reveal" class="primary">${turnHandoff?'Reveal my hand':'Continue turn'}</button></div>`}</section>`;
+ $('#game .hand')?.insertAdjacentHTML('beforebegin',`<details class="action-summary"><summary>${Math.max(0,3-state.plays)} plays left · Undo ${undoHistory.length?'available':'unavailable'}</summary><p class="last-action">Last action: ${esc(lastAction(state))}</p></details>`);
  if(state.winner){$('#game').insertAdjacentHTML('afterbegin',gameOverHTML());wireGameOverControls();}
  if($('.cards'))$('.cards').scrollLeft=handScroll;
  $('#reveal')?.addEventListener('click',()=>{visible=true;turnHandoff=false;render()});$('#end').onclick=()=>run(end);$('#undo').onclick=undoLastMove;$('#move').onclick=()=>run(rearrange);document.querySelectorAll('#game [data-card]').forEach(b=>b.onclick=()=>run(()=>play(p.hand.find(c=>c.id===+b.dataset.card))));document.querySelectorAll('#game [data-table-view]').forEach(b=>b.onclick=()=>openTableViewer(b.dataset.tableView));
@@ -287,7 +294,7 @@ function fitCompactPreview(){
 }
 
 function render(){
- if(state&&!busy){try{sessionStorage.setItem(sessionKey,JSON.stringify(state));}catch{}}
+ if(state&&!busy)saveGame();
  detachHandSorting();
  detachHandSorting = () => {};
  if(!state){
@@ -303,7 +310,7 @@ function render(){
  if(document.documentElement.dataset.theme!=='modern'){renderClassic();updateUnavailableControls();wireHandSorting();fitResponsiveLabels();return;}
  if(!visible||!me().hand.some(c=>c.id===selectedCardId)){selectedCardId=null;previewFlipped=false;previewExpanded=false;}
  const scroll=$('.cards')?.scrollLeft||0;
- $('#game').innerHTML=gameOverHTML()+modernBoard(state,visible,selectedCardId,previewFlipped,previewExpanded,turnHandoff,selectedCardIds);
+ $('#game').innerHTML=gameOverHTML()+modernBoard(state,visible,selectedCardId,previewFlipped,previewExpanded,turnHandoff,selectedCardIds,undoHistory.length>0);
  wireGameOverControls();
  if($('.cards'))$('.cards').scrollLeft=scroll;
  $('#reveal')?.addEventListener('click',()=>{visible=true;turnHandoff=false;render()});
@@ -362,11 +369,12 @@ function render(){
   let timer,lastTap=0,start;
   const cancel=()=>{clearTimeout(timer);timer=null;};
   const inspect=()=>{cancel();lastTap=0;if(!busy)openTableViewer(button.dataset.tableView)};
-  button.onclick=event=>{if(event.detail===0){inspect();return;}const now=performance.now();if(lastTap&&now-lastTap<400)inspect();else lastTap=now;};
-  button.onpointerdown=event=>{if(event.button!==0)return;start={x:event.clientX,y:event.clientY};timer=setTimeout(inspect,550)};
+  button.onclick=event=>{const wild=event.target.closest('[data-table-wild]');if(wild){cancel();if(!busy&&visible&&!state.winner)run(()=>rearrange(Number(wild.dataset.tableWild)));return;}if(event.detail===0){inspect();return;}const now=performance.now();if(lastTap&&now-lastTap<400)inspect();else lastTap=now;};
+  button.onpointerdown=event=>{if(event.button!==0||event.target.closest('[data-table-wild]'))return;start={x:event.clientX,y:event.clientY};timer=setTimeout(inspect,550)};
   button.onpointermove=event=>{if(start&&Math.hypot(event.clientX-start.x,event.clientY-start.y)>10)cancel()};
   for(const name of ['pointerup','pointercancel','pointerleave'])button.addEventListener(name,cancel);
   button.oncontextmenu=event=>event.preventDefault();
+  button.addEventListener('keydown',event=>{const wild=event.target.closest('[data-table-wild]');if(wild&&['Enter',' '].includes(event.key)){event.preventDefault();if(!busy&&visible&&!state.winner)run(()=>rearrange(Number(wild.dataset.tableWild)));}});
  });
  wireSelectedCardBrowsing();
  updateUnavailableControls();
@@ -384,8 +392,9 @@ async function takeAITurns(){
    const move=aiPlay(me(),opponents());
    if(!move)break;
    const before=state.plays;
+   saveGame(true);
    await play(move.card,move.mode,move.color);
-   checkWin();render();
+   checkWin();saveGame();render();
    if(state.plays===before)break;
    await new Promise(resolve=>setTimeout(resolve,350));
   }
@@ -397,7 +406,7 @@ async function run(fn){
  if(busy||state.winner)return;
  const actor=me(),turn=state.turn,playsBefore=state.plays;
  const snapshot={game:structuredClone(state),visible,turnHandoff,selected:[...selectedCardIds],selectedId:selectedCardId,flipped:previewFlipped};
- const transaction={locked:false};actionTransaction=transaction;busy=true;
+ const transaction={locked:false};actionTransaction=transaction;saveGame(true);busy=true;
  try{
   await fn();checkWin();if(!state.winner)await takeAITurns();
   if(state.turn!==turn||transaction.locked)undoHistory=[];
@@ -422,12 +431,12 @@ async function defend(target,actor,description){visible=false;render();let respo
 async function pay(p,to,amount){visible=false;render();let remaining=amount;if(!p.isAI)await choose(p.name+': payment due',[['Ready to pay',true]],`${to.name} is owed ${amount}M. You choose payment; no change is given.`,p);while(remaining>0){let assets=[...p.bank,...p.props.filter(c=>c.value>0),...p.buildings];if(!assets.length)break;let c=await choose(`${p.name}: ${remaining}M still owed`,assets.map(c=>[`${p.bank.includes(c)?'Bank':p.props.includes(c)?'Property':'Building'}: ${label(c)}`,c]),'',p);if(p.bank.includes(c)){remove(p.bank,c);to.bank.push(c)}else if(p.props.includes(c)){remove(p.props,c);to.props.push(c);normalize(p)}else{remove(p.buildings,c);to.bank.push(c);if(c.action==='house'){for(const h of p.buildings.filter(x=>x.color===c.color)){remove(p.buildings,h);p.bank.push(h)}}}remaining-=c.value;render()}log(`${p.name} paid ${amount-Math.max(remaining,0)}M toward ${amount}M owed to ${to.name}.`)}
 async function collect(targets,amount){for(const p of targets)if(await defend(p,me(),`Pay ${amount}M to ${me().name}.`))await pay(p,me(),amount)}
 const opponents=()=>state.players.filter(p=>p!==me());
-async function play(c,chosenMode=null,chosenColor=null){if((!visible&&!me().isAI)||state.plays>=3||!c)return;let mode=chosenMode||await choose(label(c),[['Cancel','cancel'],...(c.type!=='property'?[['Put in bank','bank']]:[]),...(c.type!=='money'?[['Play card','play']]:[])]);if(mode==='cancel')return;if(mode==='bank'){remove(me().hand,c);me().bank.push(c);state.plays++;log(`${me().name} banked ${c.value}M.`);return}
+async function play(c,chosenMode=null,chosenColor=null){if((!visible&&!me().isAI)||state.plays>=3||!c)return;let mode=chosenMode||await choose(label(c),[['Cancel','cancel'],...(canBank(c)?[['Put in bank','bank']]:[]),...(c.type!=='money'?[['Play card','play']]:[])]);if(mode==='cancel')return;if(mode==='bank'){if(!canBank(c)){showToast('Only money cards can be banked. Play or discard action cards.');return;}remove(me().hand,c);me().bank.push(c);state.plays++;log(`${me().name} banked ${c.value}M.`);return}
  if(c.type==='property'){c.color=chosenColor||await colorFor(c,{smart:true});remove(me().hand,c);me().props.push(c);state.plays++;log(`${me().name} laid ${c.name}.`);return}
  const a=c.action,p=me();if(a==='no'||a==='double'){await choose('Keep this card for a response or rent combo',[['OK',true]],a==='no'?'Just Say No is offered when an action targets you.':'Select a Rent card to add one or two Double the Rent cards.');return}
  if(a==='pass'){use(c);draw(state,p,2);return}
  if(a==='house'||a==='hotel'){const eligible=buildingSets(p,a);if(!eligible.length)return choose('No eligible complete set',[['OK',true]],'Buildings need a complete street-color set. No railroads or utilities. Only one house and one hotel per set; the house must be placed first.');let color=await choose('Build on which set?',eligible.map(k=>[GROUPS[k].name,k]));use(c);remove(state.discard,c);c.color=color;p.buildings.push(c);return}
- if(a==='rent'){let colors=c.colors.filter(k=>properties(p,k).length);if(!colors.length)return choose('You need a matching property',[['OK',true]]);let color=await choose('Charge rent on which color?',colors.map(k=>[`${GROUPS[k].name}: ${rent(p,k)}M`,k]));let targets=c.value===3?[await choose('Choose a tenant',opponents().map(x=>[x.name,x]))]:opponents();let doubles=p.hand.filter(x=>x.action==='double');let max=Math.min(doubles.length,2-state.plays);let n=max>0?await choose('Add Double the Rent?',Array.from({length:max+1},(_,i)=>[`${i} doubler${i===1?'':'s'} · ${rent(p,color)*2**i}M · ${i+1} plays`,i])):0;use(c);for(let i=0;i<n;i++)use(doubles[i]);await collect(targets,rent(p,color)*2**n);return}
+ if(a==='rent'){const tenants=opponents().filter(hasPayableAssets);if(!tenants.length)return choose('No one can pay rent',[['OK',true]],'Opponents need money or payable properties on the table. No card or play was used.');let colors=c.colors.filter(k=>properties(p,k).length);if(!colors.length)return choose('You need a matching property',[['OK',true]]);let color=await choose('Charge rent on which color?',colors.map(k=>[`${GROUPS[k].name}: ${rent(p,k)}M`,k]));let targets=c.value===3?[await choose('Choose a tenant',tenants.map(x=>[x.name,x]))]:tenants;let doubles=p.hand.filter(x=>x.action==='double');let max=Math.min(doubles.length,2-state.plays);let n=max>0?await choose('Add Double the Rent?',Array.from({length:max+1},(_,i)=>[`${i} doubler${i===1?'':'s'} · ${rent(p,color)*2**i}M · ${i+1} plays`,i])):0;use(c);for(let i=0;i<n;i++)use(doubles[i]);await collect(targets,rent(p,color)*2**n);return}
  if(a==='debt'||a==='birthday'){let targets=a==='birthday'?opponents():[await choose('Who owes you 5M?',opponents().map(x=>[x.name,x]))];use(c);await collect(targets,a==='debt'?5:2);return}
  let targets=opponents().flatMap(x=>a==='breaker'?sets(x).map(color=>({p:x,color})):x.props.filter(card=>!complete(x,card.color)).map(card=>({p:x,card})));
  if(a==='sly'||a==='breaker')targets.sort((left,right)=>GROUPS[left.color||left.card.color].name.localeCompare(GROUPS[right.color||right.card.color].name)||left.p.name.localeCompare(right.p.name)||(left.card?.name||'').localeCompare(right.card?.name||''));
@@ -445,7 +454,7 @@ async function rearrange(cardId=null){
  const color=await choose('Choose the property color',[['Cancel',null],...card.colors.map(color=>[GROUPS[color].name,color])],detail);
  if(color&&color!==card.color){card.color=color;normalize(me());log(`${me().name} moved a wild to ${GROUPS[color].name}.`);}
 }
-async function end(){const ending=me().name;selectedCardIds.clear();selectedCardId=null;lastCardTap=null;while(me().hand.length>7){visible=false;render();let c=await choose(`${me().name}: discard down to seven`,me().hand.map(c=>[label(c),c]));remove(me().hand,c);state.discard.push(c)}state.turn=(state.turn+1)%state.players.length;state.plays=0;visible=false;turnHandoff=true;draw(state,me(),me().hand.length?2:5);log(`${me().name} begins their turn.`);showToast(`${ending}’s turn is over. ${me().name}’s turn.`)}
+async function end(){const ending=me().name;selectedCardIds.clear();selectedCardId=null;lastCardTap=null;while(me().hand.length>7){visible=false;render();let c=await choose(`${me().name}: discard down to seven`,me().hand.map(c=>[label(c),c]));remove(me().hand,c);state.discard.push(c)}state.turn=(state.turn+1)%state.players.length;state.plays=0;visible=false;turnHandoff=true;draw(state,me(),me().hand.length?2:5);log(`${me().name} begins their turn.`);showToast(`${ending}’s turn is over. ${me().name}’s turn.`);saveGame()}
 // Size only the setup dialog to the area above the keyboard; keep the table stable.
 function syncSetupViewport(){
  const wizard=$('#setup-wizard');
@@ -608,12 +617,12 @@ document.querySelectorAll('[data-table-color]').forEach(button => {
 // Only public table cards appear here; private hands and the draw order stay hidden.
 let tableViewIndex = 0;
 function tableViews() {
-  const guideViews = [{key:'rules',title:'Rules',description:'A step-by-step guide to playing Monopoly Deal.'},{key:'cards',title:'Cards',description:'Browse every card design. Use the arrows or Left/Right keys.'},{key:'release-notes',title:'Release notes',description:'Monopoly Deal · v1.4.0 · October 25, 2026 · Properties first and Details last'}];
+  const guideViews = [{key:'rules',title:'Rules',description:'A step-by-step guide to playing Monopoly Deal.'},{key:'cards',title:'Cards',description:'Browse every card design. Use the arrows or Left/Right keys.'},{key:'release-notes',title:'Release notes',description:'Monopoly Deal · v1.5.0 · October 25, 2026 · Recovery, action summary, and regression coverage'}];
   if (!state) return guideViews;
   return [
     {key:'discard', kind:'deck', title:'Discard pile', cards:[...state.discard].reverse(), description:'Newest discard first. These cards may return when the draw pile runs out.'},
     ...state.players.flatMap((player, index) => [
-      {key:`bank-${index}`, kind:'bank', ownerIndex:index, title:`${player.name}’s bank`, cards:player.bank, description:`${player.bank.reduce((total, card) => total + card.value, 0)}M in the bank. Banked action cards are money and cannot be played as actions.`, bank:true},
+      {key:`bank-${index}`, kind:'bank', ownerIndex:index, title:`${player.name}’s bank`, cards:player.bank, description:`${player.bank.reduce((total, card) => total + card.value, 0)}M in the bank. Only money cards can be banked. Legacy banked cards retain their payment value.`, bank:true},
       {key:`properties-${index}`, kind:'properties', ownerIndex:index, title:`${player.name}’s properties`, cards:[...player.props].sort((a,b)=>a.color.localeCompare(b.color)).concat(player.buildings), description:`${sets(player).length} of 3 complete colors. Properties and buildings on the table.`}
     ]),
     {key:'activity', title:'Table activity', activity:state.log, description:'Most recent event first.'}, ...guideViews
@@ -773,8 +782,8 @@ function compactCardFacts(card) {
     if (card.colors.length === 10) return ['Any property color. Move on your turn.', 'No cash value. Needs a valued property to complete a set.'];
     return card.colors.map(color=>`${GROUPS[color].name} · ${GROUPS[color].names.length} to complete. Rent ${GROUPS[color].rent.map(value=>value+'M').join('/')} .`);
   }
-  if (card.action === 'rent') return [card.colors.length === 10 ? 'Charge one opponent rent on any color you own.' : `Charge all opponents rent on ${card.colors.map(color=>GROUPS[color].name).join(' or ')}.`, `Or bank: ${card.value}M.`];
-  return [card.description, `Or bank: ${card.value}M.`];
+  if (card.action === 'rent') return [card.colors.length === 10 ? 'Charge one opponent with payable assets rent on any color you own.' : `Charge opponents with payable assets rent on ${card.colors.map(color=>GROUPS[color].name).join(' or ')}.`, 'Action cards cannot be banked.'];
+  return [card.description, 'Action cards cannot be banked.'];
 }
 
 // Theme changes only presentation, preserving the current turn and private hand.
@@ -847,3 +856,10 @@ if(window.parent===window){
  settings.querySelector('summary').textContent='Game settings';
  settings.append(upcomingGameSettings());
 }
+
+// A reload restarts only the unfinished action from its last atomic checkpoint.
+queueMicrotask(async()=>{
+ if(!state||state.winner)return;
+ if(me().isAI){showToast('Resuming the computer turn from its last completed move.');await run(async()=>{});}
+ else if(recoveredPending)showToast('The unfinished action was cancelled by refresh. Cards and plays are restored; replay it to continue.');
+});

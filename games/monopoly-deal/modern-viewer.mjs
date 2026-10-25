@@ -1,5 +1,5 @@
-import {modernFace} from './modern-ui.mjs?build=20261025-undo-recovery-v62';
-import {GROUPS,properties,complete,sets,rent} from './engine.mjs?build=20261023-deal-buildings-v22';
+import {modernFace} from './modern-ui.mjs?build=20261025-v15-table-rules-v64';
+import {GROUPS,properties,complete,sets,rent} from './engine.mjs?build=20261025-v15-table-rules-v64';
 
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const plural = (count, name) => `${count} ${count === 1 ? name : name === 'property' ? 'properties' : `${name}s`}`;
@@ -51,7 +51,7 @@ export function modernViewerContent(state, view) {
   }
   if (view.kind === 'bank') {
     const total = view.cards.reduce((sum,card) => sum + card.value, 0);
-    return `<section class="modern-view-summary" aria-label="Bank summary"><div><span class="modern-summary-label">Bank balance</span><strong>${total}<small>M</small></strong><span>${plural(view.cards.length, 'banked card')}</span></div><p>Banked cards pay debts. An action card in the bank stays money.</p></section>${view.cards.length ? gallery(view.cards, {bank:true}) : empty('No banked cards yet', 'Money and action cards appear here when they are banked.')}`;
+    return `<section class="modern-view-summary" aria-label="Bank summary"><div><span class="modern-summary-label">Bank balance</span><strong>${total}<small>M</small></strong><span>${plural(view.cards.length, 'banked card')}</span></div><p>Only money cards can be banked. Legacy banked cards retain their payment value.</p></section>${view.cards.length ? gallery(view.cards, {bank:true}) : empty('No banked cards yet', 'Money cards appear here when they are banked.')}`;
   }
   if (view.kind === 'properties') {
     const player = state.players[view.ownerIndex];

@@ -12,7 +12,7 @@ export function attachHorizontalNavigation(element,onNavigate,{pointer=true}={})
   if(isViewportZoomed()||event.ctrlKey||event.metaKey||event.target.closest('input,select,textarea,[contenteditable=true]')||Math.abs(event.deltaX)<=Math.abs(event.deltaY)*1.2)return;
   const dx=event.deltaX*(event.deltaMode===1?16:event.deltaMode===2?element.clientWidth:1);
   if(Math.abs(dx)<.5)return;
-  const now=performance.now(),sign=Math.sign(dx);
+  const now=event.timeStamp,sign=Math.sign(dx);
   if(now-last>200||sign!==direction){total=0;locked=false;direction=sign;}
   last=now;event.preventDefault();
   if(locked)return;

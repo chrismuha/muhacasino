@@ -1,4 +1,4 @@
-import {attachHorizontalNavigation,isViewportZoomed} from './horizontal-nav.mjs?build=20261025-undo-recovery-v62';
+import {attachHorizontalNavigation,isViewportZoomed} from './horizontal-nav.mjs?build=20261025-v15-table-rules-v64';
 // Paginate rendered content without shrinking text or hiding oversized items.
 let dispose = () => {};
 export function paginateViewer(dialog,content){

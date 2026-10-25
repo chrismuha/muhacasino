@@ -46,3 +46,9 @@ Public reading-card coverage verifies full faces at 320px, 420px, and desktop wi
 
 
 Mistake-recovery coverage checks cancelling prompts with Cancel action and Escape, rollback of partial end-of-turn discards, consecutive undo of property and bank moves, restored discarded cards and wild-set buildings, and clearing undo at turn handoff or required opponent decisions. Finished-game refresh coverage checks computer winners in standalone and hosted phone layouts, top-of-page recovery, visible navigation, and working New game controls.
+
+
+v1.5.0 coverage updates obsolete Hide controls to reload/handoff privacy, uses explicit enlargement before preview checks, selects human mode for pass-and-play setup, checks ARIA disabled states, and permits vertical scrolling for full public reading cards. Tests use bounded browser waits so removed selectors fail promptly. Recovery cases cover partially completed AI turns and interrupted payments without duplicate transfers; action-summary cases check plays, last action, and Undo after a move and after undoing it.
+
+
+v1.5.0 table fixes verify direct table-wild editing, money-only banking in the UI and engine for both AI levels, rent rejection against assetless opponents without spending cards or plays, real selected-card previews, and compact property reading cards with controls below the face. Property-view entry tests double-click the heading so they do not accidentally trigger the new direct wild-edit shortcut.
