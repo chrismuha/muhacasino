@@ -1,4 +1,4 @@
-import {modernFace} from './modern-ui.mjs?build=20261025-property-manager-v61';
+import {modernFace} from './modern-ui.mjs?build=20261025-undo-recovery-v62';
 import {GROUPS,properties,complete,sets,rent} from './engine.mjs?build=20261023-deal-buildings-v22';
 
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

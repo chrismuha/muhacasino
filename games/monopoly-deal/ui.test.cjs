@@ -984,3 +984,63 @@ test('difficulty fits its field and long property prompts wrap without horizonta
   await choose(p,'North Carolina Avenue');await idle(p);await conservation(p);await close(p);
  }
 });
+
+test('Cancel action and Escape restore unfinished actions including partial end-turn discards',async()=>{
+ const p=await open();p.setDefaultTimeout(5000);await fixture(p,'sly',2);const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
+ await playFirst(p);await p.locator('#choice-close').click();await idle(p);assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
+ await p.locator('#play-card').click();await p.keyboard.press('Escape');await idle(p);assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
+ await fixture(p,'discard',2);const discardBefore=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
+ await p.locator('#end').click();await choose(p,0);await p.locator('#choice-close').click();await idle(p);
+ assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),discardBefore);assert.equal(await p.locator('[data-card]').count(),9);
+ await conservation(p);await close(p);
+});
+
+test('Undo restores cards and plays in order and clears when the turn ends',async()=>{
+ const p=await open();await fixture(p,'hand',2);
+ const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
+ await p.locator('[data-card]').first().click();await p.locator('#play-card').click();await idle(p);
+ const afterProperty=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
+ const money=await p.evaluate(()=>window.__dealTest.state.players[0].hand.find(c=>c.type==='money').id);
+ await p.locator(`[data-card="${money}"]`).click();await p.locator('#bank-card').click();await idle(p);
+ await p.locator('#undo').click();assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),afterProperty);
+ await p.locator('#undo').click();assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
+ assert.equal(await p.locator('#undo').getAttribute('aria-disabled'),'true');
+ await p.locator('#deselect').click();await p.locator('[data-card]').first().click();await p.locator('#play-card').click();await idle(p);
+ await p.locator('#end').click();await idle(p);await p.locator('#reveal').click();assert.equal(await p.locator('#undo').getAttribute('aria-disabled'),'true');
+ await conservation(p);await close(p);
+});
+
+test('required opponent payments cannot be cancelled and close the undo window',async()=>{
+ const p=await open();await fixture(p,'debt',2);await playFirst(p);await choose(p,'Alex');
+ await p.locator('#choice[open]').waitFor();assert.equal(await p.locator('#choice-close').isVisible(),false);
+ await p.keyboard.press('Escape');assert.equal(await p.locator('#choice').evaluate(el=>el.open),true);
+ await choose(p,'Ready to pay');await choose(p,0);await idle(p);
+ assert.equal(await p.locator('#undo').getAttribute('aria-disabled'),'true');await conservation(p);await close(p);
+});
+
+test('Undo restores discarded cards and wild-set buildings exactly',async()=>{
+ const p=await open();await fixture(p,'hand',2);const beforeDiscard=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
+ await p.locator('[data-card]').first().click();await p.locator('#discard-card').click();await choose(p,'Discard selected cards');await idle(p);await p.locator('#undo').click();
+ assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),beforeDiscard);
+ await fixture(p,'rearrange',2);const beforeWild=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
+ await p.locator('#move').click();await p.locator('[data-stack-shift="1"]').click();await p.locator('[data-stack-shift="1"]').click();await p.locator('[data-change-wild]:visible').click();await choose(p,'Light Blue');await idle(p);
+ await p.locator('#table-view-close').click();await p.locator('#undo').click();
+ assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),beforeWild);await conservation(p);await close(p);
+});
+
+test('refreshing a finished computer game starts at the top with working recovery controls',async()=>{
+ for(const hosted of [false,true]){
+  const p=await open({width:420,height:780},undefined,{isMobile:true,hasTouch:true});let game=p;
+  if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+  await fixture(game,'win',2);await game.evaluate(()=>{const s=window.__dealTest.state;const winner=s.players[0];winner.props.push(...winner.hand.splice(0));winner.isAI=true;winner.name='Computer 1';s.winner=winner.name;window.__dealTest.render();window.scrollTo(0,500)});
+  await p.reload();
+  game=hosted?p.frameLocator('#gameFrame'):p;
+  await game.locator('#game-restart').waitFor();
+  assert.equal(await game.locator('#game-restart').isEnabled(),true);assert.match(await game.locator('.game-over-banner').innerText(),/Computer 1 wins/);
+  assert.equal(await game.locator('.game-over-controls a').isVisible(),true);
+  assert.equal(await game.locator('body').evaluate(()=>window.scrollY),0);
+  if(hosted)assert.equal(await p.locator('#toolbarCollapseButton').isVisible(),true);
+  await game.locator('#game-restart').click();await game.locator('#setup-wizard[open]').waitFor();
+  await game.locator('#wizard-cancel').click();await close(p);
+ }
+});

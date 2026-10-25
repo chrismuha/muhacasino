@@ -101,7 +101,7 @@ function syncHostedCabinetScreens(gameId = null) {
   device.classList.toggle("cabinet-non-slot-game", !slotGameActive);
 }
 
-const SITE_BUILD = "20261025-property-manager-v61";
+const SITE_BUILD = "20261025-undo-recovery-v62";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");
@@ -519,6 +519,7 @@ function launchGame(gameId, updateHistory = true) {
   activeGameId = gameId;
   syncHostedCabinetScreens(gameId);
   setGameToolbarCollapsed(gameId === "monopoly-deal");
+  if(gameId==="monopoly-deal")window.scrollTo(0,0);
   showGameLoading();
   gameView.classList.toggle("tabletop-game", game.categories.includes("table"));
   currentGame.textContent = game.title;

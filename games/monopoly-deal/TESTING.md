@@ -43,3 +43,6 @@ Phone-height coverage checks iPhone 17/17 Pro (402×874) and 17 Pro Max (440×95
 
 
 Public reading-card coverage verifies full faces at 320px, 420px, and desktop widths, minimum readable rent text, bank quantities, and card conservation. Chromium exercises actual page-scale zoom through CDP; WebKit exercises the visual-viewport resize path with a simulated zoom scale. Both verify that zoom preserves live DOM, page, scroll position, and selected property. Larger cards scroll within the viewer instead of shrinking their text.
+
+
+Mistake-recovery coverage checks cancelling prompts with Cancel action and Escape, rollback of partial end-of-turn discards, consecutive undo of property and bank moves, restored discarded cards and wild-set buildings, and clearing undo at turn handoff or required opponent decisions. Finished-game refresh coverage checks computer winners in standalone and hosted phone layouts, top-of-page recovery, visible navigation, and working New game controls.
