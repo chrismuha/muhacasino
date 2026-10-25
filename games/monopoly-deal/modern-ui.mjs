@@ -50,7 +50,7 @@ export function modernBoard(state,visible,selectedId,flipped){
  const bankTotal=player.bank.reduce((sum,card)=>sum+card.value,0),completeSets=sets(player).length;
  const selectedWild=selected?.type==='property'&&selected.colors.length===2;
  const disabled=on=>`aria-disabled="${!on}"`;
- return `<div class="deal-table ${selected?'has-selection':''} ${visible?'hand-visible':''}" style="--opponent-count:${state.players.length-1}">
+ return `<div class="deal-table ${selected?'has-selection':''} ${visible?'hand-visible':'hand-hidden'}" style="--opponent-count:${state.players.length-1}">
  <div class="opponents">${Array.from({length:state.players.length-1},(_,offset)=>{const i=(state.turn+offset+1)%state.players.length;return playerPanel(state.players[i],i,offset)}).join('')}</div>
  <section class="deal-stage" aria-label="Card table">
  <button class="draw-deck" data-table-view="discard" aria-haspopup="dialog" aria-label="Deck and discard: ${state.draw.length} cards to draw, ${state.discard.length} discarded"><span class="deck-label">Deck</span><span class="deal-card-back" aria-hidden="true"><span class="card-back-city" aria-hidden="true">▥</span><b>MONOPOLY<br>DEAL</b></span><span class="deck-count" aria-hidden="true"><span>${state.draw.length} left</span><span>${state.discard.length} used</span></span></button>

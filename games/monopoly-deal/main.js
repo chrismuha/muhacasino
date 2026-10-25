@@ -1,8 +1,9 @@
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-ai-preview';
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-ai-preview';
-import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-ai-preview';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-ai-preview';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-ai-preview';
+import {paginateViewer} from './view-pages.mjs?build=20261025-clean-mobile';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-clean-mobile';
+import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-clean-mobile';
+import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-clean-mobile';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-clean-mobile';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-clean-mobile';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false;
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -408,6 +409,7 @@ function showTableView(index) {
       return `<li><span class="table-mini-face">${modernFace(card)}</span><span class="table-card-colors" aria-hidden="true" style="background:linear-gradient(90deg,${[...colors,colors.at(-1)].join(',')})"></span><div><h3>${esc(card.name)}</h3><p>${esc(description)}</p></div><strong class="table-card-value">${card.value}M</strong></li>`;
     }).join('')}</ol>` : '<p class="table-empty">No cards here yet.</p>');
   }
+  paginateViewer($('#table-viewer'),content);
   content.scrollTop = 0;
   if(modern)$('.table-view-body').scrollTop = 0;
   fitResponsiveLabels();
