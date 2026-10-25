@@ -1,10 +1,10 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-bank-navigation-v57';
-import {paginateViewer} from './view-pages.mjs?build=20261025-bank-navigation-v57';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-bank-navigation-v57';
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-bank-navigation-v57';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-bank-navigation-v57';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-bank-navigation-v57';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-bank-navigation-v57';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-mobile-discard-v58';
+import {paginateViewer} from './view-pages.mjs?build=20261025-mobile-discard-v58';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-mobile-discard-v58';
+import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-mobile-discard-v58';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-mobile-discard-v58';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-mobile-discard-v58';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-mobile-discard-v58';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -48,7 +48,7 @@ function updateUnavailableControls() {
  for(const button of document.querySelectorAll('#game button')){
   let reason = finished && !button.hasAttribute('data-table-view') ? finished : waiting;
   if(!reason){
-   if(button.id === 'discard-card')reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.');
+   if(button.id === 'discard-card')reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.') || noPlays || (selectedCardIds.size>3-state.plays?`Discard uses one play per card. Select at most ${3-state.plays} card${3-state.plays===1?'':'s'}.`:'');
    else if(button.id === 'deselect')reason = selectedCardIds.size?'':'No cards are selected.';
    else if(button.id === 'preview-previous'||button.id === 'preview-next')reason = hiddenHand || (me().hand.length<2 ? 'This is the only card in your hand.' : '');
    else if(button.id === 'move')reason = hiddenHand || (!me().props.some(card => card.colors.length > 1) ? 'You have no wild properties on the table to rearrange.' : '');
@@ -269,9 +269,11 @@ function render(){
  $('#discard-card').onclick=()=>run(async()=>{
   const cards=me().hand.filter(card=>selectedCardIds.has(card.id));
   if(!cards.length||!visible||state.winner)return;
-  const confirmed=await choose(`Discard ${cards.length} selected card${cards.length===1?'':'s'}?`,[['Cancel',false],['Discard selected cards',true]],'These cards go to the discard pile. This does not use a play.');
+  if(cards.length>3-state.plays){showToast('Discard uses one play per card. Select fewer cards or Pass to end your turn.');return;}
+  const confirmed=await choose(`Discard ${cards.length} selected card${cards.length===1?'':'s'}?`,[['Cancel',false],['Discard selected cards',true]],`These cards go to the discard pile. This uses ${cards.length} of your ${3-state.plays} remaining plays (one per card).`);
   if(!confirmed)return;
   for(const card of cards){remove(me().hand,card);state.discard.push(card);selectedCardIds.delete(card.id)}
+  state.plays+=cards.length;
   selectedCardId=null;previewExpanded=false;lastCardTap=null;
   log(`${me().name} discarded ${cards.length} card${cards.length===1?'':'s'}.`);
   showToast(`${cards.length} card${cards.length===1?'':'s'} discarded.`);
@@ -373,6 +375,7 @@ async function play(c,chosenMode=null,chosenColor=null){if((!visible&&!me().isAI
  if(a==='rent'){let colors=c.colors.filter(k=>properties(p,k).length);if(!colors.length)return choose('You need a matching property',[['OK',true]]);let color=await choose('Charge rent on which color?',colors.map(k=>[`${GROUPS[k].name}: ${rent(p,k)}M`,k]));let targets=c.value===3?[await choose('Choose a tenant',opponents().map(x=>[x.name,x]))]:opponents();let doubles=p.hand.filter(x=>x.action==='double');let max=Math.min(doubles.length,2-state.plays);let n=max>0?await choose('Add Double the Rent?',Array.from({length:max+1},(_,i)=>[`${i} doubler${i===1?'':'s'} · ${rent(p,color)*2**i}M · ${i+1} plays`,i])):0;use(c);for(let i=0;i<n;i++)use(doubles[i]);await collect(targets,rent(p,color)*2**n);return}
  if(a==='debt'||a==='birthday'){let targets=a==='birthday'?opponents():[await choose('Who owes you 5M?',opponents().map(x=>[x.name,x]))];use(c);await collect(targets,a==='debt'?5:2);return}
  let targets=opponents().flatMap(x=>a==='breaker'?sets(x).map(color=>({p:x,color})):x.props.filter(card=>!complete(x,card.color)).map(card=>({p:x,card})));
+ if(a==='sly'||a==='breaker')targets.sort((left,right)=>GROUPS[left.color||left.card.color].name.localeCompare(GROUPS[right.color||right.card.color].name)||left.p.name.localeCompare(right.p.name)||(left.card?.name||'').localeCompare(right.card?.name||''));
  if(!targets.length)return choose('No eligible opponent properties',[['OK',true]]);let own;if(a==='forced'){let options=p.props.filter(x=>!complete(p,x.color));if(!options.length)return choose('You need a property outside a full set',[['OK',true]]);own=await choose('Choose your property to give',options.map(x=>[label(x),x]));}
  let t=await choose(a==='breaker'?'Steal which complete set?':'Choose a property',targets.map(t=>[`${t.p.name} · ${t.card?label(t.card):GROUPS[t.color].name}`,t]));use(c);if(!await defend(t.p,p,c.name))return;
  if(a==='breaker'){for(const card of [...properties(t.p,t.color)]){remove(t.p.props,card);p.props.push(card)}for(const b of [...t.p.buildings.filter(x=>x.color===t.color)]){remove(t.p.buildings,b);p.buildings.push(b)}}else{remove(t.p.props,t.card);p.props.push(t.card);if(own){remove(p.props,own);t.p.props.push(own)}}

@@ -682,7 +682,7 @@ test('manual discard and inline property inspection',async()=>{
  await p.locator('[data-card]').first().click();await p.locator('#discard-card').click();await choose(p,'Discard selected cards');await idle(p);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].hand.length),6);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.discard.length),1);
- assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);await conservation(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);await conservation(p);
  await fixture(p,'house',2);
  assert.equal(await p.locator('.current-properties .public-mini').first().isVisible(),true);
  await p.locator('.current-properties').click();assert.equal(await p.locator('#table-viewer').evaluate(el=>el.open),false);
@@ -773,4 +773,90 @@ test('an embedded game without a casino toolbar retains its own navigation after
  await frame.locator('#new').waitFor();assert.equal(await frame.locator('.game-topbar').isVisible(),true);
  await frame.locator('body').evaluate(()=>location.reload());await frame.locator('#new').waitFor();
  assert.equal(await frame.locator('.game-topbar a').isVisible(),true);await frame.locator('#new').click();await frame.locator('#setup-wizard[open]').waitFor();await close(p);
+});
+
+test('shorter phone viewports fit normal play while taller screens keep full previews',async()=>{
+ for(const viewport of [{width:420,height:780},{width:420,height:912}]){
+  const p=await open(viewport);await fixture(p,'hand',2);
+  if(viewport.height<850){
+   assert.ok(await p.locator('.deal-hand').evaluate(el=>el.getBoundingClientRect().bottom<=innerHeight),'Hand fits in the available phone height');
+   assert.equal(await p.locator('.draw-deck .deal-card-back').isVisible(),false);
+   await p.locator('[data-card]').first().click();
+   assert.ok(await p.locator('.deal-hand').evaluate(el=>el.getBoundingClientRect().bottom<=innerHeight),'Selected hand fits too');
+  }else assert.equal(await p.locator('.draw-deck .deal-card-back').isVisible(),true);
+  await fixture(p,'house',2);assert.equal(await p.locator('.current-properties .public-mini').first().isVisible(),true);
+  assert.ok(await p.locator('#discard-card').evaluate(el=>el.getBoundingClientRect().height>=44));
+  await close(p);
+ }
+});
+
+test('iPhone 17 and Pro family keep normal play within the visible portrait screen',async()=>{
+ // iPhone 17 and 17 Pro: 402×874; Pro Max: 440×956.
+ for(const viewport of [{width:402,height:874},{width:402,height:742},{width:440,height:956},{width:440,height:824}]){
+  for(const hosted of [false,true]){
+   const p=await open(viewport,undefined,{isMobile:true,hasTouch:true});let game=p;
+   if(hosted){
+    await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();
+    game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));
+    await p.locator('#toolbarCollapseButton').click();
+   }
+   for(const kind of ['hand','hotel']){
+    await fixture(game,kind,4);
+    for(const selected of [false,true]){
+     if(selected&&kind==='hand')await game.locator('[data-card]').first().click();
+     const bounds=await game.locator('.deal-hand').evaluate(el=>({bottom:el.getBoundingClientRect().bottom,viewport:innerHeight,scroll:document.documentElement.scrollHeight}));
+     assert.ok(bounds.bottom<=bounds.viewport+1,`${viewport.width}×${viewport.height} hosted=${hosted} ${kind} selected=${selected}: ${JSON.stringify(bounds)}`);
+     assert.ok(await game.locator('.current-properties').isVisible());assert.ok(await game.locator('#discard-card').isVisible());
+    }
+   }
+   await close(p);
+  }
+ }
+});
+
+test('manual discard costs one play per card and enforces remaining plays',async()=>{
+ const p=await open();p.setDefaultTimeout(5000);await fixture(p,'hand',2);
+ await p.locator('[data-card]').nth(0).click();await p.locator('[data-card]').nth(1).click();
+ await p.locator('#discard-card').click();assert.match(await p.locator('#detail').innerText(),/uses 2 of your 3 remaining plays/);
+ await choose(p,'Cancel');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);
+ await p.locator('#discard-card').click();await choose(p,'Discard selected cards');await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),2);assert.equal(await p.evaluate(()=>window.__dealTest.state.discard.length),2);
+ await p.locator('[data-card]').nth(0).click();await p.locator('[data-card]').nth(1).click();
+ assert.equal(await p.locator('#discard-card').getAttribute('aria-disabled'),'true');await p.locator('#discard-card').click({force:true});
+ assert.equal(await p.locator('#choice').evaluate(el=>el.open),false);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),2);
+ await p.waitForTimeout(400);await p.locator('[data-card]').nth(1).click();await p.locator('#discard-card').click();await choose(p,'Discard selected cards');await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),3);assert.equal(await p.evaluate(()=>window.__dealTest.state.discard.length),3);
+ await p.locator('[data-card]').first().click();assert.equal(await p.locator('#discard-card').getAttribute('aria-disabled'),'true');
+ await conservation(p);await close(p);
+});
+
+test('Sly Deal and Deal Breaker choices use alphabetical color order across players',async()=>{
+ const p=await open();
+ for(const action of ['sly','breaker']){
+  await p.evaluate(async action=>{
+   const {createGame,deck,GROUPS}=await import('./engine.mjs');const s=createGame(['Chris','Alex','Sam']);s.draw=deck();s.discard=[];s.plays=0;s.players.forEach(p=>{p.hand=[];p.bank=[];p.props=[];p.buildings=[]});
+   const take=fn=>s.draw.splice(s.draw.findIndex(fn),1)[0];s.players[0].hand.push(take(c=>c.action===action));
+   for(const [who,color] of [[1,'yellow'],[2,'brown'],[1,'blue'],[2,'lightblue']]){
+    const count=action==='breaker'?GROUPS[color].names.length:1;
+    for(let i=0;i<count;i++)s.players[who].props.push(take(c=>c.type==='property'&&c.colors.length===1&&c.color===color));
+   }
+   window.__dealTest.setState(s);
+  },action);
+  await playFirst(p);await p.locator('#choice[open]').waitFor();
+  const labels=await p.locator('#options button').allTextContents();
+  const colors=labels.map(label=>['Brown','Dark Blue','Light Blue','Yellow'].find(color=>label.includes(color)));
+  assert.deepEqual(colors,['Brown','Dark Blue','Light Blue','Yellow']);
+  await choose(p,0);await idle(p);await conservation(p);
+ }
+ await close(p);
+});
+
+test('Pass and play dots keep their size when selecting or enlarging Sly Deal',async()=>{
+ for(const viewport of [{width:402,height:742},{width:440,height:824},{width:1440,height:900}]){
+  const p=await open(viewport);await fixture(p,'sly',2);
+  const measure=()=>p.evaluate(()=>{const button=document.querySelector('#end'),dot=document.querySelector('.plays-dots i'),disc=button.querySelector('.action-disc');const size=el=>{const r=el.getBoundingClientRect();return [r.width,r.height]};return {font:getComputedStyle(button).fontSize,height:button.getBoundingClientRect().height,disc:size(disc),dot:size(dot)}});
+  const before=await measure();await p.locator('[data-card]').first().click();assert.deepEqual(await measure(),before);
+  await p.locator('#preview-open').click();assert.deepEqual(await measure(),before);
+  await p.locator('#preview-close').click();assert.deepEqual(await measure(),before);await close(p);
+ }
 });

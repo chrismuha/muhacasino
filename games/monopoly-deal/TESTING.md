@@ -37,3 +37,6 @@ Selection-feedback checks verify lifted/checkmarked selections, selecting and de
 
 
 AI difficulty coverage verifies that Easy retains the original strategy and Normal develops different color sets and prioritizes winning steals. UI checks cover difficulty selection, setup review, Back navigation, hiding difficulty in human-only mode, same-tab reload persistence, and migration of older deals to Easy. Flip checks verify animation on both the hand card and enlarged preview, updated color artwork, and no play cost.
+
+
+Phone-height coverage checks iPhone 17/17 Pro (402×874) and 17 Pro Max (440×956), plus 132px shorter viewports to simulate space taken by browser controls and device insets. Tests verify that the hand fits in normal and single-selection portrait play, with four players and property collections, both standalone and inside the casino. Run with Chromium and WebKit. These are viewport simulations, not physical-device tests. Screen dimensions: https://developer.apple.com/design/human-interface-guidelines/layout
