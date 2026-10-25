@@ -1,6 +1,6 @@
 const games = {
   "monopoly-deal": {
-    title: "Monopoly Deal", version: "v1.0.0", subtitle: "2–4 Player Card Game",
+    title: "Monopoly Deal", version: "v1.2.0", subtitle: "2–4 Player Card Game",
     path: "games/monopoly-deal/index.html", className: "card-deal",
     reels: "M DEAL M", icon: "▣", categories: ["table"],
   },

@@ -1,0 +1,22 @@
+# Monopoly Deal regression checks
+
+Run from the `muhacasino` repository:
+
+```sh
+npm ci
+npx playwright install chromium webkit
+npm run test:monopoly-deal
+DEAL_QA_BROWSER=webkit npm run test:monopoly-deal
+npm run check
+npm run build
+```
+
+On macOS, the default test run uses installed Google Chrome when available; otherwise it uses Playwright Chromium. Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to use another local Chromium executable. WebKit checks the Safari browser engine; it does not replace testing on a physical iPhone.
+
+Set `DEAL_QA_ARTIFACTS` to an output directory to save screenshots of empty-table, property, money, and rent selections at 320×740, 390×844, 430×932, 768×1024, 1260×2736, 1440×900, and 844×390. The suite also checks the 58 card designs, navigation, small-screen clipping, card proportions, long names, and large-hand scrolling.
+
+Gameplay coverage includes setup validation and cancellation, private handoffs, bank/property placement, Pass Go, three-play limits, wild flipping and rearrangement, buildings, rent/doublers, Any Color Rent, steals/swaps/full sets, Just Say No and counter-responses, debtor-chosen payments, insufficient assets, discarding, and victory. Both themes, independent saved colors, unavailable storage, and public table/guide navigation are covered.
+
+Tests run a temporary local HTTP server and inject fixture access into intercepted responses. The shipped game contains no fixture access API. Card-conservation checks ensure every original deck card remains accounted for after tested actions.
+
+Responsive coverage also sweeps 22 viewport sizes from 240×568 through 1920×1080, including 320×240, 480×240, and 844×240 browser-chrome stress cases in both themes, including the 600/601px breakpoint. It checks single-line names and controls, horizontal overflow, selected-card containment, opponent labels, setup/settings/choice dialogs, rules, card catalog, and table activity. Touch-device tests rotate an existing game through six viewport sizes while preserving selection and private hands. Long names and oversized lists remain accessible through local scrolling.

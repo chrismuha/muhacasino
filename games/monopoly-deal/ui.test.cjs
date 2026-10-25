@@ -1,0 +1,240 @@
+const {test,before,after}=require('node:test');
+const assert=require('node:assert/strict');
+const {createServer}=require('node:http');
+const {readFile}=require('node:fs/promises');
+const {existsSync}=require('node:fs');
+const path=require('node:path');
+const {chromium,webkit}=require('playwright');
+let browser,server,origin;
+const root=path.resolve(__dirname,'../..');
+const artifacts=process.env.DEAL_QA_ARTIFACTS;
+before(async()=>{
+ server=createServer(async(req,res)=>{try{let pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname);if(pathname.endsWith('/'))pathname+='index.html';const file=path.resolve(root,'.'+pathname);if(!file.startsWith(root+path.sep))throw Error('outside root');const data=await readFile(file);res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.jpg':'image/jpeg','.svg':'image/svg+xml'})[path.extname(file)]||'application/octet-stream');res.end(data)}catch{res.writeHead(404);res.end('Not found')}});
+ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));origin=`http://127.0.0.1:${server.address().port}`;
+ const macChrome='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+ browser=process.env.DEAL_QA_BROWSER==='webkit'?await webkit.launch({headless:true}):await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH}:existsSync(macChrome)?{executablePath:macChrome}:{})});
+});
+after(async()=>{await browser?.close();await new Promise(resolve=>server?server.close(resolve):resolve())});
+async function open(viewport={width:430,height:932},storage,contextOptions={}){
+ const context=await browser.newContext({viewport,...contextOptions});
+ if(storage)await context.addInitScript(values=>{for(const [key,value]of Object.entries(values))localStorage.setItem(key,value)},storage);
+ const page=await context.newPage();page.errors=[];page.on('pageerror',error=>page.errors.push(error.message));
+ // Test-only instrumentation is added by the test server response interceptor.
+ // The shipped app has no fixture or private-state access API.
+ await page.route('**/monopoly-deal/main.js?*',async route=>{const response=await route.fetch();await route.fulfill({response,body:await response.text()+`\nwindow.__dealTest={get state(){return state},get visible(){return visible},get busy(){return busy},setState(s,show=true){state=s;visible=show;selectedCardId=null;previewFlipped=false;render()},render,run,play,end,rearrange,defend,pay,checkWin,tableViews};`})});
+ await page.goto(origin+'/games/monopoly-deal/');await page.waitForFunction(()=>window.__dealTest);return page;
+}
+async function close(page){assert.deepEqual(page.errors,[],'No browser runtime errors');await page.context().close()}
+async function fixture(page,kind='hand',count=4){return page.evaluate(async({kind,count})=>{
+ const {createGame,deck}=await import('./engine.mjs');const names=['Chris','Alex','Sam','Taylor'].slice(0,count),s=createGame(names);s.players.forEach(p=>{p.hand=[];p.props=[];p.bank=[];p.buildings=[]});s.draw=deck();s.discard=[];s.log=[];s.turn=0;s.plays=0;delete s.winner;
+ const take=predicate=>{const index=s.draw.findIndex(predicate);if(index<0)throw Error('Missing fixture card');return s.draw.splice(index,1)[0]},put=(who,zone,predicate,color)=>{const c=take(predicate);if(color)c.color=color;s.players[who][zone].push(c);return c};
+ const action=(a,who=0)=>put(who,'hand',c=>c.action===a),prop=(color,who=0)=>put(who,'props',c=>c.type==='property'&&c.colors.length===1&&c.color===color),money=(v,who=0)=>put(who,'bank',c=>c.type==='money'&&c.value===v);
+ if(kind==='hand'){put(0,'hand',c=>c.name==='New York Avenue');put(0,'hand',c=>c.type==='money'&&c.value===4);put(0,'hand',c=>c.action==='rent'&&c.colors.length===2&&c.colors.includes('red'));action('pass');put(0,'hand',c=>c.type==='property'&&c.colors.length===2&&c.colors.includes('brown'));put(0,'hand',c=>c.name==='Marvin Gardens');put(0,'hand',c=>c.type==='money'&&c.value===2);for(let i=1;i<count;i++)for(let j=0;j<5;j++)put(i,'hand',()=>true);}
+ if(kind==='wild'){put(0,'hand',c=>c.type==='property'&&c.colors.length===2&&c.colors.includes('brown'));}
+ if(kind==='rent'){prop('red');put(0,'hand',c=>c.action==='rent'&&c.colors.length===2&&c.colors.includes('red'));action('double');action('double');for(let i=1;i<count;i++){money(5,i);money(3,i);}}
+ if(kind==='house'||kind==='hotel'){prop('brown');prop('brown');action(kind);if(kind==='hotel')put(0,'buildings',c=>c.action==='house','brown');}
+ if(['sly','forced','breaker'].includes(kind)){action(kind);prop('orange',1);if(kind==='breaker'){prop('orange',1);prop('orange',1);put(1,'buildings',c=>c.action==='house','orange');put(1,'buildings',c=>c.action==='hotel','orange');}if(kind==='forced')prop('brown');}
+ if(kind==='debt'||kind==='birthday'){action(kind);for(let i=1;i<count;i++)money(5,i);}
+ if(kind==='counter'){action('debt');action('no',1);money(5,1);}
+ if(kind==='counter-counter'){action('debt');action('no');action('no',1);money(5,1);}
+ if(kind==='pay-property'){prop('brown',1);prop('brown',1);put(1,'buildings',c=>c.action==='house','brown');put(1,'buildings',c=>c.action==='hotel','brown');action('debt');}
+ if(kind==='rearrange'){prop('brown');put(0,'props',c=>c.type==='property'&&c.colors.length===2&&c.colors.includes('brown'),'brown');put(0,'buildings',c=>c.action==='house','brown');put(0,'buildings',c=>c.action==='hotel','brown');}
+ if(kind==='discard'){for(let j=0;j<9;j++)put(0,'hand',()=>true);}
+ if(kind==='win'){for(const color of ['brown','blue','utility']){const cards=s.draw.filter(c=>c.type==='property'&&c.colors.length===1&&c.color===color);for(const c of cards)put(0,color==='utility'&&c===cards.at(-1)?'hand':'props',x=>x.id===c.id)}}
+ window.__dealTest.setState(s);return {ids:s.players[0].hand.map(c=>c.id)};
+ },{kind,count})}
+async function choose(page,text){await page.locator('#choice[open]').waitFor();const button=typeof text==='string'?page.locator('#options button').filter({hasText:text}).first():page.locator('#options button').nth(text);await button.click();}
+async function idle(page){await page.waitForFunction(()=>!window.__dealTest.busy)}
+async function select(page,predicate){const id=await page.evaluate(predicate);await page.locator(`#game [data-card="${id}"]`).click()}
+async function playFirst(page){await page.locator('#game [data-card]').first().click();await page.locator('#play-card').click()}
+async function conservation(page){assert.equal(await page.evaluate(()=>{const s=window.__dealTest.state;const cards=[...s.draw,...s.discard,...s.players.flatMap(p=>[...p.hand,...p.bank,...p.props,...p.buildings])];return cards.length===106&&new Set(cards.map(c=>c.id)).size===106}),true)}
+async function shot(page,name){if(artifacts){await require('node:fs/promises').mkdir(artifacts,{recursive:true});await page.screenshot({path:path.join(artifacts,name+'.png'),fullPage:true})}}
+
+test('setup: 2–4 unique named players, validation, review, cancellation, and private device handoffs',async()=>{
+ const p=await open();assert.equal(await p.locator('html').getAttribute('data-theme'),'modern');
+ for(const count of [2,3,4]){
+  await p.locator('#new').click();await p.locator('#count').selectOption(String(count));await p.locator('#start').click();await p.locator('#start').click();await choose(p,'Back to setup');assert.equal(await p.locator('#names input[aria-invalid=true]').count(),count);
+  for(let i=0;i<count;i++)await p.locator(`#player-name-${i}`).fill(i<2?'Chris':`Player ${i+1}`);
+  await p.locator('#start').click();await choose(p,'Back to setup');await p.locator('#player-name-1').fill('Alex');await p.locator('#start').click();assert.equal(await p.locator('#wizard-review li').count(),count);await p.locator('#wizard-back').click();assert.equal(await p.locator('#player-name-1').inputValue(),'Alex');await p.locator('#start').click();await p.locator('#start').click();assert.equal(await p.locator('.opponent').count(),count-1);assert.equal(await p.locator('#game [data-card]').count(),0);await p.locator('#reveal').click();assert.equal(await p.locator('#game [data-card]').count(),7);
+  const ids=await p.locator('#game [data-card]').evaluateAll(nodes=>nodes.map(n=>n.dataset.card));await p.locator('#new').click();await p.locator('#wizard-cancel').click();assert.deepEqual(await p.locator('#game [data-card]').evaluateAll(nodes=>nodes.map(n=>n.dataset.card)),ids);
+  await p.locator('#end').click();await idle(p);assert.equal(await p.locator('#game [data-card]').count(),0);assert.match(await p.locator('.table-privacy').innerText(),/Alex/);await conservation(p);
+ }
+ await close(p);
+});
+
+test('theme and colors: independent presets/HEX/picker/reset, storage recovery, state and privacy preservation',async()=>{
+ const p=await open();await fixture(p);await p.locator('.appearance-settings summary').click();await p.locator('#table-hex').fill('#803050');assert.equal(await p.locator('#table-color').inputValue(),'#803050');await p.locator('[data-theme-choice=classic]').click();assert.equal(await p.locator('#table-color').inputValue(),'#0b211e');await p.locator('[data-table-color="#27313C"]').click();await p.locator('[data-theme-choice=modern]').click();assert.equal(await p.locator('#table-color').inputValue(),'#803050');assert.equal(await p.locator('.modern-hand-card').count(),7);await p.locator('#table-hex').fill('oops');assert.equal(await p.locator('#table-hex').getAttribute('aria-invalid'),'true');await p.locator('#table-hex').fill('#123456');await p.locator('#table-hex').focus();await p.keyboard.press(process.platform==='darwin'?'Meta+A':'Control+A');await p.keyboard.type('#803050');assert.equal(await p.locator('#table-hex').inputValue(),'#803050');await p.locator('#reset-color').click();assert.equal(await p.locator('#table-color').inputValue(),'#0064db');await p.locator('#table-color').evaluate(e=>{e.value='#665533';e.dispatchEvent(new Event('input',{bubbles:true}))});assert.equal(await p.locator('#table-hex').inputValue(),'#665533');await p.locator('[data-theme-choice=classic]').click();assert.equal(await p.locator('#table-color').inputValue(),'#27313c');await p.locator('#reset-color').click();assert.equal(await p.locator('#table-color').inputValue(),'#0b211e');await p.locator('[data-theme-choice=modern]').click();assert.equal(await p.locator('#table-color').inputValue(),'#665533');await p.locator('#hide').click();await p.locator('[data-theme-choice=classic]').click();assert.equal(await p.locator('#game [data-card]').count(),0);await p.locator('[data-theme-choice=modern]').click();assert.equal(await p.locator('#game [data-card]').count(),0);await p.reload();assert.equal(await p.locator('html').getAttribute('data-theme'),'modern');assert.equal(await p.locator('#table-color').inputValue(),'#665533');await close(p);
+ const broken=await open(undefined,{'muha-monopoly-deal-theme':'garbage','muha-monopoly-deal-modern-table-color':'bad'});assert.equal(await broken.locator('#table-color').inputValue(),'#0064db');await close(broken);
+ const blocked=await open();await blocked.addInitScript(()=>{Object.defineProperty(window,'localStorage',{get(){throw Error('blocked')}})});await blocked.reload();await blocked.waitForFunction(()=>window.__dealTest);assert.equal(await blocked.locator('html').getAttribute('data-theme'),'modern');await close(blocked);
+});
+
+test('screenshot states and responsive layout: 320, 390, 430, 768, 1260 portrait and desktop/landscape',async()=>{
+ for(const viewport of [{width:320,height:740},{width:390,height:844},{width:430,height:932},{width:768,height:1024},{width:1260,height:2736},{width:1440,height:900},{width:844,height:390}]){
+  const p=await open(viewport);await fixture(p);assert.equal(await p.locator('.opponent').count(),3);
+  const rows=await p.locator('.opponent').evaluateAll(nodes=>nodes.map(n=>Math.round(n.getBoundingClientRect().top)));assert.equal(new Set(rows).size,1,'All opponents stay across the top');
+  assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'No page overflow');await shot(p,`${viewport.width}-table`);
+  for(const [type,find] of [['property',()=>window.__dealTest.state.players[0].hand.find(c=>c.name==='New York Avenue').id],['money',()=>window.__dealTest.state.players[0].hand.find(c=>c.type==='money').id],['rent',()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='rent').id]]){
+   await select(p,find);assert.equal(await p.locator('.selected-table-card .deal-face').count(),1);assert.equal(await p.locator('#bank-card').isEnabled(),type!=='property');assert.equal(await p.locator('#play-card').isEnabled(),type!=='money');
+   const box=await p.locator('.selected-table-card .deal-face').boundingBox();assert.ok(Math.abs(box.width/box.height-.69)<.03,`${viewport.width}: proper selected card ratio`);const action=await p.locator('#end').boundingBox();assert.ok(box.x+box.width<=action.x+1,'Preview does not cover actions');await shot(p,`${viewport.width}-${type}`);
+  }
+  await close(p);
+ }
+});
+
+test('selection, property placement, banking, Pass Go, 3-play cap, and turn privacy',async()=>{
+ const p=await open();await fixture(p);
+ await select(p,()=>window.__dealTest.state.players[0].hand.find(c=>c.name==='New York Avenue').id);await p.locator('#play-card').click();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[0].name),'New York Avenue');assert.equal(await p.locator('.current-properties .deal-face').count(),1);
+ await select(p,()=>window.__dealTest.state.players[0].hand.find(c=>c.type==='money'&&c.value===4).id);await p.locator('#bank-card').click();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank[0].value),4);
+ await select(p,()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='pass').id);await p.locator('#play-card').click();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),3);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].hand.length),6);
+ await p.locator('#game [data-card]').first().click();assert.equal(await p.locator('#bank-card').isDisabled(),true);assert.equal(await p.locator('#play-card').isDisabled(),true);await p.locator('#end').click();await idle(p);assert.equal(await p.locator('.selected-table-card').count(),0);assert.equal(await p.locator('#game [data-card]').count(),0);await conservation(p);await close(p);
+});
+
+test('wild flip controls played color; free rearrangement normalizes buildings',async()=>{
+ const p=await open();await fixture(p,'wild');await p.locator('[data-card]').first().click();assert.equal(await p.locator('#flip-card').isEnabled(),true);await p.locator('#flip-card').click();await p.locator('#play-card').click();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[0].color),'lightblue');assert.match(await p.locator('.current-properties .wild-half').first().getAttribute('style'),/#77cfe9/);
+ await fixture(p,'rearrange');await p.locator('#move').click();await choose(p,1);await choose(p,'Light Blue');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].buildings.length),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),2);await conservation(p);await close(p);
+});
+
+test('rent with two doublers charges every opponent, conserves cards, and hides hands during payment',async()=>{
+ const p=await open();await fixture(p,'rent',3);await playFirst(p);await choose(p,'Red');await choose(p,'2 doublers');for(let i=1;i<3;i++){await choose(p,'Ready to pay');assert.equal(await p.locator('#game [data-card]').count(),0);await choose(p,0);await choose(p,0)}await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),4);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),3);assert.equal(await p.evaluate(()=>window.__dealTest.state.discard.filter(c=>c.action==='double').length),2);await conservation(p);await close(p);
+});
+
+test('House and Hotel building placement and rent',async()=>{
+ const p=await open();for(const kind of ['house','hotel']){await fixture(p,kind);await playFirst(p);await choose(p,'Brown');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].buildings.length),kind==='house'?1:2);assert.match(await p.locator('.current-properties').innerText(),kind==='house'?/5M/:/9M/);await conservation(p)}await close(p);
+});
+
+test('Sly Deal, Forced Deal, and Deal Breaker transfer eligible properties and buildings',async()=>{
+ const p=await open();for(const kind of ['sly','forced','breaker']){await fixture(p,kind);await playFirst(p);if(kind==='forced')await choose(p,0);await choose(p,0);await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.length),kind==='breaker'?3:1);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].props.length),kind==='forced'?1:0);if(kind==='breaker')assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].buildings.length),2);await conservation(p)}await close(p);
+});
+
+test('Debt Collector and Birthday collect from the chosen debtor / every opponent',async()=>{
+ const p=await open();for(const kind of ['debt','birthday']){await fixture(p,kind,3);await playFirst(p);if(kind==='debt')await choose(p,'Alex');for(let i=0;i<(kind==='debt'?1:2);i++){await choose(p,'Ready to pay');await choose(p,0)}await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),kind==='debt'?1:2);await conservation(p)}await close(p);
+});
+
+test('Just Say No cancels an action and counter-No restores it',async()=>{
+ const p=await open();for(const kind of ['counter','counter-counter']){await fixture(p,kind,2);await playFirst(p);await choose(p,'Alex');await choose(p,'Ready');await choose(p,'Play Just Say No');if(kind==='counter-counter'){await choose(p,'Ready');await choose(p,'Play Just Say No');await choose(p,'Ready to pay');await choose(p,0)}await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),kind==='counter'?0:1);await conservation(p)}await close(p);
+});
+
+test('payment breaks sets, normalizes buildings, allows insufficient assets without change',async()=>{
+ const p=await open();await fixture(p,'pay-property',2);await playFirst(p);await choose(p,'Alex');await choose(p,'Ready to pay');await choose(p,'Mediterranean');await choose(p,'House');await choose(p,'Baltic');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].buildings.length),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].bank.length),1);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.length),2);await conservation(p);await close(p);
+});
+
+test('discard down to seven, next-player draw, victory, and post-win table access',async()=>{
+ const p=await open();await fixture(p,'discard',2);await p.locator('#end').click();await choose(p,0);await choose(p,0);await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].hand.length),7);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].hand.length),5);await conservation(p);
+ await fixture(p,'win',2);await playFirst(p);await choose(p,'View table');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.winner),'Chris');assert.equal(await p.locator('#end').isDisabled(),true);await p.locator('.current-properties').click();assert.equal(await p.locator('#table-viewer').getAttribute('open'),'');await p.locator('#table-view-close').click();await conservation(p);await close(p);
+});
+
+test('Classic gameplay still supports cancel, bank, property play, privacy, and theme return',async()=>{
+ const p=await open();await fixture(p);await p.locator('.appearance-settings summary').click();await p.locator('[data-theme-choice=classic]').click();await p.locator('#game [data-card]').first().click();await choose(p,'Cancel');await idle(p);assert.equal(await p.locator('#game [data-card]').count(),7);await p.locator('#game [data-card]').first().click();await choose(p,'Play card');await idle(p);await p.locator('#game [data-card]').first().click();await choose(p,'Put in bank');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),2);await p.locator('#hide').click();assert.equal(await p.locator('#game [data-card]').count(),0);await p.locator('#reveal').click();assert.equal(await p.locator('#game [data-card]').count(),5);await p.locator('[data-theme-choice=modern]').click();assert.equal(await p.locator('.modern-hand-card').count(),5);await conservation(p);await close(p);
+});
+
+test('all 58 card designs and every table-view category work in both themes',async()=>{
+ const p=await open();await fixture(p);await p.locator('.appearance-settings summary').click();for(const theme of ['modern','classic']){
+  await p.locator(`[data-theme-choice=${theme}]`).click();await p.locator('#rules').click();const views=await p.locator('#table-view-category option').count();for(let i=0;i<views;i++){await p.locator('#table-view-category').selectOption(String(i));assert.ok((await p.locator('#table-view-title').innerText()).length);}
+  const cardOption=await p.locator('#table-view-category option').filter({hasText:'Cards'}).getAttribute('value');await p.locator('#table-view-category').selectOption(cardOption);await p.locator('#catalog-type').selectOption('all');assert.match(await p.locator('.catalog-position').innerText(),/58/);
+  for(let i=0;i<58;i++){assert.equal(await p.locator('.catalog-face').count(),1);if(theme==='modern'){assert.equal(await p.locator('.modern-catalog-face .deal-face').isVisible(),true);const box=await p.locator('.modern-catalog-face .deal-face').boundingBox();assert.ok(box.height>100&&box.width>80,'Catalog card is visible');}await p.locator('#design-next').click();}assert.match(await p.locator('.catalog-position').innerText(),/^1 \/ 58/);
+  for(const type of ['property','action','money']){await p.locator('#catalog-type').selectOption(type);assert.ok((await p.locator('.catalog-copy-count').innerText()).includes('Deck:'));}
+  await shot(p,`${theme}-catalog`);await p.locator('#table-view-close').click();
+ }await close(p);
+});
+
+test('invalid action attempts spend no plays: no eligible buildings, steals, standalone No/doubler, or matching rent',async()=>{
+ const p=await open();
+ for(const action of ['house','hotel','sly','forced','breaker','no','double','rent']){
+  await p.evaluate(async action=>{const {createGame,deck}=await import('./engine.mjs');const s=createGame(['Chris','Alex']);s.players.forEach(p=>{p.hand=[];p.props=[];p.bank=[];p.buildings=[]});s.draw=deck();s.discard=[];s.plays=0;const index=s.draw.findIndex(c=>c.action===action);s.players[0].hand.push(s.draw.splice(index,1)[0]);window.__dealTest.setState(s)},action);
+  await playFirst(p);await choose(p,'OK');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);assert.equal(await p.locator('#game [data-card]').count(),1);await conservation(p);
+ }await close(p);
+});
+
+test('Any Color Rent targets only the selected opponent; multicolor property requires a color choice',async()=>{
+ const p=await open();await p.evaluate(async()=>{const {createGame,deck}=await import('./engine.mjs');const s=createGame(['Chris','Alex','Sam']);s.draw=deck();s.discard=[];s.plays=0;s.players.forEach(p=>{p.hand=[];p.props=[];p.bank=[];p.buildings=[]});const take=fn=>s.draw.splice(s.draw.findIndex(fn),1)[0];s.players[0].hand.push(take(c=>c.action==='rent'&&c.colors.length===10),take(c=>c.type==='property'&&c.colors.length===10));s.players[0].props.push(take(c=>c.name==='New York Avenue'));s.players[1].bank.push(take(c=>c.type==='money'&&c.value===2));s.players[2].bank.push(take(c=>c.type==='money'&&c.value===2));window.__dealTest.setState(s)});
+ await playFirst(p);await choose(p,'Orange');await choose(p,'Sam');await choose(p,'Ready to pay');await choose(p,0);await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].bank.length),1);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[2].bank.length),0);
+ await p.locator('#reveal').click();await playFirst(p);await choose(p,'Dark Blue');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.find(c=>c.value===0).color),'blue');await conservation(p);await close(p);
+});
+
+test('complete sets resist Sly/Forced Deal; no-assets payment completes without touching a private hand',async()=>{
+ const p=await open();await fixture(p,'breaker',2);await p.evaluate(async()=>{const s=window.__dealTest.state;const c=s.players[0].hand.pop();s.draw.push(c);const index=s.draw.findIndex(c=>c.action==='sly');s.players[0].hand.push(s.draw.splice(index,1)[0]);window.__dealTest.render()});await playFirst(p);await choose(p,'OK');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].props.length),3);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);
+ await fixture(p,'debt',2);await p.evaluate(()=>{const s=window.__dealTest.state;s.draw.push(...s.players[1].bank.splice(0));s.players[1].hand.push(s.draw.pop());window.__dealTest.render()});await playFirst(p);await choose(p,'Alex');await choose(p,'Ready to pay');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].hand.length),1);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),0);await conservation(p);await close(p);
+});
+
+test('large private hands scroll to both ends; long and markup-like names stay within player panels',async()=>{
+ for(const viewport of [{width:320,height:740},{width:1440,height:900}]){
+  const p=await open(viewport);await fixture(p);await p.evaluate(()=>{const s=window.__dealTest.state;s.players[0].hand.push(...s.draw.splice(0,20));s.players[1].name='<img src=x onerror=oops>';s.players[2].name='AReallyLongPlayerNameXYZ';window.__dealTest.render()});assert.equal(await p.locator('.opponent img').count(),0);assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await p.locator('[data-card]').first().click();await p.locator('[data-card]').last().click();assert.equal(await p.locator('.selected-table-card').count(),1);await p.locator('[data-card]').first().click();assert.equal(await p.locator('.selected-table-card').count(),1);await close(p);
+ }
+});
+
+test('catalog card proportions, action medallions and text fit across all designs at phone and desktop sizes',async()=>{
+ for(const viewport of [{width:240,height:568},{width:320,height:740},{width:844,height:390},{width:1440,height:900}]){
+  const p=await open(viewport);await p.locator('#rules').click();await p.locator('#table-view-category').selectOption('1');
+  for(let i=0;i<58;i++){
+   const issue=await p.locator('.modern-catalog-face .deal-face').evaluate(face=>{const r=face.getBoundingClientRect();const pieces=[...face.querySelectorAll('.face-instructions,.money-medallion,.action-medallion,.face-rent,.face-property-name')];return pieces.flatMap(el=>{const p=el.getBoundingClientRect();return p.bottom>r.bottom+2||p.left<r.left-2||p.right>r.right+2?[{card:face.getAttribute('aria-label'),piece:el.className,bottom:p.bottom,faceBottom:r.bottom,left:p.left,right:p.right,faceRight:r.right}]:[]})});assert.deepEqual(issue,[],`All content fits for catalog design ${i+1} at ${viewport.width}px`);
+   if(artifacts&&viewport.width===320&&i%4===0){await p.locator('.modern-catalog-face .deal-face').screenshot({path:path.join(artifacts,`design-${i}.png`)})}
+   await p.keyboard.press('ArrowRight');
+  }
+  await p.keyboard.press('Escape');assert.equal(await p.locator('#table-viewer').getAttribute('open'),null);await close(p);
+ }
+});
+
+async function responsiveIssues(page){return page.evaluate(()=>{
+ const issues=[];
+ if(document.documentElement.scrollWidth>innerWidth+1)issues.push(`page width ${document.documentElement.scrollWidth} > ${innerWidth}`);
+ const visible=el=>el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden';
+ for(const el of document.querySelectorAll('dialog[open]')){const r=el.getBoundingClientRect();if(r.left<-.5||r.right>innerWidth+.5||r.top<-.5||r.bottom>innerHeight+.5)issues.push(`dialog ${el.id} outside viewport: ${JSON.stringify(r.toJSON())}`)}
+ for(const el of document.querySelectorAll('[data-fit-label],.player h3,.player .group>strong,.player .group>div,.card>strong,.catalog-face>h3,.table-view-heading h2,#question,.wizard-heading h2,#setup-wizard h3,.privacy h2,.round-action,.table-tools button,.game-top-actions button,#options button,.wizard-actions button')){
+  if(!visible(el))continue;
+  const style=getComputedStyle(el);
+  if(!['nowrap','pre'].includes(style.whiteSpace))issues.push(`label wraps: ${el.className||el.id||el.tagName} ${el.textContent.trim()}`);
+  if(el.scrollWidth>el.clientWidth+2&&!['auto','scroll'].includes(style.overflowX))issues.push(`label clipped: ${el.textContent.trim()}`);
+ }
+ for(const face of document.querySelectorAll('.selected-table-card .deal-face,.modern-catalog-face .deal-face')){
+  if(!visible(face))continue;
+  const r=face.getBoundingClientRect();
+  for(const el of face.querySelectorAll('.face-property-name,.face-rent,.face-instructions,.money-medallion,.action-medallion')){
+   const e=el.getBoundingClientRect();if(e.bottom>r.bottom+2||e.top<r.top-2||e.left<r.left-2||e.right>r.right+2)issues.push(`card content clipped: ${face.getAttribute('aria-label')} ${el.className}`);
+  }
+ }
+ const readingPane=document.querySelector('#table-viewer[open] .table-view-body');
+ if(readingPane&&getComputedStyle(readingPane).overflowY==='hidden'){
+  const pane=readingPane.getBoundingClientRect();
+  for(const child of readingPane.children){if(visible(child)&&child.getBoundingClientRect().bottom>pane.bottom+2)issues.push(`reading pane clipped: ${child.id}`);}
+ }
+ for(const label of document.querySelectorAll('.opponent .inspect-label,.opponent-count,.opponent-bank')){
+  if(!visible(label))continue;
+  const panel=label.closest('.opponent').getBoundingClientRect(),r=label.getBoundingClientRect();
+  if(r.top<panel.top-1||r.bottom>panel.bottom+1)issues.push(`opponent label clipped: ${label.textContent.trim()}`);
+ }
+ const face=document.querySelector('.selected-table-card'),stage=document.querySelector('.card-stage');
+ if(face&&visible(face)){const r=face.getBoundingClientRect(),s=stage.getBoundingClientRect();if(r.left<s.left-1||r.right>s.right+1||r.top<s.top-1||r.bottom>s.bottom+1)issues.push(`preview outside stage: ${JSON.stringify({card:r.toJSON(),stage:s.toJSON()})}`);}
+ return issues;
+})}
+
+test('responsive matrix: single-line labels and no clipped page, dialogs, or selected cards in both themes',async()=>{
+ const sizes=[[320,240],[480,240],[844,240],[240,568],[280,653],[320,568],[360,640],[375,667],[390,844],[414,896],[430,932],[480,320],[568,320],[600,480],[601,480],[667,375],[768,1024],[820,1180],[1024,768],[1280,720],[1440,900],[1920,1080]];
+ const issues=[];
+ for(const [width,height] of sizes){
+  const p=await open({width,height});await fixture(p);await p.evaluate(()=>{const s=window.__dealTest.state;s.players.forEach((p,i)=>p.name=['Christopher WWWWWWWWWWWW','AlexandriaWithALongNameXX','WWWWWWWWWWWWWWWWWWWWWWWW','AReallyLongPlayerNameXYZ'][i]);window.__dealTest.render()});
+  for(const theme of ['modern','classic']){
+   await p.locator('.appearance-settings').evaluate(el=>el.open=true);await p.locator(`[data-theme-choice=${theme}]`).click();
+   issues.push(...(await responsiveIssues(p)).map(issue=>`${width}×${height} ${theme} settings: ${issue}`));
+   await p.locator('.appearance-settings').evaluate(el=>el.open=false);await p.locator('#game [data-card]').first().click();
+   if(theme==='classic'){await p.locator('#choice[open]').waitFor();issues.push(...(await responsiveIssues(p)).map(issue=>`${width}×${height} classic choice: ${issue}`));await choose(p,'Cancel');await idle(p)}else{issues.push(...(await responsiveIssues(p)).map(issue=>`${width}×${height} modern selected: ${issue}`));}
+   await p.locator('#rules').click();for(const name of ['Rules','Cards','Table activity']){
+    await p.locator('#table-view-category').selectOption({label:name});issues.push(...(await responsiveIssues(p)).map(issue=>`${width}×${height} ${theme} ${name}: ${issue}`));
+    if(name==='Cards'){const face=p.locator(theme==='modern'?'.modern-catalog-face .deal-face':'.catalog-face');const box=await face.boundingBox();if(box.width<40||box.height<100)issues.push(`${width}×${height} ${theme}: catalog too small (${box.width}×${box.height})`);}
+   }await p.locator('#table-view-close').click();
+   await p.locator('#new').click();await p.locator('#start').click();issues.push(...(await responsiveIssues(p)).map(issue=>`${width}×${height} ${theme} wizard: ${issue}`));await p.locator('#wizard-cancel').click();
+   if(artifacts&&[240,320,601,667,1920].includes(width))await shot(p,`responsive-${width}-${height}-${theme}`);
+  }
+  await close(p);
+ }
+ assert.deepEqual(issues,[]);
+});
+
+test('touch and live rotation keep selection, controls, labels, and hand privacy responsive',async()=>{
+ const p=await open({width:390,height:844},undefined,{isMobile:true,hasTouch:true,deviceScaleFactor:3});await fixture(p);await p.locator('[data-card]').first().tap();
+ const id=await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card');
+ for(const [width,height] of [[844,390],[320,568],[568,320],[240,568],[1024,768],[390,844]]){
+  await p.setViewportSize({width,height});await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  assert.equal(await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card'),id);assert.deepEqual(await responsiveIssues(p),[],`${width}×${height} rotation`);assert.equal(await p.locator('#play-card').isEnabled(),true);
+ }
+ await p.locator('#play-card').tap();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.length),1);await p.locator('#hide').tap();await p.setViewportSize({width:844,height:390});assert.equal(await p.locator('#game [data-card]').count(),0);await p.locator('#reveal').tap();assert.equal(await p.locator('#game [data-card]').count(),6);await close(p);
+});

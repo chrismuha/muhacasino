@@ -1,0 +1,109 @@
+/* Classic uses styles.css unchanged. All new table rules are scoped to modern. */
+.theme-settings{flex-basis:100%;border:0;padding:0;margin:0 0 14px}.theme-settings legend{font-size:22px;font-weight:750;margin-bottom:12px}.theme-options{display:flex;gap:12px}.theme-options button[aria-pressed=true]{border:2px solid #ffe297;background:#22579c}.theme-settings p{margin:10px 0 0;font-size:18px}.property-rents,.modern-catalog-face{display:none}
+html[data-theme=modern]{background:var(--modern-table-background,#0064db);color:#fff;color-scheme:dark}
+[data-theme=modern] body{background:linear-gradient(180deg,color-mix(in srgb,var(--modern-table-background,#0064db),black 72%),transparent 42%),radial-gradient(ellipse at 48% 50%,color-mix(in srgb,var(--modern-table-background,#0064db),white 12%),var(--modern-table-background,#0064db) 42%,color-mix(in srgb,var(--modern-table-background,#0064db),#111344 85%) 100%);background-attachment:fixed}
+[data-theme=modern] main{max-width:1180px;padding:12px 14px 24px}
+[data-theme=modern] .game-topbar{background:transparent;border:0;padding:14px 20px;gap:10px}
+[data-theme=modern] .game-topbar>a{background:#ff7300;border:2px solid white;border-radius:14px;padding:10px 14px;box-shadow:0 3px 0 #9b3e00;font-size:16px}
+[data-theme=modern] button,[data-theme=modern] select,[data-theme=modern] input{background:#073773;border-color:#98c6ff77;color:#fff}
+[data-theme=modern] button:hover{background:#10549b}
+[data-theme=modern] .primary{background:#ff7300;border:2px solid #fff;color:white;font-weight:800}
+[data-theme=modern] .primary:hover{background:#ff8b29}
+[data-theme=modern] .masthead{min-height:0;padding:14px 20px;background:#08266a88;border-color:#79b8ff40;box-shadow:none;margin-bottom:12px}
+[data-theme=modern] .masthead>div{max-width:100%;padding:0}
+[data-theme=modern] .masthead h1{font-size:28px;letter-spacing:-1px}
+[data-theme=modern] .masthead .cover-art,[data-theme=modern] .masthead::before,[data-theme=modern] .masthead p{display:none}
+[data-theme=modern] .is-playing .masthead{display:none}
+[data-theme=modern] .appearance-settings{background:#08276f99;margin-bottom:12px;border-color:#83beff55}
+[data-theme=modern] .appearance-settings>summary{min-height:44px;padding:8px 14px;font-size:17px}
+[data-theme=modern] .table-settings{background:#092c69}
+[data-theme=modern] .history{display:none}
+[data-theme=modern] dialog,[data-theme=modern] #setup-wizard{background:#092c69;border-color:#88c5ff;color:white}
+[data-theme=modern] dialog::backdrop{background:#021442df}
+[data-theme=modern] .setup input{background:#0a3677}
+/* Every context uses the same card face: hand, table, selection, and catalog. */
+.deal-face{position:relative;display:flex;flex-direction:column;width:100%;height:100%;aspect-ratio:0.69;background:#fff;color:#070a09;border:0.055em solid white;border-radius:.12em;box-shadow:0 .035em .08em #00164180;overflow:hidden;container-type:inline-size;font-family:'Arial Narrow','Helvetica Neue',Arial,sans-serif;font-weight:750;text-align:center;line-height:1.15;font-size:100px}
+.deal-face *{box-sizing:border-box}
+.face-property-top{height:27%;flex-shrink:0;position:relative;background:var(--face-band);color:white}
+.face-value{position:absolute;left:2%;top:10%;width:30%;aspect-ratio:1;background:white;border-radius:50%;display:grid;place-items:center;color:black;box-shadow:0 .012em .02em #0005;z-index:1}
+.cash-number{display:inline-flex;align-items:baseline;justify-content:center;font-size:23cqw;font-weight:900;line-height:1;letter-spacing:-1.5cqw}
+.face-value .cash-number{font-size:21cqw}.currency{font-size:9cqw;letter-spacing:-1cqw;margin-left:-.4cqw}
+.property-skyline{position:absolute;height:80%;width:30%;bottom:0;right:3%;color:white}
+.face-property-name{font-size:8cqw;font-weight:900;text-transform:uppercase;line-height:1.08;padding:3% 6% 0;min-height:20%;display:grid;place-items:center;overflow-wrap:normal}
+.face-rent{padding:2% 12% 10%;margin-block:auto;font-size:5cqw;text-align:right}
+.rent-caption{font-size:7cqw;margin-bottom:5%;font-weight:900}
+.face-rent-row{display:flex;align-items:flex-end;gap:1%;margin:8% 0;white-space:nowrap;font-size:4.8cqw}
+.face-rent-row b{font-size:inherit;line-height:1.1}.face-rent-row small{font-size:3cqw}
+.rent-count{flex:0 0 14%;display:flex;align-items:flex-end;justify-content:center}.tiny-property{display:grid;place-items:end center;border:.35cqw solid #111;border-radius:1cqw;font-size:4.5cqw;line-height:1.3;min-width:7cqw;height:10cqw;background:linear-gradient(var(--rent-color) 0 26%,white 26%);box-shadow:-1cqw -.7cqw 0 -.1cqw #fff,-1cqw -.7cqw 0 .1cqw #111}
+.rent-dots{flex:1;min-width:0;border-bottom:.7cqw dotted #222;margin-bottom:.7cqw}
+.deal-face[data-wild=true]{display:block}.wild-half{height:50%;position:relative;overflow:hidden}.wild-half .face-property-top{height:25%}.wild-half .face-property-name{min-height:0;font-size:5cqw;padding:1%}.wild-half .face-rent{font-size:3cqw;padding:0 13%}.wild-half .face-rent-row{font-size:3cqw;margin:4% 0}.wild-half .rent-caption{font-size:4cqw;margin:0}.wild-half .tiny-property{height:6cqw;min-width:5cqw;font-size:3cqw}.wild-half .face-value{width:16%;top:6%}.wild-half .cash-number{font-size:10cqw}.wild-half .currency{font-size:5cqw}.wild-reverse{transform:rotate(180deg);border-top:1cqw solid #ddd}
+.deal-face[data-face=money]{background:repeating-conic-gradient(from 12deg at -35% 80%,#9fc4bc 0deg 8deg,#8bb3aa 8.2deg 9.3deg)}
+.face-money-top,.face-money-bottom{position:relative;height:27%;flex-shrink:0;background:#ffffff0d}.face-money-bottom{transform:rotate(180deg);margin-top:auto}
+.money-medallion{width:64%;aspect-ratio:1;border:2.2cqw solid #050a08;border-radius:50%;outline:2cqw solid #050a08;outline-offset:2.1cqw;align-self:center;margin:auto;background:#fff;display:grid;place-items:center;box-shadow:0 0 0 5cqw #8bb3aa}
+.money-medallion .cash-number{font-size:29cqw}.money-medallion .currency{font-size:11cqw}
+.deal-face[data-face=action]{background:#c6c796}.face-action-top{height:27%;position:relative;flex-shrink:0;background:#d7d8aa;display:flex;align-items:center;justify-content:flex-end;padding-right:3%;font-size:7cqw;letter-spacing:-.3cqw;white-space:nowrap}.face-action-top>span:last-child{padding-left:29%}
+.action-medallion{width:64%;aspect-ratio:1;background:#fff;border:1.6cqw solid #111;outline:1cqw solid #fff;outline-offset:-2.5cqw;align-self:center;border-radius:50%;display:grid;place-items:center;margin:8% 0 4%;padding:7%;font-size:8cqw;font-weight:900}
+.action-medallion>span{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;background:white;border-radius:50%;font-size:7cqw;line-height:1.05;padding:5%;overflow-wrap:normal}.action-medallion b{font-size:12cqw}.go-arrow{font-size:16cqw;line-height:.7;color:#ed3c25;-webkit-text-stroke:.3cqw #111}
+.face-instructions{font-size:5.5cqw;line-height:1.2;color:#070a09;font-weight:750;padding:4% 10% 7%;margin:auto 0 0;overflow-wrap:normal}.any-color-disc{width:55%;aspect-ratio:1;border-radius:50%;align-self:center;background:var(--face-band);border:1cqw solid black;margin:3%}
+.deal-face[data-action=house] .face-action-top{background:#22824b;color:white}.deal-face[data-action=hotel] .face-action-top{background:#c83737;color:white}
+/* Opponents remain in a single row, as in the reference table. */
+.deal-table{container-type:inline-size;min-width:0;display:grid;grid-template-rows:clamp(165px,44cqw,330px) clamp(260px,62cqw,460px) auto auto;gap:0}
+.opponents{display:grid;grid-template-columns:repeat(var(--opponent-count),minmax(0,1fr));gap:8px;min-width:0}
+.opponent{min-width:0;display:flex;flex-direction:column;border:1px solid #72baff66;background:linear-gradient(#001c55b8,#0053c225);border-radius:7px 7px 0 0;overflow:hidden}
+.opponent-heading{background:var(--seat-color);padding:5px 5px 4px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.opponent h3{font-size:clamp(13px,3.1cqw,25px);line-height:1.15;margin:0;width:100%;text-align:center;overflow-wrap:anywhere;color:#fff}
+[data-theme=modern] .opponent-bank{border:0;background:#0003;min-height:0;padding:1px 12px;border-radius:22px;display:flex;gap:8px;align-items:center;justify-content:center;font-size:clamp(14px,3.2cqw,24px);line-height:1.1;box-shadow:none}
+.coin{display:inline-grid;place-items:center;width:1.3em;aspect-ratio:1;border-radius:50%;background:#ffe83b;color:#121627;font-weight:900;font-size:1em;border:1px solid #d8bf26}
+.opponent-count{display:flex;gap:4px;justify-content:space-between;align-items:center;font-size:clamp(14px,2.9cqw,22px);padding:6px;color:white}.opponent-count>span:first-child{font-size:1.25em}.opponent-sets{margin-left:auto;font-size:.64em;white-space:nowrap}
+[data-theme=modern] .opponent-properties{display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;padding:3px 5px 6px;background:transparent;border:0;border-radius:0;box-shadow:none;white-space:normal}
+.opponent-groups{display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;overflow:auto;min-height:0;flex:1;width:100%}.inspect-label{font-size:12px;font-weight:500;color:#c1ddff;display:block;padding:3px 0;text-align:center}
+.deal-property-group{display:flex;flex-direction:column;align-items:center;min-width:0;padding-top:3px;border-top:3px solid var(--group-color)}.deal-property-group.complete{filter:drop-shadow(0 0 3px #fff387)}.public-cards{display:flex;padding-right:18px}.public-mini{display:block;flex-shrink:0;width:clamp(28px,7cqw,58px);aspect-ratio:.69;margin-right:-18px;pointer-events:none}.group-caption{font-size:clamp(9px,1.6cqw,13px);color:white;line-height:1.5;white-space:normal}.public-mini .deal-face{font-size:28px}
+.deal-stage{display:grid;grid-template-columns:20% minmax(0,1fr) 27%;align-items:center;gap:2%;position:relative;min-height:0}
+[data-theme=modern] .draw-deck{justify-self:center;width:clamp(44px,12cqw,95px);min-height:0;border:0;background:transparent;padding:0;box-shadow:none;white-space:normal;align-self:center}.deal-card-back{display:flex;aspect-ratio:.66;flex-direction:column;align-items:center;justify-content:center;background:repeating-conic-gradient(from 10deg at 50% 50%,#ff8144 0 22deg,#f86933 22deg 45deg);border:3px solid white;outline:1px solid #c64c18;outline-offset:-6px;border-radius:6px;box-shadow:0 4px 9px #00194c90;color:#ffe14a;padding:5px;font-size:clamp(7px,1.5cqw,12px);line-height:1.2;text-shadow:0 1px 0 #bb341b}.card-back-city{display:grid;place-items:center;width:85%;aspect-ratio:.8;border-radius:50%;background:#ffe333;color:#b43920;font-size:clamp(22px,7cqw,52px);margin-bottom:10%}.deck-count{display:block;font-size:11px;color:#daecff;margin-top:8px;white-space:nowrap}
+.card-stage{min-width:0;height:100%;display:flex;justify-content:center;align-items:center;position:relative}.selected-table-card{width:min(100%,290px);aspect-ratio:.69;max-height:96%;display:flex}.table-privacy{text-align:center;min-width:0}.table-privacy h2{font-size:clamp(17px,4cqw,28px);margin:6px 0}.table-privacy p{font-size:clamp(13px,3cqw,18px);color:white;line-height:1.4}.table-privacy button{font-size:clamp(13px,3cqw,20px);white-space:normal;padding:9px;min-height:44px}
+.deal-actions{display:flex;flex-direction:column;gap:10px;align-items:stretch;padding-block:10px}
+[data-theme=modern] .round-action,[data-theme=modern] #end.round-action{display:flex;align-items:center;gap:9px;min-height:0;background:transparent;border:0;border-radius:0;padding:0;box-shadow:none;font-size:clamp(12px,3.1cqw,24px);font-weight:800;white-space:nowrap;text-align:left}
+.action-disc{display:grid;place-items:center;width:clamp(42px,10.5cqw,72px);aspect-ratio:1;flex-shrink:0;border-radius:50%;background:#005477;border:2px solid white;box-shadow:0 3px 1px #003967,0 0 0 1px #ffffff33;color:white;font-size:clamp(24px,6cqw,44px);line-height:1}
+.green .action-disc{background:#00bd50}.orange .action-disc{background:#ff7300}.orange .action-disc:first-child{font-weight:900}.round-action:disabled{opacity:.45}.round-action:disabled .action-disc{background:#004a70;border-color:#216b8b}.plays-dots{display:flex;gap:7px;padding-left:clamp(8px,2cqw,15px)}.plays-dots i{display:block;width:clamp(10px,2.4cqw,15px);aspect-ratio:1;background:#003677;border-radius:50%}.plays-dots i.used{background:#9ecfff;opacity:.7}
+.current-seat{min-width:0}.current-seat-heading{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:4px 0 6px}.current-seat h2{font-size:clamp(18px,3.6cqw,28px);margin:0;color:white;overflow-wrap:anywhere}.current-seat-heading>span{font-size:clamp(11px,2.1cqw,16px);white-space:nowrap;color:#e4efff}
+.current-assets{display:grid;grid-template-columns:13% minmax(0,1fr);gap:8px;height:clamp(75px,20cqw,150px)}
+[data-theme=modern] .current-bank,[data-theme=modern] .current-properties{background:#003575a6;border:0;border-radius:7px;min-height:0;padding:5px;box-shadow:none;overflow:auto;white-space:normal;min-width:0;display:flex;flex-direction:column;justify-content:space-between;align-items:center}
+.current-bank>span:last-child{font-size:11px;color:#c1ddff}.bank-miniatures{display:flex;min-width:0;width:100%;padding-right:16px;overflow:hidden}.own-groups{display:flex;align-items:flex-start;gap:18px;width:100%;overflow:auto;flex:1;min-height:0}.current-stats{display:flex;align-items:center;gap:8px;padding:8px 2px;font-size:clamp(17px,3.4cqw,24px);color:#fff}.current-stats>b{margin-right:6px}.table-tools{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+[data-theme=modern] .table-tools button{font-size:12px;min-height:36px;padding:5px 8px;background:#002b6880;border-color:#81b9ff55;box-shadow:none}
+.deal-hand{min-width:0;min-height:90px}.deal-hand .cards{display:flex;justify-content:center;gap:0;overflow-x:auto;overflow-y:hidden;padding:7px 4px 14px;scroll-snap-type:x proximity;max-width:100%}.deal-hand .cards:focus-visible{outline:2px solid #ffe17d;outline-offset:0}
+[data-theme=modern] .modern-hand-card{position:relative;display:block;flex:0 0 clamp(55px,12.5cqw,115px);aspect-ratio:.69;min-width:0;min-height:0;margin:0 -2.2cqw 0 0;padding:0;background:none;border:0;border-radius:5px;box-shadow:none;transition:transform .15s;white-space:normal;scroll-snap-align:center}
+.modern-hand-card:last-child{margin-right:0!important}.modern-hand-card .deal-face{font-size:55px;border-width:2px;border-radius:5px}
+[data-theme=modern] .modern-hand-card.is-selected{transform:translateY(-6px);outline:2px solid #fff69a;outline-offset:1px;z-index:1}.modern-hand-card:focus-visible{z-index:2}
+/* Public table viewers and the catalog retain every original navigation control. */
+[data-theme=modern] #table-viewer,[data-theme=modern] #table-view-content,[data-theme=modern] .table-view-footer{background:#082964}
+[data-theme=modern] .table-view-heading,[data-theme=modern] .table-view-navigation{background:#061f52}
+[data-theme=modern] #table-view-description{background:#0b397d;color:#e8f3ff}
+[data-theme=modern] .table-card-list li{background:#fff;color:#142334;border-color:#acd5ff;border-radius:10px;box-shadow:0 4px 12px #0003}
+[data-theme=modern] .table-card-list p{color:#344b64}.table-mini-face{display:none}
+[data-theme=modern] .table-mini-face{display:block;flex:0 0 65px;aspect-ratio:.69;pointer-events:none}
+[data-theme=modern] .table-card-value{color:#142334}
+[data-theme=modern] .modern-catalog-face{display:flex;width:100%;height:100%;justify-content:center;align-items:center;min-height:0;min-width:0}
+[data-theme=modern] .modern-catalog-face>.deal-face{width:auto;height:100%;max-width:100%;font-size:100px}
+[data-theme=modern] #table-viewer[data-view=cards] .catalog-face{display:block;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;container-type:normal;max-width:460px;justify-self:center}
+[data-theme=modern] .catalog-face>:not(.modern-catalog-face){display:none!important}
+@media(max-width:600px){[data-theme=modern] main{padding:4px 6px 14px}[data-theme=modern] .game-topbar{padding:10px 8px}[data-theme=modern] .game-topbar>a{font-size:13px;padding:8px}[data-theme=modern] .game-top-actions{margin-left:auto;gap:5px}[data-theme=modern] .game-top-actions #new,[data-theme=modern] .game-top-actions #rules{font-size:13px;min-height:40px;padding:7px 9px}[data-theme=modern] .game-top-actions #rules span{display:none}.opponents{gap:5px}.deal-stage{grid-template-columns:20% minmax(0,1fr) 27%;gap:2%}.deal-actions{gap:9px}.current-stats{flex-wrap:wrap}.table-tools{gap:4px}[data-theme=modern] .table-tools button{font-size:10px;min-height:30px;padding:4px 6px}.selected-table-card{max-height:90%}.deal-hand .cards{justify-content:flex-start;padding-left:5%;padding-right:5%}}
+@media(max-width:350px){.deal-stage{grid-template-columns:16% minmax(0,1fr) 29%}.action-disc{width:38px}.round-action{gap:5px!important}.opponent-count{font-size:12px}.opponent-sets{font-size:9px}.table-tools{width:100%;margin:0;justify-content:flex-end}}
+@media(max-height:550px) and (min-width:601px){.deal-table{grid-template-rows:150px 260px auto auto}.opponent-groups .public-mini{width:35px}.current-assets{height:85px}}
+@media(prefers-reduced-motion:reduce){.modern-hand-card{transition:none}}
+.selected-table-card{height:90%;width:auto;aspect-ratio:.69;max-width:100%;max-height:none}
+.face-property-name{width:86%;align-self:center;font-size:9cqw}
+.wild-half .face-property-name{width:100%}
+[data-theme=modern] .table-tools #move{background:#002b6880;border:1px solid #81b9ff55;color:#fff;box-shadow:none}
+.currency,.coin{text-decoration:line-through;text-decoration-thickness:.07em}
+[data-theme=modern] body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;background:linear-gradient(127deg,transparent 30%,#6acaff07 30% 48%,transparent 48%),linear-gradient(26deg,transparent 68%,#0516500d 68% 88%,transparent 88%)}
+@media(max-width:600px){.deal-table{grid-template-rows:clamp(170px,56cqw,340px) clamp(220px,48cqw,300px) auto auto}.selected-table-card{position:absolute;top:10%;height:auto;width:40cqw;max-width:100%;aspect-ratio:.69;z-index:1;pointer-events:none}}
+.deal-table:not(.has-selection) #flip-card,.deal-table:not(.has-selection) #bank-card,.deal-table:not(.has-selection) #play-card{visibility:hidden}
+.action-disc svg{width:65%;height:65%;display:block}
+.deal-hand .cards{justify-content:safe center}
+@media(max-width:600px){.deal-hand .cards{justify-content:flex-start}}
+.face-rent-row{margin:6% 0}
+.any-color-disc{width:45%;margin:2%;flex-shrink:0}
+.deal-face[data-face=property]>.face-instructions{font-size:5cqw;padding:2% 7% 4%;line-height:1.15}
+.face-rent.rows-4 .face-rent-row{margin:3% 0}
+input,textarea{user-select:text!important;-webkit-user-select:text!important}
+@media(max-width:350px){.action-disc{width:44px}}
