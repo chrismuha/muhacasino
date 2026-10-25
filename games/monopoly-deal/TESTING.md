@@ -24,3 +24,5 @@ Responsive coverage also sweeps 22 viewport sizes from 240×568 through 1920×10
 Selected-card browsing checks cover left/right swipe direction, wrapping at both ends, short/vertical gestures, actual touch injection in Chromium, arrow buttons and keyboard navigation, single-card hands, hidden-hand privacy, wild flipping, card conservation, and banking the displayed card without browsing spending a play.
 
 Card drop coverage checks mouse and held-touch drops onto Properties and Bank, action-card play, invalid and cancelled drops, the three-play limit, card conservation, sorting without spending plays, non-overlapping complete hand cards, and inset close-button focus rings.
+
+Selection checks cover single-click/tap actions without enlargement, deliberate double-click/tap enlargement, closing via either Hide control while preserving the hand and selection, separate local multiplayer privacy, and automatic casino-header collapse only after dealing Monopoly Deal.

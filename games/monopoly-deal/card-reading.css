@@ -380,3 +380,29 @@ dialog button,#preview-close{outline-offset:-4px}
 [data-theme=modern] .deal-hand .cards.is-hand-scrolling{scroll-snap-type:none;overflow-anchor:none}
 [data-theme=modern] .hand-sort-hint{white-space:normal;overflow:visible;font-size:11px;line-height:1.3}
 .hand-drag-ghost{will-change:transform}
+
+/* Selecting keeps the hand visible; enlarging is a separate, deliberate action. */
+[data-theme=modern] .deal-table:not(.has-selection) .deal-stage{min-height:190px}
+[data-theme=modern] .card-selected:not(.has-selection) .deal-actions{display:flex;padding:0;gap:4px}
+[data-theme=modern] .card-selected:not(.has-selection) #flip-card,
+[data-theme=modern] .card-selected:not(.has-selection) #bank-card,
+[data-theme=modern] .card-selected:not(.has-selection) #play-card{display:flex}
+[data-theme=modern] .card-selected:not(.has-selection) #flip-card[aria-disabled=true],
+[data-theme=modern] .card-selected:not(.has-selection) #bank-card[aria-disabled=true],
+[data-theme=modern] .card-selected:not(.has-selection) #play-card[aria-disabled=true]{display:none}
+[data-theme=modern] .selected-card-summary{width:100%;min-width:0;padding:4px 8px;text-align:left}
+[data-theme=modern] .selected-card-summary h2{font-size:16px;line-height:1.25;margin:0 0 6px;overflow-wrap:anywhere}
+[data-theme=modern] .selected-card-summary p{font-size:12px;line-height:1.3;margin:0 0 6px}
+[data-theme=modern] .selected-card-summary button{font-size:13px;min-height:36px;padding:5px 8px}
+@media(max-width:600px){
+ [data-theme=modern] .deal-table:not(.has-selection) .deal-stage{min-height:160px;grid-template-columns:64px minmax(0,1fr) 76px;gap:8px}
+ [data-theme=modern] .card-selected:not(.has-selection) .round-action,[data-theme=modern] .card-selected:not(.has-selection) #end.round-action{font-size:12px;gap:4px}
+ [data-theme=modern] .card-selected:not(.has-selection) .round-action>span:last-child{min-width:0}
+ [data-theme=modern] .card-selected:not(.has-selection) .action-disc{width:32px}
+ [data-theme=modern] .card-selected:not(.has-selection) .plays-dots{padding:0;justify-content:center;gap:5px}
+ [data-theme=modern] .card-selected:not(.has-selection) .plays-dots i{width:8px;height:8px}
+ [data-theme=modern] .table-tools #hide,[data-theme=modern] .table-tools #hide-hand{font-size:11px;padding-inline:7px}
+}
+[data-theme=modern] .card-selected:not(.has-selection) #flip-card,
+[data-theme=modern] .card-selected:not(.has-selection) #bank-card,
+[data-theme=modern] .card-selected:not(.has-selection) #play-card{visibility:visible}

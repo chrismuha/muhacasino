@@ -1,11 +1,12 @@
-import {paginateViewer} from './view-pages.mjs?build=20261025-deal-drops-v48';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-deal-drops-v48';
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-deal-drops-v48';
-import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-deal-drops-v48';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-deal-drops-v48';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-deal-drops-v48';
+import {paginateViewer} from './view-pages.mjs?build=20261025-deal-selection-v49';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-deal-selection-v49';
+import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-deal-selection-v49';
+import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-deal-selection-v49';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-deal-selection-v49';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-deal-selection-v49';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
-let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false;
+let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
+let lastCardTap=null;
 // Keep the last completed action in this tab if Safari reloads the frame.
 const sessionKey='muha-deal-session-v1';
 try { const saved=JSON.parse(sessionStorage.getItem(sessionKey)||'null'); if(saved?.players?.length>=2 && Array.isArray(saved.draw) && Array.isArray(saved.discard) && saved.players[saved.turn])state=saved; } catch {}
@@ -80,6 +81,7 @@ function wireHandSorting() {
   },
   onDrop(cardId,target){
    if(!canSort())return;
+   lastCardTap=null;
    if(!target.allowed){showToast(target.reason);return;}
    const card=player.hand.find(card=>card.id===cardId);
    if(!card)return;
@@ -87,6 +89,7 @@ function wireHandSorting() {
    run(()=>play(card,target.mode,color));
   },
   onReorder(ids, {movedId, focusId} = {}) {
+   lastCardTap=null;
    if(!canSort() || ids.length !== player.hand.length || new Set(ids).size !== ids.length)return false;
    const byId = new Map(player.hand.map(card => [card.id, card]));
    if(ids.some(id => !byId.has(id)))return false;
@@ -180,7 +183,7 @@ function browseSelectedCard(direction,focusTarget=null){
 function wireSelectedCardBrowsing(){
  const preview=$('.selected-table-card');
  if(!preview)return;
- $('#preview-close').onclick=()=>{selectedCardId=null;previewFlipped=false;render();};
+ $('#preview-close').onclick=()=>{previewExpanded=false;lastCardTap=null;render();};
  $('#preview-previous').onclick=()=>browseSelectedCard(-1,'#preview-previous');
  $('#preview-next').onclick=()=>browseSelectedCard(1,'#preview-next');
  preview.addEventListener('keydown',event=>{
@@ -239,22 +242,36 @@ function render(){
  }
  document.body.classList.add('is-playing');
  if(document.documentElement.dataset.theme!=='modern'){renderClassic();updateUnavailableControls();wireHandSorting();fitResponsiveLabels();return;}
- if(!visible||!me().hand.some(c=>c.id===selectedCardId)){selectedCardId=null;previewFlipped=false;}
+ if(!visible||!me().hand.some(c=>c.id===selectedCardId)){selectedCardId=null;previewFlipped=false;previewExpanded=false;}
  const scroll=$('.cards')?.scrollLeft||0;
- $('#game').innerHTML=modernBoard(state,visible,selectedCardId,previewFlipped);
+ $('#game').innerHTML=modernBoard(state,visible,selectedCardId,previewFlipped,previewExpanded);
  if($('.cards'))$('.cards').scrollLeft=scroll;
  $('#reveal')?.addEventListener('click',()=>{visible=true;render()});
- $('#hide')?.addEventListener('click',()=>{visible=false;selectedCardId=null;render()});
+ $('#hide')?.addEventListener('click',()=>{if(previewExpanded)previewExpanded=false;else selectedCardId=null;lastCardTap=null;render();});
+ $('#hide-hand')?.addEventListener('click',()=>{visible=false;selectedCardId=null;previewExpanded=false;lastCardTap=null;render();});
+ $('#preview-open')?.addEventListener('click',()=>{previewExpanded=true;lastCardTap=null;render();});
  $('#end').onclick=()=>run(end);
  $('#move').onclick=()=>run(rearrange);
  $('#flip-card').onclick=()=>{previewFlipped=!previewFlipped;render()};
  for(const [id,mode] of [['bank-card','bank'],['play-card','play']]){
    $('#'+id).onclick=()=>{const card=me().hand.find(c=>c.id===selectedCardId);run(()=>play(card,mode,mode==='play'&&card?.type==='property'&&card.colors.length===2?card.colors[previewFlipped?1:0]:null))};
  }
- document.querySelectorAll('#game [data-card]').forEach(button=>button.onclick=()=>{
-  if(busy||state.winner)return;
-  selectedCardId=selectedCardId===Number(button.dataset.card)?null:Number(button.dataset.card);
-  previewFlipped=Boolean(selectedCardId!==null && cardPreferredSide(Number(button.dataset.card)));render();
+ document.querySelectorAll('#game [data-card]').forEach(button=>{
+  button.onclick=event=>{
+   if(busy||state.winner)return;
+   const id=Number(button.dataset.card),now=performance.now();
+   const doubleTap=event.detail!==0&&lastCardTap?.id===id&&now-lastCardTap.time<=350;
+   if(selectedCardId!==id)previewFlipped=Boolean(cardPreferredSide(id));
+   selectedCardId=id;previewExpanded=doubleTap;
+   lastCardTap=doubleTap?null:{id,time:now};
+   render();
+   if(event.detail===0)$(`[data-card="${id}"]`)?.focus({preventScroll:true});
+  };
+  button.addEventListener('keydown',event=>{
+   if(event.key==='Enter'&&Number(button.dataset.card)===selectedCardId&&!busy&&!state.winner){
+    event.preventDefault();previewExpanded=true;lastCardTap=null;render();$('.selected-table-card')?.focus({preventScroll:true});
+   }
+  });
  });
  document.querySelectorAll('#game [data-table-view]').forEach(button=>button.onclick=()=>{if(!busy)openTableViewer(button.dataset.tableView)});
  wireSelectedCardBrowsing();
@@ -406,7 +423,7 @@ function setup() {
     }
     state = createGame(playerNames);
     state.players.forEach((player,i)=>player.isAI=$('#opponent-mode').value==='ai'&&i>0);
-    selectedCardId=null;previewFlipped=false;
+    selectedCardId=null;previewFlipped=false;previewExpanded=false;lastCardTap=null;
     $('#setup-wizard').close();
     $('#log').innerHTML='';
     $('.history').hidden=false;
@@ -414,6 +431,7 @@ function setup() {
     draw(state, me(), 2);
     log('Cards dealt. First to three different complete colors wins.');
     render();
+    if(window.parent!==window)window.parent.postMessage({type:'muha-deal-started'},location.origin);
   };
 }
 $('#new').onclick=()=>{if(busy||$('#choice').open||$('#setup-wizard').open||$('#table-viewer').open)return;setup()};
