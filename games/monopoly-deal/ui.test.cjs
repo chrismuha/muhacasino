@@ -21,7 +21,7 @@ async function open(viewport={width:430,height:932},storage,contextOptions={}){
  const page=await context.newPage();page.errors=[];page.on('pageerror',error=>page.errors.push(error.message));
  // Test-only instrumentation is added by the test server response interceptor.
  // The shipped app has no fixture or private-state access API.
- await page.route('**/monopoly-deal/main.js?*',async route=>{const response=await route.fetch();await route.fulfill({response,body:await response.text()+`\nwindow.__dealTest={get state(){return state},get visible(){return visible},get busy(){return busy},setState(s,show=true){state=s;visible=show;selectedCardId=null;previewFlipped=false;previewExpanded=false;lastCardTap=null;render()},render,run,play,end,rearrange,defend,pay,checkWin,tableViews};`})});
+ await page.route('**/monopoly-deal/main.js?*',async route=>{const response=await route.fetch();await route.fulfill({response,body:await response.text()+`\nwindow.__dealTest={get state(){return state},get visible(){return visible},get busy(){return busy},setState(s,show=true){state=s;visible=show;selectedCardId=null;previewFlipped=false;previewExpanded=false;lastCardTap=null;turnHandoff=!show;render()},render,run,play,end,rearrange,defend,pay,checkWin,tableViews};`})});
  await page.goto(origin+'/games/monopoly-deal/');await page.waitForFunction(()=>window.__dealTest);return page;
 }
 async function close(page){assert.deepEqual(page.errors,[],'No browser runtime errors');await page.context().close()}
@@ -239,17 +239,16 @@ test('touch and live rotation keep selection, controls, labels, and hand privacy
  await p.locator('#play-card').tap();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.length),1);await p.locator('#hide-hand').tap();await p.setViewportSize({width:844,height:390});assert.equal(await p.locator('#game [data-card]').count(),0);await p.locator('#reveal').tap();assert.equal(await p.locator('#game [data-card]').count(),6);await close(p);
 });
 
-test('hiding and reloading preserve the completed deal and keep hands private',async()=>{
+test('closing preview and reloading preserve the completed deal and keep the resumed turn private',async()=>{
  const p=await open({width:390,height:844});await fixture(p);
  await p.locator('[data-card]').first().click();await p.locator('#play-card').click();await idle(p);
  const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
- await p.locator('#hide-hand').click();await p.locator('#reveal').click();
+ await p.locator('[data-card]').first().click();await p.locator('#preview-open').click();await p.locator('#preview-close').click();
  assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
  await p.reload();await p.locator('#reveal').waitFor();
  assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
  assert.equal(await p.locator('#game [data-card]').count(),0);
- await p.locator('#reveal').click();assert.equal(await p.locator('#game [data-card]').count(),6);
- await close(p);
+ await p.locator('#reveal').click();assert.equal(await p.locator('#game [data-card]').count(),6);await close(p);
 });
 
 test('hosted keyboard and header collapse preserve the frame',async()=>{
@@ -326,7 +325,7 @@ test('preview buttons and arrow keys preserve wild side, private hands, and sing
  await p.locator('.selected-table-card').focus();await p.keyboard.press('ArrowLeft');assert.match(await p.locator('#selected-card-help').innerText(),/7 \/ 7/);
  await p.keyboard.press('ArrowRight');assert.match(await p.locator('#selected-card-help').innerText(),/1 \/ 7/);
  await p.locator('.selected-table-card').dispatchEvent('pointercancel');assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);
- await p.locator('#hide').click();assert.equal(await p.locator('.selected-table-card').count(),0);assert.equal(await p.locator('#preview-next').count(),0);
+ await p.locator('#preview-close').click();assert.equal(await p.locator('.selected-table-card').count(),0);assert.equal(await p.locator('#preview-next').count(),0);
  await fixture(p,'wild',2);await p.locator('[data-card]').first().click();await p.locator('#preview-open').click();assert.equal(await p.locator('#preview-next').getAttribute('aria-disabled'),'true');
  const id=await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card');await swipePreview(p,-90);assert.equal(await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card'),id);
  await p.locator('#flip-card').click();await p.locator('#play-card').click();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[0].color),'lightblue');
@@ -441,7 +440,7 @@ test('single click selects actions with the hand visible; double click enlarges 
  await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,380)));
  await p.locator(`[data-card="${id}"]`).dblclick();await p.locator('.selected-table-card').waitFor();
  const stateBefore=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
- await p.locator('#hide').click();assert.equal(await p.locator('.selected-table-card').count(),0);assert.equal(await p.locator('.cards').isVisible(),true);
+ await p.locator('#preview-close').click();assert.equal(await p.locator('.selected-table-card').count(),0);assert.equal(await p.locator('.cards').isVisible(),true);
  assert.equal(await p.locator(`[data-card="${id}"]`).getAttribute('aria-pressed'),'true');assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),stateBefore);
  await p.locator('#preview-open').click();await p.locator('#preview-close').click();assert.equal(await p.locator('.cards').isVisible(),true);
  await p.locator('#play-card').click();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[0].id),Number(id));
@@ -451,7 +450,7 @@ test('double tapping a hand card opens preview and closing keeps every hand card
  const p=await open({width:390,height:844},undefined,{isMobile:true,hasTouch:true});await fixture(p,'hand',2);
  await p.locator('[data-card]').first().tap();assert.equal(await p.locator('.selected-table-card').count(),0);
  await p.locator('[data-card]').first().tap();await p.locator('.selected-table-card').waitFor();
- await p.locator('#hide').tap();assert.equal(await p.locator('.cards').isVisible(),true);assert.equal(await p.locator('[data-card]').count(),7);
+ await p.locator('#preview-close').tap();assert.equal(await p.locator('.cards').isVisible(),true);assert.equal(await p.locator('[data-card]').count(),7);
  await p.locator('[data-card]').nth(1).tap();assert.equal(await p.locator('#bank-card').getAttribute('aria-disabled'),'false');assert.equal(await p.locator('.selected-table-card').count(),0);
  await close(p);
 });
@@ -474,11 +473,110 @@ test('Monopoly Deal collapses the casino header only after dealing; expansion ke
  await close(p);
 });
 
-test('keyboard enlargement and explicit Privacy keep selection separate from private hand visibility',async()=>{
+test('closing enlarged cards never hides hands; Reveal is only offered at a turn handoff',async()=>{
  const p=await open();await fixture(p,'hand',2);
- await p.locator('[data-card]').first().focus();await p.keyboard.press('Enter');assert.equal(await p.locator('.cards').isVisible(),true);assert.equal(await p.locator('.selected-table-card').count(),0);
+ assert.equal(await p.locator('#hide,#hide-hand').count(),0);
+ await p.locator('[data-card]').first().focus();await p.keyboard.press('Enter');assert.equal(await p.locator('.selected-table-card').count(),0);
  await p.keyboard.press('Enter');await p.locator('.selected-table-card').waitFor();await p.locator('#preview-close').click();
- assert.equal(await p.locator('.cards').isVisible(),true);const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
- await p.locator('#hide-hand').click();assert.equal(await p.locator('[data-card]').count(),0);await p.locator('#reveal').click();assert.equal(await p.locator('[data-card]').count(),7);
- assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);await close(p);
+ assert.equal(await p.locator('.cards').isVisible(),true);assert.equal(await p.locator('#reveal').count(),0);
+ await p.locator('#end').click();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.turn),1);
+ assert.equal(await p.locator('.cards').count(),0);await p.locator('#reveal').click();assert.equal(await p.locator('[data-card]').count(),7);
+ await close(p);
+});
+
+async function horizontalWheel(target,dx){
+ for(let i=0;i<6;i++)await target.dispatchEvent('wheel',{deltaX:dx,deltaY:1,deltaMode:0,bubbles:true,cancelable:true});
+}
+test('public bank and property pages fit phone panes and support swipe and precise trackpad navigation',async()=>{
+ for(const viewport of [{width:390,height:650},{width:320,height:568}]){
+  const p=await open(viewport);await fixture(p,'hand',2);
+  await p.evaluate(()=>{const s=window.__dealTest.state;for(let i=0;i<8;i++){const index=s.draw.findIndex(c=>c.type==='money');s.players[0].bank.push(s.draw.splice(index,1)[0]);}for(let i=0;i<4;i++){const index=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===1);s.players[0].props.push(s.draw.splice(index,1)[0]);}window.__dealTest.render()});
+  for(const kind of ['bank','properties']){
+   await p.locator(`.current-${kind}`).click();await p.locator('.content-page-nav span').waitFor();await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,100)));
+   let count=0;
+   while(true){
+    const issue=await p.locator('#table-view-content').evaluate(el=>({scroll:el.scrollHeight,height:el.clientHeight,card:[...el.querySelectorAll('.modern-public-card')].map(c=>c.getBoundingClientRect().height)}));
+    assert.ok(issue.scroll<=issue.height+1,`${viewport.width} ${kind}: ${JSON.stringify(issue)}`);
+    if(await p.locator('.content-page-nav button').last().isDisabled())break;
+    await p.locator('.content-page-nav button').last().click();assert.ok(++count<20);
+   }
+   if(count){
+    await p.locator('.content-page-nav button').first().click();const before=await p.locator('.content-page-nav span').innerText();
+    await horizontalWheel(p.locator('#table-view-content'),8);assert.notEqual(await p.locator('.content-page-nav span').innerText(),before);
+    await horizontalWheel(p.locator('#table-view-content'),-8);assert.equal(await p.locator('.content-page-nav span').innerText(),before);
+    const box=await p.locator('#table-view-content').boundingBox();await p.mouse.move(box.x+box.width*.7,box.y+30);await p.mouse.down();await p.mouse.move(box.x+box.width*.3,box.y+30,{steps:8});await p.mouse.up();assert.notEqual(await p.locator('.content-page-nav span').innerText(),before);
+   }
+   if(artifacts)await shot(p,`public-${kind}-${viewport.width}`);await p.locator('#table-view-close').click();
+  }
+  await close(p);
+ }
+});
+test('enlarged cards keep identical bounds across designs and trackpad gestures change one card per burst',async()=>{
+ for(const viewport of [{width:390,height:700},{width:1440,height:900}]){
+ const p=await open(viewport);await fixture(p,'hand',2);
+ await p.evaluate(async()=>{const {deck}=await import('./engine.mjs');const s=window.__dealTest.state;s.players[0].hand=[...new Map(deck().map(c=>[JSON.stringify([c.name,c.value,c.colors]),c])).values()];s.draw=[];s.players[1].hand=[];window.__dealTest.render()});
+ await p.locator('[data-card]').first().click();await p.locator('#preview-open').click();
+ const size=await p.locator('.selected-table-card .deal-face').boundingBox();const count=await p.locator('[data-card]').count();
+ for(let i=0;i<count;i++){
+  const rect=await p.locator('.selected-table-card .deal-face').boundingBox();assert.ok(Math.abs(rect.width-size.width)<1&&Math.abs(rect.height-size.height)<1,`design ${i} stays same size`);
+  const clipped=await p.locator('.selected-table-card .deal-face').evaluate(face=>{const r=face.getBoundingClientRect();return [...face.querySelectorAll('.reading-property-title,.reading-rent-wrap,.face-instructions,.action-medallion,.money-medallion,.reading-color')].filter(el=>{const p=el.getBoundingClientRect();return p.top<r.top-1||p.bottom>r.bottom+1||p.left<r.left-1||p.right>r.right+1}).map(el=>el.className)});
+  assert.deepEqual(clipped,[],`${viewport.width} design ${i} fits inside its frame`);
+  await p.locator('#preview-next').click();
+ }
+ const before=await p.locator('#selected-card-help').innerText();await horizontalWheel(p.locator('.selected-table-card'),8);const next=await p.locator('#selected-card-help').innerText();assert.notEqual(next,before);
+ await horizontalWheel(p.locator('.selected-table-card'),8);assert.equal(await p.locator('#selected-card-help').innerText(),next);
+ await horizontalWheel(p.locator('.selected-table-card'),-8);assert.equal(await p.locator('#selected-card-help').innerText(),before);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);await close(p);
+ }
+});
+test('launcher carousel arrows fit above phone bottom and precise trackpad swipes move slides',async()=>{
+ for(const viewport of [{width:390,height:650},{width:320,height:568},{width:430,height:740}]){
+  const p=await open(viewport);await p.goto(origin+'/index.html');await p.evaluate(()=>document.fonts.ready);await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,100)));
+  const geometry=await p.evaluate(()=>({arrows:[...document.querySelectorAll('.hero-arrow')].map(e=>e.getBoundingClientRect().toJSON()),actions:document.querySelector('.hero-slide.active .hero-actions').getBoundingClientRect().toJSON(),controls:document.querySelector('.hero-controls').getBoundingClientRect().toJSON(),height:innerHeight}));
+  assert.ok(geometry.arrows.every(r=>r.top>=0&&r.bottom<=geometry.height-16),JSON.stringify(geometry));assert.ok(geometry.controls.top>=geometry.actions.bottom+8,JSON.stringify(geometry));
+  const before=await p.locator('.hero-slide.active').getAttribute('data-hero-game');await horizontalWheel(p.locator('#heroTrack'),8);const after=await p.locator('.hero-slide.active').getAttribute('data-hero-game');assert.notEqual(after,before);
+  await horizontalWheel(p.locator('#heroTrack'),8);assert.equal(await p.locator('.hero-slide.active').getAttribute('data-hero-game'),after);
+  await horizontalWheel(p.locator('#heroTrack'),-8);assert.equal(await p.locator('.hero-slide.active').getAttribute('data-hero-game'),before);
+  if(artifacts)await shot(p,`launcher-controls-${viewport.width}`);await close(p);
+ }
+});
+
+test('hand trackpad scrolling and catalog swipe/trackpad navigation preserve play count',async()=>{
+ const p=await open({width:390,height:844});await fixture(p,'hand',2);
+ const r=await p.locator('.cards').boundingBox();await p.mouse.move(r.x+r.width/2,r.y+r.height/2);await p.mouse.wheel(170,0);await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,180)));
+ assert.ok(await p.locator('.cards').evaluate(el=>el.scrollLeft>0));assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);
+ await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Cards'});
+ const before=await p.locator('.catalog-position').innerText();await horizontalWheel(p.locator('#table-view-content'),8);assert.notEqual(await p.locator('.catalog-position').innerText(),before);
+ await horizontalWheel(p.locator('#table-view-content'),-8);assert.equal(await p.locator('.catalog-position').innerText(),before);
+ const box=await p.locator('.catalog-face').boundingBox();await p.mouse.move(box.x+box.width*.7,box.y+50);await p.mouse.down();await p.mouse.move(box.x+box.width*.3,box.y+50,{steps:8});await p.mouse.up();
+ const after=await p.locator('.catalog-position').innerText();assert.notEqual(after,before);
+ await p.locator('#table-view-content').dispatchEvent('wheel',{deltaX:0,deltaY:100,bubbles:true});assert.equal(await p.locator('.catalog-position').innerText(),after);
+ await close(p);
+});
+
+test('guide and release notes match deck facts, current controls, and the same-day v1.3.0 label',async()=>{
+ const p=await open();const facts=await p.evaluate(async()=>{const {GUIDE_RULES,RELEASE_NOTES,cardDesigns}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),notes:JSON.stringify(RELEASE_NOTES),designs:cardDesigns().length,cards:deck().length,title:RELEASE_NOTES[0][0]}});
+ assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.match(facts.title,/v1\.3\.0/);
+ for(const instruction of ['Double-tap','Close returns','no manual Hide','trackpad','Coming soon','Continue turn'])assert.ok(facts.rules.toLowerCase().includes(instruction.toLowerCase()),instruction);
+ assert.doesNotMatch(facts.notes,/overlapping hand below|Privacy separately hides|actions below the selected|Collapsible Table appearance/);
+ const history=await readFile(path.join(root,'about.html'),'utf8'),section=history.slice(history.indexOf('<article id="monopoly-deal"'),history.indexOf('<article id="sorry"'));
+ assert.equal((section.match(/2026-10-25/g)||[]).length,1);assert.match(section,/v1\.3\.0/);assert.doesNotMatch(section,/separate Privacy control/);
+ await close(p);
+});
+test('private payment resumes the same turn with Continue turn rather than Reveal my hand',async()=>{
+ const p=await open();await fixture(p,'debt',2);await playFirst(p);await choose(p,'Alex');await choose(p,'Ready to pay');await choose(p,0);await idle(p);
+ assert.equal(await p.locator('#reveal').innerText(),'Continue turn');await p.locator('#reveal').click();
+ assert.equal(await p.locator('#reveal').count(),0);assert.equal(await p.locator('#hide,#hide-hand').count(),0);
+ await p.locator('#end').click();await idle(p);assert.equal(await p.locator('#reveal').innerText(),'Reveal my hand');await close(p);
+});
+
+test('public viewer touch swipes page in both directions while vertical gestures leave the page selected',async t=>{
+ if(browser.browserType().name()!=='chromium'){t.skip('Chromium touch injection');return;}
+ const p=await open({width:390,height:700},undefined,{isMobile:true,hasTouch:true});await fixture(p,'hand',2);
+ await p.evaluate(()=>{const s=window.__dealTest.state;for(let i=0;i<8;i++){const j=s.draw.findIndex(c=>c.type==='money');s.players[0].bank.push(s.draw.splice(j,1)[0]);}window.__dealTest.render()});
+ await p.locator('.current-bank').tap();await p.locator('.content-page-nav span').waitFor();await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,100)));
+ const first=await p.locator('.content-page-nav span').innerText(),session=await p.context().newCDPSession(p);
+ async function touch(dx,dy){const r=await p.locator('#table-view-content').boundingBox(),x=r.x+r.width/2,y=r.y+70;await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});for(let i=1;i<=6;i++)await session.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+dx*i/6,y:y+dy*i/6}]});await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});}
+ await touch(-90,0);assert.notEqual(await p.locator('.content-page-nav span').innerText(),first);await touch(90,0);assert.equal(await p.locator('.content-page-nav span').innerText(),first);
+ await touch(0,-60);assert.equal(await p.locator('.content-page-nav span').innerText(),first);await session.detach();await close(p);
 });

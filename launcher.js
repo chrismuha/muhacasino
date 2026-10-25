@@ -101,7 +101,7 @@ function syncHostedCabinetScreens(gameId = null) {
   device.classList.toggle("cabinet-non-slot-game", !slotGameActive);
 }
 
-const SITE_BUILD = "20261025-deal-selection-v49";
+const SITE_BUILD = "20261025-gestures-v51";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");
@@ -289,7 +289,7 @@ if (featuredSection) {
   document.fonts?.ready.then(scheduleFeaturedLayout);
   document.fonts?.addEventListener('loadingdone', scheduleFeaturedLayout);
 }
-let lastHeroWheelAt = 0;
+let heroWheelLast=0,heroWheelTotal=0,heroWheelDirection=0,heroWheelLocked=false;
 
 let gameLoadTimer = 0;
 const bingoThemeChannel = "BroadcastChannel" in window
@@ -400,14 +400,17 @@ addHorizontalSwipe(document.querySelector("#heroTrack"), (direction) => {
   restartSlider();
 });
 
-document.querySelector("#heroTrack").addEventListener("wheel", (event) => {
-  if (Math.abs(event.deltaX) < 24 || Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
-  event.preventDefault();
-  if (Date.now() - lastHeroWheelAt < 500) return;
-  lastHeroWheelAt = Date.now();
-  showSlide(activeSlide + (event.deltaX > 0 ? 1 : -1));
-  restartSlider();
-}, { passive: false });
+document.querySelector('#featured').addEventListener('wheel',event=>{
+ if(event.ctrlKey||event.metaKey||Math.abs(event.deltaX)<=Math.abs(event.deltaY)*1.2)return;
+ const dx=event.deltaX*(event.deltaMode===1?16:event.deltaMode===2?innerWidth:1);
+ if(Math.abs(dx)<.5)return;
+ const now=performance.now(),direction=Math.sign(dx);
+ if(now-heroWheelLast>200||direction!==heroWheelDirection){heroWheelTotal=0;heroWheelLocked=false;heroWheelDirection=direction;}
+ heroWheelLast=now;event.preventDefault();
+ if(heroWheelLocked)return;
+ heroWheelTotal+=dx;
+ if(Math.abs(heroWheelTotal)>=32){heroWheelLocked=true;showSlide(activeSlide+direction);restartSlider();}
+},{passive:false});
 
 document.querySelectorAll(".game-rail").forEach((rail) => {
   let wheelEndTimer = 0;

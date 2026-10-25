@@ -1,3 +1,4 @@
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-gestures-v51';
 // Paginate rendered content without shrinking text or hiding oversized items.
 let dispose = () => {};
 export function paginateViewer(dialog,content){
@@ -54,14 +55,22 @@ export function paginateViewer(dialog,content){
   }
   index=Math.min(old,pages.length-1);show();
  }
- previous.onclick=()=>{if(index>0){index--;show();}};
- next.onclick=()=>{if(index<pages.length-1){index++;show();}};
+ function navigate(direction){
+  const target=index+direction;
+  if(target<0||target>=pages.length)return;
+  index=target;show();
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)content.animate([{opacity:.6,transform:`translateX(${direction*16}px)`},{opacity:1,transform:'translateX(0)'}],{duration:160,easing:'ease-out'});
+ }
+ previous.onclick=()=>navigate(-1);
+ next.onclick=()=>navigate(1);
+ const detachNavigation=attachHorizontalNavigation(content,navigate);
  const schedule=()=>{if(!active)return;cancelAnimationFrame(frame);frame=requestAnimationFrame(rebuild);};
  window.addEventListener('resize',schedule);
  window.visualViewport?.addEventListener('resize',schedule);
  document.fonts?.ready.then(schedule);
  schedule();
  dispose=()=>{
+  detachNavigation();
   active=false;dialog.classList.remove('has-content-pages');
   cancelAnimationFrame(frame);window.removeEventListener('resize',schedule);
   window.visualViewport?.removeEventListener('resize',schedule);nav.remove();

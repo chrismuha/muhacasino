@@ -870,13 +870,16 @@
       <article id="monopoly-deal" class="history-card">
         <header><span class="game-icon">▣</span><div><p>New tabletop game · 2–4 players</p><h2>Monopoly Deal</h2></div><b>v1.3.0</b></header>
         <section><h3>v1.3.0 · 2026-10-25 · Swipe through your hand</h3><ul>
-          <li>Single-tap a hand card to select it and show actions on the right; double-tap or double-click to enlarge it. Hide closes the enlarged view while keeping the hand and selection; a separate Privacy control hides local multiplayer hands.</li>
+          <li>Added horizontal swipe and precise trackpad navigation to paged table content and the card catalog. Enlarged hand cards keep a consistent frame so browsing does not jump between card sizes.</li>
+          <li>Removed manual hand-hiding controls. Close exits the enlarged preview; Reveal my hand appears for the incoming or restored current turn.</li>
+          <li>Compacted public bank, property, and discard cards into side-by-side artwork and text rows, keeping each paged item and its navigation visible on phones.</li>
+          <li>Single-tap a hand card to select it and show actions on the right; double-tap or double-click to enlarge it. Close returns from the enlarged view while keeping the hand and selection. Manual hand hiding was removed; Reveal my hand is reserved for turn handoffs or resuming the saved current turn.</li>
           <li>Automatically collapse the casino header after dealing a new Monopoly Deal game. The header can be expanded again without resetting the game; other games retain their existing behavior.</li>
           <li>New: drag a hand card onto Bank to bank it or Properties to play it, with highlighted drop targets and normal rules and prompts. Touch users hold before dragging. Invalid drops spend no plays; sorting, buttons, and keyboard controls remain available.</li>
           <li>Made swipes follow your finger with animated transitions, added momentum to hand scrolling, kept hand cards separate and fully visible, and inset close-button focus outlines.</li>
-          <li>Reduced mobile card sizes and table spacing so the selected card and play controls fit together; use Hide to return from swipe browsing to the hand strip.</li>
+          <li>Reduced mobile card sizes and table spacing so the selected card and play controls fit together; use Close to return from swipe browsing to the hand strip.</li>
           <li>Swipe left or right on the enlarged selected card to browse your hand, wrapping at either end. Previous/Next buttons and arrow keys also select cards; Flip, Bank, and Play always use the displayed card without spending a play to browse.</li>
-          <li>Enlarged the draw deck and restored the larger mobile hand and selected-card layout, with actions below the selected card.</li>
+          <li>Improved draw-deck visibility and compact card previews, with contextual actions beside the card.</li>
           <li>Open setup at the top with immediately visible name fields; scroll the active field above the keyboard without shrinking the game.</li>
           <li>Give opponents full-height property previews and visible bank cards, with horizontal browsing for multiple opponents on phones.</li>
           <li>Keep the table size stable while typing on mobile, enlarge hand and selected cards, wrap long card titles, and recover the current deal in the same tab after a frame reload.</li>
@@ -886,11 +889,11 @@
           <li>Reduced mobile table spacing, added a visible start panel when no match is active, prevented automatic player-count dropdown focus, and made wild properties prefer completing an existing set.</li>
           <li>Renamed the default Blue table theme to Modern, retaining Classic and independent table colors, with a Blue preset available in both themes.</li>
           <li>Added drag, touch, and keyboard hand sorting, explanations for unavailable controls, refreshed Modern bank, deck, and property viewers, and clearer selected-card values, titles, and rent tables.</li>
-          <li>Made names and control labels stay on one line in Modern and Classic, with fitted text and local scrolling for unusually long names and choices.</li>
+          <li>Fitted or scrollable controls keep long labels accessible; public-card titles and hand hints can wrap.</li>
           <li>Added a side-by-side landscape table, compact mobile toolbar labels, and contained card previews that preserve their proportions without covering player assets or action buttons.</li>
           <li>Kept opponent-panel labels visible and made narrow settings, toolbars, large hands, and public property groups safely scrollable.</li>
           <li>Made card catalogs scroll on short displays and kept guide and activity text reachable in extra-short viewports.</li>
-          <li>Added a 22-viewport responsive regression matrix from narrow phones through desktop, including touch controls, live rotation, all 58 card designs, private handoffs, independent saved theme colors, and the full game flow.</li>
+          <li>Added a responsive test matrix and focused Chrome/WebKit checks for cards, turn privacy, setup, themes, navigation, drag/drop, and common phone layouts.</li>
         </ul></section>
         <section><h3>v1.1.0 · 2026-10-24 · Blue table theme</h3><ul>
           <li>Added the default Blue table theme with colored player-name panels without avatars, opponent columns, a centered selected card with Flip/Bank/Play/Pass controls, and the current player’s bank, property area, and overlapping hand.</li>
