@@ -1,4 +1,4 @@
-const CACHE_NAME = "muha-casino-shell-20261025-deal-toolbar";
+const CACHE_NAME = "muha-casino-shell-20261025-clean-icons-v5";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -11,11 +11,11 @@ const APP_SHELL = [
   "./statistics.js",
   "./interaction-lock.js",
   "./manifest.webmanifest",
-  "./icons/muha-casino-192-v3.png",
-  "./icons/muha-casino-512-v3.png",
-  "./icons/muha-casino-maskable-v3.png",
-  "./icons/muha-casino-touch-v3.png",
-  "./icons/round-browser-icon-v4.svg"
+  "./icons/casino-app-192-v5.png",
+  "./icons/casino-app-512-v5.png",
+  "./icons/casino-maskable-v5.png",
+  "./icons/casino-touch-v5.png",
+  "./icons/casino-mark-v5.svg"
 ];
 
 self.addEventListener("install", (event) => {

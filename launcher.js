@@ -180,6 +180,11 @@ function syncGameViewport() {
  const top=viewport?.offsetTop || 0;
  document.documentElement.style.setProperty('--casino-visible-height',`${height}px`);
  document.documentElement.style.setProperty('--casino-visible-top',`${top}px`);
+ if(!gameView.hidden && document.body.classList.contains('game-open')){
+  const available=gameView.getBoundingClientRect().height;
+  const toolbar=gameView.querySelector('.game-toolbar').getBoundingClientRect().height;
+  gameView.style.setProperty('--casino-frame-height',`${Math.max(0,available-toolbar)}px`);
+ }
 }
 window.addEventListener('resize',syncGameViewport);
 window.addEventListener('pageshow',syncGameViewport);
@@ -533,11 +538,13 @@ setGameToolbarCollapsed(false);
     delete gameView.dataset.bingoTheme;
   }
   gameFrame.title = game.title;
-  navigateGameFrame(activeGameUrl());
   launcher.hidden = true;
   gameView.hidden = false;
   document.body.classList.add("game-open");
   syncGameViewport();
+  // Size the visible host before the child document starts its first layout.
+  gameFrame.getBoundingClientRect();
+  navigateGameFrame(activeGameUrl());
   document.title = `${game.title} | Muha Casino`;
 
   if (updateHistory) history.pushState({ gameId }, "", `#${gameId}`);
@@ -710,7 +717,19 @@ gameFrame.addEventListener("load", () => {
   syncPrettyPennyFrameWidth();
   window.requestAnimationFrame(syncPrettyPennyFrameWidth);
   window.setTimeout(syncPrettyPennyFrameWidth, 150);
-  gameLoadState.hidden = true;
+  // Keep the loading cover until the sized frame has had a complete paint turn.
+  const loadedGame=activeGameId,loadedDocument=gameFrame.contentDocument;
+  syncGameViewport();
+  window.requestAnimationFrame(()=>{
+   if(activeGameId!==loadedGame||gameFrame.contentDocument!==loadedDocument)return;
+   syncGameViewport();
+   gameFrame.getBoundingClientRect();
+   window.requestAnimationFrame(()=>{
+    if(activeGameId!==loadedGame||gameFrame.contentDocument!==loadedDocument||gameView.hidden)return;
+    syncGameViewport();
+    gameLoadState.hidden=true;
+   });
+  });
   if (slotGameIds.has(activeGameId)) {
     const experience = gameFrame.contentWindow?.slotExperience;
     syncSlotModeToolbar(experience?.getDisplayMode(), experience?.isInteractionLocked());

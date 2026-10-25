@@ -78,3 +78,9 @@ body.game-open #gameView #gameFrame{
  #gameView .toolbar-deal-controls[hidden]{display:none}
  #gameView .toolbar-deal-controls button{padding:6px 4px;font-size:13px}
 }
+
+/* Use a definite frame height on first paint rather than growing a zero-height iframe. */
+body.game-open #gameView #gameFrame{
+ flex:0 0 auto;
+ height:var(--casino-frame-height,calc(100% - var(--casino-toolbar-height)))!important;
+}
