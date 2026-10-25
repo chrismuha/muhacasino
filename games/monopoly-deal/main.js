@@ -1,10 +1,10 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-readable-viewers-v60';
-import {paginateViewer} from './view-pages.mjs?build=20261025-readable-viewers-v60';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-readable-viewers-v60';
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-readable-viewers-v60';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-readable-viewers-v60';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-readable-viewers-v60';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-readable-viewers-v60';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-property-manager-v61';
+import {paginateViewer} from './view-pages.mjs?build=20261025-property-manager-v61';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-property-manager-v61';
+import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-property-manager-v61';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-property-manager-v61';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-property-manager-v61';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-property-manager-v61';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -51,7 +51,7 @@ function updateUnavailableControls() {
    if(button.id === 'discard-card')reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.') || noPlays || (selectedCardIds.size>3-state.plays?`Discard uses one play per card. Select at most ${3-state.plays} card${3-state.plays===1?'':'s'}.`:'');
    else if(button.id === 'deselect')reason = selectedCardIds.size?'':'No cards are selected.';
    else if(button.id === 'preview-previous'||button.id === 'preview-next')reason = hiddenHand || (me().hand.length<2 ? 'This is the only card in your hand.' : '');
-   else if(button.id === 'move')reason = hiddenHand || (!me().props.some(card => card.colors.length > 1) ? 'You have no wild properties on the table to rearrange.' : '');
+   else if(button.id === 'move')reason = hiddenHand || (document.documentElement.dataset.theme==='classic'&&!me().props.some(card=>card.colors.length>1)?'You have no wild properties on the table to rearrange.':'');
    else if(button.id === 'flip-card')reason = hiddenHand || (!selected ? 'Select a two-color wild property card to flip it.' : '') || noPlays || (selected.type !== 'property' || selected.colors.length !== 2 ? 'Only two-color wild property cards can be flipped.' : '');
    else if(button.id === 'bank-card')reason = hiddenHand || (!selected ? 'Select a money or action card to bank.' : '') || noPlays || (selected.type === 'property' ? 'Property cards cannot be banked. Play this card as a property.' : '');
    else if(button.id === 'play-card')reason = hiddenHand || (!selected ? 'Select a property or action card to play.' : '') || noPlays || (selected.type === 'money' ? 'Money cards can only be banked, not played.' : '');
@@ -120,7 +120,7 @@ function wireHandSorting() {
 // Fit short labels without breaking words; unusually long names can still scroll.
 let labelMeasureCanvas;
 function fitResponsiveLabels() {
- const nodes=document.querySelectorAll('[data-fit-label],.player h3,.player .group>strong,.player .group>div,.card>strong,.catalog-face>h3,.table-view-heading h2,#question,.wizard-heading h2,#setup-wizard h3,.privacy h2');
+ const nodes=document.querySelectorAll('[data-fit-label],.player h3,.player .group>strong,.player .group>div,.card>strong,.catalog-face>h3,.table-view-heading h2,.wizard-heading h2,#setup-wizard h3,.privacy h2');
  for(const node of nodes){
   if(!node.getClientRects().length)continue;
   node.style.removeProperty('font-size');
@@ -278,7 +278,7 @@ function render(){
   log(`${me().name} discarded ${cards.length} card${cards.length===1?'':'s'}.`);
   showToast(`${cards.length} card${cards.length===1?'':'s'} discarded.`);
  });
- $('#move').onclick=()=>run(rearrange);
+ $('#move').onclick=()=>openTableViewer(`properties-${state.turn}`);
  $('#flip-card').onclick=()=>{
   previewFlipped=!previewFlipped;
   render();
@@ -380,7 +380,16 @@ async function play(c,chosenMode=null,chosenColor=null){if((!visible&&!me().isAI
  let t=await choose(a==='breaker'?'Steal which complete set?':'Choose a property',targets.map(t=>[`${t.p.name} · ${t.card?label(t.card):GROUPS[t.color].name}`,t]));use(c);if(!await defend(t.p,p,c.name))return;
  if(a==='breaker'){for(const card of [...properties(t.p,t.color)]){remove(t.p.props,card);p.props.push(card)}for(const b of [...t.p.buildings.filter(x=>x.color===t.color)]){remove(t.p.buildings,b);p.buildings.push(b)}}else{remove(t.p.props,t.card);p.props.push(t.card);if(own){remove(p.props,own);t.p.props.push(own)}}
 }
-async function rearrange(){if(!visible)return;let wilds=me().props.filter(c=>c.colors.length>1);if(!wilds.length)return;let c=await choose('Move a wild property',[['Cancel',null],...wilds.map(c=>[label(c),c])]);if(!c)return;let color=await colorFor(c);if(color!==c.color){c.color=color;normalize(me());log(`${me().name} moved a wild to ${GROUPS[color].name}.`)}}
+async function rearrange(cardId=null){
+ if(!visible)return;
+ const wilds=me().props.filter(card=>card.colors.length>1);
+ if(!wilds.length)return;
+ const card=cardId===null?await choose('Move a wild property',[['Cancel',null],...wilds.map(card=>[label(card),card])]):wilds.find(card=>card.id===cardId);
+ if(!card)return;
+ const detail=`Currently ${GROUPS[card.color].name}. Moving a wild is free and may break a complete set. If the set becomes incomplete, its buildings move to your bank.`;
+ const color=await choose('Choose the property color',[['Cancel',null],...card.colors.map(color=>[GROUPS[color].name,color])],detail);
+ if(color&&color!==card.color){card.color=color;normalize(me());log(`${me().name} moved a wild to ${GROUPS[color].name}.`);}
+}
 async function end(){const ending=me().name;selectedCardIds.clear();selectedCardId=null;lastCardTap=null;while(me().hand.length>7){visible=false;render();let c=await choose(`${me().name}: discard down to seven`,me().hand.map(c=>[label(c),c]));remove(me().hand,c);state.discard.push(c)}state.turn=(state.turn+1)%state.players.length;state.plays=0;visible=false;turnHandoff=true;draw(state,me(),me().hand.length?2:5);log(`${me().name} begins their turn.`);showToast(`${ending}’s turn is over. ${me().name}’s turn.`)}
 // Size only the setup dialog to the area above the keyboard; keep the table stable.
 function syncSetupViewport(){
@@ -645,7 +654,15 @@ $('#table-view-category').onchange = event => {
   showTableView(Number(event.target.value));
   if($('#table-viewer').dataset.modernPublic === 'true')revealModernSection()?.focus({preventScroll:true});
 };
-$('#table-view-content').addEventListener('click',browsePropertyStack);
+$('#table-view-content').addEventListener('click',async event=>{
+ browsePropertyStack(event);
+ const control=event.target.closest('[data-move-wild],[data-change-wild]');
+ if(!control||busy||!visible||state?.winner||$('#table-viewer').dataset.view!==`properties-${state.turn}`)return;
+ const cardId=Number(control.dataset.moveWild||control.dataset.changeWild),key=`properties-${state.turn}`;
+ const card=me().props.find(card=>card.id===cardId),oldColor=card?.color;
+ await run(()=>rearrange(cardId));
+ if($('#table-viewer').open&&card?.color!==oldColor)showTableView(tableViews().findIndex(view=>view.key===key));
+});
 $('#table-view-close').onclick = () => $('#table-viewer').close();
 $('#table-viewer').addEventListener('keydown', event => {
   if (['INPUT', 'SELECT', 'TEXTAREA'].includes(event.target.tagName)) return;

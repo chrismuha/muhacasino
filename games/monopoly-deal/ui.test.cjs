@@ -91,7 +91,7 @@ test('selection, property placement, banking, Pass Go, 3-play cap, and turn priv
 
 test('wild flip controls played color; free rearrangement normalizes buildings',async()=>{
  const p=await open();await fixture(p,'wild');await p.locator('[data-card]').first().click();assert.equal(await p.locator('#flip-card').isEnabled(),true);await p.locator('#flip-card').click();await p.locator('#play-card').click();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[0].color),'lightblue');assert.match(await p.locator('.current-properties .wild-half').first().getAttribute('style'),/#77cfe9/);
- await fixture(p,'rearrange');await p.locator('#move').click();await choose(p,1);await choose(p,'Light Blue');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].buildings.length),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),2);await conservation(p);await close(p);
+ await fixture(p,'rearrange');await p.locator('#move').click();await p.locator('[data-stack-shift="1"]').click();await p.locator('[data-stack-shift="1"]').click();await p.locator('[data-change-wild]:visible').click();await choose(p,'Light Blue');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].buildings.length),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),2);await conservation(p);await close(p);
 });
 
 test('rent with two doublers charges every opponent, conserves cards, and hides hands during payment',async()=>{
@@ -940,4 +940,47 @@ test('casino-hosted property zoom preserves frame height and the selected card',
  assert.equal(await frame.locator('#table-view-content').innerHTML(),saved);
  if(session){await session.send('Emulation.setPageScaleFactor',{pageScaleFactor:1});await session.detach()}
  await conservation(game);await close(p);
+});
+
+test('property manager taps move wilds out of completed sets for free and normalize buildings',async()=>{
+ const p=await open();await fixture(p,'rearrange',2);
+ const wild=await p.evaluate(()=>window.__dealTest.state.players[0].props.find(c=>c.colors.length>1).id);
+ await p.locator('#move').click();await p.locator('.property-stack-card.is-active').waitFor();
+ // The last card initially shown is a building; browse to the wild.
+ for(let i=0;i<4&&await p.locator(`[data-move-wild="${wild}"]:visible`).count()===0;i++)await p.locator('[data-stack-shift="1"]').click();
+ await p.locator(`[data-move-wild="${wild}"]`).click();await choose(p,'Cancel');await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.find(c=>c.colors.length>1).color),'brown');
+ for(let i=0;i<4&&await p.locator(`[data-move-wild="${wild}"]:visible`).count()===0;i++)await p.locator('[data-stack-shift="1"]').click();
+ await p.locator('[data-change-wild]:visible').click();await choose(p,'Light Blue');await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.find(c=>c.colors.length>1).color),'lightblue');
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].buildings.length),0);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),2);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);
+ assert.equal(await p.locator('.current-properties').getAttribute('data-complete-sets'),'0');
+ await p.evaluate(()=>{window.__dealTest.state.plays=3});
+ await p.locator('.content-page-nav button').last().click();
+ await p.locator(`[data-move-wild="${wild}"]`).click();await choose(p,'Brown');await idle(p);
+ assert.equal(await p.locator('.current-properties').getAttribute('data-complete-sets'),'1');
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),3);
+ await p.locator('#modern-view-owner').selectOption('1');assert.equal(await p.locator('[data-change-wild]').count(),0);
+ await conservation(p);await close(p);
+});
+
+test('difficulty fits its field and long property prompts wrap without horizontal clipping',async()=>{
+ for(const viewport of [{width:240,height:568},{width:320,height:568},{width:420,height:780},{width:768,height:1024}]){
+  const p=await open(viewport);await p.locator('#new').click();
+  for(const difficulty of ['easy','normal']){
+   await p.locator('#ai-difficulty').selectOption(difficulty);
+   const bounds=await p.locator('#ai-difficulty').evaluate(el=>{const r=el.getBoundingClientRect(),label=el.parentElement.getBoundingClientRect(),style=getComputedStyle(el);const ctx=document.createElement('canvas').getContext('2d');ctx.font=`${style.fontSize} ${style.fontFamily}`;return {right:r.right,parent:label.right,available:el.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight),text:ctx.measureText(el.selectedOptions[0].text).width}});
+   assert.ok(bounds.right<=bounds.parent+1&&bounds.text<=bounds.available,`${viewport.width}: ${JSON.stringify(bounds)}`);
+  }
+  await p.locator('#wizard-cancel').click();await fixture(p,'sly',2);
+  await p.evaluate(()=>{const s=window.__dealTest.state;s.players[1].name='AlexandertheGreatPlayer';const i=s.draw.findIndex(c=>c.name==='North Carolina Avenue');s.players[1].props.push(s.draw.splice(i,1)[0]);window.__dealTest.render()});
+  await playFirst(p);await p.locator('#choice[open]').waitFor();
+  const option=p.locator('#options button').filter({hasText:'North Carolina Avenue'});
+  assert.equal(await option.evaluate(el=>getComputedStyle(el).whiteSpace),'normal');
+  assert.ok(await option.evaluate(el=>el.scrollWidth<=el.clientWidth+1));
+  assert.ok(await p.locator('#choice').evaluate(el=>el.scrollWidth<=el.clientWidth+1));
+  await choose(p,'North Carolina Avenue');await idle(p);await conservation(p);await close(p);
+ }
 });

@@ -72,7 +72,7 @@ export function modernBoard(state,visible,selectedId,flipped,expanded=false,turn
  <span class="own-groups">${propertyGroups(player)||'<span class="asset-empty">None yet</span>'}</span><span class="asset-count">${player.props.length} properties · ${player.buildings.length} buildings</span><span class="property-inspect-hint">Double-tap or hold for details</span></button>
  </div>
  <div class="current-stats"><span class="coin" aria-hidden="true">M</span><b>${bankTotal}M</b><span>▱ ×${player.hand.length}</span>
- <div class="table-tools"><button id="move" ${disabled(visible&&!finished)} aria-label="Rearrange wild properties"><span class="table-tool-icon" aria-hidden="true">↔</span><span class="tool-label-long">Rearrange wilds</span><span class="tool-label-short" aria-hidden="true">Wilds</span></button>
+ <div class="table-tools"><button id="move" ${disabled(visible&&!finished)} aria-label="Open property manager"><span class="table-tool-icon" aria-hidden="true">↔</span><span class="tool-label-long">Property manager</span><span class="tool-label-short" aria-hidden="true">Manage</span></button>
  <button id="discard-card" type="button">Discard${selectedIds.size?` (${selectedIds.size})`: ''}</button>
  <button id="deselect" type="button" aria-label="Clear all selected cards">Clear${selectedIds.size?` (${selectedIds.size})`: ''}</button>
  <button data-table-view="activity" aria-haspopup="dialog" aria-label="View table"><span class="table-tool-icon" aria-hidden="true">▦</span><span class="tool-label-long">View table</span><span class="tool-label-short" aria-hidden="true">Table</span></button>

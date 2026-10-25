@@ -545,3 +545,14 @@ dialog button,#preview-close{outline-offset:-4px}
 [data-theme=modern] #table-viewer[data-modern-public=true] .modern-card-value,
 [data-theme=modern] #table-viewer .property-stack-caption,
 [data-theme=modern] #table-viewer .property-set-status{font-size:16px;line-height:1.4}
+
+/* Setup selects stay inside their label column, including the difficulty field. */
+#setup-wizard label[for=ai-difficulty]{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:12px;min-width:0;max-width:100%;overflow:visible}
+#setup-wizard #ai-difficulty{width:100%;min-width:0;max-width:100%;font-size:16px;padding:8px 32px 8px 10px}
+@media(max-width:360px){
+ #setup-wizard label[for=ai-difficulty],#setup-wizard label[for=opponent-mode],#setup-wizard label[for=count]{grid-template-columns:minmax(0,1fr);gap:6px}
+}
+/* Property names and player names in prompts wrap instead of clipping sideways. */
+#choice #options{min-width:0;max-width:100%}
+#choice #options button{width:100%;height:auto;max-width:100%;min-width:0;white-space:normal;overflow:visible;overflow-wrap:anywhere;word-break:normal}
+#choice #question,#choice #detail{white-space:normal;overflow:visible;overflow-wrap:anywhere;word-break:normal;min-width:0;max-width:100%}
