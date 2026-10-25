@@ -19,7 +19,14 @@ export function modernViewerTools(state, view) {
 }
 
 function gallery(cards, {bank = false, newest = false} = {}) {
-  return `<ul class="modern-public-grid">${cards.map((card,index) => {
+  const groups=new Map();
+  if(bank)for(const card of cards){
+    const key=JSON.stringify([card.type,card.name,card.action,card.value,card.colors]);
+    const group=groups.get(key);
+    if(group)group.count++;else groups.set(key,{card,count:1});
+  }
+  const entries=bank?[...groups.values()]:cards.map(card=>({card,count:1}));
+  return `<ul class="modern-public-grid">${entries.map(({card,count},index) => {
     let description = card.description || 'Money';
     if (bank) description = `Banked for ${card.value}M. Available for payments; this card cannot be played as an action.`;
     else if (card.type === 'property') {
@@ -30,7 +37,7 @@ function gallery(cards, {bank = false, newest = false} = {}) {
         return `${group.name}: ${group.names.length} for a full set. Rent ${group.rent.map((value,i) => `${plural(i+1,'card')}: ${value}M`).join('; ')}.`;
       }).join(' ')}`;
     }
-    return `<li class="modern-public-card"><div class="modern-public-face" aria-hidden="true">${modernFace(card)}</div><div class="modern-public-copy"><h3 data-fit-label>${esc(card.name)}</h3><span class="modern-card-value">${card.value}M${bank ? ' · Banked' : ''}${newest && index === 0 ? ' · Latest' : ''}</span><p>${esc(description)}</p></div></li>`;
+    return `<li class="modern-public-card"><div class="modern-public-face" aria-hidden="true">${modernFace(card)}</div><div class="modern-public-copy"><h3 data-fit-label>${esc(card.name)}${bank?` <span class="bank-card-quantity" aria-label="${count} ${count===1?'copy':'copies'}">×${count}</span>`:''}</h3><span class="modern-card-value">${card.value}M${bank ? ' · Banked' : ''}${newest && index === 0 ? ' · Latest' : ''}</span><p>${esc(description)}</p></div></li>`;
   }).join('')}</ul>`;
 }
 

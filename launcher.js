@@ -101,7 +101,7 @@ function syncHostedCabinetScreens(gameId = null) {
   device.classList.toggle("cabinet-non-slot-game", !slotGameActive);
 }
 
-const SITE_BUILD = "20261025-ai-difficulty-v56";
+const SITE_BUILD = "20261025-bank-navigation-v57";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");
@@ -667,6 +667,13 @@ bingoThemeChannel?.addEventListener("message", (event) => {
 
 window.addEventListener("message", (event) => {
   if (event.origin !== window.location.origin) return;
+  if(event.data?.type==='muha-deal-ready'){
+   if(event.source===gameFrame.contentWindow&&activeGameId==='monopoly-deal'){
+    setGameToolbarCollapsed(false);
+    gameFrame.contentWindow.postMessage({type:'muha-deal-host-ready'},location.origin);
+   }
+   return;
+  }
   if(event.data?.type==='muha-deal-started'){
    if(event.source===gameFrame.contentWindow&&activeGameId==='monopoly-deal')setGameToolbarCollapsed(true);
    return;

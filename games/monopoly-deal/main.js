@@ -1,10 +1,10 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-ai-difficulty-v56';
-import {paginateViewer} from './view-pages.mjs?build=20261025-ai-difficulty-v56';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-ai-difficulty-v56';
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-ai-difficulty-v56';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-ai-difficulty-v56';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-ai-difficulty-v56';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-ai-difficulty-v56';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-bank-navigation-v57';
+import {paginateViewer} from './view-pages.mjs?build=20261025-bank-navigation-v57';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-bank-navigation-v57';
+import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-bank-navigation-v57';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-bank-navigation-v57';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-bank-navigation-v57';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-bank-navigation-v57';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -744,7 +744,6 @@ function upcomingGameSettings(){
 
 // Keep direct URLs usable; hosted games use the casino's single utility bar.
 if(window.parent!==window){
- document.documentElement.classList.add('casino-hosted');
  const appearance=document.createElement('dialog');
  appearance.id='appearance-dialog';
  appearance.setAttribute('aria-labelledby','appearance-title');
@@ -755,13 +754,16 @@ if(window.parent!==window){
  appearance.append(upcomingGameSettings());
  document.body.append(appearance);
  window.addEventListener('message',event=>{
-  if(event.source!==window.parent||event.origin!==location.origin||event.data?.type!=='muha-deal-command')return;
+  if(event.source!==window.parent||event.origin!==location.origin)return;
+  if(event.data?.type==='muha-deal-host-ready'){document.documentElement.classList.add('casino-hosted');return;}
+  if(event.data?.type!=='muha-deal-command')return;
   if(busy){showToast('Finish the current action or computer turn first.');return;}
   if(document.querySelector('dialog[open]'))return;
   if(event.data.command==='new')setup();
   if(event.data.command==='guide')openTableViewer('rules');
   if(event.data.command==='appearance'){appearance.showModal();close.focus({preventScroll:true});}
  });
+ window.parent.postMessage({type:'muha-deal-ready'},location.origin);
 }
 
 if(window.parent===window){

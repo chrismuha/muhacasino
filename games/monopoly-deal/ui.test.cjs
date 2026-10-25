@@ -726,3 +726,51 @@ test('AI difficulty setup, review, saved deal and human mode',async()=>{
  assert.deepEqual(await p.evaluate(()=>window.__dealTest.state.players.filter(p=>p.isAI).map(p=>p.aiDifficulty)),['easy','easy']);
  await close(p);
 });
+
+test('bank details groups identical cards with quantities and preserves balance',async()=>{
+ for(const viewport of [{width:390,height:844},{width:1440,height:900}]){
+  const p=await open(viewport);
+  await p.evaluate(async()=>{
+   const {createGame,deck}=await import('./engine.mjs');const s=createGame(['Chris','Alex']);s.draw=deck();s.discard=[];s.players.forEach(p=>{p.hand=[];p.bank=[];p.props=[];p.buildings=[]});
+   const take=fn=>s.players[0].bank.push(s.draw.splice(s.draw.findIndex(fn),1)[0]);
+   for(let i=0;i<3;i++)take(c=>c.type==='money'&&c.value===2);
+   for(let i=0;i<2;i++)take(c=>c.action==='debt');
+   take(c=>c.action==='sly');take(c=>c.action==='rent'&&c.colors.includes('brown'));take(c=>c.action==='rent'&&c.colors.includes('pink'));
+   window.__dealTest.setState(s);
+  });
+  await p.locator('.current-bank').click();
+  const summary=p.locator('[aria-label="Bank summary"]');assert.match(await summary.innerText(),/17/);assert.match(await summary.innerText(),/8 banked cards/);
+  await p.locator('.content-page-nav span').waitFor();await p.waitForTimeout(100);
+  const labels=[];
+  while(true){
+   labels.push(...await p.locator('.modern-public-card h3').allTextContents());
+   if(await p.locator('.content-page-nav button').last().count()===0)break;
+   if(await p.locator('.content-page-nav button').last().isDisabled())break;
+   await p.locator('.content-page-nav button').last().click();
+  }
+  assert.equal(labels.length,5);assert.ok(labels.some(s=>s.includes('2M')&&s.includes('×3')));assert.ok(labels.some(s=>s.includes('Debt Collector')&&s.includes('×2')));
+  assert.equal(labels.filter(s=>s.includes('Rent')&&s.includes('×1')).length,2);
+  await conservation(p);await close(p);
+ }
+});
+
+test('refresh restores casino navigation and New game for a saved deal',async()=>{
+ const p=await open({width:390,height:700});await p.goto(origin+'/index.html#monopoly-deal');
+ const frame=p.frameLocator('#gameFrame');await frame.locator('#ready-new').click();await frame.locator('#start').click();await frame.locator('#player-name-0').fill('Chris');await frame.locator('#start').click();await frame.locator('#start').click();
+ await p.waitForFunction(()=>document.querySelector('#toolbarCollapseButton').getAttribute('aria-expanded')==='false');
+ await frame.locator('body').evaluate(()=>location.reload());
+ await p.waitForFunction(()=>document.querySelector('#toolbarCollapseButton').getAttribute('aria-expanded')==='true');
+ await frame.locator('#reveal').waitFor();
+ assert.equal(await p.locator('#backButton').isVisible(),true);
+ await p.locator('[data-deal-command="new"]').click();await frame.locator('#setup-wizard[open]').waitFor();await frame.locator('#wizard-cancel').click();
+ await p.locator('#backButton').click();assert.equal(await p.locator('#gameView').isVisible(),false);await close(p);
+});
+
+test('an embedded game without a casino toolbar retains its own navigation after refresh',async()=>{
+ const p=await open();await fixture(p,'hand',2);
+ await p.route('**/test-embed.html',route=>route.fulfill({contentType:'text/html',body:'<iframe id="embedded" src="/games/monopoly-deal/" style="width:100%;height:800px"></iframe>'}));
+ await p.goto(origin+'/test-embed.html');const frame=p.frameLocator('#embedded');
+ await frame.locator('#new').waitFor();assert.equal(await frame.locator('.game-topbar').isVisible(),true);
+ await frame.locator('body').evaluate(()=>location.reload());await frame.locator('#new').waitFor();
+ assert.equal(await frame.locator('.game-topbar a').isVisible(),true);await frame.locator('#new').click();await frame.locator('#setup-wizard[open]').waitFor();await close(p);
+});
