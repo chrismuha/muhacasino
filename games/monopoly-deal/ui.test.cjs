@@ -307,7 +307,8 @@ test('selected-card swipes browse and wrap the hand without plays; Bank uses the
  const p=await open({width:390,height:844});await fixture(p,'hand',2);
  const ids=await p.evaluate(()=>window.__dealTest.state.players[0].hand.map(c=>c.id));
  await p.locator('[data-card]').first().click();
- await swipePreview(p,-90);assert.equal(await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card'),String(ids[1]));
+ await p.locator('.selected-table-card').evaluate(el=>el.dataset.previewIdentity='preserved');
+ await swipePreview(p,-90);assert.equal(await p.locator('.selected-table-card').getAttribute('data-preview-identity'),'preserved');assert.equal(await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card'),String(ids[1]));
  assert.equal(await p.locator('#bank-card').getAttribute('aria-disabled'),'false');assert.equal(await p.locator('#play-card').getAttribute('aria-disabled'),'true');
  await swipePreview(p,90);assert.equal(await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card'),String(ids[0]));
  await swipePreview(p,90);assert.equal(await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card'),String(ids.at(-1)));
@@ -362,7 +363,72 @@ test('compact hosted phone table fits selected cards and controls without vertic
    assert.ok(layout.card.width<=231);assert.ok(layout.controls.bottom<=layout.height+1);
    await frame.locator('#preview-close').click();
   }
-  assert.ok((await frame.locator('.modern-hand-card').first().boundingBox()).width<80);
+  assert.ok((await frame.locator('.modern-hand-card').first().boundingBox()).width<=90);
   await close(p);
  }
+});
+
+async function dragHandCard(page,card,target){
+ await card.scrollIntoViewIfNeeded();const from=await card.boundingBox(),to=await target.boundingBox();
+ await page.mouse.move(from.x+from.width/2,from.y+from.height/2);await page.mouse.down();
+ const sortingTarget=await target.getAttribute('data-card');
+ const targetX=to.x+to.width*(sortingTarget!==null?0.8:0.5);
+ await page.mouse.move(targetX,to.y+to.height/2,{steps:14});
+ await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(resolve)));
+ await page.mouse.up();await idle(page);
+}
+test('dropping hand cards banks or plays the dropped card; invalid and cancelled drops spend nothing',async()=>{
+ const p=await open();await fixture(p,'hand',2);
+ const ids=await p.evaluate(()=>window.__dealTest.state.players[0].hand.map(c=>c.id));
+ await dragHandCard(p,p.locator(`[data-card="${ids[0]}"]`),p.locator('.current-bank'));
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);assert.match(await p.locator('#game-toast').innerText(),/cannot be banked/);
+ await dragHandCard(p,p.locator(`[data-card="${ids[0]}"]`),p.locator('.current-properties'));
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[0].id),ids[0]);
+ await dragHandCard(p,p.locator(`[data-card="${ids[1]}"]`),p.locator('.current-bank'));
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank[0].id),ids[1]);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),2);
+ const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
+ const source=p.locator('[data-card]').first();await source.scrollIntoViewIfNeeded();const r=await source.boundingBox();
+ await p.mouse.move(r.x+r.width/2,r.y+r.height/2);await p.mouse.down();await p.mouse.move(5,5,{steps:10});await p.keyboard.press('Escape');await p.mouse.up();
+ assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);assert.equal(await p.locator('.hand-drag-ghost').count(),0);
+ await p.evaluate(()=>{window.__dealTest.state.plays=3;window.__dealTest.render()});
+ await dragHandCard(p,p.locator('[data-card]').first(),p.locator('.current-bank'));
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),1);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),3);
+ await conservation(p);await close(p);
+});
+test('whole hand cards have no overlap; end cards and close focus ring stay inside their panes',async()=>{
+ const p=await open({width:390,height:844});await fixture(p,'hand',2);
+ const issues=await p.locator('.cards').evaluate(strip=>{
+  const cards=[...strip.querySelectorAll('[data-card]')],issues=[];
+  for(let i=0;i<cards.length;i++){const r=cards[i].getBoundingClientRect(),s=strip.getBoundingClientRect();if(r.top<s.top||r.bottom>s.bottom)issues.push('vertical clipping');if(i&&r.left<cards[i-1].getBoundingClientRect().right)issues.push('overlapping cards');}
+  strip.scrollLeft=strip.scrollWidth;return issues;
+ });assert.deepEqual(issues,[]);
+ await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,150)));
+ const end=await p.locator('.cards').evaluate(strip=>{const r=strip.lastElementChild.getBoundingClientRect(),s=strip.getBoundingClientRect();return r.left>=s.left&&r.right<=s.right+1});assert.ok(end);
+ if(artifacts)await shot(p,'hand-without-clipping');
+ await p.locator('[data-card]').last().click();await p.locator('#preview-close').focus();
+ if(artifacts)await shot(p,'preview-close-outline');
+ assert.ok(await p.locator('#preview-close').evaluate(el=>parseFloat(getComputedStyle(el).outlineOffset)<0));
+ await p.locator('#preview-close').click();assert.equal(await p.locator('.selected-table-card').count(),0);
+ await close(p);
+});
+test('touch hold and drag drops a card on Properties without scrolling or spending extra plays',async t=>{
+ if(browser.browserType().name()!=='chromium'){t.skip('Chromium touch injection');return;}
+ const p=await open({width:390,height:844},undefined,{isMobile:true,hasTouch:true});await fixture(p,'hand',2);
+ const source=p.locator('[data-card]').first();await source.scrollIntoViewIfNeeded();const r=await source.boundingBox(),target=await p.locator('.current-properties').boundingBox();
+ const id=await source.getAttribute('data-card'),session=await p.context().newCDPSession(p),x=r.x+r.width/2,y=r.y+r.height/2;
+ await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});await new Promise(resolve=>setTimeout(resolve,300));
+ for(let i=1;i<=10;i++)await session.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+(target.x+target.width/2-x)*i/10,y:y+(target.y+target.height/2-y)*i/10}]});
+ await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[0]?.id),Number(id));assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);
+ assert.equal(await p.locator('.hand-drag-ghost').count(),0);await conservation(p);await session.detach();await close(p);
+});
+
+test('hand sorting still reorders freely and dropping an action on Properties plays it',async()=>{
+ const p=await open();await fixture(p,'hand',2);
+ const ids=await p.evaluate(()=>window.__dealTest.state.players[0].hand.map(c=>c.id));
+ await dragHandCard(p,p.locator(`[data-card="${ids[0]}"]`),p.locator(`[data-card="${ids[2]}"]`));
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].hand[2].id),ids[0],JSON.stringify({before:ids,after:await p.evaluate(()=>window.__dealTest.state.players[0].hand.map(c=>c.id)),toast:await p.locator('#game-toast').innerText()}));assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);
+ await dragHandCard(p,p.locator(`[data-card="${ids[3]}"]`),p.locator('.current-properties'));
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.discard.at(-1).id),ids[3]);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);
+ await conservation(p);await close(p);
 });

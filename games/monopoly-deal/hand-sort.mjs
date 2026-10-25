@@ -8,11 +8,12 @@ export function consumeHandSortClick(event) {
   return true;
 }
 
-export function attachHandSorting(hand, {canSort, onReorder, announce}) {
+export function attachHandSorting(hand, {canSort, onReorder, announce, dropTargetAt, onDrop}) {
   if (!hand) return () => {};
   let gesture = null;
   let holdTimer;
   let scrollFrame;
+  let momentumFrame;
   const cards = () => [...hand.querySelectorAll('[data-card]')];
 
   for (const card of cards()) {
@@ -26,13 +27,14 @@ export function attachHandSorting(hand, {canSort, onReorder, announce}) {
     hand.scrollLeft = current.originalScroll;
   }
 
-  function finish(commit = false) {
+  function finish(commit = false, drop = null) {
     const current = gesture;
     if (!current) return;
     gesture = null;
     clearTimeout(holdTimer);
     cancelAnimationFrame(scrollFrame);
     current.ghost?.remove();
+    current.dropTarget?.element.classList.remove('drop-ready','drop-invalid');
     current.card.classList.remove('is-hand-dragging');
     hand.classList.remove('is-hand-sorting', 'is-hand-scrolling');
     if (hand.hasPointerCapture(current.pointerId)) {
@@ -44,6 +46,11 @@ export function attachHandSorting(hand, {canSort, onReorder, announce}) {
     if (current.mode !== 'pending') ignoreHandClickUntil = performance.now() + 350;
     if (current.mode !== 'drag') return;
 
+    if(commit && drop && canSort()){
+      restoreOrder(current);
+      onDrop?.(Number(current.card.dataset.card),drop);
+      return;
+    }
     const ids = cards().map(card => Number(card.dataset.card));
     const changed = ids.some((id, i) => id !== Number(current.originalCards[i].dataset.card));
     if (!commit || !canSort() || !changed) {
@@ -58,8 +65,15 @@ export function attachHandSorting(hand, {canSort, onReorder, announce}) {
   function moveToPointer() {
     if (!gesture || gesture.mode !== 'drag') return;
     const current = gesture;
-    current.ghost.style.left = `${current.x - current.offsetX}px`;
-    current.ghost.style.top = `${current.y - current.offsetY}px`;
+    current.ghost.style.setProperty('transform',`translate3d(${current.x-current.offsetX}px,${current.y-current.offsetY}px,0) rotate(-3deg)`,'important');
+    const target=dropTargetAt?.(Number(current.card.dataset.card),current.x,current.y);
+    if(current.dropTarget?.element!==target?.element||current.dropTarget?.allowed!==target?.allowed){
+      current.dropTarget?.element.classList.remove('drop-ready','drop-invalid');
+      target?.element.classList.add(target.allowed?'drop-ready':'drop-invalid');
+    }
+    current.dropTarget=target;
+    const bounds=hand.getBoundingClientRect();
+    if(current.y<bounds.top-20||current.y>bounds.bottom+20||target)return;
     const before = cards().find(card => {
       if (card === current.card) return false;
       const rect = card.getBoundingClientRect();
@@ -81,8 +95,8 @@ export function attachHandSorting(hand, {canSort, onReorder, announce}) {
     }
     if (speed) {
       hand.scrollLeft += speed;
-      moveToPointer();
     }
+    moveToPointer();
     scrollFrame = requestAnimationFrame(autoScroll);
   }
 
@@ -107,6 +121,7 @@ export function attachHandSorting(hand, {canSort, onReorder, announce}) {
     ghost.tabIndex = -1;
     ghost.classList.remove('is-selected');
     ghost.classList.add('hand-drag-ghost');
+    ghost.style.left='0';ghost.style.top='0';
     ghost.style.setProperty('width', `${rect.width}px`, 'important');
     ghost.style.setProperty('height', `${rect.height}px`, 'important');
     document.body.append(ghost);
@@ -122,12 +137,13 @@ export function attachHandSorting(hand, {canSort, onReorder, announce}) {
     if (!card || card.parentElement !== hand || !event.isPrimary || event.button !== 0) return;
     // A deliberate new tap/click must not be swallowed by the previous drag.
     ignoreHandClickUntil = 0;
+    cancelAnimationFrame(momentumFrame);
     if (!canSort()) return;
     if (gesture) finish(false);
     gesture = {
       card, pointerId: event.pointerId, touch: event.pointerType === 'touch', mode: 'pending',
       startX: event.clientX, startY: event.clientY, x: event.clientX, y: event.clientY,
-      originalCards: cards(), originalScroll: hand.scrollLeft,
+      originalCards: cards(), originalScroll: hand.scrollLeft, lastX:event.clientX,lastY:event.clientY,lastTime:performance.now(),velocity:0,
     };
     card.setPointerCapture(event.pointerId);
     if (gesture.touch) holdTimer = setTimeout(startDrag, 240);
@@ -139,20 +155,25 @@ export function attachHandSorting(hand, {canSort, onReorder, announce}) {
     const current = gesture;
     current.x = event.clientX;
     current.y = event.clientY;
+    const now=performance.now(),dt=Math.max(1,now-current.lastTime);
+    current.velocity=.5*current.velocity+.5*(current.x-current.lastX)/dt;
+    const lastY=current.lastY;
+    current.lastX=current.x;current.lastY=current.y;current.lastTime=now;
     const dx = current.x - current.startX;
     const dy = current.y - current.startY;
     if (current.mode === 'pending' && Math.hypot(dx, dy) > 7) {
       clearTimeout(holdTimer);
       if (!current.touch) startDrag();
       else if (Math.abs(dx) > Math.abs(dy)) { current.mode = 'scroll'; hand.classList.add('is-hand-scrolling'); }
-      else { current.mode = 'scroll'; finish(false); return; }
+      else current.mode='page-scroll';
     }
     if (current.mode === 'scroll') {
       event.preventDefault();
       hand.scrollLeft = current.originalScroll - dx;
+    } else if(current.mode==='page-scroll'){
+      event.preventDefault();window.scrollBy(0,lastY-current.y);
     } else if (current.mode === 'drag') {
       event.preventDefault();
-      moveToPointer();
     }
   }
 
@@ -162,7 +183,20 @@ export function attachHandSorting(hand, {canSort, onReorder, announce}) {
     const inside = event.clientX >= rect.left - 24 && event.clientX <= rect.right + 24
       && event.clientY >= rect.top - 40 && event.clientY <= rect.bottom + 40;
     if (gesture.mode !== 'pending') event.preventDefault();
-    finish(inside);
+    const current=gesture;
+    const drop=current.mode==='drag'?dropTargetAt?.(Number(current.card.dataset.card),event.clientX,event.clientY):null;
+    finish(inside||Boolean(drop),drop);
+    if(current.mode==='scroll'&&Math.abs(current.velocity)>.1){
+      let velocity=-Math.max(-2,Math.min(2,current.velocity)),last=performance.now();
+      hand.classList.add('is-hand-scrolling');
+      const glide=now=>{
+        const dt=Math.min(32,now-last);last=now;
+        if(!hand.isConnected||!canSort()||Math.abs(velocity)<.03){hand.classList.remove('is-hand-scrolling');return;}
+        hand.scrollLeft+=velocity*dt;velocity*=Math.pow(.9,dt/16);
+        momentumFrame=requestAnimationFrame(glide);
+      };
+      momentumFrame=requestAnimationFrame(glide);
+    }
   }
 
   function cancelPointer(event) {
@@ -208,6 +242,7 @@ export function attachHandSorting(hand, {canSort, onReorder, announce}) {
   window.addEventListener('resize', cancel);
   return () => {
     finish(false);
+    cancelAnimationFrame(momentumFrame);
     hand.removeEventListener('pointerdown', pointerDown);
     hand.removeEventListener('pointermove', pointerMove);
     hand.removeEventListener('pointerup', pointerUp);

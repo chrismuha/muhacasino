@@ -1,9 +1,9 @@
-import {paginateViewer} from './view-pages.mjs?build=20261025-deal-compact-v47';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-deal-compact-v47';
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-deal-compact-v47';
-import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-deal-compact-v47';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-deal-compact-v47';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-deal-compact-v47';
+import {paginateViewer} from './view-pages.mjs?build=20261025-deal-drops-v48';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-deal-drops-v48';
+import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-deal-drops-v48';
+import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-deal-drops-v48';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-deal-drops-v48';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-deal-drops-v48';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false;
 // Keep the last completed action in this tab if Safari reloads the frame.
@@ -70,6 +70,22 @@ function wireHandSorting() {
  detachHandSorting = attachHandSorting(hand, {
   canSort,
   announce: showToast,
+  dropTargetAt(cardId,x,y){
+   if(!canSort()||document.documentElement.dataset.theme!=='modern')return null;
+   const element=document.elementFromPoint(x,y)?.closest('.current-bank,.current-properties');
+   if(!element)return null;
+   const card=player.hand.find(card=>card.id===cardId),mode=element.matches('.current-bank')?'bank':'play';
+   const reason=state.plays>=3?'You have used all three plays. Pass to end your turn.':mode==='bank'&&card?.type==='property'?'Property cards cannot be banked. Drop onto Properties.':mode==='play'&&card?.type==='money'?'Money cards belong in the Bank.':'';
+   return {element,mode,allowed:!reason,reason};
+  },
+  onDrop(cardId,target){
+   if(!canSort())return;
+   if(!target.allowed){showToast(target.reason);return;}
+   const card=player.hand.find(card=>card.id===cardId);
+   if(!card)return;
+   const color=target.mode==='play'&&card.type==='property'&&card.colors.length===2?(card.id===selectedCardId?card.colors[previewFlipped?1:0]:card.colors[cardPreferredSide(card.id)?1:0]):null;
+   run(()=>play(card,target.mode,color));
+  },
   onReorder(ids, {movedId, focusId} = {}) {
    if(!canSort() || ids.length !== player.hand.length || new Set(ids).size !== ids.length)return false;
    const byId = new Map(player.hand.map(card => [card.id, card]));
@@ -142,9 +158,16 @@ function browseSelectedCard(direction,focusTarget=null){
  if(busy||!visible||!state||state.winner||me().isAI||document.querySelector('dialog[open]'))return;
  const hand=me().hand,index=hand.findIndex(card=>card.id===selectedCardId);
  if(index<0||hand.length<2)return;
- selectedCardId=hand[(index+direction+hand.length)%hand.length].id;
+ const next=(index+direction+hand.length)%hand.length,card=hand[next];
+ selectedCardId=card.id;
  previewFlipped=Boolean(cardPreferredSide(selectedCardId));
- render();
+ const preview=$('.selected-table-card');
+ preview.innerHTML=modernFace(card,{flipped:previewFlipped,reading:true});
+ preview.setAttribute('aria-label',`${card.name} · Card ${next+1} of ${hand.length}`);
+ $('#selected-card-help').textContent=`Swipe · ${next+1} / ${hand.length}`;
+ document.querySelectorAll('#game [data-card]').forEach(button=>{const selected=Number(button.dataset.card)===selectedCardId;button.classList.toggle('is-selected',selected);button.setAttribute('aria-pressed',String(selected));});
+ updateUnavailableControls();fitCompactPreview();
+ if(!matchMedia('(prefers-reduced-motion: reduce)').matches)preview.animate([{transform:`translateX(${direction*28}px)`,opacity:.65},{transform:'translateX(0)',opacity:1}],{duration:170,easing:'cubic-bezier(.2,.7,.2,1)'});
  // Keep the selected thumbnail in view without scrolling the page away from the preview.
  const strip=$('.cards'),thumbnail=$(`[data-card="${selectedCardId}"]`);
  if(strip&&thumbnail){
@@ -165,18 +188,33 @@ function wireSelectedCardBrowsing(){
   event.preventDefault();browseSelectedCard(event.key==='ArrowLeft'?-1:1,'.selected-table-card');
  });
  let gesture=null;
+ const reset=()=>{
+  gesture=null;
+  preview.style.transform='';
+  preview.style.transition=matchMedia('(prefers-reduced-motion: reduce)').matches?'none':'transform 140ms ease-out';
+ };
  preview.addEventListener('pointerdown',event=>{
   if(!event.isPrimary||event.button!==0||busy||!visible)return;
-  gesture={id:event.pointerId,x:event.clientX,y:event.clientY};
+  preview.getAnimations().forEach(animation=>animation.cancel());
+  gesture={id:event.pointerId,x:event.clientX,y:event.clientY,time:performance.now(),horizontal:false};
+  preview.style.transition='none';
   preview.setPointerCapture(event.pointerId);
  });
- preview.addEventListener('pointercancel',()=>{gesture=null;});
- preview.addEventListener('lostpointercapture',()=>{gesture=null;});
+ preview.addEventListener('pointermove',event=>{
+  if(!gesture||event.pointerId!==gesture.id)return;
+  const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;
+  if(!gesture.horizontal&&Math.abs(dx)>8&&Math.abs(dx)>Math.abs(dy)*1.5)gesture.horizontal=true;
+  if(gesture.horizontal)preview.style.transform=`translate3d(${Math.max(-90,Math.min(90,dx*.55))}px,0,0)`;
+ });
+ preview.addEventListener('pointercancel',reset);
+ preview.addEventListener('lostpointercapture',reset);
  preview.addEventListener('pointerup',event=>{
-  const start=gesture;gesture=null;
+  const start=gesture;
   if(!start||start.id!==event.pointerId)return;
   const dx=event.clientX-start.x,dy=event.clientY-start.y;
-  if(Math.abs(dx)>=40&&Math.abs(dx)>Math.abs(dy)*1.5)browseSelectedCard(dx<0?1:-1);
+  reset();
+  const threshold=performance.now()-start.time<250?28:40;
+  if(Math.abs(dx)>=threshold&&Math.abs(dx)>Math.abs(dy)*1.5)browseSelectedCard(dx<0?1:-1);
  });
  preview.addEventListener('dragstart',event=>event.preventDefault());
 }

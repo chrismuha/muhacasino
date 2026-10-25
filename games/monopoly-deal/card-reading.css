@@ -358,3 +358,25 @@
  [data-theme=modern] .deal-face[data-reading=true] .reading-color{font-size:13px;line-height:1.2;padding:2px 6px 4px}
  [data-theme=modern] .deal-face[data-reading=true] .reading-flip-note{font-size:11px;line-height:1.2;padding:4px 6px}
 }
+
+/* Keep focus rings inside their controls and leave room around complete hand cards. */
+dialog button:focus-visible,#preview-close:focus-visible{outline-offset:-4px}
+[data-theme=modern] .selected-card-navigation{padding:4px;box-sizing:border-box}
+[data-theme=modern] .has-selection .card-stage{overflow:hidden;padding:4px;isolation:isolate}
+[data-theme=modern] .selected-table-card{will-change:transform;outline-offset:-3px}
+[data-theme=modern] .deal-hand .cards{gap:8px;padding:10px 8px 12px;scroll-padding-inline:8px;scroll-snap-type:x mandatory;overscroll-behavior-x:contain}
+[data-theme=modern] .deal-hand .modern-hand-card{margin:0!important;scroll-snap-align:start;scroll-snap-stop:normal;flex-shrink:0;transform:none}
+[data-theme=modern] .deal-hand .modern-hand-card.is-selected{outline-offset:-3px}
+#game .cards [data-hand-sortable=true]{touch-action:none}
+.cards.is-hand-sorting,.cards.is-hand-scrolling{scroll-snap-type:none}
+.current-bank.drop-ready,.current-properties.drop-ready{outline:3px solid #8dffb5;outline-offset:-3px;box-shadow:inset 0 0 0 5px #24cd5f44}
+.current-bank.drop-invalid,.current-properties.drop-invalid{outline:3px solid #ffad83;outline-offset:-3px}
+@media(max-width:600px){
+ [data-theme=modern] .deal-hand .modern-hand-card{flex-basis:clamp(72px,20cqw,90px)}
+}
+/* Keep the inset focus-ring geometry stable for pointer and keyboard focus alike. */
+dialog button,#preview-close{outline-offset:-4px}
+[data-theme=modern] .deal-hand .cards.is-hand-sorting,
+[data-theme=modern] .deal-hand .cards.is-hand-scrolling{scroll-snap-type:none;overflow-anchor:none}
+[data-theme=modern] .hand-sort-hint{white-space:normal;overflow:visible;font-size:11px;line-height:1.3}
+.hand-drag-ghost{will-change:transform}
