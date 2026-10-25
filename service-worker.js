@@ -1,4 +1,4 @@
-const CACHE_NAME = "muha-casino-shell-20261025-mobile-ready";
+const CACHE_NAME = "muha-casino-shell-20261025-ai-mode";
 const APP_SHELL = [
   "./",
   "./index.html",

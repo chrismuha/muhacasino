@@ -1,7 +1,8 @@
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-mobile-ready';
-import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-mobile-ready';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-mobile-ready';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-mobile-ready';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-ai-preview';
+import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-ai-preview';
+import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-ai-preview';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-ai-preview';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-ai-preview';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false;
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -107,7 +108,7 @@ function fitResponsiveLabels() {
  }
 }
 const me=()=>state.players[state.turn];
-function choose(title,options,detail=''){return new Promise(resolve=>{const d=$('#choice');$('#question').textContent=title;$('#detail').textContent=detail;$('#options').replaceChildren();for(const [label,value] of options){const b=document.createElement('button');b.textContent=label;b.onclick=()=>{d.close();resolve(value)};$('#options').append(b)}d.oncancel=e=>e.preventDefault();d.showModal();fitResponsiveLabels()})}
+function choose(title,options,detail='',actor=state?me():null){if(actor?.isAI)return Promise.resolve(aiChoice(title,options,actor));return new Promise(resolve=>{const d=$('#choice');$('#question').textContent=title;$('#detail').textContent=detail;$('#options').replaceChildren();for(const [label,value] of options){const b=document.createElement('button');b.textContent=label;b.onclick=()=>{d.close();resolve(value)};$('#options').append(b)}d.oncancel=e=>e.preventDefault();d.showModal();fitResponsiveLabels()})}
 function log(s){state.log.unshift(s);state.log=state.log.slice(0,30);$('#log').innerHTML=state.log.map(x=>`<li>${esc(x)}</li>`).join('')}
 const label=c=>`${c.name} · ${c.value}M${c.color?' · '+GROUPS[c.color].name:''}`;
 function completingWildColor(card) {
@@ -128,7 +129,7 @@ function cardPreferredSide(id){
  const card=me().hand.find(item=>item.id===id);
  return card?.colors?.length===2 && completingWildColor(card)===card.colors[1];
 }
-function renderClassic(){if(!state)return;const handScroll=$('.cards')?.scrollLeft || 0;const p=me();$('#game').innerHTML=`<div class="players">${state.players.map((x,i)=>`<section class="player ${i===state.turn?'active':''}"><h3>${esc(x.name)} ${i===state.turn?'◆':''}</h3><div class="meta"><span>Bank <b>${x.bank.reduce((a,c)=>a+c.value,0)}M</b></span><span>${x.hand.length} cards</span><span class="badge">${sets(x).length} / 3 sets</span></div><div class="player-inspect"><button type="button" data-table-view="bank-${i}">Bank cards</button><button type="button" data-table-view="properties-${i}">Properties</button></div><div class="groups">${Object.entries(GROUPS).filter(([k])=>properties(x,k).length).map(([k,g])=>`<div class="group ${complete(x,k)?'done':''}" style="--color:${g.color}"><strong>${g.name} ${properties(x,k).length}/${g.names.length}</strong>${properties(x,k).map(c=>`<div>${esc(c.name)}</div>`).join('')}<small>Rent ${rent(x,k)}M ${x.buildings.filter(c=>c.color===k).map(c=>`<span class="building-label" data-building="${c.action}">${esc(c.name)}</span>`).join(' ')}</small></div>`).join('')||'<p>No properties yet</p>'}</div></section>`).join('')}</div><div class="turnbar"><div><strong>${esc(p.name)}’s turn</strong><div class="meta">${3-state.plays} plays left · ${state.draw.length} in draw pile · Discard: ${esc(state.discard.at(-1)?.name||'Empty')}</div></div><div><button type="button" data-table-view="discard">Discard pile</button><button type="button" data-table-view="activity">View table</button><button id="move">Rearrange wilds</button> <button id="end" class="primary">End turn →</button></div></div><section class="hand">${visible?`<h2>${esc(p.name)}’s hand <button id="hide">Hide</button></h2><p id="hand-sort-help" class="hand-hint">Tap a card to play or bank it. Drag to sort; hold first on touch. Swipe to scroll, or use Alt+Left/Right to reorder the focused card.</p><div class="cards" tabindex="0" role="region" aria-label="Your hand; scroll sideways for more cards" aria-describedby="hand-sort-help">${p.hand.map(cardHTML).join('')||'<p>Your hand is empty.</p>'}</div>`:`<div class="privacy"><h2>Pass the device to ${esc(p.name)}</h2><p>Only this player should view their hand.</p><button id="reveal" class="primary">Reveal my hand</button></div>`}</section>`;
+function renderClassic(){if(!state)return;const handScroll=$('.cards')?.scrollLeft || 0;const p=me();$('#game').innerHTML=`<div class="players">${state.players.map((x,i)=>`<section class="player ${i===state.turn?'active':''}"><h3>${esc(x.name)} ${i===state.turn?'◆':''}</h3><div class="meta"><span>Bank <b>${x.bank.reduce((a,c)=>a+c.value,0)}M</b></span><span>${x.hand.length} cards</span><span class="badge">${sets(x).length} / 3 sets</span></div><div class="player-inspect"><button type="button" data-table-view="bank-${i}">Bank cards</button><button type="button" data-table-view="properties-${i}">Properties</button></div><div class="groups">${Object.entries(GROUPS).filter(([k])=>properties(x,k).length).map(([k,g])=>`<div class="group ${complete(x,k)?'done':''}" style="--color:${g.color}"><strong>${g.name} ${properties(x,k).length}/${g.names.length}</strong>${properties(x,k).map(c=>`<div>${esc(c.name)}</div>`).join('')}<small>Rent ${rent(x,k)}M ${x.buildings.filter(c=>c.color===k).map(c=>`<span class="building-label" data-building="${c.action}">${esc(c.name)}</span>`).join(' ')}</small></div>`).join('')||'<p>No properties yet</p>'}</div></section>`).join('')}</div><div class="turnbar"><div><strong>${esc(p.name)}’s turn</strong><div class="meta">${3-state.plays} plays left · ${state.draw.length} in draw pile · Discard: ${esc(state.discard.at(-1)?.name||'Empty')}</div></div><div><button type="button" data-table-view="discard">Discard pile</button><button type="button" data-table-view="activity">View table</button><button id="move">Rearrange wilds</button> <button id="end" class="primary">End turn →</button></div></div><section class="hand">${visible?`<h2>${esc(p.name)}’s hand <button id="hide">Hide</button></h2><p id="hand-sort-help" class="hand-hint">Tap a card to play or bank it. Drag to sort; hold first on touch. Swipe to scroll, or use Alt+Left/Right to reorder the focused card.</p><div class="cards" tabindex="0" role="region" aria-label="Your hand; scroll sideways for more cards" aria-describedby="hand-sort-help">${p.hand.map(cardHTML).join('')||'<p>Your hand is empty.</p>'}</div>`:p.isAI?`<div class="privacy" role="status"><h2>${esc(p.name)}’s turn</h2><p>Computer turn…</p></div>`:`<div class="privacy"><h2>Pass the device to ${esc(p.name)}</h2><p>Only this player should view their hand.</p><button id="reveal" class="primary">Reveal my hand</button></div>`}</section>`;
  if($('.cards'))$('.cards').scrollLeft=handScroll;
  $('#reveal')?.addEventListener('click',()=>{visible=true;render()});$('#hide')?.addEventListener('click',()=>{visible=false;render()});$('#end').onclick=()=>run(end);$('#move').onclick=()=>run(rearrange);document.querySelectorAll('#game [data-card]').forEach(b=>b.onclick=()=>run(()=>play(p.hand.find(c=>c.id===+b.dataset.card))));document.querySelectorAll('#game [data-table-view]').forEach(b=>b.onclick=()=>openTableViewer(b.dataset.tableView));
 }
@@ -136,7 +137,7 @@ function render(){
  detachHandSorting();
  detachHandSorting = () => {};
  if(!state){
-  $('#game').innerHTML='<section class="game-ready" aria-labelledby="ready-title"><h2 id="ready-title">Ready to deal?</h2><p>Start a game for two to four players on this device.</p><button type="button" class="primary" id="ready-new">New game</button></section>';
+  $('#game').innerHTML='<section class="game-ready" aria-labelledby="ready-title"><h2 id="ready-title">Ready to deal?</h2><p>Play against computer opponents or with two to four people on this device.</p><button type="button" class="primary" id="ready-new">New game</button></section>';
   $('#ready-new').onclick=setup;
   return;
  }
@@ -164,14 +165,32 @@ function render(){
  wireHandSorting();
  fitResponsiveLabels();
 }
-async function run(fn){if(busy||state.winner)return;busy=true;try{await fn();checkWin();}catch(e){console.error(e);await choose('Unable to play', [['Continue',true]],e.message)}finally{busy=false;selectedCardId=null;previewFlipped=false;render()}}
-function checkWin(){if(sets(me()).length>=3&&!state.winner){state.winner=me().name;log(`${state.winner} wins with three complete colors!`);choose(`${state.winner} wins!`,[['View table',true]],'Three complete property sets. Start a new game for a rematch.')}}
+async function takeAITurns(){
+ while(state && me().isAI && !state.winner){
+  visible=false;render();
+  showToast(`${me().name} is thinking…`);
+  await new Promise(resolve=>setTimeout(resolve,450));
+  while(state.plays<3&&!state.winner){
+   const move=aiPlay(me(),opponents());
+   if(!move)break;
+   const before=state.plays;
+   await play(move.card,move.mode,move.color);
+   checkWin();render();
+   if(state.plays===before)break;
+   await new Promise(resolve=>setTimeout(resolve,350));
+  }
+  if(!state.winner)await end();
+ }
+ if(state?.players.some(p=>p.isAI)&&!me().isAI&&!state.winner)visible=true;
+}
+async function run(fn){if(busy||state.winner)return;busy=true;try{await fn();checkWin();if(!state.winner)await takeAITurns();}catch(e){console.error(e);await choose('Unable to play', [['Continue',true]],e.message,null)}finally{if(state?.players.some(p=>p.isAI)&&!me().isAI)visible=true;busy=false;selectedCardId=null;previewFlipped=false;render()}}
+function checkWin(){if(sets(me()).length>=3&&!state.winner){state.winner=me().name;log(`${state.winner} wins with three complete colors!`);choose(`${state.winner} wins!`,[['View table',true]],'Three complete property sets. Start a new game for a rematch.',null)}}
 function use(c){remove(me().hand,c);state.discard.push(c);state.plays++;log(`${me().name} played ${c.name}.`)}
-async function defend(target,actor,description){visible=false;render();let responder=target,other=actor,cancelled=false;while(true){const no=responder.hand.find(c=>c.action==='no');if(!no)return !cancelled;await choose(`Pass to ${responder.name}`,[['Ready',true]],'An action response is available. Keep hands private.');const yes=await choose(`${responder.name}: Just Say No?`,[['Allow action / stop countering',false],['Play Just Say No',true]],description);if(!yes)return !cancelled;remove(responder.hand,no);state.discard.push(no);if(responder===me())state.plays++;cancelled=!cancelled;log(`${responder.name} played Just Say No.`);[responder,other]=[other,responder];}}
-async function pay(p,to,amount){visible=false;render();let remaining=amount;await choose(`Pass to ${p.name}`,[['Ready to pay',true]],`${to.name} is owed ${amount}M. You choose payment; no change is given.`);while(remaining>0){let assets=[...p.bank,...p.props.filter(c=>c.value>0),...p.buildings];if(!assets.length)break;let c=await choose(`${p.name}: ${remaining}M still owed`,assets.map(c=>[`${p.bank.includes(c)?'Bank':p.props.includes(c)?'Property':'Building'}: ${label(c)}`,c]));if(p.bank.includes(c)){remove(p.bank,c);to.bank.push(c)}else if(p.props.includes(c)){remove(p.props,c);to.props.push(c);normalize(p)}else{remove(p.buildings,c);to.bank.push(c);if(c.action==='house'){for(const h of p.buildings.filter(x=>x.color===c.color)){remove(p.buildings,h);p.bank.push(h)}}}remaining-=c.value;render()}log(`${p.name} paid ${amount-Math.max(remaining,0)}M toward ${amount}M owed to ${to.name}.`)}
+async function defend(target,actor,description){visible=false;render();let responder=target,other=actor,cancelled=false;while(true){const no=responder.hand.find(c=>c.action==='no');if(!no)return !cancelled;if(!responder.isAI&&!state.players.some(p=>p.isAI))await choose(`Pass to ${responder.name}`,[['Ready',true]],'An action response is available. Keep hands private.',responder);const yes=await choose(`${responder.name}: Just Say No?`,[['Allow action / stop countering',false],['Play Just Say No',true]],description,responder);if(!yes)return !cancelled;remove(responder.hand,no);state.discard.push(no);if(responder===me())state.plays++;cancelled=!cancelled;log(`${responder.name} played Just Say No.`);[responder,other]=[other,responder];}}
+async function pay(p,to,amount){visible=false;render();let remaining=amount;if(!p.isAI)await choose(p.name+': payment due',[['Ready to pay',true]],`${to.name} is owed ${amount}M. You choose payment; no change is given.`,p);while(remaining>0){let assets=[...p.bank,...p.props.filter(c=>c.value>0),...p.buildings];if(!assets.length)break;let c=await choose(`${p.name}: ${remaining}M still owed`,assets.map(c=>[`${p.bank.includes(c)?'Bank':p.props.includes(c)?'Property':'Building'}: ${label(c)}`,c]),'',p);if(p.bank.includes(c)){remove(p.bank,c);to.bank.push(c)}else if(p.props.includes(c)){remove(p.props,c);to.props.push(c);normalize(p)}else{remove(p.buildings,c);to.bank.push(c);if(c.action==='house'){for(const h of p.buildings.filter(x=>x.color===c.color)){remove(p.buildings,h);p.bank.push(h)}}}remaining-=c.value;render()}log(`${p.name} paid ${amount-Math.max(remaining,0)}M toward ${amount}M owed to ${to.name}.`)}
 async function collect(targets,amount){for(const p of targets)if(await defend(p,me(),`Pay ${me().name} ${amount}M.`))await pay(p,me(),amount)}
 const opponents=()=>state.players.filter(p=>p!==me());
-async function play(c,chosenMode=null,chosenColor=null){if(!visible||state.plays>=3||!c)return;let mode=chosenMode||await choose(label(c),[['Cancel','cancel'],...(c.type!=='property'?[['Put in bank','bank']]:[]),...(c.type!=='money'?[['Play card','play']]:[])]);if(mode==='cancel')return;if(mode==='bank'){remove(me().hand,c);me().bank.push(c);state.plays++;log(`${me().name} banked ${c.value}M.`);return}
+async function play(c,chosenMode=null,chosenColor=null){if((!visible&&!me().isAI)||state.plays>=3||!c)return;let mode=chosenMode||await choose(label(c),[['Cancel','cancel'],...(c.type!=='property'?[['Put in bank','bank']]:[]),...(c.type!=='money'?[['Play card','play']]:[])]);if(mode==='cancel')return;if(mode==='bank'){remove(me().hand,c);me().bank.push(c);state.plays++;log(`${me().name} banked ${c.value}M.`);return}
  if(c.type==='property'){c.color=chosenColor||await colorFor(c,{smart:true});remove(me().hand,c);me().props.push(c);state.plays++;log(`${me().name} laid ${c.name}.`);return}
  const a=c.action,p=me();if(a==='no'||a==='double'){await choose('Keep this card for a response or rent combo',[['OK',true]],a==='no'?'Just Say No is offered when an action targets you.':'Select a Rent card to add one or two Double the Rent cards.');return}
  if(a==='pass'){use(c);draw(state,p,2);return}
@@ -187,7 +206,7 @@ async function rearrange(){if(!visible)return;let wilds=me().props.filter(c=>c.c
 async function end(){while(me().hand.length>7){visible=false;render();let c=await choose(`${me().name}: discard down to seven`,me().hand.map(c=>[label(c),c]));remove(me().hand,c);state.discard.push(c)}state.turn=(state.turn+1)%state.players.length;state.plays=0;visible=false;draw(state,me(),me().hand.length?2:5);log(`${me().name} begins their turn.`)}
 function setup() {
   $('#setup-content').innerHTML = `<form class="setup" id="setup-form" novalidate>
-    <section data-wizard-step="1"><h3>How many players?</h3><p>Play together on this device, passing it between turns.</p><label for="count">Players <select id="count" required><option>2</option><option>3</option><option>4</option></select></label></section>
+    <section data-wizard-step="1"><h3>Choose your opponents</h3><label for="opponent-mode">Mode <select id="opponent-mode"><option value="human">Human vs human</option><option value="ai">Human vs AI</option></select></label><p>Choose the total number of players. In AI mode, the other seats are computer opponents.</p><label for="count">Players <select id="count" required><option>2</option><option>3</option><option>4</option></select></label></section>
     <section data-wizard-step="2" hidden><h3>Who’s at the table?</h3><p class="setup-required">Enter a different name for everyone. All player names are required.</p><div id="names"></div></section>
     <section data-wizard-step="3" hidden><h3>Ready to deal?</h3><p>Each player gets five private cards. The first player draws two more to start.</p><ul id="wizard-review"></ul><p id="wizard-replace" hidden>Dealing starts a new game and replaces the current one.</p></section>
     <div class="wizard-actions"><button id="wizard-back" type="button" hidden>← Back</button><button id="start" type="submit" class="primary">Continue →</button></div>
@@ -209,7 +228,7 @@ function setup() {
     const previous = [...document.querySelectorAll('#names input')].map(input=>input.value);
     $('#names').innerHTML = Array.from({length:Number($('#count').value)}, (_,i)=>`
       <label for="player-name-${i}">Player ${i+1} name <span class="required-label">(required)</span></label>
-      <input id="player-name-${i}" name="player-${i+1}" required aria-required="true" maxlength="24" placeholder="Enter player ${i+1}’s name" aria-describedby="player-error-${i}" autocomplete="off" value="${esc(previous[i] || '')}">
+      <input id="player-name-${i}" name="player-${i+1}" required aria-required="true" maxlength="24" placeholder="Enter player ${i+1}’s name" aria-describedby="player-error-${i}" autocomplete="off" value="${esc($('#opponent-mode').value==='ai'&&i>0?'Computer '+i:previous[i] || '')}" ${$('#opponent-mode').value==='ai'&&i>0?'readonly aria-label="Computer opponent '+i+'"':''}>
       <p class="setup-error" id="player-error-${i}" hidden></p>`).join('');
     document.querySelectorAll('#names input').forEach(input=>input.addEventListener('input',()=>{
       input.removeAttribute('aria-invalid');
@@ -217,6 +236,7 @@ function setup() {
     }));
   }
   $('#count').onchange = names;
+  $('#opponent-mode').onchange = names;
   names();
   showStep(1);
   $('#setup-wizard').showModal();
@@ -257,17 +277,18 @@ function setup() {
       return;
     }
     if(wizardStep === 2) {
-      $('#wizard-review').innerHTML=playerNames.map((name,index)=>`<li><span>Player ${index+1}</span> <strong>${esc(name)}</strong></li>`).join('');
+      $('#wizard-review').innerHTML=playerNames.map((name,index)=>`<li><span>${$('#opponent-mode').value==='ai'&&index>0?'AI opponent':'Player '+(index+1)}</span> <strong>${esc(name)}</strong></li>`).join('');
       $('#wizard-replace').hidden = !state;
       showStep(3);
       return;
     }
     state = createGame(playerNames);
+    state.players.forEach((player,i)=>player.isAI=$('#opponent-mode').value==='ai'&&i>0);
     selectedCardId=null;previewFlipped=false;
     $('#setup-wizard').close();
     $('#log').innerHTML='';
     $('.history').hidden=false;
-    visible = false;
+    visible = state.players.some(p=>p.isAI);
     draw(state, me(), 2);
     log('Cards dealt. First to three different complete colors wins.');
     render();
@@ -275,7 +296,7 @@ function setup() {
 }
 $('#new').onclick=()=>{if(busy||$('#choice').open||$('#setup-wizard').open||$('#table-viewer').open)return;setup()};
 $('#wizard-cancel').onclick=()=>$('#setup-wizard').close();
-$('#rules').onclick=()=>openTableViewer('rules');
+$('#rules').onclick=()=>{if(busy){showToast('Finish the current action or computer turn first.');return;}openTableViewer('rules')};
 $('.history').hidden=true;
 
 // A device preference shared by all seats; no hand or game state is stored.
