@@ -464,3 +464,13 @@ dialog button,#preview-close{outline-offset:-4px}
 [data-theme=modern] .current-properties:not([data-complete-sets="0"]) .asset-progress{background:#ffe297;color:#123959;font-weight:800}
 
 [data-theme=modern] .property-stack-page .property-set-status{display:block}
+
+/* Keep icon centers and labels on shared columns regardless of label length. */
+[data-theme=modern] .deal-actions .round-action,[data-theme=modern] .deal-actions #end.round-action{display:grid;grid-template-columns:32px minmax(0,1fr);justify-content:stretch;align-items:center;text-align:left;column-gap:6px;width:100%}
+[data-theme=modern] .deal-actions .round-action>span:last-child{min-width:0;text-align:left}
+[data-theme=modern] .deal-actions .action-disc{width:32px;height:32px;justify-self:start}
+[data-theme=modern] .deal-hand .cards{padding-top:20px;padding-bottom:16px}
+[data-theme=modern] .deal-hand .modern-hand-card.is-selected{transform:translateY(-7px) scale(1.04);outline:3px solid #ffe297;outline-offset:2px;box-shadow:0 5px 14px #00133399;z-index:4;transition:transform 140ms ease-out,box-shadow 140ms ease-out}
+[data-theme=modern] .deal-hand .modern-hand-card.is-active{outline-color:white;z-index:5}
+[data-theme=modern] .deal-hand .modern-hand-card.is-selected::after{content:'✓';position:absolute;top:3px;right:3px;display:grid;place-items:center;width:16px;height:16px;border-radius:50%;background:#ffe297;color:#123959;font-size:12px;font-weight:900;line-height:1;pointer-events:none}
+@media(prefers-reduced-motion:reduce){[data-theme=modern] .deal-hand .modern-hand-card.is-selected{transition:none}}

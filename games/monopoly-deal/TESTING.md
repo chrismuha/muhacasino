@@ -32,3 +32,5 @@ Public-card paging checks cover full artwork and descriptions within phone panes
 Properties-ordering checks verify cards on the first page and completion/property/building totals on a separate final Details page, across phone and desktop sizes and after switching to a player with no properties.
 
 Property-stack checks cover one page per color, overlapping cards, buildings kept with their set, inspecting members without changing game state, complete-set badges on the table, and a separate final Details page on phone and desktop.
+
+Selection-feedback checks verify lifted/checkmarked selections, selecting and deselecting several cards, clearing all, retaining unplayed selections, single-card action consumption, aligned action icon columns, unambiguous numbered-player payment text, and turn-limit/handoff toasts.

@@ -646,3 +646,31 @@ test('a crowded monopoly stays one stack page and all members remain inspectable
  }
  if(artifacts)await shot(p,'crowded-monopoly-stack');await conservation(p);await close(p);
 });
+
+test('hand selections visibly lift, support individual deselection and clearing, and play one active card at a time',async()=>{
+ const p=await open({width:390,height:844});await fixture(p,'hand',2);
+ const ids=await p.evaluate(()=>window.__dealTest.state.players[0].hand.map(c=>c.id));
+ await p.locator(`[data-card="${ids[0]}"]`).click();
+ const style=await p.locator(`[data-card="${ids[0]}"]`).evaluate(el=>({transform:getComputedStyle(el).transform,outline:getComputedStyle(el).outlineStyle,badge:getComputedStyle(el,'::after').content}));assert.notEqual(style.transform,'none');assert.equal(style.outline,'solid');assert.match(style.badge,/✓/);assert.equal(await p.locator('.selected-table-card').count(),0);
+ await p.locator(`[data-card="${ids[1]}"]`).click();assert.equal(await p.locator('[data-card][aria-pressed=true]').count(),2);if(artifacts)await shot(p,'multiple-selected-card-feedback');
+ await p.locator(`[data-card="${ids[0]}"]`).click();assert.equal(await p.locator('[data-card][aria-pressed=true]').count(),1);
+ await p.locator('#deselect').click();assert.equal(await p.locator('[data-card][aria-pressed=true]').count(),0);
+ await p.locator(`[data-card="${ids[0]}"]`).click();await p.locator(`[data-card="${ids[1]}"]`).click();await p.locator('#bank-card').click();await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank[0].id),ids[1]);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);
+ assert.equal(await p.locator(`[data-card="${ids[0]}"]`).getAttribute('aria-pressed'),'true');await p.locator('#play-card').click();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[0].id),ids[0]);
+ await conservation(p);await close(p);
+});
+test('right-side action icons align and turn limit and end handoff produce clear toasts',async()=>{
+ const p=await open({width:390,height:844});await fixture(p,'hand',2);
+ await p.locator('[data-card]').nth(3).click();
+ const icons=await p.locator('.deal-actions .round-action').evaluateAll(nodes=>nodes.filter(n=>getComputedStyle(n).display!=='none'&&getComputedStyle(n).visibility!=='hidden').map(n=>n.querySelector('.action-disc').getBoundingClientRect().x));assert.ok(Math.max(...icons)-Math.min(...icons)<1);
+ await p.locator('#deselect').click();await p.evaluate(()=>{window.__dealTest.state.plays=2;window.__dealTest.render()});
+ await p.locator('[data-card]').nth(1).click();await p.locator('#bank-card').click();await idle(p);
+ assert.match(await p.locator('#game-toast').innerText(),/All three plays used/);await p.locator('#end').click();await idle(p);
+ assert.match(await p.locator('#game-toast').innerText(),/Chris’s turn is over\. Alex’s turn/);assert.equal(await p.locator('[data-card][aria-pressed=true]').count(),0);await close(p);
+});
+test('numbered player names do not run into payment amounts',async()=>{
+ const p=await open();await fixture(p,'debt',2);await p.evaluate(()=>{const s=window.__dealTest.state;s.players[0].name='Computer 1';const index=s.draw.findIndex(c=>c.action==='no');s.players[1].hand.push(s.draw.splice(index,1)[0]);window.__dealTest.render()});
+ await playFirst(p);await choose(p,'Alex');await choose(p,'Ready');assert.equal(await p.locator('#detail').innerText(),'Pay 5M to Computer 1.');
+ await choose(p,'Allow action');await choose(p,'Ready to pay');await choose(p,0);await idle(p);await conservation(p);await close(p);
+});

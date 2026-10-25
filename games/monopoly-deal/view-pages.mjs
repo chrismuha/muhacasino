@@ -1,4 +1,4 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-deal-stacks-v53';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-selection-feedback-v54';
 // Paginate rendered content without shrinking text or hiding oversized items.
 let dispose = () => {};
 export function paginateViewer(dialog,content){
