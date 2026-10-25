@@ -211,6 +211,55 @@ const categoryTitle = document.querySelector("#categoryTitle");
 const categoryRail = document.querySelector("#categoryRail");
 let activeSlide = 0;
 let sliderTimer;
+const featuredSection = document.querySelector('#featured');
+let featuredLayoutFrame = 0;
+
+// Measure all slides, not only the active one, so slide changes cannot move the copy.
+function syncFeaturedLayout() {
+  if (!featuredSection || !featuredSection.clientWidth || launcher.hidden) return;
+  const slots = [
+    ['--featured-eyebrow-height', '.hero-content > .eyebrow'],
+    ['--featured-title-height', '.hero-content > h1'],
+    ['--featured-copy-height', '.hero-content > p:not(.eyebrow)'],
+    ['--featured-actions-height', '.hero-actions'],
+  ];
+  const sizes = slots.map(([property, selector]) => {
+    const height = Math.ceil(Math.max(0, ...slides.map(slide => slide.querySelector(selector)?.getBoundingClientRect().height || 0)));
+    const value = `${height}px`;
+    if (featuredSection.style.getPropertyValue(property) !== value) featuredSection.style.setProperty(property, value);
+    return height;
+  });
+  const copyHeight = sizes.reduce((total, height) => total + height, 0);
+  const required = Math.ceil(Math.max(0, ...slides.map(slide => {
+    const padding = getComputedStyle(slide);
+    const content = getComputedStyle(slide.querySelector('.hero-content'));
+    return parseFloat(padding.paddingTop) + parseFloat(padding.paddingBottom) + copyHeight + 3 * (parseFloat(content.rowGap) || 0);
+  })));
+  const minimum = `${required}px`;
+  if (featuredSection.style.getPropertyValue('--featured-content-min-height') !== minimum) {
+    featuredSection.style.setProperty('--featured-content-min-height', minimum);
+  }
+}
+
+function scheduleFeaturedLayout() {
+  cancelAnimationFrame(featuredLayoutFrame);
+  featuredLayoutFrame = requestAnimationFrame(syncFeaturedLayout);
+}
+
+if (featuredSection) {
+  let previousWidth = -1;
+  const observer = new ResizeObserver(entries => {
+    const width = entries[0].contentRect.width;
+    if (Math.abs(width - previousWidth) > .5) {
+      previousWidth = width;
+      scheduleFeaturedLayout();
+    }
+  });
+  observer.observe(featuredSection);
+  window.addEventListener('resize', scheduleFeaturedLayout);
+  document.fonts?.ready.then(scheduleFeaturedLayout);
+  document.fonts?.addEventListener('loadingdone', scheduleFeaturedLayout);
+}
 let lastHeroWheelAt = 0;
 let activeGameId = null;
 let gameLoadTimer = 0;
@@ -220,7 +269,12 @@ const bingoThemeChannel = "BroadcastChannel" in window
 
 function showSlide(index) {
   activeSlide = (index + slides.length) % slides.length;
-  slides.forEach((slide, slideIndex) => slide.classList.toggle("active", slideIndex === activeSlide));
+  slides.forEach((slide, slideIndex) => {
+    const active = slideIndex === activeSlide;
+    slide.classList.toggle('active', active);
+    slide.setAttribute('aria-hidden', String(!active));
+    slide.inert = !active;
+  });
   [...heroDots.children].forEach((dot, dotIndex) => {
     dot.classList.toggle("active", dotIndex === activeSlide);
     dot.setAttribute("aria-current", dotIndex === activeSlide ? "true" : "false");
@@ -229,7 +283,10 @@ function showSlide(index) {
 
 function restartSlider() {
   window.clearInterval(sliderTimer);
-  sliderTimer = window.setInterval(() => showSlide(activeSlide + 1), 6500);
+  sliderTimer = window.setInterval(() => {
+    if (document.hidden || launcher.hidden || featuredSection?.matches(':focus-within')) return;
+    showSlide(activeSlide + 1);
+  }, 6500);
 }
 
 slides.forEach((slide, index) => {
@@ -369,6 +426,7 @@ function showLauncher(updateHistory = true) {
   gameLoadState.hidden = true;
   gameView.hidden = true;
   launcher.hidden = false;
+  scheduleFeaturedLayout();
   document.body.classList.remove("game-open");
   bingoToolbarControls.hidden = true;
   slotModeToolbar.hidden = true;
@@ -663,6 +721,7 @@ window.addEventListener("popstate", () => {
   else showLauncher(false);
 });
 
+syncFeaturedLayout();
 showSlide(0);
 restartSlider();
 const requestedGame = window.location.hash.slice(1);

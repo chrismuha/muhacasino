@@ -1,8 +1,90 @@
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-deal-release-v12';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-deal-release-v12';
+import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-rent-reading-preview';
+import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-rent-reading-preview';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-rent-reading-preview';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-rent-reading-preview';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false;
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let detachHandSorting = () => {};
+let toastTimer;
+function showToast(message) {
+ const toast = $('#game-toast');
+ const modal = [...document.querySelectorAll('dialog[open]')].at(-1);
+ (modal || document.body).append(toast);
+ clearTimeout(toastTimer);
+ toast.hidden = false;
+ toast.textContent = message;
+ toastTimer = setTimeout(() => { toast.hidden = true; }, 5500);
+}
+// ARIA-disabled buttons remain focusable/clickable solely to explain their state.
+document.addEventListener('click', event => {
+ if(consumeHandSortClick(event)){
+  event.preventDefault();event.stopImmediatePropagation();return;
+ }
+ const button = event.target.closest('button[aria-disabled="true"]');
+ if(!button)return;
+ event.preventDefault();
+ event.stopImmediatePropagation();
+ showToast(button.dataset.unavailableReason || 'This control is not available right now.');
+}, true);
+
+function updateUnavailableControls() {
+ const selected = visible ? me().hand.find(card => card.id === selectedCardId) : null;
+ const finished = state.winner ? 'This game is finished. Start a new game to play again.' : '';
+ const waiting = busy ? 'Finish the current action first.' : '';
+ const hiddenHand = !visible ? 'Reveal your hand first.' : '';
+ const noPlays = state.plays >= 3 ? 'You have used all three plays. Pass to end your turn.' : '';
+ for(const button of document.querySelectorAll('#game button')){
+  let reason = finished && !button.hasAttribute('data-table-view') ? finished : waiting;
+  if(!reason){
+   if(button.id === 'move')reason = hiddenHand || (!me().props.some(card => card.colors.length > 1) ? 'You have no wild properties on the table to rearrange.' : '');
+   else if(button.id === 'flip-card')reason = hiddenHand || (!selected ? 'Select a two-color wild property card to flip it.' : '') || noPlays || (selected.type !== 'property' || selected.colors.length !== 2 ? 'Only two-color wild property cards can be flipped.' : '');
+   else if(button.id === 'bank-card')reason = hiddenHand || (!selected ? 'Select a money or action card to bank.' : '') || noPlays || (selected.type === 'property' ? 'Property cards cannot be banked. Play this card as a property.' : '');
+   else if(button.id === 'play-card')reason = hiddenHand || (!selected ? 'Select a property or action card to play.' : '') || noPlays || (selected.type === 'money' ? 'Money cards can only be banked, not played.' : '');
+   else if(button.hasAttribute('data-card') && document.documentElement.dataset.theme === 'classic')reason = noPlays;
+  }
+  button.disabled = false;
+  if(button.hasAttribute('data-card'))button.dataset.handSortable=String(visible&&!busy&&!state.winner);
+  button.setAttribute('aria-disabled', String(Boolean(reason)));
+  if(reason){
+   button.dataset.unavailableReason = reason;
+   button.setAttribute('aria-description', reason);
+   button.title = reason;
+  }else if(button.dataset.unavailableReason){
+   delete button.dataset.unavailableReason;
+   button.removeAttribute('aria-description');
+   button.removeAttribute('title');
+  }
+ }
+}
+
+function wireHandSorting() {
+ const hand = $('#game .cards'), game = state, turn = state.turn, player = me();
+ const canSort = () => state === game && state.turn === turn && visible && !busy && !state.winner;
+ detachHandSorting = attachHandSorting(hand, {
+  canSort,
+  announce: showToast,
+  onReorder(ids, {movedId, focusId} = {}) {
+   if(!canSort() || ids.length !== player.hand.length || new Set(ids).size !== ids.length)return false;
+   const byId = new Map(player.hand.map(card => [card.id, card]));
+   if(ids.some(id => !byId.has(id)))return false;
+   player.hand = ids.map(id => byId.get(id));
+   render();
+   if(focusId !== undefined){
+    const card = document.querySelector(`#game [data-card="${focusId}"]`);
+    card?.focus({preventScroll:true});
+    const list = $('#game .cards');
+    if(card && list){
+     const item = card.getBoundingClientRect(), bounds = list.getBoundingClientRect();
+     if(item.left < bounds.left)list.scrollLeft -= bounds.left - item.left;
+     else if(item.right > bounds.right)list.scrollLeft += item.right - bounds.right;
+    }
+   }
+   showToast(`Card moved to position ${ids.indexOf(movedId) + 1} of ${ids.length}.`);
+   return true;
+  }
+ });
+}
 // Fit short labels without breaking words; unusually long names can still scroll.
 let labelMeasureCanvas;
 function fitResponsiveLabels() {
@@ -30,14 +112,16 @@ function log(s){state.log.unshift(s);state.log=state.log.slice(0,30);$('#log').i
 const label=c=>`${c.name} · ${c.value}M${c.color?' · '+GROUPS[c.color].name:''}`;
 async function colorFor(c){return c.colors.length===1?c.colors[0]:choose('Choose the property color',c.colors.map(k=>[GROUPS[k].name,k]))}
 function cardHTML(c){let colors=c.action==='house'?['#22824b']:c.action==='hotel'?['#c83737']:c.colors?.map(k=>GROUPS[k].color)||[c.type==='money'?'#d6ba62':'#dc6a55'];return `<button class="card" data-card="${c.id}" data-building="${['house','hotel'].includes(c.action)?c.action:''}"><span class="value">${c.value}M <small>${c.type==='property'?'PROPERTY':c.type.toUpperCase()}</small></span><span class="stripe" style="background:linear-gradient(110deg,${colors.length===1?[colors[0],colors[0]].join(','):colors.join(',')})"></span><strong>${esc(c.name)}</strong><small>${esc(c.description|| (c.type==='property'?(c.colors.length===10?'Use with any property color.':c.colors.map(k=>GROUPS[k].name).join(' / ')):'Build your bank. Pay your debts.'))}</small></button>`}
-function renderClassic(){if(!state)return;const handScroll=$('.cards')?.scrollLeft || 0;const p=me();$('#game').innerHTML=`<div class="players">${state.players.map((x,i)=>`<section class="player ${i===state.turn?'active':''}"><h3>${esc(x.name)} ${i===state.turn?'◆':''}</h3><div class="meta"><span>Bank <b>${x.bank.reduce((a,c)=>a+c.value,0)}M</b></span><span>${x.hand.length} cards</span><span class="badge">${sets(x).length} / 3 sets</span></div><div class="player-inspect"><button type="button" data-table-view="bank-${i}">Bank cards</button><button type="button" data-table-view="properties-${i}">Properties</button></div><div class="groups">${Object.entries(GROUPS).filter(([k])=>properties(x,k).length).map(([k,g])=>`<div class="group ${complete(x,k)?'done':''}" style="--color:${g.color}"><strong>${g.name} ${properties(x,k).length}/${g.names.length}</strong>${properties(x,k).map(c=>`<div>${esc(c.name)}</div>`).join('')}<small>Rent ${rent(x,k)}M ${x.buildings.filter(c=>c.color===k).map(c=>`<span class="building-label" data-building="${c.action}">${esc(c.name)}</span>`).join(' ')}</small></div>`).join('')||'<p>No properties yet</p>'}</div></section>`).join('')}</div><div class="turnbar"><div><strong>${esc(p.name)}’s turn</strong><div class="meta">${3-state.plays} plays left · ${state.draw.length} in draw pile · Discard: ${esc(state.discard.at(-1)?.name||'Empty')}</div></div><div><button type="button" data-table-view="discard">Discard pile</button><button type="button" data-table-view="activity">View table</button><button id="move">Rearrange wilds</button> <button id="end" class="primary">End turn →</button></div></div><section class="hand">${visible?`<h2>${esc(p.name)}’s hand <button id="hide">Hide</button></h2><p class="hand-hint">Tap a card to play or bank it. Swipe sideways to see your full hand.</p><div class="cards" tabindex="0" role="region" aria-label="Your hand; scroll sideways for more cards">${p.hand.map(cardHTML).join('')||'<p>Your hand is empty.</p>'}</div>`:`<div class="privacy"><h2>Pass the device to ${esc(p.name)}</h2><p>Only this player should view their hand.</p><button id="reveal" class="primary">Reveal my hand</button></div>`}</section>`;
+function renderClassic(){if(!state)return;const handScroll=$('.cards')?.scrollLeft || 0;const p=me();$('#game').innerHTML=`<div class="players">${state.players.map((x,i)=>`<section class="player ${i===state.turn?'active':''}"><h3>${esc(x.name)} ${i===state.turn?'◆':''}</h3><div class="meta"><span>Bank <b>${x.bank.reduce((a,c)=>a+c.value,0)}M</b></span><span>${x.hand.length} cards</span><span class="badge">${sets(x).length} / 3 sets</span></div><div class="player-inspect"><button type="button" data-table-view="bank-${i}">Bank cards</button><button type="button" data-table-view="properties-${i}">Properties</button></div><div class="groups">${Object.entries(GROUPS).filter(([k])=>properties(x,k).length).map(([k,g])=>`<div class="group ${complete(x,k)?'done':''}" style="--color:${g.color}"><strong>${g.name} ${properties(x,k).length}/${g.names.length}</strong>${properties(x,k).map(c=>`<div>${esc(c.name)}</div>`).join('')}<small>Rent ${rent(x,k)}M ${x.buildings.filter(c=>c.color===k).map(c=>`<span class="building-label" data-building="${c.action}">${esc(c.name)}</span>`).join(' ')}</small></div>`).join('')||'<p>No properties yet</p>'}</div></section>`).join('')}</div><div class="turnbar"><div><strong>${esc(p.name)}’s turn</strong><div class="meta">${3-state.plays} plays left · ${state.draw.length} in draw pile · Discard: ${esc(state.discard.at(-1)?.name||'Empty')}</div></div><div><button type="button" data-table-view="discard">Discard pile</button><button type="button" data-table-view="activity">View table</button><button id="move">Rearrange wilds</button> <button id="end" class="primary">End turn →</button></div></div><section class="hand">${visible?`<h2>${esc(p.name)}’s hand <button id="hide">Hide</button></h2><p id="hand-sort-help" class="hand-hint">Tap a card to play or bank it. Drag to sort; hold first on touch. Swipe to scroll, or use Alt+Left/Right to reorder the focused card.</p><div class="cards" tabindex="0" role="region" aria-label="Your hand; scroll sideways for more cards" aria-describedby="hand-sort-help">${p.hand.map(cardHTML).join('')||'<p>Your hand is empty.</p>'}</div>`:`<div class="privacy"><h2>Pass the device to ${esc(p.name)}</h2><p>Only this player should view their hand.</p><button id="reveal" class="primary">Reveal my hand</button></div>`}</section>`;
  if($('.cards'))$('.cards').scrollLeft=handScroll;
- $('#reveal')?.addEventListener('click',()=>{visible=true;render()});$('#hide')?.addEventListener('click',()=>{visible=false;render()});$('#end').onclick=()=>run(end);$('#move').onclick=()=>run(rearrange);document.querySelectorAll('[data-card]').forEach(b=>b.onclick=()=>run(()=>play(p.hand.find(c=>c.id===+b.dataset.card))));document.querySelectorAll('[data-table-view]').forEach(b=>b.onclick=()=>openTableViewer(b.dataset.tableView));if(state.winner)document.querySelectorAll('#game button:not([data-table-view])').forEach(b=>b.disabled=true);
+ $('#reveal')?.addEventListener('click',()=>{visible=true;render()});$('#hide')?.addEventListener('click',()=>{visible=false;render()});$('#end').onclick=()=>run(end);$('#move').onclick=()=>run(rearrange);document.querySelectorAll('#game [data-card]').forEach(b=>b.onclick=()=>run(()=>play(p.hand.find(c=>c.id===+b.dataset.card))));document.querySelectorAll('#game [data-table-view]').forEach(b=>b.onclick=()=>openTableViewer(b.dataset.tableView));
 }
 function render(){
+ detachHandSorting();
+ detachHandSorting = () => {};
  if(!state)return;
  document.body.classList.add('is-playing');
- if(document.documentElement.dataset.theme!=='modern'){renderClassic();fitResponsiveLabels();return;}
+ if(document.documentElement.dataset.theme!=='modern'){renderClassic();updateUnavailableControls();wireHandSorting();fitResponsiveLabels();return;}
  if(!visible||!me().hand.some(c=>c.id===selectedCardId)){selectedCardId=null;previewFlipped=false;}
  const scroll=$('.cards')?.scrollLeft||0;
  $('#game').innerHTML=modernBoard(state,visible,selectedCardId,previewFlipped);
@@ -56,6 +140,8 @@ function render(){
   previewFlipped=false;render();
  });
  document.querySelectorAll('#game [data-table-view]').forEach(button=>button.onclick=()=>{if(!busy)openTableViewer(button.dataset.tableView)});
+ updateUnavailableControls();
+ wireHandSorting();
  fitResponsiveLabels();
 }
 async function run(fn){if(busy||state.winner)return;busy=true;try{await fn();checkWin();}catch(e){console.error(e);await choose('Unable to play', [['Continue',true]],e.message)}finally{busy=false;selectedCardId=null;previewFlipped=false;render()}}
@@ -213,10 +299,10 @@ function tableViews() {
   const guideViews = [{key:'rules',title:'Rules',description:'A step-by-step guide to playing Monopoly Deal.'},{key:'cards',title:'Cards',description:'Browse every card design. Use the arrows or Left/Right keys.'},{key:'release-notes',title:'Release notes',description:'Monopoly Deal · v1.2.0 · October 25, 2026 · Responsive tables and controls'}];
   if (!state) return guideViews;
   return [
-    {key:'discard', title:'Discard pile', cards:[...state.discard].reverse(), description:'Newest discard first. These cards may return when the draw pile runs out.'},
+    {key:'discard', kind:'deck', title:'Discard pile', cards:[...state.discard].reverse(), description:'Newest discard first. These cards may return when the draw pile runs out.'},
     ...state.players.flatMap((player, index) => [
-      {key:`bank-${index}`, title:`${player.name}’s bank`, cards:player.bank, description:`${player.bank.reduce((total, card) => total + card.value, 0)}M in the bank. Banked action cards are money and cannot be played as actions.`, bank:true},
-      {key:`properties-${index}`, title:`${player.name}’s properties`, cards:[...player.props].sort((a,b)=>a.color.localeCompare(b.color)).concat(player.buildings), description:`${sets(player).length} of 3 complete colors. Properties and buildings on the table.`}
+      {key:`bank-${index}`, kind:'bank', ownerIndex:index, title:`${player.name}’s bank`, cards:player.bank, description:`${player.bank.reduce((total, card) => total + card.value, 0)}M in the bank. Banked action cards are money and cannot be played as actions.`, bank:true},
+      {key:`properties-${index}`, kind:'properties', ownerIndex:index, title:`${player.name}’s properties`, cards:[...player.props].sort((a,b)=>a.color.localeCompare(b.color)).concat(player.buildings), description:`${sets(player).length} of 3 complete colors. Properties and buildings on the table.`}
     ]),
     {key:'activity', title:'Table activity', activity:state.log, description:'Most recent event first.'}, ...guideViews
   ];
@@ -225,8 +311,11 @@ function showTableView(index) {
   const views = tableViews();
   tableViewIndex = (index + views.length) % views.length;
   const view = views[tableViewIndex];
+  const modern = document.documentElement.dataset.theme === 'modern';
+  const modernPublic = modern && state && (view.kind || view.key === 'activity');
   $('#table-viewer').dataset.view = view.key;
-  $('#table-view-title').textContent = view.title;
+  $('#table-viewer').dataset.modernPublic = String(Boolean(modernPublic));
+  $('#table-view-title').textContent = modern && view.kind === 'deck' ? 'Deck & discard' : view.title;
   $('#table-view-description').textContent = view.description;
   $('#table-view-position').textContent = `${tableViewIndex + 1} of ${views.length}`;
   $('#table-view-category').replaceChildren(...views.map((entry, i) => {
@@ -236,8 +325,32 @@ function showTableView(index) {
     option.selected = i === tableViewIndex;
     return option;
   }));
+  const tools = $('#modern-table-tools');
+  const toolsScroll = tools.querySelector('.modern-section-nav')?.scrollLeft || 0;
+  tools.innerHTML = modern ? modernViewerTools(state, view) : '';
+  tools.hidden = !tools.innerHTML;
+  if(tools.querySelector('.modern-section-nav'))tools.querySelector('.modern-section-nav').scrollLeft=toolsScroll;
+  tools.querySelectorAll('[data-modern-view]').forEach(button => {
+    button.onclick = () => {
+      const next = tableViews().findIndex(entry => entry.key === button.dataset.modernView);
+      if(next < 0)return;
+      const section = button.dataset.modernSection;
+      showTableView(next);
+      tools.querySelector(`[data-modern-section="${section}"]`)?.focus({preventScroll:true});
+      revealModernSection();
+    };
+  });
+  tools.querySelector('#modern-view-owner')?.addEventListener('change', event => {
+    const next = tableViews().findIndex(entry => entry.key === `${view.kind}-${event.target.value}`);
+    if(next < 0)return;
+    showTableView(next);
+    $('#modern-view-owner')?.focus({preventScroll:true});
+  });
   const content = $('#table-view-content');
-  if (view.key === 'release-notes') {
+  content.setAttribute('aria-label', modern ? view.title : 'Category contents');
+  if (modernPublic) {
+    content.innerHTML = modernViewerContent(state, view);
+  } else if (view.key === 'release-notes') {
     content.innerHTML = `<div class="guide-rules">${RELEASE_NOTES.map(([title,items])=>`<section><h3>${esc(title)}</h3><ul>${items.map(item=>`<li>${esc(item)}</li>`).join('')}</ul></section>`).join('')}<p><a class="release-history-link" href="../../about.html#monopoly-deal" target="_blank" rel="noopener">Open casino game version history ↗</a></p></div>`;
   } else if (view.key === 'rules') {
     content.innerHTML = `<div class="guide-rules">${GUIDE_RULES.map(([title,items])=>`<section><h3>${esc(title)}</h3><ul>${items.map(item=>`<li>${esc(item)}</li>`).join('')}</ul></section>`).join('')}</div>`;
@@ -254,25 +367,44 @@ function showTableView(index) {
     }).join('')}</ol>` : '<p class="table-empty">No cards here yet.</p>');
   }
   content.scrollTop = 0;
+  if(modern)$('.table-view-body').scrollTop = 0;
   fitResponsiveLabels();
+}
+function revealModernSection() {
+  if(document.documentElement.dataset.theme !== 'modern')return null;
+  const button = $('#modern-table-tools [aria-current="page"]');
+  const nav = button?.closest('.modern-section-nav');
+  if(button && nav){
+    const item=button.getBoundingClientRect(),bounds=nav.getBoundingClientRect();
+    if(item.left<bounds.left)nav.scrollLeft-=bounds.left-item.left;
+    else if(item.right>bounds.right)nav.scrollLeft+=item.right-bounds.right;
+  }
+  return button;
 }
 function openTableViewer(key) {
   if ($('#choice').open) return;
   const index = tableViews().findIndex(view=>view.key===key);
   showTableView(Math.max(index, 0));
   if (!$('#table-viewer').open) $('#table-viewer').showModal();
+  revealModernSection();
   fitResponsiveLabels();
 }
 $('#table-view-previous').onclick = () => showTableView(tableViewIndex - 1);
 $('#table-view-next').onclick = () => showTableView(tableViewIndex + 1);
-$('#table-view-category').onchange = event => showTableView(Number(event.target.value));
+$('#table-view-category').onchange = event => {
+  showTableView(Number(event.target.value));
+  if($('#table-viewer').dataset.modernPublic === 'true')revealModernSection()?.focus({preventScroll:true});
+};
 $('#table-view-close').onclick = () => $('#table-viewer').close();
 $('#table-viewer').addEventListener('keydown', event => {
   if (['INPUT', 'SELECT', 'TEXTAREA'].includes(event.target.tagName)) return;
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
     event.preventDefault();
     const direction = event.key === 'ArrowLeft' ? -1 : 1;
-    if (tableViews()[tableViewIndex].key === 'cards') {designIndex += direction;showCardDesign();} else showTableView(tableViewIndex + direction);
+    if (tableViews()[tableViewIndex].key === 'cards') {designIndex += direction;showCardDesign();} else {
+      showTableView(tableViewIndex + direction);
+      revealModernSection()?.focus({preventScroll:true});
+    }
   }
 });
 

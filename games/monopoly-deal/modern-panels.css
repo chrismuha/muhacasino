@@ -1,0 +1,105 @@
+/* Modern theme only: value spacing, asset panels, and public-card viewers. */
+[data-theme=modern] .cash-number{gap:1cqw;white-space:nowrap;letter-spacing:0;font-variant-numeric:tabular-nums}
+[data-theme=modern] .cash-amount{display:block;flex:0 0 auto;letter-spacing:0;line-height:1}
+[data-theme=modern] .currency{display:block;flex:0 0 auto;margin-left:0;letter-spacing:0;line-height:1}
+[data-theme=modern] .face-value .cash-number[data-digits="2"]{font-size:15cqw;gap:.6cqw}
+[data-theme=modern] .face-value .cash-number[data-digits="2"] .currency{font-size:6cqw}
+[data-theme=modern] .deal-face{isolation:isolate}
+[data-theme=modern] .modern-hand-card{isolation:isolate;z-index:0}
+[data-theme=modern] .modern-hand-card.is-selected{z-index:4;margin-inline-end:clamp(6px,1.5cqw,14px)}
+[data-theme=modern] .modern-hand-card:focus-visible{z-index:3}
+
+/* Clearly labelled, keyboard-accessible entry points to each public collection. */
+[data-theme=modern] .current-assets{grid-template-columns:minmax(64px,.22fr) minmax(0,1fr);height:clamp(110px,22cqw,170px);gap:10px}
+[data-theme=modern] .current-bank,[data-theme=modern] .current-properties{padding:10px;border:1px solid #93caff55;border-radius:14px;background:linear-gradient(145deg,#064b9baa,#052d6ddd);gap:6px;text-align:left}
+[data-theme=modern] .current-bank:hover,[data-theme=modern] .current-properties:hover{background:linear-gradient(145deg,#064b9baa,#052d6ddd);border-color:#b5dcff}
+[data-theme=modern] .current-properties{container-type:inline-size}
+[data-theme=modern] .asset-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;min-width:0;flex-shrink:0}
+[data-theme=modern] .asset-panel-title{font-size:clamp(11px,9cqw,16px);font-weight:800;white-space:nowrap;min-width:0}
+[data-theme=modern] .current-bank .asset-panel-heading{justify-content:center}
+[data-theme=modern] .current-bank .asset-panel-title{font-size:13px}
+[data-theme=modern] .asset-progress{flex-shrink:0;display:inline-block;border-radius:20px;padding:3px 8px;background:#ffffff15;color:#e5f1ff;font-size:11px;white-space:nowrap}
+[data-theme=modern] .bank-balance{display:flex;align-items:baseline;justify-content:center;gap:3px;flex-shrink:0;min-width:0;font-size:clamp(18px,3cqw,28px);line-height:1.1;color:#fff;font-variant-numeric:tabular-nums}
+[data-theme=modern] .bank-unit{font-size:.55em;text-decoration:line-through;text-decoration-thickness:.08em}
+[data-theme=modern] .bank-miniatures{min-height:0;flex:1;align-items:center;justify-content:flex-start}
+[data-theme=modern] .current-bank .bank-miniatures{padding-right:8px}
+[data-theme=modern] .current-bank .public-mini{height:100%;max-height:64px;width:auto;max-width:none;aspect-ratio:.69;margin-right:-8px}
+[data-theme=modern] .asset-count{display:block;flex-shrink:0;width:100%;font-size:11px;line-height:1.4;color:#d3e9ff;white-space:nowrap;overflow-x:auto;scrollbar-width:thin}
+[data-theme=modern] .current-bank .asset-count{text-align:center}
+[data-theme=modern] .asset-empty{align-self:center;margin:auto;font-size:11px;line-height:1.4;color:#c5e0ff;white-space:nowrap}
+[data-theme=modern] .own-groups{align-items:flex-start;padding:2px;gap:14px}
+[data-theme=modern] .deck-label{display:block;margin-bottom:8px;font-size:13px;font-weight:800;line-height:1.3;color:white;white-space:nowrap}
+[data-theme=modern] .deck-count{display:grid;gap:3px;font-size:11px;line-height:1.3}
+[data-theme=modern] .deck-count>span{white-space:nowrap}
+[data-theme=modern] .table-tools{gap:8px}
+[data-theme=modern] .table-tools button,[data-theme=modern] .table-tools #move{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;border-radius:999px;border:1px solid #91c9ff66;padding:8px 12px;background:#063d80;color:#fff;font-size:12px;box-shadow:none}
+[data-theme=modern] .table-tools button:hover,[data-theme=modern] .table-tools #move:hover{background:#10549b}
+[data-theme=modern] .table-tool-icon{display:inline-grid;place-items:center;flex:0 0 18px;width:18px;font-size:20px;line-height:1;pointer-events:none}
+
+/* Navigation stays at the top. Classic retains its existing viewer and footer. */
+[data-theme=modern] #table-viewer[open]{grid-template-rows:auto auto auto minmax(0,1fr);background:#05245b}
+[data-theme=modern] #table-viewer .table-view-heading{grid-row:1;background:#041d4a;border-bottom:1px solid #9ccaff33;padding:14px 18px}
+[data-theme=modern] #table-viewer .table-view-heading h2{font-size:clamp(20px,3vw,30px)}
+[data-theme=modern] #table-viewer .table-view-heading button{min-height:44px;padding:9px 18px;border-radius:999px;background:#0d4086;border-color:#b1d8ff77}
+[data-theme=modern] #modern-table-tools:not([hidden]){grid-row:2;display:grid;gap:10px;padding:10px 16px;background:#07295f;border-bottom:1px solid #9ccaff33;min-width:0}
+[data-theme=modern] .modern-section-nav{display:flex;align-items:center;gap:8px;min-width:0;max-width:100%;overflow-x:auto;padding:3px;scrollbar-width:thin;overscroll-behavior-x:contain}
+[data-theme=modern] .modern-section-nav button{flex:0 0 auto;min-height:44px;white-space:nowrap;border-radius:999px;padding:9px 16px;background:#0a3975;border-color:#8fc9ff66;font-size:15px}
+[data-theme=modern] .modern-section-nav button[aria-current=page]{background:#f0f7ff;border-color:#f0f7ff;color:#07346d;font-weight:800}
+[data-theme=modern] .modern-owner-field{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:12px;min-width:0}
+[data-theme=modern] .modern-owner-field label{font-size:15px;font-weight:750;color:#e4f2ff;white-space:nowrap}
+[data-theme=modern] #modern-view-owner{min-width:0;width:100%;min-height:44px;max-width:100%;border:1px solid #9acfff88;border-radius:10px;background:#09346e;color:white;font-size:16px;padding:8px 12px}
+[data-theme=modern] #table-viewer .table-view-navigation{grid-row:3}
+[data-theme=modern] #table-viewer .table-view-body{grid-row:4;min-height:0;min-width:0;margin:12px;border:1px solid #8abfff44;background:#05265e}
+[data-theme=modern] #table-viewer .table-view-footer{display:none}
+[data-theme=modern] #table-viewer[data-modern-public=true] .table-view-navigation,[data-theme=modern] #table-viewer[data-modern-public=true] #table-view-description{display:none}
+[data-theme=modern] #table-viewer[data-modern-public=true] .table-view-body{grid-template-rows:minmax(0,1fr)}
+[data-theme=modern] #table-viewer[data-modern-public=true] #table-view-content{padding:18px;background:transparent;overflow:auto}
+
+[data-theme=modern] .modern-view-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:16px;align-items:center;margin-bottom:18px;padding:18px;border:1px solid #8fc9ff55;border-radius:16px;background:linear-gradient(135deg,#0b4b96,#0a306a);color:#fff}
+[data-theme=modern] .modern-view-summary>div{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0}
+[data-theme=modern] .modern-summary-label{font-size:14px;font-weight:750;color:#d8ebff;white-space:nowrap}
+[data-theme=modern] .modern-view-summary strong{display:flex;align-items:baseline;gap:5px;font-size:38px;line-height:1.1;font-variant-numeric:tabular-nums}
+[data-theme=modern] .modern-view-summary strong small{font-size:18px;white-space:nowrap}
+[data-theme=modern] .modern-view-summary>div>span:last-child{font-size:14px;color:#d8ebff}
+[data-theme=modern] .modern-view-summary>p,[data-theme=modern] .modern-view-note{margin:0;color:#dfedff;font-size:16px;line-height:1.5}
+[data-theme=modern] .modern-view-note{margin:0 0 18px}
+[data-theme=modern] .modern-public-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,170px),1fr));gap:18px;align-items:start;list-style:none;padding:0;margin:0}
+[data-theme=modern] .modern-public-card{display:grid;gap:12px;align-content:start;min-width:0;padding:12px;border:1px solid #8ec7ff44;border-radius:16px;background:#0a3773}
+[data-theme=modern] .modern-public-face{justify-self:center;width:100%;max-width:220px;aspect-ratio:.69;min-width:0}
+[data-theme=modern] .modern-public-copy{min-width:0}
+[data-theme=modern] .modern-public-copy h3{margin:0 0 8px;color:#fff;font-size:16px;line-height:1.3;white-space:nowrap;overflow-x:auto;scrollbar-width:thin}
+[data-theme=modern] .modern-card-value{display:block;margin-bottom:8px;font-size:13px;font-weight:750;line-height:1.4;color:#ffe990}
+[data-theme=modern] .modern-public-copy p{font-size:14px;line-height:1.5;color:#d8eaff;margin:0}
+[data-theme=modern] .modern-property-section{margin:24px 0 0;padding-top:14px;border-top:5px solid var(--set-color);min-width:0}
+[data-theme=modern] .modern-property-heading{display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;padding:0;border:0}
+[data-theme=modern] .modern-property-heading h3{flex:1;min-width:0;margin:0;color:#fff;font-size:20px;line-height:1.3}
+[data-theme=modern] .modern-property-heading>span{flex-shrink:0;font-size:14px;letter-spacing:0;color:#dceeff;white-space:nowrap}
+[data-theme=modern] .modern-view-empty{padding:28px 18px;border:1px dashed #97c9ff77;border-radius:16px;background:#08316b;text-align:center}
+[data-theme=modern] .modern-view-empty h3,[data-theme=modern] .modern-activity-heading h3{font-size:22px;margin:0 0 10px;color:white}
+[data-theme=modern] .modern-view-empty p,[data-theme=modern] .modern-activity-heading p{font-size:16px;line-height:1.5;color:#d7e9ff;margin:0}
+[data-theme=modern] .modern-activity-list{list-style:none;display:grid;gap:12px;margin:18px 0 0;padding:0}
+[data-theme=modern] .modern-activity-list li{padding:16px 18px;border:1px solid #85c2ff44;border-left:4px solid #5dc5ff;border-radius:12px;background:#0a3670;color:#f0f7ff;font-size:17px;line-height:1.5;overflow-wrap:anywhere}
+
+@container(max-width:120px){.asset-progress{display:none}}
+@media(max-width:600px){
+ [data-theme=modern] #table-viewer .table-view-heading{padding:8px 10px}
+ [data-theme=modern] #modern-table-tools:not([hidden]){padding:8px;gap:8px}
+ [data-theme=modern] .modern-section-nav{gap:6px}
+ [data-theme=modern] .modern-section-nav button{font-size:13px;padding-inline:12px}
+ [data-theme=modern] #table-viewer .table-view-body{margin:8px}
+ [data-theme=modern] #table-viewer[data-modern-public=true] #table-view-content{padding:12px}
+ [data-theme=modern] .modern-view-summary{padding:14px}
+ [data-theme=modern] .modern-property-heading{display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
+ [data-theme=modern] .modern-property-heading>span{justify-self:start;max-width:100%;overflow-x:auto;scrollbar-width:thin;font-size:12px}
+ [data-theme=modern] .current-bank,[data-theme=modern] .current-properties{padding:8px}
+ [data-theme=modern] .table-tools button,[data-theme=modern] .table-tools #move{padding:8px 10px;gap:5px}
+}
+@media(max-width:350px){[data-theme=modern] .table-tool-icon{display:none}}
+@media(orientation:landscape) and (max-height:600px) and (min-width:480px){
+ [data-theme=modern] .current-assets{height:auto;min-height:110px;grid-template-columns:64px minmax(0,1fr)}
+}
+@media(orientation:landscape) and (max-width:560px){[data-theme=modern] .table-tool-icon{display:none}}
+@media(max-height:360px){
+ [data-theme=modern] #table-viewer .table-view-heading{padding-block:6px}
+ [data-theme=modern] #modern-table-tools:not([hidden]){padding-block:4px;gap:4px}
+}

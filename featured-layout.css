@@ -1,0 +1,72 @@
+/* One shared geometry for every featured game, including Monopoly Deal. */
+#featured{
+ --featured-min-height:680px;
+ --featured-content-top:168px;
+ --featured-content-bottom:96px;
+ height:min(840px,calc(92svh + 60px));
+ min-height:max(var(--featured-min-height),var(--featured-content-min-height,0px));
+}
+#featured .hero-track{position:relative;height:100%}
+#featured .hero-slide{
+ display:grid;
+ grid-template-columns:minmax(0,1fr);
+ grid-template-rows:minmax(0,1fr);
+ align-items:start;
+ padding-block:var(--featured-content-top) var(--featured-content-bottom);
+}
+#featured .hero-glow{position:absolute;inset:0;pointer-events:none}
+#featured .hero-content{
+ grid-column:1;
+ grid-row:1;
+ display:grid;
+ grid-template-columns:minmax(0,1fr);
+ grid-template-rows:var(--featured-eyebrow-height,32px) var(--featured-title-height,260px) var(--featured-copy-height,96px) var(--featured-actions-height,52px);
+ align-content:start;
+ gap:16px;
+ min-height:0;
+ padding:0;
+ transform:none;
+}
+#featured .hero-content>*{align-self:start;min-width:0;margin-block:0}
+#featured .hero-content>.eyebrow{grid-row:1}
+#featured .hero-content>h1{grid-row:2}
+#featured .hero-content>p:not(.eyebrow){grid-row:3;min-height:0;padding:0;margin:0}
+#featured .hero-actions{grid-row:4}
+#featured .hero-actions>*{white-space:nowrap}
+#featured .hero-slide .hero-art{pointer-events:none}
+#featured .deal-art{inset:0;width:100%;height:100%;background-size:cover}
+
+/* Dot hit areas do not change width when the active game changes. */
+#featured .hero-dot,#featured .hero-dot.active{width:44px;flex:0 0 44px}
+#featured .hero-dot::after{inset-inline:10px}
+#featured .hero-dot.active::after{inset-inline:2px}
+#games.content-section{padding-top:12px}
+
+@media(max-width:900px){
+ #featured{--featured-content-top:156px}
+}
+@media(max-width:620px){
+ #featured{--featured-min-height:743px;--featured-content-top:104px;--featured-content-bottom:132px;height:743px}
+ #featured .hero-content{width:100%;max-width:100%}
+ #featured .hero-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ #featured .hero-actions>*{display:flex;align-items:center;justify-content:center;min-height:48px;padding:12px;font-size:clamp(12px,3.3vw,16px);text-align:center}
+ #featured .hero-controls{position:absolute;z-index:6;inset:auto 12px 12px;display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:8px;align-items:center}
+ #featured .hero-controls .hero-arrow{position:static;width:44px;height:44px;min-width:0;padding:0;font-size:40px;line-height:1}
+ #featured .hero-controls .previous{grid-column:1;grid-row:1}
+ #featured .hero-controls .next{grid-column:3;grid-row:1}
+ #featured .hero-controls .hero-dots{position:static;grid-column:2;grid-row:1;justify-self:center;left:auto;bottom:auto;transform:none;gap:2px}
+}
+@media(max-width:480px){
+ #featured .hero-controls{grid-template-rows:44px 44px}
+ #featured .hero-controls .hero-dots{grid-column:1/-1;grid-row:1}
+ #featured .hero-controls .previous,#featured .hero-controls .next{grid-row:2}
+}
+@media(max-height:500px){
+ #featured{--featured-min-height:820px;--featured-content-top:104px;height:820px}
+}
+@media(max-height:500px) and (min-width:621px) and (max-width:900px){
+ #featured{--featured-content-top:144px}
+}
+@media(max-height:500px) and (max-width:620px){
+ #featured{--featured-min-height:803px;height:803px}
+}

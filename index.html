@@ -15,6 +15,7 @@
   <link rel="manifest" href="manifest.webmanifest?v=20260919-rounded-icons-v3">
   <link rel="stylesheet" href="styles.css?build=20261024-bingo-sticky-v42">
   <link rel="stylesheet" href="safe-area.css?build=20260905-notch-v1">
+  <link rel="stylesheet" href="featured-layout.css?build=20261025-featured-layout-preview">
 </head>
 <body>
   <main id="launcher">
@@ -137,9 +138,11 @@
         </article>
       </div>
 
-      <button id="heroPrevious" class="hero-arrow previous" type="button" aria-label="Previous featured game">‹</button>
-      <button id="heroNext" class="hero-arrow next" type="button" aria-label="Next featured game">›</button>
-      <div id="heroDots" class="hero-dots" aria-label="Choose featured game"></div>
+      <div class="hero-controls" role="group" aria-label="Featured game controls">
+        <button id="heroPrevious" class="hero-arrow previous" type="button" aria-label="Previous featured game">‹</button>
+        <div id="heroDots" class="hero-dots" aria-label="Choose featured game"></div>
+        <button id="heroNext" class="hero-arrow next" type="button" aria-label="Next featured game">›</button>
+      </div>
     </section>
 
     <section id="games" class="content-section">
@@ -275,7 +278,7 @@
   </section>
 
   <script src="interaction-lock.js?build=20260811-horizontal-rails"></script>
-  <script src="launcher.js?build=20261025-deal-release-v12"></script>
+  <script src="launcher.js?build=20261025-featured-layout-preview"></script>
   <script src="pwa.js?build=20260829-pwa-v1"></script>
 </body>
 </html>

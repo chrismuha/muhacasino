@@ -1,4 +1,4 @@
-/* Responsive rules shared by Blue table and Classic. Card copy keeps its designed lines. */
+/* Responsive rules shared by Modern and Classic. Card copy keeps its designed lines. */
 .game-topbar,.game-top-actions{flex-wrap:nowrap;min-width:0}
 .game-topbar>a{flex-shrink:0;white-space:nowrap}
 .game-topbar>a .casino-name{display:inline;font:inherit;letter-spacing:inherit;color:inherit}
@@ -162,3 +162,30 @@ button:not(.card):not(.modern-hand-card):not(.current-properties):not(.current-b
  #table-viewer:not([data-view=cards]) #table-view-content{overflow:visible}
  #table-viewer #table-view-description{max-height:none;overflow:visible}
 }
+
+/* Hand sorting is shared by both themes and never spends a play. */
+#game .cards [data-hand-sortable=true]{touch-action:pan-y pinch-zoom;cursor:grab}
+.cards.is-hand-sorting,.cards.is-hand-scrolling{scroll-snap-type:none}
+.cards.is-hand-sorting [data-card]{cursor:grabbing}
+.cards [data-card].is-hand-dragging{opacity:.25;outline:2px dashed #ffe297;outline-offset:1px}
+.hand-drag-ghost{position:fixed!important;z-index:10000!important;margin:0!important;max-width:none!important;min-height:0!important;max-height:none!important;pointer-events:none!important;opacity:.96!important;transform:rotate(-3deg)!important;transition:none!important;box-shadow:0 10px 28px #00153c66!important}
+.hand-sort-hint{font-size:clamp(10px,2.1vw,13px);line-height:1.4;color:#e4efff;margin:4px 0 0;white-space:nowrap;overflow-x:auto;scrollbar-width:thin}
+
+/* Disabled controls still receive clicks so a toast can explain their state. */
+button[aria-disabled=true]{opacity:.4;cursor:help}
+.round-action[aria-disabled=true]{opacity:.45}
+.round-action[aria-disabled=true] .action-disc{background:#004a70;border-color:#216b8b}
+.game-toast{position:fixed;inset:auto auto max(16px,env(safe-area-inset-bottom)) 50%;transform:translateX(-50%);z-index:20000;box-sizing:border-box;width:max-content;max-width:min(540px,calc(100vw - 24px));padding:14px 18px;border:1px solid #a4c8ee;border-radius:12px;background:#092543;color:#fff;font:600 16px/1.45 system-ui,sans-serif;white-space:normal;overflow-wrap:break-word;text-align:center;box-shadow:0 6px 24px #00102166;pointer-events:none}
+.game-toast[hidden]{display:none}
+
+/* No browser tap flash or rectangular hover fill around cards and round buttons. */
+html,body,body *{-webkit-tap-highlight-color:transparent}
+.round-action,.opponent-properties,.draw-deck,.modern-hand-card,.current-bank,.current-properties{-webkit-appearance:none;appearance:none}
+[data-theme=modern] .round-action:hover,[data-theme=modern] #end.round-action:hover,
+[data-theme=modern] .opponent-properties:hover,[data-theme=modern] .draw-deck:hover,
+[data-theme=modern] .modern-hand-card:hover{background:transparent}
+[data-theme=modern] .current-bank:hover,[data-theme=modern] .current-properties:hover{background:#003575a6}
+@media(hover:hover) and (pointer:fine){
+ [data-theme=modern] .round-action:not([aria-disabled=true]):hover .action-disc{filter:brightness(1.12)}
+}
+@media(prefers-reduced-motion:reduce){.hand-drag-ghost{transform:none!important}}
