@@ -307,3 +307,54 @@ test('v1.3 mobile cards and draw deck are large with or without a selected card'
  assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
  await close(p);
 });
+
+async function swipePreview(page,dx,dy=0){
+ const face=page.locator('.selected-table-card');await face.scrollIntoViewIfNeeded();
+ const box=await face.boundingBox(),x=box.x+box.width/2,y=box.y+Math.min(box.height/2,100);
+ await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x+dx,y+dy,{steps:8});await page.mouse.up();
+}
+test('selected-card swipes browse and wrap the hand without plays; Bank uses the displayed card',async()=>{
+ const p=await open({width:390,height:844});await fixture(p,'hand',2);
+ const ids=await p.evaluate(()=>window.__dealTest.state.players[0].hand.map(c=>c.id));
+ await p.locator('[data-card]').first().click();
+ await swipePreview(p,-90);assert.equal(await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card'),String(ids[1]));
+ assert.equal(await p.locator('#bank-card').getAttribute('aria-disabled'),'false');assert.equal(await p.locator('#play-card').getAttribute('aria-disabled'),'true');
+ await swipePreview(p,90);assert.equal(await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card'),String(ids[0]));
+ await swipePreview(p,90);assert.equal(await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card'),String(ids.at(-1)));
+ await swipePreview(p,-90);assert.equal(await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card'),String(ids[0]));
+ await swipePreview(p,15);await swipePreview(p,20,80);assert.equal(await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card'),String(ids[0]));
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);
+ await swipePreview(p,-90);await p.locator('#bank-card').click();await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank[0].id),ids[1]);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);
+ await conservation(p);await close(p);
+});
+test('preview buttons and arrow keys preserve wild side, private hands, and single-card selection',async()=>{
+ const p=await open();await fixture(p,'hand',2);await p.locator('[data-card]').first().click();
+ await p.locator('#preview-next').click();await p.locator('#preview-previous').click();
+ assert.match(await p.locator('#selected-card-help').innerText(),/1 \/ 7/);
+ await p.locator('.selected-table-card').focus();await p.keyboard.press('ArrowLeft');assert.match(await p.locator('#selected-card-help').innerText(),/7 \/ 7/);
+ await p.keyboard.press('ArrowRight');assert.match(await p.locator('#selected-card-help').innerText(),/1 \/ 7/);
+ await p.locator('.selected-table-card').dispatchEvent('pointercancel');assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);
+ await p.locator('#hide').click();assert.equal(await p.locator('.selected-table-card').count(),0);assert.equal(await p.locator('#preview-next').count(),0);
+ await fixture(p,'wild',2);await p.locator('[data-card]').first().click();assert.equal(await p.locator('#preview-next').getAttribute('aria-disabled'),'true');
+ const id=await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card');await swipePreview(p,-90);assert.equal(await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card'),id);
+ await p.locator('#flip-card').click();await p.locator('#play-card').click();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[0].color),'lightblue');
+ await close(p);
+});
+
+test('touch swipe changes preview while vertical touch scroll preserves selection',async t=>{
+ if(browser.browserType().name()!=='chromium'){t.skip('Chromium touch injection');return;}
+ const p=await open({width:390,height:844},undefined,{isMobile:true,hasTouch:true});await fixture(p,'hand',2);
+ await p.locator('[data-card]').first().tap();
+ const ids=await p.evaluate(()=>window.__dealTest.state.players[0].hand.map(c=>c.id));
+ const session=await p.context().newCDPSession(p);
+ async function touch(dx,dy){
+  await p.locator('.selected-table-card').scrollIntoViewIfNeeded();const r=await p.locator('.selected-table-card').boundingBox(),x=r.x+r.width/2,y=r.y+100;
+  await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});
+  for(let i=1;i<=6;i++)await session.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+dx*i/6,y:y+dy*i/6}]});
+  await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+ }
+ await touch(-100,0);assert.equal(await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card'),String(ids[1]));
+ await touch(0,-100);assert.equal(await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card'),String(ids[1]));
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);await session.detach();await close(p);
+});

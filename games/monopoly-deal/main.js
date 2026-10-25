@@ -1,9 +1,9 @@
-import {paginateViewer} from './view-pages.mjs?build=20261025-deal-1-3-v45';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-deal-1-3-v45';
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-deal-1-3-v45';
-import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-deal-1-3-v45';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-deal-1-3-v45';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-deal-1-3-v45';
+import {paginateViewer} from './view-pages.mjs?build=20261025-deal-1-3-swipe-v46';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-deal-1-3-swipe-v46';
+import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-deal-1-3-swipe-v46';
+import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-deal-1-3-swipe-v46';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-deal-1-3-swipe-v46';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-deal-1-3-swipe-v46';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false;
 // Keep the last completed action in this tab if Safari reloads the frame.
@@ -42,7 +42,8 @@ function updateUnavailableControls() {
  for(const button of document.querySelectorAll('#game button')){
   let reason = finished && !button.hasAttribute('data-table-view') ? finished : waiting;
   if(!reason){
-   if(button.id === 'move')reason = hiddenHand || (!me().props.some(card => card.colors.length > 1) ? 'You have no wild properties on the table to rearrange.' : '');
+   if(button.id === 'preview-previous'||button.id === 'preview-next')reason = hiddenHand || (me().hand.length<2 ? 'This is the only card in your hand.' : '');
+   else if(button.id === 'move')reason = hiddenHand || (!me().props.some(card => card.colors.length > 1) ? 'You have no wild properties on the table to rearrange.' : '');
    else if(button.id === 'flip-card')reason = hiddenHand || (!selected ? 'Select a two-color wild property card to flip it.' : '') || noPlays || (selected.type !== 'property' || selected.colors.length !== 2 ? 'Only two-color wild property cards can be flipped.' : '');
    else if(button.id === 'bank-card')reason = hiddenHand || (!selected ? 'Select a money or action card to bank.' : '') || noPlays || (selected.type === 'property' ? 'Property cards cannot be banked. Play this card as a property.' : '');
    else if(button.id === 'play-card')reason = hiddenHand || (!selected ? 'Select a property or action card to play.' : '') || noPlays || (selected.type === 'money' ? 'Money cards can only be banked, not played.' : '');
@@ -137,6 +138,47 @@ function renderClassic(){if(!state)return;const handScroll=$('.cards')?.scrollLe
  if($('.cards'))$('.cards').scrollLeft=handScroll;
  $('#reveal')?.addEventListener('click',()=>{visible=true;render()});$('#hide')?.addEventListener('click',()=>{visible=false;render()});$('#end').onclick=()=>run(end);$('#move').onclick=()=>run(rearrange);document.querySelectorAll('#game [data-card]').forEach(b=>b.onclick=()=>run(()=>play(p.hand.find(c=>c.id===+b.dataset.card))));document.querySelectorAll('#game [data-table-view]').forEach(b=>b.onclick=()=>openTableViewer(b.dataset.tableView));
 }
+function browseSelectedCard(direction,focusTarget=null){
+ if(busy||!visible||!state||state.winner||me().isAI||document.querySelector('dialog[open]'))return;
+ const hand=me().hand,index=hand.findIndex(card=>card.id===selectedCardId);
+ if(index<0||hand.length<2)return;
+ selectedCardId=hand[(index+direction+hand.length)%hand.length].id;
+ previewFlipped=Boolean(cardPreferredSide(selectedCardId));
+ render();
+ // Keep the selected thumbnail in view without scrolling the page away from the preview.
+ const strip=$('.cards'),thumbnail=$(`[data-card="${selectedCardId}"]`);
+ if(strip&&thumbnail){
+  const area=strip.getBoundingClientRect(),card=thumbnail.getBoundingClientRect();
+  if(card.left<area.left)strip.scrollLeft+=card.left-area.left-4;
+  else if(card.right>area.right)strip.scrollLeft+=card.right-area.right+4;
+ }
+ if(focusTarget)$(focusTarget)?.focus({preventScroll:true});
+}
+function wireSelectedCardBrowsing(){
+ const preview=$('.selected-table-card');
+ if(!preview)return;
+ $('#preview-previous').onclick=()=>browseSelectedCard(-1,'#preview-previous');
+ $('#preview-next').onclick=()=>browseSelectedCard(1,'#preview-next');
+ preview.addEventListener('keydown',event=>{
+  if(event.altKey||event.ctrlKey||event.metaKey||!['ArrowLeft','ArrowRight'].includes(event.key))return;
+  event.preventDefault();browseSelectedCard(event.key==='ArrowLeft'?-1:1,'.selected-table-card');
+ });
+ let gesture=null;
+ preview.addEventListener('pointerdown',event=>{
+  if(!event.isPrimary||event.button!==0||busy||!visible)return;
+  gesture={id:event.pointerId,x:event.clientX,y:event.clientY};
+  preview.setPointerCapture(event.pointerId);
+ });
+ preview.addEventListener('pointercancel',()=>{gesture=null;});
+ preview.addEventListener('lostpointercapture',()=>{gesture=null;});
+ preview.addEventListener('pointerup',event=>{
+  const start=gesture;gesture=null;
+  if(!start||start.id!==event.pointerId)return;
+  const dx=event.clientX-start.x,dy=event.clientY-start.y;
+  if(Math.abs(dx)>=40&&Math.abs(dx)>Math.abs(dy)*1.5)browseSelectedCard(dx<0?1:-1);
+ });
+ preview.addEventListener('dragstart',event=>event.preventDefault());
+}
 function render(){
  if(state&&!busy){try{sessionStorage.setItem(sessionKey,JSON.stringify(state));}catch{}}
  detachHandSorting();
@@ -166,6 +208,7 @@ function render(){
   previewFlipped=Boolean(selectedCardId!==null && cardPreferredSide(Number(button.dataset.card)));render();
  });
  document.querySelectorAll('#game [data-table-view]').forEach(button=>button.onclick=()=>{if(!busy)openTableViewer(button.dataset.tableView)});
+ wireSelectedCardBrowsing();
  updateUnavailableControls();
  wireHandSorting();
  fitResponsiveLabels();
@@ -367,7 +410,7 @@ document.querySelectorAll('[data-table-color]').forEach(button => {
 // Only public table cards appear here; private hands and the draw order stay hidden.
 let tableViewIndex = 0;
 function tableViews() {
-  const guideViews = [{key:'rules',title:'Rules',description:'A step-by-step guide to playing Monopoly Deal.'},{key:'cards',title:'Cards',description:'Browse every card design. Use the arrows or Left/Right keys.'},{key:'release-notes',title:'Release notes',description:'Monopoly Deal · v1.3.0 · October 25, 2026 · Responsive tables and controls'}];
+  const guideViews = [{key:'rules',title:'Rules',description:'A step-by-step guide to playing Monopoly Deal.'},{key:'cards',title:'Cards',description:'Browse every card design. Use the arrows or Left/Right keys.'},{key:'release-notes',title:'Release notes',description:'Monopoly Deal · v1.3.0 · October 25, 2026 · Swipe through your hand'}];
   if (!state) return guideViews;
   return [
     {key:'discard', kind:'deck', title:'Discard pile', cards:[...state.discard].reverse(), description:'Newest discard first. These cards may return when the draw pile runs out.'},
