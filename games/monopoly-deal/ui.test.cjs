@@ -120,7 +120,7 @@ test('payment breaks sets, normalizes buildings, allows insufficient assets with
 
 test('discard down to seven, next-player draw, victory, and post-win table access',async()=>{
  const p=await open();await fixture(p,'discard',2);await p.locator('#end').click();await choose(p,0);await choose(p,0);await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].hand.length),7);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].hand.length),5);await conservation(p);
- await fixture(p,'win',2);await playFirst(p);await choose(p,'View table');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.winner),'Chris');assert.equal(await p.locator('#end').isDisabled(),true);await p.locator('.current-properties').click();assert.equal(await p.locator('#table-viewer').getAttribute('open'),'');await p.locator('#table-view-close').click();await conservation(p);await close(p);
+ await fixture(p,'win',2);await playFirst(p);await choose(p,'View table');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.winner),'Chris');assert.equal(await p.locator('#end').isDisabled(),true);await p.locator('.current-properties').dblclick();assert.equal(await p.locator('#table-viewer').getAttribute('open'),'');await p.locator('#table-view-close').click();await conservation(p);await close(p);
 });
 
 test('Classic gameplay still supports cancel, bank, property play, privacy, and theme return',async()=>{
@@ -583,7 +583,7 @@ test('public viewer touch swipes page in both directions while vertical gestures
 
 test('Properties starts with cards and ends with a dedicated Details page, including empty players',async()=>{
  for(const viewport of [{width:390,height:650},{width:320,height:568},{width:1440,height:900}]){
-  const p=await open(viewport);await fixture(p,'hotel',2);await p.locator('.current-properties').click();
+  const p=await open(viewport);await fixture(p,'hotel',2);await p.locator('.current-properties').dblclick();
   await p.locator('.content-page-nav span').waitFor();await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,100)));
   assert.ok(await p.locator('#table-view-content .property-stack-card').count()>0,'Property cards come first');
   assert.equal(await p.locator('#table-view-content [aria-label="Property details"]').count(),0);
@@ -609,7 +609,7 @@ test('property stacks keep complete sets together and Properties displays the co
   await p.evaluate(()=>{const s=window.__dealTest.state;for(const name of ['Electric Company','Water Works','Reading Railroad']){const i=s.draw.findIndex(c=>c.name===name);s.players[0].props.push(s.draw.splice(i,1)[0]);}window.__dealTest.render()});
   assert.equal(await p.locator('.current-properties').getAttribute('data-complete-sets'),'2');
   assert.equal(await p.locator('.current-properties .asset-progress').innerText(),'2 complete sets');assert.equal(await p.locator('.current-properties .asset-progress').isVisible(),true);
-  const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));await p.locator('.current-properties').click();await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,100)));
+  const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));await p.locator('.current-properties').dblclick();await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,100)));
   const groups=[];
   while(true){
    const stack=p.locator('.property-stack-page');
@@ -637,7 +637,7 @@ test('property stacks keep complete sets together and Properties displays the co
 test('a crowded monopoly stays one stack page and all members remain inspectable',async()=>{
  const p=await open({width:320,height:568});await fixture(p,'hotel',2);
  await p.evaluate(()=>{const s=window.__dealTest.state;for(const c of [...s.draw].filter(c=>c.type==='property'&&c.colors.length>1)){s.draw.splice(s.draw.indexOf(c),1);c.color='brown';s.players[0].props.push(c);}window.__dealTest.render()});
- await p.locator('.current-properties').click();await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,100)));
+ await p.locator('.current-properties').dblclick();await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,100)));
  assert.equal(await p.locator('.current-properties .asset-progress').innerText(),'1 complete set');
  const count=await p.locator('[data-stack-index]').count();assert.ok(count>10);assert.match(await p.locator('.content-page-nav span').innerText(),/Page 1 of 2/);
  assert.ok(await p.locator('#table-view-content').evaluate(el=>el.scrollHeight<=el.clientHeight+1));
@@ -673,4 +673,21 @@ test('numbered player names do not run into payment amounts',async()=>{
  const p=await open();await fixture(p,'debt',2);await p.evaluate(()=>{const s=window.__dealTest.state;s.players[0].name='Computer 1';const index=s.draw.findIndex(c=>c.action==='no');s.players[1].hand.push(s.draw.splice(index,1)[0]);window.__dealTest.render()});
  await playFirst(p);await choose(p,'Alex');await choose(p,'Ready');assert.equal(await p.locator('#detail').innerText(),'Pay 5M to Computer 1.');
  await choose(p,'Allow action');await choose(p,'Ready to pay');await choose(p,0);await idle(p);await conservation(p);await close(p);
+});
+
+
+test('manual discard and inline property inspection',async()=>{
+ const p=await open();await fixture(p,'hand',2);
+ assert.equal(await p.locator('#discard-card').isVisible(),true);
+ await p.locator('[data-card]').first().click();await p.locator('#discard-card').click();await choose(p,'Discard selected cards');await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].hand.length),6);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.discard.length),1);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);await conservation(p);
+ await fixture(p,'house',2);
+ assert.equal(await p.locator('.current-properties .public-mini').first().isVisible(),true);
+ await p.locator('.current-properties').click();assert.equal(await p.locator('#table-viewer').evaluate(el=>el.open),false);
+ await p.locator('.current-properties').dblclick();await p.locator('#table-viewer[open]').waitFor();
+ await p.locator('#table-view-close').click();
+ await p.locator('.current-properties').dispatchEvent('pointerdown',{button:0,clientX:10,clientY:10});
+ await p.locator('#table-viewer[open]').waitFor();await close(p);
 });

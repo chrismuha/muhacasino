@@ -474,3 +474,10 @@ dialog button,#preview-close{outline-offset:-4px}
 [data-theme=modern] .deal-hand .modern-hand-card.is-active{outline-color:white;z-index:5}
 [data-theme=modern] .deal-hand .modern-hand-card.is-selected::after{content:'✓';position:absolute;top:3px;right:3px;display:grid;place-items:center;width:16px;height:16px;border-radius:50%;background:#ffe297;color:#123959;font-size:12px;font-weight:900;line-height:1;pointer-events:none}
 @media(prefers-reduced-motion:reduce){[data-theme=modern] .deal-hand .modern-hand-card.is-selected{transition:none}}
+
+/* Keep played properties visible in their collection, including on phones. */
+[data-theme=modern] .current-assets .current-properties{height:auto;min-height:150px;grid-template-rows:auto minmax(76px,auto) auto auto;align-content:start}
+[data-theme=modern] .current-assets .own-groups{display:flex;flex:1 0 auto;min-height:76px;overflow-x:auto;overflow-y:hidden;gap:14px}
+[data-theme=modern] .current-properties .deal-property-group{flex-shrink:0}
+[data-theme=modern] .current-properties .public-mini{width:46px}
+[data-theme=modern] .property-inspect-hint{font-size:11px;color:#d3e9ff;line-height:1.4}

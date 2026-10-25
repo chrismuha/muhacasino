@@ -29,6 +29,7 @@ export function cardFacts(card){
 
 export const RELEASE_NOTES = [
  ['v1.4.0 · October 25, 2026',[
+  'Added a visible Discard button for selected hand cards, with confirmation and no play cost. Played properties remain visible in the Properties box on phones; double-tap, hold, or keyboard activation opens details.',
   'Selected hand cards now lift, show a checkmark and outline, and can be selected in groups. Tap again to deselect individually or use Clear for all. Bank/Play uses the active card one at a time, preserving other selections until played, deselected, or the turn ends.',
   'Aligned the right-side action icons and labels. Payment prompts put the amount before the player name, avoiding ambiguous adjacent digits. Added toasts when three plays are used and when the turn ends.',
   'Played properties are grouped into overlapping color stacks, with each group and its buildings kept on one page. Tap a card or use the stack arrows to inspect it. Complete sets are marked on their page and counted in the main Properties box.',

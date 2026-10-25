@@ -1,10 +1,10 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-selection-feedback-v54';
-import {paginateViewer} from './view-pages.mjs?build=20261025-selection-feedback-v54';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-selection-feedback-v54';
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-selection-feedback-v54';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-selection-feedback-v54';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-selection-feedback-v54';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-selection-feedback-v54';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-discard-properties-v55';
+import {paginateViewer} from './view-pages.mjs?build=20261025-discard-properties-v55';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-discard-properties-v55';
+import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-discard-properties-v55';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-discard-properties-v55';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-discard-properties-v55';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-discard-properties-v55';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -48,7 +48,8 @@ function updateUnavailableControls() {
  for(const button of document.querySelectorAll('#game button')){
   let reason = finished && !button.hasAttribute('data-table-view') ? finished : waiting;
   if(!reason){
-   if(button.id === 'deselect')reason = selectedCardIds.size?'':'No cards are selected.';
+   if(button.id === 'discard-card')reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.');
+   else if(button.id === 'deselect')reason = selectedCardIds.size?'':'No cards are selected.';
    else if(button.id === 'preview-previous'||button.id === 'preview-next')reason = hiddenHand || (me().hand.length<2 ? 'This is the only card in your hand.' : '');
    else if(button.id === 'move')reason = hiddenHand || (!me().props.some(card => card.colors.length > 1) ? 'You have no wild properties on the table to rearrange.' : '');
    else if(button.id === 'flip-card')reason = hiddenHand || (!selected ? 'Select a two-color wild property card to flip it.' : '') || noPlays || (selected.type !== 'property' || selected.colors.length !== 2 ? 'Only two-color wild property cards can be flipped.' : '');
@@ -265,6 +266,16 @@ function render(){
  $('#deselect')?.addEventListener('click',()=>{selectedCardIds.clear();selectedCardId=null;previewExpanded=false;previewFlipped=false;lastCardTap=null;render();});
  $('#preview-open')?.addEventListener('click',()=>{previewExpanded=true;lastCardTap=null;render();});
  $('#end').onclick=()=>run(end);
+ $('#discard-card').onclick=()=>run(async()=>{
+  const cards=me().hand.filter(card=>selectedCardIds.has(card.id));
+  if(!cards.length||!visible||state.winner)return;
+  const confirmed=await choose(`Discard ${cards.length} selected card${cards.length===1?'':'s'}?`,[['Cancel',false],['Discard selected cards',true]],'These cards go to the discard pile. This does not use a play.');
+  if(!confirmed)return;
+  for(const card of cards){remove(me().hand,card);state.discard.push(card);selectedCardIds.delete(card.id)}
+  selectedCardId=null;previewExpanded=false;lastCardTap=null;
+  log(`${me().name} discarded ${cards.length} card${cards.length===1?'':'s'}.`);
+  showToast(`${cards.length} card${cards.length===1?'':'s'} discarded.`);
+ });
  $('#move').onclick=()=>run(rearrange);
  $('#flip-card').onclick=()=>{previewFlipped=!previewFlipped;render()};
  for(const [id,mode] of [['bank-card','bank'],['play-card','play']]){
@@ -289,7 +300,17 @@ function render(){
    }
   });
  });
- document.querySelectorAll('#game [data-table-view]').forEach(button=>button.onclick=()=>{if(!busy)openTableViewer(button.dataset.tableView)});
+ document.querySelectorAll('#game [data-table-view]').forEach(button=>{
+  if(!button.matches('.current-properties')){button.onclick=()=>{if(!busy)openTableViewer(button.dataset.tableView)};return;}
+  let timer,lastTap=0,start;
+  const cancel=()=>{clearTimeout(timer);timer=null;};
+  const inspect=()=>{cancel();lastTap=0;if(!busy)openTableViewer(button.dataset.tableView)};
+  button.onclick=event=>{if(event.detail===0){inspect();return;}const now=performance.now();if(lastTap&&now-lastTap<400)inspect();else lastTap=now;};
+  button.onpointerdown=event=>{if(event.button!==0)return;start={x:event.clientX,y:event.clientY};timer=setTimeout(inspect,550)};
+  button.onpointermove=event=>{if(start&&Math.hypot(event.clientX-start.x,event.clientY-start.y)>10)cancel()};
+  for(const name of ['pointerup','pointercancel','pointerleave'])button.addEventListener(name,cancel);
+  button.oncontextmenu=event=>event.preventDefault();
+ });
  wireSelectedCardBrowsing();
  updateUnavailableControls();
  wireHandSorting();
