@@ -73,3 +73,35 @@
  [data-theme=modern] .has-selection .plays-dots{grid-column:1/-1;justify-content:center;padding-left:0}
  [data-theme=modern] .has-selection .draw-deck{grid-column:1;grid-row:3}
 }
+
+/* Compact phone table: reserve space for cards and controls, not empty felt. */
+.game-ready{margin:16px 0;padding:24px;border:1px solid #83beff55;border-radius:16px;background:#08276f99;color:#fff}
+.game-ready h2{margin:0 0 10px;font-size:24px}.game-ready p{font-size:16px;line-height:1.5}.game-ready button{min-height:44px}
+@media(max-width:600px){
+ [data-theme=modern] .is-playing main{padding-top:0}
+ [data-theme=modern] .is-playing .appearance-settings{margin-bottom:6px}
+ [data-theme=modern] .deal-table,[data-theme=modern] .deal-table.has-selection{grid-template-rows:clamp(104px,28vw,140px) auto auto auto;gap:6px}
+ [data-theme=modern] .deal-stage{min-height:100px;padding-block:4px;container-type:inline-size}
+ [data-theme=modern] .has-selection .deal-stage{min-height:0;row-gap:4px;column-gap:8px}
+ [data-theme=modern] .deal-table:not(.has-selection) .deal-actions{display:block;padding:0}
+ [data-theme=modern] .deal-table:not(.has-selection) #flip-card,
+ [data-theme=modern] .deal-table:not(.has-selection) #bank-card,
+ [data-theme=modern] .deal-table:not(.has-selection) #play-card{display:none}
+ [data-theme=modern] .deal-face[data-reading=true]{min-height:280px}
+ [data-theme=modern] .deal-face[data-reading=true] .face-property-top,
+ [data-theme=modern] .deal-face[data-reading=true] .face-action-top,
+ [data-theme=modern] .deal-face[data-reading=true] .face-money-top,
+ [data-theme=modern] .deal-face[data-reading=true] .face-money-bottom{height:60px}
+ [data-theme=modern] .deal-face[data-reading=true] .face-value{width:54px}
+ [data-theme=modern] .deal-face[data-reading=true] .reading-property-title{padding:8px}
+ [data-theme=modern] .deal-face[data-reading=true] .action-medallion{margin:10px 0}
+ [data-theme=modern] .deal-face[data-reading=true] .money-medallion{margin:10px auto}
+ [data-theme=modern] .reading-rent-wrap{padding:4px 8px 8px}
+ [data-theme=modern] .reading-rent caption{padding-bottom:6px}
+ [data-theme=modern] .reading-rent th,[data-theme=modern] .reading-rent td{padding:5px 3px}
+ [data-theme=modern] .current-assets{height:76px}
+ [data-theme=modern] .current-stats{padding-block:3px}
+ [data-theme=modern] .table-tools{padding-block:0}
+ [data-theme=modern] .hand-sort-hint{margin:4px 0;font-size:12px}
+ [data-theme=modern] .deal-hand .cards{padding-top:7px;padding-bottom:8px}
+}
