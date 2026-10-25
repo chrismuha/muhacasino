@@ -1,9 +1,9 @@
-import {paginateViewer} from './view-pages.mjs?build=20261025-deal-mobile-v41';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-deal-mobile-v41';
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-deal-mobile-v41';
-import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-deal-mobile-v41';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-deal-mobile-v41';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-deal-mobile-v41';
+import {paginateViewer} from './view-pages.mjs?build=20261025-setup-keyboard-v43';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-setup-keyboard-v43';
+import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-setup-keyboard-v43';
+import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-setup-keyboard-v43';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-setup-keyboard-v43';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-setup-keyboard-v43';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false;
 // Keep the last completed action in this tab if Safari reloads the frame.
@@ -209,6 +209,26 @@ async function play(c,chosenMode=null,chosenColor=null){if((!visible&&!me().isAI
 }
 async function rearrange(){if(!visible)return;let wilds=me().props.filter(c=>c.colors.length>1);if(!wilds.length)return;let c=await choose('Move a wild property',[['Cancel',null],...wilds.map(c=>[label(c),c])]);if(!c)return;let color=await colorFor(c);if(color!==c.color){c.color=color;normalize(me());log(`${me().name} moved a wild to ${GROUPS[color].name}.`)}}
 async function end(){while(me().hand.length>7){visible=false;render();let c=await choose(`${me().name}: discard down to seven`,me().hand.map(c=>[label(c),c]));remove(me().hand,c);state.discard.push(c)}state.turn=(state.turn+1)%state.players.length;state.plays=0;visible=false;draw(state,me(),me().hand.length?2:5);log(`${me().name} begins their turn.`)}
+// Size only the setup dialog to the area above the keyboard; keep the table stable.
+function syncSetupViewport(){
+ const wizard=$('#setup-wizard');
+ let viewport=window.visualViewport, frameTop=0;
+ try{if(window.parent!==window){viewport=window.parent.visualViewport;frameTop=window.frameElement.getBoundingClientRect().top;}}catch{}
+ const top=Math.max(8,(viewport?.offsetTop||0)-frameTop+8);
+ const bottom=(viewport?.offsetTop||0)+(viewport?.height||innerHeight)-frameTop;
+ wizard.style.setProperty('--setup-top',`${top}px`);
+ wizard.style.setProperty('--setup-height',`${Math.max(80,bottom-top-8)}px`);
+ if(wizard.open&&wizard.contains(document.activeElement)&&document.activeElement.matches('input')){
+  requestAnimationFrame(()=>document.activeElement?.scrollIntoView({block:'nearest',inline:'nearest'}));
+ }
+}
+let setupViewport=window.visualViewport;
+try{if(window.parent!==window)setupViewport=window.parent.visualViewport;}catch{}
+setupViewport?.addEventListener('resize',syncSetupViewport);
+setupViewport?.addEventListener('scroll',syncSetupViewport);
+window.addEventListener('resize',syncSetupViewport);
+window.addEventListener('pagehide',()=>{setupViewport?.removeEventListener('resize',syncSetupViewport);setupViewport?.removeEventListener('scroll',syncSetupViewport);});
+$('#setup-wizard').addEventListener('focusin',syncSetupViewport);
 function setup() {
   $('#setup-content').innerHTML = `<form class="setup" id="setup-form" novalidate>
     <section data-wizard-step="1"><h3>Choose your opponents</h3><label for="opponent-mode">Mode <select id="opponent-mode"><option value="ai" selected>Human vs AI</option><option value="human">Human vs human</option></select></label><p>Choose the total number of players. In AI mode, the other seats are computer opponents.</p><label for="count">Players <select id="count" required><option>2</option><option>3</option><option>4</option></select></label></section>
@@ -224,7 +244,9 @@ function setup() {
     $('#wizard-back').hidden = step === 1;
     $('#start').textContent = step === 3 ? 'Deal the cards →' : 'Continue →';
     if(step === 1) $('#wizard-title').focus({preventScroll:true});
-    if(step === 2) $('#names input')?.focus();
+    $('#setup-wizard').scrollTop=0;
+    syncSetupViewport();
+    if(step === 2) $('#names input')?.focus({preventScroll:true});
     if(step === 3) $('#start').focus();
     fitResponsiveLabels();
   }
@@ -244,7 +266,9 @@ function setup() {
   $('#opponent-mode').onchange = names;
   names();
   showStep(1);
+  syncSetupViewport();
   $('#setup-wizard').showModal();
+  $('#setup-wizard').scrollTop=0;
   $('#wizard-title').focus({preventScroll:true});
   fitResponsiveLabels();
   let validating = false;

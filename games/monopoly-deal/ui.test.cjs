@@ -263,3 +263,36 @@ test('hosted keyboard and header collapse preserve the frame',async()=>{
  await p.locator('#toolbarCollapseButton').click();await p.locator('#toolbarCollapseButton').click();
  assert.equal(await frame.locator('body').getAttribute('data-session-marker'),'same-document');await close(p);
 });
+
+test('opponent property and bank previews fit completely on phones and landscape',async()=>{
+ for(const viewport of [{width:390,height:680},{width:320,height:568},{width:844,height:390}]){
+  const p=await open(viewport);await fixture(p,'hand',4);
+  await p.evaluate(()=>{const s=window.__dealTest.state;for(const player of s.players.slice(1)){for(const zone of ['props','bank']){for(let i=0;i<3;i++){const index=s.draw.findIndex(c=>zone==='props'?c.type==='property'&&c.colors.length===1:c.type==='money');player[zone].push(s.draw.splice(index,1)[0]);}}}window.__dealTest.render()});
+  assert.equal(await p.locator('.opponent-bank-preview .public-mini').count(),9);
+  for(const opponent of await p.locator('.opponent').all()){
+   await opponent.scrollIntoViewIfNeeded();
+   const issues=await opponent.evaluate(panel=>{const issues=[];for(const selector of ['.opponent-bank-cards','.opponent-groups']){const pane=panel.querySelector(selector),r=pane.getBoundingClientRect();for(const child of pane.querySelectorAll('.public-mini,.group-caption')){const c=child.getBoundingClientRect();if(c.top<r.top-1||c.bottom>r.bottom+1)issues.push(selector+' clips '+child.className);}if(r.bottom>panel.getBoundingClientRect().bottom+1)issues.push(selector+' outside panel');}return issues;});
+   assert.deepEqual(issues,[],`${viewport.width}px public cards fit`);
+  }
+  assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+  await p.locator('.opponent-bank-preview').first().click();await p.locator('#table-viewer[open]').waitFor();await p.locator('#table-view-close').click();
+  await p.locator('.opponent-properties').first().click();await p.locator('#table-viewer[open]').waitFor();await p.locator('#table-view-close').click();
+  if(artifacts)await shot(p,`opponent-assets-${viewport.width}`);await close(p);
+ }
+});
+
+test('hosted setup starts at top and focused name stays above the keyboard',async()=>{
+ const p=await open({width:390,height:700});await p.goto(origin+'/index.html#monopoly-deal');
+ const frame=p.frameLocator('#gameFrame');await frame.locator('#ready-new').click();await frame.locator('#start').click();
+ const initial=await frame.locator('#setup-wizard').evaluate(w=>({top:w.getBoundingClientRect().top,fields:[...w.querySelectorAll('#names input')].map(i=>({top:i.getBoundingClientRect().top,bottom:i.getBoundingClientRect().bottom})),height:innerHeight}));
+ assert.ok(initial.top<=9);assert.ok(initial.fields.every(r=>r.top>=0&&r.bottom<initial.height),'Both name inputs immediately visible');
+ const frameHeight=await p.locator('#gameFrame').evaluate(f=>f.clientHeight);
+ await p.evaluate(()=>{Object.defineProperty(visualViewport,'height',{configurable:true,value:420});visualViewport.dispatchEvent(new Event('resize'));});
+ await frame.locator('#names input').first().fill('Chris');
+ await frame.locator('#names input').last().focus();
+ await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,150)));
+ const field=await frame.locator('#names input').last().boundingBox();assert.ok(field.y+field.height<=420,'Focused field is above keyboard');
+ assert.equal(await p.locator('#gameFrame').evaluate(f=>f.clientHeight),frameHeight);
+ await frame.locator('#names input').first().fill('Chris Muha');assert.equal(await frame.locator('#names input').first().inputValue(),'Chris Muha');
+ await close(p);
+});

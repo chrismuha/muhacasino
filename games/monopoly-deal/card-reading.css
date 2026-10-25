@@ -233,3 +233,41 @@
  [data-theme=modern] .has-selection .plays-dots{width:100%;justify-content:center;padding:0}
  [data-theme=modern] .has-selection .draw-deck{grid-column:1;grid-row:3}
 }
+
+/* Public collections need their full card height, independent of screen height. */
+[data-theme=modern] .opponents{align-self:start;align-items:start;min-height:max-content}
+[data-theme=modern] .opponent{min-height:max-content}
+[data-theme=modern] .opponent-properties{flex:none;min-height:120px;gap:6px}
+[data-theme=modern] .opponent-groups{flex:none;min-height:92px;overflow-x:auto;overflow-y:hidden;padding:6px;align-items:flex-start}
+[data-theme=modern] .opponent .public-mini{width:44px}
+[data-theme=modern] .opponent .group-caption{font-size:12px;line-height:1.5}
+[data-theme=modern] .opponent .inspect-label{font-size:13px;line-height:1.4}
+[data-theme=modern] .opponent-bank-preview{display:flex;flex-direction:column;gap:6px;width:100%;min-width:0;margin:0;padding:6px 10px;background:transparent;border:0;border-radius:0;box-shadow:none;text-align:left;white-space:normal}
+[data-theme=modern] .opponent-bank-cards{display:flex;align-items:center;width:100%;min-width:0;min-height:64px;overflow-x:auto;overflow-y:hidden;padding:2px 20px 2px 2px}
+[data-theme=modern] .opponent-bank-cards .asset-empty{margin:0}
+[data-theme=modern] .opponents{grid-auto-rows:max-content}
+[data-theme=modern] .deal-table,[data-theme=modern] .deal-table.has-selection{grid-template-rows:max-content auto auto auto}
+@media(max-width:600px){
+ [data-theme=modern] .opponents{grid-template-columns:repeat(var(--opponent-count),minmax(min(220px,85vw),1fr));overflow-x:auto;padding-bottom:4px;scroll-snap-type:x proximity}
+ [data-theme=modern] .opponent{scroll-snap-align:start}
+}
+@media(orientation:landscape) and (max-height:600px) and (min-width:480px){
+ [data-theme=modern] .deal-table,[data-theme=modern] .deal-table.has-selection{grid-template-rows:max-content minmax(320px,auto) auto}
+}
+
+/* Start setup at the top, with compact names and a keyboard-aware scroll area. */
+#setup-wizard{position:fixed;inset:var(--setup-top,8px) 0 auto;margin:0 auto;max-height:var(--setup-height,calc(100dvh - 16px));overflow-y:auto;scroll-padding:12px;box-sizing:border-box}
+@media(max-width:600px){
+ #setup-wizard .wizard-heading{padding-bottom:8px;gap:8px}
+ #setup-wizard .wizard-heading h2{font-size:22px}
+ #setup-wizard .wizard-heading button{min-height:40px;padding:6px 10px}
+ #setup-wizard #wizard-progress{font-size:15px;line-height:1.3;margin:10px 0}
+ #setup-wizard .setup{margin:0;padding:0}
+ #setup-wizard h3{font-size:18px;margin:0 0 6px}
+ #setup-wizard .setup p{font-size:14px;line-height:1.35;margin:6px 0 10px}
+ #setup-wizard #names{display:grid;gap:6px}
+ #setup-wizard #names label{font-size:14px;margin:0;padding:0;line-height:1.3}
+ #setup-wizard #names input{font-size:16px;line-height:1.3;min-height:44px;height:44px;padding:8px 10px;margin:0 0 6px;scroll-margin:8px}
+ #setup-wizard .wizard-actions{margin-top:10px;padding-top:8px}
+ #setup-wizard #start,#setup-wizard #wizard-back{min-height:44px;font-size:15px}
+}
