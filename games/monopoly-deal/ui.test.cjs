@@ -296,3 +296,14 @@ test('hosted setup starts at top and focused name stays above the keyboard',asyn
  await frame.locator('#names input').first().fill('Chris Muha');assert.equal(await frame.locator('#names input').first().inputValue(),'Chris Muha');
  await close(p);
 });
+
+test('v1.3 mobile cards and draw deck are large with or without a selected card',async()=>{
+ const p=await open({width:390,height:700});await fixture(p,'hand',2);
+ assert.ok((await p.locator('.draw-deck .deal-card-back').boundingBox()).width>=64);
+ assert.ok((await p.locator('.modern-hand-card').first().boundingBox()).width>=96);
+ await p.locator('.modern-hand-card').first().click();
+ assert.ok((await p.locator('.selected-table-card').boundingBox()).width>=350);
+ assert.ok((await p.locator('.draw-deck .deal-card-back').boundingBox()).width>=64);
+ assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+ await close(p);
+});
