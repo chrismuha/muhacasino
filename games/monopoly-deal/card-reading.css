@@ -222,17 +222,6 @@
 /* Reading faces grow with their copy; long property names use complete lines. */
 [data-theme=modern] .deal-face[data-reading=true] .reading-property-title{white-space:normal;overflow:visible;overflow-wrap:anywhere}
 [data-theme=modern] .has-selection .selected-table-card{max-height:none}
-@media(max-width:600px){
- [data-theme=modern] .modern-hand-card{flex-basis:clamp(96px,28cqw,140px);margin-right:8px}
- [data-theme=modern] .has-selection .deal-stage{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto}
- [data-theme=modern] .has-selection .card-stage{grid-column:1;grid-row:1}
- [data-theme=modern] .has-selection .selected-table-card{max-width:440px}
- [data-theme=modern] .has-selection .deal-actions{grid-column:1;grid-row:2;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:space-between;gap:8px}
- [data-theme=modern] .has-selection .round-action,[data-theme=modern] .has-selection #end.round-action{flex-direction:column;gap:4px;font-size:14px}
- [data-theme=modern] .has-selection .action-disc{width:44px}
- [data-theme=modern] .has-selection .plays-dots{width:100%;justify-content:center;padding:0}
- [data-theme=modern] .has-selection .draw-deck{grid-column:1;grid-row:3}
-}
 
 /* Public collections need their full card height, independent of screen height. */
 [data-theme=modern] .opponents{align-self:start;align-items:start;min-height:max-content}
