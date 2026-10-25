@@ -1,4 +1,4 @@
-import {attachHorizontalNavigation,isViewportZoomed} from './horizontal-nav.mjs?build=20261025-v15-table-rules-v64';
+import {attachHorizontalNavigation,isViewportZoomed} from './horizontal-nav.mjs?build=20261025-orange-deck-dots-v66';
 // Paginate rendered content without shrinking text or hiding oversized items.
 let dispose = () => {};
 export function paginateViewer(dialog,content){

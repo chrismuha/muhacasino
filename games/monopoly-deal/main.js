@@ -1,11 +1,11 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-v15-table-rules-v64';
-import {paginateViewer} from './view-pages.mjs?build=20261025-v15-table-rules-v64';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-v15-table-rules-v64';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261025-v15-table-rules-v64';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-v15-table-rules-v64';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-v15-table-rules-v64';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-v15-table-rules-v64';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261025-v15-table-rules-v64';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-orange-deck-dots-v66';
+import {paginateViewer} from './view-pages.mjs?build=20261025-orange-deck-dots-v66';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-orange-deck-dots-v66';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261025-orange-deck-dots-v66';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-orange-deck-dots-v66';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-orange-deck-dots-v66';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-orange-deck-dots-v66';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261025-orange-deck-dots-v66';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -57,7 +57,7 @@ function updateUnavailableControls() {
  const hiddenHand = !visible ? 'Reveal your hand first.' : '';
  const noPlays = state.plays >= 3 ? 'You have used all three plays. Pass to end your turn.' : '';
  for(const button of document.querySelectorAll('#game button')){
-  let reason = finished && !['undo','game-restart'].includes(button.id)&&!button.hasAttribute('data-table-view') ? finished : waiting;
+  let reason = finished && !['undo','game-restart'].includes(button.id)&&!button.hasAttribute('data-table-view')&&!button.classList.contains('action-history-button') ? finished : waiting;
   if(!reason){
    if(button.id === 'undo')reason=hiddenHand||(!undoHistory.length?'No move to undo in this turn.':'');
    else if(button.id === 'discard-card')reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.') || noPlays || (selectedCardIds.size>3-state.plays?`Discard uses one play per card. Select at most ${3-state.plays} card${3-state.plays===1?'':'s'}.`:'');
@@ -209,7 +209,7 @@ function wireGameOverControls(){
  $('#game-restart')?.addEventListener('click',setup);
 }
 function renderClassic(){if(!state)return;const handScroll=$('.cards')?.scrollLeft || 0;const p=me();$('#game').innerHTML=`<div class="players">${state.players.map((x,i)=>`<section class="player ${i===state.turn?'active':''}"><h3>${esc(x.name)} ${i===state.turn?'◆':''}</h3><div class="meta"><span>Bank <b>${x.bank.reduce((a,c)=>a+c.value,0)}M</b></span><span>${x.hand.length} cards</span><span class="badge">${sets(x).length} / 3 sets</span></div><div class="player-inspect"><button type="button" data-table-view="bank-${i}">Bank cards</button><button type="button" data-table-view="properties-${i}">Properties</button></div><div class="groups">${Object.entries(GROUPS).filter(([k])=>properties(x,k).length).map(([k,g])=>`<div class="group ${complete(x,k)?'done':''}" style="--color:${g.color}"><strong>${g.name} ${properties(x,k).length}/${g.names.length}</strong>${properties(x,k).map(c=>`<div>${esc(c.name)}</div>`).join('')}<small>Rent ${rent(x,k)}M ${x.buildings.filter(c=>c.color===k).map(c=>`<span class="building-label" data-building="${c.action}">${esc(c.name)}</span>`).join(' ')}</small></div>`).join('')||'<p>No properties yet</p>'}</div></section>`).join('')}</div><div class="turnbar"><div><strong>${esc(p.name)}’s turn</strong><div class="meta">${3-state.plays} plays left · ${state.draw.length} in draw pile · Discard: ${esc(state.discard.at(-1)?.name||'Empty')}</div></div><div><button type="button" data-table-view="discard">Discard pile</button><button type="button" data-table-view="activity">View table</button><button id="move">Rearrange wilds</button> <button id="undo" type="button">Undo</button> <button id="end" class="primary">End turn →</button></div></div><section class="hand">${visible?`<h2>${esc(p.name)}’s hand</h2><p id="hand-sort-help" class="hand-hint">Tap a card to play or bank it. Drag to sort; hold first on touch. Swipe to scroll, or use Alt+Left/Right to reorder the focused card.</p><div class="cards" tabindex="0" role="region" aria-label="Your hand; scroll sideways for more cards" aria-describedby="hand-sort-help">${p.hand.map(cardHTML).join('')||'<p>Your hand is empty.</p>'}</div>`:p.isAI?`<div class="privacy" role="status"><h2>${esc(p.name)}’s turn</h2><p>Computer turn…</p></div>`:`<div class="privacy"><h2>${turnHandoff?'Pass the device to':'Return the device to'} ${esc(p.name)}</h2><p>Only this player should view their hand.</p><button id="reveal" class="primary">${turnHandoff?'Reveal my hand':'Continue turn'}</button></div>`}</section>`;
- $('#game .hand')?.insertAdjacentHTML('beforebegin',`<details class="action-summary"><summary>${Math.max(0,3-state.plays)} plays left · Undo ${undoHistory.length?'available':'unavailable'}</summary><p class="last-action">Last action: ${esc(lastAction(state))}</p></details>`);
+ $('#game .hand')?.insertAdjacentHTML('beforebegin',`<div class="action-summary"><span class="action-summary-status">${Math.max(0,3-state.plays)} plays left · Undo ${undoHistory.length?'available':'unavailable'}</span><button type="button" class="action-history-button" aria-label="Open action history" aria-haspopup="dialog">History</button></div>`);wireActionHistory();
  if(state.winner){$('#game').insertAdjacentHTML('afterbegin',gameOverHTML());wireGameOverControls();}
  if($('.cards'))$('.cards').scrollLeft=handScroll;
  $('#reveal')?.addEventListener('click',()=>{visible=true;turnHandoff=false;render()});$('#end').onclick=()=>run(end);$('#undo').onclick=undoLastMove;$('#move').onclick=()=>run(rearrange);document.querySelectorAll('#game [data-card]').forEach(b=>b.onclick=()=>run(()=>play(p.hand.find(c=>c.id===+b.dataset.card))));document.querySelectorAll('#game [data-table-view]').forEach(b=>b.onclick=()=>openTableViewer(b.dataset.tableView));
@@ -311,7 +311,7 @@ function render(){
  if(!visible||!me().hand.some(c=>c.id===selectedCardId)){selectedCardId=null;previewFlipped=false;previewExpanded=false;}
  const scroll=$('.cards')?.scrollLeft||0;
  $('#game').innerHTML=gameOverHTML()+modernBoard(state,visible,selectedCardId,previewFlipped,previewExpanded,turnHandoff,selectedCardIds,undoHistory.length>0);
- wireGameOverControls();
+ wireGameOverControls();wireActionHistory();
  if($('.cards'))$('.cards').scrollLeft=scroll;
  $('#reveal')?.addEventListener('click',()=>{visible=true;turnHandoff=false;render()});
  $('#deselect')?.addEventListener('click',()=>{selectedCardIds.clear();selectedCardId=null;previewExpanded=false;previewFlipped=false;lastCardTap=null;render();});
@@ -863,3 +863,13 @@ queueMicrotask(async()=>{
  if(me().isAI){showToast('Resuming the computer turn from its last completed move.');await run(async()=>{});}
  else if(recoveredPending)showToast('The unfinished action was cancelled by refresh. Cards and plays are restored; replay it to continue.');
 });
+
+function wireActionHistory(){
+ document.querySelectorAll('.action-history-button').forEach(button=>button.onclick=()=>{
+  if(!state)return;
+  let popup=$('#action-history');
+  if(!popup){popup=document.createElement('dialog');popup.id='action-history';popup.setAttribute('aria-labelledby','action-history-title');document.body.append(popup);}
+  popup.innerHTML=`<div class="wizard-heading"><h2 id="action-history-title">Action history</h2><button type="button" id="action-history-close">Close</button></div><p>${Math.max(0,3-state.plays)} plays left · Undo ${undoHistory.length?'available':'unavailable'} · ${me().hand.length} cards in hand</p><p class="last-action">Last action: ${esc(lastAction(state))}</p><ol>${state.log.map(entry=>`<li>${esc(entry)}</li>`).join('')||'<li>No moves yet.</li>'}</ol><p>Tap a card to select it. Tap its preview or double-tap the card to read it enlarged. Hold to drag to Bank or Properties. Alt+Left/Right reorders a focused card.</p>`;
+  $('#action-history-close').onclick=()=>popup.close();popup.showModal();$('#action-history-close').focus();
+ });
+}

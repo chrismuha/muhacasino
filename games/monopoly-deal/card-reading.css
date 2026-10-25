@@ -623,3 +623,49 @@ dialog button,#preview-close{outline-offset:-4px}
 [data-theme=modern] .property-inspect-hint,[data-theme=modern] #selected-card-help,
 [data-theme=modern] .current-properties .asset-progress{font-size:12px}
 [data-theme=modern] .current-properties[data-complete-sets="0"] .asset-progress{color:#fff}
+/* History opens separately so the table never expands under the hand. */
+[data-theme=modern] .action-summary{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:28px;margin:0;padding:0;color:#fff}
+[data-theme=modern] .action-summary-status{font-size:14px;line-height:1.2;font-weight:650}
+.action-history-button{display:inline-grid;place-items:center;flex-shrink:0;min-height:28px;min-width:28px;height:28px;padding:2px 5px;border:1px solid #a9d6ff;background:#07488b;color:#fff}
+.action-history-button svg{width:22px;height:22px}
+#action-history{width:min(620px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;padding:18px;background:#05265e;color:#fff}
+#action-history h2{margin:0;font-size:22px}#action-history p,#action-history li{color:#fff;font-size:16px;line-height:1.5;overflow-wrap:anywhere}
+#action-history ol{padding-left:24px}#action-history li{margin-block:10px}#action-history-close{min-height:44px;font-size:16px}
+/* Keep the deck label and pile counts bold and readable. */
+[data-theme=modern] .draw-deck .deck-icon{display:block;width:48px;height:48px;margin:0 auto}
+[data-theme=modern] .deck-icon svg{display:block;width:100%;height:100%}
+[data-theme=modern] .draw-deck .deck-label{font-size:15px;font-weight:800;margin-bottom:3px}
+[data-theme=modern] .draw-deck .deck-count{display:grid;gap:3px;margin-top:4px;color:#fff;font-size:15px;font-weight:650;line-height:1.2}
+[data-theme=modern] .draw-deck .deck-count span{white-space:nowrap}
+[data-theme=modern] .draw-deck .deck-count b{font-size:18px;font-weight:850}
+[data-theme=modern] .table-tools button,[data-theme=modern] .table-tools #move{font-size:14px;font-weight:750;line-height:1.2}
+@media(max-width:600px){
+ [data-theme=modern] .current-stats{display:block;padding-block:1px}
+ [data-theme=modern] .current-stats>span{display:none}
+ [data-theme=modern] .current-stats .table-tools{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));width:100%;gap:4px;margin:0}
+ [data-theme=modern] .table-tools button,[data-theme=modern] .table-tools #move{min-width:0;min-height:44px;padding:4px;white-space:normal;overflow-wrap:normal;justify-content:center;text-align:center}
+ [data-theme=modern] .table-tools .table-tool-icon{display:none}
+ [data-theme=modern] .deal-table,[data-theme=modern] .deal-table.has-selection{gap:3px}
+ [data-theme=modern] .deal-hand .cards{padding-top:12px;padding-bottom:4px}
+}
+@media(max-width:360px){[data-theme=modern] .action-summary-status{font-size:12px}}
+#game .table-tools button{white-space:normal;flex-shrink:0}
+@media(max-width:600px){
+ #game .current-stats{container-type:inline-size}
+ #game .table-tools button,#game .table-tools #move{white-space:normal}
+}
+@container(max-width:340px){
+ #game .current-stats .table-tools{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+/* Restore the recognizable orange Monopoly Deal card back in every table state. */
+#game .draw-deck .deal-card-back.deck-icon{display:flex;flex:0 0 auto;width:48px;height:68px;aspect-ratio:auto;margin:0 auto;padding:4px;border:3px solid #fff;font-size:8px;font-weight:900;line-height:1.05;text-align:center}
+#game .draw-deck .deck-icon .card-back-city{font-size:24px;line-height:1;margin-bottom:3px}
+#game .draw-deck .deck-icon b{font-size:8px;font-weight:900;letter-spacing:.1px}
+/* Dots identify completed plays, the current play, and unused plays. */
+[data-theme=modern] .deal-table .plays-dots i{background:#000;opacity:1;border:1px solid #fff7;box-shadow:none}
+[data-theme=modern] .deal-table .plays-dots i.used{background:#fff;opacity:1;animation:none}
+[data-theme=modern] .deal-table .plays-dots i.is-current{background:#fff;animation:current-play-pulse 1.4s ease-in-out infinite}
+@keyframes current-play-pulse{0%,100%{background:#000;box-shadow:none}50%{background:#fff;box-shadow:0 0 6px #fff}}
+@media(prefers-reduced-motion:reduce){[data-theme=modern] .deal-table .plays-dots i.is-current{animation:none;background:#fff;outline:2px solid #fff;outline-offset:2px}}
+/* Unavailable card actions need no space beside an enlarged card. */
+#game .has-selection .deal-actions .round-action[aria-disabled=true]:not(#end){display:none}

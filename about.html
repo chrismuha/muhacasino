@@ -870,6 +870,8 @@
       <article id="monopoly-deal" class="history-card">
         <header><span class="game-icon">▣</span><div><p>New tabletop game · 2–4 players</p><h2>Monopoly Deal</h2></div><b>v1.5.0</b></header>
         <section><h3>v1.5.0 · 2026-10-25 · Recovery, action summary, and regression coverage</h3><ul>
+          <li>Restored the orange Monopoly Deal deck card. Play dots are black for unused plays, flashing white for the current play, and solid white for completed plays.</li>
+          <li>Action history opens in a popup instead of expanding the table. Manage, Discard, Undo, Clear, and Table use larger bold labels. The deck shows the orange Monopoly Deal card back with larger white draw/discard counts.</li>
           <li>Secondary table labels and unavailable-control text are white for contrast, with small labels raised to a readable minimum size. The user guide and card facts now match all v1.5 controls and money-only banking rules.</li>
           <li>Tap a wild directly in your own Properties box to change its color without opening Manage.</li>
           <li>Rent requires opponents with money or payable properties. Assetless opponents are excluded, and blocked rent uses no card or play.</li>
@@ -877,7 +879,7 @@
           <li>Only money cards may be banked manually, including by computer opponents. Action cards must be played, held, or discarded; legacy banked cards keep their cash value.</li>
 
           <li>Saved AI turns resume from completed-move checkpoints. Refreshing during a payment restores and replays only the unfinished action, preventing duplicate card transfers or charges.</li>
-          <li>A compact action summary shows remaining plays and Undo availability; expand it to read the latest action and hand controls.</li>
+          <li>A compact action summary shows remaining plays and Undo availability; open its history popup to read the latest action and hand controls.</li>
           <li>Updated UI regression tests for current selection, privacy, prompt wrapping, and readable card views. Very short landscape dialogs scroll rather than clipping their content.</li>
 
           <li>Refreshing a finished game returns to the top and shows clear New game and Game Library controls, including after a computer wins.</li>

@@ -1,5 +1,5 @@
-import {modernFace} from './modern-ui.mjs?build=20261025-v15-table-rules-v64';
-import {GROUPS,properties,complete,sets,rent} from './engine.mjs?build=20261025-v15-table-rules-v64';
+import {modernFace} from './modern-ui.mjs?build=20261025-orange-deck-dots-v66';
+import {GROUPS,properties,complete,sets,rent} from './engine.mjs?build=20261025-orange-deck-dots-v66';
 
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const plural = (count, name) => `${count} ${count === 1 ? name : name === 'property' ? 'properties' : `${name}s`}`;

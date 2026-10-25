@@ -194,7 +194,7 @@ async function responsiveIssues(page){return page.evaluate(()=>{
  for(const el of document.querySelectorAll('[data-fit-label],.player h3,.player .group>strong,.player .group>div,.card>strong,.catalog-face>h3,.table-view-heading h2,#question,.wizard-heading h2,#setup-wizard h3,.privacy h2,.round-action,.table-tools button,.game-top-actions button,#options button,.wizard-actions button')){
   if(!visible(el))continue;
   const style=getComputedStyle(el);
-  if(!el.matches('#question,#options button')&&!['nowrap','pre'].includes(style.whiteSpace))issues.push(`label wraps: ${el.className||el.id||el.tagName} ${el.textContent.trim()}`);
+  if(!el.matches('#question,#options button,.table-tools button')&&!['nowrap','pre'].includes(style.whiteSpace))issues.push(`label wraps: ${el.className||el.id||el.tagName} ${el.textContent.trim()}`);
   if(el.scrollWidth>el.clientWidth+2&&!['auto','scroll'].includes(style.overflowX))issues.push(`label clipped: ${el.textContent.trim()}`);
  }
  for(const face of document.querySelectorAll('.selected-table-card .deal-face,.modern-catalog-face .deal-face')){
@@ -798,10 +798,10 @@ test('shorter phone viewports fit normal play while taller screens keep full pre
   const p=await open(viewport);await fixture(p,'hand',2);
   if(viewport.height<850){
    assert.ok(await p.locator('.deal-hand').evaluate(el=>el.getBoundingClientRect().bottom<=innerHeight),'Hand fits in the available phone height');
-   assert.equal(await p.locator('.draw-deck .deal-card-back').isVisible(),false);
+   assert.equal(await p.locator('.draw-deck .deck-icon').isVisible(),true);
    await p.locator('[data-card]').first().click();
    assert.ok(await p.locator('.deal-hand').evaluate(el=>el.getBoundingClientRect().bottom<=innerHeight),'Selected hand fits too');
-  }else assert.equal(await p.locator('.draw-deck .deal-card-back').isVisible(),true);
+  }else assert.equal(await p.locator('.draw-deck .deck-icon').isVisible(),true);
   await fixture(p,'house',2);assert.equal(await p.locator('.current-properties .public-mini').first().isVisible(),true);
   assert.ok(await p.locator('#discard-card').evaluate(el=>el.getBoundingClientRect().height>=44));
   await close(p);
@@ -1081,10 +1081,10 @@ test('refresh during an AI payment replays only that unpaid action without dupli
 
 test('action summary reports the last move, remaining plays and Undo availability',async()=>{
  const p=await open();await fixture(p,'hand',2);
- assert.match(await p.locator('.action-summary summary').innerText(),/3 plays left · Undo unavailable/);
- await playFirst(p);await idle(p);assert.match(await p.locator('.action-summary summary').innerText(),/2 plays left · Undo available/);
- await p.locator('.action-summary summary').click();assert.match(await p.locator('.last-action').innerText(),/New York Avenue/);
- await p.locator('#undo').click();assert.match(await p.locator('.action-summary summary').innerText(),/3 plays left · Undo unavailable/);await conservation(p);await close(p);
+ assert.match(await p.locator('.action-summary-status').innerText(),/3 plays left · Undo unavailable/);
+ await playFirst(p);await idle(p);assert.match(await p.locator('.action-summary-status').innerText(),/2 plays left · Undo available/);
+ await p.locator('.action-history-button').click();assert.match(await p.locator('.last-action').innerText(),/New York Avenue/);
+ await p.locator('#action-history-close').click();await p.locator('#undo').click();assert.match(await p.locator('.action-summary-status').innerText(),/3 plays left · Undo unavailable/);await conservation(p);await close(p);
 });
 
 test('refresh cancels an unfinished human action without losing its card or plays',async()=>{
@@ -1145,7 +1145,7 @@ test('selected cards show an actual face and phone property cards fit without ov
 
 test('secondary text is white and the guide consistently documents the v1.5 rules',async()=>{
  const p=await open({width:420,height:780});await fixture(p,'house',2);
- for(const selector of ['.asset-count','.opponent-count','.action-summary summary','.current-properties .group-caption']){
+ for(const selector of ['.asset-count','.opponent-count','.action-summary-status','.current-properties .group-caption']){
   const style=await p.locator(selector).first().evaluate(el=>({color:getComputedStyle(el).color,size:parseFloat(getComputedStyle(el).fontSize)}));
   assert.equal(style.color,'rgb(255, 255, 255)');assert.ok(style.size>=12,`${selector}: ${JSON.stringify(style)}`);
  }
@@ -1153,4 +1153,34 @@ test('secondary text is white and the guide consistently documents the v1.5 rule
  const guide=await p.evaluate(async()=>{const {GUIDE_RULES,cardFacts}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),facts:deck().filter(c=>c.type==='action').flatMap(cardFacts).join(' ')}});
  assert.match(guide.rules,/Only money cards can be banked manually/);assert.match(guide.rules,/Assetless players are excluded/);assert.match(guide.rules,/tap a wild directly/i);assert.doesNotMatch(guide.facts,/Alternatively, bank|Or bank:/);
  await close(p);
+});
+
+test('history popup preserves the phone table and deck and toolbar labels are readable',async()=>{
+ const p=await open({width:420,height:742});await fixture(p,'hand',2);
+ const before=await p.locator('.deal-table').boundingBox();const plays=await p.evaluate(()=>window.__dealTest.state.plays);
+ await p.locator('.action-history-button').click();await p.locator('#action-history[open]').waitFor();
+ assert.deepEqual(await p.locator('.deal-table').boundingBox(),before);assert.equal(await p.locator('details.action-summary').count(),0);
+ await p.keyboard.press('Escape');assert.equal(await p.locator('#action-history').evaluate(el=>el.open),false);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),plays);
+ for(const id of ['move','discard-card','undo','deselect']){
+  const style=await p.locator('#'+id).evaluate(el=>({size:parseFloat(getComputedStyle(el).fontSize),weight:Number(getComputedStyle(el).fontWeight),color:getComputedStyle(el).color}));
+  assert.ok(style.size>=14&&style.weight>=700);assert.equal(style.color,'rgb(255, 255, 255)');
+ }
+ assert.equal(await p.locator('.deck-icon.deal-card-back').isVisible(),true);assert.match(await p.locator('.deck-count').innerText(),/94 left\s+0 used/);
+ assert.ok(await p.locator('.deck-count').evaluate(el=>parseFloat(getComputedStyle(el).fontSize)>=15));await close(p);
+});
+
+test('orange deck remains visible and play dots distinguish current, completed and unused plays',async()=>{
+ const p=await open({width:420,height:742});await fixture(p,'hand',2);
+ assert.match(await p.locator('.deal-card-back.deck-icon').innerText(),/MONOPOLY\s+DEAL/);
+ for(let plays=0;plays<=3;plays++){
+  await p.evaluate(plays=>{window.__dealTest.state.plays=plays;window.__dealTest.render()},plays);
+  assert.equal(await p.locator('.plays-dots .used').count(),plays);
+  assert.equal(await p.locator('.plays-dots .is-current').count(),plays<3?1:0);
+  const dots=await p.locator('.plays-dots i').evaluateAll(nodes=>nodes.map(el=>({classes:el.className,color:getComputedStyle(el).backgroundColor,animation:getComputedStyle(el).animationName})));
+  for(let i=0;i<3;i++){if(i<plays)assert.equal(dots[i].color,'rgb(255, 255, 255)');else if(i===plays)assert.equal(dots[i].animation,'current-play-pulse');else assert.equal(dots[i].color,'rgb(0, 0, 0)');}
+  assert.equal(await p.locator('.deal-card-back.deck-icon').isVisible(),true);
+ }
+ await p.emulateMedia({reducedMotion:'reduce'});await p.evaluate(()=>{window.__dealTest.state.plays=1;window.__dealTest.render()});
+ assert.equal(await p.locator('.plays-dots .is-current').evaluate(el=>getComputedStyle(el).animationName),'none');await close(p);
 });
