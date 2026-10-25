@@ -4,7 +4,7 @@ const faceColors={orange:'#fa8020',yellow:'#ffd10c',red:'#fa3b25',pink:'#ff2c8c'
 const paint=color=>faceColors[color]||GROUPS[color].color;
 const propertyName=name=>{const words=name.split(' ');return words.length>1?esc(words.slice(0,-1).join(' '))+'<br>'+esc(words.at(-1)):esc(name)};
 const propertyHeading=(name,reading,art=propertyName(name))=>reading
- ? `<h3 class="face-property-name reading-property-title" tabindex="0">${esc(name)}</h3>`
+ ? `<h3 class="face-property-name reading-property-title" data-fit-label tabindex="0">${esc(name)}</h3>`
  : `<div class="face-property-name">${art}</div>`;
 // Fixed, separate drawing bounds keep the symbol clear of one- and two-digit values.
 const cash=value=>{
@@ -37,7 +37,7 @@ export function modernFace(card,{flipped=card.type==='property'&&card.colors?.le
   const rentCard=card.action==='rent';
   const ring=rentCard?`background:conic-gradient(from -90deg,${colors.map((c,i)=>`${c} ${i*100/colors.length}% ${(i+1)*100/colors.length}%`).join(',')})`:'';
   const title=rentCard?'RENT':card.action==='pass'?'PASS<br><b>GO</b><span class="go-arrow">⟵</span>':esc(card.name).toUpperCase();
-  body=`<div class="face-action-top">${value}<span>${reading?'ACTION<br>CARD':'ACTION CARD'}</span></div><div class="action-medallion" style="${ring}"><span>${title}</span></div><p class="face-instructions">${esc(rentCard?(card.colors.length===10?'One player pays you rent for properties you own in any color.':'All players pay you rent for properties you own in one of these colors.'):card.description)}</p>`;
+  body=`<div class="face-action-top">${value}<span>ACTION CARD</span></div><div class="action-medallion" style="${ring}"><span>${title}</span></div><p class="face-instructions">${esc(rentCard?(card.colors.length===10?'One player pays you rent for properties you own in any color.':'All players pay you rent for properties you own in one of these colors.'):card.description)}</p>`;
  }
  return `<span class="deal-face" data-face="${card.type}" data-action="${card.action||''}" data-wild="${card.type==='property'&&card.colors.length===2}" data-reading="${reading}" style="--face-band:${band}" role="${reading?'group':'img'}" aria-label="${esc(card.name)} · ${card.value}M">${body}</span>`;
 }
@@ -77,5 +77,5 @@ export function modernBoard(state,visible,selectedId,flipped,expanded=false,turn
  <button id="deselect" type="button" aria-label="Clear all selected cards">Clear${selectedIds.size?` (${selectedIds.size})`: ''}</button>
  <button data-table-view="activity" aria-haspopup="dialog" aria-label="View table"><span class="table-tool-icon" aria-hidden="true">▦</span><span class="tool-label-long">View table</span><span class="tool-label-short" aria-hidden="true">Table</span></button>
  </div></div></section>
- <section class="deal-hand" aria-label="${esc(player.name)}’s private hand">${visible?`<p id="hand-sort-help" class="hand-sort-hint" title="Keyboard: Alt+Left or Alt+Right moves the focused card">Tap to select/deselect · Double-tap to enlarge · Hold to drag onto Bank / Properties</p><div class="cards" tabindex="0" role="region" aria-label="Your hand; scroll sideways for more cards" aria-describedby="hand-sort-help">${player.hand.map(c=>`<button class="modern-hand-card ${selectedIds.has(c.id)?'is-selected':''} ${c.id===selectedId?'is-active':''}" data-card="${c.id}" aria-label="${esc(c.name)} · ${c.value}M" aria-pressed="${selectedIds.has(c.id)}" ${disabled(!finished)}>${modernFace(c,c.id===selectedId?{flipped}:{})}</button>`).join('')||'<p>Your hand is empty.</p>'}</div>`:''}</section></div>`;
+ <section class="deal-hand" aria-label="${esc(player.name)}’s private hand">${visible?`<p id="hand-sort-help" class="hand-sort-hint" title="Keyboard: Alt+Left or Alt+Right moves the focused card">Tap to select/deselect · Double-tap to enlarge<span class="hand-drag-hint"> · Hold to drag onto Bank / Properties</span></p><div class="cards" tabindex="0" role="region" aria-label="Your hand; scroll sideways for more cards" aria-describedby="hand-sort-help">${player.hand.map(c=>`<button class="modern-hand-card ${selectedIds.has(c.id)?'is-selected':''} ${c.id===selectedId?'is-active':''}" data-card="${c.id}" aria-label="${esc(c.name)} · ${c.value}M" aria-pressed="${selectedIds.has(c.id)}" ${disabled(!finished)}>${modernFace(c,c.id===selectedId?{flipped}:{})}</button>`).join('')||'<p>Your hand is empty.</p>'}</div>`:''}</section></div>`;
 }

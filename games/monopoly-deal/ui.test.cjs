@@ -860,3 +860,34 @@ test('Pass and play dots keep their size when selecting or enlarging Sly Deal',a
   await p.locator('#preview-close').click();assert.deepEqual(await measure(),before);await close(p);
  }
 });
+
+test('iPhone Air property and wild selections fit shorter portrait viewports',async()=>{
+ for(const height of [742,780,912]){
+  const p=await open({width:420,height},undefined,{isMobile:true,hasTouch:true});await fixture(p,'hand',4);
+  for(const selector of ['[data-card]','[data-card]:has(.wild-half)']){
+   await p.locator('#deselect').click({force:true});await p.locator(selector).first().click();
+   const size=await p.locator('.deal-hand').evaluate(el=>({bottom:el.getBoundingClientRect().bottom,viewport:innerHeight}));
+   assert.ok(size.bottom<=size.viewport+1,`${height}: ${selector}: ${JSON.stringify(size)}`);
+   assert.equal(await p.locator('#end').isVisible(),true);
+  }
+  await close(p);
+ }
+});
+
+test('enlarged property and action headers stay on one line',async()=>{
+ for(const viewport of [{width:420,height:742},{width:1440,height:900}]){
+  const p=await open(viewport);
+  await p.evaluate(async()=>{
+   const {createGame,deck}=await import('./engine.mjs');const s=createGame(['Chris','Alex']);s.draw=deck();s.discard=[];s.players.forEach(p=>{p.hand=[];p.props=[];p.bank=[];p.buildings=[]});
+   for(const fn of [c=>c.name==='North Carolina Avenue',c=>c.type==='property'&&c.colors.length===2,c=>c.action==='sly'])s.players[0].hand.push(s.draw.splice(s.draw.findIndex(fn),1)[0]);window.__dealTest.setState(s);
+  });
+  for(let index=0;index<3;index++){
+   await p.locator('[data-card]').nth(index).click();await p.locator('#preview-open').click();
+   const header=p.locator('.selected-table-card .reading-property-title,.selected-table-card .face-action-top > span:last-child');
+   assert.equal(await header.evaluate(el=>getComputedStyle(el).whiteSpace),'nowrap');assert.equal(await header.locator('br').count(),0);
+   assert.ok(await header.evaluate(el=>{const r=document.createRange();r.selectNodeContents(el);return r.getClientRects().length===1}));
+   await p.locator('#preview-close').click();await p.locator('#deselect').click();
+  }
+  await close(p);
+ }
+});

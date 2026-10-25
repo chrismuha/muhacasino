@@ -504,3 +504,13 @@ dialog button,#preview-close{outline-offset:-4px}
 @media(max-width:600px){
  [data-theme=modern] .deal-table #end.round-action{font-size:12px}
 }
+
+/* Keep enlarged card headers on one line, fitting long names or scrolling locally. */
+[data-theme=modern] .deal-face[data-reading=true] .reading-property-title{white-space:nowrap;overflow-wrap:normal;word-break:normal;overflow-x:auto;overflow-y:hidden}
+[data-theme=modern] .deal-face[data-reading=true] .face-action-top>span:last-child{white-space:nowrap;font-size:14px;letter-spacing:normal}
+@media(max-width:600px) and (max-height:780px){
+ [data-theme=modern] .hand-drag-hint{display:none}
+ [data-theme=modern] .hand-sort-hint{margin:0;font-size:11px}
+ [data-theme=modern] .deal-hand .modern-hand-card{flex-basis:60px}
+ [data-theme=modern] .deal-hand .cards{padding-top:16px;padding-bottom:6px}
+}
