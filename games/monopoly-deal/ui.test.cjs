@@ -554,13 +554,13 @@ test('hand trackpad scrolling and catalog swipe/trackpad navigation preserve pla
  await close(p);
 });
 
-test('guide and release notes match deck facts, current controls, and the same-day v1.3.0 label',async()=>{
+test('guide and release notes match deck facts, current controls, and the same-day v1.4.0 label',async()=>{
  const p=await open();const facts=await p.evaluate(async()=>{const {GUIDE_RULES,RELEASE_NOTES,cardDesigns}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),notes:JSON.stringify(RELEASE_NOTES),designs:cardDesigns().length,cards:deck().length,title:RELEASE_NOTES[0][0]}});
- assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.match(facts.title,/v1\.3\.0/);
+ assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.match(facts.title,/v1\.4\.0/);
  for(const instruction of ['Double-tap','Close returns','no manual Hide','trackpad','Coming soon','Continue turn'])assert.ok(facts.rules.toLowerCase().includes(instruction.toLowerCase()),instruction);
  assert.doesNotMatch(facts.notes,/overlapping hand below|Privacy separately hides|actions below the selected|Collapsible Table appearance/);
  const history=await readFile(path.join(root,'about.html'),'utf8'),section=history.slice(history.indexOf('<article id="monopoly-deal"'),history.indexOf('<article id="sorry"'));
- assert.equal((section.match(/2026-10-25/g)||[]).length,1);assert.match(section,/v1\.3\.0/);assert.doesNotMatch(section,/separate Privacy control/);
+ assert.equal((section.match(/2026-10-25/g)||[]).length,1);assert.match(section,/v1\.4\.0/);assert.doesNotMatch(section,/separate Privacy control/);
  await close(p);
 });
 test('private payment resumes the same turn with Continue turn rather than Reveal my hand',async()=>{
@@ -579,4 +579,26 @@ test('public viewer touch swipes page in both directions while vertical gestures
  async function touch(dx,dy){const r=await p.locator('#table-view-content').boundingBox(),x=r.x+r.width/2,y=r.y+70;await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});for(let i=1;i<=6;i++)await session.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+dx*i/6,y:y+dy*i/6}]});await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});}
  await touch(-90,0);assert.notEqual(await p.locator('.content-page-nav span').innerText(),first);await touch(90,0);assert.equal(await p.locator('.content-page-nav span').innerText(),first);
  await touch(0,-60);assert.equal(await p.locator('.content-page-nav span').innerText(),first);await session.detach();await close(p);
+});
+
+test('Properties starts with cards and ends with a dedicated Details page, including empty players',async()=>{
+ for(const viewport of [{width:390,height:650},{width:320,height:568},{width:1440,height:900}]){
+  const p=await open(viewport);await fixture(p,'hotel',2);await p.locator('.current-properties').click();
+  await p.locator('.content-page-nav span').waitFor();await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,100)));
+  assert.ok(await p.locator('#table-view-content .modern-public-card').count()>0,'Property cards come first');
+  assert.equal(await p.locator('#table-view-content [aria-label="Property details"]').count(),0);
+  let steps=0;while(!await p.locator('.content-page-nav button').last().isDisabled()){
+   await p.locator('.content-page-nav button').last().click();assert.ok(++steps<20);
+  }
+  assert.match(await p.locator('.content-page-nav span').innerText(),/Details$/);
+  assert.equal(await p.locator('#table-view-content .modern-public-card').count(),0,'Details does not share a card page');
+  assert.match(await p.locator('[aria-label="Property details"]').innerText(),/Complete colors/);
+  assert.match(await p.locator('[aria-label="Property details"]').innerText(),/2 properties · 1 building/);
+  assert.ok(await p.locator('#table-view-content').evaluate(el=>el.scrollHeight<=el.clientHeight+1));
+  await p.locator('#modern-view-owner').selectOption('1');await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,100)));
+  assert.match(await p.locator('#table-view-content').innerText(),/No properties yet/);assert.equal(await p.locator('[aria-label="Property details"]').count(),0);
+  await p.locator('.content-page-nav button').last().click();assert.match(await p.locator('.content-page-nav span').innerText(),/Details$/);
+  assert.match(await p.locator('[aria-label="Property details"]').innerText(),/0 properties · 0 buildings/);
+  await close(p);
+ }
 });

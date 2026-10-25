@@ -1,4 +1,4 @@
-import {modernFace} from './modern-ui.mjs?build=20261025-gestures-v51';
+import {modernFace} from './modern-ui.mjs?build=20261025-deal-1-4-details-v52';
 import {GROUPS,properties,complete,sets,rent} from './engine.mjs?build=20261023-deal-buildings-v22';
 
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -49,7 +49,8 @@ export function modernViewerContent(state, view) {
   if (view.kind === 'properties') {
     const player = state.players[view.ownerIndex];
     const groups = Object.entries(GROUPS).filter(([color]) => view.cards.some(card => card.color === color));
-    return `<section class="modern-view-summary" aria-label="Property summary"><div><span class="modern-summary-label">Complete colors</span><strong>${sets(player).length}<small> / 3</small></strong><span>${plural(player.props.length, 'property')} · ${plural(player.buildings.length, 'building')}</span></div><p>Collect three complete colors to win. Each group shows its current rent, including buildings.</p></section>${groups.length ? groups.map(([color,group]) => `<section class="modern-property-section" style="--set-color:${group.color}" aria-label="${group.name} properties"><header class="modern-property-heading"><h3 data-fit-label>${group.name}</h3><span>${properties(player,color).length}/${group.names.length}${complete(player,color) ? ' · Complete' : ''} · Rent ${rent(player,color)}M</span></header>${gallery(view.cards.filter(card => card.color === color))}</section>`).join('') : empty('No properties yet', 'Properties and buildings appear here after they are played.')}`;
+    const cards = groups.length ? groups.map(([color,group]) => `<section class="modern-property-section" style="--set-color:${group.color}" aria-label="${group.name} properties"><header class="modern-property-heading"><h3 data-fit-label>${group.name}</h3><span>${properties(player,color).length}/${group.names.length}${complete(player,color) ? ' · Complete' : ''} · Rent ${rent(player,color)}M</span></header>${gallery(view.cards.filter(card => card.color === color))}</section>`).join('') : empty('No properties yet', 'Properties and buildings appear here after they are played.');
+    return `${cards}<section class="modern-view-summary" data-page-break="before" data-page-title="Details" aria-label="Property details"><div><span class="modern-summary-label">Property details</span><span>Complete colors</span><strong>${sets(player).length}<small> / 3</small></strong><span>${plural(player.props.length, 'property')} · ${plural(player.buildings.length, 'building')}</span></div><p>Collect three complete colors to win. Each group shows its current rent, including buildings.</p></section>`;
   }
   if (view.key === 'activity') {
     return `<div class="modern-activity-heading"><h3>At the table</h3><p>Most recent event first.</p></div>${view.activity.length ? `<ol class="modern-activity-list">${view.activity.map(event => `<li>${esc(event)}</li>`).join('')}</ol>` : empty('No activity yet', 'Game events appear here as you play.')}`;

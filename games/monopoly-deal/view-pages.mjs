@@ -1,4 +1,4 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-gestures-v51';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-deal-1-4-details-v52';
 // Paginate rendered content without shrinking text or hiding oversized items.
 let dispose = () => {};
 export function paginateViewer(dialog,content){
@@ -14,7 +14,8 @@ export function paginateViewer(dialog,content){
  dialog.classList.add('has-content-pages');
  function show(){
   content.replaceChildren(...pages[index]);content.scrollTop=0;
-  label.textContent=`Page ${index+1} of ${pages.length}`;
+  const title=pages[index].find(node=>node.dataset.pageTitle)?.dataset.pageTitle;
+  label.textContent=`Page ${index+1} of ${pages.length}${title?' · '+title:''}`;
   previous.disabled=index===0;next.disabled=index===pages.length-1;
  }
  function rebuild(){
@@ -49,6 +50,7 @@ export function paginateViewer(dialog,content){
   const units=originals.flatMap(node=>split(node.cloneNode(true)));
   pages=[[]];content.replaceChildren();
   for(const unit of units){
+   if(unit.dataset.pageBreak==='before'&&pages.at(-1).length){pages.push([]);content.replaceChildren();}
    content.append(unit);
    if(!fits()&&pages.at(-1).length){pages.push([]);content.replaceChildren(unit);}
    pages.at(-1).push(unit);

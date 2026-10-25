@@ -28,3 +28,5 @@ Card drop coverage checks mouse and held-touch drops onto Properties and Bank, a
 Selection checks cover single-click/tap actions without enlargement, deliberate double-click/tap enlargement, closing the preview while preserving the hand and selection, with no manual Hide/Privacy controls, and automatic casino-header collapse only after dealing Monopoly Deal.
 
 Public-card paging checks cover full artwork and descriptions within phone panes, pointer swipes, and precise trackpad deltas. Enlarged-card checks compare the same dimensions and content containment across designs on phone and desktop. Launcher checks keep arrows within the first phone screen and verify one slide per trackpad burst. The guide and release notes describe the current controls and the limits of same-tab recovery and planned save features.
+
+Properties-ordering checks verify cards on the first page and completion/property/building totals on a separate final Details page, across phone and desktop sizes and after switching to a player with no properties.
