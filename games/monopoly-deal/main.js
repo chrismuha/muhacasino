@@ -1,9 +1,9 @@
-import {paginateViewer} from './view-pages.mjs?build=20261025-deal-1-3-swipe-v46';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-deal-1-3-swipe-v46';
-import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-deal-1-3-swipe-v46';
-import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-deal-1-3-swipe-v46';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-deal-1-3-swipe-v46';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-deal-1-3-swipe-v46';
+import {paginateViewer} from './view-pages.mjs?build=20261025-deal-compact-v47';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261025-deal-compact-v47';
+import {modernBoard,modernFace} from './modern-ui.mjs?build=20261025-deal-compact-v47';
+import {modernViewerTools,modernViewerContent} from './modern-viewer.mjs?build=20261025-deal-compact-v47';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-deal-compact-v47';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-deal-compact-v47';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets} from './engine.mjs?build=20261023-deal-buildings-v22';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false;
 // Keep the last completed action in this tab if Safari reloads the frame.
@@ -157,6 +157,7 @@ function browseSelectedCard(direction,focusTarget=null){
 function wireSelectedCardBrowsing(){
  const preview=$('.selected-table-card');
  if(!preview)return;
+ $('#preview-close').onclick=()=>{selectedCardId=null;previewFlipped=false;render();};
  $('#preview-previous').onclick=()=>browseSelectedCard(-1,'#preview-previous');
  $('#preview-next').onclick=()=>browseSelectedCard(1,'#preview-next');
  preview.addEventListener('keydown',event=>{
@@ -178,6 +179,16 @@ function wireSelectedCardBrowsing(){
   if(Math.abs(dx)>=40&&Math.abs(dx)>Math.abs(dy)*1.5)browseSelectedCard(dx<0?1:-1);
  });
  preview.addEventListener('dragstart',event=>event.preventDefault());
+}
+function fitCompactPreview(){
+ const face=$('.selected-table-card .deal-face');
+ if(!face||innerWidth>600)return;
+ face.style.zoom='1';
+ const overflow=Math.max(0,document.documentElement.scrollHeight-innerHeight);
+ if(overflow>0){
+  const height=face.getBoundingClientRect().height;
+  face.style.zoom=String(Math.max(.55,(height-overflow-3)/height));
+ }
 }
 function render(){
  if(state&&!busy){try{sessionStorage.setItem(sessionKey,JSON.stringify(state));}catch{}}
@@ -212,6 +223,7 @@ function render(){
  updateUnavailableControls();
  wireHandSorting();
  fitResponsiveLabels();
+ fitCompactPreview();
 }
 async function takeAITurns(){
  while(state && me().isAI && !state.winner){
@@ -590,7 +602,7 @@ document.querySelectorAll('[data-theme-choice]').forEach(button => {
 
 // Refit after rotation, split-screen resizing, browser zoom, or container resizing.
 let labelResizeFrame;
-function scheduleLabelFit(){cancelAnimationFrame(labelResizeFrame);labelResizeFrame=requestAnimationFrame(fitResponsiveLabels);}
+function scheduleLabelFit(){cancelAnimationFrame(labelResizeFrame);labelResizeFrame=requestAnimationFrame(()=>{fitResponsiveLabels();fitCompactPreview();});}
 window.addEventListener('resize',scheduleLabelFit);
 window.visualViewport?.addEventListener('resize',scheduleLabelFit);
 let lastLabelWidth=-1;

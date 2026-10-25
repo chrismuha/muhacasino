@@ -297,16 +297,6 @@ test('hosted setup starts at top and focused name stays above the keyboard',asyn
  await close(p);
 });
 
-test('v1.3 mobile cards and draw deck are large with or without a selected card',async()=>{
- const p=await open({width:390,height:700});await fixture(p,'hand',2);
- assert.ok((await p.locator('.draw-deck .deal-card-back').boundingBox()).width>=64);
- assert.ok((await p.locator('.modern-hand-card').first().boundingBox()).width>=96);
- await p.locator('.modern-hand-card').first().click();
- assert.ok((await p.locator('.selected-table-card').boundingBox()).width>=350);
- assert.ok((await p.locator('.draw-deck .deal-card-back').boundingBox()).width>=64);
- assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
- await close(p);
-});
 
 async function swipePreview(page,dx,dy=0){
  const face=page.locator('.selected-table-card');await face.scrollIntoViewIfNeeded();
@@ -357,4 +347,22 @@ test('touch swipe changes preview while vertical touch scroll preserves selectio
  await touch(-100,0);assert.equal(await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card'),String(ids[1]));
  await touch(0,-100);assert.equal(await p.locator('[data-card][aria-pressed=true]').getAttribute('data-card'),String(ids[1]));
  assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);await session.detach();await close(p);
+});
+
+test('compact hosted phone table fits selected cards and controls without vertical page scrolling',async()=>{
+ for(const viewport of [{width:390,height:700},{width:375,height:667},{width:430,height:800}]){
+  const p=await open(viewport);await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();
+  const frame=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));await fixture(frame,'hand',2);
+  await frame.evaluate(async()=>{const {deck}=await import('./engine.mjs');const s=window.__dealTest.state;s.players[0].hand=deck();s.draw=[];s.players[1].hand=[];window.__dealTest.render()});
+  const designs=await frame.evaluate(()=>[...new Map(window.__dealTest.state.players[0].hand.map(c=>[c.name,{id:c.id,name:c.name}])).values()]);
+  for(const {id,name} of designs){
+   await frame.locator(`[data-card="${id}"]`).evaluate(el=>el.click());
+   const layout=await frame.evaluate(()=>({height:innerHeight,scroll:document.documentElement.scrollHeight,sections:[...document.querySelectorAll('.deal-table>*,.card-stage,.deal-actions,.draw-deck')].map(e=>[e.className,e.getBoundingClientRect().height]),card:document.querySelector('.selected-table-card').getBoundingClientRect().toJSON(),controls:document.querySelector('.current-stats').getBoundingClientRect().toJSON()}));
+   assert.ok(layout.scroll<=layout.height+1,`${viewport.width} ${name}: ${JSON.stringify(layout)}`);
+   assert.ok(layout.card.width<=231);assert.ok(layout.controls.bottom<=layout.height+1);
+   await frame.locator('#preview-close').click();
+  }
+  assert.ok((await frame.locator('.modern-hand-card').first().boundingBox()).width<80);
+  await close(p);
+ }
 });
