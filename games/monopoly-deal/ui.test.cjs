@@ -574,7 +574,7 @@ test('guide and release notes match deck facts, current controls, and the same-d
  for(const instruction of ['Double-tap','Close returns','no manual Hide','trackpad','Coming soon','Continue turn'])assert.ok(facts.rules.toLowerCase().includes(instruction.toLowerCase()),instruction);
  assert.doesNotMatch(facts.notes,/overlapping hand below|Privacy separately hides|actions below the selected|Collapsible Table appearance/);
  const history=await readFile(path.join(root,'about.html'),'utf8'),section=history.slice(history.indexOf('<article id="monopoly-deal"'),history.indexOf('<article id="sorry"'));
- assert.equal((section.match(/2026-10-25/g)||[]).length,1);assert.match(section,/v1\.5\.0/);assert.doesNotMatch(section,/separate Privacy control/);
+ assert.equal((section.match(/2026-10-26/g)||[]).length,1);assert.match(section,/v1\.5\.0/);assert.doesNotMatch(section,/separate Privacy control/);
  await close(p);
 });
 test('private payment resumes the same turn with Continue turn rather than Reveal my hand',async()=>{
@@ -1098,7 +1098,7 @@ test('refresh cancels an unfinished human action without losing its card or play
 test('v1.5.0 matches the game, launcher and single same-day release entry',async()=>{
  const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v1\.5\.0/);
  await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v1\.5\.0/);
- await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v1.5.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-10-25'}).count(),1);
+ await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v1.5.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-10-26'}).count(),1);
  await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v1.5.0');await close(p);
 });
 

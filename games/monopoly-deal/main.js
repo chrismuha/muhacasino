@@ -4,7 +4,7 @@ import {aiChoice,aiPlay} from './ai.mjs?build=20261025-orange-deck-dots-v66';
 import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261025-orange-deck-dots-v66';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-orange-deck-dots-v66';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-orange-deck-dots-v66';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261025-orange-deck-dots-v66';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261026-release-date-v69';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261025-orange-deck-dots-v66';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
