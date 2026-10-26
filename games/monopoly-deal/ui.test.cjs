@@ -86,7 +86,7 @@ test('screenshot states and responsive layout: 320, 390, 430, 768, 1260 portrait
   const rows=await p.locator('.opponent').evaluateAll(nodes=>nodes.map(n=>Math.round(n.getBoundingClientRect().top)));assert.equal(new Set(rows).size,1,'All opponents stay across the top');
   assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'No page overflow');await shot(p,`${viewport.width}-table`);
   for(const [type,find] of [['property',()=>window.__dealTest.state.players[0].hand.find(c=>c.name==='New York Avenue').id],['money',()=>window.__dealTest.state.players[0].hand.find(c=>c.type==='money').id],['rent',()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='rent').id]]){
-   await select(p,find);await p.locator('#preview-open').click();assert.equal(await p.locator('.selected-table-card .deal-face').count(),1);assert.equal(await p.locator('#bank-card').getAttribute('aria-disabled'),String(type!=='money'));assert.equal(await p.locator('#play-card').getAttribute('aria-disabled'),String(type==='money'||type==='rent'));
+   await select(p,find);await p.locator('#preview-open').click();assert.equal(await p.locator('.selected-table-card .deal-face').count(),1);assert.equal(await p.locator('#bank-card').getAttribute('aria-disabled'),String(type!=='money'));assert.equal(await p.locator('#play-card').getAttribute('aria-disabled'),String(type==='money'));
    const box=await p.locator('.selected-table-card .deal-face').boundingBox();assert.ok(Math.abs(box.width/box.height-(viewport.width<=600?230/330:300/460))<.01,`${viewport.width}: proper selected card ratio`);const action=await p.locator('#end').boundingBox();assert.ok(box.x+box.width<=action.x+1||box.y+box.height<=action.y+1||action.y+action.height<=box.y+1,'Preview does not cover actions');await shot(p,`${viewport.width}-${type}`);await p.locator('#preview-close').click();
   }
   await close(p);
@@ -568,13 +568,13 @@ test('hand trackpad scrolling and catalog swipe/trackpad navigation preserve pla
  await close(p);
 });
 
-test('guide and release notes match deck facts, current controls, and the same-day v1.5.0 label',async()=>{
+test('guide and release notes match deck facts, current controls, and the same-day v2.0.0 label',async()=>{
  const p=await open();const facts=await p.evaluate(async()=>{const {GUIDE_RULES,RELEASE_NOTES,cardDesigns}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),notes:JSON.stringify(RELEASE_NOTES),designs:cardDesigns().length,cards:deck().length,title:RELEASE_NOTES[0][0]}});
- assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.match(facts.title,/v1\.5\.0/);
+ assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.match(facts.title,/v2\.0\.0/);
  for(const instruction of ['Double-tap','Close returns','no manual Hide','trackpad','Coming soon','Continue turn'])assert.ok(facts.rules.toLowerCase().includes(instruction.toLowerCase()),instruction);
  assert.doesNotMatch(facts.notes,/overlapping hand below|Privacy separately hides|actions below the selected|Collapsible Table appearance/);
  const history=await readFile(path.join(root,'about.html'),'utf8'),section=history.slice(history.indexOf('<article id="monopoly-deal"'),history.indexOf('<article id="sorry"'));
- assert.equal((section.match(/2026-10-26/g)||[]).length,1);assert.match(section,/v1\.5\.0/);assert.doesNotMatch(section,/separate Privacy control/);
+ assert.equal((section.match(/2026-10-26/g)||[]).length,1);assert.match(section,/v2\.0\.0/);assert.doesNotMatch(section,/separate Privacy control/);
  await close(p);
 });
 test('private payment resumes the same turn with Continue turn rather than Reveal my hand',async()=>{
@@ -1095,11 +1095,11 @@ test('refresh cancels an unfinished human action without losing its card or play
  await p.locator('#reveal').click();await playFirst(p);await choose(p,0);await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);await conservation(p);await close(p);
 });
 
-test('v1.5.0 matches the game, launcher and single same-day release entry',async()=>{
- const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v1\.5\.0/);
- await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v1\.5\.0/);
- await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v1.5.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-10-26'}).count(),1);
- await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v1.5.0');await close(p);
+test('v2.0.0 matches the game, launcher and single same-day release entry',async()=>{
+ const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v2\.0\.0/);
+ await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v2\.0\.0/);
+ await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v2.0.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-10-26'}).count(),1);
+ await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v2.0.0');await close(p);
 });
 
 test('own table wilds change color directly without opening Manage',async()=>{
@@ -1121,13 +1121,28 @@ test('action cards cannot be banked through UI, direct moves or either AI diffic
  await conservation(p);await close(p);
 });
 
-test('rent against assetless opponents uses neither a card nor a play',async()=>{
+test('rent on newly placed property allows assetless opponents',async()=>{
  const p=await open();await fixture(p,'rent',2);
  await p.evaluate(()=>{const s=window.__dealTest.state;s.draw.push(...s.players[1].bank.splice(0));window.__dealTest.render()});
- const id=await p.evaluate(()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='rent').id);await p.locator(`[data-card="${id}"]`).click();assert.equal(await p.locator('#play-card').getAttribute('aria-disabled'),'true');
- const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
- const pending=p.evaluate(async id=>window.__dealTest.run(()=>window.__dealTest.play(window.__dealTest.state.players[0].hand.find(c=>c.id===id),'play')),id);
- await choose(p,'OK');await pending;assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);await conservation(p);await close(p);
+ await p.evaluate(async()=>{const t=window.__dealTest,s=t.state,c=s.players[0].props.pop();s.players[0].hand.push(c);await t.run(()=>t.play(c,'play','red'))});
+ await playFirst(p);await choose(p,'Red');await choose(p,0);await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),2);
+ assert.match(await p.evaluate(()=>window.__dealTest.state.log.join(' ')),/pays 0M rent/);
+ await conservation(p);await close(p);
+});
+
+test('excess hand cards discard free even after three plays',async()=>{
+ for(const plays of [0,3]){
+ const p=await open();await fixture(p,'discard',2);
+ await p.evaluate(()=>{const s=window.__dealTest.state;s.draw.push(s.players[0].hand.pop());window.__dealTest.render()});
+ await p.evaluate(plays=>{window.__dealTest.state.plays=plays;window.__dealTest.render()},plays);
+ await p.locator('[data-card]').nth(0).click();
+ assert.equal(await p.locator('#discard-card').getAttribute('aria-disabled'),'false');
+ await p.locator('#discard-card').click();await choose(p,'Discard selected cards');await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].hand.length),7);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),plays);
+ await conservation(p);await close(p);
+ }
 });
 
 test('selected cards show an actual face and phone property cards fit without overlays',async()=>{
@@ -1151,7 +1166,7 @@ test('secondary text is white and the guide consistently documents the v1.5 rule
  }
  assert.equal(await p.locator('#undo').evaluate(el=>getComputedStyle(el).opacity),'1');
  const guide=await p.evaluate(async()=>{const {GUIDE_RULES,cardFacts}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),facts:deck().filter(c=>c.type==='action').flatMap(cardFacts).join(' ')}});
- assert.match(guide.rules,/Only money cards can be banked manually/);assert.match(guide.rules,/Assetless players are excluded/);assert.match(guide.rules,/tap a wild directly/i);assert.doesNotMatch(guide.facts,/Alternatively, bank|Or bank:/);
+ assert.match(guide.rules,/Only money cards can be banked manually/);assert.match(guide.rules,/Opponents with no payable assets pay nothing/);assert.match(guide.rules,/tap a wild directly/i);assert.doesNotMatch(guide.facts,/Alternatively, bank|Or bank:/);
  await close(p);
 });
 

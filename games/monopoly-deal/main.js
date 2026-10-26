@@ -4,7 +4,7 @@ import {aiChoice,aiPlay} from './ai.mjs?build=20261025-orange-deck-dots-v66';
 import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261025-orange-deck-dots-v66';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261025-orange-deck-dots-v66';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-orange-deck-dots-v66';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261026-release-date-v69';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261026-hand-rent-v70';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261025-orange-deck-dots-v66';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -50,6 +50,8 @@ document.addEventListener('click', event => {
  showToast(button.dataset.unavailableReason || 'This control is not available right now.');
 }, true);
 
+const discardPlayCost = count => Math.max(0,count-Math.max(0,me().hand.length-7));
+
 function updateUnavailableControls() {
  const selected = visible ? me().hand.find(card => card.id === selectedCardId) : null;
  const finished = state.winner ? 'This game is finished. Start a new game to play again.' : '';
@@ -60,13 +62,13 @@ function updateUnavailableControls() {
   let reason = finished && !['undo','game-restart'].includes(button.id)&&!button.hasAttribute('data-table-view')&&!button.classList.contains('action-history-button') ? finished : waiting;
   if(!reason){
    if(button.id === 'undo')reason=hiddenHand||(!undoHistory.length?'No move to undo in this turn.':'');
-   else if(button.id === 'discard-card')reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.') || noPlays || (selectedCardIds.size>3-state.plays?`Discard uses one play per card. Select at most ${3-state.plays} card${3-state.plays===1?'':'s'}.`:'');
+   else if(button.id === 'discard-card')reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.') || (discardPlayCost(selectedCardIds.size)>3-state.plays?`Discard uses one play per card. Select at most ${Math.max(0,me().hand.length-7)+3-state.plays} card${3-state.plays===1?'':'s'}.`:'');
    else if(button.id === 'deselect')reason = selectedCardIds.size?'':'No cards are selected.';
    else if(button.id === 'preview-previous'||button.id === 'preview-next')reason = hiddenHand || (me().hand.length<2 ? 'This is the only card in your hand.' : '');
    else if(button.id === 'move')reason = hiddenHand || (document.documentElement.dataset.theme==='classic'&&!me().props.some(card=>card.colors.length>1)?'You have no wild properties on the table to rearrange.':'');
    else if(button.id === 'flip-card')reason = hiddenHand || (!selected ? 'Select a two-color wild property card to flip it.' : '') || noPlays || (selected.type !== 'property' || selected.colors.length !== 2 ? 'Only two-color wild property cards can be flipped.' : '');
    else if(button.id === 'bank-card')reason = hiddenHand || (!selected ? 'Select a money card to bank.' : '') || noPlays || (!canBank(selected) ? 'Only money cards can be banked. Play or discard action cards.' : '');
-   else if(button.id === 'play-card')reason = hiddenHand || (!selected ? 'Select a property or action card to play.' : '') || noPlays || (selected.type === 'money' ? 'Money cards can only be banked, not played.' : '') || (selected.action==='rent'&&!opponents().some(hasPayableAssets)?'No opponent has money or payable properties for rent.':'');
+   else if(button.id === 'play-card')reason = hiddenHand || (!selected ? 'Select a property or action card to play.' : '') || noPlays || (selected.type === 'money' ? 'Money cards can only be banked, not played.' : '');
    else if(button.hasAttribute('data-card') && document.documentElement.dataset.theme === 'classic')reason = noPlays;
   }
   button.disabled = false;
@@ -321,11 +323,12 @@ function render(){
  $('#discard-card').onclick=()=>run(async()=>{
   const cards=me().hand.filter(card=>selectedCardIds.has(card.id));
   if(!cards.length||!visible||state.winner)return;
-  if(cards.length>3-state.plays){showToast('Discard uses one play per card. Select fewer cards or Pass to end your turn.');return;}
-  const confirmed=await choose(`Discard ${cards.length} selected card${cards.length===1?'':'s'}?`,[['Cancel',false],['Discard selected cards',true]],`These cards go to the discard pile. This uses ${cards.length} of your ${3-state.plays} remaining plays (one per card).`);
+  const cost=discardPlayCost(cards.length);
+  if(cost>3-state.plays){showToast('Discard uses one play per card. Select fewer cards or Pass to end your turn.');return;}
+  const confirmed=await choose(`Discard ${cards.length} selected card${cards.length===1?'':'s'}?`,[['Cancel',false],['Discard selected cards',true]],`These cards go to the discard pile. This uses ${cost} of your ${3-state.plays} remaining plays. ${cards.length-cost} excess card(s) above seven are free to discard.`);
   if(!confirmed)return;
   for(const card of cards){remove(me().hand,card);state.discard.push(card);selectedCardIds.delete(card.id)}
-  state.plays+=cards.length;
+  state.plays+=cost;
   selectedCardId=null;previewExpanded=false;lastCardTap=null;
   log(`${me().name} discarded ${cards.length} card${cards.length===1?'':'s'}.`);
   showToast(`${cards.length} card${cards.length===1?'':'s'} discarded.`);
@@ -436,7 +439,7 @@ async function play(c,chosenMode=null,chosenColor=null){if((!visible&&!me().isAI
  const a=c.action,p=me();if(a==='no'||a==='double'){await choose('Keep this card for a response or rent combo',[['OK',true]],a==='no'?'Just Say No is offered when an action targets you.':'Select a Rent card to add one or two Double the Rent cards.');return}
  if(a==='pass'){use(c);draw(state,p,2);return}
  if(a==='house'||a==='hotel'){const eligible=buildingSets(p,a);if(!eligible.length)return choose('No eligible complete set',[['OK',true]],'Buildings need a complete street-color set. No railroads or utilities. Only one house and one hotel per set; the house must be placed first.');let color=await choose('Build on which set?',eligible.map(k=>[GROUPS[k].name,k]));use(c);remove(state.discard,c);c.color=color;p.buildings.push(c);return}
- if(a==='rent'){const tenants=opponents().filter(hasPayableAssets);if(!tenants.length)return choose('No one can pay rent',[['OK',true]],'Opponents need money or payable properties on the table. No card or play was used.');let colors=c.colors.filter(k=>properties(p,k).length);if(!colors.length)return choose('You need a matching property',[['OK',true]]);let color=await choose('Charge rent on which color?',colors.map(k=>[`${GROUPS[k].name}: ${rent(p,k)}M`,k]));let targets=c.value===3?[await choose('Choose a tenant',tenants.map(x=>[x.name,x]))]:tenants;let doubles=p.hand.filter(x=>x.action==='double');let max=Math.min(doubles.length,2-state.plays);let n=max>0?await choose('Add Double the Rent?',Array.from({length:max+1},(_,i)=>[`${i} doubler${i===1?'':'s'} · ${rent(p,color)*2**i}M · ${i+1} plays`,i])):0;use(c);for(let i=0;i<n;i++)use(doubles[i]);await collect(targets,rent(p,color)*2**n);return}
+ if(a==='rent'){const tenants=opponents();let colors=c.colors.filter(k=>properties(p,k).length);if(!colors.length)return choose('You need a matching property',[['OK',true]]);let color=await choose('Charge rent on which color?',colors.map(k=>[`${GROUPS[k].name}: ${rent(p,k)}M`,k]));let targets=c.value===3?[await choose('Choose a tenant',tenants.map(x=>[x.name,x]))]:tenants;let doubles=p.hand.filter(x=>x.action==='double');let max=Math.min(doubles.length,2-state.plays);let n=max>0?await choose('Add Double the Rent?',Array.from({length:max+1},(_,i)=>[`${i} doubler${i===1?'':'s'} · ${rent(p,color)*2**i}M · ${i+1} plays`,i])):0;use(c);for(let i=0;i<n;i++)use(doubles[i]);for(const target of targets){if(hasPayableAssets(target))await collect([target],rent(p,color)*2**n);else log(`${target.name} has no payable assets and pays 0M rent.`)}return}
  if(a==='debt'||a==='birthday'){let targets=a==='birthday'?opponents():[await choose('Who owes you 5M?',opponents().map(x=>[x.name,x]))];use(c);await collect(targets,a==='debt'?5:2);return}
  let targets=opponents().flatMap(x=>a==='breaker'?sets(x).map(color=>({p:x,color})):x.props.filter(card=>!complete(x,card.color)).map(card=>({p:x,card})));
  if(a==='sly'||a==='breaker')targets.sort((left,right)=>GROUPS[left.color||left.card.color].name.localeCompare(GROUPS[right.color||right.card.color].name)||left.p.name.localeCompare(right.p.name)||(left.card?.name||'').localeCompare(right.card?.name||''));
@@ -782,7 +785,7 @@ function compactCardFacts(card) {
     if (card.colors.length === 10) return ['Any property color. Move on your turn.', 'No cash value. Needs a valued property to complete a set.'];
     return card.colors.map(color=>`${GROUPS[color].name} · ${GROUPS[color].names.length} to complete. Rent ${GROUPS[color].rent.map(value=>value+'M').join('/')} .`);
   }
-  if (card.action === 'rent') return [card.colors.length === 10 ? 'Charge one opponent with payable assets rent on any color you own.' : `Charge opponents with payable assets rent on ${card.colors.map(color=>GROUPS[color].name).join(' or ')}.`, 'Action cards cannot be banked.'];
+  if (card.action === 'rent') return [card.colors.length === 10 ? 'Charge one opponent rent on any color you own.' : `Charge opponents rent on ${card.colors.map(color=>GROUPS[color].name).join(' or ')}.`, 'Action cards cannot be banked.'];
   return [card.description, 'Action cards cannot be banked.'];
 }
 

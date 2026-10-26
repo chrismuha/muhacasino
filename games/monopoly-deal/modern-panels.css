@@ -103,3 +103,6 @@
  [data-theme=modern] #table-viewer .table-view-heading{padding-block:6px}
  [data-theme=modern] #modern-table-tools:not([hidden]){padding-block:4px;gap:4px}
 }
+
+/* Keep table status labels legible on mobile displays. */
+[data-theme=modern] :is(.asset-progress,.asset-count,.asset-empty,.group-caption,.opponent-count,.opponent-meta,.inspect-label,.current-seat-heading>span){font-weight:700;color:#fff}
