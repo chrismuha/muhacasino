@@ -673,3 +673,21 @@ dialog button,#preview-close{outline-offset:-4px}
 
 /* Keep empty property inventory text fully white in every panel state. */
 #game .current-properties .asset-empty,#game .current-properties .asset-count,#game .current-properties .asset-panel-title{color:#fff;opacity:1}
+
+/* Card faces can be nested in buttons, whose labels deliberately do not wrap. */
+.deal-face{white-space:normal}
+.action-medallion{min-width:0;flex-shrink:0}
+.action-medallion>span{min-width:0;white-space:normal;overflow-wrap:normal}
+.face-instructions{white-space:normal}
+/* Use the available phone viewport, including when the keyboard is open. */
+@media(max-width:600px){
+ #setup-wizard[open]{display:flex;flex-direction:column;width:calc(100% - 16px);height:var(--setup-height,calc(100dvh - 16px));max-height:var(--setup-height,calc(100dvh - 16px));padding:16px;overflow:hidden}
+ #setup-wizard .wizard-heading,#setup-wizard #wizard-progress{flex-shrink:0}
+ #setup-content{flex:1;min-height:0;display:flex;flex-direction:column}
+ #setup-wizard .setup{flex:1;min-height:0;display:flex;flex-direction:column;max-width:none;width:100%}
+ #setup-wizard [data-wizard-step]:not([hidden]){flex:1;min-height:0;overflow-y:auto;scroll-padding:12px;padding:4px 2px 12px}
+ #setup-wizard .wizard-actions{flex-shrink:0;display:flex;justify-content:space-between;gap:12px;background:inherit;margin:0;padding:12px 0 0;border-top:1px solid #ffffff30}
+ #setup-wizard #names{gap:8px}
+ #setup-wizard #names input{min-height:48px;height:48px;font-size:18px}
+ #setup-wizard #start,#setup-wizard #wizard-back{min-height:48px;font-size:16px}
+}

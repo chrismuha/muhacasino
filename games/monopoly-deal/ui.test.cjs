@@ -297,6 +297,7 @@ test('hosted setup starts at top and focused name stays above the keyboard',asyn
  const frame=p.frameLocator('#gameFrame');await frame.locator('#ready-new').click();await frame.locator('#start').click();
  const initial=await frame.locator('#setup-wizard').evaluate(w=>({top:w.getBoundingClientRect().top,fields:[...w.querySelectorAll('#names input')].map(i=>({top:i.getBoundingClientRect().top,bottom:i.getBoundingClientRect().bottom})),height:innerHeight}));
  assert.ok(initial.top<=9);assert.ok(initial.fields.every(r=>r.top>=0&&r.bottom<initial.height),'Both name inputs immediately visible');
+ await frame.locator('#names input').first().focus();
  const frameHeight=await p.locator('#gameFrame').evaluate(f=>f.clientHeight);
  await p.evaluate(()=>{Object.defineProperty(visualViewport,'height',{configurable:true,value:420});visualViewport.dispatchEvent(new Event('resize'));});
  await frame.locator('#names input').first().fill('Chris');
@@ -1217,4 +1218,64 @@ test('phone deck alignment, white property labels and flashing current play surv
   assert.notEqual(backgrounds[0],backgrounds[1]);
   await shot(p,'phone-deck-turn-white-text');
  } finally { await close(p); }
+});
+
+test('phone setup keeps the keyboard opt-in and navigation visible when space shrinks',async()=>{
+ const p=await open({width:390,height:700});
+ await p.locator('#ready-new').click();await p.locator('#start').click();
+ assert.equal(await p.locator('#names input').evaluateAll(inputs=>inputs.includes(document.activeElement)),false);
+ await p.setViewportSize({width:390,height:360});
+ await p.waitForFunction(()=>{const r=document.querySelector('#start').getBoundingClientRect();return r.y>=0&&r.bottom<=innerHeight});
+ const bounds=await p.locator('#start').boundingBox();
+ assert.ok(bounds.y>=0&&bounds.y+bounds.height<=360,'Continue stays above the keyboard');
+ await close(p);
+});
+
+test('compact action previews wrap complete instructions and keep titles inside their circles',async()=>{
+ const p=await open({width:390,height:844});
+ for(const action of ['debt','breaker']){
+  await fixture(p,action,2);await p.locator('#game [data-card]').first().click();
+  const geometry=await p.locator('#preview-open .deal-face').evaluate(face=>{
+   const text=face.querySelector('.face-instructions'),title=face.querySelector('.action-medallion>span');
+   return {wrap:getComputedStyle(text).whiteSpace,textFits:text.scrollWidth<=text.clientWidth+1,titleFits:title.scrollWidth<=title.clientWidth+1};
+  });
+  assert.equal(geometry.wrap,'normal');assert.ok(geometry.textFits);assert.ok(geometry.titleFits);
+ }
+ await close(p);
+});
+
+test('payment popups order Bank descending before Properties ascending without reordering assets',async()=>{
+ const p=await open();await fixture(p,'debt',2);
+ const expected=await p.evaluate(()=>{
+  const s=window.__dealTest.state,debtor=s.players[1];
+  debtor.bank.push(...[1,10,2].map(value=>{const c=s.draw.find(c=>c.type==='money'&&c.value===value);s.draw.splice(s.draw.indexOf(c),1);return c}));
+  debtor.props.push(...[4,1,3].map(value=>{const c=s.draw.find(c=>c.type==='property'&&c.value===value);s.draw.splice(s.draw.indexOf(c),1);return c}));
+  return {bank:debtor.bank.map(c=>c.id),props:debtor.props.map(c=>c.id)};
+ });
+ await p.evaluate(()=>{const s=window.__dealTest.state;void window.__dealTest.pay(s.players[1],s.players[0],5)});
+ await choose(p,'Ready to pay');
+ const labels=await p.locator('#options button').allTextContents();
+ assert.deepEqual(labels.map(s=>s.split(':')[0]),['Bank','Bank','Bank','Bank','Property','Property','Property']);
+ assert.deepEqual(labels.map(s=>Number(s.match(/(\d+)M/)[1])),[10,5,2,1,1,3,4]);
+ assert.deepEqual(await p.evaluate(()=>{const d=window.__dealTest.state.players[1];return {bank:d.bank.map(c=>c.id),props:d.props.map(c=>c.id)}}),expected);
+ await close(p);
+});
+
+test('public popup banks descend and property stacks ascend by value',async()=>{
+ const p=await open();await fixture(p,'hand',2);
+ const order=await p.evaluate(async()=>{
+  const {modernViewerContent}=await import('./modern-viewer.mjs');
+  const s=window.__dealTest.state,mount=document.createElement('div');
+  const money=[1,10,3,5].map(value=>s.draw.find(c=>c.type==='money'&&c.value===value));
+  mount.innerHTML=modernViewerContent(s,{kind:'bank',cards:money,ownerIndex:0});
+  const bank=[...mount.querySelectorAll('.modern-card-value')].map(n=>parseInt(n.textContent));
+  const props=s.draw.filter(c=>c.type==='property'&&c.colors.length===1).reverse();
+  mount.innerHTML=modernViewerContent(s,{kind:'properties',cards:props,ownerIndex:0});
+  const stacks=[...mount.querySelectorAll('.property-stack')].map(n=>[...n.querySelectorAll('[data-stack-value]')].map(c=>Number(c.dataset.stackValue)));
+  return {bank,stacks};
+ });
+ assert.deepEqual(order.bank,[10,5,3,1]);
+ for(const values of order.stacks)assert.deepEqual(values,[...values].sort((a,b)=>a-b));
+ const minima=order.stacks.map(values=>Math.min(...values));assert.deepEqual(minima,[...minima].sort((a,b)=>a-b));
+ await close(p);
 });
