@@ -1183,5 +1183,23 @@ test('orange deck remains visible and play dots distinguish current, completed a
   assert.equal(await p.locator('.deal-card-back.deck-icon').isVisible(),true);
  }
  await p.emulateMedia({reducedMotion:'reduce'});await p.evaluate(()=>{window.__dealTest.state.plays=1;window.__dealTest.render()});
- assert.equal(await p.locator('.plays-dots .is-current').evaluate(el=>getComputedStyle(el).animationName),'none');await close(p);
+ assert.equal(await p.locator('.plays-dots .is-current').evaluate(el=>getComputedStyle(el).animationName),'current-play-pulse');await close(p);
+});
+
+
+test('phone deck alignment, white property labels and flashing current play survive reduced motion', async () => {
+ const p=await open({width:390,height:844},undefined,{reducedMotion:'reduce'});
+ try {
+  await fixture(p,'hand');
+  const colors=await p.locator('.current-properties').evaluate(el=>['.asset-panel-title','.asset-empty','.asset-count'].map(selector=>getComputedStyle(el.querySelector(selector)).color));
+  assert.deepEqual(colors,['rgb(255, 255, 255)','rgb(255, 255, 255)','rgb(255, 255, 255)']);
+  const label=await p.locator('.deck-label').boundingBox(),card=await p.locator('.draw-deck .deck-icon').boundingBox();
+  assert.ok(Math.abs(label.x-card.x)<2,`Deck label ${label.x}, card ${card.x}`);
+  const dot=p.locator('.plays-dots .is-current');
+  const animation=await dot.evaluate(el=>getComputedStyle(el).animationName);
+  assert.equal(animation,'current-play-pulse');
+  const backgrounds=await dot.evaluate(el=>{const animation=el.getAnimations()[0];animation.pause();animation.currentTime=0;const first=getComputedStyle(el).backgroundColor;animation.currentTime=1000;return [first,getComputedStyle(el).backgroundColor]});
+  assert.notEqual(backgrounds[0],backgrounds[1]);
+  await shot(p,'phone-deck-turn-white-text');
+ } finally { await close(p); }
 });

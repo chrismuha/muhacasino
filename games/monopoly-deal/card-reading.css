@@ -658,7 +658,7 @@ dialog button,#preview-close{outline-offset:-4px}
  #game .current-stats .table-tools{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 /* Restore the recognizable orange Monopoly Deal card back in every table state. */
-#game .draw-deck .deal-card-back.deck-icon{display:flex;flex:0 0 auto;width:48px;height:68px;aspect-ratio:auto;margin:0 auto;padding:4px;border:3px solid #fff;font-size:8px;font-weight:900;line-height:1.05;text-align:center}
+#game .draw-deck .deal-card-back.deck-icon{display:flex;flex:0 0 auto;width:48px;height:68px;aspect-ratio:auto;margin:0;padding:4px;border:3px solid #fff;font-size:8px;font-weight:900;line-height:1.05;text-align:center}
 #game .draw-deck .deck-icon .card-back-city{flex:0 0 28px;height:28px;aspect-ratio:auto;font-size:24px;line-height:1;margin-bottom:3px}
 #game .draw-deck .deck-icon b{display:block;flex:0 0 auto;width:100%;font-size:6px;font-weight:900;letter-spacing:-.2px;line-height:1.2;white-space:nowrap}
 /* Dots identify completed plays, the current play, and unused plays. */
@@ -666,6 +666,10 @@ dialog button,#preview-close{outline-offset:-4px}
 [data-theme=modern] .deal-table .plays-dots i.used{background:#fff;opacity:1;animation:none}
 [data-theme=modern] .deal-table .plays-dots i.is-current{background:#fff;animation:current-play-pulse 1.4s ease-in-out infinite}
 @keyframes current-play-pulse{0%,100%{background:#000;box-shadow:none}50%{background:#fff;box-shadow:0 0 6px #fff}}
-@media(prefers-reduced-motion:reduce){[data-theme=modern] .deal-table .plays-dots i.is-current{animation:none;background:#fff;outline:2px solid #fff;outline-offset:2px}}
+/* The current play must remain visibly distinct, including with reduced motion. */
+@media(prefers-reduced-motion:reduce){[data-theme=modern] .deal-table .plays-dots i.is-current{animation:current-play-pulse 2s steps(2,end) infinite;outline:none}}
 /* Unavailable card actions need no space beside an enlarged card. */
 #game .has-selection .deal-actions .round-action[aria-disabled=true]:not(#end){display:none}
+
+/* Keep empty property inventory text fully white in every panel state. */
+#game .current-properties .asset-empty,#game .current-properties .asset-count,#game .current-properties .asset-panel-title{color:#fff;opacity:1}
