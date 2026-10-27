@@ -1,10 +1,10 @@
 import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-orange-deck-dots-v66';
 import {paginateViewer} from './view-pages.mjs?build=20261025-orange-deck-dots-v66';
 import {aiChoice,aiPlay} from './ai.mjs?build=20261025-orange-deck-dots-v66';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261025-orange-deck-dots-v66';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261026-background-ai-v78';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261026-popup-order-v72';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-orange-deck-dots-v66';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261026-hand-rent-v70';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261026-action-preview-v80';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261025-orange-deck-dots-v66';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -65,6 +65,7 @@ function updateUnavailableControls() {
    else if(button.id === 'discard-card')reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.') || (discardPlayCost(selectedCardIds.size)>3-state.plays?`Discard uses one play per card. Select at most ${Math.max(0,me().hand.length-7)+3-state.plays} card${3-state.plays===1?'':'s'}.`:'');
    else if(button.id === 'deselect')reason = selectedCardIds.size?'':'No cards are selected.';
    else if(button.id === 'preview-previous'||button.id === 'preview-next')reason = hiddenHand || (me().hand.length<2 ? 'This is the only card in your hand.' : '');
+   else if(button.id === 'wilds')reason = hiddenHand || (!me().props.some(card=>card.colors.length>1)?'You have no wild properties on the table to rearrange.':'');
    else if(button.id === 'move')reason = hiddenHand || (document.documentElement.dataset.theme==='classic'&&!me().props.some(card=>card.colors.length>1)?'You have no wild properties on the table to rearrange.':'');
    else if(button.id === 'flip-card')reason = hiddenHand || (!selected ? 'Select a two-color wild property card to flip it.' : '') || noPlays || (selected.type !== 'property' || selected.colors.length !== 2 ? 'Only two-color wild property cards can be flipped.' : '');
    else if(button.id === 'bank-card')reason = hiddenHand || (!selected ? 'Select a money card to bank.' : '') || noPlays || (!canBank(selected) ? 'Only money cards can be banked. Play or discard action cards.' : '');
@@ -153,6 +154,7 @@ function fitResponsiveLabels() {
  }
 }
 const me=()=>state.players[state.turn];
+const tableSeat=()=>me().isAI?Math.max(0,state.players.findIndex(player=>!player.isAI)):state.turn;
 function choose(title,options,detail='',actor=state?me():null){
  if(actionTransaction&&actor&&actor!==me()){actionTransaction.locked=true;undoHistory=[];}
  if(actor?.isAI)return Promise.resolve(aiChoice(title,options,actor));
@@ -210,7 +212,7 @@ function gameOverHTML(){
 function wireGameOverControls(){
  $('#game-restart')?.addEventListener('click',setup);
 }
-function renderClassic(){if(!state)return;const handScroll=$('.cards')?.scrollLeft || 0;const p=me();$('#game').innerHTML=`<div class="players">${state.players.map((x,i)=>`<section class="player ${i===state.turn?'active':''}"><h3>${esc(x.name)} ${i===state.turn?'◆':''}</h3><div class="meta"><span>Bank <b>${x.bank.reduce((a,c)=>a+c.value,0)}M</b></span><span>${x.hand.length} cards</span><span class="badge">${sets(x).length} / 3 sets</span></div><div class="player-inspect"><button type="button" data-table-view="bank-${i}">Bank cards</button><button type="button" data-table-view="properties-${i}">Properties</button></div><div class="groups">${Object.entries(GROUPS).filter(([k])=>properties(x,k).length).map(([k,g])=>`<div class="group ${complete(x,k)?'done':''}" style="--color:${g.color}"><strong>${g.name} ${properties(x,k).length}/${g.names.length}</strong>${properties(x,k).map(c=>`<div>${esc(c.name)}</div>`).join('')}<small>Rent ${rent(x,k)}M ${x.buildings.filter(c=>c.color===k).map(c=>`<span class="building-label" data-building="${c.action}">${esc(c.name)}</span>`).join(' ')}</small></div>`).join('')||'<p>No properties yet</p>'}</div></section>`).join('')}</div><div class="turnbar"><div><strong>${esc(p.name)}’s turn</strong><div class="meta">${3-state.plays} plays left · ${state.draw.length} in draw pile · Discard: ${esc(state.discard.at(-1)?.name||'Empty')}</div></div><div><button type="button" data-table-view="discard">Discard pile</button><button type="button" data-table-view="activity">View table</button><button id="move">Rearrange wilds</button> <button id="undo" type="button">Undo</button> <button id="end" class="primary">End turn →</button></div></div><section class="hand">${visible?`<h2>${esc(p.name)}’s hand</h2><p id="hand-sort-help" class="hand-hint">Tap a card to play or bank it. Drag to sort; hold first on touch. Swipe to scroll, or use Alt+Left/Right to reorder the focused card.</p><div class="cards" tabindex="0" role="region" aria-label="Your hand; scroll sideways for more cards" aria-describedby="hand-sort-help">${p.hand.map(cardHTML).join('')||'<p>Your hand is empty.</p>'}</div>`:p.isAI?`<div class="privacy" role="status"><h2>${esc(p.name)}’s turn</h2><p>Computer turn…</p></div>`:`<div class="privacy"><h2>${turnHandoff?'Pass the device to':'Return the device to'} ${esc(p.name)}</h2><p>Only this player should view their hand.</p><button id="reveal" class="primary">${turnHandoff?'Reveal my hand':'Continue turn'}</button></div>`}</section>`;
+function renderClassic(){if(!state)return;const handScroll=$('.cards')?.scrollLeft || 0;const p=state.players[tableSeat()];$('#game').innerHTML=`<div class="players">${state.players.map((x,i)=>`<section class="player ${i===state.turn?'active':''}"><h3>${esc(x.name)} ${i===state.turn?'◆':''}</h3><div class="meta"><span>Bank <b>${x.bank.reduce((a,c)=>a+c.value,0)}M</b></span><span>${x.hand.length} cards</span><span class="badge">${sets(x).length} / 3 sets</span></div><div class="player-inspect"><button type="button" data-table-view="bank-${i}">Bank cards</button><button type="button" data-table-view="properties-${i}">Properties</button></div><div class="groups">${Object.entries(GROUPS).filter(([k])=>properties(x,k).length).map(([k,g])=>`<div class="group ${complete(x,k)?'done':''}" style="--color:${g.color}"><strong>${g.name} ${properties(x,k).length}/${g.names.length}</strong>${properties(x,k).map(c=>`<div>${esc(c.name)}</div>`).join('')}<small>Rent ${rent(x,k)}M ${x.buildings.filter(c=>c.color===k).map(c=>`<span class="building-label" data-building="${c.action}">${esc(c.name)}</span>`).join(' ')}</small></div>`).join('')||'<p>No properties yet</p>'}</div></section>`).join('')}</div><div class="turnbar"><div><strong>${esc(p.name)}’s turn</strong><div class="meta">${3-state.plays} plays left · ${state.draw.length} in draw pile · Discard: ${esc(state.discard.at(-1)?.name||'Empty')}</div></div><div><button type="button" data-table-view="discard">Discard pile</button><button type="button" data-table-view="activity">View table</button><button id="move">Rearrange wilds</button> <button id="undo" type="button">Undo</button> <button id="end" class="primary">End turn →</button></div></div><section class="hand">${visible?`<h2>${esc(p.name)}’s hand</h2><p id="hand-sort-help" class="hand-hint">Tap a card to play or bank it. Drag to sort; hold first on touch. Swipe to scroll, or use Alt+Left/Right to reorder the focused card.</p><div class="cards" tabindex="0" role="region" aria-label="Your hand; scroll sideways for more cards" aria-describedby="hand-sort-help">${p.hand.map(cardHTML).join('')||'<p>Your hand is empty.</p>'}</div>`:`<div class="privacy"><h2>${turnHandoff?'Pass the device to':'Return the device to'} ${esc(p.name)}</h2><p>Only this player should view their hand.</p><button id="reveal" class="primary">${turnHandoff?'Reveal my hand':'Continue turn'}</button></div>`}</section>`;
  $('#game .hand')?.insertAdjacentHTML('beforebegin',`<div class="action-summary"><span class="action-summary-status">${Math.max(0,3-state.plays)} plays left · Undo ${undoHistory.length?'available':'unavailable'}</span><button type="button" class="action-history-button" aria-label="Open action history" aria-haspopup="dialog">History</button></div>`);wireActionHistory();
  if(state.winner){$('#game').insertAdjacentHTML('afterbegin',gameOverHTML());wireGameOverControls();}
  if($('.cards'))$('.cards').scrollLeft=handScroll;
@@ -297,11 +299,14 @@ function fitCompactPreview(){
 
 function render(){
  if(state&&!busy)saveGame();
+ // Keep the human table mounted throughout background computer actions.
+ if(state&&me().isAI&&!state.winner&&$('#game .deal-table, #game .players')){updateUnavailableControls();return;}
  detachHandSorting();
  detachHandSorting = () => {};
  if(!state){
-  $('#game').innerHTML='<section class="game-ready" aria-labelledby="ready-title"><h2 id="ready-title">Ready to deal?</h2><p>Play against computer opponents or with two to four people on this device.</p><button type="button" class="primary" id="ready-new">New game</button></section>';
+  $('#game').innerHTML='<section class="game-ready" aria-labelledby="ready-title"><h2 id="ready-title">Ready to deal?</h2><p>Play against computer opponents or with two to four people on this device.</p><div class="ready-actions"><button type="button" class="primary" id="ready-new">New game</button><button type="button" id="ready-settings" aria-haspopup="dialog">Game settings</button></div></section>';
   $('#ready-new').onclick=setup;
+  $('#ready-settings').onclick=openGameSettings;
   return;
  }
  document.body.classList.add('is-playing');
@@ -312,7 +317,7 @@ function render(){
  if(document.documentElement.dataset.theme!=='modern'){renderClassic();updateUnavailableControls();wireHandSorting();fitResponsiveLabels();return;}
  if(!visible||!me().hand.some(c=>c.id===selectedCardId)){selectedCardId=null;previewFlipped=false;previewExpanded=false;}
  const scroll=$('.cards')?.scrollLeft||0;
- $('#game').innerHTML=gameOverHTML()+modernBoard(state,visible,selectedCardId,previewFlipped,previewExpanded,turnHandoff,selectedCardIds,undoHistory.length>0);
+ $('#game').innerHTML=gameOverHTML()+modernBoard({...state,turn:tableSeat()},visible&&!me().isAI,selectedCardId,previewFlipped,previewExpanded,turnHandoff,selectedCardIds,undoHistory.length>0);
  wireGameOverControls();wireActionHistory();
  if($('.cards'))$('.cards').scrollLeft=scroll;
  $('#reveal')?.addEventListener('click',()=>{visible=true;turnHandoff=false;render()});
@@ -334,6 +339,8 @@ function render(){
   showToast(`${cards.length} card${cards.length===1?'':'s'} discarded.`);
  });
  $('#move').onclick=()=>openTableViewer(`properties-${state.turn}`);
+ $('#wilds').onclick=()=>run(()=>rearrange());
+ $('#table-settings').onclick=openGameSettings;
  $('#flip-card').onclick=()=>{
   previewFlipped=!previewFlipped;
   render();
@@ -388,18 +395,15 @@ function render(){
 async function takeAITurns(){
  while(state && me().isAI && !state.winner){
   if(actionTransaction)actionTransaction.locked=true;undoHistory=[];
-  visible=false;render();
-  // The table already identifies the computer turn; leave handoff toasts visible.
-  await new Promise(resolve=>setTimeout(resolve,450));
+  visible=false;
   while(state.plays<3&&!state.winner){
    const move=aiPlay(me(),opponents());
    if(!move)break;
    const before=state.plays;
    saveGame(true);
    await play(move.card,move.mode,move.color);
-   checkWin();saveGame();render();
+   checkWin();saveGame();
    if(state.plays===before)break;
-   await new Promise(resolve=>setTimeout(resolve,350));
   }
   if(!state.winner)await end();
  }
@@ -409,7 +413,7 @@ async function run(fn){
  if(busy||state.winner)return;
  const actor=me(),turn=state.turn,playsBefore=state.plays;
  const snapshot={game:structuredClone(state),visible,turnHandoff,selected:[...selectedCardIds],selectedId:selectedCardId,flipped:previewFlipped};
- const transaction={locked:false};actionTransaction=transaction;saveGame(true);busy=true;
+ const transaction={locked:false};actionTransaction=transaction;saveGame(true);busy=true;updateUnavailableControls();
  try{
   await fn();checkWin();if(!state.winner)await takeAITurns();
   if(state.turn!==turn||transaction.locked)undoHistory=[];
@@ -430,17 +434,17 @@ async function run(fn){
 }
 function checkWin(){if(sets(me()).length>=3&&!state.winner){state.winner=me().name;log(`${state.winner} wins with three complete colors!`);choose(`${state.winner} wins!`,[['View table',true]],'Three complete property sets. Start a new game for a rematch.',null)}}
 function use(c){remove(me().hand,c);state.discard.push(c);state.plays++;log(`${me().name} played ${c.name}.`)}
-async function defend(target,actor,description){visible=false;render();let responder=target,other=actor,cancelled=false;while(true){const no=responder.hand.find(c=>c.action==='no');if(!no)return !cancelled;if(!responder.isAI&&!state.players.some(p=>p.isAI))await choose(`Pass to ${responder.name}`,[['Ready',true]],'An action response is available. Keep hands private.',responder);const yes=await choose(`${responder.name}: Just Say No?`,[['Allow action / stop countering',false],['Play Just Say No',true]],description,responder);if(!yes)return !cancelled;remove(responder.hand,no);state.discard.push(no);if(responder===me())state.plays++;cancelled=!cancelled;log(`${responder.name} played Just Say No.`);[responder,other]=[other,responder];}}
+async function defend(target,actor,description){visible=false;render();if(actor.isAI&&!target.isAI)await choose(`${actor.name} played ${description.split(':')[0]} against you`,[['Continue',true]],description,target);let responder=target,other=actor,cancelled=false;while(true){const no=responder.hand.find(c=>c.action==='no');if(!no)return !cancelled;if(!responder.isAI&&!state.players.some(p=>p.isAI))await choose(`Pass to ${responder.name}`,[['Ready',true]],'An action response is available. Keep hands private.',responder);const yes=await choose(`${responder.name}: Just Say No?`,[['Allow action / stop countering',false],['Play Just Say No',true]],description,responder);if(!yes)return !cancelled;remove(responder.hand,no);state.discard.push(no);if(responder===me())state.plays++;cancelled=!cancelled;log(`${responder.name} played Just Say No.`);[responder,other]=[other,responder];}}
 async function pay(p,to,amount){visible=false;render();let remaining=amount;if(!p.isAI)await choose(p.name+': payment due',[['Ready to pay',true]],`${to.name} is owed ${amount}M. You choose payment; no change is given.`,p);while(remaining>0){let assets=[...[...p.bank].sort((a,b)=>b.value-a.value),...p.props.filter(c=>c.value>0).sort((a,b)=>a.value-b.value),...[...p.buildings].sort((a,b)=>a.value-b.value)];if(!assets.length)break;let c=await choose(`${p.name}: ${remaining}M still owed`,assets.map(c=>[`${p.bank.includes(c)?'Bank':p.props.includes(c)?'Property':'Building'}: ${label(c)}`,c]),'',p);if(p.bank.includes(c)){remove(p.bank,c);to.bank.push(c)}else if(p.props.includes(c)){remove(p.props,c);to.props.push(c);normalize(p)}else{remove(p.buildings,c);to.bank.push(c);if(c.action==='house'){for(const h of p.buildings.filter(x=>x.color===c.color)){remove(p.buildings,h);p.bank.push(h)}}}remaining-=c.value;render()}log(`${p.name} paid ${amount-Math.max(remaining,0)}M toward ${amount}M owed to ${to.name}.`)}
-async function collect(targets,amount){for(const p of targets)if(await defend(p,me(),`Pay ${amount}M to ${me().name}.`))await pay(p,me(),amount)}
+async function collect(targets,amount,actionName){for(const p of targets)if(await defend(p,me(),`${actionName}: Pay ${amount}M to ${me().name}.`))await pay(p,me(),amount)}
 const opponents=()=>state.players.filter(p=>p!==me());
 async function play(c,chosenMode=null,chosenColor=null){if((!visible&&!me().isAI)||state.plays>=3||!c)return;let mode=chosenMode||await choose(label(c),[['Cancel','cancel'],...(canBank(c)?[['Put in bank','bank']]:[]),...(c.type!=='money'?[['Play card','play']]:[])]);if(mode==='cancel')return;if(mode==='bank'){if(!canBank(c)){showToast('Only money cards can be banked. Play or discard action cards.');return;}remove(me().hand,c);me().bank.push(c);state.plays++;log(`${me().name} banked ${c.value}M.`);return}
  if(c.type==='property'){c.color=chosenColor||await colorFor(c,{smart:true});remove(me().hand,c);me().props.push(c);state.plays++;log(`${me().name} laid ${c.name}.`);return}
  const a=c.action,p=me();if(a==='no'||a==='double'){await choose('Keep this card for a response or rent combo',[['OK',true]],a==='no'?'Just Say No is offered when an action targets you.':'Select a Rent card to add one or two Double the Rent cards.');return}
  if(a==='pass'){use(c);draw(state,p,2);return}
  if(a==='house'||a==='hotel'){const eligible=buildingSets(p,a);if(!eligible.length)return choose('No eligible complete set',[['OK',true]],'Buildings need a complete street-color set. No railroads or utilities. Only one house and one hotel per set; the house must be placed first.');let color=await choose('Build on which set?',eligible.map(k=>[GROUPS[k].name,k]));use(c);remove(state.discard,c);c.color=color;p.buildings.push(c);return}
- if(a==='rent'){const tenants=opponents();let colors=c.colors.filter(k=>properties(p,k).length);if(!colors.length)return choose('You need a matching property',[['OK',true]]);let color=await choose('Charge rent on which color?',colors.map(k=>[`${GROUPS[k].name}: ${rent(p,k)}M`,k]));let targets=c.value===3?[await choose('Choose a tenant',tenants.map(x=>[x.name,x]))]:tenants;let doubles=p.hand.filter(x=>x.action==='double');let max=Math.min(doubles.length,2-state.plays);let n=max>0?await choose('Add Double the Rent?',Array.from({length:max+1},(_,i)=>[`${i} doubler${i===1?'':'s'} · ${rent(p,color)*2**i}M · ${i+1} plays`,i])):0;use(c);for(let i=0;i<n;i++)use(doubles[i]);for(const target of targets){if(hasPayableAssets(target))await collect([target],rent(p,color)*2**n);else log(`${target.name} has no payable assets and pays 0M rent.`)}return}
- if(a==='debt'||a==='birthday'){let targets=a==='birthday'?opponents():[await choose('Who owes you 5M?',opponents().map(x=>[x.name,x]))];use(c);await collect(targets,a==='debt'?5:2);return}
+ if(a==='rent'){const tenants=opponents();let colors=c.colors.filter(k=>properties(p,k).length);if(!colors.length)return choose('You need a matching property',[['OK',true]]);let color=await choose('Charge rent on which color?',colors.map(k=>[`${GROUPS[k].name}: ${rent(p,k)}M`,k]));let targets=c.value===3?[await choose('Choose a tenant',tenants.map(x=>[x.name,x]))]:tenants;let doubles=p.hand.filter(x=>x.action==='double');let max=Math.min(doubles.length,2-state.plays);let n=max>0?await choose('Add Double the Rent?',Array.from({length:max+1},(_,i)=>[`${i} doubler${i===1?'':'s'} · ${rent(p,color)*2**i}M · ${i+1} plays`,i])):0;use(c);for(let i=0;i<n;i++)use(doubles[i]);for(const target of targets){if(hasPayableAssets(target))await collect([target],rent(p,color)*2**n,c.name);else log(`${target.name} has no payable assets and pays 0M rent.`)}return}
+ if(a==='debt'||a==='birthday'){let targets=a==='birthday'?opponents():[await choose('Who owes you 5M?',opponents().map(x=>[x.name,x]))];use(c);await collect(targets,a==='debt'?5:2,c.name);return}
  let targets=opponents().flatMap(x=>a==='breaker'?sets(x).map(color=>({p:x,color})):x.props.filter(card=>!complete(x,card.color)).map(card=>({p:x,card})));
  if(a==='sly'||a==='breaker')targets.sort((left,right)=>GROUPS[left.color||left.card.color].name.localeCompare(GROUPS[right.color||right.card.color].name)||left.p.name.localeCompare(right.p.name)||(left.card?.name||'').localeCompare(right.card?.name||''));
  if(!targets.length)return choose('No eligible opponent properties',[['OK',true]]);let own;if(a==='forced'){let options=p.props.filter(x=>!complete(p,x.color));if(!options.length)return choose('You need a property outside a full set',[['OK',true]]);own=await choose('Choose your property to give',options.map(x=>[label(x),x]));}
@@ -457,9 +461,35 @@ async function rearrange(cardId=null){
  const color=await choose('Choose the property color',[['Cancel',null],...card.colors.map(color=>[GROUPS[color].name,color])],detail);
  if(color&&color!==card.color){card.color=color;normalize(me());log(`${me().name} moved a wild to ${GROUPS[color].name}.`);}
 }
-async function end(){const ending=me().name;selectedCardIds.clear();selectedCardId=null;lastCardTap=null;while(me().hand.length>7){visible=false;render();let c=await choose(`${me().name}: discard down to seven`,me().hand.map(c=>[label(c),c]));remove(me().hand,c);state.discard.push(c)}state.turn=(state.turn+1)%state.players.length;state.plays=0;visible=false;turnHandoff=true;draw(state,me(),me().hand.length?2:5);log(`${me().name} begins their turn.`);showToast(`${ending}’s turn is over. ${me().name}’s turn.`);saveGame()}
+async function end(){const ending=me().name;selectedCardIds.clear();selectedCardId=null;lastCardTap=null;while(me().hand.length>7){visible=false;render();let c=await choose(`${me().name}: discard down to seven`,me().hand.map(c=>[label(c),c]));remove(me().hand,c);state.discard.push(c)}state.turn=(state.turn+1)%state.players.length;state.plays=0;visible=false;turnHandoff=true;draw(state,me(),me().hand.length?2:5);log(`${me().name} begins their turn.`);if(!state.players.some(player=>player.isAI)||!me().isAI)showToast(`${me().name}’s turn.`);saveGame()}
 // Size only the setup dialog; never scroll the document in response to keyboard panning.
 let setupViewportFrame=0;
+let releaseSetupScrollLock=null;
+function lockSetupScrolling(){
+ releaseSetupScrollLock?.();
+ const documents=[document];
+ try{if(window.parent!==window&&window.parent.document.querySelector('#gameFrame')===window.frameElement)documents.push(window.parent.document);}catch{}
+ const cleanups=documents.map(doc=>{
+  const view=doc.defaultView,scrollX=view.scrollX,scrollY=view.scrollY;
+  const style=doc.createElement('style');
+  style.textContent='html.deal-setup-locked{overflow:hidden!important;overscroll-behavior:none!important}html.deal-setup-locked body{position:fixed!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;overflow:hidden!important;overscroll-behavior:none!important}';
+  doc.head.append(style);doc.documentElement.classList.add('deal-setup-locked');
+  // iOS can pan the visual viewport despite overflow:hidden, including across
+  // an iframe boundary. Cancel the gesture in both documents while setup owns it.
+  const stopPan=event=>{if(event.cancelable)event.preventDefault();};
+  doc.addEventListener('touchmove',stopPan,{passive:false,capture:true});
+  doc.addEventListener('wheel',stopPan,{passive:false,capture:true});
+  view.scrollTo(0,0);
+  return ()=>{
+   doc.removeEventListener('touchmove',stopPan,true);doc.removeEventListener('wheel',stopPan,true);
+   doc.documentElement.classList.remove('deal-setup-locked');style.remove();view.scrollTo(scrollX,scrollY);
+  };
+ });
+ releaseSetupScrollLock=()=>{cleanups.forEach(cleanup=>cleanup());releaseSetupScrollLock=null;};
+}
+$('#setup-wizard').addEventListener('close',()=>releaseSetupScrollLock?.());
+window.addEventListener('pagehide',()=>releaseSetupScrollLock?.());
+
 function syncSetupViewport(){
  const wizard=$('#setup-wizard');
  let viewport=window.visualViewport, frameTop=0;
@@ -519,6 +549,7 @@ function setup() {
   names();
   showStep(1);
   syncSetupViewport();
+  lockSetupScrolling();
   $('#setup-wizard').showModal();
   $('#setup-wizard').scrollTop=0;
   $('#wizard-title').focus({preventScroll:true});
@@ -623,7 +654,7 @@ document.querySelectorAll('[data-table-color]').forEach(button => {
 // Only public table cards appear here; private hands and the draw order stay hidden.
 let tableViewIndex = 0;
 function tableViews() {
-  const guideViews = [{key:'rules',title:'Rules',description:'A step-by-step guide to playing Monopoly Deal.'},{key:'cards',title:'Cards',description:'Browse every card design. Use the arrows or Left/Right keys.'},{key:'release-notes',title:'Release notes',description:'Monopoly Deal · v1.5.0 · October 25, 2026 · Recovery, action summary, and regression coverage'}];
+  const guideViews = [{key:'rules',title:'Rules',description:'A step-by-step guide to playing Monopoly Deal.'},{key:'cards',title:'Cards',description:'Browse every card design. Use the arrows or Left/Right keys.'},{key:'release-notes',title:'Release notes',description:'Monopoly Deal · v2.0.0 · October 26, 2026 · Setup, settings, wilds, and computer-action notifications'}];
   if (!state) return guideViews;
   return [
     {key:'discard', kind:'deck', title:'Discard pile', cards:[...state.discard].reverse(), description:'Newest discard first. These cards may return when the draw pile runs out.'},
@@ -833,16 +864,27 @@ function upcomingGameSettings(){
  return section;
 }
 
-// Keep direct URLs usable; hosted games use the casino's single utility bar.
-if(window.parent!==window){
+function openGameSettings(){
+ if(busy){showToast('Finish the current action or computer turn first.');return;}
+ if(document.querySelector('dialog[open]'))return;
+ const dialog=$('#appearance-dialog');
+ if(window.parent===window){dialog.append(document.querySelector('.table-settings'),document.querySelector('.upcoming-game-settings'));}
+ dialog.showModal();dialog.querySelector('button').focus({preventScroll:true});
+}
+// The same settings dialog is available from the starting screen and utility bar.
+{
+
  const appearance=document.createElement('dialog');
  appearance.id='appearance-dialog';
  appearance.setAttribute('aria-labelledby','appearance-title');
  appearance.innerHTML='<div class="wizard-heading"><h2 id="appearance-title">Game settings</h2><button type="button">Close</button></div>';
  const close=appearance.querySelector('button');
  close.onclick=()=>appearance.close();
- appearance.append(document.querySelector('.table-settings'));
- appearance.append(upcomingGameSettings());
+ if(window.parent!==window){appearance.append(document.querySelector('.table-settings'));appearance.append(upcomingGameSettings());}
+ else{
+  const settings=document.querySelector('.appearance-settings');settings.querySelector('summary').textContent='Game settings';settings.append(upcomingGameSettings());
+  appearance.addEventListener('close',()=>{settings.append(appearance.querySelector('.table-settings'),appearance.querySelector('.upcoming-game-settings'));});
+ }
  document.body.append(appearance);
  window.addEventListener('message',event=>{
   if(event.source!==window.parent||event.origin!==location.origin)return;
@@ -852,21 +894,18 @@ if(window.parent!==window){
   if(document.querySelector('dialog[open]'))return;
   if(event.data.command==='new')setup();
   if(event.data.command==='guide')openTableViewer('rules');
-  if(event.data.command==='appearance'){appearance.showModal();close.focus({preventScroll:true});}
+  if(event.data.command==='appearance')openGameSettings();
  });
- window.parent.postMessage({type:'muha-deal-ready'},location.origin);
+ if(window.parent!==window)window.parent.postMessage({type:'muha-deal-ready'},location.origin);
 }
 
-if(window.parent===window){
- const settings=document.querySelector('.appearance-settings');
- settings.querySelector('summary').textContent='Game settings';
- settings.append(upcomingGameSettings());
-}
+$('#game-settings').onclick=openGameSettings;
+if(window.parent!==window)document.querySelector('.appearance-settings').hidden=true;
 
 // A reload restarts only the unfinished action from its last atomic checkpoint.
 queueMicrotask(async()=>{
  if(!state||state.winner)return;
- if(me().isAI){showToast('Resuming the computer turn from its last completed move.');await run(async()=>{});}
+ if(me().isAI){await run(async()=>{});}
  else if(recoveredPending)showToast('The unfinished action was cancelled by refresh. Cards and plays are restored; replay it to continue.');
 });
 

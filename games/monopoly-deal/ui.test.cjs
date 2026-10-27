@@ -329,6 +329,50 @@ test('hosted setup starts at top and focused name stays above the keyboard',asyn
  await close(p);
 });
 
+test('starting-screen and table settings buttons open settings; Wilds directly opens rearranging',async()=>{
+ for(const hosted of [false,true]){
+  const p=await open({width:390,height:700});let game=p;
+  if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+  await game.locator('#ready-settings').click();await game.locator('#appearance-dialog[open]').waitFor();
+  await game.locator('#appearance-dialog .wizard-heading button').click();
+  await fixture(game,'wild',2);
+  await game.evaluate(()=>{const t=window.__dealTest,s=t.state,c=s.players[0].hand.pop();c.color=c.colors[0];s.players[0].props.push(c);t.render();});
+  await game.locator('#table-settings').click();await game.locator('#appearance-dialog[open]').waitFor();await game.locator('#appearance-dialog .wizard-heading button').click();
+  const before=await game.evaluate(()=>window.__dealTest.state.plays);
+  await game.locator('#wilds').click();await game.locator('#choice[open]').waitFor();assert.match(await game.locator('#question').innerText(),/Move a wild/);
+  await game.locator('#options button').nth(1).click();await game.locator('#choice[open]').waitFor();assert.match(await game.locator('#question').innerText(),/property color/);
+  await game.locator('#options button').last().click();await idle(game);
+  assert.equal(await game.evaluate(()=>window.__dealTest.state.plays),before);
+  await conservation(game);await close(p);
+ }
+});
+
+test('setup locks touch panning and background scrolling until closed, standalone and hosted',async()=>{
+ for(const hosted of [false,true]){
+  const p=await open({width:390,height:700},undefined,{isMobile:true,hasTouch:true});
+  let game=p;
+  if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+  await game.locator('#ready-new').click();await game.locator('#start').click();await game.locator('#names input').first().focus();
+  const documents=hosted?[p,game]:[game];
+  for(const target of documents){
+   const lock=await target.evaluate(()=>{
+    const pan=new Event('touchmove',{bubbles:true,cancelable:true}),wheel=new Event('wheel',{bubbles:true,cancelable:true});
+    document.body.dispatchEvent(pan);document.body.dispatchEvent(wheel);window.scrollTo(0,200);
+    return {pan:pan.defaultPrevented,wheel:wheel.defaultPrevented,y:scrollY,position:getComputedStyle(document.body).position};
+   });
+   assert.deepEqual(lock,{pan:true,wheel:true,y:0,position:'fixed'});
+  }
+  await game.locator('#names input').first().fill('Chris');assert.equal(await game.locator('#names input').first().inputValue(),'Chris');
+  await game.locator('#wizard-cancel').click();
+  for(const target of documents){
+   await target.waitForFunction(()=>!document.documentElement.classList.contains('deal-setup-locked'));
+   assert.equal(await target.evaluate(()=>{const event=new Event('touchmove',{bubbles:true,cancelable:true});document.body.dispatchEvent(event);return event.defaultPrevented;}),false);
+  }
+  await close(p);
+ }
+});
+
+
 
 async function swipePreview(page,dx,dy=0){
  const face=page.locator('.selected-table-card');await face.scrollIntoViewIfNeeded();
@@ -1087,15 +1131,34 @@ test('reload resumes a saved AI turn without repeating already completed plays',
  assert.equal(await p.evaluate(()=>window.__dealTest.state.draw.length),drawBefore-2);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);await conservation(p);await close(p);
 });
 
+test('computer Forced Deal notifies the human without changing the mounted player screen',async()=>{
+ for(const theme of ['modern','classic']){
+  const p=await open();await fixture(p,'forced',2);
+  await p.evaluate(theme=>{
+   const t=window.__dealTest,s=t.state;s.players.reverse();s.players[1].isAI=true;s.players[1].name='Computer 1';
+   document.documentElement.dataset.theme=theme;t.render();
+   document.querySelector('#game').dataset.mounted='human';
+   window.__aiRun=t.run(async()=>{s.turn=1;});
+  },theme);
+  await p.locator('#choice[open]').waitFor();
+  assert.match(await p.locator('#question').innerText(),/Computer 1 played Forced Deal against you/i);
+  assert.equal(await p.locator('#game').getAttribute('data-mounted'),'human');
+  assert.equal(await p.locator('#game').innerText().then(t=>t.includes('Computer turn')),false);
+  assert.equal(await p.locator(theme==='modern'?'.current-seat-heading h2':'.hand h2').innerText().then(t=>t.includes('Alex')),true);
+  await choose(p,'Continue');await p.evaluate(()=>window.__aiRun);await idle(p);
+  assert.equal(await p.evaluate(()=>window.__dealTest.state.turn),0);await conservation(p);await close(p);
+ }
+});
+
 test('refresh during an AI payment replays only that unpaid action without duplicate transfers',async()=>{
  const p=await open();
  await p.evaluate(async()=>{
   const {createGame,deck}=await import('./engine.mjs');const s=createGame(['Chris','Computer']);s.draw=deck();s.discard=[];s.log=[];s.turn=1;s.plays=0;s.players.forEach(p=>{p.hand=[];p.bank=[];p.props=[];p.buildings=[]});
   const take=fn=>s.draw.splice(s.draw.findIndex(fn),1)[0];s.players[1].isAI=true;s.players[1].aiDifficulty='normal';s.players[1].hand.push(take(c=>c.action==='debt'));s.players[0].bank.push(take(c=>c.type==='money'&&c.value===1),take(c=>c.type==='money'&&c.value===1));window.__dealTest.setState(s,false);
  });
- await p.reload();await choose(p,'Ready to pay');await choose(p,0);await p.locator('#choice[open]').waitFor();
+ await p.reload();await choose(p,'Continue');await choose(p,'Ready to pay');await choose(p,0);await p.locator('#choice[open]').waitFor();
  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].bank.length),1);
- await p.reload();await choose(p,'Ready to pay');assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].bank.length),0);
+ await p.reload();await choose(p,'Continue');await choose(p,'Ready to pay');assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].bank.length),0);
  await choose(p,0);await choose(p,0);await p.waitForFunction(()=>!window.__dealTest.busy&&window.__dealTest.state.turn===0);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].bank.length),2);assert.equal(await p.evaluate(()=>window.__dealTest.state.discard.filter(c=>c.action==='debt').length),1);await conservation(p);await close(p);
 });
@@ -1257,9 +1320,11 @@ test('compact action previews wrap complete instructions and keep titles inside 
   await fixture(p,action,2);await p.locator('#game [data-card]').first().click();
   const geometry=await p.locator('#preview-open .deal-face').evaluate(face=>{
    const text=face.querySelector('.face-instructions'),title=face.querySelector('.action-medallion>span');
-   return {wrap:getComputedStyle(text).whiteSpace,textFits:text.scrollWidth<=text.clientWidth+1,titleFits:title.scrollWidth<=title.clientWidth+1};
+   const range=document.createRange();range.selectNodeContents(text);
+   const lines=[...range.getClientRects()],bounds=face.getBoundingClientRect();
+   return {wrap:getComputedStyle(text).whiteSpace,textFits:text.scrollWidth<=text.clientWidth+1,titleFits:title.scrollWidth<=title.clientWidth+1,allLinesVisible:lines.every(r=>r.top>=bounds.top&&r.bottom<=bounds.bottom&&r.left>=bounds.left&&r.right<=bounds.right),text:text.textContent};
   });
-  assert.equal(geometry.wrap,'normal');assert.ok(geometry.textFits);assert.ok(geometry.titleFits);
+  assert.equal(geometry.wrap,'normal');assert.ok(geometry.textFits);assert.ok(geometry.titleFits);assert.ok(geometry.allLinesVisible,'Every instruction line fits inside the preview');if(action==='breaker')assert.equal(geometry.text,'Steal a complete set, including buildings.');
  }
  await close(p);
 });

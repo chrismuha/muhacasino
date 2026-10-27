@@ -720,3 +720,13 @@ dialog button,#preview-close{outline-offset:-4px}
 #setup-wizard.setup-compact .wizard-actions{padding-top:6px}
 #setup-wizard.setup-compact .setup label{font-size:14px}
 #setup-wizard.setup-compact .setup select{min-height:36px;padding:4px 8px;font-size:16px}
+
+.ready-actions{display:flex;flex-wrap:wrap;gap:12px}
+.game-top-actions{flex-wrap:wrap}
+#game-settings{min-height:44px;font-size:14px;padding:8px 10px}
+.appearance-settings[hidden]{display:none!important}
+
+/* Compact action faces reserve space for the complete instructions. */
+[data-theme=modern] .has-card-preview .deal-face[data-face=action] .face-action-top{height:22%}
+[data-theme=modern] .has-card-preview .deal-face[data-face=action] .action-medallion{width:55%;margin:3% 0;padding:5%}
+[data-theme=modern] .has-card-preview .deal-face[data-face=action] .face-instructions{font-size:7cqw;line-height:1.15;padding:3% 6% 4%;margin:auto 0 0;flex-shrink:0}
