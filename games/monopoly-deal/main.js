@@ -458,26 +458,29 @@ async function rearrange(cardId=null){
  if(color&&color!==card.color){card.color=color;normalize(me());log(`${me().name} moved a wild to ${GROUPS[color].name}.`);}
 }
 async function end(){const ending=me().name;selectedCardIds.clear();selectedCardId=null;lastCardTap=null;while(me().hand.length>7){visible=false;render();let c=await choose(`${me().name}: discard down to seven`,me().hand.map(c=>[label(c),c]));remove(me().hand,c);state.discard.push(c)}state.turn=(state.turn+1)%state.players.length;state.plays=0;visible=false;turnHandoff=true;draw(state,me(),me().hand.length?2:5);log(`${me().name} begins their turn.`);showToast(`${ending}’s turn is over. ${me().name}’s turn.`);saveGame()}
-// Size only the setup dialog to the area above the keyboard; keep the table stable.
+// Size only the setup dialog; never scroll the document in response to keyboard panning.
+let setupViewportFrame=0;
 function syncSetupViewport(){
  const wizard=$('#setup-wizard');
  let viewport=window.visualViewport, frameTop=0;
  try{if(window.parent!==window){viewport=window.parent.visualViewport;frameTop=window.frameElement.getBoundingClientRect().top;}}catch{}
- const top=Math.max(8,(viewport?.offsetTop||0)-frameTop+8);
+ const top=Math.max(0,(viewport?.offsetTop||0)-frameTop);
  const bottom=(viewport?.offsetTop||0)+(viewport?.height||innerHeight)-frameTop;
  wizard.style.setProperty('--setup-top',`${top}px`);
- wizard.style.setProperty('--setup-height',`${Math.max(80,bottom-top-8)}px`);
- if(wizard.open&&wizard.contains(document.activeElement)&&document.activeElement.matches('input')){
-  requestAnimationFrame(()=>document.activeElement?.scrollIntoView({block:'nearest',inline:'nearest'}));
- }
+ wizard.style.setProperty('--setup-height',`${Math.max(80,bottom-top)}px`);
+ wizard.classList.toggle('setup-compact',bottom-top<520);
+}
+function scheduleSetupViewport(){
+ if(setupViewportFrame)return;
+ setupViewportFrame=requestAnimationFrame(()=>{setupViewportFrame=0;syncSetupViewport();});
 }
 let setupViewport=window.visualViewport;
 try{if(window.parent!==window)setupViewport=window.parent.visualViewport;}catch{}
-setupViewport?.addEventListener('resize',syncSetupViewport);
-setupViewport?.addEventListener('scroll',syncSetupViewport);
-window.addEventListener('resize',syncSetupViewport);
-window.addEventListener('pagehide',()=>{setupViewport?.removeEventListener('resize',syncSetupViewport);setupViewport?.removeEventListener('scroll',syncSetupViewport);});
-$('#setup-wizard').addEventListener('focusin',syncSetupViewport);
+setupViewport?.addEventListener('resize',scheduleSetupViewport);
+setupViewport?.addEventListener('scroll',scheduleSetupViewport);
+window.addEventListener('resize',scheduleSetupViewport);
+window.addEventListener('pagehide',()=>{setupViewport?.removeEventListener('resize',scheduleSetupViewport);setupViewport?.removeEventListener('scroll',scheduleSetupViewport);});
+$('#setup-wizard').addEventListener('focusin',scheduleSetupViewport);
 function setup() {
   $('#setup-content').innerHTML = `<form class="setup" id="setup-form" novalidate>
     <section data-wizard-step="1"><h3>Choose your opponents</h3><label for="opponent-mode">Mode <select id="opponent-mode"><option value="ai" selected>Human vs AI</option><option value="human">Human vs human</option></select></label><p>Choose the total number of players. In AI mode, the other seats are computer opponents.</p><div id="ai-difficulty-field"><label for="ai-difficulty">Difficulty <select id="ai-difficulty" aria-describedby="ai-difficulty-help"><option value="easy">Easy</option><option value="normal" selected>Normal</option></select></label><p id="ai-difficulty-help">Easy uses the original computer strategy. Normal builds different color sets and targets opponents close to winning.</p></div><label for="count">Players <select id="count" required><option>2</option><option>3</option><option>4</option></select></label></section>

@@ -31,6 +31,7 @@ export function cardFacts(card){
 
 export const RELEASE_NOTES = [
  ['v2.0.0 · October 26, 2026',[
+  'New-player setup fills the screen with compact name rows and fixed navigation above the keyboard, without scrolling or page repositioning.',
   'Restored the orange Monopoly Deal deck card. Play dots are black for unused plays, flashing white for the current play, and solid white for completed plays.',
   'Action history opens in a popup instead of expanding the table. Manage, Discard, Undo, Clear, and Table use larger bold labels. The deck shows the orange Monopoly Deal card back with larger white draw/discard counts.',
   'Secondary table labels and unavailable-control text are white for contrast, with small labels raised to a readable minimum size. The user guide and card facts now match all v1.5 controls and money-only banking rules.',

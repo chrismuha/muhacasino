@@ -691,3 +691,32 @@ dialog button,#preview-close{outline-offset:-4px}
  #setup-wizard #names input{min-height:48px;height:48px;font-size:18px}
  #setup-wizard #start,#setup-wizard #wizard-back{min-height:48px;font-size:16px}
 }
+
+/* Keep name-field scrolling local while the software keyboard animates. */
+#setup-wizard,#setup-wizard [data-wizard-step]{overscroll-behavior:contain;scroll-behavior:auto;overflow-anchor:none}
+
+/* New game is a full-screen screen, with all controls fitted above the keyboard. */
+#setup-wizard[open]{display:flex;flex-direction:column;inset:var(--setup-top,0px) 0 auto;width:100%;max-width:100%;height:var(--setup-height,100dvh);max-height:var(--setup-height,100dvh);margin:0;border:0;border-radius:0;padding:clamp(12px,3vw,24px);overflow:hidden}
+#setup-wizard .wizard-heading,#setup-wizard #wizard-progress{flex-shrink:0}
+#setup-content{flex:1;min-height:0;display:flex;flex-direction:column;width:100%;max-width:760px;margin-inline:auto}
+#setup-wizard .setup{flex:1;min-height:0;width:100%;display:flex;flex-direction:column}
+#setup-wizard [data-wizard-step]:not([hidden]){flex:1;min-height:0;overflow:hidden;padding:0}
+#setup-wizard .wizard-actions{flex-shrink:0;margin:0;padding:10px 0 0;display:flex;justify-content:space-between}
+#setup-wizard #names{display:grid;grid-template-columns:minmax(90px,auto) minmax(0,1fr);align-items:center;gap:10px 12px}
+#setup-wizard #names label{font-size:15px;white-space:normal;overflow:visible;margin:0}
+#setup-wizard #names .required-label{display:none}
+#setup-wizard #names input{height:48px;min-height:48px;margin:0;font-size:18px}
+#setup-wizard #names .setup-error{grid-column:1/-1;margin:0;font-size:14px}
+#setup-wizard.setup-compact{padding:8px 12px}
+#setup-wizard.setup-compact .wizard-heading{padding-bottom:4px}
+#setup-wizard.setup-compact .wizard-heading h2{font-size:20px}
+#setup-wizard.setup-compact .wizard-heading button{min-height:36px;font-size:16px;padding:4px 10px}
+#setup-wizard.setup-compact #wizard-progress{font-size:14px;margin:5px 0}
+#setup-wizard.setup-compact h3{font-size:18px;margin:0 0 6px}
+#setup-wizard.setup-compact .setup p:not(.setup-error){display:none}
+#setup-wizard.setup-compact #names{gap:5px 10px}
+#setup-wizard.setup-compact #names input{height:40px;min-height:40px;padding:6px 10px;font-size:16px}
+#setup-wizard.setup-compact #start,#setup-wizard.setup-compact #wizard-back{min-height:40px;font-size:15px;padding:6px 10px}
+#setup-wizard.setup-compact .wizard-actions{padding-top:6px}
+#setup-wizard.setup-compact .setup label{font-size:14px}
+#setup-wizard.setup-compact .setup select{min-height:36px;padding:4px 8px;font-size:16px}

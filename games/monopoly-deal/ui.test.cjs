@@ -294,9 +294,11 @@ test('opponent property and bank previews fit completely on phones and landscape
 
 test('hosted setup starts at top and focused name stays above the keyboard',async()=>{
  const p=await open({width:390,height:700});await p.goto(origin+'/index.html#monopoly-deal');
- const frame=p.frameLocator('#gameFrame');await frame.locator('#ready-new').click();await frame.locator('#start').click();
+ const frame=p.frameLocator('#gameFrame');await frame.locator('#ready-new').click();await frame.locator('#opponent-mode').selectOption('human');await frame.locator('#count').selectOption('4');await frame.locator('#start').click();
  const initial=await frame.locator('#setup-wizard').evaluate(w=>({top:w.getBoundingClientRect().top,fields:[...w.querySelectorAll('#names input')].map(i=>({top:i.getBoundingClientRect().top,bottom:i.getBoundingClientRect().bottom})),height:innerHeight}));
  assert.ok(initial.top<=9);assert.ok(initial.fields.every(r=>r.top>=0&&r.bottom<initial.height),'Both name inputs immediately visible');
+ const game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));
+ await game.evaluate(()=>{window.__setupPageScrolls=0;Element.prototype.scrollIntoView=function(){window.__setupPageScrolls++};});
  await frame.locator('#names input').first().focus();
  const frameHeight=await p.locator('#gameFrame').evaluate(f=>f.clientHeight);
  await p.evaluate(()=>{Object.defineProperty(visualViewport,'height',{configurable:true,value:420});visualViewport.dispatchEvent(new Event('resize'));});
@@ -306,6 +308,24 @@ test('hosted setup starts at top and focused name stays above the keyboard',asyn
  const field=await frame.locator('#names input').last().boundingBox();assert.ok(field.y+field.height<=420,'Focused field is above keyboard');
  assert.equal(await p.locator('#gameFrame').evaluate(f=>f.clientHeight),frameHeight);
  await frame.locator('#names input').first().fill('Chris Muha');assert.equal(await frame.locator('#names input').first().inputValue(),'Chris Muha');
+ // Simulate keyboard animation and Safari panning, including repeated events.
+ for(const [height,offsetTop] of [[390,20],[350,45],[420,0]]){
+  await p.evaluate(({height,offsetTop})=>{
+   Object.defineProperty(visualViewport,'height',{configurable:true,value:height});
+   Object.defineProperty(visualViewport,'offsetTop',{configurable:true,value:offsetTop});
+   for(let i=0;i<8;i++){visualViewport.dispatchEvent(new Event('resize'));visualViewport.dispatchEvent(new Event('scroll'));}
+  },{height,offsetTop});
+  await game.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  assert.equal(await p.locator('#gameFrame').evaluate(f=>f.clientHeight),frameHeight);
+  const fit=await frame.locator('#setup-wizard').evaluate(w=>{
+   const section=w.querySelector('[data-wizard-step="2"]'),r=w.getBoundingClientRect();
+   return {width:r.width,height:r.height,scroll:section.scrollHeight-section.clientHeight,fields:[...w.querySelectorAll('#names input')].map(i=>({top:i.getBoundingClientRect().top,bottom:i.getBoundingClientRect().bottom})),bottom:r.bottom};
+  });
+  assert.equal(fit.width,390);assert.ok(fit.scroll<=1,'Names fit without scrolling');
+  assert.ok(fit.fields.every(r=>r.top>=0&&r.bottom<=fit.bottom),'All four names remain visible');
+ }
+ assert.equal(await game.evaluate(()=>window.__setupPageScrolls),0,'Keyboard updates never scroll the page or iframe');
+ const settled=await frame.locator('#names input').last().boundingBox();assert.ok(settled.y+settled.height<=420);
  await close(p);
 });
 
