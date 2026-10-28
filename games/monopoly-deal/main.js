@@ -1,10 +1,10 @@
 import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-orange-deck-dots-v66';
 import {paginateViewer} from './view-pages.mjs?build=20261025-orange-deck-dots-v66';
 import {aiChoice,aiPlay} from './ai.mjs?build=20261025-orange-deck-dots-v66';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261027-vector-rent-dots-v98';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261027-vector-rent-dots-v98';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261027-hand-resume-limit-v99';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261027-hand-resume-limit-v99';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-orange-deck-dots-v66';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261027-vector-rent-dots-v98';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261027-hand-resume-limit-v99';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261025-orange-deck-dots-v66';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -13,6 +13,7 @@ let lastCardTap=null;
 let undoHistory=[],actionTransaction=null;
 class CancelAction extends Error {}
 let turnHandoff=true;
+let handLimitQueued=false;
 let detachCatalogNavigation=()=>{};
 // Keep the last completed action in this tab if Safari reloads the frame.
 const sessionKey='muha-deal-session-v1',pendingKey='muha-deal-pending-v1';
@@ -20,12 +21,12 @@ let recoveredPending=false;
 try{recoveredPending=sessionStorage.getItem(pendingKey)==='1';}catch{}
 function saveGame(pending=false){
  if(!state)return;
- try{sessionStorage.setItem(sessionKey,JSON.stringify(state));if(pending)sessionStorage.setItem(pendingKey,'1');else sessionStorage.removeItem(pendingKey);}catch{}
+ try{sessionStorage.setItem(sessionKey,JSON.stringify({...state,_handView:{visible,turnHandoff}}));if(pending)sessionStorage.setItem(pendingKey,'1');else sessionStorage.removeItem(pendingKey);}catch{}
 }
 if('scrollRestoration' in history)history.scrollRestoration='manual';
 window.addEventListener('pageshow',()=>requestAnimationFrame(()=>window.scrollTo(0,0)));
 
-try { const saved=JSON.parse(sessionStorage.getItem(sessionKey)||'null'); if(saved?.players?.length>=2 && Array.isArray(saved.draw) && Array.isArray(saved.discard) && saved.players[saved.turn]){state=saved;state.players.forEach(player=>{if(player.isAI&&!player.aiDifficulty)player.aiDifficulty='easy'})} } catch {}
+try { const saved=JSON.parse(sessionStorage.getItem(sessionKey)||'null'); if(saved?.players?.length>=2 && Array.isArray(saved.draw) && Array.isArray(saved.discard) && saved.players[saved.turn]){state=saved;visible=saved._handView?.visible??true;turnHandoff=saved._handView?.turnHandoff??false;delete state._handView;state.players.forEach(player=>{if(player.isAI&&!player.aiDifficulty)player.aiDifficulty='easy'})} } catch {}
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let detachHandSorting = () => {};
 let toastTimer;
@@ -165,7 +166,7 @@ function fitResponsiveLabels() {
 const me=()=>state.players[state.turn];
 const orderedColors=colors=>[...colors].sort((a,b)=>GROUPS[a].name.localeCompare(GROUPS[b].name));
 const tableSeat=()=>me().isAI?Math.max(0,state.players.findIndex(player=>!player.isAI)):state.turn;
-function choose(title,options,detail='',actor=state?me():null){
+function choose(title,options,detail='',actor=state?me():null,required=false){
  if(actionTransaction&&actor&&actor!==me()){actionTransaction.locked=true;undoHistory=[];}
  if(actor?.isAI)return Promise.resolve(aiChoice(title,options,actor));
  // All human card/asset prompts share one monetary ordering, including
@@ -175,7 +176,7 @@ function choose(title,options,detail='',actor=state?me():null){
  options=options.map(option=>amount(option[1])===null?option:valued.shift());
  return new Promise((resolve,reject)=>{
   const dialog=$('#choice');$('#question').textContent=title;$('#detail').textContent=detail;$('#options').replaceChildren();
-  const canCancel=Boolean(actionTransaction&&!actionTransaction.locked&&actor===me()&&!actor?.isAI);
+  const canCancel=!required&&Boolean(actionTransaction&&!actionTransaction.locked&&actor===me()&&!actor?.isAI);
   const dismiss=()=>{
    if(canCancel){dialog.close();reject(new CancelAction());}
    else if(!actor){dialog.close();resolve(options[0]?.[1]);}
@@ -324,6 +325,7 @@ function render(){
   $('#ready-settings').onclick=openGameSettings;
   return;
  }
+ queueHandLimit();
  document.body.classList.add('is-playing');
  if(selectionOwner!==me()){selectedCardIds.clear();lastCardTap=null;}
  selectionOwner=me();
@@ -407,16 +409,34 @@ function render(){
  fitResponsiveLabels();
  fitCompactPreview();
 }
+function queueHandLimit(){
+ if(handLimitQueued||busy||!state||state.winner||!visible||me().isAI||me().hand.length<=7)return;
+ handLimitQueued=true;
+ queueMicrotask(()=>{
+  handLimitQueued=false;
+  if(state&&!state.winner&&!busy&&visible&&!me().isAI&&me().hand.length>7)void run(()=>enforceHandLimit(me()));
+ });
+}
+async function enforceHandLimit(player){
+ while(player.hand.length>7){
+  if(actionTransaction){actionTransaction.locked=true;undoHistory=[];}
+  const card=await choose(`${player.name}: discard down to seven`,player.hand.map(card=>[label(card),card]),`Choose ${player.hand.length-7} more card(s) to discard before playing. These required discards use no plays.`,player,true);
+  remove(player.hand,card);state.discard.push(card);selectedCardIds.delete(card.id);
+  log(`${player.name} discarded ${card.name} to reach the seven-card limit.`);saveGame(true);
+ }
+}
 async function takeAITurns(){
  while(state && me().isAI && !state.winner){
   if(actionTransaction)actionTransaction.locked=true;undoHistory=[];
   visible=false;
+  await enforceHandLimit(me());
   while(state.plays<3&&!state.winner){
    const move=aiPlay(me(),opponents());
    if(!move)break;
    const before=state.plays;
    saveGame(true);
    await play(move.card,move.mode,move.color);
+   await enforceHandLimit(me());
    checkWin();saveGame();
    if(state.plays===before)break;
   }
@@ -430,7 +450,7 @@ async function run(fn){
  const snapshot={game:structuredClone(state),visible,turnHandoff,selected:[...selectedCardIds],selectedId:selectedCardId,flipped:previewFlipped};
  const transaction={locked:false};actionTransaction=transaction;saveGame(true);busy=true;updateUnavailableControls();
  try{
-  await fn();checkWin();if(!state.winner)await takeAITurns();
+  await fn();if(visible&&!me().isAI)await enforceHandLimit(me());checkWin();if(!state.winner)await takeAITurns();
   if(state.turn!==turn||transaction.locked)undoHistory=[];
   else if(!actor.isAI&&JSON.stringify(state)!==JSON.stringify(snapshot.game))undoHistory.push(snapshot);
   if(undoHistory.length>20)undoHistory.shift();
@@ -476,7 +496,7 @@ async function rearrange(cardId=null){
  const color=await choose('Choose the property color',[['Cancel',null],...orderedColors(card.colors).map(color=>[GROUPS[color].name,color])],detail);
  if(color&&color!==card.color){card.color=color;normalize(me());log(`${me().name} moved a wild to ${GROUPS[color].name}.`);}
 }
-async function end(){const ending=me().name;selectedCardIds.clear();selectedCardId=null;lastCardTap=null;while(me().hand.length>7){visible=false;render();let c=await choose(`${me().name}: discard down to seven`,me().hand.map(c=>[label(c),c]));remove(me().hand,c);state.discard.push(c)}state.turn=(state.turn+1)%state.players.length;state.plays=0;visible=false;turnHandoff=true;draw(state,me(),me().hand.length?2:5);log(`${me().name} begins their turn.`);if(!state.players.some(player=>player.isAI)||!me().isAI)showToast(`${me().name}’s turn.`);saveGame()}
+async function end(){const ending=me().name;selectedCardIds.clear();selectedCardId=null;lastCardTap=null;await enforceHandLimit(me());state.turn=(state.turn+1)%state.players.length;state.plays=0;visible=false;turnHandoff=true;draw(state,me(),me().hand.length?2:5);log(`${me().name} begins their turn.`);if(!state.players.some(player=>player.isAI)||!me().isAI)showToast(`${me().name}’s turn.`);saveGame()}
 // Size only the setup dialog; never scroll the document in response to keyboard panning.
 let setupViewportFrame=0;
 let releaseSetupScrollLock=null;
@@ -905,7 +925,7 @@ function upcomingGameSettings(){
  const section=document.createElement('section');
  section.className='upcoming-game-settings';
  section.setAttribute('aria-labelledby','upcoming-title');
- section.innerHTML=`<h3 id="upcoming-title">Coming soon</h3><p>Named games, saved games, backup, and restore are planned for the desktop app. These features are not available yet. The current deal recovers in this tab after a reload; hands stay hidden until revealed.</p><label for="planned-game-name">Game name <span>Coming soon</span></label><input id="planned-game-name" type="text" placeholder="Name your game" disabled aria-describedby="upcoming-title"><div class="upcoming-actions">${['Save game','Load game','Backup','Restore'].map(label=>`<button type="button" aria-disabled="true" data-unavailable-reason="${label} is coming soon for the desktop app.">${label}</button>`).join('')}</div>`;
+ section.innerHTML=`<h3 id="upcoming-title">Coming soon</h3><p>Named games, saved games, backup, and restore are planned for the desktop app. These features are not available yet. The current deal recovers in this tab after a reload; your current hand visibility is preserved.</p><label for="planned-game-name">Game name <span>Coming soon</span></label><input id="planned-game-name" type="text" placeholder="Name your game" disabled aria-describedby="upcoming-title"><div class="upcoming-actions">${['Save game','Load game','Backup','Restore'].map(label=>`<button type="button" aria-disabled="true" data-unavailable-reason="${label} is coming soon for the desktop app.">${label}</button>`).join('')}</div>`;
  return section;
 }
 

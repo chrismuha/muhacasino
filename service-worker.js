@@ -1,4 +1,4 @@
-const CACHE_NAME = "muha-casino-shell-20261027-vector-rent-dots-v98";
+const CACHE_NAME = "muha-casino-shell-20261027-hand-resume-limit-v99";
 const APP_SHELL = [
   "./",
   "./index.html",

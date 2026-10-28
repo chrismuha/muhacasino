@@ -101,7 +101,7 @@ function syncHostedCabinetScreens(gameId = null) {
   device.classList.toggle("cabinet-non-slot-game", !slotGameActive);
 }
 
-const SITE_BUILD = "20261027-vector-rent-dots-v98";
+const SITE_BUILD = "20261027-hand-resume-limit-v99";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");
@@ -208,6 +208,19 @@ window.visualViewport?.addEventListener('resize',scheduleGameViewport);
 window.visualViewport?.addEventListener('scroll',scheduleGameViewport);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncGameViewport();});
 syncGameViewport();
+
+function syncSetupControls(){
+ const toolbar=gameView.querySelector('.game-toolbar');
+ const locked=activeGameId==='monopoly-deal'&&document.documentElement.classList.contains('deal-setup-locked');
+ if(toolbar.inert===locked)return;
+ toolbar.inert=locked;
+ toolbar.querySelectorAll('button').forEach(button=>{
+  if(locked){button.dataset.disabledBeforeSetup=String(button.disabled);button.disabled=true;}
+  else{button.disabled=button.dataset.disabledBeforeSetup==='true';delete button.dataset.disabledBeforeSetup;}
+ });
+ if(locked)backButton.setAttribute('aria-disabled','true');else backButton.removeAttribute('aria-disabled');
+}
+new MutationObserver(syncSetupControls).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
 
 function setGameToolbarCollapsed(collapsed) {
   gameView.classList.toggle("toolbar-collapsed", collapsed);
@@ -466,6 +479,7 @@ function releaseActiveGameFrame(){
   gameFrame.contentDocument?.activeElement?.blur?.();
   gameFrame.contentWindow?.slotExperience?.releaseCabinetScreens?.();
  }catch{}
+ syncSetupControls();
  cancelAnimationFrame(gameViewportTimer);
  dealLayoutHeight=0;dealLayoutWidth=0;
 }
