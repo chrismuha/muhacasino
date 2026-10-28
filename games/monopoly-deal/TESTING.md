@@ -63,3 +63,6 @@ Action sizing checks cover compact phones, touch tablets in portrait and landsca
 
 
 Category-selection checks cover touch on phone/tablet and mouse/keyboard on desktop, same-category additions, category replacement, deselection, banking only the active money card, and enlarged browsing across categories without spending plays. Payment checks keep Bank before Property before Building, sort each group by value and label, preserve stored asset order, and regroup buildings moved to the bank after a property payment in both themes.
+
+
+Property-deal notification checks cover Sly Deal, Forced Deal, and Deal Breaker in both themes at phone, tablet, and desktop sizes. They verify one bullet per transferred card, both swap directions, included House/Hotel cards, viewport containment, dismissal, third-play reminders, and matching action-history details. Computer results survive turn handoff and combine consecutive steals. Cancelled actions and Just Say No blocks never report transfers.

@@ -115,7 +115,7 @@ test('House and Hotel building placement and rent',async()=>{
 });
 
 test('Sly Deal, Forced Deal, and Deal Breaker transfer eligible properties and buildings',async()=>{
- const p=await open();for(const kind of ['sly','forced','breaker']){await fixture(p,kind);await playFirst(p);if(kind==='forced')await choose(p,0);await choose(p,0);await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.length),kind==='breaker'?3:1);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].props.length),kind==='forced'?1:0);if(kind==='breaker')assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].buildings.length),2);await conservation(p)}await close(p);
+ const p=await open();for(const kind of ['sly','forced','breaker']){await fixture(p,kind);await playFirst(p);if(kind==='forced')await choose(p,0);await choose(p,0);await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.length),kind==='breaker'?3:1);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].props.length),kind==='forced'?1:0);if(kind==='breaker')assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].buildings.length),2);await conservation(p);await p.locator('#game-toast button').click()}await close(p);
 });
 
 test('Debt Collector and Birthday collect from the chosen debtor / every opponent',async()=>{
@@ -637,7 +637,7 @@ test('hand trackpad scrolling and catalog swipe/trackpad navigation preserve pla
 test('guide and release notes match deck facts, current controls, and the consolidated v1.5.0 label',async()=>{
  const p=await open();const facts=await p.evaluate(async()=>{const {GUIDE_RULES,RELEASE_NOTES,cardDesigns}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),notes:JSON.stringify(RELEASE_NOTES),designs:cardDesigns().length,cards:deck().length,title:RELEASE_NOTES[0][0]}});
  assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.match(facts.title,/v1\.5\.0/);
- for(const instruction of ['Double-tap','Close returns','no manual Hide','trackpad','Coming soon','Continue turn','same category','Bank cards first'])assert.ok(facts.rules.toLowerCase().includes(instruction.toLowerCase()),instruction);
+ for(const instruction of ['Double-tap','Close returns','no manual Hide','trackpad','Coming soon','Continue turn','same category','Bank cards first','one bullet for each card','Forced Deal lists both'])assert.ok(facts.rules.toLowerCase().includes(instruction.toLowerCase()),instruction);
  assert.doesNotMatch(facts.notes,/overlapping hand below|Privacy separately hides|actions below the selected|Collapsible Table appearance/);
  const history=await readFile(path.join(root,'about.html'),'utf8'),section=history.slice(history.indexOf('<article id="monopoly-deal"'),history.indexOf('<article id="sorry"'));
  assert.equal((section.match(/2026-10-28/g)||[]).length,1);assert.match(section,/v1\.5\.0/);assert.doesNotMatch(section,/separate Privacy control/);
@@ -1196,7 +1196,7 @@ test('v1.5.0 matches the game, launcher and single same-day release entry',async
  const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v1\.5\.0/);
  await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v1\.5\.0/);
  await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v1.5.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-10-28'}).count(),1);
- await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v1.5.0');await close(p);
+ await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v1.5.0');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();await close(p);
 });
 
 test('own table wilds change color directly without opening Manage',async()=>{
@@ -1836,4 +1836,61 @@ test('payments group Bank Property Building and regroup moved buildings after ea
   assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.length),1);
   await conservation(p);await close(p);
  }
+});
+
+test('completed Sly Forced and Breaker deals toast every transferred card as a bullet in both themes',async()=>{
+ for(const theme of ['modern','classic'])for(const viewport of [{width:390,height:844},{width:768,height:1024},{width:1440,height:900}]){
+  const p=await open(viewport,{'muha-monopoly-deal-theme':theme});
+  for(const kind of ['sly','forced','breaker']){
+   await fixture(p,kind,2);
+   const expected=await p.evaluate(async kind=>{const {GROUPS}=await import('./engine.mjs');const s=window.__dealTest.state,actor=s.players[0],target=s.players[1];s.plays=2;const label=c=>`${c.name} · ${c.value}M · ${GROUPS[c.color].name}`;return {title:`${actor.name} · ${actor.hand[0].name}`,items:[...target.props.map(c=>`Taken from ${target.name}: ${label(c)}`),...target.buildings.map(c=>`Taken from ${target.name}: ${label(c)}`),...(kind==='forced'?[`Given to ${target.name}: ${label(actor.props[0])}`]:[])]}},kind);
+   if(theme==='modern')await playFirst(p);else{await p.locator('#game [data-card]').first().click();await choose(p,'Play card');}
+   if(kind==='forced')await choose(p,0);await choose(p,0);await idle(p);
+   assert.equal(await p.locator('#game-toast strong').innerText(),expected.title);
+   assert.deepEqual(await p.locator('#game-toast li').allTextContents(),expected.items);
+   assert.equal(await p.locator('#game-toast').getAttribute('role'),'status');assert.equal(await p.locator('#game-toast').getAttribute('tabindex'),'0');
+   assert.ok(await p.locator('#game-toast').evaluate(el=>{const r=el.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight}));
+   for(const item of expected.items)assert.ok(await p.evaluate(item=>window.__dealTest.state.log.some(line=>line.includes(item)),item));
+   assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),3);assert.match(await p.locator('#game-toast p').innerText(),/All three plays used/);await conservation(p);
+   if(kind==='breaker')await shot(p,`property-deal-bullets-${theme}-${viewport.width}`);
+   if(kind==='sly'){await p.locator('#game-toast').focus();await p.locator('#game-toast').press('Escape');}else await p.locator('#game-toast button').click();assert.equal(await p.locator('#game-toast').isVisible(),false);
+  }
+  await close(p);
+ }
+});
+
+test('computer theft results survive the turn handoff and combine repeated steals',async()=>{
+ for(const kind of ['sly','forced','breaker']){
+  const p=await open();await fixture(p,kind,2);
+  await p.evaluate(kind=>{const t=window.__dealTest,s=t.state;if(kind==='sly'){let i=s.draw.findIndex(c=>c.action==='sly');s.players[0].hand.push(s.draw.splice(i,1)[0]);i=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===1&&c.color==='orange');s.players[1].props.push(s.draw.splice(i,1)[0]);}s.players.reverse();s.players[0].name='Chris';s.players[1].name='Computer 1';s.players[1].isAI=true;t.render();window.__stealRun=t.run(async()=>{s.turn=1})},kind);
+  await choose(p,'Continue');if(kind==='sly')await choose(p,'Continue');await p.evaluate(()=>window.__stealRun);await idle(p);
+  assert.equal(await p.evaluate(()=>window.__dealTest.state.turn),0);
+  const lines=await p.locator('#game-toast li').allTextContents();assert.equal(lines.length,kind==='breaker'?5:2);
+  assert.ok(lines.some(line=>line.includes('Taken from Chris:')));if(kind==='forced')assert.ok(lines.some(line=>line.includes('Given to Chris:')));
+  assert.ok(lines.every(line=>line.includes('M')));assert.equal(await p.locator('#game-toast').isVisible(),true);
+  if(kind==='sly')assert.equal(await p.locator('#game-toast strong').innerText(),'Property deals resolved');
+  await conservation(p);await close(p);
+ }
+});
+
+test('blocked and cancelled property deals never announce a transfer',async()=>{
+ const p=await open();await fixture(p,'sly',2);
+ await playFirst(p);await p.locator('#choice-close').click();await idle(p);assert.equal(await p.locator('#game-toast li').count(),0);
+ await fixture(p,'sly',2);
+ await p.evaluate(()=>{const t=window.__dealTest,s=t.state,i=s.draw.findIndex(c=>c.action==='no');s.players[1].hand.push(s.draw.splice(i,1)[0]);s.players.reverse();s.players[1].isAI=true;s.players[1].name='Computer 1';t.render();window.__blockedRun=t.run(async()=>{s.turn=1})});
+ await choose(p,'Continue');await choose(p,'Play Just Say No');await p.evaluate(()=>window.__blockedRun);await idle(p);
+ assert.equal(await p.locator('#game-toast li').count(),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.length),1);
+ await conservation(p);await close(p);
+});
+
+test('a crowded Deal Breaker notification keeps every card readable in a scrolling phone toast',async()=>{
+ const p=await open({width:320,height:568});await fixture(p,'breaker',2);
+ const count=await p.evaluate(()=>{const s=window.__dealTest.state,wilds=s.draw.filter(c=>c.type==='property'&&c.colors.length>1);for(const card of wilds){s.draw.splice(s.draw.indexOf(card),1);card.color='orange';s.players[1].props.push(card);}window.__dealTest.render();return s.players[1].props.length+s.players[1].buildings.length});
+ await playFirst(p);await choose(p,0);await idle(p);
+ assert.equal(await p.locator('#game-toast li').count(),count);
+ const box=await p.locator('#game-toast').evaluate(el=>({scroll:el.scrollHeight,client:el.clientHeight,rect:el.getBoundingClientRect().toJSON()}));assert.ok(box.scroll>box.client);assert.ok(box.rect.top>=0&&box.rect.bottom<=568);
+ await p.locator('#game-toast li').last().scrollIntoViewIfNeeded();
+ assert.ok(await p.locator('#game-toast li').last().evaluate(el=>{const r=el.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight}));
+ await p.locator('#game-toast').focus();await p.locator('#game-toast').press('Escape');assert.equal(await p.locator('#game-toast').isVisible(),false);
+ await conservation(p);await close(p);
 });

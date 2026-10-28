@@ -1,10 +1,10 @@
 import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-orange-deck-dots-v66';
 import {paginateViewer} from './view-pages.mjs?build=20261025-orange-deck-dots-v66';
 import {aiChoice,aiPlay} from './ai.mjs?build=20261025-orange-deck-dots-v66';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261028-deal-selection-payments-v105';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261028-deal-selection-payments-v105';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261028-deal-property-notices-v106';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261028-deal-property-notices-v106';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-orange-deck-dots-v66';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261028-deal-selection-payments-v105';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261028-deal-property-notices-v106';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261025-orange-deck-dots-v66';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -38,15 +38,27 @@ function syncToastViewport(){
  const bottom=Math.min(innerHeight,(viewport?.offsetTop||0)+(viewport?.height||innerHeight)-frameTop);
  toast.style.bottom=`${Math.max(16,innerHeight-bottom+12)}px`;
 }
-function showToast(message) {
+function showToast(message, {items=[],detail=''}={}) {
  const toast = $('#game-toast');
  const modal = [...document.querySelectorAll('dialog[open]')].at(-1);
  (modal || document.body).append(toast);
  clearTimeout(toastTimer);
  toast.hidden = false;
+ toast.classList.toggle('has-card-details',items.length>0);
+ toast.removeAttribute('tabindex');toast.onkeydown=null;
  toast.textContent = message;
+ if(items.length){
+  const heading=document.createElement('div'),title=document.createElement('strong'),dismiss=document.createElement('button'),list=document.createElement('ul');
+  heading.className='toast-heading';title.textContent=message;
+  dismiss.type='button';dismiss.textContent='×';dismiss.setAttribute('aria-label','Dismiss card notification');
+  dismiss.onclick=()=>{clearTimeout(toastTimer);toast.hidden=true;};heading.append(title,dismiss);
+  for(const item of items){const line=document.createElement('li');line.textContent=item;list.append(line);}
+  toast.replaceChildren(heading,list);
+  if(detail){const note=document.createElement('p');note.textContent=detail;toast.append(note);}
+  toast.tabIndex=0;toast.onkeydown=event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();dismiss.click();}};
+ }
  syncToastViewport();
- toastTimer = setTimeout(() => { toast.hidden = true; }, 5500);
+ toastTimer = setTimeout(() => { toast.hidden = true; }, items.length?Math.min(20000,8000+items.length*1500):5500);
 }
 // ARIA-disabled buttons remain focusable/clickable solely to explain their state.
 document.addEventListener('click', event => {
@@ -468,15 +480,15 @@ async function run(fn){
  if(busy||state.winner)return;
  const actor=me(),turn=state.turn,playsBefore=state.plays;
  const snapshot={game:structuredClone(state),visible,turnHandoff,selected:[...selectedCardIds],selectedId:selectedCardId,flipped:previewFlipped};
- const transaction={locked:false};actionTransaction=transaction;saveGame(true);busy=true;updateUnavailableControls();
+ const transaction={locked:false,propertyNotices:[]};actionTransaction=transaction;saveGame(true);busy=true;updateUnavailableControls();
  try{
   await fn();if(visible&&!me().isAI)await enforceHandLimit(me());checkWin();if(!state.winner)await takeAITurns();
   if(state.turn!==turn||transaction.locked)undoHistory=[];
   else if(!actor.isAI&&JSON.stringify(state)!==JSON.stringify(snapshot.game))undoHistory.push(snapshot);
   if(undoHistory.length>20)undoHistory.shift();
  }catch(error){
-  if(error instanceof CancelAction){restoreAction(snapshot);showToast('Action cancelled. Cards and plays restored.');}
-  else{console.error(error);if(!transaction.locked)restoreAction(snapshot);await choose('Unable to play',[['Continue',true]],error.message,null);}
+  if(error instanceof CancelAction){restoreAction(snapshot);transaction.propertyNotices=[];showToast('Action cancelled. Cards and plays restored.');}
+  else{console.error(error);if(!transaction.locked){restoreAction(snapshot);transaction.propertyNotices=[];}await choose('Unable to play',[['Continue',true]],error.message,null);}
  }finally{
   actionTransaction=null;
   if(state?.players.some(player=>player.isAI)&&!me().isAI)visible=true;
@@ -484,7 +496,13 @@ async function run(fn){
   if(state.turn!==turn){selectedCardIds.clear();selectedCardId=null;}
   else{for(const id of selectedCardIds)if(!me().hand.some(card=>card.id===id))selectedCardIds.delete(id);if(!selectedCardIds.has(selectedCardId))selectedCardId=[...selectedCardIds].at(-1)??null;}
   previewFlipped=selectedCardId!==null&&Boolean(cardPreferredSide(selectedCardId));render();
-  if(!state.winner&&state.turn===turn&&!actor.isAI&&playsBefore<3&&state.plays>=3)showToast('All three plays used. Pass to end your turn.');
+  const turnReminder=!state.winner&&state.turn===turn&&!actor.isAI&&playsBefore<3&&state.plays>=3?'All three plays used. Pass to end your turn.':'';
+  if(turnReminder)showToast(turnReminder);
+  // Report after turn/handoff messages so computer turns cannot erase the result.
+  if(transaction.propertyNotices.length){
+   const notices=transaction.propertyNotices;
+   showToast(notices.length===1?notices[0].title:'Property deals resolved',{items:notices.flatMap(notice=>notice.items.map(item=>notices.length===1?item:`${notice.title}: ${item}`)),detail:turnReminder});
+  }
  }
 }
 function checkWin(){if(sets(me()).length>=3&&!state.winner){state.winner=me().name;log(`${state.winner} wins with three complete colors!`);choose(`${state.winner} wins!`,[['View table',true]],'Three complete property sets. Start a new game for a rematch.',null)}}
@@ -521,7 +539,17 @@ async function play(c,chosenMode=null,chosenColor=null){if((!visible&&!me().isAI
  targets.sort((left,right)=>GROUPS[left.color||left.card.color].name.localeCompare(GROUPS[right.color||right.card.color].name)||left.p.name.localeCompare(right.p.name)||(left.card?.name||'').localeCompare(right.card?.name||''));
  if(!targets.length)return choose('No eligible opponent properties',[['OK',true]]);let own;if(a==='forced'){let options=p.props.filter(x=>!complete(p,x.color));if(!options.length)return choose('You need a property outside a full set',[['OK',true]]);own=await choose('Choose your property to give',options.sort((a,b)=>GROUPS[a.color].name.localeCompare(GROUPS[b.color].name)||a.value-b.value||a.name.localeCompare(b.name)).map(x=>[label(x),x]));}
  let t=await choose(a==='breaker'?'Steal which complete set?':'Choose a property',targets.map(t=>[`${t.p.name} · ${t.card?label(t.card):GROUPS[t.color].name}`,t]));use(c);if(!await defend(t.p,p,c.name))return;
- if(a==='breaker'){for(const card of [...properties(t.p,t.color)]){remove(t.p.props,card);p.props.push(card)}for(const b of [...t.p.buildings.filter(x=>x.color===t.color)]){remove(t.p.buildings,b);p.buildings.push(b)}}else{remove(t.p.props,t.card);p.props.push(t.card);if(own){remove(p.props,own);t.p.props.push(own)}}
+ const taken=a==='breaker'?[...properties(t.p,t.color),...t.p.buildings.filter(card=>card.color===t.color)]:[t.card];
+ if(a==='breaker'){
+  for(const card of taken){const from=card.type==='property'?t.p.props:t.p.buildings,to=card.type==='property'?p.props:p.buildings;remove(from,card);to.push(card);}
+ }else{
+  remove(t.p.props,t.card);p.props.push(t.card);
+  if(own){remove(p.props,own);t.p.props.push(own)}
+ }
+ const notice={title:`${p.name} · ${c.name}`,items:[...taken.map(card=>`Taken from ${t.p.name}: ${label(card)}`),...(own?[`Given to ${t.p.name}: ${label(own)}`]:[])]};
+ for(const item of notice.items)log(`${notice.title}: ${item}`);
+ if(actionTransaction)actionTransaction.propertyNotices.push(notice);
+ else showToast(notice.title,{items:notice.items});
 }
 async function rearrange(cardId=null){
  if(!visible)return;

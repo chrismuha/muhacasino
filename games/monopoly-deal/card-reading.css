@@ -877,3 +877,14 @@ html[data-theme=modern] body{background-size:100% 100%;background-attachment:loc
  #game .draw-deck .deck-icon .card-back-city{flex-basis:44px;height:44px;font-size:38px}
  #game .draw-deck .deck-icon b{font-size:9px}
 }
+
+
+/* Completed property deals name every transferred card in readable bullet lines. */
+.game-toast.has-card-details{text-align:left;max-height:min(60dvh,440px);overflow-y:auto;overscroll-behavior:contain;pointer-events:auto}
+.game-toast.has-card-details .toast-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.game-toast.has-card-details button{flex:none;width:44px;min-height:44px;padding:0;margin:-6px -8px 0 0;border:1px solid #a4c8ee;border-radius:8px;background:transparent;color:inherit;font:700 24px/1 system-ui;cursor:pointer}
+.game-toast.has-card-details strong{display:block;font-size:17px;line-height:1.35}
+.game-toast.has-card-details ul{margin:8px 0 0;padding-left:22px}
+.game-toast.has-card-details li{margin:5px 0;line-height:1.4}
+.game-toast.has-card-details p{margin:8px 0 0;color:inherit;font:inherit}
+.game-toast.has-card-details:focus-visible{outline:2px solid #fff;outline-offset:-4px}
