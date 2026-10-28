@@ -777,8 +777,8 @@ test('rent dotted leaders retain visible width and paint after repeated wild fli
   const p=await open({width,height:844});await fixture(p,'wild');await p.locator('[data-card]').first().click();
   for(let i=0;i<4;i++){
    await p.locator('#flip-card').click();await p.waitForTimeout(450);
-   const dots=await p.locator('.modern-hand-card.is-active .rent-dots,#preview-open .rent-dots').evaluateAll(nodes=>nodes.map(el=>({width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height,image:getComputedStyle(el).backgroundImage})));
-   assert.ok(dots.length>0);assert.ok(dots.every(d=>d.width>=3&&d.height>=1&&d.image.includes('repeating-linear-gradient')),'Every rent row keeps painted dots');
+   const dots=await p.locator('.modern-hand-card.is-active .rent-dots,#preview-open .rent-dots').evaluateAll(nodes=>nodes.map(el=>({width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height,painted:!!el.querySelector('svg path[stroke-dasharray]')})));
+   assert.ok(dots.length>0);assert.ok(dots.every(d=>d.width>=3&&d.height>=1&&d.painted),'Every rent row keeps painted dots');
   }
   await conservation(p);if(width===390)await shot(p,'wild-rent-dots-after-flip');await close(p);
  }
@@ -1484,7 +1484,7 @@ test('wild miniature rent dots scale with the card on phone tablet and desktop',
   const p=await open(viewport);await fixture(p,'hand',2);
   await p.evaluate(()=>{const s=window.__dealTest.state;const i=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===2&&c.colors.includes('railroad'));const c=s.draw.splice(i,1)[0];c.color='railroad';s.players[0].props.push(c);window.__dealTest.render()});
   const dots=await p.locator('.current-properties .public-mini .rent-dots').evaluateAll(nodes=>nodes.map(el=>({height:el.getBoundingClientRect().height,width:el.closest('.deal-face').getBoundingClientRect().width})));
-  assert.ok(dots.length>0);assert.ok(dots.every(d=>d.height<=Math.max(1.01,d.width*.02)),JSON.stringify({viewport,dots}));
+  assert.ok(dots.length>0);assert.ok(dots.every(d=>d.height<=Math.max(2.01,d.width*.02)),JSON.stringify({viewport,dots}));
   assert.match(await p.locator('.current-properties .group-caption').textContent(),/1\/4 · 1M/);
   await shot(p,`wild-mini-dots-${viewport.width}`);await close(p);
  }
@@ -1567,4 +1567,38 @@ test('every miniature rent row paints dark dots at multiple zoom levels',async()
   }
  }
  await close(p);
+});
+
+test('whole-card paint retains visible separated dots on both wild halves',async()=>{
+ const {spawnSync}=require('node:child_process');
+ for(const dpr of [1,3]){
+  const p=await open({width:4200,height:1200},undefined,{deviceScaleFactor:dpr});
+  await p.evaluate(async()=>{
+   const {modernFace}=await import('./modern-ui.mjs');const {deck}=await import('./engine.mjs');
+   const wild=deck().find(c=>c.type==='property'&&c.colors.length===2&&c.colors.includes('green')&&c.colors.includes('blue'));
+   for(const child of document.body.children)child.style.display='none';
+   const stage=document.createElement('div');stage.id='paint-cards';stage.style.cssText='display:flex;align-items:flex-start;gap:20px;background:white;padding:12px';document.body.append(stage);
+   for(const width of [28,34,46,72,105,230])for(const flipped of [false,true]){
+    const card=document.createElement('div');card.style.cssText=`width:${width}px;aspect-ratio:.69;flex-shrink:0`;
+    card.innerHTML=modernFace(wild,{flipped});document.querySelector('#paint-cards').append(card);
+   }
+  });
+  for(const zoom of [1,1.5,3]){
+   await p.locator('#paint-cards').evaluate((el,z)=>{el.style.transformOrigin='top left';el.style.transform=`scale(${z})`;},zoom);
+   const png=await p.screenshot();
+   const rows=await p.locator('.rent-dots').evaluateAll(nodes=>nodes.map(el=>{const r=el.getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,w:r.width,h:r.height}}));
+   const result=spawnSync('python3',['-c',`import sys,io,json,math
+from PIL import Image
+im=Image.open(io.BytesIO(sys.stdin.buffer.read())).convert('RGB')
+dpr=float(sys.argv[1]); rows=json.loads(sys.argv[2]); failures=[]
+for i,r in enumerate(rows):
+ box=(math.floor(r['x']*dpr),math.floor(r['y']*dpr),math.ceil((r['x']+r['w'])*dpr),math.ceil((r['y']+r['h'])*dpr))
+ crop=im.crop(box); dark=[any(max(crop.getpixel((x,y)))<190 for y in range(crop.height)) for x in range(crop.width)]
+ transitions=sum(a!=b for a,b in zip(dark,dark[1:]))
+ if not any(dark) or all(dark) or transitions<2: failures.append({'row':i,'dark':sum(dark),'width':len(dark),'transitions':transitions})
+print(json.dumps(failures))`,String(dpr),JSON.stringify(rows)],{input:png,maxBuffer:1024*1024});
+   assert.equal(result.status,0,result.stderr.toString());assert.equal(result.stdout.toString().trim(),'[]',`dpr=${dpr}, zoom=${zoom}: ${result.stdout}`);
+  }
+  await close(p);
+ }
 });

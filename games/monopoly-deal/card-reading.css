@@ -736,7 +736,7 @@ dialog button,#preview-close{outline-offset:-4px}
 .game-over-controls a:hover,.game-over-controls a:focus-visible{background:#20558e;color:#fff;outline:3px solid #ffcf70;outline-offset:3px}
 
 /* Reserve a painted leader so flipping cannot collapse or drop the rent dots. */
-[data-theme=modern] .deal-face .rent-dots,[data-theme=modern] .deal-face[data-reading=true] .rent-dots{flex:1 0 12%;min-width:12%;height:max(1px,.7cqw);border:0;margin-bottom:.7cqw;background:repeating-linear-gradient(to right,#222 0 38%,transparent 38% 100%) left center/max(1.8px,1.6cqw) 100% repeat-x}
+[data-theme=modern] .deal-face .rent-dots,[data-theme=modern] .deal-face[data-reading=true] .rent-dots{flex:1 0 12%;min-width:12%;height:max(2px,.7cqw);border:0;margin-bottom:.7cqw;background:none}
 #setup-wizard [data-wizard-step]:not([hidden]){overflow-y:auto;overscroll-behavior:none}
 #setup-wizard{transition:none;scrollbar-gutter:stable}
 
@@ -766,3 +766,6 @@ html[data-theme=modern] body{min-height:100vh;min-height:100lvh;background-size:
 
 /* Keep human and computer name fields compact instead of filling the row. */
 #setup-wizard .setup #names input{width:88%;max-width:18ch;justify-self:start}
+
+/* Vector dots retain separate round marks without background tile rounding. */
+[data-theme=modern] .rent-dots svg{display:block;width:100%;height:100%;overflow:visible}

@@ -101,7 +101,7 @@ function syncHostedCabinetScreens(gameId = null) {
   device.classList.toggle("cabinet-non-slot-game", !slotGameActive);
 }
 
-const SITE_BUILD = "20261027-rent-dot-paint-v97";
+const SITE_BUILD = "20261027-vector-rent-dots-v98";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");
