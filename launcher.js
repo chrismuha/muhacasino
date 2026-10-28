@@ -524,6 +524,7 @@ function launchGame(gameId, updateHistory = true) {
     gameFrame.contentWindow?.slotExperience?.releaseCabinetScreens?.();
   }
   activeGameId = gameId;
+  gameView.dataset.game = gameId;
   syncHostedCabinetScreens(gameId);
   setGameToolbarCollapsed(gameId === "monopoly-deal");
   if(gameId==="monopoly-deal")window.scrollTo(0,0);

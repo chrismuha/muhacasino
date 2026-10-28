@@ -741,3 +741,10 @@ dialog button,#preview-close{outline-offset:-4px}
 #setup-wizard{transition:none;scrollbar-gutter:stable}
 
 #setup-wizard.setup-compact #wizard-progress{position:absolute;width:1px;height:1px;margin:0;padding:0;overflow:hidden;clip-path:inset(50%)}
+
+/* Only the setup step scrolls; headings and labels are ordinary text. */
+#setup-wizard .wizard-heading h2,#setup-wizard h3,#setup-wizard .setup label{overflow:visible;white-space:normal;overflow-wrap:break-word;scrollbar-width:none}
+#setup-wizard{scrollbar-gutter:auto}
+#setup-wizard [data-wizard-step]:not([hidden]){overflow-x:hidden}
+/* The launcher already reserves device insets around the game. */
+html.casino-hosted body{padding:0;min-height:100%}

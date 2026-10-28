@@ -84,3 +84,8 @@ body.game-open #gameView #gameFrame{
  flex:0 0 auto;
  height:var(--casino-frame-height,calc(100% - var(--casino-toolbar-height)))!important;
 }
+
+/* Browser chrome already ends the visual viewport above its bottom bar. */
+@media(display-mode:browser){
+ body.game-open #gameView[data-game="monopoly-deal"]{--casino-safe-bottom:0px}
+}

@@ -1403,3 +1403,22 @@ test('public popup banks and property stacks ascend by value',async()=>{
  const minima=order.stacks.map(values=>Math.min(...values));assert.deepEqual(minima,[...minima].sort((a,b)=>a-b));
  await close(p);
 });
+
+test('setup text has no nested scroll panes and browser hosted table has no bottom inset gap',async()=>{
+ const p=await open({width:420,height:780});
+ await p.locator('#ready-new').click();await p.locator('#start').click();
+ await p.locator('#player-name-0').focus();await p.setViewportSize({width:420,height:360});
+ await p.waitForTimeout(250);
+ for(const selector of ['.wizard-heading h2','[data-wizard-step="2"] h3','#names label']){
+  assert.ok(await p.locator('#setup-wizard '+selector).evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).overflowY==='visible')));
+ }
+ assert.equal(await p.locator('#setup-wizard').evaluate(el=>getComputedStyle(el).scrollbarGutter),'auto');
+ await p.goto(origin+'/index.html#monopoly-deal');
+ const frame=p.frameLocator('#gameFrame');await frame.locator('#ready-new').waitFor();
+ await p.evaluate(()=>{document.documentElement.style.setProperty('--safe-area-inset-bottom','16px');window.dispatchEvent(new Event('resize'));});
+ await p.waitForTimeout(250);
+ const layout=await p.locator('#gameView').evaluate(el=>({bottom:el.getBoundingClientRect().bottom,height:visualViewport.height}));
+ assert.ok(Math.abs(layout.bottom-layout.height)<1,JSON.stringify(layout));
+ assert.equal(await frame.locator('body').evaluate(el=>getComputedStyle(el).paddingBottom),'0px');
+ await close(p);
+});
