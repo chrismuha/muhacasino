@@ -913,7 +913,7 @@ test('manual discard costs one play per card and enforces remaining plays',async
  await conservation(p);await close(p);
 });
 
-test('Sly Deal and Deal Breaker choices use alphabetical color order across players',async()=>{
+test('Sly Deal choices ascend by value and Deal Breaker color-only choices stay alphabetical',async()=>{
  const p=await open();
  for(const action of ['sly','breaker']){
   await p.evaluate(async action=>{
@@ -928,7 +928,7 @@ test('Sly Deal and Deal Breaker choices use alphabetical color order across play
   await playFirst(p);await p.locator('#choice[open]').waitFor();
   const labels=await p.locator('#options button').allTextContents();
   const colors=labels.map(label=>['Brown','Dark Blue','Light Blue','Yellow'].find(color=>label.includes(color)));
-  assert.deepEqual(colors,['Brown','Dark Blue','Light Blue','Yellow']);
+  assert.deepEqual(colors,action==='sly'?['Brown','Light Blue','Yellow','Dark Blue']:['Brown','Dark Blue','Light Blue','Yellow']);
   await choose(p,0);await idle(p);await conservation(p);
  }
  await close(p);
@@ -1179,11 +1179,11 @@ test('refresh cancels an unfinished human action without losing its card or play
  await p.locator('#reveal').click();await playFirst(p);await choose(p,0);await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);await conservation(p);await close(p);
 });
 
-test('v2.0.0 matches the game, launcher and single same-day release entry',async()=>{
- const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v2\.0\.0/);
- await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v2\.0\.0/);
- await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v2.0.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-10-26'}).count(),1);
- await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v2.0.0');await close(p);
+test('v2.1.0 matches the game, launcher and single same-day release entry',async()=>{
+ const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v2\.1\.0/);
+ await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v2\.1\.0/);
+ await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v2.1.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-10-27'}).count(),1);
+ await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v2.1.0');await close(p);
 });
 
 test('own table wilds change color directly without opening Manage',async()=>{
@@ -1314,6 +1314,32 @@ test('phone setup keeps the keyboard opt-in and navigation visible when space sh
  await close(p);
 });
 
+test('rent choices stay lowest-rent-first regardless of property acquisition order in both themes',async()=>{
+ for(const theme of ['modern','classic'])for(const colors of [['pink','red','green','railroad'],['railroad','green','red','pink']]){
+  const p=await open();await fixture(p,'hand',2);
+  await p.evaluate(({theme,colors})=>{
+   const t=window.__dealTest,s=t.state,p=s.players[0];s.draw.push(...p.hand.splice(0));
+   const take=fn=>s.draw.splice(s.draw.findIndex(fn),1)[0];p.hand.push(take(c=>c.action==='rent'&&c.colors.length===10));
+   p.props.push(...colors.map(color=>take(c=>c.type==='property'&&c.colors.length===1&&c.color===color)));
+   document.documentElement.dataset.theme=theme;t.render();
+  },{theme,colors});
+  if(theme==='modern'){await p.locator('[data-card]').first().click();await p.locator('#play-card').click();}
+  else{await p.locator('[data-card]').first().click();await choose(p,'Play card');}
+  await p.locator('#choice[open]').waitFor();
+  assert.deepEqual((await p.locator('#options button').allTextContents()).map(t=>t.split(':')[0]),['Pink','Railroad','Green','Red']);
+  await p.locator('#choice-close').click();await idle(p);await conservation(p);await close(p);
+ }
+});
+
+test('finished-game Game Library retains readable button colors, including visited links',async()=>{
+ const p=await open({width:390,height:700});await fixture(p,'win',2);
+ await p.evaluate(()=>{window.__dealTest.state.winner='Computer 1';window.__dealTest.render();});
+ const button=p.locator('.game-over-controls a');
+ const style=await button.evaluate(el=>{const s=getComputedStyle(el);return {color:s.color,background:s.backgroundColor,opacity:s.opacity,fontWeight:Number(s.fontWeight),height:el.getBoundingClientRect().height};});
+ assert.equal(style.color,'rgb(255, 255, 255)');assert.equal(style.background,'rgb(18, 59, 112)');assert.equal(style.opacity,'1');assert.ok(style.fontWeight>=700);assert.ok(style.height>=44);
+ await close(p);
+});
+
 test('compact action previews wrap complete instructions and keep titles inside their circles',async()=>{
  const p=await open({width:390,height:844});
  for(const action of ['debt','breaker']){
@@ -1329,7 +1355,7 @@ test('compact action previews wrap complete instructions and keep titles inside 
  await close(p);
 });
 
-test('payment popups order Bank descending before Properties ascending without reordering assets',async()=>{
+test('payment popups order all assets by ascending value without reordering assets',async()=>{
  const p=await open();await fixture(p,'debt',2);
  const expected=await p.evaluate(()=>{
   const s=window.__dealTest.state,debtor=s.players[1];
@@ -1340,13 +1366,13 @@ test('payment popups order Bank descending before Properties ascending without r
  await p.evaluate(()=>{const s=window.__dealTest.state;void window.__dealTest.pay(s.players[1],s.players[0],5)});
  await choose(p,'Ready to pay');
  const labels=await p.locator('#options button').allTextContents();
- assert.deepEqual(labels.map(s=>s.split(':')[0]),['Bank','Bank','Bank','Bank','Property','Property','Property']);
- assert.deepEqual(labels.map(s=>Number(s.match(/(\d+)M/)[1])),[10,5,2,1,1,3,4]);
+ assert.deepEqual(labels.map(s=>s.split(':')[0]),['Bank','Property','Bank','Property','Property','Bank','Bank']);
+ assert.deepEqual(labels.map(s=>Number(s.match(/(\d+)M/)[1])),[1,1,2,3,4,5,10]);
  assert.deepEqual(await p.evaluate(()=>{const d=window.__dealTest.state.players[1];return {bank:d.bank.map(c=>c.id),props:d.props.map(c=>c.id)}}),expected);
  await close(p);
 });
 
-test('public popup banks descend and property stacks ascend by value',async()=>{
+test('public popup banks and property stacks ascend by value',async()=>{
  const p=await open();await fixture(p,'hand',2);
  const order=await p.evaluate(async()=>{
   const {modernViewerContent}=await import('./modern-viewer.mjs');
@@ -1359,7 +1385,7 @@ test('public popup banks descend and property stacks ascend by value',async()=>{
   const stacks=[...mount.querySelectorAll('.property-stack')].map(n=>[...n.querySelectorAll('[data-stack-value]')].map(c=>Number(c.dataset.stackValue)));
   return {bank,stacks};
  });
- assert.deepEqual(order.bank,[10,5,3,1]);
+ assert.deepEqual(order.bank,[1,3,5,10]);
  for(const values of order.stacks)assert.deepEqual(values,[...values].sort((a,b)=>a-b));
  const minima=order.stacks.map(values=>Math.min(...values));assert.deepEqual(minima,[...minima].sort((a,b)=>a-b));
  await close(p);

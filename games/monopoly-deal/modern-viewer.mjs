@@ -1,4 +1,4 @@
-import {modernFace} from './modern-ui.mjs?build=20261025-orange-deck-dots-v66';
+import {modernFace} from './modern-ui.mjs?build=20261027-popup-order-v82';
 import {GROUPS,properties,complete,sets,rent} from './engine.mjs?build=20261025-orange-deck-dots-v66';
 
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -25,7 +25,7 @@ function gallery(cards, {bank = false, newest = false} = {}) {
     const group=groups.get(key);
     if(group)group.count++;else groups.set(key,{card,count:1});
   }
-  const entries=bank?[...groups.values()].sort((a,b)=>b.card.value-a.card.value):cards.map(card=>({card,count:1}));
+  const entries=bank?[...groups.values()].sort((a,b)=>a.card.value-b.card.value||a.card.name.localeCompare(b.card.name)):cards.map(card=>({card,count:1}));
   return `<ul class="modern-public-grid">${entries.map(({card,count},index) => {
     let description = card.description || 'Money';
     if (bank) description = `Banked for ${card.value}M. Available for payments; this card cannot be played as an action.`;
@@ -58,7 +58,7 @@ export function modernViewerContent(state, view) {
     const groups = Object.entries(GROUPS).filter(([color]) => view.cards.some(card => card.color === color)).sort(([a],[b])=>Math.min(...view.cards.filter(card=>card.color===a).map(card=>card.value))-Math.min(...view.cards.filter(card=>card.color===b).map(card=>card.value)));
     const cards = groups.length ? groups.map(([color,group]) => {
       const held=view.cards.filter(card=>card.color===color).sort((a,b)=>a.value-b.value),done=complete(player,color);
-      const active=held.length-1,canManage=view.ownerIndex===state.turn&&!state.winner;
+      const active=0,canManage=view.ownerIndex===state.turn&&!state.winner;
       return `<section class="modern-property-section property-stack-page" data-page-break="before" data-page-title="${esc(group.name)}" data-stack-active="${active}" style="--set-color:${group.color};--stack-gaps:${Math.max(1,held.length-1)}" aria-label="${esc(group.name)} property stack"><header class="modern-property-heading"><h3>${esc(group.name)}</h3><span class="property-set-status ${done?'is-complete':''}">${done?'✓ Complete set':`${properties(player,color).length}/${group.names.length} properties`} · Rent ${rent(player,color)}M</span></header><div class="property-stack" role="group" aria-label="${esc(group.name)} cards">${held.map((card,index)=>`<button type="button" class="property-stack-card ${index===active?'is-active':''}" data-stack-index="${index}" ${canManage&&card.colors?.length>1?`data-move-wild="${card.id}"`:''} data-stack-name="${esc(card.name)}" data-stack-value="${card.value}" style="--stack-index:${index}" aria-label="View ${esc(card.name)}, ${card.value}M" aria-pressed="${index===active}">${modernFace(card,{reading:true})}</button>`).join('')}</div><div class="property-stack-controls"><button type="button" data-stack-shift="-1" aria-label="Previous card in this set" ${held.length<2?'disabled':''}>←</button><span class="property-stack-position" role="status">${active+1} / ${held.length}</span><button type="button" data-stack-shift="1" aria-label="Next card in this set" ${held.length<2?'disabled':''}>→</button></div><p class="property-stack-caption">${esc(held[active].name)} · ${held[active].value}M</p>${canManage?`<button type="button" class="wild-manage-action" data-change-wild="${held[active].id}" ${held[active].colors?.length>1?'':'hidden'}>Change wild color</button><p class="wild-manage-help">Tap a wild card or choose Change wild color to move it, even out of a complete set. Moving is free.</p>`:''}</section>`;
     }).join('') : empty('No properties yet', 'Properties and buildings appear here after they are played.');
     return `${cards}<section class="modern-view-summary" data-page-break="before" data-page-title="Details" aria-label="Property details"><div><span class="modern-summary-label">Property details</span><span>Complete colors</span><strong>${sets(player).length}<small> / 3</small></strong><span>${plural(player.props.length, 'property')} · ${plural(player.buildings.length, 'building')}</span></div><p>Collect three complete colors to win. Each group shows its current rent, including buildings.</p></section>`;
