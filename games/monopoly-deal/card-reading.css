@@ -826,3 +826,21 @@ html[data-theme=modern] body{background-size:100% 100%;background-attachment:loc
  [data-theme=modern] .deal-hand .cards{padding-top:12px;padding-bottom:4px}
  [data-theme=modern] .current-seat-heading{padding-block:0}
 }
+
+/* Shorter desktop windows keep the larger cards and use tighter surrounding space. */
+@media(min-width:1024px) and (min-height:601px) and (max-height:900px){
+ [data-theme=modern] .game-topbar{padding-block:8px}
+ [data-theme=modern] .is-playing main{padding-block:4px}
+ [data-theme=modern] .deal-table:not(.has-selection){row-gap:6px}
+ [data-theme=modern] .opponent-heading{padding-block:3px}
+ [data-theme=modern] .opponent-count{padding-block:2px}
+ [data-theme=modern] .opponent-properties{min-height:88px;padding-block:3px;gap:2px}
+ [data-theme=modern] .opponent-groups{min-height:60px}
+ [data-theme=modern] .current-seat-heading{padding-block:2px}
+ [data-theme=modern] .current-assets{min-height:150px}
+ [data-theme=modern] .current-assets .current-bank,
+ [data-theme=modern] .current-assets .current-properties{padding:6px;gap:3px}
+ [data-theme=modern] .current-stats{padding-block:2px}
+ [data-theme=modern] .table-tools{gap:4px}
+ [data-theme=modern] .deal-hand .cards{padding-top:12px;padding-bottom:6px}
+}

@@ -1727,22 +1727,23 @@ test('Monopoly Deal only locks settings and guide through dialogs, actions, and 
  await close(p);
 });
 
-test('responsive table fits normal hosted play with larger tablet previews and desktop hands',async()=>{
- for(const viewport of [{width:390,height:700},{width:768,height:1024},{width:1440,height:900},{width:1920,height:1080}]){
-  const p=await open(viewport,undefined,viewport.width===768?{hasTouch:true,isMobile:true}:{});
-  await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();
-  const game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));
-  for(const kind of ['hand','hotel']){
-   await fixture(game,kind,4);
-   if(kind==='hotel')await game.evaluate(()=>{const s=window.__dealTest.state;const i=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===1);s.players[0].hand.push(s.draw.splice(i,1)[0]);window.__dealTest.render()});
-   await game.locator('[data-card]').first().evaluate(el=>el.click());
-   const geometry=await game.evaluate(()=>({height:innerHeight,scroll:document.body.scrollHeight,width:innerWidth,scrollWidth:document.body.scrollWidth,preview:document.querySelector('#preview-open').getBoundingClientRect().toJSON(),hand:document.querySelector('.modern-hand-card').getBoundingClientRect().toJSON(),handBottom:document.querySelector('.deal-hand').getBoundingClientRect().bottom,stage:document.querySelector('.deal-stage').getBoundingClientRect().toJSON()}));
-   assert.ok(geometry.scroll<=geometry.height+1,JSON.stringify({viewport,kind,geometry}));
-   assert.ok(geometry.handBottom<=geometry.height+1);assert.ok(geometry.scrollWidth<=geometry.width+1);
-   assert.ok(geometry.preview.top>=geometry.stage.top&&geometry.preview.bottom<=geometry.stage.bottom+1,JSON.stringify({viewport,kind,geometry}));
-   if(viewport.width>=768)assert.ok(geometry.preview.width>=140);else assert.ok(geometry.preview.width<=105);
-   if(viewport.width>=1440)assert.ok(geometry.hand.width>=150);else if(viewport.width<600)assert.ok(geometry.hand.width<=90);
+test('responsive table fits normal play with larger tablet previews and desktop hands',async()=>{
+ for(const viewport of [{width:390,height:700},{width:768,height:1024},{width:1440,height:900},{width:1536,height:864},{width:1920,height:1080}]){
+  for(const hosted of viewport.width>=1440?[false,true]:[true]){
+   const p=await open(viewport,undefined,viewport.width===768?{hasTouch:true,isMobile:true}:{});let game=p;
+   if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+   for(const kind of ['hand','hotel']){
+    await fixture(game,kind,4);
+    if(kind==='hotel')await game.evaluate(()=>{const s=window.__dealTest.state;const i=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===1);s.players[0].hand.push(s.draw.splice(i,1)[0]);window.__dealTest.render()});
+    await game.locator('[data-card]').first().evaluate(el=>el.click());
+    const geometry=await game.evaluate(()=>({height:innerHeight,clientHeight:document.body.clientHeight,scroll:document.body.scrollHeight,width:innerWidth,scrollWidth:document.body.scrollWidth,preview:document.querySelector('#preview-open').getBoundingClientRect().toJSON(),hand:document.querySelector('.modern-hand-card').getBoundingClientRect().toJSON(),handBottom:document.querySelector('.deal-hand').getBoundingClientRect().bottom,stage:document.querySelector('.deal-stage').getBoundingClientRect().toJSON()}));
+    assert.equal(geometry.scroll,geometry.clientHeight,JSON.stringify({viewport,hosted,kind,geometry}));
+    assert.ok(geometry.handBottom<=geometry.height);assert.ok(geometry.scrollWidth<=geometry.width);
+    assert.ok(geometry.preview.top>=geometry.stage.top&&geometry.preview.bottom<=geometry.stage.bottom+1,JSON.stringify({viewport,hosted,kind,geometry}));
+    if(viewport.width>=768)assert.ok(geometry.preview.width>=140);else assert.ok(geometry.preview.width<=105);
+    if(viewport.width>=1440)assert.ok(geometry.hand.width>=150);else if(viewport.width<600)assert.ok(geometry.hand.width<=90);
+   }
+   await shot(p,`responsive-larger-cards-${viewport.width}-${hosted?'hosted':'standalone'}`);await close(p);
   }
-  await shot(p,`responsive-larger-cards-${viewport.width}`);await close(p);
  }
 });
