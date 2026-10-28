@@ -1422,3 +1422,26 @@ test('setup text has no nested scroll panes and browser hosted table has no bott
  assert.equal(await frame.locator('body').evaluate(el=>getComputedStyle(el).paddingBottom),'0px');
  await close(p);
 });
+
+test('hosted blue canvas remains painted and frame stays stable while keyboard viewport pans',async()=>{
+ const p=await open({width:420,height:780});
+ await p.goto(origin+'/index.html#monopoly-deal');
+ const game=p.frameLocator('#gameFrame');await game.locator('#ready-new').waitFor();
+ await game.locator('#ready-new').click();await game.locator('#start').click();
+ await game.locator('#player-name-0').focus();
+ const original=await p.locator('#gameFrame').evaluate(el=>el.getBoundingClientRect().height);
+ await p.evaluate(()=>{
+  Object.defineProperty(visualViewport,'height',{configurable:true,get:()=>360});
+  Object.defineProperty(visualViewport,'offsetTop',{configurable:true,get:()=>55});
+  visualViewport.dispatchEvent(new Event('resize'));visualViewport.dispatchEvent(new Event('scroll'));
+ });
+ await p.waitForTimeout(450);
+ assert.equal(await p.locator('#gameFrame').evaluate(el=>el.getBoundingClientRect().height),original);
+ assert.equal(await p.locator('#gameView').evaluate(el=>el.getBoundingClientRect().top),0);
+ for(const selector of ['html','body','#gameView','#gameFrame'])assert.equal(await p.locator(selector).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(0, 100, 219)');
+ const button=await game.locator('#start').boundingBox();assert.ok(button.y+button.height<=415,JSON.stringify(button));
+ await game.locator('#wizard-cancel').click();
+ await p.locator('#backButton').evaluate(el=>el.click());
+ assert.equal(await p.locator('html').evaluate(el=>el.classList.contains('deal-host-open')),false);
+ await close(p);
+});

@@ -89,3 +89,6 @@ body.game-open #gameView #gameFrame{
 @media(display-mode:browser){
  body.game-open #gameView[data-game="monopoly-deal"]{--casino-safe-bottom:0px}
 }
+
+/* Paint the complete host canvas, including Safari's exposed viewport edges. */
+html.deal-host-open,html.deal-host-open body,html.deal-host-open #gameView,html.deal-host-open #gameFrame{background:var(--deal-host-background,#0064db)}

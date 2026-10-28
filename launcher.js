@@ -184,9 +184,9 @@ function syncGameViewport() {
  const editing=activeGameId==='monopoly-deal' && gameFrame.contentDocument?.activeElement?.matches('input:not([disabled]),textarea,[contenteditable=true]');
  if(activeGameId==='monopoly-deal'){
   if(!editing || dealLayoutWidth!==window.innerWidth || !dealLayoutHeight){dealLayoutHeight=height;dealLayoutWidth=window.innerWidth;}
-  if(editing&&!setupOpen)height=Math.max(height,dealLayoutHeight);
+  if(editing)height=Math.max(height,dealLayoutHeight);
  }
- const top=editing&&!setupOpen?0:(viewport?.offsetTop || 0);
+ const top=activeGameId==='monopoly-deal'?0:(viewport?.offsetTop || 0);
  document.documentElement.style.setProperty('--casino-visible-height',`${height}px`);
  document.documentElement.style.setProperty('--casino-visible-top',`${top}px`);
  if(!gameView.hidden && document.body.classList.contains('game-open')){
@@ -463,6 +463,7 @@ function showLauncher(updateHistory = true) {
   window.clearTimeout(gameLoadTimer);
   gameFrame.contentWindow?.slotExperience?.releaseCabinetScreens?.();
   activeGameId = null;
+  document.documentElement.classList.remove('deal-host-open');
   gameLoadState.hidden = true;
   gameView.hidden = true;
   launcher.hidden = false;
@@ -525,6 +526,7 @@ function launchGame(gameId, updateHistory = true) {
   }
   activeGameId = gameId;
   gameView.dataset.game = gameId;
+  document.documentElement.classList.toggle('deal-host-open',gameId==='monopoly-deal');
   syncHostedCabinetScreens(gameId);
   setGameToolbarCollapsed(gameId === "monopoly-deal");
   if(gameId==="monopoly-deal")window.scrollTo(0,0);
@@ -677,6 +679,11 @@ bingoThemeChannel?.addEventListener("message", (event) => {
 
 window.addEventListener("message", (event) => {
   if (event.origin !== window.location.origin) return;
+  if(event.data?.type==='muha-deal-background'&&event.source===gameFrame.contentWindow&&activeGameId==='monopoly-deal'){
+   const color=event.data.color;
+   if(/^#[0-9a-f]{6}$/i.test(color))document.documentElement.style.setProperty('--deal-host-background',color);
+   return;
+  }
   if(event.data?.type==='muha-deal-ready'){
    if(event.source===gameFrame.contentWindow&&activeGameId==='monopoly-deal'){
     setGameToolbarCollapsed(true);

@@ -748,3 +748,8 @@ dialog button,#preview-close{outline-offset:-4px}
 #setup-wizard [data-wizard-step]:not([hidden]){overflow-x:hidden}
 /* The launcher already reserves device insets around the game. */
 html.casino-hosted body{padding:0;min-height:100%}
+
+/* Anchor the blue table paint to the large viewport, rather than the keyboard's
+   changing height. The setup controls alone follow the visible viewport. */
+html[data-theme=modern]{min-height:100%;background:var(--modern-table-background,#0064db)}
+html[data-theme=modern] body{min-height:100vh;min-height:100lvh;background-size:100% 100lvh;background-repeat:no-repeat;background-color:var(--modern-table-background,#0064db)}

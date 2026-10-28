@@ -639,6 +639,7 @@ function setTableColor(color) {
   if (!/^#[0-9a-f]{6}$/i.test(color)) return;
   const modern=document.documentElement.dataset.theme==='modern';
   document.documentElement.style.setProperty(modern?'--modern-table-background':'--table-background', color);
+  if(window.parent!==window)window.parent.postMessage({type:'muha-deal-background',color},location.origin);
   tableColor.value = color;
   tableHex.value = color.toUpperCase();
   tableHex.setCustomValidity('');
@@ -905,7 +906,7 @@ function openGameSettings(){
  document.body.append(appearance);
  window.addEventListener('message',event=>{
   if(event.source!==window.parent||event.origin!==location.origin)return;
-  if(event.data?.type==='muha-deal-host-ready'){document.documentElement.classList.add('casino-hosted');return;}
+  if(event.data?.type==='muha-deal-host-ready'){document.documentElement.classList.add('casino-hosted');setTableColor(tableColor.value);return;}
   if(event.data?.type!=='muha-deal-command')return;
   if(busy){showToast('Finish the current action or computer turn first.');return;}
   if(document.querySelector('dialog[open]'))return;
