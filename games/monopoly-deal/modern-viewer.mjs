@@ -1,4 +1,4 @@
-import {modernFace} from './modern-ui.mjs?build=20261027-popup-order-v82';
+import {modernFace} from './modern-ui.mjs?build=20261027-keyboard-rent-v83';
 import {GROUPS,properties,complete,sets,rent} from './engine.mjs?build=20261025-orange-deck-dots-v66';
 
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

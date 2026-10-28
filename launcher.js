@@ -180,12 +180,13 @@ function syncGameViewport() {
  const viewport=window.visualViewport;
  if(activeGameId==='monopoly-deal'&&(viewport?.scale||1)!==1)return;
  let height=viewport?.height || window.innerHeight;
+ const setupOpen=activeGameId==='monopoly-deal'&&gameFrame.contentDocument?.querySelector('#setup-wizard[open]');
  const editing=activeGameId==='monopoly-deal' && gameFrame.contentDocument?.activeElement?.matches('input:not([disabled]),textarea,[contenteditable=true]');
  if(activeGameId==='monopoly-deal'){
   if(!editing || dealLayoutWidth!==window.innerWidth || !dealLayoutHeight){dealLayoutHeight=height;dealLayoutWidth=window.innerWidth;}
-  if(editing)height=Math.max(height,dealLayoutHeight);
+  if(editing&&!setupOpen)height=Math.max(height,dealLayoutHeight);
  }
- const top=editing?0:(viewport?.offsetTop || 0);
+ const top=editing&&!setupOpen?0:(viewport?.offsetTop || 0);
  document.documentElement.style.setProperty('--casino-visible-height',`${height}px`);
  document.documentElement.style.setProperty('--casino-visible-top',`${top}px`);
  if(!gameView.hidden && document.body.classList.contains('game-open')){
@@ -194,10 +195,16 @@ function syncGameViewport() {
   gameView.style.setProperty('--casino-frame-height',`${Math.max(0,available-toolbar)}px`);
  }
 }
-window.addEventListener('resize',syncGameViewport);
+let gameViewportTimer;
+function scheduleGameViewport(){
+ clearTimeout(gameViewportTimer);
+ const setupOpen=activeGameId==='monopoly-deal'&&gameFrame.contentDocument?.querySelector('#setup-wizard[open]');
+ if(setupOpen)gameViewportTimer=setTimeout(syncGameViewport,100);else syncGameViewport();
+}
+window.addEventListener('resize',scheduleGameViewport);
 window.addEventListener('pageshow',syncGameViewport);
-window.visualViewport?.addEventListener('resize',syncGameViewport);
-window.visualViewport?.addEventListener('scroll',syncGameViewport);
+window.visualViewport?.addEventListener('resize',scheduleGameViewport);
+window.visualViewport?.addEventListener('scroll',scheduleGameViewport);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncGameViewport();});
 syncGameViewport();
 

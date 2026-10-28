@@ -16,7 +16,7 @@ const skyline='<svg class="property-skyline" viewBox="0 0 80 90" aria-hidden="tr
 function rentSchedule(color,reading=false){
  const g=GROUPS[color];
  if(reading)return `<div class="reading-rent-wrap"><table class="reading-rent"><caption>${g.name} rent</caption><thead><tr><th scope="col">Properties</th><th scope="col">Rent</th></tr></thead><tbody>${g.rent.map((value,i)=>`<tr${i===g.names.length-1?' class="reading-full-set"':''}><th scope="row"><span class="reading-rent-owned"><span>${i+1}</span>${i===g.names.length-1?'<span class="reading-full-label">Full set</span>':''}</span></th><td><span class="reading-rent-price"><span>${value}</span><span>M</span></span></td></tr>`).join('')}</tbody></table></div>`;
- return `<div class="face-rent rows-${g.rent.length}"><div class="rent-caption">RENT</div>${g.rent.map((v,i)=>`<div class="face-rent-row"><span class="rent-count"><span class="tiny-property" style="--rent-color:${paint(color)}">${i+1}</span></span><span class="rent-dots"></span><b>${i===g.names.length-1?'FULL SET…':''}${v}<small>M</small></b></div>`).join('')}</div>`;
+ return `<div class="face-rent rows-${g.rent.length}"><div class="rent-caption">RENT</div>${g.rent.map((v,i)=>`<div class="face-rent-row"><span class="rent-count"><span class="tiny-property" style="--rent-color:${paint(color)}">${i+1}</span></span><span class="rent-dots"></span><b>${v}<small>M</small></b></div>`).join('')}</div>`;
 }
 export function modernFace(card,{flipped=card.type==='property'&&card.colors?.length===2&&card.color===card.colors[1],reading=false}={}){
  const colors=card.colors?.map(k=>paint(k))||[];

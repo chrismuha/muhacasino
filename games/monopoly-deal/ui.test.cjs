@@ -300,13 +300,13 @@ test('hosted setup starts at top and focused name stays above the keyboard',asyn
  const game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));
  await game.evaluate(()=>{window.__setupPageScrolls=0;Element.prototype.scrollIntoView=function(){window.__setupPageScrolls++};});
  await frame.locator('#names input').first().focus();
- const frameHeight=await p.locator('#gameFrame').evaluate(f=>f.clientHeight);
+ const initialFieldHeight=await frame.locator('#names input').first().evaluate(el=>el.getBoundingClientRect().height);
  await p.evaluate(()=>{Object.defineProperty(visualViewport,'height',{configurable:true,value:420});visualViewport.dispatchEvent(new Event('resize'));});
  await frame.locator('#names input').first().fill('Chris');
  await frame.locator('#names input').last().focus();
- await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,150)));
+ await p.evaluate(()=>new Promise(resolve=>setTimeout(resolve,350)));
  const field=await frame.locator('#names input').last().boundingBox();assert.ok(field.y+field.height<=420,'Focused field is above keyboard');
- assert.equal(await p.locator('#gameFrame').evaluate(f=>f.clientHeight),frameHeight);
+ assert.ok(await p.locator('#gameFrame').evaluate(f=>f.getBoundingClientRect().bottom)<=420,'Hosted frame fits above keyboard');
  await frame.locator('#names input').first().fill('Chris Muha');assert.equal(await frame.locator('#names input').first().inputValue(),'Chris Muha');
  // Simulate keyboard animation and Safari panning, including repeated events.
  for(const [height,offsetTop] of [[390,20],[350,45],[420,0]]){
@@ -315,13 +315,14 @@ test('hosted setup starts at top and focused name stays above the keyboard',asyn
    Object.defineProperty(visualViewport,'offsetTop',{configurable:true,value:offsetTop});
    for(let i=0;i<8;i++){visualViewport.dispatchEvent(new Event('resize'));visualViewport.dispatchEvent(new Event('scroll'));}
   },{height,offsetTop});
-  await game.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
-  assert.equal(await p.locator('#gameFrame').evaluate(f=>f.clientHeight),frameHeight);
+  await game.evaluate(()=>new Promise(resolve=>setTimeout(resolve,350)));
+  assert.ok(await p.locator('#gameFrame').evaluate(f=>f.getBoundingClientRect().bottom)<=height+offsetTop,'Frame stays in visual viewport');
   const fit=await frame.locator('#setup-wizard').evaluate(w=>{
    const section=w.querySelector('[data-wizard-step="2"]'),r=w.getBoundingClientRect();
    return {width:r.width,height:r.height,scroll:section.scrollHeight-section.clientHeight,fields:[...w.querySelectorAll('#names input')].map(i=>({top:i.getBoundingClientRect().top,bottom:i.getBoundingClientRect().bottom})),bottom:r.bottom};
   });
-  assert.equal(fit.width,390);assert.ok(fit.scroll<=1,'Names fit without scrolling');
+  assert.equal(fit.width,390);assert.ok(fit.scroll<=1,'Names fit without scrolling: '+JSON.stringify(fit));
+  assert.equal(await frame.locator('#names input').first().evaluate(el=>el.getBoundingClientRect().height),initialFieldHeight,'Keyboard never changes field sizing');
   assert.ok(fit.fields.every(r=>r.top>=0&&r.bottom<=fit.bottom),'All four names remain visible');
  }
  assert.equal(await game.evaluate(()=>window.__setupPageScrolls),0,'Keyboard updates never scroll the page or iframe');
@@ -771,6 +772,18 @@ test('manual discard and inline property inspection',async()=>{
  await p.locator('#table-viewer[open]').waitFor();await close(p);
 });
 
+test('rent dotted leaders retain visible width and paint after repeated wild flips',async()=>{
+ for(const width of [320,390,430]){
+  const p=await open({width,height:844});await fixture(p,'wild');await p.locator('[data-card]').first().click();
+  for(let i=0;i<4;i++){
+   await p.locator('#flip-card').click();await p.waitForTimeout(450);
+   const dots=await p.locator('.modern-hand-card.is-active .rent-dots,#preview-open .rent-dots').evaluateAll(nodes=>nodes.map(el=>({width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height,image:getComputedStyle(el).backgroundImage})));
+   assert.ok(dots.length>0);assert.ok(dots.every(d=>d.width>=3&&d.height>=1&&d.image.includes('radial-gradient')),'Every rent row keeps painted dots');
+  }
+  await conservation(p);if(width===390)await shot(p,'wild-rent-dots-after-flip');await close(p);
+ }
+});
+
 test('Flip animates both wild faces and updates hand artwork without spending a play',async()=>{
  const p=await open();await fixture(p,'wild');await p.locator('[data-card]').first().dblclick();
  const before=await p.locator('.modern-hand-card.is-active .wild-half').first().getAttribute('style');
@@ -1175,7 +1188,7 @@ test('refresh cancels an unfinished human action without losing its card or play
  const p=await open();await fixture(p,'sly',2);const saved=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
  await playFirst(p);await p.locator('#choice[open]').waitFor();await p.reload();await p.waitForFunction(()=>window.__dealTest);
  assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),saved);
- assert.equal(await p.locator('#choice').evaluate(el=>el.open),false);assert.equal(await p.locator('[data-card]').count(),0);
+ assert.equal(await p.locator('#choice').evaluate(el=>el.open),false);assert.equal(await p.locator('[data-card]').count(),0);assert.equal(await p.locator('#reveal').innerText(),'Reveal my hand');
  await p.locator('#reveal').click();await playFirst(p);await choose(p,0);await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);await conservation(p);await close(p);
 });
 

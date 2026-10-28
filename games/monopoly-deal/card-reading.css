@@ -734,3 +734,10 @@ dialog button,#preview-close{outline-offset:-4px}
 /* Finished-game navigation must retain button contrast, including visited links. */
 .game-over-controls a:link,.game-over-controls a:visited{background:#123b70;color:#fff;font-weight:750;text-decoration:none;opacity:1;border:2px solid #b7dcff}
 .game-over-controls a:hover,.game-over-controls a:focus-visible{background:#20558e;color:#fff;outline:3px solid #ffcf70;outline-offset:3px}
+
+/* Reserve a painted leader so flipping cannot collapse or drop the rent dots. */
+[data-theme=modern] .deal-face .rent-dots,[data-theme=modern] .deal-face[data-reading=true] .rent-dots{flex:1 0 12%;min-width:12%;height:2px;border:0;margin-bottom:1px;background:radial-gradient(circle,#222 0 1px,transparent 1.1px) left center/4px 2px repeat-x}
+#setup-wizard [data-wizard-step]:not([hidden]){overflow-y:auto;overscroll-behavior:none}
+#setup-wizard{transition:none;scrollbar-gutter:stable}
+
+#setup-wizard.setup-compact #wizard-progress{position:absolute;width:1px;height:1px;margin:0;padding:0;overflow:hidden;clip-path:inset(50%)}

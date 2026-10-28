@@ -1,10 +1,10 @@
 import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-orange-deck-dots-v66';
 import {paginateViewer} from './view-pages.mjs?build=20261025-orange-deck-dots-v66';
 import {aiChoice,aiPlay} from './ai.mjs?build=20261025-orange-deck-dots-v66';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261027-popup-order-v82';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261027-popup-order-v82';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261027-guide-audit-v84';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261027-guide-audit-v84';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-orange-deck-dots-v66';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261027-popup-order-v82';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261027-guide-audit-v84';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261025-orange-deck-dots-v66';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -482,12 +482,23 @@ function lockSetupScrolling(){
   doc.head.append(style);doc.documentElement.classList.add('deal-setup-locked');
   // iOS can pan the visual viewport despite overflow:hidden, including across
   // an iframe boundary. Cancel the gesture in both documents while setup owns it.
-  const stopPan=event=>{if(event.cancelable)event.preventDefault();};
+  let lastTouchY=0;
+  const trackTouch=event=>{lastTouchY=event.touches[0]?.clientY||0;};
+  const stopPan=event=>{
+   const section=event.target.closest?.('#setup-wizard [data-wizard-step]');
+   const touchY=event.touches?.[0]?.clientY;
+   const delta=typeof touchY==='number'?lastTouchY-touchY:event.deltaY;
+   if(typeof touchY==='number')lastTouchY=touchY;
+   if(section&&section.scrollHeight>section.clientHeight+1&&
+      ((delta>0&&section.scrollTop+section.clientHeight<section.scrollHeight-1)||(delta<0&&section.scrollTop>0)))return;
+   if(event.cancelable)event.preventDefault();
+  };
+  doc.addEventListener('touchstart',trackTouch,{passive:true,capture:true});
   doc.addEventListener('touchmove',stopPan,{passive:false,capture:true});
   doc.addEventListener('wheel',stopPan,{passive:false,capture:true});
   view.scrollTo(0,0);
   return ()=>{
-   doc.removeEventListener('touchmove',stopPan,true);doc.removeEventListener('wheel',stopPan,true);
+   doc.removeEventListener('touchstart',trackTouch,true);doc.removeEventListener('touchmove',stopPan,true);doc.removeEventListener('wheel',stopPan,true);
    doc.documentElement.classList.remove('deal-setup-locked');style.remove();view.scrollTo(scrollX,scrollY);
   };
  });
@@ -501,14 +512,14 @@ function syncSetupViewport(){
  let viewport=window.visualViewport, frameTop=0;
  try{if(window.parent!==window){viewport=window.parent.visualViewport;frameTop=window.frameElement.getBoundingClientRect().top;}}catch{}
  const top=Math.max(0,(viewport?.offsetTop||0)-frameTop);
- const bottom=(viewport?.offsetTop||0)+(viewport?.height||innerHeight)-frameTop;
+ const bottom=Math.min(innerHeight,(viewport?.offsetTop||0)+(viewport?.height||innerHeight)-frameTop);
  wizard.style.setProperty('--setup-top',`${top}px`);
  wizard.style.setProperty('--setup-height',`${Math.max(80,bottom-top)}px`);
- wizard.classList.toggle('setup-compact',bottom-top<520);
+ wizard.classList.toggle('setup-compact',innerWidth<=600||bottom-top<520);
 }
 function scheduleSetupViewport(){
- if(setupViewportFrame)return;
- setupViewportFrame=requestAnimationFrame(()=>{setupViewportFrame=0;syncSetupViewport();});
+ clearTimeout(setupViewportFrame);
+ setupViewportFrame=setTimeout(()=>{setupViewportFrame=0;syncSetupViewport();},140);
 }
 let setupViewport=window.visualViewport;
 try{if(window.parent!==window)setupViewport=window.parent.visualViewport;}catch{}
