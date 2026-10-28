@@ -1,10 +1,10 @@
 import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-orange-deck-dots-v66';
 import {paginateViewer} from './view-pages.mjs?build=20261025-orange-deck-dots-v66';
 import {aiChoice,aiPlay} from './ai.mjs?build=20261025-orange-deck-dots-v66';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261027-hand-resume-limit-v99';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261027-hand-resume-limit-v99';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261027-deal-nav-lock-v100';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261027-deal-nav-lock-v100';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-orange-deck-dots-v66';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261027-hand-resume-limit-v99';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261027-deal-nav-lock-v100';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261025-orange-deck-dots-v66';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -62,7 +62,18 @@ document.addEventListener('click', event => {
 
 const discardPlayCost = count => Math.max(0,count-Math.max(0,me().hand.length-7));
 
+let lastHostedControlLock=null;
+function syncNavigationControls(force=false){
+ const locked=busy||Boolean(document.querySelector('dialog[open]'));
+ const header=document.querySelector('.game-topbar');
+ if(header){header.inert=locked;header.querySelectorAll('button').forEach(button=>button.disabled=locked);}
+ if(window.parent!==window&&(force||lastHostedControlLock!==locked))window.parent.postMessage({type:'muha-deal-controls',locked},location.origin);
+ lastHostedControlLock=locked;
+}
+new MutationObserver(()=>syncNavigationControls()).observe(document.body,{subtree:true,attributes:true,attributeFilter:['open']});
+
 function updateUnavailableControls() {
+ syncNavigationControls();
  const selected = visible ? me().hand.find(card => card.id === selectedCardId) : null;
  const finished = state.winner ? 'This game is finished. Start a new game to play again.' : '';
  const waiting = busy ? 'Finish the current action first.' : '';
@@ -953,7 +964,7 @@ function openGameSettings(){
  document.body.append(appearance);
  window.addEventListener('message',event=>{
   if(event.source!==window.parent||event.origin!==location.origin)return;
-  if(event.data?.type==='muha-deal-host-ready'){document.documentElement.classList.add('casino-hosted');setTableColor(tableColor.value);return;}
+  if(event.data?.type==='muha-deal-host-ready'){document.documentElement.classList.add('casino-hosted');setTableColor(tableColor.value);syncNavigationControls(true);return;}
   if(event.data?.type!=='muha-deal-command')return;
   if(busy){showToast('Finish the current action or computer turn first.');return;}
   if(document.querySelector('dialog[open]'))return;

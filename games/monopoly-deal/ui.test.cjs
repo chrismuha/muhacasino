@@ -1679,3 +1679,30 @@ test('computer players enforce seven cards before playing without a human discar
  assert.equal(await p.evaluate(()=>window.__dealTest.state.turn),0);
  await conservation(p);await close(p);
 });
+
+test('Monopoly Deal nav follows dialogs and busy actions and releases when they finish',async()=>{
+ const p=await open({width:420,height:780});await p.goto(origin+'/index.html#monopoly-deal');
+ await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();const game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));
+ await p.locator('#toolbarCollapseButton').click();await fixture(game,'sly',2);
+ await game.locator('[data-card]').first().click();await game.locator('#play-card').click();await game.locator('#choice[open]').waitFor();
+ await p.waitForFunction(()=>document.querySelector('.game-toolbar').inert);
+ assert.ok(await p.locator('.game-toolbar button').evaluateAll(buttons=>buttons.every(b=>b.disabled)));
+ assert.equal(await p.locator('[data-deal-command="new"]').evaluate(el=>getComputedStyle(el).opacity),'0.4');
+ await p.locator('#backButton').evaluate(el=>el.click());assert.equal(await p.locator('#gameView').isVisible(),true);
+ await game.locator('#choice-close').click();await idle(game);
+ await p.waitForFunction(()=>!document.querySelector('.game-toolbar').inert);
+ assert.equal(await p.locator('[data-deal-command="new"]').isEnabled(),true);
+ await game.evaluate(()=>{void window.__dealTest.run(()=>new Promise(resolve=>{window.releaseTestAction=resolve}));});
+ await p.waitForFunction(()=>document.querySelector('.game-toolbar').inert);
+ assert.equal(await game.locator('#play-card').evaluate(el=>getComputedStyle(el).opacity),'0.4');
+ await game.evaluate(()=>window.releaseTestAction());await idle(game);
+ await p.waitForFunction(()=>!document.querySelector('.game-toolbar').inert);
+ await p.locator('[data-deal-command="appearance"]').click();await game.locator('#appearance-dialog[open]').waitFor();
+ await p.waitForFunction(()=>document.querySelector('.game-toolbar').inert);
+ await game.locator('#appearance-dialog .wizard-heading button').click();
+ await p.waitForFunction(()=>!document.querySelector('.game-toolbar').inert);
+ await p.locator('#backButton').click();await p.locator('[data-game="yahtzee"]').first().evaluate(el=>el.click());
+ await p.waitForFunction(()=>document.querySelector('#gameLoadState').hidden);
+ assert.equal(await p.locator('.game-toolbar').evaluate(el=>el.inert),false);assert.equal(await p.locator('#toolbarCollapseButton').isEnabled(),true);
+ await close(p);
+});

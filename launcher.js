@@ -101,7 +101,7 @@ function syncHostedCabinetScreens(gameId = null) {
   device.classList.toggle("cabinet-non-slot-game", !slotGameActive);
 }
 
-const SITE_BUILD = "20261027-hand-resume-limit-v99";
+const SITE_BUILD = "20261027-deal-nav-lock-v100";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");
@@ -175,6 +175,7 @@ slotModeToolbar.addEventListener("click", () => {
 // Safari's browser bars and keyboard change the visible viewport independently
 // of the layout viewport. Give the hosted frame a definite pixel-sized parent.
 let activeGameId = null;
+let dealControlsLocked=false;
 let libraryScrollY=0;
 if("scrollRestoration" in history)history.scrollRestoration="manual";
 let dealLayoutHeight=0, dealLayoutWidth=0;
@@ -209,18 +210,18 @@ window.visualViewport?.addEventListener('scroll',scheduleGameViewport);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncGameViewport();});
 syncGameViewport();
 
-function syncSetupControls(){
+function syncDealControls(){
  const toolbar=gameView.querySelector('.game-toolbar');
- const locked=activeGameId==='monopoly-deal'&&document.documentElement.classList.contains('deal-setup-locked');
+ const locked=activeGameId==='monopoly-deal'&&(dealControlsLocked||document.documentElement.classList.contains('deal-setup-locked'));
  if(toolbar.inert===locked)return;
  toolbar.inert=locked;
  toolbar.querySelectorAll('button').forEach(button=>{
-  if(locked){button.dataset.disabledBeforeSetup=String(button.disabled);button.disabled=true;}
-  else{button.disabled=button.dataset.disabledBeforeSetup==='true';delete button.dataset.disabledBeforeSetup;}
+  if(locked){button.dataset.disabledBeforeDealLock=String(button.disabled);button.disabled=true;}
+  else{button.disabled=button.dataset.disabledBeforeDealLock==='true';delete button.dataset.disabledBeforeDealLock;}
  });
  if(locked)backButton.setAttribute('aria-disabled','true');else backButton.removeAttribute('aria-disabled');
 }
-new MutationObserver(syncSetupControls).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+new MutationObserver(syncDealControls).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
 
 function setGameToolbarCollapsed(collapsed) {
   gameView.classList.toggle("toolbar-collapsed", collapsed);
@@ -474,12 +475,13 @@ document.addEventListener("keydown", (event) => {
 });
 
 function releaseActiveGameFrame(){
+ dealControlsLocked=false;
  try{
   gameFrame.contentWindow?.dispatchEvent(new Event('muha-host-leave'));
   gameFrame.contentDocument?.activeElement?.blur?.();
   gameFrame.contentWindow?.slotExperience?.releaseCabinetScreens?.();
  }catch{}
- syncSetupControls();
+ syncDealControls();
  cancelAnimationFrame(gameViewportTimer);
  dealLayoutHeight=0;dealLayoutWidth=0;
 }
@@ -656,6 +658,7 @@ document.querySelector("#closeCategory").addEventListener("click", () => {
 backButton.addEventListener("click", (event) => {
   event.preventDefault();
   event.stopPropagation();
+  if(backButton.getAttribute("aria-disabled")==="true")return;
   showLauncher();
 });
 
@@ -705,6 +708,9 @@ bingoThemeChannel?.addEventListener("message", (event) => {
 
 window.addEventListener("message", (event) => {
   if (event.origin !== window.location.origin) return;
+  if(event.data?.type==='muha-deal-controls'&&event.source===gameFrame.contentWindow&&activeGameId==='monopoly-deal'){
+   dealControlsLocked=event.data.locked===true;syncDealControls();return;
+  }
   if(event.data?.type==='muha-deal-background'&&event.source===gameFrame.contentWindow&&activeGameId==='monopoly-deal'){
    const color=event.data.color;
    if(/^#[0-9a-f]{6}$/i.test(color))document.documentElement.style.setProperty('--deal-host-background',color);
