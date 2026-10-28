@@ -1,6 +1,6 @@
 const games = {
   "monopoly-deal": {
-    title: "Monopoly Deal", version: "v2.2.0", subtitle: "2–4 Player Card Game",
+    title: "Monopoly Deal", version: "v1.5.0", subtitle: "2–4 Player Card Game",
     path: "games/monopoly-deal/index.html", className: "card-deal",
     reels: "M DEAL M", icon: "▣", categories: ["table"],
   },
@@ -101,7 +101,7 @@ function syncHostedCabinetScreens(gameId = null) {
   device.classList.toggle("cabinet-non-slot-game", !slotGameActive);
 }
 
-const SITE_BUILD = "20261028-deal-header-controls-v101";
+const SITE_BUILD = "20261028-deal-responsive-v102";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");

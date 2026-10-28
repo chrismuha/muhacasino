@@ -30,25 +30,21 @@ export function cardFacts(card){
 }
 
 export const RELEASE_NOTES = [
- ['v2.2.0 · October 28, 2026', [
+ ['v1.5.0 · October 28, 2026', [
+  'Larger center card previews on iPad and desktop, larger hand cards on desktop with a mouse or trackpad, and a more compact table layout reduce unnecessary scrolling. Phone card sizes remain compact; selecting a card no longer adds empty vertical space.',
   'Only Game settings and Game guide disable during setup, dialogs, and pending actions. The header expand/collapse arrow, library arrow, and New game stay enabled. Refresh restores the current deal and updates the two utility buttons to match its state.',
- ]],
- ['v2.1.0 · October 27, 2026', [
-  'Preserved revealed hands on refresh and re-entry, disabled and grayed Monopoly Deal navigation during setup, dialogs, and pending actions, contained table scrolling, and required free discards down to seven before playing.',
+  'Preserved revealed hands on refresh and re-entry, disabled and grayed Game settings and Game guide during setup, dialogs, and pending actions, contained table scrolling, and required free discards down to seven before playing.',
   'Removed miniature setup label scroll panes and duplicate hosted safe-area spacing beneath the hand. The blue background stays anchored during keyboard changes, the hosted frame keeps its height through focus and blur during setup, and the surrounding canvas follows the table color. The setup backdrop and launcher canvas use matching dark blue while setup is open, including around the keyboard and browser bars. Rent dots scale with card size across hand, preview, and property miniatures, using separated round SVG dots to keep every rent row visible without merging into solid lines when zooming. Player and computer name fields use shorter widths. Entered player names match the larger placeholder text size and are capped at 12 characters, with a short toast above the keyboard only for over-limit typing or pastes and a name-check reminder on the final review screen. Fixed header clicks reopening the game so the navigation arrow expands and collapses normally.',
   'Audited the rules and card facts against gameplay: corrected discard costs, recovery and history button labels, reduced-motion indicators, theme-specific viewers, and the distinction between sorted choices, property groups, and chronological history.',
   'Player-name setup keeps consistent field sizes while the keyboard opens, waits for viewport movement to settle, and fits the hosted frame above the keyboard. Only overflowing setup content scrolls. Rent dotted leaders retain reserved space and stable paint when property wilds flip.',
   'Game Library uses bold white text on a solid dark button, including after the link has been visited.',
   'Rent choices show the lowest current rent first, with alphabetical color names breaking ties. Color-only choices for wild placement, rearranging, buildings, and complete sets remain alphabetical.',
   'Bank lists and human monetary choices use ascending amounts, with alphabetical labels breaking ties. Payment choices combine asset types by value. Modern Properties stays grouped by color, with groups ordered by minimum card value and members ascending; Classic lists properties first, then buildings, each ascending. Color-only choices stay alphabetical; discard-pile views and activity stay newest first.',
- ]],
- ['v2.0.0 · October 26, 2026',[
-  'Historical release: v2.1.0 supersedes its popup ordering and keyboard-layout behavior. Use the Rules guide and the latest entry for current controls.',
   'Compact top-center action previews show the full instructions, including Deal Breaker’s complete-set and buildings description.',
   'Computer turns run in the background without switching away from your table. Targeted action cards show their name before you respond; payment and Just Say No decisions remain interactive.',
   'Added Game settings buttons on the starting screen and main table, plus a Wilds shortcut to rearrange your played wild properties without opening Manage.',
   'New-game setup locks background scrolling and touch panning in both the game and casino while the keyboard is open.',
-  'New-player setup fills the screen with compact name rows and fixed navigation above the keyboard, without scrolling or page repositioning.',
+  'New-player setup fills the screen with compact name rows and fixed navigation above the keyboard; overflowing setup content scrolls within its step.',
   'Restored the orange Monopoly Deal deck card. Play dots are black for unused plays, flashing white for the current play, and solid white for completed plays.',
   'Action history opens in a popup instead of expanding the table. Manage, Discard, Undo, Clear, and Table use larger bold labels. The deck shows the orange Monopoly Deal card back with larger white draw/discard counts.',
   'Secondary table labels and unavailable-control text are white for contrast, with small labels raised to a readable minimum size. The user guide and card facts now describe the current controls and money-only banking rules.',
