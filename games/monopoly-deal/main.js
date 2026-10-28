@@ -554,7 +554,7 @@ function setup() {
     const previous = [...document.querySelectorAll('#names input')].map(input=>input.value);
     $('#names').innerHTML = Array.from({length:Number($('#count').value)}, (_,i)=>`
       <label for="player-name-${i}">Player ${i+1} name <span class="required-label">(required)</span></label>
-      <input id="player-name-${i}" name="player-${i+1}" required aria-required="true" maxlength="24" placeholder="Enter player ${i+1}’s name" aria-describedby="player-error-${i}" autocomplete="off" value="${esc($('#opponent-mode').value==='ai'&&i>0?'Computer '+i:previous[i] || '')}" ${$('#opponent-mode').value==='ai'&&i>0?'readonly aria-label="Computer opponent '+i+'"':''}>
+      <input id="player-name-${i}" name="player-${i+1}" required aria-required="true" maxlength="16" title="Maximum 16 characters" placeholder="Enter player ${i+1}’s name" aria-describedby="player-error-${i}" autocomplete="off" value="${esc($('#opponent-mode').value==='ai'&&i>0?'Computer '+i:previous[i] || '')}" ${$('#opponent-mode').value==='ai'&&i>0?'readonly aria-label="Computer opponent '+i+'"':''}>
       <p class="setup-error" id="player-error-${i}" hidden></p>`).join('');
     document.querySelectorAll('#names input').forEach(input=>input.addEventListener('input',()=>{
       input.removeAttribute('aria-invalid');
@@ -588,7 +588,7 @@ function setup() {
     inputs.forEach((input, i)=>{
       const name = playerNames[i];
       const duplicate = name && playerNames.some((other,j)=>j!==i && other.toLocaleLowerCase()===name.toLocaleLowerCase());
-      const error = !name ? `Enter a name for Player ${i+1}.` : duplicate ? `Player ${i+1} needs a different name. Each player name must be unique.` : '';
+      const error = !name ? `Enter a name for Player ${i+1}.` : name.length>16 ? `Player ${i+1}’s name must be 16 characters or fewer.` : duplicate ? `Player ${i+1} needs a different name. Each player name must be unique.` : '';
       const message = document.getElementById(input.getAttribute('aria-describedby'));
       message.textContent = error;
       message.hidden = !error;

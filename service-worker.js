@@ -1,4 +1,4 @@
-const CACHE_NAME = "muha-casino-shell-20261027-player-name-text-v88";
+const CACHE_NAME = "muha-casino-shell-20261027-name-limit-v89";
 const APP_SHELL = [
   "./",
   "./index.html",
