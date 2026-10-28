@@ -778,7 +778,7 @@ test('rent dotted leaders retain visible width and paint after repeated wild fli
   for(let i=0;i<4;i++){
    await p.locator('#flip-card').click();await p.waitForTimeout(450);
    const dots=await p.locator('.modern-hand-card.is-active .rent-dots,#preview-open .rent-dots').evaluateAll(nodes=>nodes.map(el=>({width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height,image:getComputedStyle(el).backgroundImage})));
-   assert.ok(dots.length>0);assert.ok(dots.every(d=>d.width>=3&&d.height>=1&&d.image.includes('radial-gradient')),'Every rent row keeps painted dots');
+   assert.ok(dots.length>0);assert.ok(dots.every(d=>d.width>=3&&d.height>=1&&d.image.includes('repeating-linear-gradient')),'Every rent row keeps painted dots');
   }
   await conservation(p);if(width===390)await shot(p,'wild-rent-dots-after-flip');await close(p);
  }
@@ -1484,7 +1484,7 @@ test('wild miniature rent dots scale with the card on phone tablet and desktop',
   const p=await open(viewport);await fixture(p,'hand',2);
   await p.evaluate(()=>{const s=window.__dealTest.state;const i=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===2&&c.colors.includes('railroad'));const c=s.draw.splice(i,1)[0];c.color='railroad';s.players[0].props.push(c);window.__dealTest.render()});
   const dots=await p.locator('.current-properties .public-mini .rent-dots').evaluateAll(nodes=>nodes.map(el=>({height:el.getBoundingClientRect().height,width:el.closest('.deal-face').getBoundingClientRect().width})));
-  assert.ok(dots.length>0);assert.ok(dots.every(d=>d.height<=d.width*.02),JSON.stringify({viewport,dots}));
+  assert.ok(dots.length>0);assert.ok(dots.every(d=>d.height<=Math.max(1.01,d.width*.02)),JSON.stringify({viewport,dots}));
   assert.match(await p.locator('.current-properties .group-caption').textContent(),/1\/4 · 1M/);
   await shot(p,`wild-mini-dots-${viewport.width}`);await close(p);
  }
@@ -1504,4 +1504,67 @@ test('name limit toast stays above the keyboard in standalone and hosted setup',
   const moved=await game.locator('#game-toast').boundingBox();assert.ok(moved.y>=0&&moved.y+moved.height<=310,JSON.stringify({hosted,moved}));
   await close(p);
  }
+});
+
+test('all casino games keep a sized frame through refresh return and re-entry',async()=>{
+ const ids=['monopoly-deal','big-money-deluxe','neon-slots','pretty-penny','treasurepots','bingo','sorry','yahtzee'];
+ const p=await open({width:420,height:780},undefined,{isMobile:true,hasTouch:true});
+ await p.goto(origin+'/index.html');
+ for(const id of ids){
+  for(let cycle=0;cycle<2;cycle++){
+   await p.locator(`[data-game="${id}"]`).first().evaluate(el=>el.click());
+   await p.waitForFunction(()=>document.querySelector('#gameLoadState').hidden);
+   const geometry=await p.locator('#gameFrame').evaluate(el=>({top:el.getBoundingClientRect().top,bottom:el.getBoundingClientRect().bottom,height:el.getBoundingClientRect().height,scroll:window.scrollY,viewport:visualViewport.height}));
+   assert.ok(geometry.height>400&&geometry.bottom<=geometry.viewport+1&&geometry.scroll===0,JSON.stringify({id,cycle,geometry}));
+   if(cycle===0){await p.reload();await p.waitForFunction(()=>document.querySelector('#gameLoadState').hidden);}
+   if(await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded')==='false')await p.locator('#toolbarCollapseButton').click();
+   await p.locator('#backButton').click();
+   assert.equal(await p.locator('#launcher').isVisible(),true);
+   assert.equal(await p.locator('html').evaluate(el=>el.classList.contains('deal-setup-locked')),false);
+  }
+ }
+ await close(p);
+});
+
+test('leaving setup releases parent scroll locks before another game opens',async()=>{
+ const p=await open({width:420,height:780});await p.goto(origin+'/index.html#monopoly-deal');
+ await p.frameLocator('#gameFrame').locator('#ready-new').click();
+ await p.locator('#toolbarCollapseButton').click();await p.locator('#backButton').click();
+ assert.equal(await p.locator('html').evaluate(el=>el.classList.contains('deal-setup-locked')),false);
+ await p.locator('[data-game="yahtzee"]').first().evaluate(el=>el.click());
+ await p.waitForFunction(()=>document.querySelector('#gameLoadState').hidden);
+ assert.equal(await p.locator('html').evaluate(el=>el.classList.contains('deal-setup-locked')),false);
+ await close(p);
+});
+
+test('library scrolling and browser back-forward do not offset reopened games',async()=>{
+ const p=await open({width:420,height:780});await p.goto(origin+'/index.html');
+ await p.evaluate(()=>window.scrollTo({top:500,behavior:'instant'}));
+ const original=await p.evaluate(()=>scrollY);assert.ok(original>0);
+ await p.locator('[data-game="yahtzee"]').first().evaluate(el=>el.click());
+ await p.waitForFunction(()=>document.querySelector('#gameLoadState').hidden);
+ assert.equal(await p.evaluate(()=>scrollY),0);
+ await p.goBack();await p.locator('#launcher').waitFor();
+ assert.equal(await p.evaluate(()=>scrollY),original);
+ await p.waitForFunction(()=>document.querySelector('#gameFrame').contentWindow.location.href==='about:blank');
+ await p.goForward();await p.waitForFunction(()=>document.querySelector('#gameLoadState').hidden);
+ assert.equal(await p.locator('#gameView').isVisible(),true);assert.equal(await p.evaluate(()=>scrollY),0);
+ const rect=await p.locator('#gameFrame').boundingBox();assert.ok(rect.height>400&&rect.y+rect.height<=780);
+ await close(p);
+});
+
+test('every miniature rent row paints dark dots at multiple zoom levels',async()=>{
+ const {spawnSync}=require('node:child_process');
+ const p=await open({width:420,height:780},undefined,{deviceScaleFactor:3});await fixture(p,'hand',2);
+ await p.evaluate(()=>{const s=window.__dealTest.state;for(const predicate of [c=>c.type==='property'&&c.colors.length===1&&c.color==='yellow',c=>c.type==='property'&&c.colors.length===2&&c.colors.includes('railroad')]){const i=s.draw.findIndex(predicate);const c=s.draw.splice(i,1)[0];if(c.colors.includes('railroad'))c.color='railroad';s.players[0].props.push(c)}window.__dealTest.render()});
+ for(const zoom of [1,1.5,3]){
+  await p.locator('.current-properties .own-groups').evaluate((el,zoom)=>el.style.zoom=zoom,zoom);
+  const rows=p.locator('.current-properties .rent-dots');assert.ok(await rows.count()>=7);
+  for(let i=0;i<await rows.count();i++){
+   const png=await rows.nth(i).screenshot();
+   const result=spawnSync('python3',['-c','import sys,io; from PIL import Image; im=Image.open(io.BytesIO(sys.stdin.buffer.read())).convert("RGB"); print(sum(1 for r,g,b in im.getdata() if max(r,g,b)<180))'],{input:png});
+   assert.equal(result.status,0,result.stderr.toString());assert.ok(Number(result.stdout.toString())>0,`Rent row ${i} has visible dots at zoom ${zoom}`);
+  }
+ }
+ await close(p);
 });

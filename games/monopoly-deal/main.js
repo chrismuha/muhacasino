@@ -515,6 +515,7 @@ function lockSetupScrolling(){
 }
 $('#setup-wizard').addEventListener('close',()=>releaseSetupScrollLock?.());
 window.addEventListener('pagehide',()=>releaseSetupScrollLock?.());
+window.addEventListener('muha-host-leave',()=>releaseSetupScrollLock?.());
 
 function syncSetupViewport(){
  const wizard=$('#setup-wizard');

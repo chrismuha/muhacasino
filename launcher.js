@@ -101,7 +101,7 @@ function syncHostedCabinetScreens(gameId = null) {
   device.classList.toggle("cabinet-non-slot-game", !slotGameActive);
 }
 
-const SITE_BUILD = "20261025-deck-text-v67";
+const SITE_BUILD = "20261027-rent-dot-paint-v97";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");
@@ -175,6 +175,8 @@ slotModeToolbar.addEventListener("click", () => {
 // Safari's browser bars and keyboard change the visible viewport independently
 // of the layout viewport. Give the hosted frame a definite pixel-sized parent.
 let activeGameId = null;
+let libraryScrollY=0;
+if("scrollRestoration" in history)history.scrollRestoration="manual";
 let dealLayoutHeight=0, dealLayoutWidth=0;
 function syncGameViewport() {
  const viewport=window.visualViewport;
@@ -186,7 +188,7 @@ function syncGameViewport() {
   if((!editing&&!setupOpen) || dealLayoutWidth!==window.innerWidth || !dealLayoutHeight){dealLayoutHeight=height;dealLayoutWidth=window.innerWidth;}
   if(editing||setupOpen)height=Math.max(height,dealLayoutHeight);
  }
- const top=activeGameId==='monopoly-deal'?0:(viewport?.offsetTop || 0);
+ const top=0;
  document.documentElement.style.setProperty('--casino-visible-height',`${height}px`);
  document.documentElement.style.setProperty('--casino-visible-top',`${top}px`);
  if(!gameView.hidden && document.body.classList.contains('game-open')){
@@ -197,9 +199,8 @@ function syncGameViewport() {
 }
 let gameViewportTimer;
 function scheduleGameViewport(){
- clearTimeout(gameViewportTimer);
- const setupOpen=activeGameId==='monopoly-deal'&&gameFrame.contentDocument?.querySelector('#setup-wizard[open]');
- if(setupOpen)gameViewportTimer=setTimeout(syncGameViewport,100);else syncGameViewport();
+ cancelAnimationFrame(gameViewportTimer);
+ gameViewportTimer=requestAnimationFrame(syncGameViewport);
 }
 window.addEventListener('resize',scheduleGameViewport);
 window.addEventListener('pageshow',syncGameViewport);
@@ -459,16 +460,28 @@ document.addEventListener("keydown", (event) => {
   moveLibraryGameFocus(event.key === "ArrowRight" ? 1 : -1);
 });
 
+function releaseActiveGameFrame(){
+ try{
+  gameFrame.contentWindow?.dispatchEvent(new Event('muha-host-leave'));
+  gameFrame.contentDocument?.activeElement?.blur?.();
+  gameFrame.contentWindow?.slotExperience?.releaseCabinetScreens?.();
+ }catch{}
+ cancelAnimationFrame(gameViewportTimer);
+ dealLayoutHeight=0;dealLayoutWidth=0;
+}
+
 function showLauncher(updateHistory = true) {
   window.clearTimeout(gameLoadTimer);
-  gameFrame.contentWindow?.slotExperience?.releaseCabinetScreens?.();
+  releaseActiveGameFrame();
   activeGameId = null;
+  navigateGameFrame("about:blank");
   document.documentElement.classList.remove('deal-host-open');
   gameLoadState.hidden = true;
   gameView.hidden = true;
   launcher.hidden = false;
   scheduleFeaturedLayout();
   document.body.classList.remove("game-open");
+  window.scrollTo({top:libraryScrollY,left:0,behavior:"instant"});
   bingoToolbarControls.hidden = true;
   slotModeToolbar.hidden = true;
   syncHostedCabinetScreens();
@@ -521,15 +534,13 @@ function launchGame(gameId, updateHistory = true) {
   if (!game) return;
 
   window.clearInterval(sliderTimer);
-  if (!slotGameIds.has(gameId)) {
-    gameFrame.contentWindow?.slotExperience?.releaseCabinetScreens?.();
-  }
+  if(!activeGameId)libraryScrollY=window.scrollY;
+  releaseActiveGameFrame();
   activeGameId = gameId;
   gameView.dataset.hostedGame = gameId;
   document.documentElement.classList.toggle('deal-host-open',gameId==='monopoly-deal');
   syncHostedCabinetScreens(gameId);
   setGameToolbarCollapsed(gameId === "monopoly-deal");
-  if(gameId==="monopoly-deal")window.scrollTo(0,0);
   showGameLoading();
   gameView.classList.toggle("tabletop-game", game.categories.includes("table"));
   currentGame.textContent = game.title;
@@ -563,6 +574,7 @@ function launchGame(gameId, updateHistory = true) {
   launcher.hidden = true;
   gameView.hidden = false;
   document.body.classList.add("game-open");
+  window.scrollTo({top:0,left:0,behavior:"instant"});
   syncGameViewport();
   // Size the visible host before the child document starts its first layout.
   gameFrame.getBoundingClientRect();
@@ -739,7 +751,8 @@ function syncPrettyPennyFrameWidth() {
 window.addEventListener("resize", syncPrettyPennyFrameWidth);
 
 gameFrame.addEventListener("load", () => {
-  if (!activeGameId || gameFrame.src === "about:blank") return;
+  if (!activeGameId) return;
+  try{if(gameFrame.contentWindow.location.href==="about:blank")return;}catch{}
   window.clearTimeout(gameLoadTimer);
   try {
     const frameDocument = gameFrame.contentDocument;
