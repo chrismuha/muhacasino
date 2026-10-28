@@ -29,6 +29,14 @@ try { const saved=JSON.parse(sessionStorage.getItem(sessionKey)||'null'); if(sav
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let detachHandSorting = () => {};
 let toastTimer;
+function syncToastViewport(){
+ const toast=$('#game-toast');
+ if(!toast||toast.hidden)return;
+ let viewport=window.visualViewport,frameTop=0;
+ try{if(window.parent!==window){viewport=window.parent.visualViewport;frameTop=window.frameElement.getBoundingClientRect().top;}}catch{}
+ const bottom=Math.min(innerHeight,(viewport?.offsetTop||0)+(viewport?.height||innerHeight)-frameTop);
+ toast.style.bottom=`${Math.max(16,innerHeight-bottom+12)}px`;
+}
 function showToast(message) {
  const toast = $('#game-toast');
  const modal = [...document.querySelectorAll('dialog[open]')].at(-1);
@@ -36,6 +44,7 @@ function showToast(message) {
  clearTimeout(toastTimer);
  toast.hidden = false;
  toast.textContent = message;
+ syncToastViewport();
  toastTimer = setTimeout(() => { toast.hidden = true; }, 5500);
 }
 // ARIA-disabled buttons remain focusable/clickable solely to explain their state.
@@ -524,9 +533,12 @@ function scheduleSetupViewport(){
 let setupViewport=window.visualViewport;
 try{if(window.parent!==window)setupViewport=window.parent.visualViewport;}catch{}
 setupViewport?.addEventListener('resize',scheduleSetupViewport);
+setupViewport?.addEventListener('resize',syncToastViewport);
+setupViewport?.addEventListener('scroll',syncToastViewport);
+window.addEventListener('resize',syncToastViewport);
 setupViewport?.addEventListener('scroll',scheduleSetupViewport);
 window.addEventListener('resize',scheduleSetupViewport);
-window.addEventListener('pagehide',()=>{setupViewport?.removeEventListener('resize',scheduleSetupViewport);setupViewport?.removeEventListener('scroll',scheduleSetupViewport);});
+window.addEventListener('pagehide',()=>{setupViewport?.removeEventListener('resize',scheduleSetupViewport);setupViewport?.removeEventListener('scroll',scheduleSetupViewport);setupViewport?.removeEventListener('resize',syncToastViewport);setupViewport?.removeEventListener('scroll',syncToastViewport);});
 $('#setup-wizard').addEventListener('focusin',scheduleSetupViewport);
 function setup() {
   $('#setup-content').innerHTML = `<form class="setup" id="setup-form" novalidate>

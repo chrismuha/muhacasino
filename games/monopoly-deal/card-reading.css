@@ -736,7 +736,7 @@ dialog button,#preview-close{outline-offset:-4px}
 .game-over-controls a:hover,.game-over-controls a:focus-visible{background:#20558e;color:#fff;outline:3px solid #ffcf70;outline-offset:3px}
 
 /* Reserve a painted leader so flipping cannot collapse or drop the rent dots. */
-[data-theme=modern] .deal-face .rent-dots,[data-theme=modern] .deal-face[data-reading=true] .rent-dots{flex:1 0 12%;min-width:12%;height:2px;border:0;margin-bottom:1px;background:radial-gradient(circle,#222 0 1px,transparent 1.1px) left center/4px 2px repeat-x}
+[data-theme=modern] .deal-face .rent-dots,[data-theme=modern] .deal-face[data-reading=true] .rent-dots{flex:1 0 12%;min-width:12%;height:.7cqw;border:0;margin-bottom:.7cqw;background:radial-gradient(circle,#222 0 .32cqw,transparent .36cqw) left center/1.6cqw .7cqw repeat-x}
 #setup-wizard [data-wizard-step]:not([hidden]){overflow-y:auto;overscroll-behavior:none}
 #setup-wizard{transition:none;scrollbar-gutter:stable}
 

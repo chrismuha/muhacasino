@@ -1478,3 +1478,30 @@ test('host header arrow responds to touch while name setup owns the scroll lock'
  await arrow.tap();await p.waitForFunction(()=>document.querySelector('#toolbarCollapseButton').getAttribute('aria-expanded')==='false');
  await game.locator('#wizard-cancel').click();await close(p);
 });
+
+test('wild miniature rent dots scale with the card on phone tablet and desktop',async()=>{
+ for(const viewport of [{width:320,height:568},{width:420,height:780},{width:768,height:1024},{width:1440,height:900}]){
+  const p=await open(viewport);await fixture(p,'hand',2);
+  await p.evaluate(()=>{const s=window.__dealTest.state;const i=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===2&&c.colors.includes('railroad'));const c=s.draw.splice(i,1)[0];c.color='railroad';s.players[0].props.push(c);window.__dealTest.render()});
+  const dots=await p.locator('.current-properties .public-mini .rent-dots').evaluateAll(nodes=>nodes.map(el=>({height:el.getBoundingClientRect().height,width:el.closest('.deal-face').getBoundingClientRect().width})));
+  assert.ok(dots.length>0);assert.ok(dots.every(d=>d.height<=d.width*.02),JSON.stringify({viewport,dots}));
+  assert.match(await p.locator('.current-properties .group-caption').textContent(),/1\/4 · 1M/);
+  await shot(p,`wild-mini-dots-${viewport.width}`);await close(p);
+ }
+});
+
+test('name limit toast stays above the keyboard in standalone and hosted setup',async()=>{
+ for(const hosted of [false,true]){
+  const p=await open({width:420,height:780});let game=p;
+  if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+  await game.locator('#ready-new').click();await game.locator('#start').click();
+  await game.locator('#player-name-0').fill('abcdefghijkl');
+  await p.evaluate(()=>{Object.defineProperty(visualViewport,'height',{configurable:true,get:()=>350});visualViewport.dispatchEvent(new Event('resize'));});
+  await game.locator('#player-name-0').press('End');await game.locator('#player-name-0').pressSequentially('m');
+  await game.locator('#game-toast').waitFor();
+  const bounds=await game.locator('#game-toast').boundingBox();assert.ok(bounds.y>=0&&bounds.y+bounds.height<=350,JSON.stringify({hosted,bounds}));
+  await p.evaluate(()=>{Object.defineProperty(visualViewport,'height',{configurable:true,get:()=>310});visualViewport.dispatchEvent(new Event('resize'));});
+  const moved=await game.locator('#game-toast').boundingBox();assert.ok(moved.y>=0&&moved.y+moved.height<=310,JSON.stringify({hosted,moved}));
+  await close(p);
+ }
+});
