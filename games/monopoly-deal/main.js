@@ -1,10 +1,10 @@
 import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-orange-deck-dots-v66';
 import {paginateViewer} from './view-pages.mjs?build=20261025-orange-deck-dots-v66';
 import {aiChoice,aiPlay} from './ai.mjs?build=20261025-orange-deck-dots-v66';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261028-deal-action-sizing-v104';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261028-deal-action-sizing-v104';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261028-deal-selection-payments-v105';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261028-deal-selection-payments-v105';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-orange-deck-dots-v66';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261028-deal-action-sizing-v104';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261028-deal-selection-payments-v105';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261025-orange-deck-dots-v66';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -177,13 +177,14 @@ function fitResponsiveLabels() {
 const me=()=>state.players[state.turn];
 const orderedColors=colors=>[...colors].sort((a,b)=>GROUPS[a].name.localeCompare(GROUPS[b].name));
 const tableSeat=()=>me().isAI?Math.max(0,state.players.findIndex(player=>!player.isAI)):state.turn;
-function choose(title,options,detail='',actor=state?me():null,required=false){
+function choose(title,options,detail='',actor=state?me():null,required=false,order='value'){
  if(actionTransaction&&actor&&actor!==me()){actionTransaction.locked=true;undoHistory=[];}
  if(actor?.isAI)return Promise.resolve(aiChoice(title,options,actor));
- // All human card/asset prompts share one monetary ordering, including
- // payments, discards, wilds, and steals. Keep Cancel/Continue in place.
+ // Payment choices group Bank before Property before Building. Other
+ // monetary choices stay value-first. Keep Cancel/Continue in place.
  const amount=value=>typeof value?.value==='number'?value.value:typeof value?.card?.value==='number'?value.card.value:null;
- const valued=options.filter(([,value])=>amount(value)!==null).sort((a,b)=>amount(a[1])-amount(b[1])||a[0].localeCompare(b[0]));
+ const paymentGroup=value=>actor?.bank.includes(value)?0:actor?.props.includes(value)?1:2;
+ const valued=options.filter(([,value])=>amount(value)!==null).sort((a,b)=>(order==='payment'?paymentGroup(a[1])-paymentGroup(b[1]):0)||amount(a[1])-amount(b[1])||a[0].localeCompare(b[0]));
  options=options.map(option=>amount(option[1])===null?option:valued.shift());
  return new Promise((resolve,reject)=>{
   const dialog=$('#choice');$('#question').textContent=title;$('#detail').textContent=detail;$('#options').replaceChildren();
@@ -245,12 +246,18 @@ function renderClassic(){if(!state)return;const handScroll=$('.cards')?.scrollLe
  if($('.cards'))$('.cards').scrollLeft=handScroll;
  $('#reveal')?.addEventListener('click',()=>{visible=true;turnHandoff=false;render()});$('#end').onclick=()=>run(end);$('#undo').onclick=undoLastMove;$('#move').onclick=()=>run(rearrange);document.querySelectorAll('#game [data-card]').forEach(b=>b.onclick=()=>run(()=>play(p.hand.find(c=>c.id===+b.dataset.card))));document.querySelectorAll('#game [data-table-view]').forEach(b=>b.onclick=()=>openTableViewer(b.dataset.tableView));
 }
+function selectHandCard(card){
+ // Switching categories starts a fresh selection; wilds remain properties,
+ // while Rent and buildings are action cards, just like their deck types.
+ if(me().hand.some(selected=>selectedCardIds.has(selected.id)&&selected.type!==card.type))selectedCardIds.clear();
+ selectedCardIds.add(card.id);
+}
 function browseSelectedCard(direction,focusTarget=null){
  if(busy||!visible||!state||state.winner||me().isAI||document.querySelector('dialog[open]'))return;
  const hand=me().hand,index=hand.findIndex(card=>card.id===selectedCardId);
  if(index<0||hand.length<2)return;
  const next=(index+direction+hand.length)%hand.length,card=hand[next];
- selectedCardIds.delete(selectedCardId);selectedCardIds.add(card.id);
+ selectedCardIds.delete(selectedCardId);selectHandCard(card);
  selectedCardId=card.id;
  previewFlipped=Boolean(cardPreferredSide(selectedCardId));
  const preview=$('.selected-table-card');
@@ -258,6 +265,8 @@ function browseSelectedCard(direction,focusTarget=null){
  preview.setAttribute('aria-label',`${card.name} · Card ${next+1} of ${hand.length}`);
  $('#selected-card-help').textContent=`Swipe · ${next+1} / ${hand.length}`;
  document.querySelectorAll('#game [data-card]').forEach(button=>{const id=Number(button.dataset.card),selected=selectedCardIds.has(id);button.classList.toggle('is-selected',selected);button.classList.toggle('is-active',id===selectedCardId);button.setAttribute('aria-pressed',String(selected));});
+ $('#discard-card').textContent=`Discard${selectedCardIds.size?` (${selectedCardIds.size})`:''}`;
+ $('#deselect').textContent=`Clear${selectedCardIds.size?` (${selectedCardIds.size})`:''}`;
  updateUnavailableControls();fitCompactPreview();
  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)preview.animate([{transform:`translateX(${direction*28}px)`,opacity:.65},{transform:'translateX(0)',opacity:1}],{duration:170,easing:'cubic-bezier(.2,.7,.2,1)'});
  // Keep the selected thumbnail in view without scrolling the page away from the preview.
@@ -386,12 +395,12 @@ function render(){
  document.querySelectorAll('#game [data-card]').forEach(button=>{
   button.onclick=event=>{
    if(busy||state.winner)return;
-   const id=Number(button.dataset.card),now=performance.now();
+   const id=Number(button.dataset.card),card=me().hand.find(card=>card.id===id),now=performance.now();
    const doubleTap=event.detail!==0&&lastCardTap?.id===id&&now-lastCardTap.time<=350;
    if(selectedCardId!==id)previewFlipped=Boolean(cardPreferredSide(id));
-   if(doubleTap){selectedCardIds.add(id);selectedCardId=id;previewExpanded=true;}
+   if(doubleTap){selectHandCard(card);selectedCardId=id;previewExpanded=true;}
    else if(selectedCardIds.has(id)){selectedCardIds.delete(id);selectedCardId=[...selectedCardIds].at(-1)??null;previewExpanded=false;previewFlipped=selectedCardId!==null&&Boolean(cardPreferredSide(selectedCardId));}
-   else{selectedCardIds.add(id);selectedCardId=id;previewExpanded=false;}
+   else{selectHandCard(card);selectedCardId=id;previewExpanded=false;}
    lastCardTap=doubleTap?null:{id,time:now};
    render();
    if(event.detail===0)$(`[data-card="${id}"]`)?.focus({preventScroll:true});
@@ -481,7 +490,24 @@ async function run(fn){
 function checkWin(){if(sets(me()).length>=3&&!state.winner){state.winner=me().name;log(`${state.winner} wins with three complete colors!`);choose(`${state.winner} wins!`,[['View table',true]],'Three complete property sets. Start a new game for a rematch.',null)}}
 function use(c){remove(me().hand,c);state.discard.push(c);state.plays++;log(`${me().name} played ${c.name}.`)}
 async function defend(target,actor,description){visible=false;render();if(actor.isAI&&!target.isAI)await choose(`${actor.name} played ${description.split(':')[0]} against you`,[['Continue',true]],description,target);let responder=target,other=actor,cancelled=false;while(true){const no=responder.hand.find(c=>c.action==='no');if(!no)return !cancelled;if(!responder.isAI&&!state.players.some(p=>p.isAI))await choose(`Pass to ${responder.name}`,[['Ready',true]],'An action response is available. Keep hands private.',responder);const yes=await choose(`${responder.name}: Just Say No?`,[['Allow action / stop countering',false],['Play Just Say No',true]],description,responder);if(!yes)return !cancelled;remove(responder.hand,no);state.discard.push(no);if(responder===me())state.plays++;cancelled=!cancelled;log(`${responder.name} played Just Say No.`);[responder,other]=[other,responder];}}
-async function pay(p,to,amount){visible=false;render();let remaining=amount;if(!p.isAI)await choose(p.name+': payment due',[['Ready to pay',true]],`${to.name} is owed ${amount}M. You choose payment; no change is given.`,p);while(remaining>0){let assets=[...[...p.bank].sort((a,b)=>b.value-a.value),...p.props.filter(c=>c.value>0).sort((a,b)=>a.value-b.value),...[...p.buildings].sort((a,b)=>a.value-b.value)];if(!assets.length)break;let c=await choose(`${p.name}: ${remaining}M still owed`,assets.map(c=>[`${p.bank.includes(c)?'Bank':p.props.includes(c)?'Property':'Building'}: ${label(c)}`,c]),'',p);if(p.bank.includes(c)){remove(p.bank,c);to.bank.push(c)}else if(p.props.includes(c)){remove(p.props,c);to.props.push(c);normalize(p)}else{remove(p.buildings,c);to.bank.push(c);if(c.action==='house'){for(const h of p.buildings.filter(x=>x.color===c.color)){remove(p.buildings,h);p.bank.push(h)}}}remaining-=c.value;render()}log(`${p.name} paid ${amount-Math.max(remaining,0)}M toward ${amount}M owed to ${to.name}.`)}
+async function pay(p,to,amount){
+ visible=false;render();let remaining=amount;
+ if(!p.isAI)await choose(p.name+': payment due',[['Ready to pay',true]],`${to.name} is owed ${amount}M. You choose payment; no change is given.`,p);
+ while(remaining>0){
+  // Keep computer tie-breaks stable; choose() orders the human payment list.
+  const assets=[...[...p.bank].sort((a,b)=>b.value-a.value),...p.props.filter(c=>c.value>0).sort((a,b)=>a.value-b.value),...[...p.buildings].sort((a,b)=>a.value-b.value)];
+  if(!assets.length)break;
+  const c=await choose(`${p.name}: ${remaining}M still owed`,assets.map(c=>[`${p.bank.includes(c)?'Bank':p.props.includes(c)?'Property':'Building'}: ${label(c)}`,c]),'',p,false,'payment');
+  if(p.bank.includes(c)){remove(p.bank,c);to.bank.push(c)}
+  else if(p.props.includes(c)){remove(p.props,c);to.props.push(c);normalize(p)}
+  else{
+   remove(p.buildings,c);to.bank.push(c);
+   if(c.action==='house')for(const h of p.buildings.filter(x=>x.color===c.color)){remove(p.buildings,h);p.bank.push(h)}
+  }
+  remaining-=c.value;render();
+ }
+ log(`${p.name} paid ${amount-Math.max(remaining,0)}M toward ${amount}M owed to ${to.name}.`);
+}
 async function collect(targets,amount,actionName){for(const p of targets)if(await defend(p,me(),`${actionName}: Pay ${amount}M to ${me().name}.`))await pay(p,me(),amount)}
 const opponents=()=>state.players.filter(p=>p!==me());
 async function play(c,chosenMode=null,chosenColor=null){if((!visible&&!me().isAI)||state.plays>=3||!c)return;let mode=chosenMode||await choose(label(c),[['Cancel','cancel'],...(canBank(c)?[['Put in bank','bank']]:[]),...(c.type!=='money'?[['Play card','play']]:[])]);if(mode==='cancel')return;if(mode==='bank'){if(!canBank(c)){showToast('Only money cards can be banked. Play or discard action cards.');return;}remove(me().hand,c);me().bank.push(c);state.plays++;log(`${me().name} banked ${c.value}M.`);return}

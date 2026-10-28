@@ -60,3 +60,6 @@ v1.5.0 responsive checks cover populated hosted tables at 390×700, 768×1024, 1
 
 
 Action sizing checks cover compact phones, touch tablets in portrait and landscape, and desktop screens. They verify larger action circles and labels, deck heading/count alignment, the larger desktop deck, no normal-play vertical overflow, and center-preview medallions at least as large as their hand counterparts. Enlarged reading-card artwork stays circular and scales with the card; long action instructions remain visible on phone, tablet, and desktop.
+
+
+Category-selection checks cover touch on phone/tablet and mouse/keyboard on desktop, same-category additions, category replacement, deselection, banking only the active money card, and enlarged browsing across categories without spending plays. Payment checks keep Bank before Property before Building, sort each group by value and label, preserve stored asset order, and regroup buildings moved to the bank after a property payment in both themes.

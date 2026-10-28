@@ -637,7 +637,7 @@ test('hand trackpad scrolling and catalog swipe/trackpad navigation preserve pla
 test('guide and release notes match deck facts, current controls, and the consolidated v1.5.0 label',async()=>{
  const p=await open();const facts=await p.evaluate(async()=>{const {GUIDE_RULES,RELEASE_NOTES,cardDesigns}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),notes:JSON.stringify(RELEASE_NOTES),designs:cardDesigns().length,cards:deck().length,title:RELEASE_NOTES[0][0]}});
  assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.match(facts.title,/v1\.5\.0/);
- for(const instruction of ['Double-tap','Close returns','no manual Hide','trackpad','Coming soon','Continue turn'])assert.ok(facts.rules.toLowerCase().includes(instruction.toLowerCase()),instruction);
+ for(const instruction of ['Double-tap','Close returns','no manual Hide','trackpad','Coming soon','Continue turn','same category','Bank cards first'])assert.ok(facts.rules.toLowerCase().includes(instruction.toLowerCase()),instruction);
  assert.doesNotMatch(facts.notes,/overlapping hand below|Privacy separately hides|actions below the selected|Collapsible Table appearance/);
  const history=await readFile(path.join(root,'about.html'),'utf8'),section=history.slice(history.indexOf('<article id="monopoly-deal"'),history.indexOf('<article id="sorry"'));
  assert.equal((section.match(/2026-10-28/g)||[]).length,1);assert.match(section,/v1\.5\.0/);assert.doesNotMatch(section,/separate Privacy control/);
@@ -732,12 +732,12 @@ test('hand selections visibly lift, support individual deselection and clearing,
  const ids=await p.evaluate(()=>window.__dealTest.state.players[0].hand.map(c=>c.id));
  await p.locator(`[data-card="${ids[0]}"]`).click();
  const style=await p.locator(`[data-card="${ids[0]}"]`).evaluate(el=>({transform:getComputedStyle(el).transform,outline:getComputedStyle(el).outlineStyle,badge:getComputedStyle(el,'::after').content}));assert.notEqual(style.transform,'none');assert.equal(style.outline,'solid');assert.match(style.badge,/✓/);assert.equal(await p.locator('.selected-table-card').count(),0);
- await p.locator(`[data-card="${ids[1]}"]`).click();assert.equal(await p.locator('[data-card][aria-pressed=true]').count(),2);if(artifacts)await shot(p,'multiple-selected-card-feedback');
+ await p.locator(`[data-card="${ids[5]}"]`).click();assert.equal(await p.locator('[data-card][aria-pressed=true]').count(),2);if(artifacts)await shot(p,'multiple-selected-card-feedback');
  await p.locator(`[data-card="${ids[0]}"]`).click();assert.equal(await p.locator('[data-card][aria-pressed=true]').count(),1);
  await p.locator('#deselect').click();assert.equal(await p.locator('[data-card][aria-pressed=true]').count(),0);
- await p.locator(`[data-card="${ids[0]}"]`).click();await p.locator(`[data-card="${ids[1]}"]`).click();await p.locator('#bank-card').click();await idle(p);
- assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank[0].id),ids[1]);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);
- assert.equal(await p.locator(`[data-card="${ids[0]}"]`).getAttribute('aria-pressed'),'true');await p.locator('#play-card').click();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[0].id),ids[0]);
+ await p.locator(`[data-card="${ids[0]}"]`).click();await p.locator(`[data-card="${ids[5]}"]`).click();await p.locator('#play-card').click();await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[0].id),ids[5]);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);
+ assert.equal(await p.locator(`[data-card="${ids[0]}"]`).getAttribute('aria-pressed'),'true');await p.locator('#play-card').click();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[1].id),ids[0]);
  await conservation(p);await close(p);
 });
 test('right-side action icons align and turn limit and end handoff produce clear toasts',async()=>{
@@ -1370,7 +1370,7 @@ test('compact action previews wrap complete instructions and keep titles inside 
  }
 });
 
-test('payment popups order all assets by ascending value without reordering assets',async()=>{
+test('payment popups put Bank before Property and sort each group without reordering assets',async()=>{
  const p=await open();await fixture(p,'debt',2);
  const expected=await p.evaluate(()=>{
   const s=window.__dealTest.state,debtor=s.players[1];
@@ -1381,8 +1381,8 @@ test('payment popups order all assets by ascending value without reordering asse
  await p.evaluate(()=>{const s=window.__dealTest.state;void window.__dealTest.pay(s.players[1],s.players[0],5)});
  await choose(p,'Ready to pay');
  const labels=await p.locator('#options button').allTextContents();
- assert.deepEqual(labels.map(s=>s.split(':')[0]),['Bank','Property','Bank','Property','Property','Bank','Bank']);
- assert.deepEqual(labels.map(s=>Number(s.match(/(\d+)M/)[1])),[1,1,2,3,4,5,10]);
+ assert.deepEqual(labels.map(s=>s.split(':')[0]),['Bank','Bank','Bank','Bank','Property','Property','Property']);
+ assert.deepEqual(labels.map(s=>Number(s.match(/(\d+)M/)[1])),[1,2,5,10,1,3,4]);
  assert.deepEqual(await p.evaluate(()=>{const d=window.__dealTest.state.players[1];return {bank:d.bank.map(c=>c.id),props:d.props.map(c=>c.id)}}),expected);
  await close(p);
 });
@@ -1782,5 +1782,58 @@ test('tablet and desktop action controls grow while deck labels and preview artw
    assert.ok(art.ratio>=.6&&art.ratio<=.66);assert.ok(Math.abs(art.width-art.height)<1);assert.ok(art.left>=art.faceLeft&&art.right<=art.faceRight);
   }
   await shot(p,`larger-action-controls-${viewport.width}`);await close(p);
+ }
+});
+
+test('multi-card selections stay in one category through taps keyboard and enlarged browsing on every screen',async()=>{
+ for(const viewport of [{width:390,height:844},{width:768,height:1024},{width:1440,height:900}]){
+  const touch=viewport.width<1000,p=await open(viewport,undefined,touch?{hasTouch:true,isMobile:true}:{});await fixture(p,'hand',2);
+  const cards=await p.evaluate(()=>window.__dealTest.state.players[0].hand.map(({id,type,colors})=>({id,type,colors})));
+  const grouped=type=>cards.filter(c=>c.type===type);
+  const selected=()=>p.locator('[data-card][aria-pressed=true]').evaluateAll(nodes=>nodes.map(el=>Number(el.dataset.card)).sort((a,b)=>a-b));
+  const tap=async card=>{const button=p.locator(`[data-card="${card.id}"]`);await button.scrollIntoViewIfNeeded();if(touch)await button.tap();else await button.click()};
+  const props=grouped('property'),money=grouped('money'),actions=grouped('action');
+  await tap(props[0]);await tap(props[1]);assert.deepEqual(await selected(),[props[0].id,props[1].id].sort((a,b)=>a-b));
+  await tap(money[0]);assert.deepEqual(await selected(),[money[0].id]);
+  await tap(money[1]);assert.deepEqual(await selected(),money.map(c=>c.id).sort((a,b)=>a-b));
+  await p.locator('#bank-card').click();await idle(p);assert.deepEqual(await selected(),[money[0].id]);
+  const action=p.locator(`[data-card="${actions[0].id}"]`);await action.focus();await action.press('Space');assert.deepEqual(await selected(),[actions[0].id]);
+  await tap(actions[1]);assert.deepEqual(await selected(),actions.map(c=>c.id).sort((a,b)=>a-b));
+  await tap(props[0]);await tap(props[1]);assert.equal((await selected()).length,2);
+  await p.locator('#preview-open').click();
+  // Browse across every category, including wrapping, without spending a play.
+  const count=await p.locator('[data-card]').count();let crossed=false;
+  for(let i=0;i<count;i++){
+   await p.locator('#preview-next').click();
+   const ids=await selected(),types=cards.filter(c=>ids.includes(c.id)).map(c=>c.type);
+   assert.equal(new Set(types).size,1);if(types[0]!=='property'){crossed=true;assert.equal(ids.length,1);}
+   assert.equal(await p.locator('#deselect').innerText(),`Clear (${ids.length})`);
+   assert.equal(await p.locator('#discard-card').innerText(),`Discard (${ids.length})`);
+  }
+  assert.ok(crossed);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);
+  await p.locator('#preview-close').click();await p.locator('#deselect').click();assert.deepEqual(await selected(),[]);
+  await conservation(p);await close(p);
+ }
+});
+
+test('payments group Bank Property Building and regroup moved buildings after each payment in both themes',async()=>{
+ for(const theme of ['modern','classic']){
+  const p=await open({width:390,height:844},{'muha-monopoly-deal-theme':theme});await fixture(p,'pay-property',2);
+  await p.evaluate(()=>{const s=window.__dealTest.state;for(const value of [10,1]){const i=s.draw.findIndex(c=>c.type==='money'&&c.value===value);s.players[1].bank.push(s.draw.splice(i,1)[0]);}void window.__dealTest.pay(s.players[1],s.players[0],5)});
+  await choose(p,'Ready to pay');
+  const read=()=>p.locator('#options button').allTextContents();
+  let labels=await read();assert.deepEqual(labels.map(s=>s.split(':')[0]),['Bank','Bank','Property','Property','Building','Building']);
+  assert.deepEqual(labels.map(s=>Number(s.match(/(\d+)M/)[1])),[1,10,1,1,3,4]);
+  const propertyLabels=labels.filter(s=>s.startsWith('Property:'));assert.deepEqual(propertyLabels,[...propertyLabels].sort((a,b)=>a.localeCompare(b)));
+  // A player may still choose a property while Bank cards are listed first.
+  await choose(p,propertyLabels[0]);
+  await p.waitForFunction(()=>document.querySelector('#question').textContent.includes('4M still owed'));
+  labels=await read();assert.deepEqual(labels.map(s=>s.split(':')[0]),['Bank','Bank','Bank','Bank','Property']);
+  assert.deepEqual(labels.map(s=>Number(s.match(/(\d+)M/)[1])),[1,3,4,10,1]);
+  await choose(p,labels.find(s=>s.startsWith('Bank:')&&s.includes('10M')));
+  await p.waitForFunction(()=>window.__dealTest.state.log.some(s=>s.includes('paid 5M toward 5M')));
+  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank[0].value),10);
+  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.length),1);
+  await conservation(p);await close(p);
  }
 });
