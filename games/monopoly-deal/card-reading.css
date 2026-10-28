@@ -757,3 +757,7 @@ html[data-theme=modern] body{min-height:100vh;min-height:100lvh;background-size:
 /* The dialog covers the visible controls; its backdrop paints the rest of the
    layout viewport, including the area revealed around the software keyboard. */
 [data-theme=modern] #setup-wizard::backdrop{background:#092c69}
+
+/* Entered names keep the same readable size as the name prompt. */
+#setup-wizard #names input,#setup-wizard.setup-compact #names input{font-size:22px;line-height:1.2}
+#setup-wizard #names input::placeholder{font-size:inherit}
