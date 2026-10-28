@@ -1440,6 +1440,12 @@ test('hosted blue canvas remains painted and frame stays stable while keyboard v
  assert.equal(await p.locator('#gameView').evaluate(el=>el.getBoundingClientRect().top),0);
  for(const selector of ['html','body','#gameView','#gameFrame'])assert.equal(await p.locator(selector).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(0, 100, 219)');
  const button=await game.locator('#start').boundingBox();assert.ok(button.y+button.height<=415,JSON.stringify(button));
+ assert.equal(await game.locator('#setup-wizard').evaluate(el=>getComputedStyle(el,'::backdrop').backgroundColor),'rgb(9, 44, 105)');
+ const panelTop=await game.locator('#setup-wizard').evaluate(el=>el.getBoundingClientRect().top);
+ await game.locator('#player-name-0').evaluate(el=>el.blur());
+ await p.evaluate(()=>visualViewport.dispatchEvent(new Event('resize')));await p.waitForTimeout(250);
+ assert.equal(await p.locator('#gameFrame').evaluate(el=>el.getBoundingClientRect().height),original);
+ assert.equal(await game.locator('#setup-wizard').evaluate(el=>el.getBoundingClientRect().top),panelTop);
  await game.locator('#wizard-cancel').click();
  await p.locator('#backButton').evaluate(el=>el.click());
  assert.equal(await p.locator('html').evaluate(el=>el.classList.contains('deal-host-open')),false);

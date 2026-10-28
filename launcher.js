@@ -183,8 +183,8 @@ function syncGameViewport() {
  const setupOpen=activeGameId==='monopoly-deal'&&gameFrame.contentDocument?.querySelector('#setup-wizard[open]');
  const editing=activeGameId==='monopoly-deal' && gameFrame.contentDocument?.activeElement?.matches('input:not([disabled]),textarea,[contenteditable=true]');
  if(activeGameId==='monopoly-deal'){
-  if(!editing || dealLayoutWidth!==window.innerWidth || !dealLayoutHeight){dealLayoutHeight=height;dealLayoutWidth=window.innerWidth;}
-  if(editing)height=Math.max(height,dealLayoutHeight);
+  if((!editing&&!setupOpen) || dealLayoutWidth!==window.innerWidth || !dealLayoutHeight){dealLayoutHeight=height;dealLayoutWidth=window.innerWidth;}
+  if(editing||setupOpen)height=Math.max(height,dealLayoutHeight);
  }
  const top=activeGameId==='monopoly-deal'?0:(viewport?.offsetTop || 0);
  document.documentElement.style.setProperty('--casino-visible-height',`${height}px`);

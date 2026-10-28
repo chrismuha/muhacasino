@@ -511,15 +511,15 @@ function syncSetupViewport(){
  const wizard=$('#setup-wizard');
  let viewport=window.visualViewport, frameTop=0;
  try{if(window.parent!==window){viewport=window.parent.visualViewport;frameTop=window.frameElement.getBoundingClientRect().top;}}catch{}
- const top=Math.max(0,(viewport?.offsetTop||0)-frameTop);
+ const top=0;
  const bottom=Math.min(innerHeight,(viewport?.offsetTop||0)+(viewport?.height||innerHeight)-frameTop);
  wizard.style.setProperty('--setup-top',`${top}px`);
  wizard.style.setProperty('--setup-height',`${Math.max(80,bottom-top)}px`);
  wizard.classList.toggle('setup-compact',innerWidth<=600||bottom-top<520);
 }
 function scheduleSetupViewport(){
- clearTimeout(setupViewportFrame);
- setupViewportFrame=setTimeout(()=>{setupViewportFrame=0;syncSetupViewport();},140);
+ cancelAnimationFrame(setupViewportFrame);
+ setupViewportFrame=requestAnimationFrame(()=>{setupViewportFrame=0;syncSetupViewport();});
 }
 let setupViewport=window.visualViewport;
 try{if(window.parent!==window)setupViewport=window.parent.visualViewport;}catch{}

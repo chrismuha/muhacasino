@@ -753,3 +753,7 @@ html.casino-hosted body{padding:0;min-height:100%}
    changing height. The setup controls alone follow the visible viewport. */
 html[data-theme=modern]{min-height:100%;background:var(--modern-table-background,#0064db)}
 html[data-theme=modern] body{min-height:100vh;min-height:100lvh;background-size:100% 100lvh;background-repeat:no-repeat;background-color:var(--modern-table-background,#0064db)}
+
+/* The dialog covers the visible controls; its backdrop paints the rest of the
+   layout viewport, including the area revealed around the software keyboard. */
+[data-theme=modern] #setup-wizard::backdrop{background:#092c69}

@@ -31,7 +31,7 @@ export function cardFacts(card){
 
 export const RELEASE_NOTES = [
  ['v2.1.0 · October 27, 2026', [
-  'Removed miniature setup label scroll panes and duplicate hosted safe-area spacing beneath the hand. The blue background stays anchored during keyboard changes, the hosted frame keeps its height while typing, and the surrounding canvas follows the table color.',
+  'Removed miniature setup label scroll panes and duplicate hosted safe-area spacing beneath the hand. The blue background stays anchored during keyboard changes, the hosted frame keeps its height through focus and blur during setup, and the surrounding canvas follows the table color. The setup backdrop fills the area around the keyboard in blue.',
   'Audited the rules and card facts against gameplay: corrected discard costs, recovery and history button labels, reduced-motion indicators, theme-specific viewers, and the distinction between sorted choices, property groups, and chronological history.',
   'Player-name setup keeps consistent field sizes while the keyboard opens, waits for viewport movement to settle, and fits the hosted frame above the keyboard. Only overflowing setup content scrolls. Rent dotted leaders retain reserved space and stable paint when property wilds flip.',
   'Game Library uses bold white text on a solid dark button, including after the link has been visited.',
