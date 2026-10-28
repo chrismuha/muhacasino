@@ -1438,7 +1438,7 @@ test('hosted blue canvas remains painted and frame stays stable while keyboard v
  await p.waitForTimeout(450);
  assert.equal(await p.locator('#gameFrame').evaluate(el=>el.getBoundingClientRect().height),original);
  assert.equal(await p.locator('#gameView').evaluate(el=>el.getBoundingClientRect().top),0);
- for(const selector of ['html','body','#gameView','#gameFrame'])assert.equal(await p.locator(selector).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(0, 100, 219)');
+ for(const selector of ['html','body','#gameView','#gameFrame'])assert.equal(await p.locator(selector).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(9, 44, 105)');
  const button=await game.locator('#start').boundingBox();assert.ok(button.y+button.height<=415,JSON.stringify(button));
  assert.equal(await game.locator('#setup-wizard').evaluate(el=>getComputedStyle(el,'::backdrop').backgroundColor),'rgb(9, 44, 105)');
  const panelTop=await game.locator('#setup-wizard').evaluate(el=>el.getBoundingClientRect().top);
@@ -1447,6 +1447,7 @@ test('hosted blue canvas remains painted and frame stays stable while keyboard v
  assert.equal(await p.locator('#gameFrame').evaluate(el=>el.getBoundingClientRect().height),original);
  assert.equal(await game.locator('#setup-wizard').evaluate(el=>el.getBoundingClientRect().top),panelTop);
  await game.locator('#wizard-cancel').click();
+ for(const selector of ['html','body','#gameView','#gameFrame'])assert.equal(await p.locator(selector).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(0, 100, 219)');
  await p.locator('#backButton').evaluate(el=>el.click());
  assert.equal(await p.locator('html').evaluate(el=>el.classList.contains('deal-host-open')),false);
  await close(p);
@@ -1457,10 +1458,10 @@ test('player names warn at 12 characters and prompt review before proceeding',as
  await p.locator('#ready-new').click();await p.locator('#start').click();
  const input=p.locator('#player-name-0');
  assert.equal(await input.getAttribute('data-name-limit'),'12');
- await input.fill('abcdefghijkl');await input.press('End');await input.pressSequentially('m');
+ await input.fill('abcdefghijkl');assert.equal(await p.locator('#game-toast').isVisible(),false);await input.press('End');await input.pressSequentially('m');
  assert.equal(await input.inputValue(),'abcdefghijkl');
  await p.locator('#game-toast').waitFor();assert.match(await p.locator('#game-toast').textContent(),/12 characters/);
- assert.equal(await p.locator('[data-wizard-step="2"] .name-check-reminder').isVisible(),true);
+ assert.equal(await p.locator('[data-wizard-step="2"] .name-check-reminder').count(),0);
  await input.fill('Chris');
  await input.evaluate(el=>{el.setSelectionRange(5,5);const data=new DataTransfer();data.setData('text',' far too long');el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:data,bubbles:true,cancelable:true}));});
  assert.equal(await input.inputValue(),'Chris');assert.match(await p.locator('#game-toast').textContent(),/12 characters/);

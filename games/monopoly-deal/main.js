@@ -531,7 +531,7 @@ $('#setup-wizard').addEventListener('focusin',scheduleSetupViewport);
 function setup() {
   $('#setup-content').innerHTML = `<form class="setup" id="setup-form" novalidate>
     <section data-wizard-step="1"><h3>Choose your opponents</h3><label for="opponent-mode">Mode <select id="opponent-mode"><option value="ai" selected>Human vs AI</option><option value="human">Human vs human</option></select></label><p>Choose the total number of players. In AI mode, the other seats are computer opponents.</p><div id="ai-difficulty-field"><label for="ai-difficulty">Difficulty <select id="ai-difficulty" aria-describedby="ai-difficulty-help"><option value="easy">Easy</option><option value="normal" selected>Normal</option></select></label><p id="ai-difficulty-help">Easy uses the original computer strategy. Normal builds different color sets and targets opponents close to winning.</p></div><label for="count">Players <select id="count" required><option>2</option><option>3</option><option>4</option></select></label></section>
-    <section data-wizard-step="2" hidden><h3>Who’s at the table?</h3><p class="setup-required">Enter a different name for everyone. All player names are required.</p><div id="names"></div><small class="name-check-reminder">12 characters maximum. Double-check each name before continuing.</small></section>
+    <section data-wizard-step="2" hidden><h3>Who’s at the table?</h3><p class="setup-required">Enter a different name for everyone. All player names are required.</p><div id="names"></div></section>
     <section data-wizard-step="3" hidden><h3>Ready to deal?</h3><p>Each player gets five private cards. The first player draws two more to start.</p><small class="name-check-reminder">Check that these are the names you want before dealing.</small><ul id="wizard-review"></ul><p id="wizard-replace" hidden>Dealing starts a new game and replaces the current one.</p></section>
     <div class="wizard-actions"><button id="wizard-back" type="button" hidden>← Back</button><button id="start" type="submit" class="primary">Continue →</button></div>
   </form>`;
@@ -558,7 +558,7 @@ function setup() {
       <p class="setup-error" id="player-error-${i}" hidden></p>`).join('');
     document.querySelectorAll('#names input:not([readonly])').forEach(input=>{
       const exceedsLimit=text=>input.value.length-(input.selectionEnd-input.selectionStart)+text.length>12;
-      const warnLimit=()=>showToast('Player names can be up to 12 characters. Double-check the name you want before continuing.');
+      const warnLimit=()=>showToast('Maximum 12 characters.');
       input.addEventListener('beforeinput',event=>{
         if(event.inputType?.startsWith('insert')&&event.data&&exceedsLimit(event.data)){
           event.preventDefault();warnLimit();
@@ -570,7 +570,7 @@ function setup() {
       });
     });
     document.querySelectorAll('#names input').forEach(input=>input.addEventListener('input',()=>{
-      if(input.value.length>12){input.value=input.value.slice(0,12);showToast('Player names can be up to 12 characters. Double-check the name you want before continuing.');}
+      if(input.value.length>12){input.value=input.value.slice(0,12);showToast('Maximum 12 characters.');}
       input.removeAttribute('aria-invalid');
       document.getElementById(input.getAttribute('aria-describedby')).hidden = true;
     }));

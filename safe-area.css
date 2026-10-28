@@ -92,3 +92,9 @@ body.game-open #gameView #gameFrame{
 
 /* Paint the complete host canvas, including Safari's exposed viewport edges. */
 html.deal-host-open,html.deal-host-open body,html.deal-host-open #gameView,html.deal-host-open #gameFrame{background:var(--deal-host-background,#0064db)}
+
+/* Setup uses the same dark blue across the host canvas and dialog backdrop. */
+html.deal-host-open.deal-setup-locked,
+html.deal-host-open.deal-setup-locked body,
+html.deal-host-open.deal-setup-locked #gameView,
+html.deal-host-open.deal-setup-locked #gameFrame{background:var(--deal-setup-background,#092c69)}

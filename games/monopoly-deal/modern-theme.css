@@ -18,7 +18,7 @@ html[data-theme=modern]{background:var(--modern-table-background,#0064db);color:
 [data-theme=modern] .appearance-settings>summary{min-height:44px;padding:8px 14px;font-size:17px}
 [data-theme=modern] .table-settings{background:#092c69}
 [data-theme=modern] .history{display:none}
-[data-theme=modern] dialog,[data-theme=modern] #setup-wizard{background:#092c69;border-color:#88c5ff;color:white}
+[data-theme=modern] dialog,[data-theme=modern] #setup-wizard{background:var(--deal-setup-background,#092c69);border-color:#88c5ff;color:white}
 [data-theme=modern] dialog::backdrop{background:#021442df}
 [data-theme=modern] .setup input{background:#0a3677}
 /* Every context uses the same card face: hand, table, selection, and catalog. */
