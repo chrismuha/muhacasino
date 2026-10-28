@@ -763,3 +763,6 @@ html[data-theme=modern] body{min-height:100vh;min-height:100lvh;background-size:
 #setup-wizard #names input::placeholder{font-size:inherit}
 
 #setup-wizard .name-check-reminder{display:block;margin:8px 0 0;color:#fff;font-size:14px;line-height:1.35;white-space:normal}
+
+/* Keep human and computer name fields compact instead of filling the row. */
+#setup-wizard .setup #names input{width:88%;max-width:18ch;justify-self:start}
