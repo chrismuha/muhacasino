@@ -777,6 +777,6 @@ html[data-theme]{height:100%;overflow:hidden;overscroll-behavior:none}
 html[data-theme] body{height:100%;min-height:0;overflow-y:auto;overscroll-behavior:none}
 html[data-theme=modern] body{background-size:100% 100%;background-attachment:local;background-color:color-mix(in srgb,var(--modern-table-background,#0064db),#111344 85%)}
 
-.game-topbar[inert] button,.game-topbar[inert] a{opacity:.4;filter:grayscale(1);cursor:default}
+.game-topbar button:disabled{opacity:.4;filter:grayscale(1);cursor:default}
 
 [data-theme] #game button[aria-disabled=true]{opacity:.4;cursor:default}

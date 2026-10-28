@@ -30,6 +30,9 @@ export function cardFacts(card){
 }
 
 export const RELEASE_NOTES = [
+ ['v2.2.0 · October 28, 2026', [
+  'Only Game settings and Game guide disable during setup, dialogs, and pending actions. The header expand/collapse arrow, library arrow, and New game stay enabled. Refresh restores the current deal and updates the two utility buttons to match its state.',
+ ]],
  ['v2.1.0 · October 27, 2026', [
   'Preserved revealed hands on refresh and re-entry, disabled and grayed Monopoly Deal navigation during setup, dialogs, and pending actions, contained table scrolling, and required free discards down to seven before playing.',
   'Removed miniature setup label scroll panes and duplicate hosted safe-area spacing beneath the hand. The blue background stays anchored during keyboard changes, the hosted frame keeps its height through focus and blur during setup, and the surrounding canvas follows the table color. The setup backdrop and launcher canvas use matching dark blue while setup is open, including around the keyboard and browser bars. Rent dots scale with card size across hand, preview, and property miniatures, using separated round SVG dots to keep every rent row visible without merging into solid lines when zooming. Player and computer name fields use shorter widths. Entered player names match the larger placeholder text size and are capped at 12 characters, with a short toast above the keyboard only for over-limit typing or pastes and a name-check reminder on the final review screen. Fixed header clicks reopening the game so the navigation arrow expands and collapses normally.',

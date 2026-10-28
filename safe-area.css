@@ -99,6 +99,5 @@ html.deal-host-open.deal-setup-locked body,
 html.deal-host-open.deal-setup-locked #gameView,
 html.deal-host-open.deal-setup-locked #gameFrame{background:var(--deal-setup-background,#092c69)}
 
-/* Monopoly Deal owns input during setup, dialogs, and pending actions. */
-body.game-open #gameView .game-toolbar[inert] button,
-body.game-open #gameView .game-toolbar[inert] .back-button{opacity:.4;cursor:default;filter:grayscale(1)}
+/* Only settings and guide lock during setup, dialogs, and pending actions. */
+body.game-open #gameView [data-deal-command]:disabled{opacity:.4;cursor:default;filter:grayscale(1)}

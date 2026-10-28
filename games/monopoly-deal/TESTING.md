@@ -52,3 +52,5 @@ v1.5.0 coverage updates obsolete Hide controls to reload/handoff privacy, uses e
 
 
 v1.5.0 table fixes verify direct table-wild editing, money-only banking in the UI and engine for both AI levels, rent rejection against assetless opponents without spending cards or plays, real selected-card previews, and compact property reading cards with controls below the face. Property-view entry tests double-click the heading so they do not accidentally trigger the new direct wild-edit shortcut.
+
+Header control coverage checks that only Game settings and Game guide disable during setup, dialogs, and pending actions. Both navigation arrows and New game stay enabled; refresh restores the deal and releases the utility controls, and leaving during setup releases the host lock.

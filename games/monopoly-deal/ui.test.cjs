@@ -1192,11 +1192,11 @@ test('refresh cancels an unfinished human action without losing its card or play
  await playFirst(p);await choose(p,0);await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);await conservation(p);await close(p);
 });
 
-test('v2.1.0 matches the game, launcher and single same-day release entry',async()=>{
- const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v2\.1\.0/);
- await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v2\.1\.0/);
- await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v2.1.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-10-27'}).count(),1);
- await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v2.1.0');await close(p);
+test('v2.2.0 matches the game, launcher and single same-day release entry',async()=>{
+ const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v2\.2\.0/);
+ await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v2\.2\.0/);
+ await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v2.2.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-10-28'}).count(),1);
+ await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v2.2.0');await close(p);
 });
 
 test('own table wilds change color directly without opening Manage',async()=>{
@@ -1469,18 +1469,21 @@ test('player names warn at 12 characters and prompt review before proceeding',as
  await close(p);
 });
 
-test('host header controls are disabled and gray until name setup closes',async()=>{
+test('host keeps navigation enabled while settings and guide gray out during name setup',async()=>{
  const p=await open({width:420,height:780},undefined,{isMobile:true,hasTouch:true});
  await p.goto(origin+'/index.html#monopoly-deal');const game=p.frameLocator('#gameFrame');
  await game.locator('#ready-new').click();await game.locator('#start').click();
  const arrow=p.locator('#toolbarCollapseButton');
- await p.waitForFunction(()=>document.querySelector('#toolbarCollapseButton').disabled);
- assert.equal(await p.locator('.game-toolbar').evaluate(el=>el.inert),true);
- assert.equal(await arrow.evaluate(el=>getComputedStyle(el).opacity),'0.4');
- assert.equal(await p.locator('#backButton').getAttribute('aria-disabled'),'true');
- await arrow.evaluate(el=>el.click());assert.equal(await arrow.getAttribute('aria-expanded'),'false');
+ await p.waitForFunction(()=>document.querySelector('[data-deal-command="appearance"]').disabled);
+ assert.equal(await p.locator('.game-toolbar').evaluate(el=>el.inert),false);
+ assert.equal(await p.locator('[data-deal-command="appearance"]').evaluate(el=>getComputedStyle(el).opacity),'0.4');
+ assert.equal(await p.locator('#backButton').getAttribute('aria-disabled'),null);
+ await arrow.tap();assert.equal(await arrow.getAttribute('aria-expanded'),'true');
+ assert.equal(await p.locator('[data-deal-command="new"]').isEnabled(),true);
+ assert.equal(await p.locator('[data-deal-command="guide"]').isDisabled(),true);
+ await arrow.tap();assert.equal(await arrow.getAttribute('aria-expanded'),'false');
  await game.locator('#wizard-cancel').click();
- await p.waitForFunction(()=>!document.querySelector('#toolbarCollapseButton').disabled);
+ await p.waitForFunction(()=>!document.querySelector('[data-deal-command="appearance"]').disabled);
  await arrow.tap();await p.waitForFunction(()=>document.querySelector('#toolbarCollapseButton').getAttribute('aria-expanded')==='true');
  await close(p);
 });
@@ -1680,27 +1683,44 @@ test('computer players enforce seven cards before playing without a human discar
  await conservation(p);await close(p);
 });
 
-test('Monopoly Deal nav follows dialogs and busy actions and releases when they finish',async()=>{
+test('Monopoly Deal only locks settings and guide through dialogs, actions, and refresh',async()=>{
  const p=await open({width:420,height:780});await p.goto(origin+'/index.html#monopoly-deal');
- await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();const game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));
+ await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();let game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));
+ const checkLocked=async locked=>{
+  await p.waitForFunction(locked=>document.querySelector('[data-deal-command="appearance"]').disabled===locked,locked);
+  assert.equal(await p.locator('[data-deal-command="guide"]').isDisabled(),locked);
+  assert.equal(await p.locator('.game-toolbar').evaluate(el=>el.inert),false);
+  for(const selector of ['#toolbarCollapseButton','#backButton','[data-deal-command="new"]'])assert.equal(await p.locator(selector).isEnabled(),true);
+  assert.equal(await game.locator('#game-settings').isDisabled(),locked);
+  assert.equal(await game.locator('#rules').isDisabled(),locked);
+  assert.equal(await game.locator('#new').isEnabled(),true);
+ };
  await p.locator('#toolbarCollapseButton').click();await fixture(game,'sly',2);
  await game.locator('[data-card]').first().click();await game.locator('#play-card').click();await game.locator('#choice[open]').waitFor();
- await p.waitForFunction(()=>document.querySelector('.game-toolbar').inert);
- assert.ok(await p.locator('.game-toolbar button').evaluateAll(buttons=>buttons.every(b=>b.disabled)));
- assert.equal(await p.locator('[data-deal-command="new"]').evaluate(el=>getComputedStyle(el).opacity),'0.4');
- await p.locator('#backButton').evaluate(el=>el.click());assert.equal(await p.locator('#gameView').isVisible(),true);
+ await checkLocked(true);
+
+ assert.equal(await p.locator('[data-deal-command="appearance"]').evaluate(el=>getComputedStyle(el).opacity),'0.4');
+ await p.locator('#toolbarCollapseButton').click();assert.equal(await p.locator('#gameView').evaluate(el=>el.classList.contains('toolbar-collapsed')),true);await p.locator('#toolbarCollapseButton').click();
  await game.locator('#choice-close').click();await idle(game);
- await p.waitForFunction(()=>!document.querySelector('.game-toolbar').inert);
+ await checkLocked(false);
  assert.equal(await p.locator('[data-deal-command="new"]').isEnabled(),true);
  await game.evaluate(()=>{void window.__dealTest.run(()=>new Promise(resolve=>{window.releaseTestAction=resolve}));});
- await p.waitForFunction(()=>document.querySelector('.game-toolbar').inert);
+ await checkLocked(true);
  assert.equal(await game.locator('#play-card').evaluate(el=>getComputedStyle(el).opacity),'0.4');
  await game.evaluate(()=>window.releaseTestAction());await idle(game);
- await p.waitForFunction(()=>!document.querySelector('.game-toolbar').inert);
+ await checkLocked(false);
  await p.locator('[data-deal-command="appearance"]').click();await game.locator('#appearance-dialog[open]').waitFor();
- await p.waitForFunction(()=>document.querySelector('.game-toolbar').inert);
+ await checkLocked(true);
  await game.locator('#appearance-dialog .wizard-heading button').click();
- await p.waitForFunction(()=>!document.querySelector('.game-toolbar').inert);
+ await checkLocked(false);
+ await p.locator('[data-deal-command="new"]').click();await game.locator('#setup-wizard[open]').waitFor();await checkLocked(true);
+ await p.reload();await p.frameLocator('#gameFrame').locator('[data-card]').first().waitFor();
+ game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));await checkLocked(false);
+ await p.locator('#toolbarCollapseButton').click();
+ await game.locator('.current-properties .asset-panel-title').dblclick();await game.locator('#table-viewer[open]').waitFor();await checkLocked(true);
+ await p.locator('#toolbarCollapseButton').click();await p.locator('#toolbarCollapseButton').click();
+ await game.locator('#table-view-close').click();await checkLocked(false);
+ await p.locator('[data-deal-command="new"]').click();await game.locator('#setup-wizard[open]').waitFor();await checkLocked(true);
  await p.locator('#backButton').click();await p.locator('[data-game="yahtzee"]').first().evaluate(el=>el.click());
  await p.waitForFunction(()=>document.querySelector('#gameLoadState').hidden);
  assert.equal(await p.locator('.game-toolbar').evaluate(el=>el.inert),false);assert.equal(await p.locator('#toolbarCollapseButton').isEnabled(),true);

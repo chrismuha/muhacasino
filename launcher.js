@@ -1,6 +1,6 @@
 const games = {
   "monopoly-deal": {
-    title: "Monopoly Deal", version: "v2.1.0", subtitle: "2–4 Player Card Game",
+    title: "Monopoly Deal", version: "v2.2.0", subtitle: "2–4 Player Card Game",
     path: "games/monopoly-deal/index.html", className: "card-deal",
     reels: "M DEAL M", icon: "▣", categories: ["table"],
   },
@@ -101,7 +101,7 @@ function syncHostedCabinetScreens(gameId = null) {
   device.classList.toggle("cabinet-non-slot-game", !slotGameActive);
 }
 
-const SITE_BUILD = "20261027-deal-nav-lock-v100";
+const SITE_BUILD = "20261028-deal-header-controls-v101";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");
@@ -211,15 +211,10 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncGameVi
 syncGameViewport();
 
 function syncDealControls(){
- const toolbar=gameView.querySelector('.game-toolbar');
  const locked=activeGameId==='monopoly-deal'&&(dealControlsLocked||document.documentElement.classList.contains('deal-setup-locked'));
- if(toolbar.inert===locked)return;
- toolbar.inert=locked;
- toolbar.querySelectorAll('button').forEach(button=>{
-  if(locked){button.dataset.disabledBeforeDealLock=String(button.disabled);button.disabled=true;}
-  else{button.disabled=button.dataset.disabledBeforeDealLock==='true';delete button.dataset.disabledBeforeDealLock;}
+ gameView.querySelectorAll('[data-deal-command="appearance"], [data-deal-command="guide"]').forEach(button=>{
+  button.disabled=locked;
  });
- if(locked)backButton.setAttribute('aria-disabled','true');else backButton.removeAttribute('aria-disabled');
 }
 new MutationObserver(syncDealControls).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
 
