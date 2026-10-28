@@ -1,10 +1,10 @@
 import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-orange-deck-dots-v66';
 import {paginateViewer} from './view-pages.mjs?build=20261025-orange-deck-dots-v66';
 import {aiChoice,aiPlay} from './ai.mjs?build=20261025-orange-deck-dots-v66';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261028-deal-property-notices-v106';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261028-deal-property-notices-v106';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261028-deal-phone-gutters-v107';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261028-deal-phone-gutters-v107';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-orange-deck-dots-v66';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261028-deal-property-notices-v106';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261028-deal-phone-gutters-v107';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261025-orange-deck-dots-v66';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -784,7 +784,7 @@ document.querySelectorAll('[data-table-color]').forEach(button => {
 // Only public table cards appear here; private hands and the draw order stay hidden.
 let tableViewIndex = 0;
 function tableViews() {
-  const guideViews = [{key:'rules',title:'Rules',description:'A step-by-step guide to playing Monopoly Deal.'},{key:'cards',title:'Cards',description:'Browse every card design. Use the arrows or Left/Right keys.'},{key:'release-notes',title:'Release notes',description:'Monopoly Deal · v1.5.0 · October 28, 2026 · Larger cards and compact tables'}];
+  const guideViews = [{key:'rules',title:'Rules',description:'A step-by-step guide to playing Monopoly Deal.'},{key:'cards',title:'Cards',description:'Browse every card design. Use the arrows or Left/Right keys.'},{key:'release-notes',title:'Release notes',description:'Monopoly Deal · v2.0.0 · October 28, 2026 · Larger cards and compact tables'}];
   if (!state) return guideViews;
   return [
     {key:'discard', kind:'deck', title:'Discard pile', cards:[...state.discard].reverse(), description:'Newest discard first. These cards may return when the draw pile runs out.'},

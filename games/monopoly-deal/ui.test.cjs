@@ -634,13 +634,13 @@ test('hand trackpad scrolling and catalog swipe/trackpad navigation preserve pla
  await close(p);
 });
 
-test('guide and release notes match deck facts, current controls, and the consolidated v1.5.0 label',async()=>{
+test('guide and release notes match deck facts, current controls, and the consolidated v2.0.0 label',async()=>{
  const p=await open();const facts=await p.evaluate(async()=>{const {GUIDE_RULES,RELEASE_NOTES,cardDesigns}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),notes:JSON.stringify(RELEASE_NOTES),designs:cardDesigns().length,cards:deck().length,title:RELEASE_NOTES[0][0]}});
- assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.match(facts.title,/v1\.5\.0/);
+ assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.match(facts.title,/v2\.0\.0/);
  for(const instruction of ['Double-tap','Close returns','no manual Hide','trackpad','Coming soon','Continue turn','same category','Bank cards first','one bullet for each card','Forced Deal lists both'])assert.ok(facts.rules.toLowerCase().includes(instruction.toLowerCase()),instruction);
  assert.doesNotMatch(facts.notes,/overlapping hand below|Privacy separately hides|actions below the selected|Collapsible Table appearance/);
  const history=await readFile(path.join(root,'about.html'),'utf8'),section=history.slice(history.indexOf('<article id="monopoly-deal"'),history.indexOf('<article id="sorry"'));
- assert.equal((section.match(/2026-10-28/g)||[]).length,1);assert.match(section,/v1\.5\.0/);assert.doesNotMatch(section,/separate Privacy control/);
+ assert.equal((section.match(/2026-10-28/g)||[]).length,1);assert.match(section,/v2\.0\.0/);assert.doesNotMatch(section,/separate Privacy control/);
  await close(p);
 });
 test('private payment resumes the same turn with Continue turn rather than Reveal my hand',async()=>{
@@ -1192,11 +1192,11 @@ test('refresh cancels an unfinished human action without losing its card or play
  await playFirst(p);await choose(p,0);await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);await conservation(p);await close(p);
 });
 
-test('v1.5.0 matches the game, launcher and single same-day release entry',async()=>{
- const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v1\.5\.0/);
- await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v1\.5\.0/);
- await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v1.5.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-10-28'}).count(),1);
- await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v1.5.0');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();await close(p);
+test('v2.0.0 matches the game, launcher and single same-day release entry',async()=>{
+ const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v2\.0\.0/);
+ await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v2\.0\.0/);
+ await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v2.0.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-10-28'}).count(),1);
+ await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v2.0.0');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();await close(p);
 });
 
 test('own table wilds change color directly without opening Manage',async()=>{
@@ -1255,7 +1255,7 @@ test('selected cards show an actual face and phone property cards fit without ov
  await close(p);
 });
 
-test('secondary text is white and the guide consistently documents the v1.5 rules',async()=>{
+test('secondary text is white and the guide consistently documents the v2.0 rules',async()=>{
  const p=await open({width:420,height:780});await fixture(p,'house',2);
  for(const selector of ['.asset-count','.opponent-count','.action-summary-status','.current-properties .group-caption']){
   const style=await p.locator(selector).first().evaluate(el=>({color:getComputedStyle(el).color,size:parseFloat(getComputedStyle(el).fontSize)}));
@@ -1893,4 +1893,24 @@ test('a crowded Deal Breaker notification keeps every card readable in a scrolli
  assert.ok(await p.locator('#game-toast li').last().evaluate(el=>{const r=el.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight}));
  await p.locator('#game-toast').focus();await p.locator('#game-toast').press('Escape');assert.equal(await p.locator('#game-toast').isVisible(),false);
  await conservation(p);await close(p);
+});
+
+test('iPhone Air normal play has no residual vertical scroll with populated tables and selections',async()=>{
+ for(const height of [700,742,780,844,860,912])for(const hosted of [false,true]){
+  const p=await open({width:420,height},undefined,{isMobile:true,hasTouch:true});let game=p;
+  if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+  for(const expanded of hosted&&height>=780?[false,true]:[false]){
+   if(hosted && (await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded')==='true')!==expanded)await p.locator('#toolbarCollapseButton').click();
+  for(const kind of ['hand','hotel']){
+   await fixture(game,kind,4);
+   for(const selector of [null,'[data-card]','[data-card]:has(.wild-half)']){
+    if(selector){const card=game.locator(selector).first();if(!await card.count())continue;await game.locator('#deselect').click({force:true});await card.evaluate(el=>el.click());}
+    const geometry=await game.evaluate(()=>{document.body.scrollTop=1e6;return {scroll:document.body.scrollTop,total:document.body.scrollHeight,height:document.body.clientHeight,hand:document.querySelector('.deal-hand').getBoundingClientRect().bottom,viewport:innerHeight,rows:[...document.querySelectorAll('.game-topbar,main,.deal-table>*,.deal-hand>*')].map(el=>({name:el.className,top:el.getBoundingClientRect().top,height:el.getBoundingClientRect().height,padding:getComputedStyle(el).padding,margin:getComputedStyle(el).margin}))};});
+    assert.equal(geometry.scroll,0,JSON.stringify({height,hosted,expanded,kind,selector,geometry}));
+    assert.ok(geometry.hand<=geometry.viewport,JSON.stringify({height,hosted,expanded,kind,selector,geometry}));
+   }
+  }
+  }
+  await close(p);
+ }
 });

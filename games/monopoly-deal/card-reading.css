@@ -888,3 +888,13 @@ html[data-theme=modern] body{background-size:100% 100%;background-attachment:loc
 .game-toast.has-card-details li{margin:5px 0;line-height:1.4}
 .game-toast.has-card-details p{margin:8px 0 0;color:inherit;font:inherit}
 .game-toast.has-card-details:focus-visible{outline:2px solid #fff;outline-offset:-4px}
+
+/* Safari's browser controls can leave a short portrait play area. Trim gutters,
+   keeping card faces, selection lift, and action hit areas at their normal sizes. */
+@media(max-width:600px) and (max-height:740px){
+ [data-theme=modern] .game-topbar{padding-block:1px}
+ [data-theme=modern] .deal-table:not(.has-selection){row-gap:0}
+ [data-theme=modern] .opponents{padding-bottom:0}
+ [data-theme=modern] .opponent-heading{padding-block:0}
+ [data-theme=modern] .deal-hand .cards{padding-bottom:0}
+}
