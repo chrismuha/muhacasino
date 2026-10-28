@@ -761,3 +761,5 @@ html[data-theme=modern] body{min-height:100vh;min-height:100lvh;background-size:
 /* Entered names keep the same readable size as the name prompt. */
 #setup-wizard #names input,#setup-wizard.setup-compact #names input{font-size:22px;line-height:1.2}
 #setup-wizard #names input::placeholder{font-size:inherit}
+
+#setup-wizard .name-check-reminder{display:block;margin:8px 0 0;color:#fff;font-size:14px;line-height:1.35;white-space:normal}

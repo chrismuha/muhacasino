@@ -531,8 +531,8 @@ $('#setup-wizard').addEventListener('focusin',scheduleSetupViewport);
 function setup() {
   $('#setup-content').innerHTML = `<form class="setup" id="setup-form" novalidate>
     <section data-wizard-step="1"><h3>Choose your opponents</h3><label for="opponent-mode">Mode <select id="opponent-mode"><option value="ai" selected>Human vs AI</option><option value="human">Human vs human</option></select></label><p>Choose the total number of players. In AI mode, the other seats are computer opponents.</p><div id="ai-difficulty-field"><label for="ai-difficulty">Difficulty <select id="ai-difficulty" aria-describedby="ai-difficulty-help"><option value="easy">Easy</option><option value="normal" selected>Normal</option></select></label><p id="ai-difficulty-help">Easy uses the original computer strategy. Normal builds different color sets and targets opponents close to winning.</p></div><label for="count">Players <select id="count" required><option>2</option><option>3</option><option>4</option></select></label></section>
-    <section data-wizard-step="2" hidden><h3>Who’s at the table?</h3><p class="setup-required">Enter a different name for everyone. All player names are required.</p><div id="names"></div></section>
-    <section data-wizard-step="3" hidden><h3>Ready to deal?</h3><p>Each player gets five private cards. The first player draws two more to start.</p><ul id="wizard-review"></ul><p id="wizard-replace" hidden>Dealing starts a new game and replaces the current one.</p></section>
+    <section data-wizard-step="2" hidden><h3>Who’s at the table?</h3><p class="setup-required">Enter a different name for everyone. All player names are required.</p><div id="names"></div><small class="name-check-reminder">12 characters maximum. Double-check each name before continuing.</small></section>
+    <section data-wizard-step="3" hidden><h3>Ready to deal?</h3><p>Each player gets five private cards. The first player draws two more to start.</p><small class="name-check-reminder">Check that these are the names you want before dealing.</small><ul id="wizard-review"></ul><p id="wizard-replace" hidden>Dealing starts a new game and replaces the current one.</p></section>
     <div class="wizard-actions"><button id="wizard-back" type="button" hidden>← Back</button><button id="start" type="submit" class="primary">Continue →</button></div>
   </form>`;
   let wizardStep = 1;
@@ -554,9 +554,23 @@ function setup() {
     const previous = [...document.querySelectorAll('#names input')].map(input=>input.value);
     $('#names').innerHTML = Array.from({length:Number($('#count').value)}, (_,i)=>`
       <label for="player-name-${i}">Player ${i+1} name <span class="required-label">(required)</span></label>
-      <input id="player-name-${i}" name="player-${i+1}" required aria-required="true" maxlength="16" title="Maximum 16 characters" placeholder="Enter player ${i+1}’s name" aria-describedby="player-error-${i}" autocomplete="off" value="${esc($('#opponent-mode').value==='ai'&&i>0?'Computer '+i:previous[i] || '')}" ${$('#opponent-mode').value==='ai'&&i>0?'readonly aria-label="Computer opponent '+i+'"':''}>
+      <input id="player-name-${i}" name="player-${i+1}" required aria-required="true" data-name-limit="12" title="Maximum 12 characters" placeholder="Enter player ${i+1}’s name" aria-describedby="player-error-${i}" autocomplete="off" value="${esc($('#opponent-mode').value==='ai'&&i>0?'Computer '+i:previous[i] || '')}" ${$('#opponent-mode').value==='ai'&&i>0?'readonly aria-label="Computer opponent '+i+'"':''}>
       <p class="setup-error" id="player-error-${i}" hidden></p>`).join('');
+    document.querySelectorAll('#names input:not([readonly])').forEach(input=>{
+      const exceedsLimit=text=>input.value.length-(input.selectionEnd-input.selectionStart)+text.length>12;
+      const warnLimit=()=>showToast('Player names can be up to 12 characters. Double-check the name you want before continuing.');
+      input.addEventListener('beforeinput',event=>{
+        if(event.inputType?.startsWith('insert')&&event.data&&exceedsLimit(event.data)){
+          event.preventDefault();warnLimit();
+        }
+      });
+      input.addEventListener('paste',event=>{
+        const text=event.clipboardData?.getData('text');
+        if(text&&exceedsLimit(text)){event.preventDefault();warnLimit();}
+      });
+    });
     document.querySelectorAll('#names input').forEach(input=>input.addEventListener('input',()=>{
+      if(input.value.length>12){input.value=input.value.slice(0,12);showToast('Player names can be up to 12 characters. Double-check the name you want before continuing.');}
       input.removeAttribute('aria-invalid');
       document.getElementById(input.getAttribute('aria-describedby')).hidden = true;
     }));
@@ -588,7 +602,7 @@ function setup() {
     inputs.forEach((input, i)=>{
       const name = playerNames[i];
       const duplicate = name && playerNames.some((other,j)=>j!==i && other.toLocaleLowerCase()===name.toLocaleLowerCase());
-      const error = !name ? `Enter a name for Player ${i+1}.` : name.length>16 ? `Player ${i+1}’s name must be 16 characters or fewer.` : duplicate ? `Player ${i+1} needs a different name. Each player name must be unique.` : '';
+      const error = !name ? `Enter a name for Player ${i+1}.` : name.length>12 ? `Player ${i+1}’s name must be 12 characters or fewer.` : duplicate ? `Player ${i+1} needs a different name. Each player name must be unique.` : '';
       const message = document.getElementById(input.getAttribute('aria-describedby'));
       message.textContent = error;
       message.hidden = !error;

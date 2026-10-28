@@ -87,7 +87,7 @@ body.game-open #gameView #gameFrame{
 
 /* Browser chrome already ends the visual viewport above its bottom bar. */
 @media(display-mode:browser){
- body.game-open #gameView[data-game="monopoly-deal"]{--casino-safe-bottom:0px}
+ body.game-open #gameView[data-hosted-game="monopoly-deal"]{--casino-safe-bottom:0px}
 }
 
 /* Paint the complete host canvas, including Safari's exposed viewport edges. */

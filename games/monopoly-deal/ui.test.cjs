@@ -1451,3 +1451,29 @@ test('hosted blue canvas remains painted and frame stays stable while keyboard v
  assert.equal(await p.locator('html').evaluate(el=>el.classList.contains('deal-host-open')),false);
  await close(p);
 });
+
+test('player names warn at 12 characters and prompt review before proceeding',async()=>{
+ const p=await open({width:420,height:780});
+ await p.locator('#ready-new').click();await p.locator('#start').click();
+ const input=p.locator('#player-name-0');
+ assert.equal(await input.getAttribute('data-name-limit'),'12');
+ await input.fill('abcdefghijkl');await input.press('End');await input.pressSequentially('m');
+ assert.equal(await input.inputValue(),'abcdefghijkl');
+ await p.locator('#game-toast').waitFor();assert.match(await p.locator('#game-toast').textContent(),/12 characters/);
+ assert.equal(await p.locator('[data-wizard-step="2"] .name-check-reminder').isVisible(),true);
+ await input.fill('Chris');
+ await input.evaluate(el=>{el.setSelectionRange(5,5);const data=new DataTransfer();data.setData('text',' far too long');el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:data,bubbles:true,cancelable:true}));});
+ assert.equal(await input.inputValue(),'Chris');assert.match(await p.locator('#game-toast').textContent(),/12 characters/);
+ await p.locator('#start').click();assert.equal(await p.locator('[data-wizard-step="3"] .name-check-reminder').isVisible(),true);
+ await close(p);
+});
+
+test('host header arrow responds to touch while name setup owns the scroll lock',async()=>{
+ const p=await open({width:420,height:780},undefined,{isMobile:true,hasTouch:true});
+ await p.goto(origin+'/index.html#monopoly-deal');const game=p.frameLocator('#gameFrame');
+ await game.locator('#ready-new').click();await game.locator('#start').click();
+ const arrow=p.locator('#toolbarCollapseButton');
+ await arrow.tap();await p.waitForFunction(()=>document.querySelector('#toolbarCollapseButton').getAttribute('aria-expanded')==='true');
+ await arrow.tap();await p.waitForFunction(()=>document.querySelector('#toolbarCollapseButton').getAttribute('aria-expanded')==='false');
+ await game.locator('#wizard-cancel').click();await close(p);
+});
