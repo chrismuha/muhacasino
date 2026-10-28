@@ -1354,7 +1354,8 @@ test('finished-game Game Library retains readable button colors, including visit
 });
 
 test('compact action previews wrap complete instructions and keep titles inside their circles',async()=>{
- const p=await open({width:390,height:844});
+ for(const viewport of [{width:390,height:844},{width:768,height:1024},{width:1440,height:900}]){
+ const p=await open(viewport);
  for(const action of ['debt','breaker']){
   await fixture(p,action,2);await p.locator('#game [data-card]').first().click();
   const geometry=await p.locator('#preview-open .deal-face').evaluate(face=>{
@@ -1366,6 +1367,7 @@ test('compact action previews wrap complete instructions and keep titles inside 
   assert.equal(geometry.wrap,'normal');assert.ok(geometry.textFits);assert.ok(geometry.titleFits);assert.ok(geometry.allLinesVisible,'Every instruction line fits inside the preview');if(action==='breaker')assert.equal(geometry.text,'Steal a complete set, including buildings.');
  }
  await close(p);
+ }
 });
 
 test('payment popups order all assets by ascending value without reordering assets',async()=>{
@@ -1745,5 +1747,40 @@ test('responsive table fits normal play with larger tablet previews and desktop 
    }
    await shot(p,`responsive-larger-cards-${viewport.width}-${hosted?'hosted':'standalone'}`);await close(p);
   }
+ }
+});
+
+test('tablet and desktop action controls grow while deck labels and preview artwork stay aligned',async()=>{
+ for(const viewport of [{width:390,height:844},{width:768,height:1024},{width:1024,height:768},{width:1440,height:900},{width:1536,height:864}]){
+  const tablet=viewport.width===768||viewport.width===1024,desktop=viewport.width>=1440;
+  const p=await open(viewport,undefined,tablet?{hasTouch:true,isMobile:true}:{});
+  await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();
+  const game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));await fixture(game,'hand',4);
+  for(const kind of ['wild','money','rent']){
+   const id=await game.evaluate(kind=>window.__dealTest.state.players[0].hand.find(c=>kind==='wild'?c.type==='property'&&c.colors.length===2:kind==='money'?c.type==='money':c.action==='rent').id,kind);
+   await game.locator(`[data-card="${id}"]`).evaluate(el=>el.click());
+   const geometry=await game.evaluate(()=>{
+    const box=el=>el.getBoundingClientRect().toJSON(),stage=box(document.querySelector('.deal-stage')),deck=document.querySelector('.deck-icon');
+    const controls=[...document.querySelectorAll('.deal-actions .round-action')].filter(el=>el.getBoundingClientRect().height).map(el=>({id:el.id,button:box(el),disc:box(el.querySelector('.action-disc')),font:parseFloat(getComputedStyle(el).fontSize)}));
+    const labels=[...document.querySelectorAll('.deck-label,.deck-count>span')].map(el=>{const r=document.createRange();r.selectNodeContents(el);return box(r)});
+    const preview=document.querySelector('#preview-open .action-medallion'),active=document.querySelector('.modern-hand-card.is-active .action-medallion');
+    return {stage,controls,labels,deck:box(deck),scroll:document.body.scrollHeight,client:document.body.clientHeight,preview:preview?box(preview):null,handArt:active?box(active):null};
+   });
+   assert.equal(geometry.scroll,geometry.client,JSON.stringify({viewport,kind,geometry}));
+   for(const control of geometry.controls){
+    assert.equal(control.disc.width,desktop?64:tablet?44:32);assert.equal(control.disc.height,control.disc.width);
+    if(tablet||desktop)assert.equal(control.font,desktop?22:18);
+    assert.ok(control.button.right<=geometry.stage.right+1&&control.button.left>=geometry.stage.left-1);
+   }
+   for(const label of geometry.labels)assert.ok(Math.abs((label.left+label.right)/2-(geometry.deck.left+geometry.deck.right)/2)<1,JSON.stringify({viewport,kind,geometry}));
+   assert.equal(geometry.deck.width,desktop?72:48);
+   if(kind==='rent'&&(tablet||desktop))assert.ok(geometry.preview.width>=geometry.handArt.width,JSON.stringify({viewport,geometry}));
+  }
+  if(tablet||desktop){
+   await game.locator('#preview-open').click();
+   const art=await game.locator('.selected-table-card .deal-face').evaluate(face=>{const a=face.querySelector('.action-medallion').getBoundingClientRect(),f=face.getBoundingClientRect();return{ratio:a.width/f.width,width:a.width,height:a.height,left:a.left,right:a.right,faceLeft:f.left,faceRight:f.right}});
+   assert.ok(art.ratio>=.6&&art.ratio<=.66);assert.ok(Math.abs(art.width-art.height)<1);assert.ok(art.left>=art.faceLeft&&art.right<=art.faceRight);
+  }
+  await shot(p,`larger-action-controls-${viewport.width}`);await close(p);
  }
 });

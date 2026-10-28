@@ -844,3 +844,36 @@ html[data-theme=modern] body{background-size:100% 100%;background-attachment:loc
  [data-theme=modern] .table-tools{gap:4px}
  [data-theme=modern] .deal-hand .cards{padding-top:12px;padding-bottom:6px}
 }
+
+/* Keep deck labels centered on the card, including compact phone layouts. */
+[data-theme=modern] .draw-deck .deck-label,
+[data-theme=modern] .draw-deck .deck-count{text-align:center}
+[data-theme=modern] .draw-deck .deck-count{justify-items:center}
+#game .draw-deck .deal-card-back.deck-icon{margin-inline:auto}
+
+/* Action controls grow with the available tablet and desktop space. */
+@media(min-width:768px) and (min-height:601px){
+ [data-theme=modern] .deal-table{--deal-action-size:44px;--deal-action-label:18px;--deal-action-symbol:28px;--deal-action-gap:8px}
+ [data-theme=modern] .deal-actions :is(#flip-card,#bank-card,#play-card,#end).round-action{display:grid;grid-template-columns:var(--deal-action-size) minmax(0,1fr);column-gap:var(--deal-action-gap);min-height:var(--deal-action-size);font-size:var(--deal-action-label)}
+ [data-theme=modern] .deal-actions .action-disc{width:var(--deal-action-size);height:var(--deal-action-size);font-size:var(--deal-action-symbol)}
+ [data-theme=modern] .deal-table .deal-actions,
+ [data-theme=modern] .deal-table.card-selected:not(.has-selection) .deal-actions{gap:8px}
+ [data-theme=modern] .has-card-preview .deal-face{border-width:2px}
+ /* Match the hand artwork proportions in the larger center preview. */
+ [data-theme=modern] .has-card-preview .deal-face[data-face=action] .face-action-top{height:27%}
+ [data-theme=modern] .has-card-preview .deal-face[data-face=action] .action-medallion{width:66%;margin:8% 0 4%;padding:7%}
+ [data-theme=modern] .has-card-preview .deal-face[data-face=action] .face-instructions{font-size:5.5cqw;line-height:1.2}
+ [data-theme=modern] .has-card-preview .money-medallion{width:66%}
+ [data-theme=modern] .has-card-preview .any-color-disc{width:47%}
+ /* Full reading cards scale their artwork with their own width as well. */
+ [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .action-medallion,
+ [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .money-medallion{width:64%;height:auto;aspect-ratio:1;margin:12px auto}
+ [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .any-color-disc{width:45%;height:auto;aspect-ratio:1}
+ [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .action-medallion>span{font-size:clamp(20px,7cqw,30px)}
+}
+@media(min-width:1024px) and (min-height:601px) and (hover:hover) and (pointer:fine){
+ [data-theme=modern] .deal-table{--deal-action-size:64px;--deal-action-label:22px;--deal-action-symbol:38px;--deal-action-gap:10px}
+ #game .draw-deck .deal-card-back.deck-icon{width:72px;height:104px;padding:6px;font-size:12px}
+ #game .draw-deck .deck-icon .card-back-city{flex-basis:44px;height:44px;font-size:38px}
+ #game .draw-deck .deck-icon b{font-size:9px}
+}

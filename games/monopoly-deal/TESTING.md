@@ -57,3 +57,6 @@ Header control coverage checks that only Game settings and Game guide disable du
 
 
 v1.5.0 responsive checks cover populated hosted tables at 390×700, 768×1024, 1440×900, 1536×864, and 1920×1080, including standalone desktop play. Body scroll height must equal its client height exactly. Normal play fits vertically, selected previews stay within the stage, iPad/desktop previews grow, desktop mouse/trackpad hand cards grow, and phone cards keep their compact sizes. Enlarged phone reading cards retain accessible controls through scrolling inside the game. Release checks verify the consolidated v1.5.0 labels and single October 28 entry.
+
+
+Action sizing checks cover compact phones, touch tablets in portrait and landscape, and desktop screens. They verify larger action circles and labels, deck heading/count alignment, the larger desktop deck, no normal-play vertical overflow, and center-preview medallions at least as large as their hand counterparts. Enlarged reading-card artwork stays circular and scales with the card; long action instructions remain visible on phone, tablet, and desktop.
