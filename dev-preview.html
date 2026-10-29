@@ -95,6 +95,11 @@
        second radius on its iframe exposes the dark backing at all four corners. */
     .device.cabinet iframe { border-radius: 0; }
     @media (max-width: 700px) { main { padding: 14px; } .toolbar { position: static; } }
+    /* Current device uses the available browser area, without a simulated frame. */
+    main.current-device { padding: 0; display: block; overflow: hidden; }
+    .device.current-device { width: 100%; height: 100%; padding: 0; border-radius: 0; box-shadow: none; transition: none; }
+    .device.current-device iframe { border-radius: 0; }
+    main.current-device .device-stage { width: 100%; height: 100%; transition: none; }
   </style>
 </head>
 <body>
@@ -114,6 +119,7 @@
     </label>
     <label><span>Device</span>
       <select id="preset">
+        <option value="current" selected>Current device</option>
         <option value="402x874" data-cutout="island" data-home-indicator>iPhone 17</option>
         <option value="402x874" data-cutout="island" data-home-indicator>iPhone 17 Pro</option>
         <option value="440x956" data-cutout="island" data-home-indicator>iPhone 17 Pro Max</option>
@@ -129,7 +135,7 @@
         <option value="1032x1376">iPad Pro 13-inch</option>
         <option value="800x900">Foldable (Open)</option>
         <option value="344x882" data-cutout="punch">Foldable (Closed)</option>
-        <option value="1080x1920" data-cabinet selected>Casino Cabinet · 4-screen Portrait</option>
+        <option value="1080x1920" data-cabinet>Casino Cabinet · 4-screen Portrait</option>
         <option value="1920x1080" data-cabinet>Casino Cabinet · 4-screen Landscape</option>
         <option value="1280x1024" data-cabinet>Casino Cabinet · 4-screen 5:4</option>
         <option value="320x568">Small Phone</option>
@@ -169,6 +175,7 @@
     const device = $('#device');
     const deviceStage = $('#device-stage');
     const previewCanvas = $('#preview-canvas');
+    const previewArea = document.querySelector('main');
     const dimensions = $('#dimensions');
     const audit = $('#audit');
     const screenCutout = $('#screen-cutout');
@@ -339,6 +346,11 @@
     function applySafeArea(option, cutout) {
       const root = appPreview.contentDocument?.documentElement;
       if (!root) return;
+      if (preset.value === 'current') {
+        root.style.removeProperty('--safe-area-inset-top');
+        root.style.removeProperty('--safe-area-inset-bottom');
+        return;
+      }
       const topInsets = { island: '54px', notch: '44px', punch: '36px' };
       const offsets = { island: 22, notch: 13, punch: 23 };
       const customInset = `${Math.max(0, Number(cutoutHeight.value) || 0) + (offsets[cutout] || 0)}px`;
@@ -382,6 +394,7 @@
     }
 
     function fitPreview() {
+      if (preset.value === 'current') { updateCurrentDevice(); return; }
       const naturalWidth = device.offsetWidth;
       const naturalHeight = device.offsetHeight;
       if (!naturalWidth || !naturalHeight) return;
@@ -393,15 +406,36 @@
       deviceStage.style.height = `${Math.ceil(naturalHeight * scale)}px`;
     }
 
+    function updateCurrentDevice() {
+      if (preset.value !== 'current') return;
+      width.value = previewArea.clientWidth;
+      height.value = previewArea.clientHeight;
+      dimensions.textContent = `${width.value} × ${height.value} CSS px · Current device`;
+      auditLayout();
+    }
     function applyPreset() {
       const option = preset.selectedOptions[0];
       custom.classList.toggle('visible', preset.value === 'custom');
       applyCutout(option);
       homeIndicator.classList.toggle('hidden', !option?.hasAttribute('data-home-indicator'));
-      if (preset.value !== 'custom') resize(...preset.value.split('x'));
+      const isCurrent = preset.value === 'current';
+      previewArea.classList.toggle('current-device', isCurrent);
+      device.classList.toggle('current-device', isCurrent);
+      if (isCurrent) {
+        device.classList.remove('cabinet');
+        for (const property of ['width', 'height', '--cabinet-width', '--cabinet-height', '--preview-scale']) device.style.removeProperty(property);
+        deviceStage.style.removeProperty('width');
+        deviceStage.style.removeProperty('height');
+        updateCurrentDevice();
+      } else if (preset.value !== 'custom') {
+        resize(...preset.value.split('x'));
+      } else {
+        resize(width.value, height.value);
+      }
       window.setTimeout(auditLayout, 250);
     }
 
+    new ResizeObserver(updateCurrentDevice).observe(previewArea);
     preset.addEventListener('change', applyPreset);
     width.addEventListener('input', () => resize(width.value, height.value));
     height.addEventListener('input', () => resize(width.value, height.value));
