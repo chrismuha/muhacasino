@@ -634,13 +634,13 @@ test('hand trackpad scrolling and catalog swipe/trackpad navigation preserve pla
  await close(p);
 });
 
-test('guide and release notes match deck facts, current controls, and the current v2.0.0 label',async()=>{
+test('guide and release notes match deck facts, current controls, and the current v1.5.0 label',async()=>{
  const p=await open();const facts=await p.evaluate(async()=>{const {GUIDE_RULES,RELEASE_NOTES,cardDesigns}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),notes:JSON.stringify(RELEASE_NOTES),designs:cardDesigns().length,cards:deck().length,title:RELEASE_NOTES[0][0]}});
- assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.match(facts.title,/v2\.0\.0/);
+ assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.match(facts.title,/v1\.5\.0/);
  for(const instruction of ['Double-tap','Close returns','no manual Hide','trackpad','Coming soon','Continue turn','same category','Bank cards first','one bullet for each card','Forced Deal lists both'])assert.ok(facts.rules.toLowerCase().includes(instruction.toLowerCase()),instruction);
  assert.doesNotMatch(facts.notes,/overlapping hand below|Privacy separately hides|actions below the selected|Collapsible Table appearance/);
  const history=await readFile(path.join(root,'about.html'),'utf8'),section=history.slice(history.indexOf('<article id="monopoly-deal"'),history.indexOf('<article id="sorry"'));
- assert.equal((section.match(/2026-10-28/g)||[]).length,1);assert.match(section,/v2\.0\.0/);assert.doesNotMatch(section,/separate Privacy control/);
+ assert.equal((section.match(/2026-10-28/g)||[]).length,1);assert.match(section,/v1\.5\.0/);assert.doesNotMatch(section,/separate Privacy control/);
  await close(p);
 });
 test('private payment resumes the same turn with Continue turn rather than Reveal my hand',async()=>{
@@ -1192,11 +1192,11 @@ test('refresh cancels an unfinished human action without losing its card or play
  await playFirst(p);await choose(p,0);await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);await conservation(p);await close(p);
 });
 
-test('v2.0.0 matches the game, launcher and single same-day release entry',async()=>{
- const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v2\.0\.0/);
- await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v2\.0\.0/);
- await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v2.0.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-10-28'}).count(),1);
- await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v2.0.0');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();await close(p);
+test('v1.5.0 matches the game, launcher and single same-day release entry',async()=>{
+ const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v1\.5\.0/);
+ await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v1\.5\.0/);
+ await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v1.5.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-10-28'}).count(),1);
+ await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v1.5.0');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();await close(p);
 });
 
 test('own table wilds change color directly without opening Manage',async()=>{
