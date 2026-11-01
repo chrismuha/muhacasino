@@ -881,9 +881,9 @@ html[data-theme=modern] body{background-size:100% 100%;background-attachment:loc
 
 /* Completed property deals name every transferred card in readable bullet lines. */
 .game-toast.has-card-details{text-align:left;max-height:min(60dvh,440px);overflow-y:auto;overscroll-behavior:contain;pointer-events:auto}
-.game-toast.has-card-details .toast-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.game-toast.has-card-details button{flex:none;width:44px;min-height:44px;padding:0;margin:-6px -8px 0 0;border:1px solid #a4c8ee;border-radius:8px;background:transparent;color:inherit;font:700 24px/1 system-ui;cursor:pointer}
-.game-toast.has-card-details strong{display:block;font-size:17px;line-height:1.35}
+.game-toast .toast-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.game-toast button{flex:none;width:44px;min-height:44px;padding:0;margin:-6px -8px 0 0;border:1px solid #a4c8ee;border-radius:8px;background:transparent;color:inherit;font:700 24px/1 system-ui;cursor:pointer}
+.game-toast strong{display:block;font-size:17px;line-height:1.35}
 .game-toast.has-card-details ul{margin:8px 0 0;padding-left:22px}
 .game-toast.has-card-details li{margin:5px 0;line-height:1.4}
 .game-toast.has-card-details p{margin:8px 0 0;color:inherit;font:inherit}
@@ -898,3 +898,13 @@ html[data-theme=modern] body{background-size:100% 100%;background-attachment:loc
  [data-theme=modern] .opponent-heading{padding-block:0}
  [data-theme=modern] .deal-hand .cards{padding-bottom:0}
 }
+
+/* Paint can use the large viewport without forcing the page to its height. */
+html[data-theme=modern] body{min-height:100dvh}
+html.casino-hosted[data-theme=modern] body{min-height:100%}
+.toast-settings{margin-top:20px;min-width:0}
+.toast-settings label{display:flex;align-items:center;gap:10px;white-space:normal;font-size:16px;margin:10px 0}
+.toast-settings input[type=checkbox]{width:22px;height:22px;flex:0 0 22px;margin:0}
+
+.game-toast{pointer-events:none}
+.game-toast.has-card-details,.game-toast button{pointer-events:auto}

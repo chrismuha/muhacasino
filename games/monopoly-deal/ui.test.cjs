@@ -634,7 +634,7 @@ test('hand trackpad scrolling and catalog swipe/trackpad navigation preserve pla
  await close(p);
 });
 
-test('guide and release notes match deck facts, current controls, and the consolidated v2.0.0 label',async()=>{
+test('guide and release notes match deck facts, current controls, and the current v2.0.0 label',async()=>{
  const p=await open();const facts=await p.evaluate(async()=>{const {GUIDE_RULES,RELEASE_NOTES,cardDesigns}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),notes:JSON.stringify(RELEASE_NOTES),designs:cardDesigns().length,cards:deck().length,title:RELEASE_NOTES[0][0]}});
  assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.match(facts.title,/v2\.0\.0/);
  for(const instruction of ['Double-tap','Close returns','no manual Hide','trackpad','Coming soon','Continue turn','same category','Bank cards first','one bullet for each card','Forced Deal lists both'])assert.ok(facts.rules.toLowerCase().includes(instruction.toLowerCase()),instruction);
@@ -747,7 +747,7 @@ test('right-side action icons align and turn limit and end handoff produce clear
  await p.locator('#deselect').click();await p.evaluate(()=>{window.__dealTest.state.plays=2;window.__dealTest.render()});
  await p.locator('[data-card]').nth(1).click();await p.locator('#bank-card').click();await idle(p);
  assert.match(await p.locator('#game-toast').innerText(),/All three plays used/);await p.locator('#end').click();await idle(p);
- assert.match(await p.locator('#game-toast').innerText(),/Chris’s turn is over\. Alex’s turn/);assert.equal(await p.locator('[data-card][aria-pressed=true]').count(),0);await close(p);
+ assert.match(await p.locator('#game-toast').innerText(),/Alex’s turn\./);assert.equal(await p.locator('[data-card][aria-pressed=true]').count(),0);await close(p);
 });
 test('numbered player names do not run into payment amounts',async()=>{
  const p=await open();await fixture(p,'debt',2);await p.evaluate(()=>{const s=window.__dealTest.state;s.players[0].name='Computer 1';const index=s.draw.findIndex(c=>c.action==='no');s.players[1].hand.push(s.draw.splice(index,1)[0]);window.__dealTest.render()});
@@ -1913,4 +1913,74 @@ test('iPhone Air normal play has no residual vertical scroll with populated tabl
   }
   await close(p);
  }
+});
+
+test('rent cannot consume cards or plays against empty opponents, including any-color rent',async()=>{
+ const p=await open();
+ for(const anyColor of [false,true]){
+  await fixture(p,'rent',2);
+  await p.evaluate(async anyColor=>{
+   const s=window.__dealTest.state;
+   s.draw.push(...s.players[1].bank.splice(0));
+   if(anyColor){const i=s.draw.findIndex(c=>c.action==='rent'&&c.colors.length===10);s.draw.push(...s.players[0].hand.splice(0,1,s.draw.splice(i,1)[0]));}
+   window.__dealTest.render();
+  },anyColor);
+  const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
+  await p.evaluate(()=>window.__dealTest.run(()=>window.__dealTest.play(window.__dealTest.state.players[0].hand[0],'play')));
+  await idle(p);
+  assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
+  assert.equal(await p.locator('#choice[open]').count(),0);
+ }
+ await close(p);
+});
+
+test('toast preferences persist and suppress individual events or all events',async()=>{
+ const p=await open();await fixture(p);
+ await p.locator('#table-settings').click();
+ await p.locator('[data-toast-type=bank]').uncheck();
+ await p.locator('#appearance-dialog .wizard-heading button').click();
+ await p.evaluate(async()=>{const t=window.__dealTest;await t.run(()=>t.play(t.state.players[0].hand.find(c=>c.type==='money'),'bank'));});
+ assert.equal(await p.locator('#game-toast').isVisible(),false);
+ await p.reload();await p.waitForFunction(()=>window.__dealTest);
+ await p.locator('#table-settings').click();assert.equal(await p.locator('[data-toast-type=bank]').isChecked(),false);
+ await p.locator('[data-toast-type=all]').uncheck();
+ await p.locator('#appearance-dialog .wizard-heading button').click();
+ await fixture(p);await p.evaluate(async()=>{const t=window.__dealTest;await t.run(()=>t.play(t.state.players[0].hand.find(c=>c.type==='property'),'play','orange'));});
+ assert.equal(await p.locator('#game-toast').isVisible(),false);await close(p);
+});
+
+test('ready screen stays within a short dynamic viewport before dealing',async()=>{
+ for(const viewport of [{width:420,height:680},{width:390,height:600},{width:320,height:568}]){
+  const p=await open(viewport);
+  assert.ok(await p.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+1));
+  assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+  await close(p);
+ }
+});
+
+test('hosted ready screen has no page or frame scroll before dealing',async()=>{
+ for(const viewport of [{width:420,height:680},{width:390,height:600}]){
+  const p=await open(viewport);await p.goto(origin+'/index.html#monopoly-deal');
+  await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();
+  const frame=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));
+  await p.waitForTimeout(200);
+  for(const target of [p,frame])assert.ok(await target.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+1));
+  await close(p);
+ }
+});
+
+test('game event toasts queue instead of replacing each other',async()=>{
+ const p=await open();await fixture(p);
+ await p.evaluate(async()=>{const t=window.__dealTest;const cards=t.state.players[0].hand.filter(c=>c.type==='money');for(const c of cards)await t.run(()=>t.play(c,'bank'));});
+ assert.match(await p.locator('#game-toast').innerText(),/banked 4M/);
+ await p.waitForFunction(()=>document.querySelector('#game-toast').textContent.includes('banked 2M'));
+ await close(p);
+});
+
+test('Any Color Rent lists only opponents who have payable assets',async()=>{
+ const p=await open();await fixture(p,'rent',3);
+ await p.evaluate(()=>{const s=window.__dealTest.state;s.draw.push(...s.players[1].bank.splice(0));const i=s.draw.findIndex(c=>c.action==='rent'&&c.colors.length===10);s.draw.push(...s.players[0].hand.splice(0,1,s.draw.splice(i,1)[0]));window.__dealTest.render();});
+ await playFirst(p);await choose(p,'Red');
+ const options=await p.locator('#options').innerText();assert.ok(!options.includes('Alex'));assert.ok(options.includes('Sam'));
+ await p.locator('#choice-close').click();await idle(p);await close(p);
 });

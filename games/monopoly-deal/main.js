@@ -4,7 +4,7 @@ import {aiChoice,aiPlay} from './ai.mjs?build=20261025-orange-deck-dots-v66';
 import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261028-deal-phone-gutters-v107';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261028-deal-phone-gutters-v107';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-orange-deck-dots-v66';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261028-deal-phone-gutters-v107';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261031-deal-toasts-v108';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261025-orange-deck-dots-v66';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -29,7 +29,32 @@ window.addEventListener('pageshow',()=>requestAnimationFrame(()=>window.scrollTo
 try { const saved=JSON.parse(sessionStorage.getItem(sessionKey)||'null'); if(saved?.players?.length>=2 && Array.isArray(saved.draw) && Array.isArray(saved.discard) && saved.players[saved.turn]){state=saved;visible=saved._handView?.visible??true;turnHandoff=saved._handView?.turnHandoff??false;delete state._handView;state.players.forEach(player=>{if(player.isAI&&!player.aiDifficulty)player.aiDifficulty='easy'})} } catch {}
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let detachHandSorting = () => {};
+const toastTypes={bank:'Banking',property:'Playing properties',action:'Action cards',payment:'Payments',transfer:'Property transfers',wild:'Moving wilds',discard:'Discards',turn:'Turn changes',draw:'Drawing cards',game:'Game start and wins',undo:'Undo and cancellation',sort:'Hand sorting',help:'Hints and unavailable actions'};
+const toastPreferenceKey='muha-deal-toasts-v1';
+let toastPreferences={};
+try{const saved=JSON.parse(localStorage.getItem(toastPreferenceKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))toastPreferences=saved;}catch{}
+function toastType(message){
+ if(/banked/.test(message))return 'bank';
+ if(/ laid /.test(message))return 'property';
+ if(/ paid /.test(message))return 'payment';
+ if(/: .* ·|deals resolved/.test(message))return 'transfer';
+ if(/moved a wild/.test(message))return 'wild';
+ if(/discard/i.test(message))return 'discard';
+ if(/turn|begins/.test(message))return 'turn';
+ if(/drew|draws/.test(message))return 'draw';
+ if(/dealt|wins|difficulty/.test(message))return 'game';
+ if(/undone|cancelled|restored/.test(message))return 'undo';
+ if(/position/.test(message))return 'sort';
+ if(/played/.test(message))return 'action';
+ return 'help';
+}
 let toastTimer;
+const toastQueue=[];
+let currentToast=null;
+function nextToast(){
+ clearTimeout(toastTimer);$('#game-toast').hidden=true;currentToast=null;
+ const next=toastQueue.shift();if(next)showToast(...next);
+}
 function syncToastViewport(){
  const toast=$('#game-toast');
  if(!toast||toast.hidden)return;
@@ -38,7 +63,16 @@ function syncToastViewport(){
  const bottom=Math.min(innerHeight,(viewport?.offsetTop||0)+(viewport?.height||innerHeight)-frameTop);
  toast.style.bottom=`${Math.max(16,innerHeight-bottom+12)}px`;
 }
-function showToast(message, {items=[],detail=''}={}) {
+function showToast(message, {items=[],detail='',type=items.length?'transfer':toastType(message)}={}) {
+ if(toastPreferences.all===false||toastPreferences[type]===false)return;
+ const active=$('#game-toast');
+ if(!active.hidden){
+  if(!items.length&&!['help','undo','turn'].includes(type)){toastQueue.push([message,{items,detail,type}]);return;}
+  // Detailed transfer results stay immediately available for reading.
+  if(currentToast)toastQueue.unshift(currentToast);
+ }
+ currentToast=[message,{items,detail,type}];
+ active.dataset.toastType=type;
  const toast = $('#game-toast');
  const modal = [...document.querySelectorAll('dialog[open]')].at(-1);
  (modal || document.body).append(toast);
@@ -47,18 +81,18 @@ function showToast(message, {items=[],detail=''}={}) {
  toast.classList.toggle('has-card-details',items.length>0);
  toast.removeAttribute('tabindex');toast.onkeydown=null;
  toast.textContent = message;
- if(items.length){
+ {
   const heading=document.createElement('div'),title=document.createElement('strong'),dismiss=document.createElement('button'),list=document.createElement('ul');
   heading.className='toast-heading';title.textContent=message;
-  dismiss.type='button';dismiss.textContent='×';dismiss.setAttribute('aria-label','Dismiss card notification');
-  dismiss.onclick=()=>{clearTimeout(toastTimer);toast.hidden=true;};heading.append(title,dismiss);
+  dismiss.type='button';dismiss.textContent='×';dismiss.setAttribute('aria-label','Dismiss notification');
+  dismiss.onclick=nextToast;heading.append(title,dismiss);
   for(const item of items){const line=document.createElement('li');line.textContent=item;list.append(line);}
-  toast.replaceChildren(heading,list);
+  toast.replaceChildren(heading);if(items.length)toast.append(list);
   if(detail){const note=document.createElement('p');note.textContent=detail;toast.append(note);}
   toast.tabIndex=0;toast.onkeydown=event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();dismiss.click();}};
  }
  syncToastViewport();
- toastTimer = setTimeout(() => { toast.hidden = true; }, items.length?Math.min(20000,8000+items.length*1500):5500);
+ toastTimer = setTimeout(nextToast, items.length?Math.min(20000,8000+items.length*1500):3000);
 }
 // ARIA-disabled buttons remain focusable/clickable solely to explain their state.
 document.addEventListener('click', event => {
@@ -226,7 +260,7 @@ function undoLastMove(){
  if($('#table-viewer').open)showTableView(tableViewIndex);
 }
 
-function log(s){state.log.unshift(s);state.log=state.log.slice(0,30);$('#log').innerHTML=state.log.map(x=>`<li>${esc(x)}</li>`).join('')}
+function log(s,type=toastType(s)){showToast(s,{type});state.log.unshift(s);state.log=state.log.slice(0,30);$('#log').innerHTML=state.log.map(x=>`<li>${esc(x)}</li>`).join('')}
 const label=c=>`${c.name} · ${c.value}M${c.color?' · '+GROUPS[c.color].name:''}`;
 function completingWildColor(card) {
  if(card.type !== 'property' || card.colors.length < 2)return null;
@@ -526,19 +560,19 @@ async function pay(p,to,amount){
  }
  log(`${p.name} paid ${amount-Math.max(remaining,0)}M toward ${amount}M owed to ${to.name}.`);
 }
-async function collect(targets,amount,actionName){for(const p of targets)if(await defend(p,me(),`${actionName}: Pay ${amount}M to ${me().name}.`))await pay(p,me(),amount)}
+async function collect(targets,amount,actionName){for(const p of targets){log(`${me().name} charged ${p.name} ${amount}M for ${actionName}.`,'action');if(await defend(p,me(),`${actionName}: Pay ${amount}M to ${me().name}.`))await pay(p,me(),amount);else log(`${p.name} blocked ${actionName}.`,'action')}}
 const opponents=()=>state.players.filter(p=>p!==me());
 async function play(c,chosenMode=null,chosenColor=null){if((!visible&&!me().isAI)||state.plays>=3||!c)return;let mode=chosenMode||await choose(label(c),[['Cancel','cancel'],...(canBank(c)?[['Put in bank','bank']]:[]),...(c.type!=='money'?[['Play card','play']]:[])]);if(mode==='cancel')return;if(mode==='bank'){if(!canBank(c)){showToast('Only money cards can be banked. Play or discard action cards.');return;}remove(me().hand,c);me().bank.push(c);state.plays++;log(`${me().name} banked ${c.value}M.`);return}
  if(c.type==='property'){c.color=chosenColor||await colorFor(c,{smart:true});remove(me().hand,c);me().props.push(c);state.plays++;log(`${me().name} laid ${c.name}.`);return}
  const a=c.action,p=me();if(a==='no'||a==='double'){await choose('Keep this card for a response or rent combo',[['OK',true]],a==='no'?'Just Say No is offered when an action targets you.':'Select a Rent card to add one or two Double the Rent cards.');return}
- if(a==='pass'){use(c);draw(state,p,2);return}
- if(a==='house'||a==='hotel'){const eligible=buildingSets(p,a);if(!eligible.length)return choose('No eligible complete set',[['OK',true]],'Buildings need a complete street-color set. No railroads or utilities. Only one house and one hotel per set; the house must be placed first.');let color=await choose('Build on which set?',orderedColors(eligible).map(k=>[GROUPS[k].name,k]));use(c);remove(state.discard,c);c.color=color;p.buildings.push(c);return}
- if(a==='rent'){const tenants=opponents();let colors=c.colors.filter(k=>properties(p,k).length);if(!colors.length)return choose('You need a matching property',[['OK',true]]);let color=await choose('Charge rent on which color?',[...colors].sort((a,b)=>rent(p,a)-rent(p,b)||GROUPS[a].name.localeCompare(GROUPS[b].name)).map(k=>[`${GROUPS[k].name}: ${rent(p,k)}M`,k]));let targets=c.value===3?[await choose('Choose a tenant',tenants.map(x=>[x.name,x]))]:tenants;let doubles=p.hand.filter(x=>x.action==='double');let max=Math.min(doubles.length,2-state.plays);let n=max>0?await choose('Add Double the Rent?',Array.from({length:max+1},(_,i)=>[`${i} doubler${i===1?'':'s'} · ${rent(p,color)*2**i}M · ${i+1} plays`,i])):0;use(c);for(let i=0;i<n;i++)use(doubles[i]);for(const target of targets){if(hasPayableAssets(target))await collect([target],rent(p,color)*2**n,c.name);else log(`${target.name} has no payable assets and pays 0M rent.`)}return}
+ if(a==='pass'){use(c);draw(state,p,2);log(`${p.name} drew two cards.`);return}
+ if(a==='house'||a==='hotel'){const eligible=buildingSets(p,a);if(!eligible.length)return choose('No eligible complete set',[['OK',true]],'Buildings need a complete street-color set. No railroads or utilities. Only one house and one hotel per set; the house must be placed first.');let color=await choose('Build on which set?',orderedColors(eligible).map(k=>[GROUPS[k].name,k]));use(c);remove(state.discard,c);c.color=color;p.buildings.push(c);log(`${p.name} built ${c.name} on ${GROUPS[color].name}.`,'property');return}
+ if(a==='rent'){const tenants=opponents().filter(hasPayableAssets);if(!tenants.length){showToast('No opponent has payable assets. Rent cannot be charged.');return;}let colors=c.colors.filter(k=>properties(p,k).length);if(!colors.length)return choose('You need a matching property',[['OK',true]]);let color=await choose('Charge rent on which color?',[...colors].sort((a,b)=>rent(p,a)-rent(p,b)||GROUPS[a].name.localeCompare(GROUPS[b].name)).map(k=>[`${GROUPS[k].name}: ${rent(p,k)}M`,k]));let targets=c.value===3?[await choose('Choose a tenant',tenants.map(x=>[x.name,x]))]:tenants;let doubles=p.hand.filter(x=>x.action==='double');let max=Math.min(doubles.length,2-state.plays);let n=max>0?await choose('Add Double the Rent?',Array.from({length:max+1},(_,i)=>[`${i} doubler${i===1?'':'s'} · ${rent(p,color)*2**i}M · ${i+1} plays`,i])):0;use(c);for(let i=0;i<n;i++)use(doubles[i]);for(const target of targets){if(hasPayableAssets(target))await collect([target],rent(p,color)*2**n,c.name);else log(`${target.name} has no payable assets and pays 0M rent.`)}return}
  if(a==='debt'||a==='birthday'){let targets=a==='birthday'?opponents():[await choose('Who owes you 5M?',opponents().map(x=>[x.name,x]))];use(c);await collect(targets,a==='debt'?5:2,c.name);return}
  let targets=opponents().flatMap(x=>a==='breaker'?sets(x).map(color=>({p:x,color})):x.props.filter(card=>!complete(x,card.color)).map(card=>({p:x,card})));
  targets.sort((left,right)=>GROUPS[left.color||left.card.color].name.localeCompare(GROUPS[right.color||right.card.color].name)||left.p.name.localeCompare(right.p.name)||(left.card?.name||'').localeCompare(right.card?.name||''));
  if(!targets.length)return choose('No eligible opponent properties',[['OK',true]]);let own;if(a==='forced'){let options=p.props.filter(x=>!complete(p,x.color));if(!options.length)return choose('You need a property outside a full set',[['OK',true]]);own=await choose('Choose your property to give',options.sort((a,b)=>GROUPS[a.color].name.localeCompare(GROUPS[b.color].name)||a.value-b.value||a.name.localeCompare(b.name)).map(x=>[label(x),x]));}
- let t=await choose(a==='breaker'?'Steal which complete set?':'Choose a property',targets.map(t=>[`${t.p.name} · ${t.card?label(t.card):GROUPS[t.color].name}`,t]));use(c);if(!await defend(t.p,p,c.name))return;
+ let t=await choose(a==='breaker'?'Steal which complete set?':'Choose a property',targets.map(t=>[`${t.p.name} · ${t.card?label(t.card):GROUPS[t.color].name}`,t]));use(c);if(!await defend(t.p,p,c.name)){log(`${t.p.name} blocked ${c.name}.`,'action');return;}
  const taken=a==='breaker'?[...properties(t.p,t.color),...t.p.buildings.filter(card=>card.color===t.color)]:[t.card];
  if(a==='breaker'){
   for(const card of taken){const from=card.type==='property'?t.p.props:t.p.buildings,to=card.type==='property'?p.props:p.buildings;remove(from,card);to.push(card);}
@@ -561,7 +595,7 @@ async function rearrange(cardId=null){
  const color=await choose('Choose the property color',[['Cancel',null],...orderedColors(card.colors).map(color=>[GROUPS[color].name,color])],detail);
  if(color&&color!==card.color){card.color=color;normalize(me());log(`${me().name} moved a wild to ${GROUPS[color].name}.`);}
 }
-async function end(){const ending=me().name;selectedCardIds.clear();selectedCardId=null;lastCardTap=null;await enforceHandLimit(me());state.turn=(state.turn+1)%state.players.length;state.plays=0;visible=false;turnHandoff=true;draw(state,me(),me().hand.length?2:5);log(`${me().name} begins their turn.`);if(!state.players.some(player=>player.isAI)||!me().isAI)showToast(`${me().name}’s turn.`);saveGame()}
+async function end(){const ending=me().name;selectedCardIds.clear();selectedCardId=null;lastCardTap=null;await enforceHandLimit(me());state.turn=(state.turn+1)%state.players.length;state.plays=0;visible=false;turnHandoff=true;const count=me().hand.length?2:5;draw(state,me(),count);log(`${me().name} drew ${count} cards.`,'draw');log(`${me().name} begins their turn.`);if(!state.players.some(player=>player.isAI)||!me().isAI)showToast(`${me().name}’s turn.`);saveGame()}
 // Size only the setup dialog; never scroll the document in response to keyboard panning.
 let setupViewportFrame=0;
 let releaseSetupScrollLock=null;
@@ -724,6 +758,7 @@ function setup() {
       return;
     }
     undoHistory=[];
+    toastQueue.length=0;clearTimeout(toastTimer);$('#game-toast').hidden=true;
     state = createGame(playerNames);
     state.players.forEach((player,i)=>{player.isAI=$('#opponent-mode').value==='ai'&&i>0;if(player.isAI)player.aiDifficulty=$('#ai-difficulty').value;});
     selectedCardIds.clear();selectedCardId=null;previewFlipped=false;previewExpanded=false;lastCardTap=null;
@@ -1008,6 +1043,19 @@ function openGameSettings(){
  appearance.id='appearance-dialog';
  appearance.setAttribute('aria-labelledby','appearance-title');
  appearance.innerHTML='<div class="wizard-heading"><h2 id="appearance-title">Game settings</h2><button type="button">Close</button></div>';
+ const notifications=document.createElement('fieldset');
+ notifications.className='toast-settings';notifications.innerHTML='<legend>Toast notifications</legend><label><input type="checkbox" data-toast-type="all"> Enable toast notifications</label>'+Object.entries(toastTypes).map(([key,label])=>`<label><input type="checkbox" data-toast-type="${key}"> ${label}</label>`).join('');
+ for(const input of notifications.querySelectorAll('input')){
+  input.checked=toastPreferences[input.dataset.toastType]!==false;
+  input.disabled=input.dataset.toastType!=='all'&&toastPreferences.all===false;
+  input.onchange=()=>{
+   toastPreferences[input.dataset.toastType]=input.checked;
+   try{localStorage.setItem(toastPreferenceKey,JSON.stringify(toastPreferences));}catch{}
+   toastQueue.length=0;clearTimeout(toastTimer);$('#game-toast').hidden=true;
+   for(const option of notifications.querySelectorAll('input:not([data-toast-type=all])'))option.disabled=toastPreferences.all===false;
+  };
+ }
+ document.querySelector('.table-settings').append(notifications);
  const close=appearance.querySelector('button');
  close.onclick=()=>appearance.close();
  if(window.parent!==window){appearance.append(document.querySelector('.table-settings'));appearance.append(upcomingGameSettings());}
