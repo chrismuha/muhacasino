@@ -62,3 +62,35 @@ for(const game of games)test(`${game}: direct URL refresh retains a complete pho
   assert.equal(geometry.width,420);assert.equal(geometry.height,712);assert.ok(geometry.body.height>0,JSON.stringify(geometry));
  }finally{await p.close();}
 });
+
+for(const game of games)test(`${game}: transient half-height visual viewport cannot shrink the restored game`,async()=>{
+ const p=await browser.newPage({...phone,viewport:{width:420,height:712}});
+ await p.addInitScript(()=>Object.defineProperty(visualViewport,'height',{configurable:true,value:356}));
+ try{
+  await p.goto(`${origin}/index.html#${game}`);await checkFrame(p,game,'transient viewport');
+  assert.equal(await p.locator('#gameView').evaluate(el=>el.getBoundingClientRect().bottom),712);
+  await p.reload();await checkFrame(p,game,'transient viewport refresh');
+  assert.equal(await p.locator('#gameView').evaluate(el=>el.getBoundingClientRect().bottom),712);
+  // Safari can finish viewport restoration without another resize event.
+  await p.evaluate(()=>delete visualViewport.height);
+  await checkFrame(p,game,'restored without resize');
+  assert.equal(await p.locator('#gameView').evaluate(el=>el.getBoundingClientRect().bottom),712);
+  await p.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true})));
+  await checkFrame(p,game,'page cache restoration');
+  assert.equal(await p.locator('#gameView').evaluate(el=>el.getBoundingClientRect().bottom),712);
+ }finally{await p.close();}
+});
+
+for(const game of games.slice(0,4))test(`${game}: text-entry keyboard shrinks the host and blur restores it without a viewport event`,async()=>{
+ const p=await browser.newPage({...phone,viewport:{width:420,height:712}});
+ try{
+  await p.goto(`${origin}/index.html#${game}`);await checkFrame(p,game,'before editing');
+  await p.frameLocator('#gameFrame').locator('#creditStep').focus();
+  await p.evaluate(()=>{Object.defineProperty(visualViewport,'height',{configurable:true,value:350});visualViewport.dispatchEvent(new Event('resize'));});
+  await p.waitForFunction(()=>document.querySelector('#gameView').getBoundingClientRect().bottom===350);
+  await checkFrame(p,game,'editing');
+  await p.frameLocator('#gameFrame').locator('#creditStep').evaluate(el=>el.blur());
+  await p.waitForFunction(()=>document.querySelector('#gameView').getBoundingClientRect().bottom===712);
+  await checkFrame(p,game,'after blur');
+ }finally{await p.close();}
+});

@@ -101,7 +101,7 @@ function syncHostedCabinetScreens(gameId = null) {
   device.classList.toggle("cabinet-non-slot-game", !slotGameActive);
 }
 
-const SITE_BUILD = "20261101-mobile-refresh-toasts-v113";
+const SITE_BUILD = "20261101-native-viewport-wilds-v114";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");
@@ -172,27 +172,23 @@ slotModeToolbar.addEventListener("click", () => {
   syncSlotModeToolbar(experience?.getDisplayMode(), experience?.isInteractionLocked());
 });
 
-// Safari's browser bars and keyboard change the visible viewport independently
-// of the layout viewport. Give the hosted frame a definite pixel-sized parent.
+// CSS owns the dynamic viewport. Only text-entry keyboards can temporarily
+// request a smaller host; transient reload measurements never set its size.
 let activeGameId = null;
 let dealControlsLocked=false;
 let libraryScrollY=0;
 if("scrollRestoration" in history)history.scrollRestoration="manual";
-let dealLayoutHeight=0, dealLayoutWidth=0;
 function syncGameViewport() {
+ // Safari may report a temporary half-height visual viewport during reload.
+ // Let CSS track browser bars and restoration; only an actual text field in
+ // another game can request a smaller layout while its keyboard is visible.
  const viewport=window.visualViewport;
- if(activeGameId==='monopoly-deal'&&(viewport?.scale||1)!==1)return;
- let height=viewport?.height || window.innerHeight;
- const setupOpen=activeGameId==='monopoly-deal'&&gameFrame.contentDocument?.querySelector('#setup-wizard[open]');
- const editing=activeGameId==='monopoly-deal' && gameFrame.contentDocument?.activeElement?.matches('input:not([disabled]),textarea,[contenteditable=true]');
- if(activeGameId==='monopoly-deal'){
-  if((!editing&&!setupOpen) || dealLayoutWidth!==window.innerWidth || !dealLayoutHeight){dealLayoutHeight=height;dealLayoutWidth=window.innerWidth;}
-  if(editing||setupOpen)height=Math.max(height,dealLayoutHeight);
- }
- const top=0;
- document.documentElement.style.setProperty('--casino-visible-height',`${height}px`);
- document.documentElement.style.setProperty('--casino-visible-top',`${top}px`);
+ const editing=gameFrame.contentDocument?.activeElement?.matches('input:not([disabled]):not([readonly]):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]):not([type=submit]):not([type=color]),textarea:not([disabled]):not([readonly]),[contenteditable=true]');
+ const keyboard=activeGameId!=='monopoly-deal'&&editing&&viewport?.scale===1&&viewport.height<innerHeight*.75;
+ if(keyboard)gameView.style.setProperty('--casino-keyboard-height',`${viewport.height}px`);
+ else gameView.style.removeProperty('--casino-keyboard-height');
 }
+
 let gameViewportTimer;
 function scheduleGameViewport(){
  cancelAnimationFrame(gameViewportTimer);
@@ -473,7 +469,7 @@ function releaseActiveGameFrame(){
  }catch{}
  syncDealControls();
  cancelAnimationFrame(gameViewportTimer);
- dealLayoutHeight=0;dealLayoutWidth=0;
+ gameView.style.removeProperty('--casino-keyboard-height');
 }
 
 function showLauncher(updateHistory = true) {
@@ -775,6 +771,8 @@ gameFrame.addEventListener("load", () => {
   } catch {
 
   }
+  gameFrame.contentDocument?.addEventListener('focusin',scheduleGameViewport);
+  gameFrame.contentDocument?.addEventListener('focusout',scheduleGameViewport);
   syncPrettyPennyFrameWidth();
   window.requestAnimationFrame(syncPrettyPennyFrameWidth);
   window.setTimeout(syncPrettyPennyFrameWidth, 150);
