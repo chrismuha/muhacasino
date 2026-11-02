@@ -1967,3 +1967,27 @@ body.slot-phone-play .reels .cell{padding:0!important}
 body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-gem,.hold-coin){border-width:0!important}
 body.slot-phone-play .reels :is(.link-chip,.hold-gem) > .chip-caption{position:static!important;clip-path:none!important;height:auto!important;flex:none}
 body.slot-phone-play .reels .money-chip:not(:has(*)){font:800 clamp(16px,4vw,22px)/1.1 system-ui,sans-serif!important;text-align:center;white-space:normal!important}
+
+/* One phone Controls layout across all four themes. Only the content scrolls. */
+.slot-phone-sheet[open]{display:grid;grid-template-rows:auto auto minmax(0,1fr);height:min(90dvh,calc(100dvh - var(--casino-safe-top,0px)));overflow:hidden;isolation:isolate}
+.slot-phone-sheet .slot-phone-sheet-heading{position:relative;z-index:10;flex:none}
+.slot-phone-sheet .slot-phone-sheet-content{min-height:0;overflow-y:auto;overscroll-behavior:contain;isolation:isolate;padding-bottom:8px}
+body.slot-phone-play .slot-phone-sheet .hud > .right{order:0;align-items:stretch!important}
+body.slot-phone-play .slot-phone-sheet .hud > .left{order:1;align-items:stretch!important}
+body.slot-phone-play .slot-phone-sheet .hud .stat{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;width:100%!important;max-width:100%!important;margin:0!important;padding:12px!important;border-radius:12px;white-space:normal;box-sizing:border-box}
+body.slot-phone-play .slot-phone-sheet .hud > .right > button{width:100%!important;max-width:none!important;min-height:48px!important;height:auto!important;font-size:16px!important;line-height:1.2!important;padding:12px!important;margin:0!important;letter-spacing:0!important}
+body.slot-phone-play .slot-phone-sheet .hud #buyBonus{font-size:16px!important;order:100;align-self:stretch!important}
+.hud > .right > #buyBonus{order:100;grid-column:auto!important;font-size:14px!important}
+.slot-history-dialog{box-sizing:border-box;position:fixed;inset:0;margin:auto;width:min(680px,calc(100% - 24px));max-width:100%;height:min(85dvh,800px);max-height:calc(100dvh - 24px);padding:16px;border:1px solid #ffffff66;border-radius:18px;background:var(--card,#121828);color:var(--text,#fff);overflow:hidden;color-scheme:dark}
+.slot-history-dialog[open]{display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:12px}
+.slot-history-dialog::backdrop{background:#000a}
+.slot-history-dialog header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.slot-history-dialog h2{font-size:24px;margin:0}
+.slot-history-dialog button{min-height:48px;padding:10px 16px;font-size:16px}
+.slot-history-dialog > p{font-size:14px;line-height:1.5;margin:0}
+#slot-history-list{overflow:auto;overscroll-behavior:contain;min-height:0}
+#slot-history-list article{border:1px solid #ffffff35;border-radius:12px;padding:12px;margin-bottom:10px}
+#slot-history-list h3{font-size:18px;margin:0 0 5px}
+#slot-history-list time{font-size:13px;opacity:.8}
+#slot-history-list p{font-size:16px;line-height:1.5;margin:8px 0 0;overflow-wrap:anywhere}
+body:not(.cabinet-game-surface):not(.slot-phone-play) .hud > .right > :is(#spin,#max,#resetSession,#settingsButton,#buyBonus,#withdrawalButton,.slot-history-button){font-size:14px!important}

@@ -204,3 +204,12 @@ body > footer a { color: var(--cyan); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+
+/* Wrapped titles and navigation stay in their own rows above release text. */
+.about-topbar{flex-wrap:wrap;gap:12px}
+.history-nav{top:calc(var(--about-header-height,72px) + 8px)}
+.history-card>header{grid-template-columns:auto minmax(0,1fr) auto}
+.history-card>header>div{min-width:0}
+.history-card header h2,.history-card h3{overflow-wrap:break-word;line-height:1.3}
+
+.history-card{scroll-margin-top:calc(var(--about-header-height,72px) + 90px)}

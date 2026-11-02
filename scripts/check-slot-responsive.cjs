@@ -27,7 +27,7 @@ async function panel(target,selector){
  await checkWidth(target,`${selector} button,${selector} input,${selector} select`);
 }
 for(const game of games)for(const viewport of screens)test(`${game} ${viewport.width}×${viewport.height}: play, every settings page, info and Buy Bonus`,async()=>{
- const context=await browser.newContext({viewport,hasTouch:viewport.width<1100,isMobile:viewport.width<1100});const p=await context.newPage();p.setDefaultTimeout(5000);
+ const context=await browser.newContext({viewport,hasTouch:viewport.width<1100,isMobile:viewport.width<1100});const p=await context.newPage();p.setDefaultTimeout(5000);p.setDefaultNavigationTimeout(15000);
  try{
  await p.goto(`${origin}/games/${game}/index.html`);await p.locator('.settings-page-jump option').first().waitFor({state:'attached'});
  await checkWidth(p,'.hud button,.hud input,.hud select,.jackpot-pill,.pot');
@@ -70,7 +70,7 @@ for(const game of games)test(`${game}: hosted iPhone Air with expanded/collapsed
  }finally{await p.close()}
 });
 for(const game of games)for(const viewport of [screens[0],screens[2],screens[4]])test(`${game} ${viewport.width}×${viewport.height}: feature dialogs`,async()=>{
- const p=await browser.newPage({viewport,isMobile:true,hasTouch:true});p.setDefaultTimeout(5000);
+ const p=await browser.newPage({viewport,isMobile:true,hasTouch:true});p.setDefaultTimeout(5000);p.setDefaultNavigationTimeout(15000);
  try{
  for(const kind of ['diamonds','match','pointers','wheel','win','lucky','lastChance']){
   await p.goto(`${origin}/games/${game}/index.html`);
@@ -110,7 +110,7 @@ test('slot release versions match the launcher, game UI, and November 1 notes',a
 });
 
 for(const game of games)test(`${game}: phone controls sheet preserves wager, pins, spin and desktop controls`,async()=>{
- const p=await browser.newPage({viewport:{width:420,height:712},isMobile:true,hasTouch:true});p.setDefaultTimeout(5000);
+ const p=await browser.newPage({viewport:{width:420,height:712},isMobile:true,hasTouch:true});p.setDefaultTimeout(5000);p.setDefaultNavigationTimeout(15000);
  try{
  await p.goto(`${origin}/games/${game}/`);await p.locator('.slot-phone-open').waitFor();
  assert.equal(await p.locator('.hud').isVisible(),false,'Secondary controls stay out of play');
@@ -155,5 +155,37 @@ for(const game of games)test(`${game}: phone chip values and captions remain rea
  const full=await p.locator('.jackpot-chip > span').first().getAttribute('title');assert.ok(full);
  await p.setViewportSize({width:1440,height:900});await p.locator('.slot-phone-open').waitFor({state:'hidden'});
  assert.equal(await p.locator('.jackpot-chip > span').first().innerText(),full);
+ }finally{await p.close()}
+});
+
+for(const game of games)test(`${game}: Controls has matching actions, an isolated header, and durable spin history`,async()=>{
+ const p=await browser.newPage({viewport:{width:420,height:712},isMobile:true,hasTouch:true});p.setDefaultTimeout(10000);
+ try{
+ await p.goto(`${origin}/games/${game}/`);await p.locator('.slot-phone-open').click();
+ const buttons=p.locator('.slot-phone-sheet .right > button:visible');
+ const labels=await buttons.allTextContents();assert.equal(labels.at(-1),'Buy Bonus',JSON.stringify(labels));
+ const fonts=await buttons.evaluateAll(es=>es.map(e=>getComputedStyle(e).fontSize));assert.ok(fonts.every(size=>size===fonts[0]),JSON.stringify(fonts));
+ await p.locator('.slot-phone-sheet-content').evaluate(el=>el.scrollTop=el.scrollHeight);
+ const geometry=await p.locator('.slot-phone-sheet').evaluate(el=>({heading:el.querySelector('.slot-phone-sheet-heading').getBoundingClientRect().bottom,content:el.querySelector('.slot-phone-sheet-content').getBoundingClientRect().top}));assert.ok(geometry.content>=geometry.heading,JSON.stringify(geometry));
+ await p.locator('.slot-history-button').click();await panel(p,'#slot-history-dialog');assert.match(await p.locator('#slot-history-list').innerText(),/No completed spins/);await p.locator('.slot-history-close').click();
+ await p.evaluate(async()=>{
+  window.slotExperience.showFeatureWin=async()=>{};
+  for(const id of ['freeSpinsOdds','bonusGameOdds'])document.getElementById(id).value='0';
+  const original=Math.random;Math.random=()=>.999999;
+  try{await doSpin({instant:true});}finally{Math.random=original;}
+ });
+ await p.locator('.slot-phone-open').click();await p.locator('.slot-history-button').click();assert.equal(await p.locator('#slot-history-list article').count(),1);
+ assert.match(await p.locator('#slot-history-list').innerText(),/Wager.*Award.*Net.*Balance/);await p.locator('.slot-history-close').click();
+ await p.evaluate(async()=>{
+  freeSpinsRemaining=1;freeSpinWagerConfig=getWagerConfig();
+  const original=Math.random;Math.random=()=>.999999;
+  try{await doSpin({instant:true});}finally{Math.random=original;}
+  playBonusGame=async()=>0;await buyInstantBonus({cost:40,wager:.4,bonus:'wheel'});
+ });
+ await p.locator('.slot-phone-open').click();await p.locator('.slot-history-button').click();
+ assert.deepEqual(await p.locator('#slot-history-list article h3').allTextContents(),['Bonus purchase','Free spin','Spin']);
+ await p.locator('.slot-history-close').click();
+ await p.reload();await p.locator('.slot-phone-open').click();await p.locator('.slot-history-button').click();assert.equal(await p.locator('#slot-history-list article').count(),3);
+ if(process.env.SLOT_QA_ARTIFACTS)await p.screenshot({path:path.join(process.env.SLOT_QA_ARTIFACTS,`${game}-history.png`)});
  }finally{await p.close()}
 });

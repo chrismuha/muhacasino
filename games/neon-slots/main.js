@@ -626,6 +626,7 @@ async function buyInstantBonus(option = {}) {
             balance = clampBalanceUSD(balance + award);
             addSessionWinnings(award); addNetSessionWinnings(award); subtractNetSessionLosses(award); adjustActualSessionNet(award);
         }
+        window.slotExperience?.recordSpin({wagerUSD:cost,payoutUSD:award,balanceUSD:balance,kind:"Bonus purchase"});
         setMessage(`BONUS COMPLETE — Cost ${fmtUSD(cost)} • Award ${fmtUSD(award)}`);
         updateTotals();
         await window.slotExperience?.showFeatureWin({ title: "Bonus Complete!", entries: [{ label: "Purchased bonus", amountUSD: award }] });
@@ -1807,6 +1808,7 @@ async function doSpin(options = {}) {
     updateTotals();
     updateAllSessionDisplays();
     pauseSpinElapsedTimer();
+    window.slotExperience?.recordSpin({wagerUSD:isFreeSpin?0:totalBetUSD,payoutUSD:totalWinUSD,balanceUSD:balance,free:isFreeSpin,kind:isFreeSpin?"Free spin":"Spin"});
     await window.slotExperience?.showFeatureWin({ title: freeSpinsComplete ? "Free Spins Complete!" : "Feature Win!", entries: featureAwards });
 
     isSpinning = false;

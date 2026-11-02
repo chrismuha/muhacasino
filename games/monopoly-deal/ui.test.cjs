@@ -2180,10 +2180,10 @@ test('manual drawn cards show complete reading faces and a reachable Close in bo
   if(index<0)throw Error(`No ${kind} card`);s.draw.push(s.draw.splice(index,1)[0]);p.pendingDraw=1;t.render();
  },kind);
  await p.locator('.draw-deck').click();await p.locator('#drawn-card-dialog[open]').waitFor();
- const face=p.locator('#drawn-card-face .deal-face');assert.equal(await face.getAttribute('data-reading'),'true');
+ const face=p.locator('#drawn-card-face .deal-face');assert.equal(await face.getAttribute('data-reading'),'false');
  const value=await face.locator('.cash-print').first().boundingBox();assert.ok(value&&value.width>0&&value.height>0,JSON.stringify({theme,viewport,kind,value}));
  const button=await p.locator('#drawn-card-close').boundingBox();assert.ok(button.y>=0&&button.y+button.height<=viewport.height,JSON.stringify({theme,viewport,kind,button}));
- if(kind==='wild'){const before=await face.locator('.reading-color').innerText();await p.locator('#drawn-card-flip').click();assert.notEqual(await face.locator('.reading-color').innerText(),before);}
+ if(kind==='wild'){const before=await face.locator('.wild-half').first().getAttribute('style');await p.locator('#drawn-card-flip').click();assert.notEqual(await face.locator('.wild-half').first().getAttribute('style'),before);}
  if(kind==='breaker')await shot(p,`drawn-card-${theme}-${viewport.width}`);
  await p.locator('#drawn-card-close').click();await idle(p);await conservation(p);
  }
@@ -2276,6 +2276,37 @@ test('all toast frames and dismiss buttons stay fixed through replacement, scrol
  assert.deepEqual(await p.locator('#game-toast').boundingBox(),frame);
  assert.deepEqual(await p.locator('#game-toast button').boundingBox(),button);
  await p.mouse.click(point.x,point.y);assert.equal(await p.locator('#game-toast').isVisible(),false);
+ }
+ await close(p);
+ }
+});
+
+test('default toasts occupy the deck-side space and footer placement persists',async()=>{
+ const p=await open({width:420,height:712});await fixture(p,'hand',2);
+ await p.evaluate(()=>window.__dealTest.showToast('Beside the deck'));
+ await p.waitForFunction(()=>document.querySelector('#game-toast').dataset.placement==='table');
+ const box=await p.locator('#game-toast').boundingBox(),area=await p.locator('.card-stage').boundingBox();
+ assert.ok(box.x>=area.x-1&&box.x+box.width<=area.x+area.width+1&&box.y>=area.y-1&&box.y+box.height<=area.y+area.height+1,JSON.stringify({box,area}));
+ await p.locator('#game-toast button').click();await p.locator('#table-settings').click();
+ assert.equal(await p.locator('#toast-placement').inputValue(),'table');await p.locator('#toast-placement').selectOption('footer');
+ await p.locator('#appearance-dialog .wizard-heading button').click();await p.evaluate(()=>window.__dealTest.showToast('Footer choice'));
+ assert.equal(await p.locator('#game-toast').getAttribute('data-placement'),'footer');
+ await p.reload();await p.waitForFunction(()=>window.__dealTest);await p.locator('#table-settings').click();assert.equal(await p.locator('#toast-placement').inputValue(),'footer');
+ await p.locator('#appearance-dialog .wizard-heading button').click();await close(p);
+});
+
+test('a fresh hosted game and its very first move stay within the phone viewport',async()=>{
+ for(const height of [600,664,712,780]){
+ const p=await open({width:420,height},undefined,{isMobile:true,hasTouch:true});
+ await p.addInitScript(()=>Math.random=()=>.999999);
+ await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();
+ const game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));await startDrawGame(game,true);
+ for(const step of ['dealt','selected','played']){
+ if(step==='selected')await game.locator('[data-card]').first().click();
+ if(step==='played'){await game.locator('#bank-card').click();await idle(game);}
+ await p.waitForTimeout(80);
+ const geometry=await game.evaluate(()=>({height:innerHeight,hand:document.querySelector('.deal-hand').getBoundingClientRect().bottom,main:document.querySelector('main').getBoundingClientRect().bottom,scroll:document.body.scrollTop}));
+ assert.ok(geometry.hand<=geometry.height+1&&geometry.scroll===0,JSON.stringify({height,step,geometry}));
  }
  await close(p);
  }

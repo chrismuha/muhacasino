@@ -970,3 +970,28 @@ html[data-theme=modern]{background:var(--modern-table-background,#0064db)}
 .game-toast .toast-dismiss{grid-column:2;grid-row:1;align-self:start;box-sizing:border-box;width:44px;height:44px;min-height:44px;margin:0;padding:0}
 .game-toast .toast-content p{margin:8px 0 0;color:inherit;font:inherit}
 .game-toast.is-fading .toast-dismiss{pointer-events:auto}
+
+/* Normal phone play never pans the page; reading dialogs retain their own scroll. */
+@media(max-width:600px){html[data-theme=modern] body.is-playing:not(:has(.has-selection)){overflow:hidden}}
+.toast-placement-setting{display:grid!important;gap:8px;white-space:normal!important}
+.toast-placement-setting select{min-height:44px;width:100%;font-size:16px}
+.game-toast[data-placement=table]{font-size:13px;padding:6px;gap:4px}
+.game-toast[data-placement=table] strong{font-size:14px}
+/* The drawn card is the same artwork as its hand thumbnail, enlarged uniformly. */
+#drawn-card-dialog .drawn-card-face{aspect-ratio:.69;overflow:hidden}
+#drawn-card-dialog .drawn-card-face > .deal-face{display:flex;height:100%;min-height:0;aspect-ratio:.69;overflow:hidden}
+#drawn-card-dialog .drawn-card-face > .deal-face[data-wild=true]{display:block}
+/* Browser bars can reduce an iPhone's first deal below 660px. Keep full deck art
+   and hand cards, using one scrollable utility row and compact opponent gutters. */
+@media(max-width:600px) and (max-height:660px){
+ [data-theme=modern] .deal-table:not(.has-selection) .opponent-groups{min-height:36px;padding-block:0}
+ [data-theme=modern] .deal-table:not(.has-selection) .opponent-properties{min-height:48px;padding-block:0}
+ [data-theme=modern] .deal-table:not(.has-selection) .opponent-bank-cards{min-height:30px}
+ [data-theme=modern] .deal-table:not(.has-selection) .opponent .public-mini{width:22px}
+ [data-theme=modern] .deal-table:not(.has-selection) .current-stats .table-tools{display:flex!important;flex-wrap:nowrap;overflow-x:auto;gap:4px;padding-block:1px}
+ [data-theme=modern] .deal-table:not(.has-selection) .table-tools button{flex:0 0 auto;min-height:44px;padding:6px 10px;font-size:14px;white-space:nowrap}
+ [data-theme=modern] .deal-table:not(.has-selection) .current-seat-heading{padding-block:0}
+}
+
+@media(max-width:600px){.game-top-actions #game-settings,[data-theme=modern] .game-top-actions #game-settings{font-size:13px;min-height:44px;padding:7px 9px}}
+@media(max-width:360px){.game-top-actions #game-settings,[data-theme=modern] .game-top-actions #game-settings{font-size:11px;padding-inline:6px}}

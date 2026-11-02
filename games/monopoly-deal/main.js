@@ -2,10 +2,10 @@ import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-or
 import {paginateViewer} from './view-pages.mjs?build=20261025-orange-deck-dots-v66';
 import {aiChoice,aiPlay} from './ai.mjs?build=20261025-orange-deck-dots-v66';
 import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261028-deal-phone-gutters-v107';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261101-deal-stable-toasts-v119';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261102-card-art-toast-history-v120';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-orange-deck-dots-v66';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261101-deal-stable-toasts-v119';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261101-deal-stable-toasts-v119';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261102-card-art-toast-history-v120';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261102-card-art-toast-history-v120';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -59,13 +59,19 @@ function nextToast(){
  const next=toastQueue.shift();if(next)showToast(...next);
 }
 function syncToastViewport(){
- const toast=$('#game-toast');
- if(!toast||toast.hidden)return;
+ const toast=$('#game-toast');if(!toast||toast.hidden)return;
  let viewport=window.visualViewport,frameTop=0;
  try{if(window.parent!==window){viewport=window.parent.visualViewport;frameTop=window.frameElement.getBoundingClientRect().top;}}catch{}
  const bottom=Math.min(innerHeight,(viewport?.offsetTop||0)+(viewport?.height||innerHeight)-frameTop);
- toast.style.bottom=`${Math.max(16,innerHeight-bottom+12)}px`;
  const top=Math.max(0,(viewport?.offsetTop||0)-frameTop);
+ const stage=$('#game .card-stage');
+ const area=stage?.getBoundingClientRect();
+ const table=toastPreferences.placement!=='footer'&&document.documentElement.dataset.theme==='modern'&&!document.querySelector('dialog[open]')&&area&&area.width>=120&&area.height>=64&&area.top>=top&&area.bottom<=bottom;
+ toast.dataset.placement=table?'table':'footer';
+ toast.style.left=table?`${area.left+area.width/2}px`:'50%';
+ toast.style.width=table?`${Math.min(540,area.width)}px`:'';
+ toast.style.height=table?`${Math.min(144,area.height)}px`:'';
+ toast.style.bottom=table?`${innerHeight-(area.top+area.height/2+Math.min(144,area.height)/2)}px`:`${Math.max(16,innerHeight-bottom+12)}px`;
  toast.style.setProperty('--toast-available-height',`${Math.max(44,bottom-top-32)}px`);
 }
 function showToast(message, {items=[],detail='',type=items.length?'transfer':toastType(message)}={}) {
@@ -394,6 +400,7 @@ function fitCompactPreview(){
 }
 
 function render(){
+ requestAnimationFrame(syncToastViewport);
  completeAutomaticDraws();
  if(state&&!busy)saveGame();
  // Keep the human table mounted throughout background computer actions.
@@ -655,7 +662,7 @@ async function drawManualCard(){
 function showDrawnCard(card,remaining){
  const dialog=$('#drawn-card-dialog');
  let flipped=false;
- const paint=()=>{$('#drawn-card-face').innerHTML=modernFace(card,{reading:true,flipped});};
+ const paint=()=>{$('#drawn-card-face').innerHTML=modernFace(card,{flipped});};
  paint();
  $('#drawn-card-title').textContent='Card drawn';
  $('#drawn-card-remaining').textContent=remaining?`${remaining} more card${remaining===1?'':'s'} to draw. Close, then tap the deck.`:'Added to your hand. Close to continue.';
@@ -1139,7 +1146,11 @@ function openGameSettings(){
   toastPreferences.durationSeconds=seconds;
   try{localStorage.setItem(toastPreferenceKey,JSON.stringify(toastPreferences));}catch{}
  };
- notifications.prepend(duration);
+ const placement=document.createElement('label');placement.className='toast-placement-setting';placement.htmlFor='toast-placement';
+ placement.innerHTML='Notification position<select id="toast-placement"><option value="table">Beside the deck (default)</option><option value="footer">Footer</option></select>';
+ const placementInput=placement.querySelector('select');placementInput.value=toastPreferences.placement==='footer'?'footer':'table';
+ placementInput.onchange=()=>{toastPreferences.placement=placementInput.value;try{localStorage.setItem(toastPreferenceKey,JSON.stringify(toastPreferences));}catch{}syncToastViewport();};
+ notifications.prepend(placement,duration);
  const dealing=document.createElement('fieldset');dealing.className='dealing-settings';
  dealing.innerHTML='<legend>Drawing cards</legend><label><input id="automatic-dealing" type="checkbox"> Automatic dealing</label><p>On by default. Turn off to tap the deck for each card you are owed. Each drawn card opens full screen with a Close button. Computer opponents always draw automatically.</p>';
  const automaticInput=dealing.querySelector('input');automaticInput.checked=dealSettings.automaticDealing;

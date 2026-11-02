@@ -706,8 +706,8 @@
         const actionArea = document.querySelector(".right");
         if (actionArea) {
             const actionStatus = actionArea.querySelector(".auto-spin-hint, .message");
-            actionArea.insertBefore(buyBonusButton, actionStatus);
             actionArea.insertBefore(withdrawalButton, actionStatus);
+            actionArea.insertBefore(buyBonusButton, actionStatus);
         }
         const matchSpinPresentation = () => {
             const spinButton = document.getElementById("spin");
@@ -1541,6 +1541,7 @@
             ensureControl("max", "Max Bet", "#max");
             ensureControl("reset", "Reset Session", "#resetSession");
             ensureControl("settings", "Settings", "#settingsButton");
+            ensureControl("history", "Spin history", ".slot-history-button");
             if (state.buyBonusEnabled) ensureControl("buy-bonus", "Buy Bonus", "#buyBonus");
             else controls.querySelector('[data-slot-cabinet-action="buy-bonus"]')?.remove();
             const cabinetActions = {
@@ -1630,12 +1631,12 @@
         document.body.append(sheet);
         const open = dock.querySelector(".slot-phone-open");
         const close = () => { if (sheet.open) sheet.close(); open.setAttribute("aria-expanded", "false"); };
-        open.addEventListener("click", () => { sheet.showModal(); sheet.scrollTop = 0; open.setAttribute("aria-expanded", "true"); });
+        open.addEventListener("click", () => { sheet.showModal(); sheet.scrollTop = 0; sheet.querySelector('.slot-phone-sheet-content').scrollTop=0; open.setAttribute("aria-expanded", "true"); });
         sheet.querySelector(".slot-phone-close").addEventListener("click", close);
         sheet.addEventListener("close", () => open.setAttribute("aria-expanded", "false"));
         sheet.addEventListener("click", event => { if (event.target === sheet) { const r=sheet.getBoundingClientRect(); if(event.clientY<r.top||event.clientX<r.left||event.clientX>r.right)close(); } });
         // Close the top-layer sheet before existing settings/bonus dialogs open.
-        sheet.addEventListener("click", event => { if (event.target.closest("#settingsButton,#buyBonus,#withdrawalButton,.slot-phone-info")) close(); }, true);
+        sheet.addEventListener("click", event => { if (event.target.closest("#settingsButton,#buyBonus,#withdrawalButton,.slot-phone-info,.slot-history-button")) close(); }, true);
         sheet.addEventListener("keydown", event => { if(event.key !== "Escape" && !event.target.matches("input,select,textarea")) event.stopPropagation(); });
         const info = document.createElement("button");
         info.type = "button"; info.className = "slot-phone-info"; info.textContent = "Payouts & rules";
@@ -1688,6 +1689,7 @@
                 sheet.querySelector(".slot-phone-sheet-content").append(hud);
                 dock.querySelector(".slot-phone-actions").append(spin);
                 hud.querySelector(".right").append(info);
+                const bonus=document.getElementById("buyBonus");if(bonus)hud.querySelector(".right").append(bonus);
             } else {
                 close(); hudHome.after(hud); spinHome.after(spin); info.remove();
             }
@@ -1702,10 +1704,50 @@
     }
     window.addEventListener("DOMContentLoaded", initializePhoneControls, {once:true});
 
+    const spinHistoryKey = `${storageKey}.spinHistory`;
+    let spinHistory = [];
+    try {
+        const saved = JSON.parse(localStorage.getItem(spinHistoryKey) || '[]');
+        if (Array.isArray(saved)) spinHistory = saved.filter(row => row && Number.isFinite(row.wagerUSD) && Number.isFinite(row.payoutUSD) && typeof row.time === 'string').slice(0, 100);
+    } catch (_) {}
+    function renderSpinHistory() {
+        const list = document.querySelector('#slot-history-list');
+        if (!list) return;
+        list.replaceChildren();
+        if (!spinHistory.length) { const empty=document.createElement('p');empty.textContent='No completed spins yet. Play a spin to start your history.';list.append(empty);return; }
+        for (const row of spinHistory) {
+            const item=document.createElement('article'),heading=document.createElement('h3'),time=document.createElement('time'),values=document.createElement('p');
+            heading.textContent=row.kind || (row.free ? 'Free spin' : 'Spin');
+            time.dateTime=row.time;time.textContent=new Date(row.time).toLocaleString();
+            const net=row.payoutUSD-row.wagerUSD;
+            values.textContent=`Wager ${money(row.wagerUSD)} · Award ${money(row.payoutUSD)} · Net ${net<0?'−':'+'}${money(Math.abs(net))} · Balance ${money(row.balanceUSD || 0)}`;
+            item.append(heading,time,values);list.append(item);
+        }
+    }
+    function recordSpin(result) {
+        if (!Number.isFinite(result.wagerUSD) || !Number.isFinite(result.payoutUSD)) return;
+        spinHistory.unshift({...result,time:new Date().toISOString()});spinHistory=spinHistory.slice(0,100);
+        try { localStorage.setItem(spinHistoryKey,JSON.stringify(spinHistory)); } catch (_) {}
+        renderSpinHistory();
+    }
+    function initializeSpinHistory() {
+        const dialog=document.createElement('dialog');dialog.id='slot-history-dialog';dialog.className='slot-history-dialog';dialog.setAttribute('aria-labelledby','slot-history-title');
+        dialog.innerHTML='<header><h2 id="slot-history-title">Spin history</h2><button type="button" class="slot-history-close" autofocus>Close</button></header><p>Last 100 completed spins and bonus purchases, newest first. History is saved separately for this game on this device. Amounts follow your current display mode.</p><section id="slot-history-list" aria-label="Completed spins"></section>';
+        document.body.append(dialog);
+        const button=document.createElement('button');button.type='button';button.className='slot-history-button';button.textContent='Spin history';button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-controls','slot-history-dialog');
+        document.querySelector('.hud .right')?.append(button);
+        button.addEventListener('click',()=>{renderSpinHistory();dialog.showModal();});
+        dialog.querySelector('.slot-history-close').onclick=()=>dialog.close();
+        dialog.addEventListener('keydown',event=>{if(event.key!=='Escape')event.stopPropagation();});
+    }
+    initializeSpinHistory();
+    window.addEventListener('slot-experience-settings-change',renderSpinHistory);
+
     initializeCabinetBridge();
 
     window.slotExperience = {
         roundWinUSD,
+        recordSpin,
         formatAmount,
         formatJackpotAmount,
         getDisplayMode: () => state.displayMode,

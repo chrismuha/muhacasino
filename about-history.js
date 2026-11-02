@@ -3,6 +3,8 @@
   const cards = [...document.querySelectorAll(".history-card")];
   if (!tabList || !cards.length) return;
 
+  const header = document.querySelector('.about-topbar');
+  if (header) new ResizeObserver(() => document.documentElement.style.setProperty('--about-header-height',`${header.getBoundingClientRect().height}px`)).observe(header);
   const tabs = [...tabList.querySelectorAll("a[href^='#']")];
   const pages = new Map();
 
