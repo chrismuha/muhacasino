@@ -84,3 +84,7 @@ iPhone Air residual-scroll coverage attempts to scroll the body and requires zer
 
 - Additional fixture corrections retain all card-design coverage in realistic hands of at most seven cards, complete required discards after Pass Go and AI handoff, use same-category multi-selection, and supply payable assets when testing rent ordering. Setup checks require the table to stay stable while its dialog fits above the keyboard; the responsive matrix permits intentionally wrapping setup headings while still rejecting clipped content.
 - Validation: the broad WebKit run covered 131 cases (115 passed, 3 Chromium-only touch cases skipped, 13 outdated assertions failed); all 13 corrected cases passed their focused rerun. The all-game refresh/cache suite passes 32 cases in each engine.
+
+Manual drawing checks cover the default automatic mode, saved toast duration, private opening hands, one card per deck tap, full-screen reading faces and Close in both themes, Pass Go, required discards, empty-hand draws, automatic computer turns, discard recycling, hosted frames, and refresh without duplicated draws. Settings and recovery checks confirm that enabling automatic dealing completes outstanding draws without card popups.
+
+Played wild color changes use one play in both themes, including multicolor wilds. Wild regressions cover direct table taps, the property manager, third-play blocking and dots, Cancel, unchanged colors, building normalization, and Undo restoring the color and play count.

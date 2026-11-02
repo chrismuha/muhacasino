@@ -37,6 +37,8 @@ for(const game of games)for(const viewport of screens)test(`${game} ${viewport.w
  if(viewport.width===420||viewport.width===844)assert.ok(await p.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+1),'iPhone Air and landscape default play fit without page scrolling');
  const buttons=await p.locator('.bet-preset').evaluateAll(es=>es.map(e=>{const r=document.createRange();r.selectNodeContents(e);return {w:e.clientWidth,sw:r.getBoundingClientRect().width}}));
  assert.ok(buttons.every(g=>g.sw<=g.w+1),JSON.stringify(buttons));
+ if(process.env.SLOT_QA_ARTIFACTS)await p.screenshot({path:path.join(process.env.SLOT_QA_ARTIFACTS,`${game}-${viewport.width}x${viewport.height}-play.png`),fullPage:true});
+ if(await p.locator('.slot-phone-open').isVisible())await p.locator('.slot-phone-open').click();
  await p.locator('#denom').selectOption('10.00');
  const largeBets=await p.locator('.bet-preset').evaluateAll(es=>es.map(e=>{const r=document.createRange();r.selectNodeContents(e);return {w:e.clientWidth,text:r.getBoundingClientRect().width}}));
  assert.ok(largeBets.every(g=>g.text<=g.w+1),`High-denomination bets fit: ${JSON.stringify(largeBets)}`);
@@ -53,16 +55,17 @@ for(const game of games)for(const viewport of screens)test(`${game} ${viewport.w
   const last=p.locator('.settings-stage input:visible,.settings-stage select:visible').last();if(await last.count())await last.scrollIntoViewIfNeeded();
  }
  await p.locator('.settings-close').click();
- await p.locator('#payInfo').click();await panel(p,'#previewOverlay > .overlay-panel');
+ await p.locator('#payInfo').evaluate(el=>el.click());await panel(p,'#previewOverlay > .overlay-panel');
  for(let i=1;i<await p.locator('#previewOverlay [data-info-page]').count();i++){await p.locator('#overlayNext').click();await panel(p,'#previewOverlay > .overlay-panel')}
  await p.locator('#previewOverlayClose').click();
+ if(await p.locator('.slot-phone-open').isVisible())await p.locator('.slot-phone-open').click();
  if(await p.locator('#buyBonus').isVisible()){await p.locator('#buyBonus').click();await panel(p,'#buyBonusOverlay > .overlay-panel');await p.locator('#buyBonusConfirm').scrollIntoViewIfNeeded();await p.locator('[data-close="buyBonusOverlay"]').click()}
  }finally{await context.close()}
 });
 for(const game of games)test(`${game}: hosted iPhone Air with expanded/collapsed toolbar and directory URL`,async()=>{
  const p=await browser.newPage({viewport:{width:420,height:712},isMobile:true,hasTouch:true});
- try{await p.goto(`${origin}/index.html#${game}`);await p.locator('#gameLoadState').waitFor({state:'hidden'});const f=p.frameLocator('#gameFrame');await f.locator('#settingsButton').waitFor();
- for(let i=0;i<2;i++){if(await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded')==='false')assert.ok(await f.locator('html').evaluate(()=>document.documentElement.scrollHeight<=innerHeight+1),'Collapsed hosted play has no residual scroll');await checkWidth(f,'.hud button,.hud input,.hud select');await f.locator('#settingsButton').click();await panel(f,'.settings-panel');await f.locator('.settings-close').click();await p.locator('#toolbarCollapseButton').click()}
+ try{await p.goto(`${origin}/index.html#${game}`);await p.locator('#gameLoadState').waitFor({state:'hidden'});const f=p.frameLocator('#gameFrame');await f.locator('#settingsButton').waitFor({state:'attached'});
+ for(let i=0;i<2;i++){if(await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded')==='false')assert.ok(await f.locator('html').evaluate(()=>document.documentElement.scrollHeight<=innerHeight+1),'Collapsed hosted play has no residual scroll');await checkWidth(f,'.hud button,.hud input,.hud select');if(await f.locator('.slot-phone-open').isVisible())await f.locator('.slot-phone-open').click();await f.locator('#settingsButton').click();await panel(f,'.settings-panel');await f.locator('.settings-close').click();await p.locator('#toolbarCollapseButton').click()}
  await p.goto(`${origin}/games/${game}/`);assert.ok(await p.locator('body').evaluate((el,g)=>el.classList.contains(`slot-game-${g}`),game));
  }finally{await p.close()}
 });
@@ -104,4 +107,53 @@ test('slot release versions match the launcher, game UI, and November 1 notes',a
   if(game==='pretty-penny'||game==='treasurepots')assert.ok(section.includes('Feature meters:'));
   assert.ok(releases.includes(`${game==='treasurepots'?'Treasurepots':game==='neon-slots'?'Neon Slots':game==='pretty-penny'?'Pretty Penny':'Big Money Deluxe'} v${version}</h2>`));
  }
+});
+
+for(const game of games)test(`${game}: phone controls sheet preserves wager, pins, spin and desktop controls`,async()=>{
+ const p=await browser.newPage({viewport:{width:420,height:712},isMobile:true,hasTouch:true});p.setDefaultTimeout(5000);
+ try{
+ await p.goto(`${origin}/games/${game}/`);await p.locator('.slot-phone-open').waitFor();
+ assert.equal(await p.locator('.hud').isVisible(),false,'Secondary controls stay out of play');
+ assert.equal(await p.locator('#spin').isVisible(),true);
+ const reels=await p.locator('.reels').boundingBox();assert.ok(reels.height>=240,JSON.stringify(reels));
+ const spin=await p.locator('#spin').boundingBox();assert.ok(spin.height>=56&&spin.y+spin.height<=712,JSON.stringify(spin));
+ assert.ok((await p.locator('[data-phone-balance]').innerText()).length>0);
+ await p.locator('.slot-phone-open').click();await panel(p,'.slot-phone-sheet');
+ await p.locator('.bet-preset').nth(1).click();
+ assert.equal(await p.locator('[data-phone-bet]').innerText(),await p.locator('#totalBet').innerText());
+ await p.locator('#settingsButton').click();assert.equal(await p.locator('.slot-phone-sheet').isVisible(),false);
+ await p.locator('.settings-page-jump').selectOption({label:'Regular Win Odds'});await p.locator('.settings-pin-toggle').check();
+ await p.locator('.settings-close').click();assert.equal(await p.locator('#winOdds').isVisible(),false);
+ await p.locator('.slot-phone-open').click();assert.equal(await p.locator('#winOdds').isVisible(),true);
+ await p.locator('.slot-phone-info').click();await panel(p,'#previewOverlay > .overlay-panel');
+ await p.locator('#previewOverlayClose').click();
+ await p.locator('.slot-phone-open').click();await p.keyboard.press('Escape');assert.equal(await p.locator('.slot-phone-sheet').isVisible(),false);
+ await p.locator('.slot-phone-open').click();
+ await p.evaluate(()=>document.body.classList.add('overlay-open'));await p.locator('.slot-phone-sheet').waitFor({state:'hidden'});
+ await p.evaluate(()=>document.body.classList.remove('overlay-open'));
+ await p.locator('#spin').click();await p.waitForTimeout(100);assert.equal(await p.locator('.slot-phone-sheet').isVisible(),false);
+ await p.setViewportSize({width:1440,height:900});await p.locator('.slot-phone-open').waitFor({state:'hidden'});
+ assert.equal(await p.locator('.hud #spin').count(),1);assert.equal(await p.locator('.hud #settingsButton').isVisible(),true);
+ await p.setViewportSize({width:420,height:712});await p.locator('.slot-phone-open').waitFor();
+ assert.equal(await p.locator('#spin').count(),1);assert.equal(await p.locator('#settingsButton').count(),1);
+ }finally{await p.close()}
+});
+
+for(const game of games)test(`${game}: phone chip values and captions remain readable`,async()=>{
+ const p=await browser.newPage({viewport:{width:320,height:568},isMobile:true,hasTouch:true});
+ try{
+ await p.goto(`${origin}/games/${game}/`);await p.locator('.slot-phone-open').waitFor();
+ await p.evaluate(game=>{
+  const examples=[{jackpot:'GRAND',value:10000},{jackpot:'MINI',value:10}];
+  if(game==='big-money-deluxe')examples.push('25 cr','10000 cr');
+  if(game==='pretty-penny'||game==='treasurepots')examples.push({kind:'link',value:5,meterIndex:0},{kind:'link',anchor:true,orphan:true},{kind:'gem',value:25});
+  const cells=[...document.querySelectorAll('.reels .cell')];examples.forEach((symbol,i)=>cells[i].replaceWith(createCell(symbol)));
+ },game);
+ const chips=await p.locator('.reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-gem)').evaluateAll(es=>es.map(el=>({text:el.textContent,width:el.clientWidth,scrollWidth:el.scrollWidth,height:el.clientHeight,scrollHeight:el.scrollHeight,font:parseFloat(getComputedStyle(el.querySelector('strong')||el).fontSize)})));
+ if(process.env.SLOT_QA_ARTIFACTS)await p.screenshot({path:path.join(process.env.SLOT_QA_ARTIFACTS,`${game}-phone-chips.png`)});
+ assert.ok(chips.every(c=>c.font>=12&&c.scrollWidth<=c.width+1&&c.scrollHeight<=c.height+1),JSON.stringify(chips));
+ const full=await p.locator('.jackpot-chip > span').first().getAttribute('title');assert.ok(full);
+ await p.setViewportSize({width:1440,height:900});await p.locator('.slot-phone-open').waitFor({state:'hidden'});
+ assert.equal(await p.locator('.jackpot-chip > span').first().innerText(),full);
+ }finally{await p.close()}
 });

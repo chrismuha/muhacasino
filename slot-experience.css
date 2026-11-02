@@ -1883,3 +1883,87 @@ body:not(.cabinet-game-surface) .overlay-head .overlay-close{flex:0 0 auto;width
 @media(orientation:landscape) and (max-height:600px) and (min-width:701px){
  body:not(.cabinet-game-surface) .reels .cell{border-width:1px!important}
 }
+
+/* Phone play: the machine owns the screen; secondary controls open in a sheet. */
+.slot-phone-dock[hidden]{display:none!important}
+body.slot-phone-play{height:100%;min-height:0!important;overflow:hidden!important}
+html:has(body.slot-phone-play){height:100%;overflow:hidden}
+body.slot-phone-play .game{height:100dvh!important;min-height:0!important;padding:4px!important;max-width:100%!important;display:flex!important;flex-direction:column}
+body.slot-phone-play .game > .card{height:100%!important;min-height:0!important;display:flex!important;flex-direction:column!important;gap:6px!important;padding:8px!important;overflow:hidden}
+body.slot-phone-play .title{flex:none;min-height:28px!important;margin:0!important;font-size:24px!important}
+body.slot-phone-play .title #payInfo{display:none}
+body.slot-phone-play :is(.jackpot-board,.pot-feature){flex:none;margin:0!important}
+body.slot-phone-play .reels-wrap{flex:1 1 auto;min-height:0!important;display:flex!important;flex-direction:column!important;gap:4px!important;padding:4px!important;margin:0!important}
+body.slot-phone-play .reels-wrap > .reels{flex:1 1 auto;width:100%;height:auto!important;min-height:0!important;grid-template-rows:repeat(5,minmax(0,1fr))!important;grid-auto-rows:0;gap:4px!important;padding:4px!important;align-content:stretch}
+body.slot-phone-play .reels .cell{min-height:0!important;height:100%!important;font-size:clamp(28px,9vw,48px)!important}
+body.slot-phone-play .reels .symbol-art::before{font-size:clamp(28px,9vw,48px)!important}
+body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-coin){padding:2px!important;gap:2px!important;max-height:100%}
+body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-coin)>strong{font-size:clamp(13px,3.8vw,18px)!important;line-height:1.05!important}
+body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-coin)>span{font-size:clamp(11px,3.3vw,16px)!important;line-height:1.05!important}
+body.slot-phone-play .reels-wrap > .reel-result{flex:none;height:auto!important;min-height:0!important;max-height:40px!important;padding:2px!important;font-size:14px!important;overflow:auto}
+body.slot-phone-play .reels-wrap > .slot-feature-indicator{flex:none;height:auto!important;min-height:0!important;max-height:32px!important;overflow:auto;font-size:13px!important}
+body.slot-phone-play .reels-wrap > :is(.reel-result,.slot-feature-indicator):empty{display:none!important}
+.slot-phone-dock{flex:none;display:grid;gap:7px;padding:8px 4px 4px;border-top:1px solid #ffffff35;color:var(--text,#fff);background:var(--card,#121828)}
+.slot-phone-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.slot-phone-summary > span{display:flex;align-items:baseline;justify-content:space-between;gap:6px;min-width:0;font-size:13px}
+.slot-phone-summary strong{font-size:18px;white-space:nowrap}
+.slot-phone-actions{display:grid;grid-template-columns:minmax(100px,1fr) minmax(0,2fr);gap:10px}
+body.slot-phone-play .slot-phone-actions > button{width:100%!important;max-width:none!important;min-height:56px!important;padding:10px!important;margin:0!important;font-size:18px!important;letter-spacing:0!important;border-radius:14px!important}
+.slot-phone-status:empty{display:none}
+.slot-phone-status{font-size:13px;text-align:center}
+.slot-phone-sheet{box-sizing:border-box;position:fixed;inset:auto 0 0;margin:0 auto;width:min(100%,620px);max-width:100%;height:auto;max-height:min(90dvh,calc(100dvh - var(--casino-safe-top,0px)));padding:0 16px max(20px,env(safe-area-inset-bottom));border:1px solid #ffffff55;border-radius:22px 22px 0 0;background:var(--card,#121828);color:var(--text,#fff);overflow-y:auto;overscroll-behavior:contain;color-scheme:dark;box-shadow:0 -12px 48px #0008}
+.slot-phone-sheet::backdrop{background:#0009}
+.slot-phone-sheet-heading{position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0 10px;background:var(--card,#121828)}
+.slot-phone-sheet-heading h2{font-size:22px;margin:0}
+.slot-phone-sheet-heading button{min-height:48px;padding:10px 18px;font-size:16px}
+.slot-phone-sheet-note{font-size:14px;line-height:1.45;margin:0 0 14px;color:var(--muted,#c2c9da)}
+body.slot-phone-play .slot-phone-sheet .hud{display:flex!important;flex-direction:column!important;gap:14px!important;margin:0!important;padding:0!important}
+body.slot-phone-play .slot-phone-sheet .hud > :is(.left,.right){display:flex!important;flex-direction:column!important;gap:12px!important;width:100%!important}
+body.slot-phone-play .slot-phone-sheet .hud .stat{font-size:16px!important;padding:8px!important}
+body.slot-phone-play .slot-phone-sheet .hud :is(button,input,select){min-height:48px!important;font-size:16px!important;padding:10px!important}
+body.slot-phone-play .slot-phone-sheet .hud label{font-size:15px!important;line-height:1.4}
+body.slot-phone-play .slot-phone-sheet .slot-wager-row{display:flex!important;flex-direction:column!important;gap:12px!important}
+body.slot-phone-play .slot-phone-sheet .bet-presets{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;width:100%!important}
+body.slot-phone-play .slot-phone-sheet .bet-presets > .bet-preset{font-size:18px!important;min-height:54px!important;height:auto!important}
+body.slot-phone-play .slot-phone-sheet .slot-denomination-control{display:grid!important;grid-template-columns:1fr 1fr!important;align-items:center;gap:12px;width:100%}
+body.slot-phone-play .slot-phone-sheet .credit-controls{display:flex!important;flex-direction:column!important;gap:8px!important}
+body.slot-phone-play .slot-phone-sheet .credit-controls .credit-row{grid-template-columns:minmax(0,1fr) 48px 48px!important}
+body.slot-phone-play .slot-phone-sheet .credit-controls > .overlay-note{display:block!important;font-size:14px!important}
+/* Hidden preferences and unavailable actions retain their existing visibility. */
+body.slot-phone-play .slot-phone-sheet [hidden]{display:none!important}
+@media(orientation:landscape) and (max-height:600px){
+ body.slot-phone-play .game > .card{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr)!important;grid-template-rows:auto auto minmax(0,1fr) auto!important;gap:5px 10px!important}
+ body.slot-phone-play .title{grid-column:1;grid-row:1}
+ body.slot-phone-play .jackpot-board{grid-column:1;grid-row:2}
+ body.slot-phone-play .pot-feature{grid-column:1;grid-row:3;align-self:start}
+ body.slot-phone-play .reels-wrap{grid-column:2;grid-row:1/5;align-self:stretch;height:100%}
+ body.slot-phone-play .slot-phone-dock{grid-column:1;grid-row:4}
+ body.slot-phone-play .reels .symbol-art::before{font-size:32px!important}
+}
+html.casino-standalone-slot body.slot-phone-play .game{height:calc(100dvh - var(--casino-safe-top,0px) - var(--casino-safe-bottom,0px))!important}
+body.slot-phone-play .slot-phone-actions > .slot-phone-open{font-size:16px!important}
+.slot-phone-summary > span{display:grid;justify-content:start;gap:2px;line-height:1.15}
+.slot-phone-summary > span:last-child{justify-content:end;text-align:right}
+body.slot-phone-play .jackpot-pills > .jackpot-pill{display:flex!important;flex-direction:column!important;justify-content:center;align-items:center;gap:1px;min-height:34px!important;padding:3px!important}
+body.slot-phone-play .jackpot-pills > .jackpot-pill > span{font-size:10px!important}
+body.slot-phone-play .jackpot-pills > .jackpot-pill > :is(b,strong){font-size:12px!important;white-space:nowrap}
+/* Use the chip space for its readable value and caption on phones. */
+body.slot-phone-play .reels :is(.link-chain-icon,.link-meter-icon,.hold-gem > .gem-stone){display:none!important}
+body.slot-phone-play .reels .hold-gem{padding:2px!important;gap:2px!important;max-height:100%}
+body.slot-phone-play .reels .hold-gem > strong{font-size:clamp(13px,3.8vw,18px)!important;line-height:1.05!important}
+body.slot-phone-play .reels .hold-gem > .chip-caption{font-size:clamp(10px,2.8vw,13px)!important;line-height:1.05!important}
+body.slot-phone-play .reels :is(.chip-caption,.bonus-chip > span){white-space:normal!important;overflow-wrap:normal;max-width:100%;font-size:clamp(10px,2.8vw,13px)!important;line-height:1.05!important}
+body.slot-phone-play .reels .cell{padding:2px!important}
+body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-gem,.hold-coin){box-sizing:border-box;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-width:100%!important;max-height:100%!important;margin:0!important;padding:2px!important;transform:none!important}
+body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-gem,.hold-coin)::before{display:none!important}
+body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-gem,.hold-coin)>:is(strong,span){box-sizing:border-box;grid-column:auto!important;grid-row:auto!important;width:100%!important;min-width:0!important;margin:0!important;padding:0!important;text-align:center;letter-spacing:0!important;white-space:normal!important;overflow:visible!important}
+body.slot-phone-play .jackpot-pills{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important}
+body.slot-phone-play .jackpot-pills > .jackpot-pill::before{display:none!important}
+body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-gem,.hold-coin)>:is(strong,span){font-family:system-ui,sans-serif!important;font-weight:800!important;line-height:1.05!important}
+body.slot-phone-play .reels :is(.link-chip,.hold-gem) > .chip-caption{display:block!important;font-size:10px!important}
+body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-gem,.hold-coin){border-width:1px!important;padding:1px!important;gap:1px!important}
+body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-gem,.hold-coin)>strong{font-size:clamp(12px,3.2vw,16px)!important}
+body.slot-phone-play .reels .cell{padding:0!important}
+body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-gem,.hold-coin){border-width:0!important}
+body.slot-phone-play .reels :is(.link-chip,.hold-gem) > .chip-caption{position:static!important;clip-path:none!important;height:auto!important;flex:none}
+body.slot-phone-play .reels .money-chip:not(:has(*)){font:800 clamp(16px,4vw,22px)/1.1 system-ui,sans-serif!important;text-align:center;white-space:normal!important}

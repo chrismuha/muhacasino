@@ -924,8 +924,6 @@ html[data-theme=modern] body{min-height:0}
 }
 @media(max-width:600px) and (max-height:780px){
  [data-theme=modern] .current-properties .public-mini{width:28px}
- #game .deal-table:not(.has-selection) .draw-deck .deal-card-back.deck-icon{height:48px}
- #game .deal-table:not(.has-selection) .draw-deck .deck-icon .card-back-city{flex-basis:20px;height:20px;font-size:18px}
 }
 @media(min-width:1024px) and (min-height:601px) and (max-height:900px){
  [data-theme=modern] .is-playing main{padding-block:0}
@@ -940,3 +938,35 @@ body.is-ready .game-ready{margin-block:0;padding:clamp(12px,3vh,24px)}
 .game-toast.is-fading{opacity:0;pointer-events:none}
 .game-toast.is-fading button{pointer-events:none}
 @media(prefers-reduced-motion:reduce){.game-toast{transition:none}}
+
+/* Stop root rubber-banding without changing the body positioning during setup. */
+html[data-theme]{overscroll-behavior-y:none;background:var(--table-background,#0b211e)}
+html[data-theme=modern]{background:var(--modern-table-background,#0064db)}
+
+/* Draw preferences stay separate from the per-event toast switches. */
+.toast-settings .toast-duration-setting{display:grid;gap:8px;white-space:normal}
+.toast-duration-setting input{width:110px;min-height:44px}
+.toast-duration-setting small,.dealing-settings p{font-size:15px;line-height:1.5;white-space:normal}
+.dealing-settings{margin-top:20px;min-width:0}
+.dealing-settings label{display:flex;align-items:center;gap:10px;white-space:normal;font-size:16px}
+.dealing-settings input{width:22px;height:22px;flex:none;margin:0}
+/* A manually drawn card owns the screen until Close or Escape. */
+#drawn-card-dialog[open]{position:fixed;inset:0;box-sizing:border-box;margin:0;width:100%;max-width:none;height:100dvh;max-height:none;border:0;border-radius:0;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background:var(--modern-table-background,#0064db);color:white;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:10px;overflow:hidden}
+#drawn-card-dialog .drawn-card-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:0;border:0}
+#drawn-card-dialog h2{font-size:20px;margin:0}
+#drawn-card-dialog button{min-height:44px;padding:8px 16px;color:white;background:#07366b;border:1px solid #a4c8ee;font-size:16px}
+#drawn-card-dialog .drawn-card-body{display:grid;place-items:center;min-height:0;overflow:auto}
+#drawn-card-dialog .drawn-card-face{container-type:inline-size;position:relative;display:block;width:min(100%,calc((100dvh - 150px)*.69),500px)!important;max-width:100%;height:auto!important;max-height:none!important;aspect-ratio:.69;min-height:0;transform:none;padding:0;margin:0}
+#drawn-card-dialog .deal-face{width:100%;height:100%}
+#drawn-card-dialog footer{display:flex;align-items:center;justify-content:center;gap:12px;min-width:0}
+#drawn-card-dialog footer p{color:white;font-size:14px;line-height:1.4;margin:0}
+#drawn-card-dialog [hidden]{display:none!important}
+
+/* Every toast shares one frame; only its text pane scrolls, keeping X stationary. */
+.game-toast{display:grid;grid-template-columns:minmax(0,1fr) 44px;grid-template-rows:minmax(0,1fr);gap:8px;width:min(540px,calc(100vw - 24px));height:min(144px,var(--toast-available-height,calc(100dvh - 32px)));max-height:none;padding:10px;overflow:hidden;text-align:left;pointer-events:auto}
+.game-toast.has-card-details{max-height:none;overflow:hidden}
+.game-toast .toast-content{grid-column:1;grid-row:1;min-width:0;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding:2px 4px}
+.game-toast .toast-heading{display:block}
+.game-toast .toast-dismiss{grid-column:2;grid-row:1;align-self:start;box-sizing:border-box;width:44px;height:44px;min-height:44px;margin:0;padding:0}
+.game-toast .toast-content p{margin:8px 0 0;color:inherit;font:inherit}
+.game-toast.is-fading .toast-dismiss{pointer-events:auto}

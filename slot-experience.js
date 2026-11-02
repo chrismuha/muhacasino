@@ -1601,6 +1601,107 @@
         }, { once: true });
     }
 
+    // Keep the original controls and listeners; only their location changes on phones.
+    function initializePhoneControls() {
+        if (document.body.classList.contains("cabinet-game-surface")) return;
+        const hud = document.querySelector(".hud");
+        const spin = document.getElementById("spin");
+        const card = document.querySelector(".game > .card");
+        if (!hud || !spin || !card) return;
+        const hudHome = document.createComment("phone-controls-home");
+        const spinHome = document.createComment("phone-spin-home");
+        hud.before(hudHome);
+        spin.before(spinHome);
+        const dock = document.createElement("footer");
+        dock.className = "slot-phone-dock";
+        dock.hidden = true;
+        dock.setAttribute("aria-label", "Play controls");
+        dock.innerHTML = `<div class="slot-phone-summary"><span>Balance<strong data-phone-balance></strong></span><span>Bet<strong data-phone-bet></strong></span></div>
+            <div class="slot-phone-actions"><button type="button" class="slot-phone-open" aria-haspopup="dialog" aria-controls="slotPhoneControls" aria-expanded="false">Controls</button></div>
+            <div class="slot-phone-status" role="status"></div>`;
+        card.append(dock);
+        const sheet = document.createElement("dialog");
+        sheet.id = "slotPhoneControls";
+        sheet.className = "slot-phone-sheet";
+        sheet.setAttribute("aria-labelledby", "slotPhoneControlsTitle");
+        sheet.innerHTML = `<div class="slot-phone-sheet-heading"><h2 id="slotPhoneControlsTitle">Game controls</h2><button type="button" class="slot-phone-close" autofocus>Done</button></div>
+            <p class="slot-phone-sheet-note">Choose your bet, manage credits, or open settings. Done returns to the reels.</p>
+            <div class="slot-phone-sheet-content"></div>`;
+        document.body.append(sheet);
+        const open = dock.querySelector(".slot-phone-open");
+        const close = () => { if (sheet.open) sheet.close(); open.setAttribute("aria-expanded", "false"); };
+        open.addEventListener("click", () => { sheet.showModal(); sheet.scrollTop = 0; open.setAttribute("aria-expanded", "true"); });
+        sheet.querySelector(".slot-phone-close").addEventListener("click", close);
+        sheet.addEventListener("close", () => open.setAttribute("aria-expanded", "false"));
+        sheet.addEventListener("click", event => { if (event.target === sheet) { const r=sheet.getBoundingClientRect(); if(event.clientY<r.top||event.clientX<r.left||event.clientX>r.right)close(); } });
+        // Close the top-layer sheet before existing settings/bonus dialogs open.
+        sheet.addEventListener("click", event => { if (event.target.closest("#settingsButton,#buyBonus,#withdrawalButton,.slot-phone-info")) close(); }, true);
+        sheet.addEventListener("keydown", event => { if(event.key !== "Escape" && !event.target.matches("input,select,textarea")) event.stopPropagation(); });
+        const info = document.createElement("button");
+        info.type = "button"; info.className = "slot-phone-info"; info.textContent = "Payouts & rules";
+        info.addEventListener("click", () => document.getElementById("payInfo")?.click());
+        const syncSummary = () => {
+            for (const [source, target] of [["#balance", "[data-phone-balance]"], ["#totalBet", "[data-phone-bet]"], ["#autoSpinHint", ".slot-phone-status"]]) {
+                const element = document.querySelector(source);
+                const value = element && !element.hidden ? element.textContent : "";
+                const output = dock.querySelector(target);
+                if(output.textContent !== value) output.textContent = value;
+            }
+        };
+        const observer = new MutationObserver(syncSummary);
+        for (const source of document.querySelectorAll("#balance,#totalBet,#autoSpinHint")) observer.observe(source, {childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:["hidden"]});
+        const overlayObserver = new MutationObserver(() => {
+            if (document.body.matches(".overlay-open,.slot-experience-overlay-open")) close();
+        });
+        overlayObserver.observe(document.body, {attributes:true,attributeFilter:["class"]});
+        const chipValues = new WeakMap();
+        const chipSelector = ":is(.money-chip,.jackpot-chip,.link-chip,.hold-gem,.hold-coin) > :is(strong,span), .money-chip:not(:has(*))";
+        const compact = new Intl.NumberFormat("en-US", {notation:"compact",maximumFractionDigits:1});
+        const syncChipValues = () => {
+            chipObserver.disconnect();
+            for (const label of card.querySelectorAll(`${chipSelector}, .jackpot-pill > b`)) {
+                const saved = chipValues.get(label);
+                const source = saved && label.textContent === saved.output ? saved.source : label.textContent;
+                let output = source;
+                if (document.body.classList.contains("slot-phone-play")) {
+                    if (source === "NOT CONNECTED") output = "NO LINK";
+                    const match = source.trim().match(/^(\$?)([\d,]+(?:\.\d+)?)(\s*(?:cr|credits?))?$/i);
+                    if (match) {
+                        const amount = Number(match[2].replaceAll(",", ""));
+                        output = match[1] + (amount >= 1000 ? compact.format(amount) : String(amount)) + (match[3] ? " cr" : "");
+                    }
+                }
+                if (label.textContent !== output) label.textContent = output;
+                if (output !== source) label.title = source;
+                else if (saved && label.title === saved.source) label.removeAttribute("title");
+                chipValues.set(label, {source,output});
+            }
+            if (document.body.classList.contains("slot-phone-play")) chipObserver.observe(card,{childList:true,subtree:true,characterData:true});
+        };
+        const chipObserver = new MutationObserver(syncChipValues);
+        const media = matchMedia("(max-width:700px), (max-width:950px) and (max-height:600px)");
+        const sync = () => {
+            const phone = media.matches;
+            document.body.classList.toggle("slot-phone-play", phone);
+            dock.hidden = !phone;
+            if (phone) {
+                sheet.querySelector(".slot-phone-sheet-content").append(hud);
+                dock.querySelector(".slot-phone-actions").append(spin);
+                hud.querySelector(".right").append(info);
+            } else {
+                close(); hudHome.after(hud); spinHome.after(spin); info.remove();
+            }
+            const label = document.querySelector(".settings-pin-row > span");
+            if (label) label.textContent = phone ? "Show this setting in Controls" : "Show this setting on the home screen";
+            syncSummary();
+            syncChipValues();
+        };
+        media.addEventListener("change", sync);
+        window.addEventListener("pagehide", close);
+        sync();
+    }
+    window.addEventListener("DOMContentLoaded", initializePhoneControls, {once:true});
+
     initializeCabinetBridge();
 
     window.slotExperience = {

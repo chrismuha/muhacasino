@@ -24,7 +24,7 @@ export function deck(){let cards=[],id=0;const add=c=>cards.push({...c,id:++id})
  for(const [value,n] of [[1,6],[2,5],[3,3],[4,3],[5,2],[10,1]])for(let i=0;i<n;i++)add({type:'money',name:`${value}M`,value});return cards;
 }
 export function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-export function createGame(names){if(names.length<2||names.length>4)throw Error('Choose 2–4 players');let s={players:names.map(name=>({name,hand:[],bank:[],props:[],buildings:[]})),draw:shuffle(deck()),discard:[],turn:0,plays:0,log:[]};s.players.forEach(p=>draw(s,p,5));return s;}
+export function createGame(names,{deal=true}={}){if(names.length<2||names.length>4)throw Error('Choose 2–4 players');let s={players:names.map(name=>({name,hand:[],bank:[],props:[],buildings:[]})),draw:shuffle(deck()),discard:[],turn:0,plays:0,log:[]};if(deal)s.players.forEach(p=>draw(s,p,5));return s;}
 export function draw(s,p,n){for(let i=0;i<n;i++){if(!s.draw.length)s.draw=shuffle(s.discard.splice(0));if(s.draw.length)p.hand.push(s.draw.pop());}}
 export const properties=(p,color)=>p.props.filter(c=>c.color===color);
 export const complete=(p,color)=>properties(p,color).length>=GROUPS[color].names.length && properties(p,color).some(c=>c.value>0);
