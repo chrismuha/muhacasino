@@ -1896,7 +1896,7 @@ test('a crowded Deal Breaker notification keeps every card readable in a scrolli
 });
 
 test('iPhone Air normal play has no residual vertical scroll with populated tables and selections',async()=>{
- for(const height of [700,742,780,844,860,912])for(const hosted of [false,true]){
+ for(const height of [700,712,742,780,844,860,912])for(const hosted of [false,true]){
   const p=await open({width:420,height},undefined,{isMobile:true,hasTouch:true});let game=p;
   if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
   for(const expanded of hosted&&height>=780?[false,true]:[false]){
@@ -1908,6 +1908,8 @@ test('iPhone Air normal play has no residual vertical scroll with populated tabl
     const geometry=await game.evaluate(()=>{document.body.scrollTop=1e6;return {scroll:document.body.scrollTop,total:document.body.scrollHeight,height:document.body.clientHeight,hand:document.querySelector('.deal-hand').getBoundingClientRect().bottom,viewport:innerHeight,rows:[...document.querySelectorAll('.game-topbar,main,.deal-table>*,.deal-hand>*')].map(el=>({name:el.className,top:el.getBoundingClientRect().top,height:el.getBoundingClientRect().height,padding:getComputedStyle(el).padding,margin:getComputedStyle(el).margin}))};});
     assert.equal(geometry.scroll,0,JSON.stringify({height,hosted,expanded,kind,selector,geometry}));
     assert.ok(geometry.hand<=geometry.viewport,JSON.stringify({height,hosted,expanded,kind,selector,geometry}));
+    const gutter=await game.locator('.deal-hand .cards').evaluate(el=>{const bottom=el.getBoundingClientRect().bottom;return Math.min(...[...el.children].map(card=>bottom-card.getBoundingClientRect().bottom))});
+    assert.ok(gutter>=16,`Scrollbar must stay below card artwork: ${gutter}`);
    }
   }
   }

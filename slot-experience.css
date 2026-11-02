@@ -1720,3 +1720,166 @@ html:has(body:is(.slot-game-pretty-penny, .slot-game-treasurepots)) { color-sche
 .feature-win-panel .feature-win-close { width: min(100%, 300px); min-height: 48px; background: #ffdf8a; color: #102030; border-color: #ffdf8a; touch-action: manipulation; }
 .sticky-link-settings > label:not(.jackpot-schedule-toggle) { display: grid; gap: 6px; margin-top: 12px; }
 .sticky-link-settings input[type="number"] { min-width: 0; width: 100%; min-height: 44px; }
+
+/* Consumer layouts: let labels and grid tracks size without intrinsic clipping. */
+body:not(.cabinet-game-surface) .bet-presets{container-type:inline-size}
+body:not(.cabinet-game-surface) :is(.hud,.hud > .left,.hud > .right,.slot-wager-row,.credit-row){min-width:0;max-width:100%}
+body:not(.cabinet-game-surface) button{box-sizing:border-box;min-width:0;white-space:normal;overflow-wrap:normal;line-height:1.2}
+body:not(.cabinet-game-surface) :is(button,input,select){max-width:100%}
+body:not(.cabinet-game-surface) .bet-presets > .bet-preset{overflow:hidden;font-size:clamp(12px,4cqw,14px)!important;letter-spacing:0;white-space:nowrap}
+body:not(.cabinet-game-surface) .overlay-head{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}
+body:not(.cabinet-game-surface) .overlay-head :is(h2,h3){min-width:0;white-space:normal;overflow-wrap:break-word}
+body:not(.cabinet-game-surface) .overlay-head .overlay-close{flex:0 0 auto;width:auto;min-width:64px;min-height:44px;padding:8px 12px}
+.settings-panel .settings-toolbar :is(button,select){min-width:0;min-height:44px;padding:8px;font-size:14px;white-space:normal}
+.settings-panel :is(.settings-stage,.settings-pin-row,.settings-toolbar){min-width:0}
+.settings-stage :is(input,select){min-width:0;max-width:100%;box-sizing:border-box}
+.settings-stage :is(.slot-wheel-setting,.jackpot-config-setting){overflow-wrap:break-word}
+@media(max-width:700px){
+ body:not(.cabinet-game-surface) .game > .card{padding:6px!important;gap:4px!important}
+ body:not(.cabinet-game-surface) .title{font-size:clamp(20px,5.5vw,30px)!important;letter-spacing:0;line-height:1.15;min-height:32px!important;flex-wrap:nowrap}
+ body:not(.cabinet-game-surface) .title-mark{width:36px;height:36px;object-fit:contain}
+ body:not(.cabinet-game-surface) .reels{--reel-row-h:clamp(30px,8vw,38px)!important;--reel-row-gap:3px!important;min-height:0!important;gap:3px!important;padding:3px!important}
+ body:not(.cabinet-game-surface) .reels-wrap{padding:4px!important;gap:4px!important}
+ body:not(.cabinet-game-surface) .jackpot-pills > .jackpot-pill{min-height:30px!important;padding-block:2px!important}
+ body:not(.cabinet-game-surface) .jackpot-pills > .jackpot-pill > span{font-size:10px!important}
+ body:not(.cabinet-game-surface) .jackpot-pills > .jackpot-pill > :is(b,strong){font-size:12px!important}
+ body:not(.cabinet-game-surface) .pot-feature > .pots > .pot{min-height:52px!important;padding:3px!important;gap:1px!important}
+ body:not(.cabinet-game-surface) .pot-feature > .pots > .pot .pot-meter{width:24px!important;height:24px!important}
+ body:not(.cabinet-game-surface) .pot-feature > .pots > .pot > b{font-size:12px!important}
+ body:not(.cabinet-game-surface) .pot-feature > .pots > .pot > small{font-size:10px!important}
+ body:not(.cabinet-game-surface) .hud{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:4px!important}
+ body:not(.cabinet-game-surface) .hud > .left{display:contents!important}
+ body:not(.cabinet-game-surface) .hud > .right{grid-column:1/-1;grid-row:1;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;width:100%;gap:4px!important}
+ body:not(.cabinet-game-surface) .hud > .right > button{width:100%!important;max-width:none!important;min-height:44px!important;padding:6px!important;font-size:12px!important;letter-spacing:0!important}
+ body:not(.cabinet-game-surface) .slot-wager-row{grid-column:1/-1;grid-template-columns:minmax(0,1fr) 64px!important;width:100%!important}
+ body:not(.cabinet-game-surface) .hud .stat{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px;padding:4px!important;font-size:11px;line-height:1.2}
+ body:not(.cabinet-game-surface) .hud .stat :is(b,strong){white-space:nowrap}
+ body:not(.cabinet-game-surface) .hud > .credit-controls{grid-column:1/-1;display:grid!important;grid-template-columns:auto minmax(0,1fr)!important;padding:0!important}
+ body:not(.cabinet-game-surface) .hud .credit-controls > .overlay-note{grid-column:1/-1;font-size:11px!important;margin:0!important}
+ body:not(.cabinet-game-surface) .hud .credit-row{display:grid!important;grid-template-columns:minmax(0,1fr) 44px 44px!important;gap:4px!important}
+ body:not(.cabinet-game-surface) .hud .credit-row > *{width:100%!important;min-width:0!important;min-height:44px!important;padding:4px!important}
+ body:not(.cabinet-game-surface) .hud > .select{grid-column:1/-1}
+ .settings-stage .jackpot-scale-grid{grid-template-columns:minmax(0,1fr)!important}
+}
+@media(orientation:landscape) and (max-height:600px) and (min-width:701px){
+ body:not(.cabinet-game-surface) .game{max-width:1100px}
+ body:not(.cabinet-game-surface) .reels-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;gap:8px}
+ body:not(.cabinet-game-surface) .reels{grid-column:1;grid-row:1/4;--reel-row-h:clamp(32px,9dvh,44px)!important;min-height:0!important}
+ body:not(.cabinet-game-surface) .reels-wrap > :is(.reel-result,.slot-feature-indicator,.hud){grid-column:2}
+ body:not(.cabinet-game-surface) .hud{margin:0!important}
+ body:not(.cabinet-game-surface) .slot-wager-row{grid-template-columns:minmax(0,1fr) 64px}
+ body:not(.cabinet-game-surface) .hud > .right{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:700px){
+ body:not(.cabinet-game-surface) .hud > .left > .stat{grid-column:auto!important}
+ body:not(.cabinet-game-surface) .hud > .left > .credit-controls{grid-column:1/-1;display:grid!important;grid-template-columns:auto minmax(0,1fr)!important;padding:0!important}
+ body:not(.cabinet-game-surface) .hud > .left > .select{grid-column:1/-1}
+ body:not(.cabinet-game-surface) .hud .credit-controls > label{font-size:11px;white-space:normal}
+ body:not(.cabinet-game-surface) .hud .credit-controls > .overlay-note{display:none}
+ .settings-stage .wheel-prize-card{grid-template-columns:minmax(0,1fr)}
+ .settings-stage .wheel-prize-card > *{grid-column:1!important}
+ .settings-stage .wheel-percentage-grid{grid-template-columns:minmax(0,1fr)!important}
+}
+@media(max-width:700px){
+ body:not(.cabinet-game-surface) .pot-feature > .pots > .pot{display:grid!important;grid-template-columns:24px minmax(0,1fr)!important;grid-template-rows:auto auto!important;min-height:44px!important;align-content:center!important}
+ body:not(.cabinet-game-surface) .pot-feature > .pots > .pot .pot-meter{grid-column:1!important;grid-row:1/3!important}
+ body:not(.cabinet-game-surface) .pot-feature > .pots > .pot > b{grid-column:2!important;grid-row:1!important;white-space:normal!important}
+ body:not(.cabinet-game-surface) .pot-feature > .pots > .pot > small{grid-column:2!important;grid-row:2!important;white-space:nowrap!important}
+ body:not(.cabinet-game-surface) .reels-wrap > .reel-result:empty{height:16px;min-height:16px;max-height:16px;padding:0!important}
+ body:not(.cabinet-game-surface) .reels-wrap > .slot-feature-indicator:empty{height:12px;min-height:12px;max-height:12px;padding:0}
+}
+@media(min-width:390px) and (max-width:700px){
+ body:not(.cabinet-game-surface) .jackpot-pills{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+ body.slot-game-pretty-penny .jackpot-pills > .jackpot-pill{padding-inline:3px!important}
+ body.slot-game-pretty-penny .jackpot-pills > .jackpot-pill::before{display:none}
+}
+@media(max-width:700px) and (max-height:780px){
+ body:not(.cabinet-game-surface) .reels{--reel-row-h:28px!important}
+}
+@media(min-width:1024px) and (min-height:601px){
+ body:not(.cabinet-game-surface) .reels-wrap{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-items:start;gap:8px}
+ body:not(.cabinet-game-surface) .reels-wrap > .reels{grid-column:1;grid-row:1;min-height:0!important}
+ body:not(.cabinet-game-surface) .reels-wrap > .hud{grid-column:2;grid-row:1/4;margin:0!important}
+ body:not(.cabinet-game-surface) .reels-wrap > .reel-result{grid-column:1;grid-row:2}
+ body:not(.cabinet-game-surface) .reels-wrap > .slot-feature-indicator{grid-column:1;grid-row:3}
+ body:not(.cabinet-game-surface) .hud > .left{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+ body:not(.cabinet-game-surface) .hud > .left > .credit-controls{grid-column:1/-1;grid-template-columns:minmax(0,1fr)}
+ body:not(.cabinet-game-surface) .slot-wager-row{grid-template-columns:minmax(0,1fr) 70px}
+ body:not(.cabinet-game-surface) .hud > .right{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ body:not(.cabinet-game-surface) .hud > .right > button{width:100%;max-width:none;min-height:44px;padding:6px;font-size:12px;letter-spacing:0}
+}
+@media(max-width:700px) and (max-height:740px){
+ body:not(.cabinet-game-surface) .game > .card{gap:1px!important}
+ body:not(.cabinet-game-surface) .reels-wrap{gap:2px!important;margin-top:0!important}
+ body:not(.cabinet-game-surface) .pot-feature{padding-block:2px!important;margin-block:0!important}
+ body:not(.cabinet-game-surface) .jackpot-board{margin-block:0!important}
+}
+@media(max-width:700px){
+ body:not(.cabinet-game-surface) .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-coin){padding:1px!important;gap:0!important}
+ body:not(.cabinet-game-surface) .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-coin) > strong{font-size:12px!important;line-height:1!important}
+ body:not(.cabinet-game-surface) .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-coin) > span{font-size:9px!important;line-height:1!important}
+}
+@media(max-width:389px){
+ body:not(.cabinet-game-surface) .bet-presets{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(orientation:landscape) and (max-height:600px) and (min-width:701px){
+ body:not(.cabinet-game-surface) .hud .credit-controls{grid-column:1/-1;grid-template-columns:minmax(0,1fr)!important}
+ body:not(.cabinet-game-surface) .hud .credit-controls > .overlay-note{white-space:normal;overflow-wrap:break-word;margin:0;font-size:12px}
+ body:not(.cabinet-game-surface) .hud .credit-row{display:grid;grid-template-columns:minmax(0,1fr) 44px 44px;gap:4px}
+ body:not(.cabinet-game-surface) .hud .credit-row > *{width:100%;min-width:0;min-height:44px;padding:4px}
+ body:not(.cabinet-game-surface) .reels .cell{font-size:24px;line-height:1}
+}
+/* Use the overlay's available width when desktop scrollbars reserve gutters. */
+.settings-overlay > .settings-panel{width:100%!important;max-width:100%!important;min-width:0}
+@media(max-width:700px){
+ body:not(.cabinet-game-surface) .slot-wager-row > .slot-denomination-control{padding:0!important;gap:0}
+ body:not(.cabinet-game-surface) .slot-denomination-control > label{margin:0!important;font-size:10px;line-height:1}
+ body:not(.cabinet-game-surface) .bet-presets > .bet-preset{height:44px;min-height:44px!important;align-self:end}
+}
+/* A short landscape phone uses both halves of the viewport for the machine. */
+@media(orientation:landscape) and (max-height:600px) and (min-width:701px){
+ body:not(.cabinet-game-surface) .game > .card{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)!important;grid-template-rows:repeat(6,max-content)!important;gap:3px 8px!important;padding:6px!important;align-content:start}
+ body:not(.cabinet-game-surface) .title{grid-column:1;grid-row:1;font-size:24px!important;min-height:32px;line-height:1.1}
+ body:not(.cabinet-game-surface) .title-mark{width:30px;height:30px}
+ body:not(.cabinet-game-surface) .jackpot-board{grid-column:1;grid-row:2;margin:0!important;padding:3px!important}
+ body:not(.cabinet-game-surface) .jackpot-pill{min-height:28px!important;padding-block:2px!important}
+ body:not(.cabinet-game-surface) .pot-feature{grid-column:1;grid-row:3;padding:2px!important;margin:0!important}
+ body:not(.cabinet-game-surface) .pot-feature > .pots > .pot{min-height:44px!important;padding:2px!important}
+ body:not(.cabinet-game-surface) .pot-feature > .pots > .pot > b{font-size:12px!important}
+ body:not(.cabinet-game-surface) .pot-feature > .pots > .pot .pot-meter{width:24px!important;height:24px!important}
+ body:not(.cabinet-game-surface) .reels-wrap{display:contents!important}
+ body:not(.cabinet-game-surface) .reels-wrap > .reels{grid-column:1;grid-row:4;--reel-row-h:26px!important;--reel-row-gap:3px!important;padding:3px!important;gap:3px!important}
+ body:not(.cabinet-game-surface) .reels-wrap > .reel-result{grid-column:1;grid-row:5;height:32px;min-height:32px;max-height:32px;margin:0!important}
+ body:not(.cabinet-game-surface) .reels-wrap > .slot-feature-indicator{grid-column:1;grid-row:6;height:20px;min-height:20px;max-height:20px}
+ body:not(.cabinet-game-surface) .reels-wrap > .hud{grid-column:2;grid-row:1/7;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:4px!important;align-self:start}
+ body:not(.cabinet-game-surface) .hud > .left{display:contents!important}
+ body:not(.cabinet-game-surface) .hud > .right{grid-column:1/-1;grid-row:1;gap:4px!important}
+ body:not(.cabinet-game-surface) .hud > .left > .stat{grid-column:auto!important;display:flex;flex-wrap:wrap;gap:2px;padding:4px!important;font-size:11px;line-height:1.2}
+ body:not(.cabinet-game-surface) .hud > .left > :is(.credit-controls,.select){grid-column:1/-1}
+ body:not(.cabinet-game-surface) .hud .credit-controls{grid-template-columns:auto minmax(0,1fr)!important;padding:0!important}
+ body:not(.cabinet-game-surface) .hud .credit-controls > label{font-size:11px;white-space:normal}
+ body:not(.cabinet-game-surface) .hud .credit-controls > .overlay-note{display:none}
+ body:not(.cabinet-game-surface) .hud > .right > button{width:100%!important;max-width:none!important;min-height:44px!important;padding:6px!important;letter-spacing:0!important;font-size:12px!important}
+ body:not(.cabinet-game-surface) .slot-wager-row > .slot-denomination-control{padding:0!important}
+ body:not(.cabinet-game-surface) .footer{grid-column:1/-1}
+}
+@media(orientation:landscape) and (max-height:600px) and (min-width:701px){
+ body:not(.cabinet-game-surface) .pot-feature > .pots > .pot{display:grid!important;grid-template-columns:24px minmax(0,1fr)!important;grid-template-rows:auto auto!important;gap:0!important;align-content:center}
+ body:not(.cabinet-game-surface) .pot-feature > .pots > .pot .pot-meter{grid-column:1!important;grid-row:1/3!important}
+ body:not(.cabinet-game-surface) .pot-feature > .pots > .pot > b{grid-column:2!important;grid-row:1!important;white-space:normal!important}
+ body:not(.cabinet-game-surface) .pot-feature > .pots > .pot > small{grid-column:2!important;grid-row:2!important;font-size:11px!important}
+ body:not(.cabinet-game-surface) .reels .cell{padding:0!important;font-size:20px;line-height:1}
+ body:not(.cabinet-game-surface) .reels-wrap > :is(.reel-result,.slot-feature-indicator){box-sizing:border-box}
+}
+@media(orientation:landscape) and (max-height:600px) and (min-width:701px){
+ body.slot-game-treasurepots .game > .card{border-block:0!important}
+ body.slot-game-treasurepots .jackpot-pill{padding-inline:32px 3px!important}
+ body:not(.cabinet-game-surface) .reels .icon-container{height:100%!important;min-height:0;max-height:100%;padding:0}
+ body:not(.cabinet-game-surface) .reels .symbol-art::before{font-size:20px!important;line-height:1}
+ body:not(.cabinet-game-surface) .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-coin){padding:1px!important;gap:0!important}
+ body:not(.cabinet-game-surface) .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-coin) > strong{font-size:12px!important;line-height:1!important}
+ body:not(.cabinet-game-surface) .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-coin) > span{font-size:9px!important;line-height:1!important}
+}
+@media(orientation:landscape) and (max-height:600px) and (min-width:701px){
+ body:not(.cabinet-game-surface) .reels .cell{border-width:1px!important}
+}

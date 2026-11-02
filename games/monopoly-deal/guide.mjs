@@ -31,6 +31,7 @@ export function cardFacts(card){
 
 export const RELEASE_NOTES = [
  ['v1.5.0 · October 28, 2026', [
+  "Safari’s horizontal hand scrollbar has a dedicated gutter below the cards. Short phone layouts trim surrounding empty space and use the dynamic viewport height to avoid residual vertical scrolling.",
   "Fixed scrolling before dealing and during normal play on short iPhone screens, including iPhone Air with browser controls visible. Page height follows the visible viewport while background paint stays anchored to the large viewport. Compact phone deck, property, hand, header, and table spacing preserve card proportions, selection lift, and action hit areas; taller screens retain larger previews. Enlarged cards and reading views still scroll when needed.",
   "Rent works immediately on matching properties. Opponents without payable assets cannot be charged any rent or selected for Any Color Rent; if nobody can pay, the rent card, doublers, and plays are preserved.",
   "Gameplay events produce queued, dismissible toast notifications, including banking, properties, action cards, payments, transfers, wild moves, discards, draws, turns, and wins. Game settings can disable all toasts or individual event types; preferences are saved on this device. Turn reminders and unavailable-action hints appear immediately without losing queued events.",

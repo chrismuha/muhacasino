@@ -1442,6 +1442,8 @@ function getSettingsDefinitions() {
         { key: "freeSpinsAward", title: "Free Spins Award", element: freeSpinsAwardEl?.closest(".select") },
         { key: "bonusGameOdds", title: "Six BONUS Symbols Odds", element: bonusGameOddsEl?.closest(".select") },
         { key: "gemHoldOdds", title: "Emerald Hold & Win Wild Trigger Odds", element: gemHoldOddsEl?.closest(".select") },
+        { key: "linkWinOdds", title: "Winning LINK Chain Odds", element: linkWinOddsEl?.closest(".select") },
+        { key: "linkTeaserOdds", title: "Not Connected LINK Display Odds", element: linkTeaserOddsEl?.closest(".select") },
     ].filter((setting) => setting.element);
 }
 

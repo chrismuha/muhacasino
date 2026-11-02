@@ -1,7 +1,8 @@
 (function () {
     "use strict";
 
-    const gameKey = location.pathname.split("/").filter(Boolean).slice(-2, -1)[0] || "slots";
+    const pathParts = location.pathname.split("/").filter(Boolean);
+    const gameKey = (location.pathname.endsWith("/") ? pathParts.at(-1) : pathParts.at(-2)) || "slots";
     const storageKey = `muhaCasino.slotExperience.${gameKey}.v1`;
     const defaultWheelPrizes = [
         { type: "multiplier", value: 1 },
