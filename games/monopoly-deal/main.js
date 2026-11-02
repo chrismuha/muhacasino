@@ -4,7 +4,7 @@ import {aiChoice,aiPlay} from './ai.mjs?build=20261025-orange-deck-dots-v66';
 import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261028-deal-phone-gutters-v107';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261028-deal-phone-gutters-v107';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-orange-deck-dots-v66';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261031-deal-version-150-v109';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261101-mobile-refresh-toasts-v113';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261025-orange-deck-dots-v66';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -50,9 +50,8 @@ function toastType(message){
 }
 let toastTimer;
 const toastQueue=[];
-let currentToast=null;
 function nextToast(){
- clearTimeout(toastTimer);$('#game-toast').hidden=true;currentToast=null;
+ clearTimeout(toastTimer);$('#game-toast').hidden=true;$('#game-toast').classList.remove('is-fading');
  const next=toastQueue.shift();if(next)showToast(...next);
 }
 function syncToastViewport(){
@@ -66,17 +65,14 @@ function syncToastViewport(){
 function showToast(message, {items=[],detail='',type=items.length?'transfer':toastType(message)}={}) {
  if(toastPreferences.all===false||toastPreferences[type]===false)return;
  const active=$('#game-toast');
- if(!active.hidden){
-  if(!items.length&&!['help','undo','turn'].includes(type)){toastQueue.push([message,{items,detail,type}]);return;}
-  // Detailed transfer results stay immediately available for reading.
-  if(currentToast)toastQueue.unshift(currentToast);
- }
- currentToast=[message,{items,detail,type}];
+ // One notification owns its full two seconds. Newest pending events go next.
+ if(!active.hidden){toastQueue.unshift([message,{items,detail,type}]);return;}
  active.dataset.toastType=type;
  const toast = $('#game-toast');
  const modal = [...document.querySelectorAll('dialog[open]')].at(-1);
  (modal || document.body).append(toast);
  clearTimeout(toastTimer);
+ toast.classList.remove('is-fading');
  toast.hidden = false;
  toast.classList.toggle('has-card-details',items.length>0);
  toast.removeAttribute('tabindex');toast.onkeydown=null;
@@ -92,7 +88,10 @@ function showToast(message, {items=[],detail='',type=items.length?'transfer':toa
   toast.tabIndex=0;toast.onkeydown=event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();dismiss.click();}};
  }
  syncToastViewport();
- toastTimer = setTimeout(nextToast, items.length?Math.min(20000,8000+items.length*1500):3000);
+ toastTimer=setTimeout(()=>{
+  toast.classList.add('is-fading');
+  toastTimer=setTimeout(nextToast,180);
+ },2000);
 }
 // ARIA-disabled buttons remain focusable/clickable solely to explain their state.
 document.addEventListener('click', event => {
@@ -385,7 +384,9 @@ function render(){
  if(state&&me().isAI&&!state.winner&&$('#game .deal-table, #game .players')){updateUnavailableControls();return;}
  detachHandSorting();
  detachHandSorting = () => {};
+ document.body.classList.toggle('is-ready',!state);
  if(!state){
+  document.body.classList.remove('is-playing');
   $('#game').innerHTML='<section class="game-ready" aria-labelledby="ready-title"><h2 id="ready-title">Ready to deal?</h2><p>Play against computer opponents or with two to four people on this device.</p><div class="ready-actions"><button type="button" class="primary" id="ready-new">New game</button><button type="button" id="ready-settings" aria-haspopup="dialog">Game settings</button></div></section>';
   $('#ready-new').onclick=setup;
   $('#ready-settings').onclick=openGameSettings;

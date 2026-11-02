@@ -69,3 +69,14 @@ Property-deal notification checks cover Sly Deal, Forced Deal, and Deal Breaker 
 
 
 iPhone Air residual-scroll coverage attempts to scroll the body and requires zero movement in normal play at 420px width and 700, 742, 780, 844, 860, and 912px heights. It covers standalone and hosted games, populated four-player tables, property and wild selections, and expanded hosted headers where sufficient height remains. Card reading views retain their intended scrolling. Run in Chromium and WebKit; physical iPhone verification remains separate.
+
+
+## November 1, 2026: mobile refresh and notifications (v1.5.0)
+
+- `npm run test:games:refresh`: tests every casino game through hosted refresh, child-frame reload, toolbar changes, orientation changes, host-height changes without a window resize, and direct-URL refresh. Uses touch, an iPhone Safari user agent, 3× device scale, and a 420px phone viewport. Includes fresh-code/offline-cache checks for the shared service worker.
+- `GAME_QA_BROWSER=chromium npm run test:games:refresh` selects Chromium. `GAME_QA_ARTIFACTS=/path` saves hosted refresh screenshots.
+- The notification timing regression uses a paused browser clock to check a full two-second display, fade, newest-first pending events, uniform timing for transfer details, and early dismissal without shortening the next notification.
+- The ready-screen regression checks root, body, and main scrolling at eight phone heights, both directly and hosted with either toolbar state.
+- Targeted WebKit checks also cover populated play tables, notification settings, transfer details in both themes, keyboard toast positioning, keyboard panning, and leaving/re-entering all games.
+- A simulated host-height change fails against the previous frame-sizing code and passes with the grid layout. The exact physical iPhone Air half-black refresh symptom was not reproduced in automation; physical-device confirmation remains necessary.
+- The broader UI run encountered existing failures in “wild flip controls played color” (hidden Change wild color control) and “large private hands scroll” (mandatory discard leaves controls disabled). Both were reproduced with unchanged baseline source and tests; the full UI suite is not claimed green.

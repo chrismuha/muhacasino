@@ -1,4 +1,4 @@
-const CACHE_NAME = "muha-casino-shell-20261101-slot-releases-v112";
+const CACHE_NAME = "muha-casino-shell-20261101-mobile-refresh-toasts-v113";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -47,13 +47,19 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request).then((response) => {
-      if (response.ok && new URL(event.request.url).origin === self.location.origin) {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-      }
-      return response;
-    }))
+  const url = new URL(event.request.url);
+  const freshCode = url.origin === self.location.origin && /\.(?:css|m?js)$/.test(url.pathname);
+  const fetchAndCache = () => fetch(event.request).then((response) => {
+    if (response.ok && url.origin === self.location.origin) {
+      const copy = response.clone();
+      event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy)));
+    }
+    return response;
+  });
+  // Fresh HTML must not be paired with old layout code. Keep large artwork
+  // cache-first; scripts and styles fetch fresh copies with an offline fallback.
+  event.respondWith(freshCode
+    ? fetchAndCache().catch(() => caches.match(event.request))
+    : caches.match(event.request).then((cached) => cached || fetchAndCache())
   );
 });

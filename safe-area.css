@@ -6,31 +6,41 @@
   --casino-safe-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
   --casino-toolbar-height: 64px;
 }
-/* The complete hosted game, including a collapsed header, stays inside the safe rectangle. */
-body.game-open #gameView {
-  position: fixed;
-  top: var(--casino-safe-top);
-  right: var(--casino-safe-right);
-  bottom: var(--casino-safe-bottom);
-  left: var(--casino-safe-left);
-  width: auto;
-  height: auto;
-  min-height: 0;
-  max-height: none;
+/* A definite grid track sizes the child viewport on first paint and reload.
+   Do not save a measured iframe height: Safari can change the available space
+   during restoration without delivering another window resize event. */
+body.game-open #gameView:not([hidden]) {
+  position:fixed;
+  display:grid;
+  grid-template-rows:var(--casino-toolbar-height) minmax(0,1fr);
+  top:calc(var(--casino-visible-top,0px) + var(--casino-safe-top));
+  right:var(--casino-safe-right);
+  bottom:auto;
+  left:var(--casino-safe-left);
+  width:auto;
+  height:calc(var(--casino-visible-height,100dvh) - var(--casino-safe-top) - var(--casino-safe-bottom));
+  min-height:0;
+  max-height:none;
 }
 body.game-open #gameView .game-toolbar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
+  position:relative;
+  inset:auto;
+  grid-row:1;
+  width:100%;
+  height:100%;
+  min-height:0;
 }
 body.game-open #gameView #gameFrame {
-  top: var(--casino-toolbar-height);
-  height: calc(100% - var(--casino-toolbar-height)) !important;
+  position:relative;
+  inset:auto;
+  grid-row:2;
+  width:100%;
+  height:100%!important;
+  min-height:0;
+  max-height:100%;
 }
-body.game-open #gameView .game-load-state { inset-block-start: var(--casino-toolbar-height); }
-body.game-open #gameView.toolbar-collapsed { --casino-toolbar-height: 28px; }
+body.game-open #gameView .game-load-state { inset-block-start:var(--casino-toolbar-height); }
+body.game-open #gameView.toolbar-collapsed { --casino-toolbar-height:28px; }
 #launcher { padding-top: var(--casino-safe-top); padding-bottom: var(--casino-safe-bottom); }
 #launcher .topbar { top: var(--casino-safe-top); width: min(1380px, calc(100% - 48px - var(--casino-safe-left) - var(--casino-safe-right))); left: calc(50% + (var(--casino-safe-left) - var(--casino-safe-right)) / 2); }
 @media (max-width: 600px) { :root { --casino-toolbar-height: 68px; } }
@@ -50,22 +60,6 @@ html.casino-standalone-slot body {
   border-left: var(--casino-safe-left) solid transparent;
 }
 
-/* A definite visible-viewport height avoids delayed percentage-height layout on iOS. */
-body.game-open #gameView:not([hidden]){
- display:flex;flex-direction:column;
- top:calc(var(--casino-visible-top,0px) + var(--casino-safe-top));
- bottom:auto;
- height:calc(var(--casino-visible-height,100dvh) - var(--casino-safe-top) - var(--casino-safe-bottom));
-}
-body.game-open #gameView .game-toolbar{
- position:relative;top:auto;left:auto;right:auto;
- flex:0 0 var(--casino-toolbar-height);height:var(--casino-toolbar-height);min-height:0;
-}
-body.game-open #gameView #gameFrame{
- position:relative;top:auto;right:auto;left:auto;
- flex:1 1 0;height:0!important;min-height:0;max-height:100%;width:100%;
-}
-
 .toolbar-deal-controls[hidden]{display:none}
 .toolbar-deal-controls{display:flex;gap:8px;align-items:center;justify-content:flex-end;grid-column:3;grid-row:1;min-width:0}
 .toolbar-deal-controls button{min-height:44px;padding:8px 12px;border:1px solid #7283a4;border-radius:8px;background:#17233b;color:#fff;font:700 14px/1.2 system-ui;white-space:nowrap;cursor:pointer}
@@ -77,12 +71,6 @@ body.game-open #gameView #gameFrame{
  #gameView .toolbar-deal-controls{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;gap:6px}
  #gameView .toolbar-deal-controls[hidden]{display:none}
  #gameView .toolbar-deal-controls button{padding:6px 4px;font-size:13px}
-}
-
-/* Use a definite frame height on first paint rather than growing a zero-height iframe. */
-body.game-open #gameView #gameFrame{
- flex:0 0 auto;
- height:var(--casino-frame-height,calc(100% - var(--casino-toolbar-height)))!important;
 }
 
 /* Browser chrome already ends the visual viewport above its bottom bar. */

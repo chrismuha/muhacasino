@@ -101,7 +101,7 @@ function syncHostedCabinetScreens(gameId = null) {
   device.classList.toggle("cabinet-non-slot-game", !slotGameActive);
 }
 
-const SITE_BUILD = "20261028-deal-phone-gutters-v107";
+const SITE_BUILD = "20261101-mobile-refresh-toasts-v113";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");
@@ -192,11 +192,6 @@ function syncGameViewport() {
  const top=0;
  document.documentElement.style.setProperty('--casino-visible-height',`${height}px`);
  document.documentElement.style.setProperty('--casino-visible-top',`${top}px`);
- if(!gameView.hidden && document.body.classList.contains('game-open')){
-  const available=gameView.getBoundingClientRect().height;
-  const toolbar=gameView.querySelector('.game-toolbar').getBoundingClientRect().height;
-  gameView.style.setProperty('--casino-frame-height',`${Math.max(0,available-toolbar)}px`);
- }
 }
 let gameViewportTimer;
 function scheduleGameViewport(){
