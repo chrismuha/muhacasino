@@ -1,10 +1,10 @@
-/* Responsive rules shared by Modern and Classic. Card copy keeps its designed lines. */
+/* Responsive card-table rules. */
+button:not(.modern-hand-card):not(.current-properties):not(.current-bank):not(.opponent-properties):not(.draw-deck){white-space:nowrap}
 .game-topbar,.game-top-actions{flex-wrap:nowrap;min-width:0}
 .game-topbar>a{flex-shrink:0;white-space:nowrap}
 .game-topbar>a .casino-name{display:inline;font:inherit;letter-spacing:inherit;color:inherit}
 .game-top-actions{flex-shrink:0;margin-left:auto}
-button:not(.card):not(.modern-hand-card):not(.current-properties):not(.current-bank):not(.opponent-properties):not(.draw-deck){white-space:nowrap}
-[data-fit-label],.player h3,.card>strong,.catalog-face>h3,.table-view-heading h2,#question,.wizard-heading h2,#setup-wizard h3,.privacy h2{white-space:nowrap;overflow-wrap:normal;word-break:normal;min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+[data-fit-label],.table-view-heading h2,#question,.wizard-heading h2,#setup-wizard h3{white-space:nowrap;overflow-wrap:normal;word-break:normal;min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
 [data-fit-label]:focus-visible{outline:2px solid #ffe297;outline-offset:2px}
 #choice #options button{white-space:nowrap;overflow-x:auto;overflow-y:hidden;max-width:100%;min-width:0;font-size:clamp(16px,2.5vw,26px);padding:14px 16px;min-height:56px;scrollbar-width:thin}
 #choice #question{font-size:clamp(20px,4vw,36px)}
@@ -24,7 +24,6 @@ button:not(.card):not(.modern-hand-card):not(.current-properties):not(.current-b
 #wizard-review span{flex-shrink:0}
 #wizard-progress{white-space:nowrap;font-size:clamp(16px,3.7vw,20px)}
 .table-settings{min-width:0}
-.theme-options{flex-wrap:nowrap;max-width:100%;overflow-x:auto;padding:3px}
 .table-settings input{max-width:100%}
 .table-view-heading{min-width:0;gap:10px}
 .table-view-heading h2{flex:1}
@@ -38,9 +37,6 @@ button:not(.card):not(.modern-hand-card):not(.current-properties):not(.current-b
 .catalog-browser-tools label{flex-shrink:0;white-space:nowrap}
 #catalog-type{flex:1 0 112px;min-width:112px;width:auto;max-width:none;font-size:16px}
 .catalog-browser-tools .catalog-position,.catalog-copy-count{flex-shrink:0;font-size:14px;white-space:nowrap}
-.table-card-list li{min-width:0}
-.table-card-list h3{white-space:nowrap;overflow:auto;overflow-wrap:normal;scrollbar-width:thin}
-.table-card-value{flex-shrink:0}
 /* Keep the entire selected card inside the stage, including its focus/outline space. */
 [data-theme=modern] .deal-table{grid-template-rows:clamp(170px,56cqw,420px) clamp(270px,66cqw,480px) auto auto}
 [data-theme=modern] .deal-stage{container-type:size;min-width:0;padding-block:12px;grid-template-columns:18% minmax(0,1fr) 28%;gap:2%}
@@ -72,17 +68,12 @@ button:not(.card):not(.modern-hand-card):not(.current-properties):not(.current-b
 [data-theme=modern] .table-privacy button{white-space:nowrap;font-size:clamp(12px,2.8cqw,20px);max-width:100%}
 [data-theme=modern] .deal-table:not(.hand-visible) .draw-deck{display:none}
 [data-theme=modern] .deal-table:not(.hand-visible) .card-stage{grid-column:1/3}
-[data-theme=modern] .table-mini-face{flex-basis:clamp(36px,9vw,65px)}
 /* Short viewports scroll their card pane rather than crop a card or shrink its text away. */
 @media(max-height:600px){
  #table-viewer[data-view=cards] #table-view-content{grid-template-rows:auto minmax(400px,1fr);overflow:auto;align-content:start}
  #table-viewer[data-view=cards] .catalog-stage{height:400px;min-height:400px}
  #table-viewer[data-view=cards] .catalog-face{height:100%;min-height:0}
  #table-viewer[data-view=cards] .catalog-face:not(:has(.modern-catalog-face)){overflow:auto}
- html[data-theme=classic] #table-viewer[data-view=cards] .catalog-face{grid-template-columns:1fr;grid-template-rows:auto 16px auto minmax(0,1fr);gap:8px;overflow:auto;container-type:normal}
- html[data-theme=classic] #table-viewer[data-view=cards] .catalog-face ul{grid-column:1;grid-row:auto;min-height:max-content;justify-content:start}
- html[data-theme=classic] #table-viewer[data-view=cards] .catalog-face h3{font-size:22px}
- html[data-theme=classic] #table-viewer[data-view=cards] .catalog-face li{font-size:18px}
  .table-view-body{grid-template-rows:auto minmax(80px,1fr);margin:8px}
  #table-view-description{max-height:25dvh;overflow:auto}
 }
@@ -106,10 +97,6 @@ button:not(.card):not(.modern-hand-card):not(.current-properties):not(.current-b
  .wizard-heading button{font-size:16px;padding-inline:10px}
  #setup-wizard h3{font-size:24px}
  .required-label{white-space:nowrap}
- .table-card-list li{gap:8px;padding:10px}
- .table-card-list h3{font-size:20px}
- .table-card-list p{font-size:16px}
- .table-card-value{font-size:18px}
 }
 @media(min-width:601px){[data-theme=modern] .current-stats{grid-template-columns:auto auto auto minmax(0,1fr)}[data-theme=modern] .table-tools{grid-column:auto;justify-content:safe end}}
 @media(max-width:280px){
@@ -126,11 +113,8 @@ button:not(.card):not(.modern-hand-card):not(.current-properties):not(.current-b
  .table-view-selector label{font-size:14px}
  #table-view-category{font-size:14px}
 }
-.theme-settings{min-inline-size:0;max-width:100%}
-.theme-options{min-width:0;width:100%}
 .masthead h1{white-space:nowrap;font-size:clamp(16px,4.8vw,49px)}
 .masthead .eyebrow{max-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
-.player .group>strong,.player .group>div,.player .group>small{white-space:nowrap;overflow-wrap:normal;min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
 /* Landscape puts your assets beside the play area, keeping the hand close by. */
 @media(orientation:landscape) and (max-height:600px) and (min-width:480px){
  [data-theme=modern] .deal-table{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);grid-template-rows:148px 280px auto;gap:10px}
@@ -181,9 +165,7 @@ button[aria-disabled=true]{opacity:.4;cursor:help}
 /* No browser tap flash or rectangular hover fill around cards and round buttons. */
 html,body,body *{-webkit-tap-highlight-color:transparent}
 .round-action,.opponent-properties,.draw-deck,.modern-hand-card,.current-bank,.current-properties{-webkit-appearance:none;appearance:none}
-[data-theme=modern] .round-action:hover,[data-theme=modern] #end.round-action:hover,
-[data-theme=modern] .opponent-properties:hover,[data-theme=modern] .draw-deck:hover,
-[data-theme=modern] .modern-hand-card:hover{background:transparent}
+[data-theme=modern] .round-action:hover,[data-theme=modern] #end.round-action:hover,[data-theme=modern] .opponent-properties:hover,[data-theme=modern] .draw-deck:hover,[data-theme=modern] .modern-hand-card:hover{background:transparent}
 [data-theme=modern] .current-bank:hover,[data-theme=modern] .current-properties:hover{background:#003575a6}
 @media(hover:hover) and (pointer:fine){
  [data-theme=modern] .round-action:not([aria-disabled=true]):hover .action-disc{filter:brightness(1.12)}

@@ -84,10 +84,17 @@ test('setup: 2–4 unique named players, validation, review, cancellation, and p
  await close(p);
 });
 
-test('theme and colors: independent presets/HEX/picker/reset, storage recovery, state and privacy preservation',async()=>{
- const p=await open();await fixture(p);await p.locator('.appearance-settings').evaluate(el=>el.open=true);await p.locator('#table-hex').fill('#803050');assert.equal(await p.locator('#table-color').inputValue(),'#803050');await p.locator('[data-theme-choice=classic]').click();assert.equal(await p.locator('#table-color').inputValue(),'#0b211e');await p.locator('[data-table-color="#27313C"]').click();await p.locator('[data-theme-choice=modern]').click();assert.equal(await p.locator('#table-color').inputValue(),'#803050');assert.equal(await p.locator('.modern-hand-card').count(),7);await p.locator('#table-hex').fill('oops');assert.equal(await p.locator('#table-hex').getAttribute('aria-invalid'),'true');await p.locator('#table-hex').fill('#123456');await p.locator('#table-hex').focus();await p.keyboard.press(process.platform==='darwin'?'Meta+A':'Control+A');await p.keyboard.type('#803050');assert.equal(await p.locator('#table-hex').inputValue(),'#803050');await p.locator('#reset-color').click();assert.equal(await p.locator('#table-color').inputValue(),'#0064db');await p.locator('#table-color').evaluate(e=>{e.value='#665533';e.dispatchEvent(new Event('input',{bubbles:true}))});assert.equal(await p.locator('#table-hex').inputValue(),'#665533');await p.locator('[data-theme-choice=classic]').click();assert.equal(await p.locator('#table-color').inputValue(),'#27313c');await p.locator('#reset-color').click();assert.equal(await p.locator('#table-color').inputValue(),'#0b211e');await p.locator('[data-theme-choice=modern]').click();assert.equal(await p.locator('#table-color').inputValue(),'#665533');await p.reload();await p.waitForFunction(()=>window.__dealTest);await p.locator('.appearance-settings').evaluate(el=>el.open=true);await p.locator('[data-theme-choice=classic]').click();assert.equal(await p.locator('#game [data-card]').count(),7);await p.locator('[data-theme-choice=modern]').click();assert.equal(await p.locator('#game [data-card]').count(),7);await p.reload();assert.equal(await p.locator('html').getAttribute('data-theme'),'modern');assert.equal(await p.locator('#table-color').inputValue(),'#665533');await close(p);
- const broken=await open(undefined,{'muha-monopoly-deal-theme':'garbage','muha-monopoly-deal-modern-table-color':'bad'});assert.equal(await broken.locator('#table-color').inputValue(),'#0064db');await close(broken);
- const blocked=await open();await blocked.addInitScript(()=>{Object.defineProperty(window,'localStorage',{get(){throw Error('blocked')}})});await blocked.reload();await blocked.waitForFunction(()=>window.__dealTest);assert.equal(await blocked.locator('html').getAttribute('data-theme'),'modern');await close(blocked);
+test('table colors persist without an appearance selector or alternate layout',async()=>{
+ const p=await open();await fixture(p);await p.locator('.appearance-settings').evaluate(el=>el.open=true);
+ assert.equal(await p.locator('[data-theme-choice],.theme-settings').count(),0);
+ await p.locator('#table-hex').fill('#803050');assert.equal(await p.locator('#table-color').inputValue(),'#803050');
+ await p.locator('[data-table-color="#27313C"]').click();assert.equal(await p.locator('#table-color').inputValue(),'#27313c');
+ await p.locator('#table-hex').fill('oops');assert.equal(await p.locator('#table-hex').getAttribute('aria-invalid'),'true');
+ await p.locator('#reset-color').click();assert.equal(await p.locator('#table-color').inputValue(),'#0064db');
+ await p.locator('#table-color').evaluate(e=>{e.value='#665533';e.dispatchEvent(new Event('input',{bubbles:true}))});
+ await p.reload();await p.waitForFunction(()=>window.__dealTest);assert.equal(await p.locator('#table-color').inputValue(),'#665533');assert.equal(await p.locator('.modern-hand-card').count(),7);await close(p);
+ const broken=await open(undefined,{'muha-monopoly-deal-modern-table-color':'bad'});assert.equal(await broken.locator('#table-color').inputValue(),'#0064db');await close(broken);
+ const blocked=await open();await blocked.addInitScript(()=>{Object.defineProperty(window,'localStorage',{get(){throw Error('blocked')}})});await blocked.reload();await blocked.waitForFunction(()=>window.__dealTest);assert.equal(await blocked.locator('.theme-settings').count(),0);await close(blocked);
 });
 
 test('screenshot states and responsive layout: 320, 390, 430, 768, 1260 portrait and desktop/landscape',async()=>{
@@ -145,13 +152,9 @@ test('discard down to seven, next-player draw, victory, and post-win table acces
  await fixture(p,'win',2);await playFirst(p);await choose(p,'View table');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.winner),'Chris');assert.equal(await p.locator('#end').isDisabled(),true);await p.locator('.current-properties .asset-panel-title').dblclick();assert.equal(await p.locator('#table-viewer').getAttribute('open'),'');await p.locator('#table-view-close').click();await conservation(p);await close(p);
 });
 
-test('Classic gameplay still supports cancel, bank, property play, privacy, and theme return',async()=>{
- const p=await open();await fixture(p);await p.locator('.appearance-settings').evaluate(el=>el.open=true);await p.locator('[data-theme-choice=classic]').click();await p.locator('#game [data-card]').first().click();await choose(p,'Cancel');await idle(p);assert.equal(await p.locator('#game [data-card]').count(),7);await p.locator('#game [data-card]').first().click();await choose(p,'Play card');await idle(p);await p.locator('#game [data-card]').first().click();await choose(p,'Put in bank');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),2);await p.reload();await p.waitForFunction(()=>window.__dealTest);assert.equal(await p.locator('#reveal').count(),0);assert.equal(await p.locator('#game [data-card]').count(),5);await p.locator('.appearance-settings').evaluate(el=>el.open=true);await p.locator('[data-theme-choice=modern]').click();assert.equal(await p.locator('.modern-hand-card').count(),5);await conservation(p);await close(p);
-});
-
-test('all 58 card designs and every table-view category work in both themes',async()=>{
- const p=await open();await fixture(p);await p.locator('.appearance-settings').evaluate(el=>el.open=true);for(const theme of ['modern','classic']){
-  await p.locator(`[data-theme-choice=${theme}]`).click();await p.locator('#rules').click();const views=await p.locator('#table-view-category option').count();for(let i=0;i<views;i++){await selectTableCategory(p,i);assert.ok((await p.locator('#table-view-title').innerText()).length);}
+test('all 58 card designs and every table-view category work in the card-table layout',async()=>{
+ const p=await open();await fixture(p);await p.locator('.appearance-settings').evaluate(el=>el.open=true);for(const theme of ['modern']){
+  await p.locator('#rules').click();const views=await p.locator('#table-view-category option').count();for(let i=0;i<views;i++){await selectTableCategory(p,i);assert.ok((await p.locator('#table-view-title').innerText()).length);}
   const cardOption=await p.locator('#table-view-category option').filter({hasText:'Cards'}).getAttribute('value');await selectTableCategory(p,cardOption);await p.locator('#catalog-type').selectOption('all');assert.match(await p.locator('.catalog-position').innerText(),/58/);
   for(let i=0;i<58;i++){assert.equal(await p.locator('.catalog-face').count(),1);if(theme==='modern'){assert.equal(await p.locator('.modern-catalog-face .deal-face').isVisible(),true);const box=await p.locator('.modern-catalog-face .deal-face').boundingBox();assert.ok(box.height>100&&box.width>80,'Catalog card is visible');}await p.locator('#design-next').click();}assert.match(await p.locator('.catalog-position').innerText(),/^1 \/ 58/);
   for(const type of ['property','action','money']){await p.locator('#catalog-type').selectOption(type);assert.ok((await p.locator('.catalog-copy-count').innerText()).includes('Deck:'));}
@@ -247,19 +250,19 @@ async function responsiveIssues(page){return page.evaluate(()=>{
  return issues;
 })}
 
-test('responsive matrix: readable controls and no clipped page, dialogs, or selected cards in both themes',async()=>{
+test('responsive matrix: readable controls and no clipped page, dialogs, or selected cards in the card-table layout',async()=>{
  const sizes=[[320,240],[480,240],[844,240],[240,568],[280,653],[320,568],[360,640],[375,667],[390,844],[414,896],[430,932],[480,320],[568,320],[600,480],[601,480],[667,375],[768,1024],[820,1180],[1024,768],[1280,720],[1440,900],[1920,1080]];
  const issues=[];
  for(const [width,height] of sizes){
   const p=await open({width,height});await fixture(p);await p.evaluate(()=>{const s=window.__dealTest.state;s.players.forEach((p,i)=>p.name=['Christopher WWWWWWWWWWWW','AlexandriaWithALongNameXX','WWWWWWWWWWWWWWWWWWWWWWWW','AReallyLongPlayerNameXYZ'][i]);window.__dealTest.render()});
-  for(const theme of ['modern','classic']){
-   await p.locator('.appearance-settings').evaluate(el=>el.open=true);await p.locator(`[data-theme-choice=${theme}]`).click();
+  for(const theme of ['modern']){
+   await p.locator('.appearance-settings').evaluate(el=>el.open=true);
    issues.push(...(await responsiveIssues(p)).map(issue=>`${width}×${height} ${theme} settings: ${issue}`));
    await p.locator('.appearance-settings').evaluate(el=>el.open=false);await p.locator('#game [data-card]').first().click();
-   if(theme==='classic'){await p.locator('#choice[open]').waitFor();issues.push(...(await responsiveIssues(p)).map(issue=>`${width}×${height} classic choice: ${issue}`));await choose(p,'Cancel');await idle(p)}else{issues.push(...(await responsiveIssues(p)).map(issue=>`${width}×${height} modern selected: ${issue}`));}
+   issues.push(...(await responsiveIssues(p)).map(issue=>`${width}×${height} selected: ${issue}`));
    await p.locator('#rules').click();for(const name of ['Rules','Cards','Table activity']){
     await p.locator('#table-view-category').selectOption({label:name});issues.push(...(await responsiveIssues(p)).map(issue=>`${width}×${height} ${theme} ${name}: ${issue}`));
-    if(name==='Cards'){const face=p.locator(theme==='modern'?'.modern-catalog-face .deal-face':'.catalog-face');const box=await face.boundingBox();if(box.width<40||box.height<100)issues.push(`${width}×${height} ${theme}: catalog too small (${box.width}×${box.height})`);}
+    if(name==='Cards'){const face=p.locator('.modern-catalog-face .deal-face');const box=await face.boundingBox();if(box.width<40||box.height<100)issues.push(`${width}×${height} ${theme}: catalog too small (${box.width}×${box.height})`);}
    }await p.locator('#table-view-close').click();
    await p.locator('#new').click();await p.locator('#start').click();issues.push(...(await responsiveIssues(p)).map(issue=>`${width}×${height} ${theme} wizard: ${issue}`));await p.locator('#wizard-cancel').click();
    if(artifacts&&[240,320,601,667,1920].includes(width))await shot(p,`responsive-${width}-${height}-${theme}`);
@@ -681,7 +684,7 @@ test('guide and release notes match deck facts, current controls, and the curren
  for(const instruction of ['Double-tap','Close returns','no manual Hide','trackpad','Coming soon','Continue turn','same category','Bank cards first','one bullet for each card','Forced Deal lists both'])assert.ok(facts.rules.toLowerCase().includes(instruction.toLowerCase()),instruction);
  assert.doesNotMatch(facts.notes,/overlapping hand below|Privacy separately hides|actions below the selected|Collapsible Table appearance/);
  const history=await readFile(path.join(root,'about.html'),'utf8'),section=history.slice(history.indexOf('<article id="monopoly-deal"'),history.indexOf('<article id="sorry"'));
- assert.equal((section.match(/2026-10-28/g)||[]).length,1);assert.match(section,/v1\.5\.0/);assert.doesNotMatch(section,/separate Privacy control/);
+ assert.equal((section.match(/2026-11-02/g)||[]).length,1);assert.match(section,/v1\.5\.0/);assert.doesNotMatch(section,/separate Privacy control/);
  await close(p);
 });
 test('private payment resumes the same turn with Continue turn rather than Reveal my hand',async()=>{
@@ -1196,7 +1199,7 @@ test('reload resumes a saved AI turn without repeating already completed plays',
 });
 
 test('computer Forced Deal notifies the human without changing the mounted player screen',async()=>{
- for(const theme of ['modern','classic']){
+ for(const theme of ['modern']){
   const p=await open();await fixture(p,'forced',2);
   await p.evaluate(theme=>{
    const t=window.__dealTest,s=t.state;s.players.reverse();s.players[1].isAI=true;s.players[1].name='Computer 1';
@@ -1208,7 +1211,7 @@ test('computer Forced Deal notifies the human without changing the mounted playe
   assert.match(await p.locator('#question').innerText(),/Computer 1 played Forced Deal against you/i);
   assert.equal(await p.locator('#game').getAttribute('data-mounted'),'human');
   assert.equal(await p.locator('#game').innerText().then(t=>t.includes('Computer turn')),false);
-  assert.equal(await p.locator(theme==='modern'?'.current-seat-heading h2':'.hand h2').innerText().then(t=>t.includes('Alex')),true);
+  assert.equal(await p.locator('.current-seat-heading h2').innerText().then(t=>t.includes('Alex')),true);
   await choose(p,'Continue');await p.evaluate(()=>window.__aiRun);await idle(p);
   assert.equal(await p.evaluate(()=>window.__dealTest.state.turn),0);await conservation(p);await close(p);
  }
@@ -1246,7 +1249,7 @@ test('refresh cancels an unfinished human action without losing its card or play
 test('v1.5.0 matches the game, launcher and single same-day release entry',async()=>{
  const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v1\.5\.0/);
  await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v1\.5\.0/);
- await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v1.5.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-10-28'}).count(),1);
+ await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v1.5.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-11-02'}).count(),1);
  await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v1.5.0');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();await close(p);
 });
 
@@ -1379,8 +1382,8 @@ test('phone setup keeps the keyboard opt-in and navigation visible when space sh
  await close(p);
 });
 
-test('rent choices stay lowest-rent-first regardless of property acquisition order in both themes',async()=>{
- for(const theme of ['modern','classic'])for(const colors of [['pink','red','green','railroad'],['railroad','green','red','pink']]){
+test('rent choices stay lowest-rent-first regardless of property acquisition order in the card-table layout',async()=>{
+ for(const theme of ['modern'])for(const colors of [['pink','red','green','railroad'],['railroad','green','red','pink']]){
   const p=await open();await fixture(p,'hand',2);
   await p.evaluate(({theme,colors})=>{
    const t=window.__dealTest,s=t.state,p=s.players[0];s.draw.push(...p.hand.splice(0));
@@ -1870,8 +1873,8 @@ test('multi-card selections stay in one category through taps keyboard and enlar
  }
 });
 
-test('payments group Bank Property Building and regroup moved buildings after each payment in both themes',async()=>{
- for(const theme of ['modern','classic']){
+test('payments group Bank Property Building and regroup moved buildings after each payment in the card-table layout',async()=>{
+ for(const theme of ['modern']){
   const p=await open({width:390,height:844},{'muha-monopoly-deal-theme':theme});await fixture(p,'pay-property',2);
   await p.evaluate(()=>{const s=window.__dealTest.state;for(const value of [10,1]){const i=s.draw.findIndex(c=>c.type==='money'&&c.value===value);s.players[1].bank.push(s.draw.splice(i,1)[0]);}void window.__dealTest.pay(s.players[1],s.players[0],5)});
   await choose(p,'Ready to pay');
@@ -1892,13 +1895,13 @@ test('payments group Bank Property Building and regroup moved buildings after ea
  }
 });
 
-test('completed Sly Forced and Breaker deals toast every transferred card as a bullet in both themes',async()=>{
- for(const theme of ['modern','classic'])for(const viewport of [{width:390,height:844},{width:768,height:1024},{width:1440,height:900}]){
+test('completed Sly Forced and Breaker deals toast every transferred card as a bullet in the card-table layout',async()=>{
+ for(const theme of ['modern'])for(const viewport of [{width:390,height:844},{width:768,height:1024},{width:1440,height:900}]){
   const p=await open(viewport,{'muha-monopoly-deal-theme':theme});
   for(const kind of ['sly','forced','breaker']){
    await fixture(p,kind,2);
    const expected=await p.evaluate(async kind=>{const {GROUPS}=await import('./engine.mjs');const s=window.__dealTest.state,actor=s.players[0],target=s.players[1];s.plays=2;const label=c=>`${c.name} · ${c.value}M · ${GROUPS[c.color].name}`;return {title:`${actor.name} · ${actor.hand[0].name}`,items:[...target.props.map(c=>`Taken from ${target.name}: ${label(c)}`),...target.buildings.map(c=>`Taken from ${target.name}: ${label(c)}`),...(kind==='forced'?[`Given to ${target.name}: ${label(actor.props[0])}`]:[])]}},kind);
-   if(theme==='modern')await playFirst(p);else{await p.locator('#game [data-card]').first().click();await choose(p,'Play card');}
+   await playFirst(p);
    if(kind==='forced')await choose(p,0);await choose(p,0);await idle(p);
    await notification(p,new RegExp(expected.title));
    assert.equal(await p.locator('#game-toast strong').innerText(),expected.title);
@@ -2128,7 +2131,7 @@ test('automatic dealing remains the default and never opens drawn-card previews'
 });
 
 test('manual opening hands draw one card per deck tap, keep privacy, and recover after refresh',async()=>{
- for(const theme of ['modern','classic']){
+ for(const theme of ['modern']){
  const p=await open({width:420,height:712},{'muha-monopoly-deal-theme':theme,'muha-deal-settings-v1':JSON.stringify({automaticDealing:false})});
  await startDrawGame(p);
  assert.deepEqual(await p.evaluate(()=>window.__dealTest.state.players.map(p=>[p.hand.length,p.pendingDraw])),[[0,7],[0,5]]);
@@ -2169,8 +2172,8 @@ test('manual Pass Go draws are required, empty hands draw five, and enabling aut
  await conservation(p);await close(p);
 });
 
-test('manual drawn cards show complete reading faces and a reachable Close in both themes',async()=>{
- for(const theme of ['modern','classic'])for(const viewport of [{width:320,height:568},{width:844,height:390}]){
+test('manual drawn cards show complete reading faces and a reachable Close in the card-table layout',async()=>{
+ for(const theme of ['modern'])for(const viewport of [{width:320,height:568},{width:844,height:390}]){
  const p=await open(viewport,{'muha-monopoly-deal-theme':theme,'muha-deal-settings-v1':JSON.stringify({automaticDealing:false})});
  await fixture(p,'hand',2);
  for(const kind of ['property','wild','money','pass','rent','house','breaker']){
@@ -2225,7 +2228,7 @@ test('manual human draws do not interrupt automatic computer draws and discard r
 });
 
 test('two-color and multicolor wild moves spend a dot, cancel and same color are free, and Undo restores it',async()=>{
- for(const theme of ['modern','classic'])for(const multicolor of [false,true]){
+ for(const theme of ['modern'])for(const multicolor of [false,true]){
  const p=await open({width:430,height:932},{'muha-monopoly-deal-theme':theme});await fixture(p,'rearrange',2);
  const wildId=await p.evaluate(multicolor=>{
   const t=window.__dealTest,s=t.state,p=s.players[0];
@@ -2310,4 +2313,15 @@ test('a fresh hosted game and its very first move stay within the phone viewport
  }
  await close(p);
  }
+});
+
+test('obsolete appearance preferences cannot enable another layout or change a saved table color',async()=>{
+ const p=await open({width:420,height:712},{'muha-monopoly-deal-theme':'obsolete-layout','muha-monopoly-deal-modern-table-color':'#123456'});
+ await fixture(p,'hand',2);
+ assert.equal(await p.locator('.theme-settings,[data-theme-choice],.players,.turnbar').count(),0);
+ assert.equal(await p.locator('.deal-table').count(),1);assert.equal(await p.locator('.modern-hand-card').count(),7);
+ assert.equal(await p.locator('#table-color').inputValue(),'#123456');
+ await p.reload();await p.waitForFunction(()=>window.__dealTest);
+ assert.equal(await p.locator('.deal-table').count(),1);assert.equal(await p.locator('#table-color').inputValue(),'#123456');
+ assert.equal(await p.locator('.modern-hand-card').count(),7);await close(p);
 });

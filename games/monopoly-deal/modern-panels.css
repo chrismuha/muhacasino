@@ -35,8 +35,6 @@
 [data-theme=modern] .table-tools button,[data-theme=modern] .table-tools #move{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;border-radius:999px;border:1px solid #91c9ff66;padding:8px 12px;background:#063d80;color:#fff;font-size:12px;box-shadow:none}
 [data-theme=modern] .table-tools button:hover,[data-theme=modern] .table-tools #move:hover{background:#10549b}
 [data-theme=modern] .table-tool-icon{display:inline-grid;place-items:center;flex:0 0 18px;width:18px;font-size:20px;line-height:1;pointer-events:none}
-
-/* Navigation stays at the top. Classic retains its existing viewer and footer. */
 [data-theme=modern] #table-viewer[open]{grid-template-rows:auto auto auto minmax(0,1fr);background:#05245b}
 [data-theme=modern] #table-viewer .table-view-heading{grid-row:1;background:#041d4a;border-bottom:1px solid #9ccaff33;padding:14px 18px}
 [data-theme=modern] #table-viewer .table-view-heading h2{font-size:clamp(20px,3vw,30px)}

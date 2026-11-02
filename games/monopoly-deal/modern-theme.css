@@ -1,5 +1,4 @@
-/* Classic uses styles.css unchanged. All new table rules are scoped to modern. */
-.theme-settings{flex-basis:100%;border:0;padding:0;margin:0 0 14px}.theme-settings legend{font-size:22px;font-weight:750;margin-bottom:12px}.theme-options{display:flex;gap:12px}.theme-options button[aria-pressed=true]{border:2px solid #ffe297;background:#22579c}.theme-settings p{margin:10px 0 0;font-size:18px}.property-rents,.modern-catalog-face{display:none}
+.property-rents,.modern-catalog-face{display:none}
 html[data-theme=modern]{background:var(--modern-table-background,#0064db);color:#fff;color-scheme:dark}
 [data-theme=modern] body{background:linear-gradient(180deg,color-mix(in srgb,var(--modern-table-background,#0064db),black 72%),transparent 42%),radial-gradient(ellipse at 48% 50%,color-mix(in srgb,var(--modern-table-background,#0064db),white 12%),var(--modern-table-background,#0064db) 42%,color-mix(in srgb,var(--modern-table-background,#0064db),#111344 85%) 100%);background-attachment:fixed}
 [data-theme=modern] main{max-width:1180px;padding:12px 14px 24px}
@@ -78,10 +77,6 @@ html[data-theme=modern]{background:var(--modern-table-background,#0064db);color:
 [data-theme=modern] #table-viewer,[data-theme=modern] #table-view-content,[data-theme=modern] .table-view-footer{background:#082964}
 [data-theme=modern] .table-view-heading,[data-theme=modern] .table-view-navigation{background:#061f52}
 [data-theme=modern] #table-view-description{background:#0b397d;color:#e8f3ff}
-[data-theme=modern] .table-card-list li{background:#fff;color:#142334;border-color:#acd5ff;border-radius:10px;box-shadow:0 4px 12px #0003}
-[data-theme=modern] .table-card-list p{color:#344b64}.table-mini-face{display:none}
-[data-theme=modern] .table-mini-face{display:block;flex:0 0 65px;aspect-ratio:.69;pointer-events:none}
-[data-theme=modern] .table-card-value{color:#142334}
 [data-theme=modern] .modern-catalog-face{display:flex;width:100%;height:100%;justify-content:center;align-items:center;min-height:0;min-width:0}
 [data-theme=modern] .modern-catalog-face>.deal-face{width:auto;height:100%;max-width:100%;font-size:100px}
 [data-theme=modern] #table-viewer[data-view=cards] .catalog-face{display:block;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;container-type:normal;max-width:460px;justify-self:center}

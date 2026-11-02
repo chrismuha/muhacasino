@@ -91,7 +91,7 @@ for(const game of games)for(const viewport of [screens[0],screens[2],screens[4]]
  }
  }finally{await p.close()}
 });
-test('slot release versions match the launcher, game UI, and November 1 notes',async()=>{
+test('slot release versions match the launcher, game UI, and November 2 notes',async()=>{
  const launcher=await readFile(path.join(root,'launcher.js'),'utf8');
  const about=await readFile(path.join(root,'about.html'),'utf8');
  const releases=await readFile(path.join(root,'release-notes.html'),'utf8');
@@ -100,9 +100,9 @@ test('slot release versions match the launcher, game UI, and November 1 notes',a
   const section=about.split(`<article id="${anchor}"`)[1].split('</article>')[0];
   assert.ok(launcher.includes(`version: "v${version}"`));
   assert.ok(html.includes(`name="game-version" content="${version}"`));
-  assert.ok(html.includes(`v${version} · November 1, 2026`));
+  assert.ok(html.includes(`v${version} · November 2, 2026`));
   assert.ok(section.includes(`<b>v${version}</b>`));
-  assert.equal(section.split(`v${version} · 2026-11-01`).length-1,1);
+  assert.equal(section.split(`v${version} · 2026-11-02`).length-1,1);
   for(const note of ['Main game screens:','Landscape screens:','Desktop screens:','Settings—all pages:','Info, payout, and Buy Bonus screens:'])assert.ok(section.includes(note),`${game}: ${note}`);
   if(game==='pretty-penny'||game==='treasurepots')assert.ok(section.includes('Feature meters:'));
   assert.ok(releases.includes(`${game==='treasurepots'?'Treasurepots':game==='neon-slots'?'Neon Slots':game==='pretty-penny'?'Pretty Penny':'Big Money Deluxe'} v${version}</h2>`));

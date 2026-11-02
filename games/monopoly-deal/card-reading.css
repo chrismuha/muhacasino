@@ -11,10 +11,7 @@
 [data-theme=modern] .has-selection .card-stage{container-type:inline-size;height:auto;min-height:0;align-self:stretch}
 [data-theme=modern] .has-selection .selected-table-card{container-type:inline-size;width:100%;max-width:440px;height:auto;aspect-ratio:auto;align-self:center;flex-shrink:0;pointer-events:auto}
 [data-theme=modern] .deal-face[data-reading=true]{display:flex;height:auto;min-height:max(320px,145cqw);aspect-ratio:auto;overflow:visible;border-radius:12px;flex-direction:column;flex-shrink:0}
-[data-theme=modern] .deal-face[data-reading=true] .face-property-top,
-[data-theme=modern] .deal-face[data-reading=true] .face-action-top,
-[data-theme=modern] .deal-face[data-reading=true] .face-money-top,
-[data-theme=modern] .deal-face[data-reading=true] .face-money-bottom{height:clamp(88px,36cqw,160px);flex:0 0 auto}
+[data-theme=modern] .deal-face[data-reading=true] .face-property-top,[data-theme=modern] .deal-face[data-reading=true] .face-action-top,[data-theme=modern] .deal-face[data-reading=true] .face-money-top,[data-theme=modern] .deal-face[data-reading=true] .face-money-bottom{height:clamp(88px,36cqw,160px);flex:0 0 auto}
 [data-theme=modern] .deal-face[data-reading=true] .face-value{width:clamp(72px,30cqw,124px);max-width:45%}
 [data-theme=modern] .deal-face[data-reading=true] .face-property-top{border-radius:6px 6px 0 0}
 [data-theme=modern] .deal-face[data-reading=true] .face-money-bottom{border-radius:6px 6px 0 0}
@@ -84,14 +81,9 @@
  [data-theme=modern] .deal-stage{min-height:100px;padding-block:4px;container-type:inline-size}
  [data-theme=modern] .has-selection .deal-stage{min-height:0;row-gap:4px;column-gap:8px}
  [data-theme=modern] .deal-table:not(.has-selection) .deal-actions{display:block;padding:0}
- [data-theme=modern] .deal-table:not(.has-selection) #flip-card,
- [data-theme=modern] .deal-table:not(.has-selection) #bank-card,
- [data-theme=modern] .deal-table:not(.has-selection) #play-card{display:none}
+ [data-theme=modern] .deal-table:not(.has-selection) #flip-card,[data-theme=modern] .deal-table:not(.has-selection) #bank-card,[data-theme=modern] .deal-table:not(.has-selection) #play-card{display:none}
  [data-theme=modern] .deal-face[data-reading=true]{min-height:280px}
- [data-theme=modern] .deal-face[data-reading=true] .face-property-top,
- [data-theme=modern] .deal-face[data-reading=true] .face-action-top,
- [data-theme=modern] .deal-face[data-reading=true] .face-money-top,
- [data-theme=modern] .deal-face[data-reading=true] .face-money-bottom{height:60px}
+ [data-theme=modern] .deal-face[data-reading=true] .face-property-top,[data-theme=modern] .deal-face[data-reading=true] .face-action-top,[data-theme=modern] .deal-face[data-reading=true] .face-money-top,[data-theme=modern] .deal-face[data-reading=true] .face-money-bottom{height:60px}
  [data-theme=modern] .deal-face[data-reading=true] .face-value{width:54px}
  [data-theme=modern] .deal-face[data-reading=true] .reading-property-title{padding:8px}
  [data-theme=modern] .deal-face[data-reading=true] .action-medallion{margin:10px 0}
@@ -123,15 +115,11 @@
 /* Mobile collection buttons use explicit rows; miniature art lives in the viewer. */
 @media(max-width:600px){
  [data-theme=modern] .current-assets{grid-template-columns:minmax(90px,1fr) minmax(0,2fr);height:auto;align-items:stretch;gap:8px}
- [data-theme=modern] .current-assets .current-bank,
- [data-theme=modern] .current-assets .current-properties{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto;align-content:center;align-items:center;justify-items:start;justify-content:stretch;min-height:78px;height:auto;padding:10px 12px;gap:8px;overflow:hidden}
+ [data-theme=modern] .current-assets .current-bank,[data-theme=modern] .current-assets .current-properties{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto;align-content:center;align-items:center;justify-items:start;justify-content:stretch;min-height:78px;height:auto;padding:10px 12px;gap:8px;overflow:hidden}
  [data-theme=modern] .current-bank .asset-panel-heading{justify-content:flex-start}
  [data-theme=modern] .current-assets .asset-panel-title{font-size:14px;line-height:1.3}
  [data-theme=modern] .current-bank .bank-balance{font-size:20px;line-height:1.2;justify-content:flex-start}
- [data-theme=modern] .current-assets .bank-miniatures,
- [data-theme=modern] .current-bank .asset-count,
- [data-theme=modern] .current-assets .own-groups,
- [data-theme=modern] .current-assets .asset-progress{display:none}
+ [data-theme=modern] .current-assets .bank-miniatures,[data-theme=modern] .current-bank .asset-count,[data-theme=modern] .current-assets .own-groups,[data-theme=modern] .current-assets .asset-progress{display:none}
  [data-theme=modern] .current-properties .asset-count{font-size:12px;line-height:1.4;margin:0;white-space:nowrap}
  [data-theme=modern] .current-stats{display:flex;flex-wrap:nowrap;align-items:center;gap:8px;padding:8px 0}
  [data-theme=modern] .current-stats>.coin,[data-theme=modern] .current-stats>b{display:none}
@@ -319,10 +307,7 @@
  [data-theme=modern] .has-selection .draw-deck .card-back-city{font-size:22px}
  [data-theme=modern] .has-selection .deck-count{font-size:10px;margin:0;gap:0}
  [data-theme=modern] .deal-face[data-reading=true]{min-height:0}
- [data-theme=modern] .deal-face[data-reading=true] .face-property-top,
- [data-theme=modern] .deal-face[data-reading=true] .face-action-top,
- [data-theme=modern] .deal-face[data-reading=true] .face-money-top,
- [data-theme=modern] .deal-face[data-reading=true] .face-money-bottom{height:40px}
+ [data-theme=modern] .deal-face[data-reading=true] .face-property-top,[data-theme=modern] .deal-face[data-reading=true] .face-action-top,[data-theme=modern] .deal-face[data-reading=true] .face-money-top,[data-theme=modern] .deal-face[data-reading=true] .face-money-bottom{height:40px}
  [data-theme=modern] .deal-face[data-reading=true] .face-value{width:36px}
  [data-theme=modern] .deal-face[data-reading=true] .reading-property-title{font-size:14px;line-height:1.15;padding:6px}
  [data-theme=modern] .reading-rent{font-size:12px;line-height:1.2}
@@ -376,20 +361,15 @@ dialog button:focus-visible,#preview-close:focus-visible{outline-offset:-4px}
 }
 /* Keep the inset focus-ring geometry stable for pointer and keyboard focus alike. */
 dialog button,#preview-close{outline-offset:-4px}
-[data-theme=modern] .deal-hand .cards.is-hand-sorting,
-[data-theme=modern] .deal-hand .cards.is-hand-scrolling{scroll-snap-type:none;overflow-anchor:none}
+[data-theme=modern] .deal-hand .cards.is-hand-sorting,[data-theme=modern] .deal-hand .cards.is-hand-scrolling{scroll-snap-type:none;overflow-anchor:none}
 [data-theme=modern] .hand-sort-hint{white-space:normal;overflow:visible;font-size:11px;line-height:1.3}
 .hand-drag-ghost{will-change:transform}
 
 /* Selecting keeps the hand visible; enlarging is a separate, deliberate action. */
 [data-theme=modern] .deal-table:not(.has-selection) .deal-stage{min-height:190px}
 [data-theme=modern] .card-selected:not(.has-selection) .deal-actions{display:flex;padding:0;gap:4px}
-[data-theme=modern] .card-selected:not(.has-selection) #flip-card,
-[data-theme=modern] .card-selected:not(.has-selection) #bank-card,
-[data-theme=modern] .card-selected:not(.has-selection) #play-card{display:flex}
-[data-theme=modern] .card-selected:not(.has-selection) #flip-card[aria-disabled=true],
-[data-theme=modern] .card-selected:not(.has-selection) #bank-card[aria-disabled=true],
-[data-theme=modern] .card-selected:not(.has-selection) #play-card[aria-disabled=true]{display:none}
+[data-theme=modern] .card-selected:not(.has-selection) #flip-card,[data-theme=modern] .card-selected:not(.has-selection) #bank-card,[data-theme=modern] .card-selected:not(.has-selection) #play-card{display:flex}
+[data-theme=modern] .card-selected:not(.has-selection) #flip-card[aria-disabled=true],[data-theme=modern] .card-selected:not(.has-selection) #bank-card[aria-disabled=true],[data-theme=modern] .card-selected:not(.has-selection) #play-card[aria-disabled=true]{display:none}
 [data-theme=modern] .selected-card-summary{width:100%;min-width:0;padding:4px 8px;text-align:left}
 [data-theme=modern] .selected-card-summary h2{font-size:16px;line-height:1.25;margin:0 0 6px;overflow-wrap:anywhere}
 [data-theme=modern] .selected-card-summary p{font-size:12px;line-height:1.3;margin:0 0 6px}
@@ -403,9 +383,7 @@ dialog button,#preview-close{outline-offset:-4px}
  [data-theme=modern] .card-selected:not(.has-selection) .plays-dots i{width:8px;height:8px}
  [data-theme=modern] .table-tools #hide,[data-theme=modern] .table-tools #hide-hand{font-size:11px;padding-inline:7px}
 }
-[data-theme=modern] .card-selected:not(.has-selection) #flip-card,
-[data-theme=modern] .card-selected:not(.has-selection) #bank-card,
-[data-theme=modern] .card-selected:not(.has-selection) #play-card{visibility:visible}
+[data-theme=modern] .card-selected:not(.has-selection) #flip-card,[data-theme=modern] .card-selected:not(.has-selection) #bank-card,[data-theme=modern] .card-selected:not(.has-selection) #play-card{visibility:visible}
 
 /* Public cards use a compact side-by-side row so every paged item fits in view. */
 @media(max-width:600px){
@@ -427,14 +405,10 @@ dialog button,#preview-close{outline-offset:-4px}
 /* Keep every desktop reading face inside the same canvas as money/action cards. */
 @media(min-width:601px){
  [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .reading-property-title{font-size:18px;padding:8px;line-height:1.2}
- [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .face-property-top,
- [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .face-action-top,
- [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .face-money-top,
- [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .face-money-bottom{height:64px;flex-shrink:0}
+ [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .face-property-top,[data-theme=modern] .selected-table-card .deal-face[data-reading=true] .face-action-top,[data-theme=modern] .selected-table-card .deal-face[data-reading=true] .face-money-top,[data-theme=modern] .selected-table-card .deal-face[data-reading=true] .face-money-bottom{height:64px;flex-shrink:0}
  [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .face-value{width:54px}
  [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .reading-rent caption{font-size:16px;padding-bottom:8px}
- [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .reading-rent th,
- [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .reading-rent td{padding:5px 3px}
+ [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .reading-rent th,[data-theme=modern] .selected-table-card .deal-face[data-reading=true] .reading-rent td{padding:5px 3px}
  [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .reading-color{font-size:16px;padding:4px 8px}
  [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .reading-flip-note{font-size:14px;padding:8px}
  [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .face-instructions{font-size:16px;line-height:1.3;padding:10px}
@@ -498,9 +472,7 @@ dialog button,#preview-close{outline-offset:-4px}
 /* Turn controls keep their dimensions as card actions appear and disappear. */
 [data-theme=modern] .deal-table #end.round-action{font-size:16px;min-height:44px;flex-shrink:0;column-gap:6px}
 [data-theme=modern] .deal-table .plays-dots{gap:6px;padding:0;justify-content:center;flex-shrink:0;min-height:12px}
-[data-theme=modern] .deal-table .plays-dots i,
-[data-theme=modern] .deal-table.has-selection .plays-dots i,
-[data-theme=modern] .deal-table.card-selected:not(.has-selection) .plays-dots i{width:12px;height:12px;flex:0 0 12px}
+[data-theme=modern] .deal-table .plays-dots i,[data-theme=modern] .deal-table.has-selection .plays-dots i,[data-theme=modern] .deal-table.card-selected:not(.has-selection) .plays-dots i{width:12px;height:12px;flex:0 0 12px}
 @media(max-width:600px){
  [data-theme=modern] .deal-table #end.round-action{font-size:12px}
 }
@@ -522,29 +494,20 @@ dialog button,#preview-close{outline-offset:-4px}
 [data-theme=modern] #table-viewer .property-stack-card{display:none;position:relative;top:auto;left:auto;transform:none;width:min(100%,280px);height:auto;aspect-ratio:auto;container-type:inline-size}
 [data-theme=modern] #table-viewer .property-stack-card.is-active{display:block;top:auto}
 [data-theme=modern] #table-viewer .deal-face[data-reading=true]{min-height:406px;height:auto;overflow:visible}
-[data-theme=modern] #table-viewer .deal-face[data-reading=true] .face-property-top,
-[data-theme=modern] #table-viewer .deal-face[data-reading=true] .face-action-top,
-[data-theme=modern] #table-viewer .deal-face[data-reading=true] .face-money-top,
-[data-theme=modern] #table-viewer .deal-face[data-reading=true] .face-money-bottom{height:72px}
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .face-property-top,[data-theme=modern] #table-viewer .deal-face[data-reading=true] .face-action-top,[data-theme=modern] #table-viewer .deal-face[data-reading=true] .face-money-top,[data-theme=modern] #table-viewer .deal-face[data-reading=true] .face-money-bottom{height:72px}
 [data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-property-title{font-size:18px;white-space:normal;overflow:visible;overflow-wrap:normal;padding:10px 8px;line-height:1.3}
 [data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-color{font-size:18px}
 [data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-rent{font-size:16px;line-height:1.35}
-[data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-rent th,
-[data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-rent td{padding:8px 4px}
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-rent th,[data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-rent td{padding:8px 4px}
 [data-theme=modern] #table-viewer .deal-face[data-reading=true] .face-instructions{font-size:16px;line-height:1.4;padding:12px}
-[data-theme=modern] #table-viewer .deal-face[data-reading=true] .action-medallion,
-[data-theme=modern] #table-viewer .deal-face[data-reading=true] .money-medallion{width:150px;height:150px;margin:14px auto}
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .action-medallion,[data-theme=modern] #table-viewer .deal-face[data-reading=true] .money-medallion{width:150px;height:150px;margin:14px auto}
 [data-theme=modern] #table-viewer .property-stack-controls{position:sticky;bottom:0;padding:8px;background:#05265e;z-index:101}
 [data-theme=modern] #table-viewer[data-modern-public=true] .modern-public-grid:has([data-reading=true]){grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
 [data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-rent caption{font-size:18px}
-[data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-rent thead th,
-[data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-full-label{font-size:16px}
+[data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-rent thead th,[data-theme=modern] #table-viewer .deal-face[data-reading=true] .reading-full-label{font-size:16px}
 [data-theme=modern] #table-viewer .deal-face[data-reading=true] .face-value{width:72px}
 [data-theme=modern] #table-viewer[data-modern-public=true] .modern-public-copy h3{font-size:18px}
-[data-theme=modern] #table-viewer[data-modern-public=true] .modern-public-copy p,
-[data-theme=modern] #table-viewer[data-modern-public=true] .modern-card-value,
-[data-theme=modern] #table-viewer .property-stack-caption,
-[data-theme=modern] #table-viewer .property-set-status{font-size:16px;line-height:1.4}
+[data-theme=modern] #table-viewer[data-modern-public=true] .modern-public-copy p,[data-theme=modern] #table-viewer[data-modern-public=true] .modern-card-value,[data-theme=modern] #table-viewer .property-stack-caption,[data-theme=modern] #table-viewer .property-set-status{font-size:16px;line-height:1.4}
 
 /* Setup selects stay inside their label column, including the difficulty field. */
 #setup-wizard label[for=ai-difficulty]{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:12px;min-width:0;max-width:100%;overflow:visible}
@@ -590,8 +553,7 @@ dialog button,#preview-close{outline-offset:-4px}
 [data-theme=modern] #table-viewer .property-stack .reading-rent-wrap{margin-block:0;padding:6px 8px}
 [data-theme=modern] #table-viewer .property-stack .face-property-top{height:48px}
 [data-theme=modern] #table-viewer .property-stack .reading-property-title{padding:6px;font-size:17px}
-[data-theme=modern] #table-viewer .property-stack .reading-rent th,
-[data-theme=modern] #table-viewer .property-stack .reading-rent td{padding:4px}
+[data-theme=modern] #table-viewer .property-stack .reading-rent th,[data-theme=modern] #table-viewer .property-stack .reading-rent td{padding:4px}
 [data-theme=modern] #table-viewer .wild-manage-help{display:none}
 @media(max-width:600px){
  [data-theme=modern] #table-viewer .property-stack-card{width:min(100%,230px)}
@@ -603,25 +565,14 @@ dialog button,#preview-close{outline-offset:-4px}
 [data-theme=modern] .has-card-preview #preview-open{width:min(105px,100%);height:auto;aspect-ratio:.69}
 @media(max-width:600px){[data-theme=modern] .deal-table.card-selected:not(.has-selection) .deal-stage{min-height:160px}}
 /* Keep secondary UI copy white; card-face ink and colored status badges stay distinct. */
-[data-theme=modern] .opponent-count,[data-theme=modern] .opponent-sets,
-[data-theme=modern] .inspect-label,[data-theme=modern] .asset-count,
-[data-theme=modern] .asset-empty,[data-theme=modern] .group-caption,
-[data-theme=modern] .hand-sort-hint,[data-theme=modern] .action-summary,
-[data-theme=modern] .property-inspect-hint,[data-theme=modern] .deck-count,
-[data-theme=modern] #selected-card-help{color:#fff;opacity:1}
-[data-theme=modern] .opponent .group-caption,[data-theme=modern] .current-properties .group-caption,
-[data-theme=modern] .asset-count,[data-theme=modern] .asset-empty,
-[data-theme=modern] .opponent .inspect-label,[data-theme=modern] .action-summary summary{font-size:12px;line-height:1.25}
+[data-theme=modern] .opponent-count,[data-theme=modern] .opponent-sets,[data-theme=modern] .inspect-label,[data-theme=modern] .asset-count,[data-theme=modern] .asset-empty,[data-theme=modern] .group-caption,[data-theme=modern] .hand-sort-hint,[data-theme=modern] .action-summary,[data-theme=modern] .property-inspect-hint,[data-theme=modern] .deck-count,[data-theme=modern] #selected-card-help{color:#fff;opacity:1}
+[data-theme=modern] .opponent .group-caption,[data-theme=modern] .current-properties .group-caption,[data-theme=modern] .asset-count,[data-theme=modern] .asset-empty,[data-theme=modern] .opponent .inspect-label,[data-theme=modern] .action-summary summary{font-size:12px;line-height:1.25}
 [data-theme=modern] #game button[aria-disabled=true]{opacity:1;color:#fff}
-[data-theme=modern] #table-viewer .modern-public-copy p,
-[data-theme=modern] #table-viewer .modern-view-note,
-[data-theme=modern] #table-viewer .modern-view-summary span{color:#fff}
+[data-theme=modern] #table-viewer .modern-public-copy p,[data-theme=modern] #table-viewer .modern-view-note,[data-theme=modern] #table-viewer .modern-view-summary span{color:#fff}
 [data-theme=modern] #table-viewer button:disabled{opacity:1;color:#fff;border-style:dashed}
 [data-theme=modern] .current-bank .asset-count{color:#fff}
 [data-theme=modern] .current-bank .asset-count{font-size:12px;line-height:1.25}
-[data-theme=modern] .opponent-sets,[data-theme=modern] .deck-count,
-[data-theme=modern] .property-inspect-hint,[data-theme=modern] #selected-card-help,
-[data-theme=modern] .current-properties .asset-progress{font-size:12px}
+[data-theme=modern] .opponent-sets,[data-theme=modern] .deck-count,[data-theme=modern] .property-inspect-hint,[data-theme=modern] #selected-card-help,[data-theme=modern] .current-properties .asset-progress{font-size:12px}
 [data-theme=modern] .current-properties[data-complete-sets="0"] .asset-progress{color:#fff}
 /* History opens separately so the table never expands under the hand. */
 [data-theme=modern] .action-summary{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:28px;margin:0;padding:0;color:#fff}
@@ -838,16 +789,14 @@ html[data-theme=modern] body{background-size:100% 100%;background-attachment:loc
  [data-theme=modern] .opponent-groups{min-height:60px}
  [data-theme=modern] .current-seat-heading{padding-block:2px}
  [data-theme=modern] .current-assets{min-height:150px}
- [data-theme=modern] .current-assets .current-bank,
- [data-theme=modern] .current-assets .current-properties{padding:6px;gap:3px}
+ [data-theme=modern] .current-assets .current-bank,[data-theme=modern] .current-assets .current-properties{padding:6px;gap:3px}
  [data-theme=modern] .current-stats{padding-block:2px}
  [data-theme=modern] .table-tools{gap:4px}
  [data-theme=modern] .deal-hand .cards{padding-top:12px;padding-bottom:6px}
 }
 
 /* Keep deck labels centered on the card, including compact phone layouts. */
-[data-theme=modern] .draw-deck .deck-label,
-[data-theme=modern] .draw-deck .deck-count{text-align:center}
+[data-theme=modern] .draw-deck .deck-label,[data-theme=modern] .draw-deck .deck-count{text-align:center}
 [data-theme=modern] .draw-deck .deck-count{justify-items:center}
 #game .draw-deck .deal-card-back.deck-icon{margin-inline:auto}
 
@@ -856,8 +805,7 @@ html[data-theme=modern] body{background-size:100% 100%;background-attachment:loc
  [data-theme=modern] .deal-table{--deal-action-size:44px;--deal-action-label:18px;--deal-action-symbol:28px;--deal-action-gap:8px}
  [data-theme=modern] .deal-actions :is(#flip-card,#bank-card,#play-card,#end).round-action{display:grid;grid-template-columns:var(--deal-action-size) minmax(0,1fr);column-gap:var(--deal-action-gap);min-height:var(--deal-action-size);font-size:var(--deal-action-label)}
  [data-theme=modern] .deal-actions .action-disc{width:var(--deal-action-size);height:var(--deal-action-size);font-size:var(--deal-action-symbol)}
- [data-theme=modern] .deal-table .deal-actions,
- [data-theme=modern] .deal-table.card-selected:not(.has-selection) .deal-actions{gap:8px}
+ [data-theme=modern] .deal-table .deal-actions,[data-theme=modern] .deal-table.card-selected:not(.has-selection) .deal-actions{gap:8px}
  [data-theme=modern] .has-card-preview .deal-face{border-width:2px}
  /* Match the hand artwork proportions in the larger center preview. */
  [data-theme=modern] .has-card-preview .deal-face[data-face=action] .face-action-top{height:27%}
@@ -866,8 +814,7 @@ html[data-theme=modern] body{background-size:100% 100%;background-attachment:loc
  [data-theme=modern] .has-card-preview .money-medallion{width:66%}
  [data-theme=modern] .has-card-preview .any-color-disc{width:47%}
  /* Full reading cards scale their artwork with their own width as well. */
- [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .action-medallion,
- [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .money-medallion{width:64%;height:auto;aspect-ratio:1;margin:12px auto}
+ [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .action-medallion,[data-theme=modern] .selected-table-card .deal-face[data-reading=true] .money-medallion{width:64%;height:auto;aspect-ratio:1;margin:12px auto}
  [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .any-color-disc{width:45%;height:auto;aspect-ratio:1}
  [data-theme=modern] .selected-table-card .deal-face[data-reading=true] .action-medallion>span{font-size:clamp(20px,7cqw,30px)}
 }
@@ -940,7 +887,7 @@ body.is-ready .game-ready{margin-block:0;padding:clamp(12px,3vh,24px)}
 @media(prefers-reduced-motion:reduce){.game-toast{transition:none}}
 
 /* Stop root rubber-banding without changing the body positioning during setup. */
-html[data-theme]{overscroll-behavior-y:none;background:var(--table-background,#0b211e)}
+html[data-theme]{overscroll-behavior-y:none;background:var(--modern-table-background,#0064db)}
 html[data-theme=modern]{background:var(--modern-table-background,#0064db)}
 
 /* Draw preferences stay separate from the per-event toast switches. */

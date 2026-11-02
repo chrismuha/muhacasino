@@ -2,10 +2,10 @@ import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-or
 import {paginateViewer} from './view-pages.mjs?build=20261025-orange-deck-dots-v66';
 import {aiChoice,aiPlay} from './ai.mjs?build=20261025-orange-deck-dots-v66';
 import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261028-deal-phone-gutters-v107';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261102-card-art-toast-history-v120';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261102-single-deal-appearance-v121';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-orange-deck-dots-v66';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261102-card-art-toast-history-v120';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261102-card-art-toast-history-v120';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261102-single-deal-appearance-v121';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261102-single-deal-appearance-v121';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -66,7 +66,7 @@ function syncToastViewport(){
  const top=Math.max(0,(viewport?.offsetTop||0)-frameTop);
  const stage=$('#game .card-stage');
  const area=stage?.getBoundingClientRect();
- const table=toastPreferences.placement!=='footer'&&document.documentElement.dataset.theme==='modern'&&!document.querySelector('dialog[open]')&&area&&area.width>=120&&area.height>=64&&area.top>=top&&area.bottom<=bottom;
+ const table=toastPreferences.placement!=='footer'&&!document.querySelector('dialog[open]')&&area&&area.width>=120&&area.height>=64&&area.top>=top&&area.bottom<=bottom;
  toast.dataset.placement=table?'table':'footer';
  toast.style.left=table?`${area.left+area.width/2}px`:'50%';
  toast.style.width=table?`${Math.min(540,area.width)}px`:'';
@@ -146,18 +146,16 @@ function updateUnavailableControls() {
  for(const button of document.querySelectorAll('#game button')){
   let reason = finished && !['undo','game-restart'].includes(button.id)&&!button.hasAttribute('data-table-view')&&!button.classList.contains('action-history-button') ? finished : waiting;
   if(!reason&&awaitingDraw&&['end','undo','play-card','bank-card','discard-card','move','wilds'].includes(button.id))reason=awaitingDraw;
-  if(!reason&&awaitingDraw&&button.hasAttribute('data-card')&&document.documentElement.dataset.theme==='classic')reason=awaitingDraw;
   if(!reason){
    if(button.id === 'undo')reason=hiddenHand||(!undoHistory.length?'No move to undo in this turn.':'');
    else if(button.id === 'discard-card')reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.') || (discardPlayCost(selectedCardIds.size)>3-state.plays?`Discard uses one play per card. Select at most ${Math.max(0,me().hand.length-7)+3-state.plays} card${3-state.plays===1?'':'s'}.`:'');
    else if(button.id === 'deselect')reason = selectedCardIds.size?'':'No cards are selected.';
    else if(button.id === 'preview-previous'||button.id === 'preview-next')reason = hiddenHand || (me().hand.length<2 ? 'This is the only card in your hand.' : '');
    else if(button.id === 'wilds')reason = hiddenHand || noPlays || (!me().props.some(card=>card.colors.length>1)?'You have no wild properties on the table to rearrange.':'');
-   else if(button.id === 'move')reason = hiddenHand || (document.documentElement.dataset.theme==='classic'?noPlays:'') || (document.documentElement.dataset.theme==='classic'&&!me().props.some(card=>card.colors.length>1)?'You have no wild properties on the table to rearrange.':'');
+   else if(button.id === 'move')reason = hiddenHand;
    else if(button.id === 'flip-card')reason = hiddenHand || (!selected ? 'Select a two-color wild property card to flip it.' : '') || noPlays || (selected.type !== 'property' || selected.colors.length !== 2 ? 'Only two-color wild property cards can be flipped.' : '');
    else if(button.id === 'bank-card')reason = hiddenHand || (!selected ? 'Select a money card to bank.' : '') || noPlays || (!canBank(selected) ? 'Only money cards can be banked. Play or discard action cards.' : '');
    else if(button.id === 'play-card')reason = hiddenHand || (!selected ? 'Select a property or action card to play.' : '') || noPlays || (selected.type === 'money' ? 'Money cards can only be banked, not played.' : '');
-   else if(button.hasAttribute('data-card') && document.documentElement.dataset.theme === 'classic')reason = noPlays;
   }
   button.disabled = false;
   if(button.hasAttribute('data-card'))button.dataset.handSortable=String(visible&&!busy&&!state.winner);
@@ -181,7 +179,7 @@ function wireHandSorting() {
   canSort,
   announce: showToast,
   dropTargetAt(cardId,x,y){
-   if(!canSort()||document.documentElement.dataset.theme!=='modern')return null;
+   if(!canSort())return null;
    const element=document.elementFromPoint(x,y)?.closest('.current-bank,.current-properties');
    if(!element)return null;
    const card=player.hand.find(card=>card.id===cardId),mode=element.matches('.current-bank')?'bank':'play';
@@ -295,7 +293,6 @@ async function colorFor(c,{smart=false}={}){
  const completing=smart?completingWildColor(c):null;
  return completing || choose('Choose the property color',orderedColors(c.colors).map(k=>[GROUPS[k].name,k]));
 }
-function cardHTML(c){let colors=c.action==='house'?['#22824b']:c.action==='hotel'?['#c83737']:c.colors?.map(k=>GROUPS[k].color)||[c.type==='money'?'#d6ba62':'#dc6a55'];return `<button class="card" data-card="${c.id}" data-building="${['house','hotel'].includes(c.action)?c.action:''}"><span class="value">${c.value}M <small>${c.type==='property'?'PROPERTY':c.type.toUpperCase()}</small></span><span class="stripe" style="background:linear-gradient(110deg,${colors.length===1?[colors[0],colors[0]].join(','):colors.join(',')})"></span><strong>${esc(c.name)}</strong><small>${esc(c.description|| (c.type==='property'?(c.colors.length===10?'Use with any property color.':c.colors.map(k=>GROUPS[k].name).join(' / ')):'Build your bank. Pay your debts.'))}</small></button>`}
 function cardPreferredSide(id){
  const card=me().hand.find(item=>item.id===id);
  return card?.colors?.length===2 && completingWildColor(card)===card.colors[1];
@@ -305,12 +302,6 @@ function gameOverHTML(){
 }
 function wireGameOverControls(){
  $('#game-restart')?.addEventListener('click',setup);
-}
-function renderClassic(){if(!state)return;const handScroll=$('.cards')?.scrollLeft || 0;const p=state.players[tableSeat()];$('#game').innerHTML=`<div class="players">${state.players.map((x,i)=>`<section class="player ${i===state.turn?'active':''}"><h3>${esc(x.name)} ${i===state.turn?'◆':''}</h3><div class="meta"><span>Bank <b>${x.bank.reduce((a,c)=>a+c.value,0)}M</b></span><span>${x.hand.length} cards</span><span class="badge">${sets(x).length} / 3 sets</span></div><div class="player-inspect"><button type="button" data-table-view="bank-${i}">Bank cards</button><button type="button" data-table-view="properties-${i}">Properties</button></div><div class="groups">${Object.entries(GROUPS).filter(([k])=>properties(x,k).length).sort(([a],[b])=>Math.min(...properties(x,a).map(card=>card.value))-Math.min(...properties(x,b).map(card=>card.value))).map(([k,g])=>`<div class="group ${complete(x,k)?'done':''}" style="--color:${g.color}"><strong>${g.name} ${properties(x,k).length}/${g.names.length}</strong>${properties(x,k).sort((a,b)=>a.value-b.value).map(c=>`<div>${esc(c.name)}</div>`).join('')}<small>Rent ${rent(x,k)}M ${x.buildings.filter(c=>c.color===k).map(c=>`<span class="building-label" data-building="${c.action}">${esc(c.name)}</span>`).join(' ')}</small></div>`).join('')||'<p>No properties yet</p>'}</div></section>`).join('')}</div><div class="turnbar"><div><strong>${esc(p.name)}’s turn</strong><div class="meta">${3-state.plays} plays left · ${state.draw.length} in draw pile · Discard: ${esc(state.discard.at(-1)?.name||'Empty')}</div></div><div><button type="button" class="draw-deck" data-table-view="discard" aria-haspopup="dialog"><span class="deck-label">Deck</span><span class="deal-card-back deck-icon" aria-hidden="true"><span class="card-back-city">▥</span><b>MONOPOLY<br>DEAL</b></span></button><button type="button" data-table-view="discard">Discard pile</button><button type="button" data-table-view="activity">View table</button><button id="move">Rearrange wilds</button> <button id="undo" type="button">Undo</button> <button id="end" class="primary">End turn →</button></div></div><section class="hand">${visible?`<h2>${esc(p.name)}’s hand</h2><p id="hand-sort-help" class="hand-hint">Tap a card to play or bank it. Drag to sort; hold first on touch. Swipe to scroll, or use Alt+Left/Right to reorder the focused card.</p><div class="cards" tabindex="0" role="region" aria-label="Your hand; scroll sideways for more cards" aria-describedby="hand-sort-help">${p.hand.map(cardHTML).join('')||'<p>Your hand is empty.</p>'}</div>`:`<div class="privacy"><h2>${turnHandoff?'Pass the device to':'Return the device to'} ${esc(p.name)}</h2><p>Only this player should view their hand.</p><button id="reveal" class="primary">${turnHandoff?'Reveal my hand':'Continue turn'}</button></div>`}</section>`;
- $('#game .hand')?.insertAdjacentHTML('beforebegin',`<div class="action-summary"><span class="action-summary-status">${Math.max(0,3-state.plays)} plays left · Undo ${undoHistory.length?'available':'unavailable'}</span><button type="button" class="action-history-button" aria-label="Open action history" aria-haspopup="dialog">History</button></div>`);wireActionHistory();
- if(state.winner){$('#game').insertAdjacentHTML('afterbegin',gameOverHTML());wireGameOverControls();}
- if($('.cards'))$('.cards').scrollLeft=handScroll;
- $('#reveal')?.addEventListener('click',()=>{visible=true;turnHandoff=false;render()});$('#end').onclick=()=>run(end);$('#undo').onclick=undoLastMove;$('#move').onclick=()=>run(rearrange);document.querySelectorAll('#game [data-card]').forEach(b=>b.onclick=()=>run(()=>play(p.hand.find(c=>c.id===+b.dataset.card))));document.querySelectorAll('#game [data-table-view]').forEach(b=>b.onclick=()=>openTableViewer(b.dataset.tableView));
 }
 function selectHandCard(card){
  // Switching categories starts a fresh selection; wilds remain properties,
@@ -404,7 +395,7 @@ function render(){
  completeAutomaticDraws();
  if(state&&!busy)saveGame();
  // Keep the human table mounted throughout background computer actions.
- if(state&&me().isAI&&!state.winner&&$('#game .deal-table, #game .players')){updateUnavailableControls();return;}
+ if(state&&me().isAI&&!state.winner&&$('#game .deal-table')){updateUnavailableControls();return;}
  detachHandSorting();
  detachHandSorting = () => {};
  document.body.classList.toggle('is-ready',!state);
@@ -421,7 +412,6 @@ function render(){
  selectionOwner=me();
  for(const id of selectedCardIds)if(!me().hand.some(card=>card.id===id))selectedCardIds.delete(id);
  if(!selectedCardIds.has(selectedCardId))selectedCardId=[...selectedCardIds].at(-1)??null;
- if(document.documentElement.dataset.theme!=='modern'){renderClassic();wireDrawDeck();updateUnavailableControls();wireHandSorting();fitResponsiveLabels();return;}
  if(!visible||!me().hand.some(c=>c.id===selectedCardId)){selectedCardId=null;previewFlipped=false;previewExpanded=false;}
  const scroll=$('.cards')?.scrollLeft||0;
  $('#game').innerHTML=gameOverHTML()+modernBoard({...state,turn:tableSeat()},visible&&!me().isAI,selectedCardId,previewFlipped,previewExpanded,turnHandoff,selectedCardIds,undoHistory.length>0);
@@ -865,8 +855,7 @@ const tableColor = document.querySelector('#table-color');
 const tableHex = document.querySelector('#table-hex');
 function setTableColor(color) {
   if (!/^#[0-9a-f]{6}$/i.test(color)) return;
-  const modern=document.documentElement.dataset.theme==='modern';
-  document.documentElement.style.setProperty(modern?'--modern-table-background':'--table-background', color);
+  document.documentElement.style.setProperty('--modern-table-background', color);
   if(window.parent!==window)window.parent.postMessage({type:'muha-deal-background',color},location.origin);
   tableColor.value = color;
   tableHex.value = color.toUpperCase();
@@ -877,10 +866,10 @@ function setTableColor(color) {
     button.setAttribute('aria-pressed', String(selected));
     button.querySelector('.preset-check').textContent = selected ? '✓' : '';
   });
-  try { localStorage.setItem(modern?'muha-monopoly-deal-modern-table-color':'muha-monopoly-deal-table-color', color); } catch { /* Storage may be unavailable. */ }
+  try { localStorage.setItem('muha-monopoly-deal-modern-table-color', color); } catch { /* Storage may be unavailable. */ }
 }
 tableColor.addEventListener('input', () => setTableColor(tableColor.value));
-document.querySelector('#reset-color').addEventListener('click', () => setTableColor(document.documentElement.dataset.theme==='modern'?'#0064db':'#0b211e'));
+document.querySelector('#reset-color').addEventListener('click', () => setTableColor('#0064db'));
 
 tableHex.addEventListener('input', () => {
   const color = tableHex.value.trim();
@@ -916,11 +905,10 @@ function showTableView(index) {
   const views = tableViews();
   tableViewIndex = (index + views.length) % views.length;
   const view = views[tableViewIndex];
-  const modern = document.documentElement.dataset.theme === 'modern';
-  const modernPublic = modern && state && (view.kind || view.key === 'activity');
+  const modernPublic = state && (view.kind || view.key === 'activity');
   $('#table-viewer').dataset.view = view.key;
   $('#table-viewer').dataset.modernPublic = String(Boolean(modernPublic));
-  $('#table-view-title').textContent = modern && view.kind === 'deck' ? 'Deck & discard' : view.title;
+  $('#table-view-title').textContent = view.kind === 'deck' ? 'Deck & discard' : view.title;
   $('#table-view-description').textContent = view.description;
   $('#table-view-position').textContent = `${tableViewIndex + 1} of ${views.length}`;
   $('#table-view-category').replaceChildren(...views.map((entry, i) => {
@@ -932,7 +920,7 @@ function showTableView(index) {
   }));
   const tools = $('#modern-table-tools');
   const toolsScroll = tools.querySelector('.modern-section-nav')?.scrollLeft || 0;
-  tools.innerHTML = modern ? modernViewerTools(state, view) : '';
+  tools.innerHTML = modernViewerTools(state, view);
   tools.hidden = !tools.innerHTML;
   if(tools.querySelector('.modern-section-nav'))tools.querySelector('.modern-section-nav').scrollLeft=toolsScroll;
   tools.querySelectorAll('[data-modern-view]').forEach(button => {
@@ -952,7 +940,7 @@ function showTableView(index) {
     $('#modern-view-owner')?.focus({preventScroll:true});
   });
   const content = $('#table-view-content');
-  content.setAttribute('aria-label', modern ? view.title : 'Category contents');
+  content.setAttribute('aria-label', view.title);
   if (modernPublic) {
     content.innerHTML = modernViewerContent(state, view);
   } else if (view.key === 'release-notes') {
@@ -961,24 +949,14 @@ function showTableView(index) {
     content.innerHTML = `<div class="guide-rules">${GUIDE_RULES.map(([title,items])=>`<section><h3>${esc(title)}</h3><ul>${items.map(item=>`<li>${esc(item)}</li>`).join('')}</ul></section>`).join('')}</div>`;
   } else if (view.key === 'cards') {
     showCardDesign();
-  } else if (view.activity) {
-    content.innerHTML = `<ol class="table-event-list">${view.activity.map(event=>`<li>${esc(event)}</li>`).join('')}</ol>`;
-  } else {
-    content.innerHTML = `<p class="table-card-count">${view.cards.length} card${view.cards.length === 1 ? '' : 's'}</p>` + (view.cards.length ? `<ol class="table-card-list">${view.cards.map(card=>{
-      const group = card.color && GROUPS[card.color];
-      const colors = card.action === 'house' ? ['#22824b'] : card.action === 'hotel' ? ['#c83737'] : card.colors?.map(color=>GROUPS[color].color) || [group?.color || '#e5c581'];
-      const description = view.bank ? 'Banked money · available for payments' : card.type === 'property' ? `${group.name} · ${card.colors.length > 1 ? 'Wild property' : 'Property'}` : card.description || 'Money';
-      return `<li><span class="table-mini-face">${modernFace(card)}</span><span class="table-card-colors" aria-hidden="true" style="background:linear-gradient(90deg,${[...colors,colors.at(-1)].join(',')})"></span><div><h3>${esc(card.name)}</h3><p>${esc(description)}</p></div><strong class="table-card-value">${card.value}M</strong></li>`;
-    }).join('')}</ol>` : '<p class="table-empty">No cards here yet.</p>');
   }
   paginateViewer($('#table-viewer'),content);
   if(view.key==='cards')detachCatalogNavigation=attachHorizontalNavigation(content,direction=>{designIndex+=direction;showCardDesign();});
   content.scrollTop = 0;
-  if(modern)$('.table-view-body').scrollTop = 0;
+  $('.table-view-body').scrollTop = 0;
   fitResponsiveLabels();
 }
 function revealModernSection() {
-  if(document.documentElement.dataset.theme !== 'modern')return null;
   const button = $('#modern-table-tools [aria-current="page"]');
   const nav = button?.closest('.modern-section-nav');
   if(button && nav){
@@ -1033,13 +1011,10 @@ function showCardDesign() {
   const filtered = designs.filter(card=>designFilter==='all'||card.type===designFilter);
   designIndex = (designIndex + filtered.length) % filtered.length;
   const card = filtered[designIndex];
-  const colors = card.action === 'house' ? ['#22824b'] : card.action === 'hotel' ? ['#c83737'] : card.colors?.map(color=>GROUPS[color].color) || [card.type === 'money' ? '#d6ba62' : '#dc6a55'];
   $('#table-view-content').innerHTML = `<div class="catalog-browser-tools"><label for="catalog-type">Type</label><select id="catalog-type"><option value="all">All cards</option><option value="property">Properties</option><option value="action">Action cards</option><option value="money">Money</option></select><span class="catalog-position" aria-live="polite">${designIndex+1} / ${filtered.length}</span><span class="catalog-copy-count">Deck: ${card.copies} ${card.copies===1?'copy':'copies'}</span></div><div class="catalog-stage">
     <button type="button" id="design-previous" class="catalog-arrow" aria-label="Previous card design">‹</button>
     <article class="catalog-face" data-type="${card.type}" data-building="${card.action || ''}" aria-label="${esc(card.name)} card">
-      <div class="modern-catalog-face">${modernFace(card)}</div><div class="catalog-value">${card.value}M <span>${esc(card.type==='property'&&card.colors.length>1?'WILD':card.type.toUpperCase())}</span></div>
-      <div class="catalog-stripe" aria-hidden="true" style="background:linear-gradient(90deg,${[...colors,colors.at(-1)].join(',')})"></div>
-      <h3>${esc(card.name)}</h3><ul>${compactCardFacts(card).map(fact=>`<li>${esc(fact)}</li>`).join('')}</ul>
+      <div class="modern-catalog-face">${modernFace(card)}</div>
     </article><button type="button" id="design-next" class="catalog-arrow" aria-label="Next card design">›</button></div>`;
   $('#catalog-type').value=designFilter;
   $('#catalog-type').onchange=event=>{designFilter=event.target.value;designIndex=0;showCardDesign();$('#catalog-type').focus()};
@@ -1059,35 +1034,11 @@ document.addEventListener('keydown', event => {
   if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'a') event.preventDefault();
 });
 
-function compactCardFacts(card) {
-  if (card.type === 'money') return ['Bank this money to pay debts. No change is given.'];
-  if (card.type === 'property') {
-    if (card.colors.length === 10) return ['Any property color. Changing a played color costs one play.', 'No cash value. Needs a valued property to complete a set.'];
-    return card.colors.map(color=>`${GROUPS[color].name} · ${GROUPS[color].names.length} to complete. Rent ${GROUPS[color].rent.map(value=>value+'M').join('/')} .`);
-  }
-  if (card.action === 'rent') return [card.colors.length === 10 ? 'Charge one opponent rent on any color you own.' : `Charge opponents rent on ${card.colors.map(color=>GROUPS[color].name).join(' or ')}.`, 'Action cards cannot be banked.'];
-  return [card.description, 'Action cards cannot be banked.'];
-}
-
-// Theme changes only presentation, preserving the current turn and private hand.
-function setTheme(theme) {
-  theme = theme === 'classic' ? 'classic' : 'modern';
-  document.documentElement.dataset.theme = theme;
-  let color=theme==='modern'?'#0064db':'#0b211e';
-  try { color=localStorage.getItem(theme==='modern'?'muha-monopoly-deal-modern-table-color':'muha-monopoly-deal-table-color')||color; } catch {}
-  setTableColor(/^#[0-9a-f]{6}$/i.test(color)?color:theme==='modern'?'#0064db':'#0b211e');
-  document.querySelectorAll('[data-theme-choice]').forEach(button => {
-    button.setAttribute('aria-pressed', String(button.dataset.themeChoice === theme));
-  });
-  try { localStorage.setItem('muha-monopoly-deal-theme', theme); } catch {}
-  selectedCardIds.clear();selectedCardId=null;previewFlipped=false;render();
-}
-let savedTheme = 'modern';
-try { savedTheme = localStorage.getItem('muha-monopoly-deal-theme') || 'modern'; } catch {}
-setTheme(savedTheme);
-document.querySelectorAll('[data-theme-choice]').forEach(button => {
-  button.addEventListener('click', () => setTheme(button.dataset.themeChoice));
-});
+// One card-table appearance. Saved table colors remain available.
+let savedColor='#0064db';
+try{savedColor=localStorage.getItem('muha-monopoly-deal-modern-table-color')||savedColor;}catch{}
+setTableColor(/^#[0-9a-f]{6}$/i.test(savedColor)?savedColor:'#0064db');
+render();
 
 // Refit after rotation, split-screen resizing, browser zoom, or container resizing.
 let labelResizeFrame;
