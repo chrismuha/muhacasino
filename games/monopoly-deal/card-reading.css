@@ -942,3 +942,14 @@ html[data-theme=modern]{background:var(--modern-table-background,#0064db)}
 
 @media(max-width:600px){.game-top-actions #game-settings,[data-theme=modern] .game-top-actions #game-settings{font-size:13px;min-height:44px;padding:7px 9px}}
 @media(max-width:360px){.game-top-actions #game-settings,[data-theme=modern] .game-top-actions #game-settings{font-size:11px;padding-inline:6px}}
+
+/* Clear, high contrast browsing controls with generous mobile targets. */
+.selected-card-navigation #preview-previous,.selected-card-navigation #preview-next{min-width:52px;min-height:52px;font-size:32px;font-weight:900;border:2px solid #fff;background:#073773;box-shadow:0 3px 8px #00164180;}
+.selected-card-navigation #preview-close{min-height:52px;font-weight:800;border:2px solid #fff;background:#073773;}
+.action-medallion .go-arrow{display:block;flex:none;width:75%;height:auto;min-height:0;overflow:visible;-webkit-text-stroke:0;}
+#elapsed-game-time{position:fixed;right:12px;bottom:max(12px,env(safe-area-inset-bottom));z-index:10;padding:6px 10px;border:1px solid #98c6ff88;border-radius:8px;background:#092c69e8;color:#fff;font:600 13px/1.3 system-ui;pointer-events:none;font-variant-numeric:tabular-nums;}
+#elapsed-game-time[hidden]{display:none;}
+
+[data-theme=modern] .card-selected:not(.has-selection) #play-card[data-unavailable-reason^="Pass Go"]{display:flex;visibility:visible;opacity:.65;}
+
+#table-view-previous,#table-view-next,#table-view-close,#drawn-card-close{min-height:48px;font-weight:800;border:2px solid #fff;}

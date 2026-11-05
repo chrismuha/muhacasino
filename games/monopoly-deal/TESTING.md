@@ -92,3 +92,7 @@ Played wild color changes use one play in the card-table layout, including multi
 November phone regressions start a real hosted deal through setup before selecting or playing the first card, check the unaltered full-screen card artwork, and verify deck-side/default and saved footer toast placement. Slot responsive checks cover the shared Controls layout, fixed heading with scrolled content, Buy Bonus typography/order, and persisted paid/free/bonus spin history.
 
 Appearance checks verify a single card-table renderer, no appearance-selector controls, preserved saved table colors and hands, and current release dates matching November 2, 2026.
+
+## November 4 controls follow-up
+
+Hard permits banking properties with positive cash value; other difficulties and action cards retain their restrictions. Pass Go is blocked when its net draw would leave more than seven cards unless the saved Allow Pass Go over seven setting is enabled (off by default). Regression checks cover the default guard, override, property banking, mobile library navigation, compact Help access, elapsed time across reload, and scalable Pass Go artwork. No Mercy combined with Hard rules remains Coming soon pending verified card counts and debt interactions.

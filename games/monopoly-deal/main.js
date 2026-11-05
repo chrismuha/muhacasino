@@ -1,11 +1,11 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261025-orange-deck-dots-v66';
-import {paginateViewer} from './view-pages.mjs?build=20261025-orange-deck-dots-v66';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261025-orange-deck-dots-v66';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261028-deal-phone-gutters-v107';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261102-single-deal-appearance-v121';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261025-orange-deck-dots-v66';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261102-single-deal-appearance-v121';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261102-single-deal-appearance-v121';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261104-deal-known-issues-v123';
+import {paginateViewer} from './view-pages.mjs?build=20261104-deal-known-issues-v123';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261104-deal-known-issues-v123';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261104-deal-known-issues-v123';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261104-deal-known-issues-v123';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261104-deal-known-issues-v123';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261104-deal-known-issues-v123';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261104-deal-known-issues-v123';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -34,8 +34,8 @@ const toastPreferenceKey='muha-deal-toasts-v1';
 let toastPreferences={};
 try{const saved=JSON.parse(localStorage.getItem(toastPreferenceKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))toastPreferences=saved;}catch{}
 const dealSettingsKey='muha-deal-settings-v1';
-let dealSettings={automaticDealing:true};
-try{const saved=JSON.parse(localStorage.getItem(dealSettingsKey)||'{}');if(typeof saved?.automaticDealing==='boolean')dealSettings.automaticDealing=saved.automaticDealing;}catch{}
+let dealSettings={automaticDealing:true,allowPassGoOverflow:false};
+try{const saved=JSON.parse(localStorage.getItem(dealSettingsKey)||'{}');if(typeof saved?.allowPassGoOverflow==='boolean')dealSettings.allowPassGoOverflow=saved.allowPassGoOverflow;if(typeof saved?.automaticDealing==='boolean')dealSettings.automaticDealing=saved.automaticDealing;}catch{}
 const toastDurationSeconds=()=>Number.isFinite(Number(toastPreferences.durationSeconds))?Math.min(30,Math.max(1,Number(toastPreferences.durationSeconds))):2;
 function toastType(message){
  if(/banked/.test(message))return 'bank';
@@ -156,8 +156,8 @@ function updateUnavailableControls() {
    else if(button.id === 'wilds')reason = hiddenHand || noPlays || (!me().props.some(card=>card.colors.length>1)?'You have no wild properties on the table to rearrange.':'');
    else if(button.id === 'move')reason = hiddenHand;
    else if(button.id === 'flip-card')reason = hiddenHand || (!selected ? 'Select a two-color wild property card to flip it.' : '') || (handFlipPlayCost()?noPlays:'') || (selected.type !== 'property' || selected.colors.length !== 2 ? 'Only two-color wild property cards can be flipped.' : '');
-   else if(button.id === 'bank-card')reason = hiddenHand || (!selected ? 'Select a money card to bank.' : '') || noPlays || (!canBank(selected) ? 'Only money cards can be banked. Play or discard action cards.' : '');
-   else if(button.id === 'play-card')reason = hiddenHand || (!selected ? 'Select a property or action card to play.' : '') || noPlays || (selected.type === 'money' ? 'Money cards can only be banked, not played.' : '');
+   else if(button.id === 'bank-card')reason = hiddenHand || (!selected ? 'Select a money card to bank.' : '') || noPlays || (!canBank(selected,hardRules()?'hard':'normal') ? 'Bank money, or properties with a cash value on Hard. Play or discard action cards.' : '');
+   else if(button.id === 'play-card')reason = hiddenHand || (!selected ? 'Select a property or action card to play.' : '') || noPlays || (selected.type === 'money' ? 'Money cards can only be banked, not played.' : selected.action==='pass'&&!canPassGo(me().hand,dealSettings.allowPassGoOverflow)?'Pass Go would put your hand over seven. Play another card first or change Game settings.':'');
   }
   button.disabled = false;
   if(button.hasAttribute('data-card'))button.dataset.handSortable=String(visible&&!busy&&!state.winner);
@@ -185,7 +185,7 @@ function wireHandSorting() {
    const element=document.elementFromPoint(x,y)?.closest('.current-bank,.current-properties');
    if(!element)return null;
    const card=player.hand.find(card=>card.id===cardId),mode=element.matches('.current-bank')?'bank':'play';
-   const reason=state.plays>=3?'You have used all three plays. Pass to end your turn.':mode==='bank'&&!canBank(card)?'Only money cards can be banked. Play or discard this card.':mode==='play'&&card?.type==='money'?'Money cards belong in the Bank.':'';
+   const reason=state.plays>=3?'You have used all three plays. Pass to end your turn.':mode==='bank'&&!canBank(card,hardRules()?'hard':'normal')?'Bank money, or properties with a cash value on Hard. Play or discard this card.':mode==='play'&&card?.type==='money'?'Money cards belong in the Bank.':'';
    return {element,mode,allowed:!reason,reason};
   },
   onDrop(cardId,target){
@@ -522,7 +522,8 @@ async function takeAITurns(){
   visible=false;
   await enforceHandLimit(me());
   while(state.plays<3&&!state.winner){
-   const move=aiPlay(me(),opponents());
+   const eligible={...me(),hand:me().hand.filter(card=>card.action!=='pass'||canPassGo(me().hand,dealSettings.allowPassGoOverflow))};
+   const move=aiPlay(eligible,opponents());
    if(!move)break;
    const before=state.plays;
    saveGame(true);
@@ -565,7 +566,7 @@ async function run(fn){
   }
  }
 }
-function checkWin(){if(sets(me()).length>=3&&!state.winner){state.winner=me().name;log(`${state.winner} wins with three complete colors!`);choose(`${state.winner} wins!`,[['View table',true]],'Three complete property sets. Start a new game for a rematch.',null)}}
+function checkWin(){if(sets(me()).length>=3&&!state.winner){state.winner=me().name;state.finishedAt=Date.now();log(`${state.winner} wins with three complete colors!`);choose(`${state.winner} wins!`,[['View table',true]],'Three complete property sets. Start a new game for a rematch.',null)}}
 function use(c){remove(me().hand,c);state.discard.push(c);state.plays++;log(`${me().name} played ${c.name}.`)}
 async function defend(target,actor,description){visible=false;render();if(actor.isAI&&!target.isAI)await choose(`${actor.name} played ${description.split(':')[0]} against you`,[['Continue',true]],description,target);let responder=target,other=actor,cancelled=false;while(true){const no=responder.hand.find(c=>c.action==='no');if(!no)return !cancelled;if(!responder.isAI&&!state.players.some(p=>p.isAI))await choose(`Pass to ${responder.name}`,[['Ready',true]],'An action response is available. Keep hands private.',responder);const yes=await choose(`${responder.name}: Just Say No?`,[['Allow action / stop countering',false],['Play Just Say No',true]],description,responder);if(!yes)return !cancelled;remove(responder.hand,no);state.discard.push(no);if(responder===me())state.plays++;cancelled=!cancelled;log(`${responder.name} played Just Say No.`);[responder,other]=[other,responder];}}
 async function pay(p,to,amount){
@@ -588,10 +589,10 @@ async function pay(p,to,amount){
 }
 async function collect(targets,amount,actionName){for(const p of targets){log(`${me().name} charged ${p.name} ${amount}M for ${actionName}.`,'action');if(await defend(p,me(),`${actionName}: Pay ${amount}M to ${me().name}.`))await pay(p,me(),amount);else log(`${p.name} blocked ${actionName}.`,'action')}}
 const opponents=()=>state.players.filter(p=>p!==me());
-async function play(c,chosenMode=null,chosenColor=null){if((!visible&&!me().isAI)||state.plays>=3||!c)return;let mode=chosenMode||await choose(label(c),[['Cancel','cancel'],...(canBank(c)?[['Put in bank','bank']]:[]),...(c.type!=='money'?[['Play card','play']]:[])]);if(mode==='cancel')return;if(mode==='bank'){if(!canBank(c)){showToast('Only money cards can be banked. Play or discard action cards.');return;}remove(me().hand,c);me().bank.push(c);state.plays++;log(`${me().name} banked ${c.value}M.`);return}
+async function play(c,chosenMode=null,chosenColor=null){if((!visible&&!me().isAI)||state.plays>=3||!c)return;let mode=chosenMode||await choose(label(c),[['Cancel','cancel'],...(canBank(c,hardRules()?'hard':'normal')?[['Put in bank','bank']]:[]),...(c.type!=='money'?[['Play card','play']]:[])]);if(mode==='cancel')return;if(mode==='bank'){if(!canBank(c,hardRules()?'hard':'normal')){showToast('Bank money, or properties with a cash value on Hard. Play or discard action cards.');return;}remove(me().hand,c);me().bank.push(c);state.plays++;log(`${me().name} banked ${c.value}M.`);return}
  if(c.type==='property'){c.color=chosenColor||await colorFor(c,{smart:true});remove(me().hand,c);me().props.push(c);state.plays++;log(`${me().name} laid ${c.name}.`);return}
  const a=c.action,p=me();if(a==='no'||a==='double'){await choose('Keep this card for a response or rent combo',[['OK',true]],a==='no'?'Just Say No is offered when an action targets you.':'Select a Rent card to add one or two Double the Rent cards.');return}
- if(a==='pass'){use(c);const automatic=dealCards(p,2);log(automatic?`${p.name} drew two cards.`:`${p.name}: tap the deck to draw two cards.`,'draw');return}
+ if(a==='pass'){if(!canPassGo(p.hand,dealSettings.allowPassGoOverflow)){showToast('Pass Go would put your hand over seven cards. Play another card first, or enable Allow Pass Go over seven in Game settings.');return;}use(c);const automatic=dealCards(p,2);log(automatic?`${p.name} drew two cards.`:`${p.name}: tap the deck to draw two cards.`,'draw');return}
  if(a==='house'||a==='hotel'){const eligible=buildingSets(p,a);if(!eligible.length)return choose('No eligible complete set',[['OK',true]],'Buildings need a complete street-color set. No railroads or utilities. Only one house and one hotel per set; the house must be placed first.');let color=await choose('Build on which set?',orderedColors(eligible).map(k=>[GROUPS[k].name,k]));use(c);remove(state.discard,c);c.color=color;p.buildings.push(c);log(`${p.name} built ${c.name} on ${GROUPS[color].name}.`,'property');return}
  if(a==='rent'){const tenants=opponents().filter(hasPayableAssets);if(!tenants.length){showToast('No opponent has payable assets. Rent cannot be charged.');return;}let colors=c.colors.filter(k=>properties(p,k).length);if(!colors.length)return choose('You need a matching property',[['OK',true]]);let color=await choose('Charge rent on which color?',[...colors].sort((a,b)=>rent(p,a)-rent(p,b)||GROUPS[a].name.localeCompare(GROUPS[b].name)).map(k=>[`${GROUPS[k].name}: ${rent(p,k)}M`,k]));let targets=c.value===3?[await choose('Choose a tenant',tenants.map(x=>[x.name,x]))]:tenants;let doubles=p.hand.filter(x=>x.action==='double');let max=Math.min(doubles.length,2-state.plays);let n=max>0?await choose('Add Double the Rent?',Array.from({length:max+1},(_,i)=>[`${i} doubler${i===1?'':'s'} · ${rent(p,color)*2**i}M · ${i+1} plays`,i])):0;use(c);for(let i=0;i<n;i++)use(doubles[i]);for(const target of targets){if(hasPayableAssets(target))await collect([target],rent(p,color)*2**n,c.name);else log(`${target.name} has no payable assets and pays 0M rent.`)}return}
  if(a==='debt'||a==='birthday'){let targets=a==='birthday'?opponents():[await choose('Who owes you 5M?',opponents().map(x=>[x.name,x]))];use(c);await collect(targets,a==='debt'?5:2,c.name);return}
@@ -1068,7 +1069,7 @@ function upcomingGameSettings(){
  const section=document.createElement('section');
  section.className='upcoming-game-settings';
  section.setAttribute('aria-labelledby','upcoming-title');
- section.innerHTML=`<h3 id="upcoming-title">Coming soon</h3><p>Coming soon: game sounds for interactions, card plays, and wild flips, plus more card and interaction animations. These features are planned and are not available yet.</p><p>Named games, saved games, backup, and restore are planned for the desktop app. These features are not available yet. The current deal recovers in this tab after a reload; your current hand visibility is preserved.</p><label for="planned-game-name">Game name <span>Coming soon</span></label><input id="planned-game-name" type="text" placeholder="Name your game" disabled aria-describedby="upcoming-title"><div class="upcoming-actions">${['Save game','Load game','Backup','Restore'].map(label=>`<button type="button" aria-disabled="true" data-unavailable-reason="${label} is coming soon for the desktop app.">${label}</button>`).join('')}</div>`;
+ section.innerHTML=`<h3 id="upcoming-title">Coming soon</h3><p><strong>No Mercy difficulty — planned.</strong> Combine the Monopoly Deal No Mercy edition cards with our Hard rules, including property banking, discard costs, and wild-flip costs. Not playable yet; the complete card list and debt interactions are still being verified.</p><p>Coming soon: game sounds for interactions, card plays, and wild flips, plus more card and interaction animations. These features are planned and are not available yet.</p><p>Named games, saved games, backup, and restore are planned for the desktop app. These features are not available yet. The current deal recovers in this tab after a reload; your current hand visibility is preserved.</p><label for="planned-game-name">Game name <span>Coming soon</span></label><input id="planned-game-name" type="text" placeholder="Name your game" disabled aria-describedby="upcoming-title"><div class="upcoming-actions">${['Save game','Load game','Backup','Restore'].map(label=>`<button type="button" aria-disabled="true" data-unavailable-reason="${label} is coming soon for the desktop app.">${label}</button>`).join('')}</div>`;
  return section;
 }
 
@@ -1121,6 +1122,11 @@ function openGameSettings(){
   try{localStorage.setItem(dealSettingsKey,JSON.stringify(dealSettings));}catch{}
   completeAutomaticDraws();if(state)render();
  };
+ const overflow=document.createElement('label');
+ overflow.innerHTML='<input id="pass-go-overflow" type="checkbox"> Allow Pass Go over seven cards';
+ const overflowInput=overflow.querySelector('input');overflowInput.checked=dealSettings.allowPassGoOverflow;
+ overflowInput.onchange=()=>{dealSettings.allowPassGoOverflow=overflowInput.checked;try{localStorage.setItem(dealSettingsKey,JSON.stringify(dealSettings));}catch{}if(state)render();};
+ dealing.append(overflow);
  document.querySelector('.table-settings').append(dealing,notifications);
  const close=appearance.querySelector('button');
  close.onclick=()=>appearance.close();
@@ -1162,3 +1168,15 @@ function wireActionHistory(){
   $('#action-history-close').onclick=()=>popup.close();popup.showModal();$('#action-history-close').focus();
  });
 }
+
+// Elapsed deal time survives reloads and stops at victory.
+const gameTimer=document.createElement('output');gameTimer.id='elapsed-game-time';gameTimer.setAttribute('aria-label','Elapsed game time');gameTimer.setAttribute('aria-live','off');document.body.append(gameTimer);
+function updateGameTimer(){
+ gameTimer.hidden=!state;
+ if(!state)return;
+ if(!state.startedAt)state.startedAt=Date.now();
+ if(state.winner&&!state.finishedAt)state.finishedAt=Date.now();
+ const seconds=Math.max(0,Math.floor(((state.finishedAt||Date.now())-state.startedAt)/1000));
+ gameTimer.textContent=`Time ${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;
+}
+setInterval(updateGameTimer,1000);updateGameTimer();

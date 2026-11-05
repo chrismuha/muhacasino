@@ -101,7 +101,7 @@ function syncHostedCabinetScreens(gameId = null) {
   device.classList.toggle("cabinet-non-slot-game", !slotGameActive);
 }
 
-const SITE_BUILD = "20261101-native-viewport-wilds-v114";
+const SITE_BUILD = "20261104-deal-controls-v122";
 const launcher = document.querySelector("#launcher");
 const topbar = document.querySelector(".topbar");
 const navMenuButton = document.querySelector(".nav-menu-button");
@@ -118,7 +118,16 @@ navMenuButton?.addEventListener("click", () => {
   setNavigationOpen(!topbar.classList.contains("nav-open"));
 });
 primaryNavigation?.addEventListener("click", (event) => {
-  if (event.target.closest("a")) setNavigationOpen(false);
+  const link=event.target.closest('a');
+  if(!link)return;
+  setNavigationOpen(false);
+  if(link.getAttribute('href')?.startsWith('#')){
+    event.preventDefault();
+    const target=document.querySelector(link.getAttribute('href'));
+    if(!target)return;
+    if(activeGameId)showLauncher();
+    requestAnimationFrame(()=>target.scrollIntoView({behavior:'smooth',block:'start'}));
+  }
 });
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") setNavigationOpen(false);

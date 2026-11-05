@@ -494,7 +494,7 @@ test('dropping hand cards banks or plays the dropped card; invalid and cancelled
  const p=await open();await fixture(p,'hand',2);
  const ids=await p.evaluate(()=>window.__dealTest.state.players[0].hand.map(c=>c.id));
  await dragHandCard(p,p.locator(`[data-card="${ids[0]}"]`),p.locator('.current-bank'));
- assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);assert.match(await p.locator('#game-toast').innerText(),/Only money cards can be banked/);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);assert.match(await p.locator('#game-toast').innerText(),/Bank money, or properties with a cash value on Hard/);
  await dragHandCard(p,p.locator(`[data-card="${ids[0]}"]`),p.locator('.current-properties'));
  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[0].id),ids[0]);
  await dragHandCard(p,p.locator(`[data-card="${ids[1]}"]`),p.locator('.current-bank'));
@@ -537,7 +537,7 @@ test('touch hold and drag drops a card on Properties without scrolling or spendi
 });
 
 test('hand sorting still reorders freely and dropping an action on Properties plays it',async()=>{
- const p=await open();await fixture(p,'hand',2);
+ const p=await open(undefined,{'muha-deal-settings-v1':JSON.stringify({allowPassGoOverflow:true})});await fixture(p,'hand',2);
  const ids=await p.evaluate(()=>window.__dealTest.state.players[0].hand.map(c=>c.id));
  await dragHandCard(p,p.locator(`[data-card="${ids[0]}"]`),p.locator(`[data-card="${ids[2]}"]`));
  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].hand[2].id),ids[0],JSON.stringify({before:ids,after:await p.evaluate(()=>window.__dealTest.state.players[0].hand.map(c=>c.id)),toast:await p.locator('#game-toast').innerText()}));assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);
@@ -1318,7 +1318,7 @@ test('secondary text is white and the guide consistently documents the v1.5.0 ru
  assert.equal(await p.locator('#undo').getAttribute('aria-disabled'),'true');
  assert.equal(await p.locator('#undo').evaluate(el=>getComputedStyle(el).color),'rgb(255, 255, 255)');
  const guide=await p.evaluate(async()=>{const {GUIDE_RULES,cardFacts}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),facts:deck().filter(c=>c.type==='action').flatMap(cardFacts).join(' ')}});
- assert.match(guide.rules,/Only money cards can be banked manually/);assert.match(guide.rules,/Opponents with no payable assets cannot be charged rent/);assert.match(guide.rules,/tap a wild directly/i);assert.doesNotMatch(guide.facts,/Alternatively, bank|Or bank:/);
+ assert.match(guide.rules,/Hard also allows properties with a cash value to be banked/);assert.match(guide.rules,/Opponents with no payable assets cannot be charged rent/);assert.match(guide.rules,/tap a wild directly/i);assert.doesNotMatch(guide.facts,/Alternatively, bank|Or bank:/);
  await close(p);
 });
 
@@ -1699,8 +1699,8 @@ test('over-limit hands must discard for free before playing and cannot dismiss t
  await conservation(p);await close(p);
 });
 
-test('Pass Go requires reducing the resulting hand to seven before another play',async()=>{
- const p=await open();await fixture(p,'hand',2);
+test('Pass Go overflow override requires reducing the resulting hand to seven before another play',async()=>{
+ const p=await open(undefined,{'muha-deal-settings-v1':JSON.stringify({allowPassGoOverflow:true})});await fixture(p,'hand',2);
  await select(p,()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='pass').id);
  await p.locator('#play-card').click();await p.locator('#choice[open]').waitFor();
  assert.match(await p.locator('#question').textContent(),/discard down to seven/);
@@ -2154,7 +2154,7 @@ test('manual opening hands draw one card per deck tap, keep privacy, and recover
 });
 
 test('manual Pass Go draws are required, empty hands draw five, and enabling auto completes pending draws',async()=>{
- const p=await open({width:420,height:712},{'muha-deal-settings-v1':JSON.stringify({automaticDealing:false})});
+ const p=await open({width:420,height:712},{'muha-deal-settings-v1':JSON.stringify({automaticDealing:false,allowPassGoOverflow:true})});
  await fixture(p,'hand',2);
  await select(p,()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='pass').id);
  await p.locator('#play-card').click();await idle(p);
@@ -2371,4 +2371,47 @@ test('Hard hand wild flips spend a play and Undo restores the flip and play',asy
  await p.locator('#undo').click();await idle(p);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),2);
  await conservation(p);await close(p);
+});
+
+test('Pass Go is blocked at seven by default and Hard can bank a property',async()=>{
+ const p=await open();await fixture(p,'hand',2);
+ await select(p,()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='pass').id);
+ await p.locator('#play-card').click({force:true});await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].hand.length),7);
+ assert.match(await p.locator('#game-toast').innerText(),/over seven/);
+ await p.evaluate(()=>{window.__dealTest.state.difficulty='hard';window.__dealTest.render();});
+ await select(p,()=>window.__dealTest.state.players[0].hand.find(c=>c.type==='property'&&c.value>0).id);
+ await p.locator('#bank-card').click();await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),1);
+ await conservation(p);await close(p);
+});
+
+test('mobile library navigation scrolls to Games and Help leaves lower-right free',async()=>{
+ const p=await open();await p.goto(origin+'/index.html');
+ await p.locator('.nav-menu-button').click();
+ if(process.env.DEAL_REVIEW_SCREENSHOTS){await p.waitForFunction(()=>getComputedStyle(document.querySelector('#primaryNavigation')).opacity==='1');await p.screenshot({path:'/tmp/deal-v122-navigation.png'});}
+ await p.locator('#primaryNavigation a[href="#games"]').click();
+ await p.waitForFunction(()=>{const r=document.querySelector('#games').getBoundingClientRect();return r.top>=-1&&r.top<200;});
+ assert.equal(await p.locator('.nav-menu-button').getAttribute('aria-expanded'),'false');
+ const help=p.locator('suite-help').locator('.suite-help-trigger');await help.waitFor();
+ const box=await help.boundingBox();assert.ok(box.width>=44&&box.width<=50);assert.ok(box.y<932-200);
+ await help.click();await p.locator('suite-help').locator('dialog[open]').waitFor();
+ assert.ok(await p.locator('suite-help').locator('[data-page="coming"]').isVisible());
+ await p.locator('suite-help').locator('.suite-help-close').click();
+ await close(p);
+});
+
+test('elapsed deal timer survives reload and Pass Go uses a scalable arrow',async()=>{
+ const p=await open();await fixture(p,'hand',2);
+ await p.evaluate(()=>{const t=window.__dealTest;t.state.startedAt=Date.now()-65000;t.render();});
+ await p.waitForFunction(()=>document.querySelector('#elapsed-game-time').textContent.startsWith('Time 1:'));
+ await p.reload();await p.waitForFunction(()=>window.__dealTest);
+ await p.waitForFunction(()=>document.querySelector('#elapsed-game-time').textContent.startsWith('Time 1:'));
+ await select(p,()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='pass').id);
+ assert.ok(await p.locator('svg.go-arrow').count()>0);
+ await p.locator('#preview-open').click();
+ if(process.env.DEAL_REVIEW_SCREENSHOTS)await p.screenshot({path:'/tmp/deal-v122-card.png'});
+ await close(p);
 });
