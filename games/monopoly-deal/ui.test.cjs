@@ -2395,11 +2395,11 @@ test('mobile library navigation scrolls to Games and Help leaves lower-right fre
  await p.locator('#primaryNavigation a[href="#games"]').click();
  await p.waitForFunction(()=>{const r=document.querySelector('#games').getBoundingClientRect();return r.top>=-1&&r.top<200;});
  assert.equal(await p.locator('.nav-menu-button').getAttribute('aria-expanded'),'false');
- const help=p.locator('suite-help').locator('.suite-help-trigger');await help.waitFor();
+ const help=p.locator('suite-help:not([data-floating])').locator('.suite-help-trigger');await help.waitFor();
  assert.equal(await help.getAttribute('data-placement'),'inline');
- await help.click();await p.locator('suite-help').locator('dialog[open]').waitFor();
- assert.ok(await p.locator('suite-help').locator('[data-page="coming"]').isVisible());
- await p.locator('suite-help').locator('.suite-help-close').click();
+ await help.click();await p.locator('suite-help:not([data-floating])').locator('dialog[open]').waitFor();
+ assert.ok(await p.locator('suite-help:not([data-floating])').locator('[data-page="coming"]').isVisible());
+ await p.locator('suite-help:not([data-floating])').locator('.suite-help-close').click();
  await close(p);
 });
 
@@ -2428,12 +2428,13 @@ test('display switches persist and turn labels stay left at phone tablet desktop
  await p.locator('#show-help').uncheck();await p.locator('#show-elapsed-time').uncheck();
  assert.equal(await p.locator('#elapsed-game-time').isVisible(),false);
  await p.reload();await p.waitForFunction(()=>window.__dealTest);
- assert.equal(await p.locator('suite-help').isVisible(),false);
+ assert.equal(await p.locator('suite-help:not([data-floating]) .suite-help-trigger').isVisible(),true);
+ assert.equal(await p.locator('suite-help[data-floating] .suite-help-trigger').isVisible(),false);
  assert.equal(await p.locator('#elapsed-game-time').isVisible(),false);
  await p.locator('#table-settings').click();await p.locator('#show-help').check();await p.locator('#show-elapsed-time').check();
  await p.locator('#appearance-dialog button').first().click();
  await p.waitForFunction(()=>!document.querySelector('#elapsed-game-time').hidden);
- await p.locator('suite-help .suite-help-trigger').waitFor({state:'visible'});
+ await p.locator('suite-help:not([data-floating]) .suite-help-trigger').waitFor({state:'visible'});
  await close(p);
 });
 
@@ -2456,21 +2457,22 @@ test('rent offers a played universal wild move and cancellation restores it',asy
  await close(p);
 });
 
-test('hosted Help uses the Deal edge tab and respects child settings and dialogs',async()=>{
+test('Deal navigation Help stays available and optional floating Help defaults off',async()=>{
  const p=await open();await p.goto(origin+'/index.html#monopoly-deal');
  const game=p.frameLocator('#gameFrame');await game.locator('#ready-new').waitFor();
- const help=p.locator('suite-help .suite-help-trigger');await help.waitFor();
- assert.equal(await help.getAttribute('data-placement'),'edge');
- assert.equal(await help.evaluate(el=>getComputedStyle(el).transform),'matrix(-1, 0, 0, -1, 0, 0)');
- await game.locator('#ready-settings').click();await help.waitFor({state:'hidden'});
- await game.locator('#show-help').uncheck();await game.locator('#appearance-dialog button').first().click();
- assert.equal(await help.isVisible(),false);
- await game.locator('#ready-settings').click();await game.locator('#show-help').check();await game.locator('#appearance-dialog button').first().click();await help.waitFor();
- const frame=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));await fixture(frame,'hand',2);
- await p.screenshot({path:'/tmp/deal-help-layout-phone.png'});
- await p.locator('#toolbarCollapseButton').click();await p.locator('#backButton').click();
- await p.waitForFunction(()=>document.querySelector('suite-help').shadowRoot.querySelector('button').dataset.placement==='inline');
- await close(p);
+ const help=p.locator('suite-help:not([data-floating]) .suite-help-trigger');
+ const floater=p.locator('suite-help[data-floating] .suite-help-trigger');
+ await p.locator('#toolbarCollapseButton').click();await help.waitFor();
+ assert.equal(await help.getAttribute('data-placement'),'inline');assert.equal(await floater.isVisible(),false);
+ await help.click();await p.locator('suite-help:not([data-floating]) dialog[open]').waitFor();await p.locator('suite-help:not([data-floating]) .suite-help-close').click();
+ await game.locator('#ready-settings').click();assert.equal(await game.locator('#show-help').isChecked(),false);
+ await game.locator('#show-help').check();await game.locator('#appearance-dialog button').first().click();await floater.waitFor();
+ await p.reload();await game.locator('#ready-new').waitFor();await floater.waitFor();
+ await game.locator('#ready-settings').click();await game.locator('#show-help').uncheck();await game.locator('#appearance-dialog button').first().click();
+ assert.equal(await floater.isVisible(),false);
+ if(await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded')==='false')await p.locator('#toolbarCollapseButton').click();
+ await help.waitFor();await help.click();await p.locator('suite-help:not([data-floating]) dialog[open]').waitFor();
+ await p.locator('suite-help:not([data-floating]) .suite-help-close').click();await close(p);
 });
 
 test('every other hosted game reserves header space for inline Help',async()=>{
@@ -2479,14 +2481,14 @@ test('every other hosted game reserves header space for inline Help',async()=>{
   await p.setViewportSize({width,height:900});
   for(const id of ['big-money-deluxe','neon-slots','pretty-penny','treasurepots','bingo','sorry','yahtzee']){
    await p.goto(origin+'/index.html#'+id);await p.locator('#gameFrame').waitFor();
-   const help=p.locator('suite-help .suite-help-trigger');
+   const help=p.locator('suite-help:not([data-floating]) .suite-help-trigger');
    await p.waitForFunction(()=>document.querySelector('suite-help')?.shadowRoot.querySelector('button')?.dataset.placement==='inline');
    if(await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded')==='false')await p.locator('#toolbarCollapseButton').click();
    await help.waitFor();
    const box=await help.boundingBox(),frame=await p.locator('#gameFrame').boundingBox();
    assert.ok(box.y+box.height<=frame.y+1,`${id} ${width}: Help stays above game content`);
    assert.ok(box.x>=0&&box.x+box.width<=width,`${id}: Help fits the viewport`);
-   await help.click();await p.locator('suite-help dialog[open]').waitFor();await p.locator('suite-help .suite-help-close').click();
+   await help.click();await p.locator('suite-help:not([data-floating]) dialog[open]').waitFor();await p.locator('suite-help:not([data-floating]) .suite-help-close').click();
   }
  }
  await close(p);

@@ -98,3 +98,5 @@ Appearance checks verify a single card-table renderer, no appearance-selector co
 Hard permits banking properties with positive cash value; other difficulties and action cards retain their restrictions. Pass Go is blocked when its net draw would leave more than seven cards unless the saved Allow Pass Go over seven setting is enabled (off by default). Regression checks cover the default guard, override, property banking, mobile library navigation, compact Help access, elapsed time across reload, and scalable Pass Go artwork. No Mercy combined with Hard rules remains Coming soon pending verified card counts and debt interactions.
 
 November 5: verify left-aligned turn and complete-set labels at 320, 430, 768, and 1440 pixels; saved Help/timer switches and re-enabling; inline Help outside Monopoly Deal; wild movement from rent with the one-play cost and cancellation rollback.
+
+Help access: verify navigation-bar Help stays available with the floating tab disabled (the default), and that explicitly enabling/disabling the tab survives reload without changing navigation-bar Help.

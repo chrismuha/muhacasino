@@ -1,11 +1,11 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-help-layout-v124';
-import {paginateViewer} from './view-pages.mjs?build=20261105-deal-help-layout-v124';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-help-layout-v124';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-help-layout-v124';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-help-layout-v124';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-help-layout-v124';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-help-layout-v124';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-help-layout-v124';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-navbar-help-v125';
+import {paginateViewer} from './view-pages.mjs?build=20261105-deal-navbar-help-v125';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-navbar-help-v125';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-navbar-help-v125';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-navbar-help-v125';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-navbar-help-v125';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-navbar-help-v125';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-navbar-help-v125';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -34,9 +34,9 @@ const toastPreferenceKey='muha-deal-toasts-v1';
 let toastPreferences={};
 try{const saved=JSON.parse(localStorage.getItem(toastPreferenceKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))toastPreferences=saved;}catch{}
 const dealSettingsKey='muha-deal-settings-v1';
-let dealSettings={automaticDealing:true,allowPassGoOverflow:false,showHelp:true,showElapsedTime:true};
+let dealSettings={automaticDealing:true,allowPassGoOverflow:false,showFloatingHelp:false,showElapsedTime:true};
 try{const saved=JSON.parse(localStorage.getItem(dealSettingsKey)||'{}');if(typeof saved?.allowPassGoOverflow==='boolean')dealSettings.allowPassGoOverflow=saved.allowPassGoOverflow;if(typeof saved?.automaticDealing==='boolean')dealSettings.automaticDealing=saved.automaticDealing;}catch{}
-for(const key of ['showHelp','showElapsedTime']){try{const saved=JSON.parse(localStorage.getItem(dealSettingsKey)||'{}');if(typeof saved[key]==='boolean')dealSettings[key]=saved[key];}catch{}}
+for(const key of ['showFloatingHelp','showElapsedTime']){try{const saved=JSON.parse(localStorage.getItem(dealSettingsKey)||'{}');if(typeof saved[key]==='boolean')dealSettings[key]=saved[key];}catch{}}
 const toastDurationSeconds=()=>Number.isFinite(Number(toastPreferences.durationSeconds))?Math.min(30,Math.max(1,Number(toastPreferences.durationSeconds))):2;
 function toastType(message){
  if(/banked/.test(message))return 'bank';
@@ -1134,8 +1134,8 @@ function openGameSettings(){
  overflowInput.onchange=()=>{dealSettings.allowPassGoOverflow=overflowInput.checked;try{localStorage.setItem(dealSettingsKey,JSON.stringify(dealSettings));}catch{}if(state)render();};
  dealing.append(overflow);
  const display=document.createElement('fieldset');display.className='display-settings';
- display.innerHTML='<legend>Display</legend><label><input id="show-help" type="checkbox"> Show Help button</label><label><input id="show-elapsed-time" type="checkbox"> Show elapsed game time</label><p>These preferences are saved on this device. Hiding elapsed time does not reset the clock.</p>';
- for(const [id,key] of [['show-help','showHelp'],['show-elapsed-time','showElapsedTime']]){
+ display.innerHTML='<legend>Display</legend><label><input id="show-help" type="checkbox"> Show floating Help tab (off by default)</label><label><input id="show-elapsed-time" type="checkbox"> Show elapsed game time</label><p>Help always remains available in the navigation bar. The optional right-edge tab is off by default. These preferences are saved on this device. Hiding elapsed time does not reset the clock.</p>';
+ for(const [id,key] of [['show-help','showFloatingHelp'],['show-elapsed-time','showElapsedTime']]){
   const input=display.querySelector('#'+id);input.checked=dealSettings[key];
   input.onchange=()=>{dealSettings[key]=input.checked;try{localStorage.setItem(dealSettingsKey,JSON.stringify(dealSettings));}catch{}document.dispatchEvent(new Event('deal-display-settings'));updateGameTimer();};
  }

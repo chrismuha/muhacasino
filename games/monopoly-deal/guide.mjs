@@ -19,7 +19,7 @@ export const GUIDE_RULES = [
  [
   "Drawing cards",
   [
-   "Game settings saves independent Show Help button and Show elapsed game time switches. Hiding time does not reset the clock. Rent can move a played wild to a matching color for one play when two plays remain, then spend one play on rent. Cancel restores the move and plays.",
+   "Game settings saves independent Show floating Help tab (off by default) and Show elapsed game time switches. Navigation-bar Help is always available. Hiding time does not reset the clock. Rent can move a played wild to a matching color for one play when two plays remain, then spend one play on rent. Cancel restores the move and plays.",
    "Game settings includes Automatic dealing, on by default. When on, opening hands, turn-start cards, and Pass Go draws go straight into the hand without a full-screen card popup.",
    "Turn Automatic dealing off to draw human cards yourself. After starting a game, reveal your private hand if prompted, then tap the orange Monopoly Deal deck card once for each card you are owed. Your first turn has seven cards to collect: the opening five plus two for the turn. Later turns draw two, or five if your hand is empty. Pass Go adds two draws.",
    "Each tap adds one card to your hand, clears Undo history, and opens its original card artwork full screen, with the same proportions and design as the hand card. Closing the preview keeps the card in your hand. Use Close or Escape to return to the table, then tap the deck for the next card. Two-color wilds have a Flip card button for reading both sides; this does not play the card or choose its future color. Complete all pending draws before playing, discarding, rearranging wilds, or passing. Required excess-hand discards follow the final draw.",
@@ -132,7 +132,7 @@ export const GUIDE_RULES = [
  [
   "Other actions",
   [
-   "Pass Go draws two extra cards. By default it cannot be played if the resulting hand would exceed seven (the played Pass Go leaves your hand first). Game settings has Allow Pass Go over seven, off by default. Hard allows banking properties with a cash value; zero-value wilds and action cards cannot be banked. Elapsed game time appears at the lower right, survives reload, and stops at victory. Help is available from the compact right-edge tab. No Mercy difficulty combining the edition cards with our Hard rules is planned and not yet playable.",
+   "Pass Go draws two extra cards. By default it cannot be played if the resulting hand would exceed seven (the played Pass Go leaves your hand first). Game settings has Allow Pass Go over seven, off by default. Hard allows banking properties with a cash value; zero-value wilds and action cards cannot be banked. Elapsed game time appears at the lower right, survives reload, and stops at victory. Help is always available in the navigation bar. The optional right-edge Help tab is off by default and can be enabled in Game settings. No Mercy difficulty combining the edition cards with our Hard rules is planned and not yet playable.",
    "Debt Collector demands 5M from one opponent.",
    "It’s My Birthday demands 2M from every opponent."
   ]
@@ -172,7 +172,7 @@ export const RELEASE_NOTES = [
  [
   "v1.5.0 · November 2, 2026",
   [
-   "November 5 follow-up: turn and complete-set labels align left above Properties without colliding with Help. Only Monopoly Deal uses the readable edge Help tab; other apps keep standard inline Help. Game settings saves independent Show Help button and Show elapsed game time switches. Rent can offer to move a played wild to a matching color for one play when a second play remains for rent; cancellation restores the move and plays.",
+   "November 5 follow-up: turn and complete-set labels align left above Properties without colliding with Help. Help is always available in the navigation bar, including Monopoly Deal. Monopoly Deal’s optional right-edge Help tab is off by default; Game settings saves Show floating Help tab and Show elapsed game time independently. Rent can offer to move a played wild to a matching color for one play when a second play remains for rent; cancellation restores the move and plays.",
    "November 4 follow-up: fixed library navigation while a game is open; enlarged and centered the mobile menu; added clear card arrows and Close controls, a scalable Pass Go arrow, Hard property banking, the default seven-card Pass Go guard with a saved override, and a saved elapsed-game timer. Shared Help uses a compact edge tab. No Mercy with our Hard rules is marked Coming soon pending verified deck and debt rules.",
    "The card table has one consistent appearance. Table presets, custom HEX colors, and the color picker remain available, with saved games and selected table colors preserved.",
    "Full-screen drawn cards now enlarge the original hand-card artwork at its original proportions, including both halves of two-color wilds. Toasts default to the open table area beside the deck; Game settings adds a saved Footer placement option, with scrolling message text and a stationary X in either location. Fresh phone deals and the first move use compact short-viewport spacing without shrinking the deck card. Header controls fit small screens.",
