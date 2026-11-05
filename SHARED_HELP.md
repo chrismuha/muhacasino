@@ -15,3 +15,5 @@ Standalone floating Help launchers now use a compact 44px-wide tab on the right 
 ## Monopoly Deal current guide and release notes
 
 Monopoly Deal remains v1.5.0. The in-game guide, Release Notes page, and About version history describe Hard property banking, the seven-card Pass Go restriction and its default-off override, the elapsed timer, and the updated mobile controls. No Mercy combined with Hard rules is Coming soon and is not playable yet. Unwanted mobile page scrolling remains unresolved and is listed under Known issues in the game guide and shared Help, without claims of a scrolling fix in the release history.
+
+November 5 follow-up: turn and complete-set labels align left above Properties without colliding with Help. Only Monopoly Deal uses the readable edge Help tab; other apps keep standard inline Help. Game settings saves independent Show Help button and Show elapsed game time switches. Rent can offer to move a played wild to a matching color for one play when a second play remains for rent; cancellation restores the move and plays.

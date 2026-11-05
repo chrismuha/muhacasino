@@ -1,11 +1,11 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261104-deal-known-issues-v123';
-import {paginateViewer} from './view-pages.mjs?build=20261104-deal-known-issues-v123';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261104-deal-known-issues-v123';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261104-deal-known-issues-v123';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261104-deal-known-issues-v123';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261104-deal-known-issues-v123';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261104-deal-known-issues-v123';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261104-deal-known-issues-v123';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-help-layout-v124';
+import {paginateViewer} from './view-pages.mjs?build=20261105-deal-help-layout-v124';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-help-layout-v124';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-help-layout-v124';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-help-layout-v124';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-help-layout-v124';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-help-layout-v124';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-help-layout-v124';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -34,8 +34,9 @@ const toastPreferenceKey='muha-deal-toasts-v1';
 let toastPreferences={};
 try{const saved=JSON.parse(localStorage.getItem(toastPreferenceKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))toastPreferences=saved;}catch{}
 const dealSettingsKey='muha-deal-settings-v1';
-let dealSettings={automaticDealing:true,allowPassGoOverflow:false};
+let dealSettings={automaticDealing:true,allowPassGoOverflow:false,showHelp:true,showElapsedTime:true};
 try{const saved=JSON.parse(localStorage.getItem(dealSettingsKey)||'{}');if(typeof saved?.allowPassGoOverflow==='boolean')dealSettings.allowPassGoOverflow=saved.allowPassGoOverflow;if(typeof saved?.automaticDealing==='boolean')dealSettings.automaticDealing=saved.automaticDealing;}catch{}
+for(const key of ['showHelp','showElapsedTime']){try{const saved=JSON.parse(localStorage.getItem(dealSettingsKey)||'{}');if(typeof saved[key]==='boolean')dealSettings[key]=saved[key];}catch{}}
 const toastDurationSeconds=()=>Number.isFinite(Number(toastPreferences.durationSeconds))?Math.min(30,Math.max(1,Number(toastPreferences.durationSeconds))):2;
 function toastType(message){
  if(/banked/.test(message))return 'bank';
@@ -594,7 +595,12 @@ async function play(c,chosenMode=null,chosenColor=null){if((!visible&&!me().isAI
  const a=c.action,p=me();if(a==='no'||a==='double'){await choose('Keep this card for a response or rent combo',[['OK',true]],a==='no'?'Just Say No is offered when an action targets you.':'Select a Rent card to add one or two Double the Rent cards.');return}
  if(a==='pass'){if(!canPassGo(p.hand,dealSettings.allowPassGoOverflow)){showToast('Pass Go would put your hand over seven cards. Play another card first, or enable Allow Pass Go over seven in Game settings.');return;}use(c);const automatic=dealCards(p,2);log(automatic?`${p.name} drew two cards.`:`${p.name}: tap the deck to draw two cards.`,'draw');return}
  if(a==='house'||a==='hotel'){const eligible=buildingSets(p,a);if(!eligible.length)return choose('No eligible complete set',[['OK',true]],'Buildings need a complete street-color set. No railroads or utilities. Only one house and one hotel per set; the house must be placed first.');let color=await choose('Build on which set?',orderedColors(eligible).map(k=>[GROUPS[k].name,k]));use(c);remove(state.discard,c);c.color=color;p.buildings.push(c);log(`${p.name} built ${c.name} on ${GROUPS[color].name}.`,'property');return}
- if(a==='rent'){const tenants=opponents().filter(hasPayableAssets);if(!tenants.length){showToast('No opponent has payable assets. Rent cannot be charged.');return;}let colors=c.colors.filter(k=>properties(p,k).length);if(!colors.length)return choose('You need a matching property',[['OK',true]]);let color=await choose('Charge rent on which color?',[...colors].sort((a,b)=>rent(p,a)-rent(p,b)||GROUPS[a].name.localeCompare(GROUPS[b].name)).map(k=>[`${GROUPS[k].name}: ${rent(p,k)}M`,k]));let targets=c.value===3?[await choose('Choose a tenant',tenants.map(x=>[x.name,x]))]:tenants;let doubles=p.hand.filter(x=>x.action==='double');let max=Math.min(doubles.length,2-state.plays);let n=max>0?await choose('Add Double the Rent?',Array.from({length:max+1},(_,i)=>[`${i} doubler${i===1?'':'s'} · ${rent(p,color)*2**i}M · ${i+1} plays`,i])):0;use(c);for(let i=0;i<n;i++)use(doubles[i]);for(const target of targets){if(hasPayableAssets(target))await collect([target],rent(p,color)*2**n,c.name);else log(`${target.name} has no payable assets and pays 0M rent.`)}return}
+ if(a==='rent'){const tenants=opponents().filter(hasPayableAssets);if(!tenants.length){showToast('No opponent has payable assets. Rent cannot be charged.');return;}const movable=color=>p.props.filter(card=>card.colors?.length>1&&card.colors.includes(color)&&card.color!==color);
+ const rentFor=color=>{if(properties(p,color).length)return rent(p,color);const wild=movable(color)[0];return wild?rent({...p,props:[...p.props.filter(card=>card!==wild),{...wild,color}]},color):0;};
+ let colors=c.colors.filter(k=>properties(p,k).length||(state.plays<2&&movable(k).length));if(!colors.length)return choose('You need a matching property',[['OK',true]]);let color=await choose('Charge rent on which color?',[...colors].sort((a,b)=>rentFor(a)-rentFor(b)||GROUPS[a].name.localeCompare(GROUPS[b].name)).map(k=>[`${GROUPS[k].name}: ${rentFor(k)}M${properties(p,k).length?'':' · move wild: 1 play'}`,k]));if(!properties(p,color).length){
+ const wild=await choose('Move a wild to '+GROUPS[color].name+'? Costs 1 play',movable(color).map(card=>[label(card),card]));
+ wild.color=color;state.plays++;normalize(p);log(`${p.name} moved a wild to ${GROUPS[color].name}.`,'wild');
+ }let targets=c.value===3?[await choose('Choose a tenant',tenants.map(x=>[x.name,x]))]:tenants;let doubles=p.hand.filter(x=>x.action==='double');let max=Math.min(doubles.length,2-state.plays);let n=max>0?await choose('Add Double the Rent?',Array.from({length:max+1},(_,i)=>[`${i} doubler${i===1?'':'s'} · ${rent(p,color)*2**i}M · ${i+1} plays`,i])):0;use(c);for(let i=0;i<n;i++)use(doubles[i]);for(const target of targets){if(hasPayableAssets(target))await collect([target],rent(p,color)*2**n,c.name);else log(`${target.name} has no payable assets and pays 0M rent.`)}return}
  if(a==='debt'||a==='birthday'){let targets=a==='birthday'?opponents():[await choose('Who owes you 5M?',opponents().map(x=>[x.name,x]))];use(c);await collect(targets,a==='debt'?5:2,c.name);return}
  let targets=opponents().flatMap(x=>a==='breaker'?sets(x).map(color=>({p:x,color})):x.props.filter(card=>!complete(x,card.color)).map(card=>({p:x,card})));
  targets.sort((left,right)=>GROUPS[left.color||left.card.color].name.localeCompare(GROUPS[right.color||right.card.color].name)||left.p.name.localeCompare(right.p.name)||(left.card?.name||'').localeCompare(right.card?.name||''));
@@ -1127,6 +1133,13 @@ function openGameSettings(){
  const overflowInput=overflow.querySelector('input');overflowInput.checked=dealSettings.allowPassGoOverflow;
  overflowInput.onchange=()=>{dealSettings.allowPassGoOverflow=overflowInput.checked;try{localStorage.setItem(dealSettingsKey,JSON.stringify(dealSettings));}catch{}if(state)render();};
  dealing.append(overflow);
+ const display=document.createElement('fieldset');display.className='display-settings';
+ display.innerHTML='<legend>Display</legend><label><input id="show-help" type="checkbox"> Show Help button</label><label><input id="show-elapsed-time" type="checkbox"> Show elapsed game time</label><p>These preferences are saved on this device. Hiding elapsed time does not reset the clock.</p>';
+ for(const [id,key] of [['show-help','showHelp'],['show-elapsed-time','showElapsedTime']]){
+  const input=display.querySelector('#'+id);input.checked=dealSettings[key];
+  input.onchange=()=>{dealSettings[key]=input.checked;try{localStorage.setItem(dealSettingsKey,JSON.stringify(dealSettings));}catch{}document.dispatchEvent(new Event('deal-display-settings'));updateGameTimer();};
+ }
+ document.querySelector('.table-settings').append(display);
  document.querySelector('.table-settings').append(dealing,notifications);
  const close=appearance.querySelector('button');
  close.onclick=()=>appearance.close();
@@ -1172,7 +1185,7 @@ function wireActionHistory(){
 // Elapsed deal time survives reloads and stops at victory.
 const gameTimer=document.createElement('output');gameTimer.id='elapsed-game-time';gameTimer.setAttribute('aria-label','Elapsed game time');gameTimer.setAttribute('aria-live','off');document.body.append(gameTimer);
 function updateGameTimer(){
- gameTimer.hidden=!state;
+ gameTimer.hidden=!state||!dealSettings.showElapsedTime;
  if(!state)return;
  if(!state.startedAt)state.startedAt=Date.now();
  if(state.winner&&!state.finishedAt)state.finishedAt=Date.now();
@@ -1180,3 +1193,5 @@ function updateGameTimer(){
  gameTimer.textContent=`Time ${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;
 }
 setInterval(updateGameTimer,1000);updateGameTimer();
+
+if(window.parent===window)import('../../shared-help/suite-help.js');

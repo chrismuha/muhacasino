@@ -953,3 +953,9 @@ html[data-theme=modern]{background:var(--modern-table-background,#0064db)}
 [data-theme=modern] .card-selected:not(.has-selection) #play-card[data-unavailable-reason^="Pass Go"]{display:flex;visibility:visible;opacity:.65;}
 
 #table-view-previous,#table-view-next,#table-view-close,#drawn-card-close{min-height:48px;font-weight:800;border:2px solid #fff;}
+
+/* Reserve the edge-tab lane; keep table status readable at every viewport. */
+[data-theme=modern] .current-seat-heading{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding-right:48px}
+[data-theme=modern] .current-seat-heading>span{text-align:left;align-self:flex-start;white-space:normal}
+[data-theme=modern] .current-properties .asset-panel-heading{flex-wrap:wrap;justify-content:flex-start;padding-right:40px}
+[data-theme=modern] .current-properties .asset-progress{white-space:normal;text-align:left}
