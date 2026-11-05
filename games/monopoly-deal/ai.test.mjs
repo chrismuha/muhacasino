@@ -30,3 +30,32 @@ test('Easy retains original strategy while Normal develops different colors',()=
  p.aiDifficulty='easy';assert.equal(aiPlay(p,[]).card,extra);
  p.aiDifficulty='normal';assert.equal(aiPlay(p,[]).card,next);
 });
+
+test('Hard banks a reserve but takes an immediate winning property first',()=>{
+ const p={...player(),aiDifficulty:'hard'},cash=deck().find(c=>c.type==='money'&&c.value===5);
+ p.hand=[property('red'),cash];assert.equal(aiPlay(p,[]).card,cash);
+ p.props=['brown','brown','utility','utility','blue'].map(property);
+ p.hand=[cash,property('blue')];assert.equal(aiPlay(p,[]).card.color,'blue');
+});
+test('Hard pays an exact bank combination and protects almost complete sets',()=>{
+ const p={...player(),name:'Computer 1',aiDifficulty:'hard'};
+ const money=value=>({...deck().find(c=>c.type==='money'&&c.value===value)});
+ p.bank=[money(4),money(3),money(2)];p.props=[property('red'),property('red'),property('brown')];
+ const options=[...p.bank,...p.props].map(c=>[c.name,c]);
+ assert.equal(aiChoice('Computer 1: 5M still owed',options,p),p.bank[1]);
+ p.bank=[];
+ assert.equal(aiChoice('Computer 1: 1M still owed',p.props.map(c=>[c.name,c]),p),p.props[2]);
+});
+test('Hard gives away a spare instead of breaking a nearly complete group',()=>{
+ const p={...player(),aiDifficulty:'hard'};p.props=['red','red','green'].map(property);
+ assert.equal(aiChoice('Choose your property to give',p.props.map(c=>[c.name,c]),p),p.props[2]);
+});
+test('Hard holds a low impact steal but uses it to complete a set',()=>{
+ const p={...player(),aiDifficulty:'hard'},other=player(),steal=deck().find(c=>c.action==='sly');
+ p.hand=[steal];other.props=[property('red')];assert.equal(aiPlay(p,[other]),null);
+ p.props=[property('red'),property('red')];assert.equal(aiPlay(p,[other]).card,steal);
+});
+test('Hard retains defensive and stealing cards when discarding',()=>{
+ const p={...player(),aiDifficulty:'hard'};p.hand=[deck().find(c=>c.action==='no'),deck().find(c=>c.action==='breaker'),deck().find(c=>c.action==='double')];
+ assert.equal(aiChoice('discard down',p.hand.map(c=>[c.name,c]),p),p.hand[2]);
+});

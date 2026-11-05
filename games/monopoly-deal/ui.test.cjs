@@ -21,7 +21,7 @@ async function open(viewport={width:430,height:932},storage,contextOptions={}){
  const page=await context.newPage();page.setDefaultTimeout(5000);page.setDefaultNavigationTimeout(15000);page.errors=[];page.on('pageerror',error=>page.errors.push(error.message));
  // Test-only instrumentation is added by the test server response interceptor.
  // The shipped app has no fixture or private-state access API.
- await page.route('**/monopoly-deal/main.js?*',async route=>{const response=await route.fetch();await route.fulfill({response,body:await response.text()+`\nwindow.__dealTest={get state(){return state},get visible(){return visible},get busy(){return busy},setState(s,show=true){state=s;visible=show;selectedCardId=null;previewFlipped=false;previewExpanded=false;lastCardTap=null;turnHandoff=!show;render()},render,run,play,end,rearrange,defend,pay,checkWin,tableViews,showToast};`})});
+ await page.route('**/monopoly-deal/main.js?*',async route=>{const response=await route.fetch();await route.fulfill({response,body:await response.text()+`\nwindow.__dealTest={get state(){return state},get visible(){return visible},get busy(){return busy},setState(s,show=true){state=s;visible=show;selectedCardId=null;previewFlipped=false;previewExpanded=false;lastCardTap=null;turnHandoff=!show;render()},render,run,play,end,rearrange,defend,pay,checkWin,tableViews,showToast,enforceHandLimit};`})});
  await page.goto(origin+'/games/monopoly-deal/');await page.waitForFunction(()=>window.__dealTest);return page;
 }
 async function close(page){assert.deepEqual(page.errors,[],'No browser runtime errors');await page.context().close()}
@@ -120,7 +120,7 @@ test('selection, property placement, banking, Pass Go, 3-play cap, and turn priv
 
 test('wild flip controls played color; moving a played wild costs one play and normalizes buildings',async()=>{
  const p=await open();await fixture(p,'wild');await p.locator('[data-card]').first().click();assert.equal(await p.locator('#flip-card').isEnabled(),true);await p.locator('#flip-card').click();await p.locator('#play-card').click();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[0].color),'lightblue');assert.match(await p.locator('.current-properties .wild-half').first().getAttribute('style'),/#77cfe9/);
- await fixture(p,'rearrange');await p.locator('#move').click();await p.locator('[data-stack-shift="1"]').click();await p.locator('[data-stack-shift="1"]').click();await p.locator('[data-change-wild]:visible').click();await choose(p,'Light Blue');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].buildings.length),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),2);await conservation(p);await close(p);
+ await fixture(p,'rearrange');await p.evaluate(()=>{window.__dealTest.state.difficulty='hard';window.__dealTest.render()});await p.locator('#move').click();await p.locator('[data-stack-shift="1"]').click();await p.locator('[data-stack-shift="1"]').click();await p.locator('[data-change-wild]:visible').click();await choose(p,'Light Blue');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].buildings.length),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),2);await conservation(p);await close(p);
 });
 
 test('rent with two doublers charges every opponent, conserves cards, and hides hands during payment',async()=>{
@@ -844,13 +844,13 @@ test('Flip animates both wild faces and updates hand artwork without spending a 
 
 test('AI difficulty setup, review, saved deal and human mode',async()=>{
  const p=await open();
- for(const difficulty of ['easy','normal']){
+ for(const difficulty of ['easy','normal','hard']){
   if(!(await p.locator('#setup-wizard').evaluate(el=>el.open)))await p.locator('#new').click();
   assert.equal(await p.locator('#ai-difficulty').inputValue(),'normal');
   await p.locator('#opponent-mode').selectOption('human');assert.equal(await p.locator('#ai-difficulty-field').isVisible(),false);
   await p.locator('#opponent-mode').selectOption('ai');await p.locator('#ai-difficulty').selectOption(difficulty);
   await p.locator('#count').selectOption('3');await p.locator('#start').click();await p.locator('#player-name-0').fill('Chris');await p.locator('#start').click();
-  assert.match(await p.locator('#wizard-review').innerText(),difficulty==='easy'?/AI opponent · Easy/:/AI opponent · Normal/);
+  assert.match(await p.locator('#wizard-review').innerText(),new RegExp('AI opponent · '+({easy:'Easy',normal:'Normal',hard:'Hard'})[difficulty]));
   await p.locator('#wizard-back').click();await p.locator('#wizard-back').click();assert.equal(await p.locator('#ai-difficulty').inputValue(),difficulty);
   await p.locator('#start').click();await p.locator('#start').click();await p.locator('#start').click();
   assert.deepEqual(await p.evaluate(()=>window.__dealTest.state.players.filter(p=>p.isAI).map(p=>p.aiDifficulty)),[difficulty,difficulty]);
@@ -1083,7 +1083,7 @@ test('casino-hosted property zoom preserves frame height and the selected card',
 });
 
 test('property manager taps move wilds out of completed sets for one play and normalize buildings',async()=>{
- const p=await open();await fixture(p,'rearrange',2);
+ const p=await open();await fixture(p,'rearrange',2);await p.evaluate(()=>{window.__dealTest.state.difficulty='hard';window.__dealTest.render()});
  const wild=await p.evaluate(()=>window.__dealTest.state.players[0].props.find(c=>c.colors.length>1).id);
  await p.locator('#move').click();await p.locator('.property-stack-card.is-active').waitFor();
  // Browsing the sorted stack must keep wild editing available even on other cards.
@@ -1113,7 +1113,7 @@ test('property manager taps move wilds out of completed sets for one play and no
 test('difficulty fits its field and long property prompts wrap without horizontal clipping',async()=>{
  for(const viewport of [{width:240,height:568},{width:320,height:568},{width:420,height:780},{width:768,height:1024}]){
   const p=await open(viewport);await p.locator('#new').click();
-  for(const difficulty of ['easy','normal']){
+  for(const difficulty of ['easy','normal','hard']){
    await p.locator('#ai-difficulty').selectOption(difficulty);
    const bounds=await p.locator('#ai-difficulty').evaluate(el=>{const r=el.getBoundingClientRect(),label=el.parentElement.getBoundingClientRect(),style=getComputedStyle(el);const ctx=document.createElement('canvas').getContext('2d');ctx.font=`${style.fontSize} ${style.fontFamily}`;return {right:r.right,parent:label.right,available:el.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight),text:ctx.measureText(el.selectedOptions[0].text).width}});
    assert.ok(bounds.right<=bounds.parent+1&&bounds.text<=bounds.available,`${viewport.width}: ${JSON.stringify(bounds)}`);
@@ -1254,7 +1254,7 @@ test('v1.5.0 matches the game, launcher and single same-day release entry',async
 });
 
 test('own table wilds change color directly without opening Manage',async()=>{
- const p=await open();await fixture(p,'rearrange',2);
+ const p=await open();await fixture(p,'rearrange',2);await p.evaluate(()=>{window.__dealTest.state.difficulty='hard';window.__dealTest.render()});
  await p.locator('.current-properties [data-table-wild]').click();await choose(p,'Light Blue');await idle(p);
  assert.equal(await p.locator('#table-viewer').evaluate(el=>el.open),false);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.find(c=>c.colors.length>1).color),'lightblue');
@@ -1268,7 +1268,7 @@ test('action cards cannot be banked through UI, direct moves or either AI diffic
  const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
  await p.evaluate(async id=>{await window.__dealTest.run(()=>window.__dealTest.play(window.__dealTest.state.players[0].hand.find(c=>c.id===id),'bank'))},id);
  assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
- await p.evaluate(async()=>{const {aiPlay}=await import('./ai.mjs');const p={hand:[{type:'action',action:'sly',value:3}],props:[],bank:[],buildings:[]};for(const aiDifficulty of ['easy','normal'])if(aiPlay({...p,aiDifficulty},[])?.mode==='bank')throw Error('AI banked an action');});
+ await p.evaluate(async()=>{const {aiPlay}=await import('./ai.mjs');const p={hand:[{type:'action',action:'sly',value:3}],props:[],bank:[],buildings:[]};for(const aiDifficulty of ['easy','normal','hard'])if(aiPlay({...p,aiDifficulty},[])?.mode==='bank')throw Error('AI banked an action');});
  await conservation(p);await close(p);
 });
 
@@ -2228,8 +2228,8 @@ test('manual human draws do not interrupt automatic computer draws and discard r
 });
 
 test('two-color and multicolor wild moves spend a dot, cancel and same color are free, and Undo restores it',async()=>{
- for(const theme of ['modern'])for(const multicolor of [false,true]){
- const p=await open({width:430,height:932},{'muha-monopoly-deal-theme':theme});await fixture(p,'rearrange',2);
+ for(const theme of ['modern'])for(const difficulty of ['easy','normal','hard'])for(const multicolor of [false,true]){
+ const p=await open({width:430,height:932},{'muha-monopoly-deal-theme':theme});await fixture(p,'rearrange',2);await p.evaluate(difficulty=>{window.__dealTest.state.difficulty=difficulty;window.__dealTest.render()},difficulty);
  const wildId=await p.evaluate(multicolor=>{
   const t=window.__dealTest,s=t.state,p=s.players[0];
   if(multicolor){const old=p.props.find(c=>c.colors.length===2);p.props.splice(p.props.indexOf(old),1);s.draw.push(old);const i=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===10),wild=s.draw.splice(i,1)[0];wild.color='brown';p.props.push(wild);}
@@ -2324,4 +2324,51 @@ test('obsolete appearance preferences cannot enable another layout or change a s
  await p.reload();await p.waitForFunction(()=>window.__dealTest);
  assert.equal(await p.locator('.deal-table').count(),1);assert.equal(await p.locator('#table-color').inputValue(),'#123456');
  assert.equal(await p.locator('.modern-hand-card').count(),7);await close(p);
+});
+
+test('difficulty controls required discard costs for humans and computers, capped at three plays',async()=>{
+ const p=await open();
+ for(const difficulty of ['easy','normal','hard'])for(const computer of [false,true])for(const excess of [2,3]){
+  await fixture(p,'hand',2);
+  await p.evaluate(({difficulty,computer,excess})=>{
+   const t=window.__dealTest,s=t.state;s.difficulty=difficulty;s.plays=1;
+   // Keep this fixture private until run starts so queued enforcement cannot race setup.
+   s.players[0].hand.push(...s.draw.splice(0,excess));s.players[0].isAI=computer;s.players[0].aiDifficulty=difficulty;
+   t.setState(s,false);
+  },{difficulty,computer,excess});
+  const action=p.evaluate(async()=>{const t=window.__dealTest;await t.enforceHandLimit(t.state.players[0]);});
+  if(!computer)for(let i=0;i<excess;i++){await p.locator('#choice[open]').waitFor();await choose(p,0);}
+  await action;await idle(p);
+  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].hand.length),7);
+  assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),difficulty==='hard'?3:1);
+  await conservation(p);
+ }
+ await close(p);
+});
+
+test('Every difficulty charges table wild reassignments and blocks them after three plays',async()=>{
+ const p=await open();
+ for(const difficulty of ['easy','normal','hard']){
+  await fixture(p,'rearrange',2);
+  await p.evaluate(difficulty=>{const t=window.__dealTest;t.state.difficulty=difficulty;t.state.plays=2;t.render();},difficulty);
+  await p.locator('.current-properties [data-table-wild]').click();await choose(p,'Light Blue');await idle(p);
+  assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),3);
+  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.find(c=>c.colors.length>1).color),'lightblue');
+  await p.locator('.current-properties [data-table-wild]').click();await idle(p);
+  assert.equal(await p.locator('#choice[open]').count(),0);
+  assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),3);
+  await conservation(p);
+ }
+ await close(p);
+});
+
+test('Hard hand wild flips spend a play and Undo restores the flip and play',async()=>{
+ const p=await open();await fixture(p,'wild',2);
+ await p.evaluate(()=>{const t=window.__dealTest;t.state.difficulty='hard';t.state.plays=2;t.render();});
+ await p.locator('[data-card]').first().click();await p.locator('#flip-card').click();await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),3);
+ assert.equal(await p.locator('#flip-card').getAttribute('aria-disabled'),'true');
+ await p.locator('#undo').click();await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),2);
+ await conservation(p);await close(p);
 });

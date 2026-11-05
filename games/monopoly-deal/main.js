@@ -123,7 +123,9 @@ document.addEventListener('click', event => {
  showToast(button.dataset.unavailableReason || 'This control is not available right now.');
 }, true);
 
-const discardPlayCost = count => Math.max(0,count-Math.max(0,me().hand.length-7));
+const hardRules = () => (state?.difficulty || state?.players.find(player=>player.isAI)?.aiDifficulty || 'normal')==='hard';
+const handFlipPlayCost = () => hardRules()?1:0;
+const discardPlayCost = count => hardRules()?count:Math.max(0,count-Math.max(0,me().hand.length-7));
 
 let lastHostedControlLock=null;
 function syncNavigationControls(force=false){
@@ -148,12 +150,12 @@ function updateUnavailableControls() {
   if(!reason&&awaitingDraw&&['end','undo','play-card','bank-card','discard-card','move','wilds'].includes(button.id))reason=awaitingDraw;
   if(!reason){
    if(button.id === 'undo')reason=hiddenHand||(!undoHistory.length?'No move to undo in this turn.':'');
-   else if(button.id === 'discard-card')reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.') || (discardPlayCost(selectedCardIds.size)>3-state.plays?`Discard uses one play per card. Select at most ${Math.max(0,me().hand.length-7)+3-state.plays} card${3-state.plays===1?'':'s'}.`:'');
+   else if(button.id === 'discard-card')reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.') || (discardPlayCost(selectedCardIds.size)>3-state.plays?`Discard uses one play per card. Select at most ${(hardRules()?0:Math.max(0,me().hand.length-7))+3-state.plays} card${3-state.plays===1?'':'s'}.`:'');
    else if(button.id === 'deselect')reason = selectedCardIds.size?'':'No cards are selected.';
    else if(button.id === 'preview-previous'||button.id === 'preview-next')reason = hiddenHand || (me().hand.length<2 ? 'This is the only card in your hand.' : '');
    else if(button.id === 'wilds')reason = hiddenHand || noPlays || (!me().props.some(card=>card.colors.length>1)?'You have no wild properties on the table to rearrange.':'');
    else if(button.id === 'move')reason = hiddenHand;
-   else if(button.id === 'flip-card')reason = hiddenHand || (!selected ? 'Select a two-color wild property card to flip it.' : '') || noPlays || (selected.type !== 'property' || selected.colors.length !== 2 ? 'Only two-color wild property cards can be flipped.' : '');
+   else if(button.id === 'flip-card')reason = hiddenHand || (!selected ? 'Select a two-color wild property card to flip it.' : '') || (handFlipPlayCost()?noPlays:'') || (selected.type !== 'property' || selected.colors.length !== 2 ? 'Only two-color wild property cards can be flipped.' : '');
    else if(button.id === 'bank-card')reason = hiddenHand || (!selected ? 'Select a money card to bank.' : '') || noPlays || (!canBank(selected) ? 'Only money cards can be banked. Play or discard action cards.' : '');
    else if(button.id === 'play-card')reason = hiddenHand || (!selected ? 'Select a property or action card to play.' : '') || noPlays || (selected.type === 'money' ? 'Money cards can only be banked, not played.' : '');
   }
@@ -427,7 +429,7 @@ function render(){
   if(!cards.length||!visible||state.winner)return;
   const cost=discardPlayCost(cards.length);
   if(cost>3-state.plays){showToast('Discard uses one play per card. Select fewer cards or Pass to end your turn.');return;}
-  const confirmed=await choose(`Discard ${cards.length} selected card${cards.length===1?'':'s'}?`,[['Cancel',false],['Discard selected cards',true]],`These cards go to the discard pile. This uses ${cost} of your ${3-state.plays} remaining plays. ${cards.length-cost} excess card(s) above seven are free to discard.`);
+  const confirmed=await choose(`Discard ${cards.length} selected card${cards.length===1?'':'s'}?`,[['Cancel',false],['Discard selected cards',true]],`These cards go to the discard pile. This uses ${cost} of your ${3-state.plays} remaining plays. ${hardRules()?'Hard difficulty: every discarded card costs one play.':`${cards.length-cost} excess card(s) above seven are free to discard.`}`);
   if(!confirmed)return;
   for(const card of cards){remove(me().hand,card);state.discard.push(card);selectedCardIds.delete(card.id)}
   state.plays+=cost;
@@ -439,8 +441,14 @@ function render(){
  $('#wilds').onclick=()=>run(()=>rearrange());
  $('#table-settings').onclick=openGameSettings;
  $('#flip-card').onclick=()=>{
+  if(busy||!visible||state.winner||pendingDrawCount(me())||(handFlipPlayCost()&&state.plays>=3))return;
+  if(handFlipPlayCost()){
+   undoHistory.push({game:structuredClone(state),visible,turnHandoff,selected:[...selectedCardIds],selectedId:selectedCardId,flipped:previewFlipped});
+   if(undoHistory.length>20)undoHistory.shift();
+  }
   previewFlipped=!previewFlipped;
-  render();
+  state.plays+=handFlipPlayCost();
+  saveGame();render();
   // Two-color wilds turn end over end so the chosen color becomes upright.
   const faces=document.querySelectorAll('.selected-table-card > .deal-face,.modern-hand-card.is-active > .deal-face');
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -448,6 +456,7 @@ function render(){
    reduced?[{opacity:.55},{opacity:1}]:[{transform:'rotate(180deg)'},{transform:'rotate(0deg)'}],
    {duration:reduced?100:420,easing:'cubic-bezier(.22,.7,.25,1)'}
   );
+  if(handFlipPlayCost()&&state.plays>=3)showToast('All three plays used. Pass to end your turn.');
  };
  for(const [id,mode] of [['bank-card','bank'],['play-card','play']]){
    $('#'+id).onclick=()=>{const card=me().hand.find(c=>c.id===selectedCardId);run(()=>play(card,mode,mode==='play'&&card?.type==='property'&&card.colors.length===2?card.colors[previewFlipped?1:0]:null))};
@@ -501,8 +510,9 @@ function queueHandLimit(){
 async function enforceHandLimit(player){
  while(player.hand.length>7){
   if(actionTransaction){actionTransaction.locked=true;undoHistory=[];}
-  const card=await choose(`${player.name}: discard down to seven`,player.hand.map(card=>[label(card),card]),`Choose ${player.hand.length-7} more card(s) to discard before playing. These required discards use no plays.`,player,true);
+  const card=await choose(`${player.name}: discard down to seven`,player.hand.map(card=>[label(card),card]),`Choose ${player.hand.length-7} more card(s) to discard before playing. ${hardRules()?'Hard difficulty: each required discard uses one remaining play. You must still reach seven cards if all three plays are used.':'These required discards use no plays.'}`,player,true);
   remove(player.hand,card);state.discard.push(card);selectedCardIds.delete(card.id);
+  if(hardRules())state.plays=Math.min(3,state.plays+1);
   log(`${player.name} discarded ${card.name} to reach the seven-card limit.`);saveGame(true);
  }
 }
@@ -608,7 +618,7 @@ async function rearrange(cardId=null){
  if(!wilds.length)return;
  const card=cardId===null?await choose('Move a wild property',[['Cancel',null],...wilds.map(card=>[label(card),card])]):wilds.find(card=>card.id===cardId);
  if(!card)return;
- const detail=`Currently ${GROUPS[card.color].name}. Changing a played wild’s color uses one play dot and may break a complete set. If the set becomes incomplete, its buildings move to your bank.`;
+ const detail=`Currently ${GROUPS[card.color].name}. Changing a played wild’s color uses one play dot in every difficulty and may break a complete set. If the set becomes incomplete, its buildings move to your bank.`;
  const color=await choose('Choose the property color',[['Cancel',null],...orderedColors(card.colors).map(color=>[GROUPS[color].name,color])],detail);
  if(color&&color!==card.color){card.color=color;state.plays++;normalize(me());log(`${me().name} moved a wild to ${GROUPS[color].name}.`);}
 }
@@ -732,7 +742,7 @@ window.addEventListener('pagehide',()=>{setupViewport?.removeEventListener('resi
 $('#setup-wizard').addEventListener('focusin',scheduleSetupViewport);
 function setup() {
   $('#setup-content').innerHTML = `<form class="setup" id="setup-form" novalidate>
-    <section data-wizard-step="1"><h3>Choose your opponents</h3><label for="opponent-mode">Mode <select id="opponent-mode"><option value="ai" selected>Human vs AI</option><option value="human">Human vs human</option></select></label><p>Choose the total number of players. In AI mode, the other seats are computer opponents.</p><div id="ai-difficulty-field"><label for="ai-difficulty">Difficulty <select id="ai-difficulty" aria-describedby="ai-difficulty-help"><option value="easy">Easy</option><option value="normal" selected>Normal</option></select></label><p id="ai-difficulty-help">Easy uses the original computer strategy. Normal builds different color sets and targets opponents close to winning.</p></div><label for="count">Players <select id="count" required><option>2</option><option>3</option><option>4</option></select></label></section>
+    <section data-wizard-step="1"><h3>Choose your opponents</h3><label for="opponent-mode">Mode <select id="opponent-mode"><option value="ai" selected>Human vs AI</option><option value="human">Human vs human</option></select></label><p>Choose the total number of players. In AI mode, the other seats are computer opponents.</p><div id="ai-difficulty-field"><label for="ai-difficulty">Difficulty <select id="ai-difficulty" aria-describedby="ai-difficulty-help"><option value="easy">Easy</option><option value="normal" selected>Normal</option><option value="hard">Hard</option></select></label><p id="ai-difficulty-help">Easy uses the original computer strategy. Normal builds different color sets and targets opponents close to winning. Hard protects sets, saves cash and steals, and charges one play per discard or wild flip. Easy and Normal hand flips are free. Reassigning a played wild costs one play in every difficulty.</p></div><label for="count">Players <select id="count" required><option>2</option><option>3</option><option>4</option></select></label></section>
     <section data-wizard-step="2" hidden><h3>Who’s at the table?</h3><p class="setup-required">Enter a different name for everyone. All player names are required.</p><div id="names"></div></section>
     <section data-wizard-step="3" hidden><h3>Ready to deal?</h3><p>Each player gets five private cards. The first player draws two more to start.</p><small class="name-check-reminder">Check that these are the names you want before dealing.</small><ul id="wizard-review"></ul><p id="wizard-replace" hidden>Dealing starts a new game and replaces the current one.</p></section>
     <div class="wizard-actions"><button id="wizard-back" type="button" hidden>← Back</button><button id="start" type="submit" class="primary">Continue →</button></div>
@@ -822,7 +832,7 @@ function setup() {
       return;
     }
     if(wizardStep === 2) {
-      $('#wizard-review').innerHTML=playerNames.map((name,index)=>`<li><span>${$('#opponent-mode').value==='ai'&&index>0?`AI opponent · ${$('#ai-difficulty').value==='easy'?'Easy':'Normal'}`:'Player '+(index+1)}</span> <strong>${esc(name)}</strong></li>`).join('');
+      $('#wizard-review').innerHTML=playerNames.map((name,index)=>`<li><span>${$('#opponent-mode').value==='ai'&&index>0?`AI opponent · ${({easy:'Easy',normal:'Normal',hard:'Hard'})[$('#ai-difficulty').value]}`:'Player '+(index+1)}</span> <strong>${esc(name)}</strong></li>`).join('');
       $('#wizard-replace').hidden = !state;
       showStep(3);
       return;
@@ -830,6 +840,7 @@ function setup() {
     undoHistory=[];
     toastQueue.length=0;clearTimeout(toastTimer);$('#game-toast').hidden=true;
     state = createGame(playerNames,{deal:dealSettings.automaticDealing});
+    state.difficulty=$('#opponent-mode').value==='ai'?$('#ai-difficulty').value:'normal';
     state.players.forEach((player,i)=>{player.isAI=$('#opponent-mode').value==='ai'&&i>0;if(player.isAI)player.aiDifficulty=$('#ai-difficulty').value;});
     if(!dealSettings.automaticDealing)for(const player of state.players){if(player.isAI)draw(state,player,5);else player.pendingDraw=5;}
     selectedCardIds.clear();selectedCardId=null;previewFlipped=false;previewExpanded=false;lastCardTap=null;
@@ -840,7 +851,7 @@ function setup() {
     turnHandoff=!visible;
     dealCards(me(),2);
     log(dealSettings.automaticDealing?'Cards dealt. First to three different complete colors wins.':'Game ready. Tap the deck to draw your cards. First to three different complete colors wins.');
-    if(state.players.some(p=>p.isAI))log(`Computer difficulty: ${$('#ai-difficulty').value==='easy'?'Easy':'Normal'}.`);
+    if(state.players.some(p=>p.isAI))log(`Computer difficulty: ${({easy:'Easy',normal:'Normal',hard:'Hard'})[$('#ai-difficulty').value]}.`);
     render();
     if(window.parent!==window)window.parent.postMessage({type:'muha-deal-started'},location.origin);
   };
@@ -1057,7 +1068,7 @@ function upcomingGameSettings(){
  const section=document.createElement('section');
  section.className='upcoming-game-settings';
  section.setAttribute('aria-labelledby','upcoming-title');
- section.innerHTML=`<h3 id="upcoming-title">Coming soon</h3><p>Named games, saved games, backup, and restore are planned for the desktop app. These features are not available yet. The current deal recovers in this tab after a reload; your current hand visibility is preserved.</p><label for="planned-game-name">Game name <span>Coming soon</span></label><input id="planned-game-name" type="text" placeholder="Name your game" disabled aria-describedby="upcoming-title"><div class="upcoming-actions">${['Save game','Load game','Backup','Restore'].map(label=>`<button type="button" aria-disabled="true" data-unavailable-reason="${label} is coming soon for the desktop app.">${label}</button>`).join('')}</div>`;
+ section.innerHTML=`<h3 id="upcoming-title">Coming soon</h3><p>Coming soon: game sounds for interactions, card plays, and wild flips, plus more card and interaction animations. These features are planned and are not available yet.</p><p>Named games, saved games, backup, and restore are planned for the desktop app. These features are not available yet. The current deal recovers in this tab after a reload; your current hand visibility is preserved.</p><label for="planned-game-name">Game name <span>Coming soon</span></label><input id="planned-game-name" type="text" placeholder="Name your game" disabled aria-describedby="upcoming-title"><div class="upcoming-actions">${['Save game','Load game','Backup','Restore'].map(label=>`<button type="button" aria-disabled="true" data-unavailable-reason="${label} is coming soon for the desktop app.">${label}</button>`).join('')}</div>`;
  return section;
 }
 
