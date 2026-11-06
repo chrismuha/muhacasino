@@ -2657,13 +2657,24 @@ test('hosted iPhone Air places time below dots and preserves rent artwork',async
 });
 
 
-test('property previews are larger and bank stays narrow at every screen size',async()=>{
+test('property previews keep previous sizes and bank stays compact at every screen size',async()=>{
  for(const viewport of [{width:390,height:700},{width:420,height:740},{width:844,height:390},{width:820,height:1180},{width:1440,height:900}]){
   const p=await open(viewport);await fixture(p,'win',2);
   const bank=await p.locator('.current-bank').boundingBox(),properties=await p.locator('.current-properties').boundingBox();
   assert.ok(bank.width<=112.5,JSON.stringify({viewport,bank}));assert.ok(properties.width>bank.width*2);
-  const card=await p.locator('.current-properties .public-mini').first().boundingBox();assert.ok(card.width>=57.5,JSON.stringify({viewport,card}));
+  const card=await p.locator('.current-properties .public-mini').first().boundingBox();assert.ok(card.width<=46.5,JSON.stringify({viewport,card}));
+  assert.ok(bank.height<properties.height,JSON.stringify({viewport,bank,properties}));
   assert.equal(await p.locator('.current-properties .own-groups').evaluate(el=>el.scrollWidth>=el.clientWidth),true);
   await close(p);
  }
+});
+
+
+test('elapsed timer uses only the turn-dot location and larger text',async()=>{
+ const p=await open();await fixture(p,'hand',2);
+ await p.waitForFunction(()=>document.querySelector('.plays-dots')?.nextElementSibling?.id==='elapsed-game-time');
+ assert.equal(await p.locator('#elapsed-game-time').evaluate(el=>getComputedStyle(el).fontSize),'16px');
+ await p.evaluate(()=>{window.__dealTest.state.winner='Chris';window.__dealTest.render()});
+ assert.equal(await p.locator('#elapsed-game-time').isVisible(),false);
+ assert.equal(await p.locator('#elapsed-game-time').count(),1);await close(p);
 });

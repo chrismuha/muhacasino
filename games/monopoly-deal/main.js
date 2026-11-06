@@ -1,11 +1,11 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-air-layout-v129';
-import {paginateViewer} from './view-pages.mjs?build=20261105-deal-air-layout-v129';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-air-layout-v129';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-air-layout-v129';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-air-layout-v129';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-air-layout-v129';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-air-layout-v129';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-air-layout-v129';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-bank-timer-v130';
+import {paginateViewer} from './view-pages.mjs?build=20261105-deal-bank-timer-v130';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-bank-timer-v130';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-bank-timer-v130';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-bank-timer-v130';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-bank-timer-v130';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-bank-timer-v130';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-bank-timer-v130';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -1208,7 +1208,7 @@ function updateGameTimer(){
  const dots=$('#game .plays-dots');
  if(dots){if(dots.nextElementSibling!==gameTimer)dots.after(gameTimer);}
  else if(gameTimer.parentElement!==document.body)document.body.append(gameTimer);
- gameTimer.hidden=!state||!dealSettings.showElapsedTime;
+ gameTimer.hidden=!state||!dots||!dealSettings.showElapsedTime;
  if(!state)return;
  if(!state.startedAt)state.startedAt=Date.now();
  if(state.winner&&!state.finishedAt)state.finishedAt=Date.now();
