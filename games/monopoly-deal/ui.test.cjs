@@ -2803,3 +2803,18 @@ test('property browsing keeps face heights and controls stable; selection keeps 
  assert.equal(new Set(heights).size,1);assert.equal(new Set(offsets).size,1);
  await close(p);
 });
+
+test('selected property explains unplayed ownership and can be played without scrolling',async()=>{
+ for(const viewport of [{width:320,height:568},{width:430,height:932},{width:1280,height:800}]){
+  const page=await open(viewport);await fixture(page,'hand',2);
+  await page.locator('[data-card]').first().click();
+  assert.match(await page.locator('.current-properties').innerText(),/Selected in hand\. Choose Play/);
+  assert.doesNotMatch(await page.locator('.current-properties').innerText(),/None yet/);
+  const play=page.locator('[data-property-action="play-card"]');
+  const bounds=await play.boundingBox();assert.ok(bounds.y>=0&&bounds.y+bounds.height<=viewport.height,'Play property stays inside the viewport');
+  await play.click();
+  await page.waitForFunction(()=>window.__dealTest.state.players[0].props.length===1);
+  assert.equal(await page.locator('.property-quick-actions').count(),0);
+  await close(page);
+ }
+});

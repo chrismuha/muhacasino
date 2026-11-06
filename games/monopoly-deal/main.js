@@ -440,6 +440,7 @@ function render(){
  if(!visible||!me().hand.some(c=>c.id===selectedCardId)){selectedCardId=null;previewFlipped=false;previewExpanded=false;}
  const scroll=$('.cards')?.scrollLeft||0;
  $('#game').innerHTML=gameOverHTML()+modernBoard({...state,turn:tableSeat()},visible&&!me().isAI,selectedCardId,previewFlipped,previewExpanded,turnHandoff,selectedCardIds,undoHistory.length>0);
+ document.querySelectorAll('[data-property-action]').forEach(button=>button.addEventListener('click',()=>document.getElementById(button.dataset.propertyAction)?.click()));
  wireGameOverControls();wireActionHistory();
  if($('.cards'))$('.cards').scrollLeft=scroll;
  $('#reveal')?.addEventListener('click',()=>{visible=true;turnHandoff=false;render()});
