@@ -2657,13 +2657,18 @@ test('hosted iPhone Air places time below dots and preserves rent artwork',async
 });
 
 
-test('property previews keep previous sizes and bank stays compact at every screen size',async()=>{
+test('property previews grow modestly and bank matches Properties height without adding page scroll',async()=>{
  for(const viewport of [{width:390,height:700},{width:420,height:740},{width:844,height:390},{width:820,height:1180},{width:1440,height:900}]){
   const p=await open(viewport);await fixture(p,'win',2);
+  const baselineStyle=await p.addStyleTag({content:'[data-theme=modern] .current-properties .public-mini{width:46px}@media(max-width:600px) and (max-height:850px){[data-theme=modern] .current-properties .public-mini{width:34px}[data-theme=modern] .current-assets .current-properties{padding-block:6px}}@media(max-width:600px) and (max-height:780px){[data-theme=modern] .current-properties .public-mini{width:28px}}'});
+  const baseline=await p.evaluate(()=>({body:document.body.scrollHeight,root:document.documentElement.scrollHeight}));
+  await baselineStyle.evaluate(el=>el.remove());
+  const after=await p.evaluate(()=>({body:document.body.scrollHeight,root:document.documentElement.scrollHeight}));
+  assert.ok(after.body<=Math.max(baseline.body,viewport.height)+1,JSON.stringify({viewport,baseline,after}));
   const bank=await p.locator('.current-bank').boundingBox(),properties=await p.locator('.current-properties').boundingBox();
   assert.ok(bank.width<=112.5,JSON.stringify({viewport,bank}));assert.ok(properties.width>bank.width*2);
-  const card=await p.locator('.current-properties .public-mini').first().boundingBox();assert.ok(card.width<=46.5,JSON.stringify({viewport,card}));
-  assert.ok(bank.height<properties.height,JSON.stringify({viewport,bank,properties}));
+  const card=await p.locator('.current-properties .public-mini').first().boundingBox();assert.ok(card.width>=31.5&&card.width<=52.5,JSON.stringify({viewport,card}));
+  assert.ok(Math.abs(bank.height-properties.height)<1,JSON.stringify({viewport,bank,properties}));
   assert.equal(await p.locator('.current-properties .own-groups').evaluate(el=>el.scrollWidth>=el.clientWidth),true);
   await close(p);
  }
