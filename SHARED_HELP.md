@@ -22,3 +22,6 @@ The v1.6.0 release date is TBD. Toast notifications are off by default, with exp
 
 
 v1.6.0 (TBD): action cards can be banked for cash in all difficulties, with one play per banked card. They remain cash-only when paying debts and cannot be used for actions or returned to hand through normal play. Hard also permits valued property banking. The release covers the other-player redesign, the narrower equal-height Bank panel, Hard difficulty rules, and mandatory blocked-play popups.
+
+
+Remaining Chrome mobile scrolling report: partially fixed. The body can still scroll just after starting a new game with no card selected; refreshing resolves that reported case. Keep Known issues until the user verifies the remaining behavior is fixed.
