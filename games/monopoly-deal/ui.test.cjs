@@ -1979,7 +1979,7 @@ test('iPhone Air normal play has no residual vertical scroll with populated tabl
    await fixture(game,kind,4);
    for(const selector of [null,'[data-card]','[data-card]:has(.wild-half)']){
     if(selector){const card=game.locator(selector).first();if(!await card.count())continue;await game.locator('#deselect').click({force:true});await card.evaluate(el=>el.click());}
-    const geometry=await game.evaluate(()=>{document.body.scrollTop=1e6;return {scroll:document.body.scrollTop,total:document.body.scrollHeight,height:document.body.clientHeight,hand:document.querySelector('.deal-hand').getBoundingClientRect().bottom,viewport:innerHeight,rows:[...document.querySelectorAll('.game-topbar,main,.deal-table>*,.deal-hand>*')].map(el=>({name:el.className,top:el.getBoundingClientRect().top,height:el.getBoundingClientRect().height,padding:getComputedStyle(el).padding,margin:getComputedStyle(el).margin}))};});
+    const geometry=await game.evaluate(()=>{document.body.scrollTop=1e6;return {scroll:document.body.scrollTop,total:document.body.scrollHeight,height:document.body.clientHeight,hand:document.querySelector('.deal-hand').getBoundingClientRect().bottom,viewport:innerHeight,rows:[...document.querySelectorAll('.game-topbar,main,.deal-table>*,.deal-hand>*,.current-seat>*,.current-assets>*,.deal-actions>*')].map(el=>({name:el.className,top:el.getBoundingClientRect().top,height:el.getBoundingClientRect().height,padding:getComputedStyle(el).padding,margin:getComputedStyle(el).margin}))};});
     assert.equal(geometry.scroll,0,JSON.stringify({height,hosted,expanded,kind,selector,geometry}));
     assert.ok(geometry.hand<=geometry.viewport,JSON.stringify({height,hosted,expanded,kind,selector,geometry}));
     const gutter=await game.locator('.deal-hand .cards').evaluate(el=>{const bottom=el.getBoundingClientRect().bottom;return Math.min(...[...el.children].map(card=>bottom-card.getBoundingClientRect().bottom))});
@@ -2810,7 +2810,7 @@ test('selected property explains unplayed ownership and can be played without sc
   await page.locator('[data-card]').first().click();
   assert.match(await page.locator('.current-properties').innerText(),/Selected in hand\. Choose Play/);
   assert.doesNotMatch(await page.locator('.current-properties').innerText(),/None yet/);
-  const play=page.locator('[data-property-action="play-card"]');
+  const play=page.locator('#play-card');
   const bounds=await play.boundingBox();assert.ok(bounds.y>=0&&bounds.y+bounds.height<=viewport.height,'Play property stays inside the viewport');
   await play.click();
   await page.waitForFunction(()=>window.__dealTest.state.players[0].props.length===1);

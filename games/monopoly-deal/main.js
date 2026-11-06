@@ -1,11 +1,11 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-v160-stable-cards-v138';
-import {paginateViewer} from './view-pages.mjs?build=20261105-deal-v160-stable-cards-v138';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-v160-stable-cards-v138';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-v160-stable-cards-v138';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-v160-stable-cards-v138';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-v160-stable-cards-v138';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-v160-stable-cards-v138';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-v160-stable-cards-v138';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261106-deal-v160-selection-v139';
+import {paginateViewer} from './view-pages.mjs?build=20261106-deal-v160-selection-v139';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261106-deal-v160-selection-v139';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261106-deal-v160-selection-v139';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261106-deal-v160-selection-v139';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261106-deal-v160-selection-v139';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261106-deal-v160-selection-v139';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261106-deal-v160-selection-v139';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -440,7 +440,6 @@ function render(){
  if(!visible||!me().hand.some(c=>c.id===selectedCardId)){selectedCardId=null;previewFlipped=false;previewExpanded=false;}
  const scroll=$('.cards')?.scrollLeft||0;
  $('#game').innerHTML=gameOverHTML()+modernBoard({...state,turn:tableSeat()},visible&&!me().isAI,selectedCardId,previewFlipped,previewExpanded,turnHandoff,selectedCardIds,undoHistory.length>0);
- document.querySelectorAll('[data-property-action]').forEach(button=>button.addEventListener('click',()=>document.getElementById(button.dataset.propertyAction)?.click()));
  wireGameOverControls();wireActionHistory();
  if($('.cards'))$('.cards').scrollLeft=scroll;
  $('#reveal')?.addEventListener('click',()=>{visible=true;turnHandoff=false;render()});

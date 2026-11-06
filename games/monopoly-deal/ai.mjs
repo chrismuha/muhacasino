@@ -1,5 +1,5 @@
-import {aiChoice as easyChoice,aiPlay as easyPlay} from './ai-easy.mjs?build=20261105-deal-v160-stable-cards-v138';
-import {GROUPS,properties,complete,sets,rent,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261105-deal-v160-stable-cards-v138';
+import {aiChoice as easyChoice,aiPlay as easyPlay} from './ai-easy.mjs?build=20261106-deal-v160-selection-v139';
+import {GROUPS,properties,complete,sets,rent,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261106-deal-v160-selection-v139';
 // Decisions use only this seat's hand and the public table.
 export function propertyScore(player,card,color){
  const held=properties(player,color),count=held.length,size=GROUPS[color].names.length;
