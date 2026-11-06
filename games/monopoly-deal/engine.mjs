@@ -42,6 +42,6 @@ export function buildingSets(player, action) {
   );
 }
 
-export const canBank=(card,difficulty='normal')=>card?.type==='money'||(difficulty==='hard'&&card?.type==='property'&&card.value>0);
+export const canBank=(card,difficulty='normal')=>card?.type==='money'||(card?.type==='action'&&card.value>0)||(difficulty==='hard'&&card?.type==='property'&&card.value>0);
 export const canPassGo=(hand,allowOverflow=false)=>allowOverflow||hand.length+1<=7;
 export const hasPayableAssets=player=>[...player.bank,...player.props,...player.buildings].some(card=>card.value>0);

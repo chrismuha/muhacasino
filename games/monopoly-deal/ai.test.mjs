@@ -50,12 +50,20 @@ test('Hard gives away a spare instead of breaking a nearly complete group',()=>{
  const p={...player(),aiDifficulty:'hard'};p.props=['red','red','green'].map(property);
  assert.equal(aiChoice('Choose your property to give',p.props.map(c=>[c.name,c]),p),p.props[2]);
 });
-test('Hard holds a low impact steal but uses it to complete a set',()=>{
+test('Hard can bank a low impact steal but plays it to complete a set',()=>{
  const p={...player(),aiDifficulty:'hard'},other=player(),steal=deck().find(c=>c.action==='sly');
- p.hand=[steal];other.props=[property('red')];assert.equal(aiPlay(p,[other]),null);
+ p.hand=[steal];other.props=[property('red')];assert.equal(aiPlay(p,[other]).mode,'bank');
  p.props=[property('red'),property('red')];assert.equal(aiPlay(p,[other]).card,steal);
 });
 test('Hard retains defensive and stealing cards when discarding',()=>{
  const p={...player(),aiDifficulty:'hard'};p.hand=[deck().find(c=>c.action==='no'),deck().find(c=>c.action==='breaker'),deck().find(c=>c.action==='double')];
  assert.equal(aiChoice('discard down',p.hand.map(c=>[c.name,c]),p),p.hand[2]);
+});
+
+
+test('every AI difficulty may bank an unusable action for cash',()=>{
+ for(const aiDifficulty of ['easy','normal','hard']){
+  const seat={...player(),aiDifficulty,hand:[deck().find(c=>c.action==='house')]};
+  const move=aiPlay(seat,[player()]);assert.equal(move.mode,'bank');assert.equal(move.card,seat.hand[0]);
+ }
 });

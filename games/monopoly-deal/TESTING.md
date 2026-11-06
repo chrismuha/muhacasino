@@ -102,3 +102,6 @@ November 5: verify left-aligned turn and complete-set labels at 320, 430, 768, a
 Help access: verify navigation-bar Help remains available after reload, with exactly one Help component and no optional tab or tab setting.
 
 November 5 defaults: toast notifications are off without an explicit saved opt-in; notification-specific fixtures opt in deliberately. Checks cover navigation-only Help (including obsolete saved settings), the sole circular Discard action, and the unique v1.5.0 release dated November 5, 2026.
+
+
+v1.6.0: verify cash-value action banking in every difficulty, one-play cost, bank-only debt transfers, and rejection of attempts to play banked actions. Preserve the Hard-only property-banking rule and zero-value-wild restriction.

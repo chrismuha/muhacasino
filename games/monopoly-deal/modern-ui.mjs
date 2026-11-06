@@ -1,4 +1,4 @@
-import {GROUPS,properties,complete,sets,rent,canBank} from './engine.mjs?build=20261104-deal-controls-v122';
+import {GROUPS,properties,complete,sets,rent,canBank} from './engine.mjs?build=20261105-deal-v160-action-bank-v136';
 const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const faceColors={orange:'#fa8020',yellow:'#ffd10c',red:'#fa3b25',pink:'#ff2c8c',brown:'#945629',lightblue:'#77cfe9',green:'#18a26b',blue:'#1c60c9',railroad:'#30383f',utility:'#b9d691'};
 const paint=color=>faceColors[color]||GROUPS[color].color;

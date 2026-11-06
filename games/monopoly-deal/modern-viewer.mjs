@@ -1,5 +1,5 @@
-import {modernFace} from './modern-ui.mjs?build=20261028-deal-header-controls-v101';
-import {GROUPS,properties,complete,sets,rent} from './engine.mjs?build=20261025-orange-deck-dots-v66';
+import {modernFace} from './modern-ui.mjs?build=20261105-deal-v160-action-bank-v136';
+import {GROUPS,properties,complete,sets,rent} from './engine.mjs?build=20261105-deal-v160-action-bank-v136';
 
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const plural = (count, name) => `${count} ${count === 1 ? name : name === 'property' ? 'properties' : `${name}s`}`;
@@ -51,7 +51,7 @@ export function modernViewerContent(state, view) {
   }
   if (view.kind === 'bank') {
     const total = view.cards.reduce((sum,card) => sum + card.value, 0);
-    return `<section class="modern-view-summary" aria-label="Bank summary"><div><span class="modern-summary-label">Bank balance</span><strong>${total}<small>M</small></strong><span>${plural(view.cards.length, 'banked card')}</span></div><p>Only money cards can be banked. Legacy banked cards retain their payment value.</p></section>${view.cards.length ? gallery(view.cards, {bank:true}) : empty('No banked cards yet', 'Money cards appear here when they are banked.')}`;
+    return `<section class="modern-view-summary" aria-label="Bank summary"><div><span class="modern-summary-label">Bank balance</span><strong>${total}<small>M</small></strong><span>${plural(view.cards.length, 'banked card')}</span></div><p>Money and valued action cards can be banked; Hard also allows valued properties. Banked cards are cash only: they cannot be used as actions or returned to hand. Debt payments stay banked.</p></section>${view.cards.length ? gallery(view.cards, {bank:true}) : empty('No banked cards yet', 'Banked money, actions, and any valued properties banked in Hard appear here.')}`;
   }
   if (view.kind === 'properties') {
     const player = state.players[view.ownerIndex];

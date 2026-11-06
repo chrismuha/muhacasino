@@ -1,4 +1,4 @@
-import {GROUPS,properties,complete,sets,rent,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261025-v15-table-rules-v64';
+import {GROUPS,properties,complete,sets,rent,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261105-deal-v160-action-bank-v136';
 // Decisions use only this seat's hand and the public table.
 export function propertyScore(player,card,color){
  const count=properties(player,color).length;
@@ -34,6 +34,6 @@ export function aiPlay(player,opponents){
  if(!ranked.length)return null;
  const {card,score}=ranked[0];
  if(score>0)return {card,mode:card.type==='money'?'bank':'play',color:card.type==='property'?[...card.colors].sort((a,b)=>propertyScore(player,card,b)-propertyScore(player,card,a))[0]:null};
- const bankable=player.hand.filter(c=>canBank(c)).sort((a,b)=>b.value-a.value)[0];
+ const bankable=player.hand.filter(c=>canBank(c,player.aiDifficulty)).sort((a,b)=>b.value-a.value)[0];
  return bankable?{card:bankable,mode:'bank'}:null;
 }

@@ -1266,14 +1266,22 @@ test('own table wilds change color directly without opening Manage',async()=>{
  await conservation(p);await close(p);
 });
 
-test('action cards cannot be banked through UI, direct moves or either AI difficulty',async()=>{
- const p=await open();await fixture(p,'hand',2);const id=await p.evaluate(()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='pass').id);
- await p.locator(`[data-card="${id}"]`).click();assert.equal(await p.locator('#bank-card').getAttribute('aria-disabled'),'true');
- const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
- await p.evaluate(async id=>{await window.__dealTest.run(()=>window.__dealTest.play(window.__dealTest.state.players[0].hand.find(c=>c.id===id),'bank'))},id);
- assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
- await p.evaluate(async()=>{const {aiPlay}=await import('./ai.mjs');const p={hand:[{type:'action',action:'sly',value:3}],props:[],bank:[],buildings:[]};for(const aiDifficulty of ['easy','normal','hard'])if(aiPlay({...p,aiDifficulty},[])?.mode==='bank')throw Error('AI banked an action');});
- await conservation(p);await close(p);
+test('actions bank for cash in every difficulty and cannot be replayed from the bank',async()=>{
+ for(const difficulty of ['easy','normal','hard']){
+  const p=await open(undefined,undefined,{},false);await fixture(p,'hand',2);
+  const id=await p.evaluate(difficulty=>{const s=window.__dealTest.state;s.difficulty=difficulty;window.__dealTest.render();return s.players[0].hand.find(c=>c.action==='pass').id},difficulty);
+  await p.locator(`[data-card="${id}"]`).click();assert.equal(await p.locator('#bank-card').getAttribute('aria-disabled'),'false');
+  await p.locator('#bank-card').click();await idle(p);
+  assert.equal(await p.evaluate(id=>window.__dealTest.state.players[0].bank.some(c=>c.id===id),id),true);
+  assert.equal(await p.evaluate(id=>window.__dealTest.state.players[0].hand.some(c=>c.id===id),id),false);
+  assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);
+  const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
+  const replay=p.evaluate(id=>window.__dealTest.play(window.__dealTest.state.players[0].bank.find(c=>c.id===id),'play'),id);
+  await p.locator('#blocked-play[open]').waitFor();assert.match(await p.locator('#blocked-play-reason').innerText(),/Banked cards are cash only/);
+  await p.locator('#blocked-play button').click();await replay;
+  assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
+  await conservation(p);await close(p);
+ }
 });
 
 test('rent on newly placed property preserves the card and plays when all opponents are assetless',async()=>{
@@ -1322,7 +1330,7 @@ test('secondary text is white and the guide consistently documents the v1.6.0 ru
  assert.equal(await p.locator('#undo').getAttribute('aria-disabled'),'true');
  assert.equal(await p.locator('#undo').evaluate(el=>getComputedStyle(el).color),'rgb(255, 255, 255)');
  const guide=await p.evaluate(async()=>{const {GUIDE_RULES,cardFacts}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),facts:deck().filter(c=>c.type==='action').flatMap(cardFacts).join(' ')}});
- assert.match(guide.rules,/Hard also allows properties with a cash value to be banked/);assert.match(guide.rules,/Opponents with no payable assets cannot be charged rent/);assert.match(guide.rules,/tap a wild directly/i);assert.doesNotMatch(guide.facts,/Alternatively, bank|Or bank:/);
+ assert.match(guide.rules,/Hard also allows properties with a cash value to be banked/);assert.match(guide.rules,/Opponents with no payable assets cannot be charged rent/);assert.match(guide.rules,/tap a wild directly/i);assert.match(guide.rules,/Action cards can be banked/);
  await close(p);
 });
 
@@ -2383,7 +2391,7 @@ test('Pass Go is blocked at seven by default and Hard can bank a property',async
  await p.locator('#play-card').click({force:true});await idle(p);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].hand.length),7);
- assert.match(await p.locator('#game-toast').innerText(),/over seven/);
+ assert.match(await p.locator('#blocked-play-reason').innerText(),/over seven/);await p.locator('#blocked-play button').click();
  await p.evaluate(()=>{window.__dealTest.state.difficulty='hard';window.__dealTest.render();});
  await select(p,()=>window.__dealTest.state.players[0].hand.find(c=>c.type==='property'&&c.value>0).id);
  await p.locator('#bank-card').click();await idle(p);
@@ -2740,4 +2748,19 @@ test('rent with no payable opponents explains the rejection with toasts disabled
  assert.match(await p.locator('#blocked-play-reason').innerText(),/No opponent has payable assets/);
  await p.locator('#blocked-play button').click();await idle(p);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].hand.length),before);await close(p);
+});
+
+
+test('banked actions survive reload and debt payments keep them in the receiving bank',async()=>{
+ const p=await open(undefined,undefined,{},false);await fixture(p,'hand',2);
+ const id=await p.evaluate(()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='pass').id);
+ await p.locator(`[data-card="${id}"]`).click();await p.locator('#bank-card').click();await idle(p);
+ await p.reload();await p.waitForFunction(()=>window.__dealTest);
+ assert.equal(await p.evaluate(id=>window.__dealTest.state.players[0].bank.some(c=>c.id===id),id),true);
+ const payment=p.evaluate(()=>{const t=window.__dealTest,s=t.state;return t.pay(s.players[0],s.players[1],1)});
+ await choose(p,'Ready to pay');await p.locator('#choice[open]').waitFor();await p.locator('#options button').filter({hasText:/Bank:.*Pass Go/}).click();
+ await payment;
+ assert.equal(await p.evaluate(id=>window.__dealTest.state.players[1].bank.some(c=>c.id===id),id),true);
+ assert.equal(await p.evaluate(id=>window.__dealTest.state.players.some(p=>p.hand.some(c=>c.id===id)||p.props.some(c=>c.id===id)),id),false);
+ await conservation(p);await close(p);
 });
