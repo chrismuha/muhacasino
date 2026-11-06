@@ -1122,3 +1122,17 @@ body.is-finished .game-over-controls>*{flex:1 1 140px}
 
 /* Keep attempted Play available to explain blocked action/property cards. */
 #game .deal-table.card-selected:is([data-selected-type=action],[data-selected-type=property]) #play-card{display:grid;visibility:visible}
+
+/* Empty fresh-deal collections use summaries instead of reserving card rows.
+   Keep all cards, text buttons, and reading-view scrolling at their normal sizes. */
+@media(max-width:600px) and (max-height:780px){
+ #game .deal-table:not(.card-selected):not(.has-selection) .deal-actions{gap:2px}
+ #game .deal-table:not(.card-selected):not(.has-selection) .current-assets:has(.own-groups>.asset-empty){min-height:0}
+ #game .deal-table:not(.card-selected):not(.has-selection) .current-properties:has(.own-groups>.asset-empty){min-height:0;grid-template-rows:auto auto}
+ #game .deal-table:not(.card-selected):not(.has-selection) .own-groups:has(>.asset-empty){display:none}
+ #game .deal-table:not(.card-selected):not(.has-selection) .current-stats{padding-block:0}
+ #game .deal-table:not(.card-selected):not(.has-selection) .opponent-count{padding-block:4px}
+ #game .deal-table:not(.card-selected):not(.has-selection) .opponent-properties:has(.opponent-groups>.asset-empty){flex-direction:row;align-items:center;gap:8px;padding-block:2px;min-height:0}
+ #game .deal-table:not(.card-selected):not(.has-selection) .opponent-groups:has(>.asset-empty){width:auto;flex:0 1 auto;padding:0;min-height:0}
+ #game .deal-table:not(.card-selected):not(.has-selection) .opponent-groups>.asset-empty{min-height:0}
+}

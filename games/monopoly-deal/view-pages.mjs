@@ -1,4 +1,4 @@
-import {attachHorizontalNavigation,isViewportZoomed} from './horizontal-nav.mjs?build=20261105-deal-v160-action-bank-v136';
+import {attachHorizontalNavigation,isViewportZoomed} from './horizontal-nav.mjs?build=20261105-deal-v160-fresh-fit-v137';
 // Paginate rendered content without shrinking text or hiding oversized items.
 let dispose = () => {};
 export function paginateViewer(dialog,content){

@@ -25,3 +25,6 @@ v1.6.0 (TBD): action cards can be banked for cash in all difficulties, with one 
 
 
 Remaining Chrome mobile scrolling report: partially fixed. The body can still scroll just after starting a new game with no card selected; refreshing resolves that reported case. Keep Known issues until the user verifies the remaining behavior is fixed.
+
+
+Verified fresh-deal layout correction: empty collection summaries compact on short phones, keeping the full hand visible without body overflow in tested Chromium/WebKit layouts before and after refresh. Preserve the Chrome iPhone Known issue until user verification.

@@ -1,4 +1,4 @@
-import {GROUPS,properties,complete,sets,rent,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261105-deal-v160-action-bank-v136';
+import {GROUPS,properties,complete,sets,rent,buildingSets,canBank,hasPayableAssets} from './engine.mjs?build=20261105-deal-v160-fresh-fit-v137';
 // Decisions use only this seat's hand and the public table.
 export function propertyScore(player,card,color){
  const count=properties(player,color).length;

@@ -2764,3 +2764,24 @@ test('banked actions survive reload and debt payments keep them in the receiving
  assert.equal(await p.evaluate(id=>window.__dealTest.state.players.some(p=>p.hand.some(c=>c.id===id)||p.props.some(c=>c.id===id)),id),false);
  await conservation(p);await close(p);
 });
+
+
+test('fresh unselected phone deals fit without body scrolling before and after refresh',async()=>{
+ for(const height of [700,740,860,912])for(const mode of ['standalone','collapsed','expanded']){
+  const p=await open({width:420,height},undefined,{isMobile:true,hasTouch:true,deviceScaleFactor:3},false);let game=p;
+  if(mode!=='standalone'){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+  await game.locator('#ready-new').click();await game.locator('#start').click();await game.locator('#player-name-0').focus();await p.setViewportSize({width:420,height:400});await game.locator('#player-name-0').fill('Chris');await p.setViewportSize({width:420,height});await game.locator('#start').click();await game.locator('#start').click();await game.locator('.deal-table').waitFor();
+  const expand=async()=>{if(mode==='expanded'&&await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded')!=='true')await p.locator('#toolbarCollapseButton').click()};
+  await expand();await p.waitForTimeout(200);
+  const snapshot=()=>game.evaluate(()=>({top:document.body.scrollTop,range:document.body.scrollHeight-document.body.clientHeight,height:innerHeight,hand:document.querySelector('.deal-hand .cards').getBoundingClientRect().bottom,rows:[...document.querySelectorAll('.deal-table>*,.current-seat>*,.deal-hand>*,.opponent>*')].map(el=>({name:el.className,height:el.getBoundingClientRect().height}))}));
+  const fresh=await snapshot();if(height===700&&mode==='expanded')await shot(p,'fresh-deal-expanded-no-scroll');
+  assert.ok(fresh.range<=1&&fresh.hand<=fresh.height+1,JSON.stringify({height,mode,fresh}));
+  if(process.env.DEAL_QA_BROWSER!=='webkit'){
+   const cdp=await p.context().newCDPSession(p);await cdp.send('Input.synthesizeScrollGesture',{x:210,y:Math.round(height*.5),yDistance:-280,speed:700,gestureSourceType:'touch'});await cdp.detach();
+  }else await game.evaluate(()=>document.body.scrollBy(0,280));
+  assert.equal((await snapshot()).top,0);
+  await p.reload();if(mode!=='standalone'){await p.frameLocator('#gameFrame').locator('.deal-table').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}else await p.locator('.deal-table').waitFor();await expand();await p.waitForTimeout(200);
+  const restored=await snapshot();assert.ok(restored.range<=1&&restored.hand<=restored.height+1,JSON.stringify({height,mode,restored}));
+  await close(p);
+ }
+});
