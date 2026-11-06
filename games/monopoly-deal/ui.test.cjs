@@ -2096,10 +2096,10 @@ test('iPhone Air ready screen cannot pan its body or main before dealing',async(
  }
 });
 
- test('phone deck card retains its normal dimensions on short screens',async()=>{
+ test('phone deck card uses compact dimensions on short screens',async()=>{
  const p=await open({width:420,height:700});await fixture(p);
  const size=await p.locator('.draw-deck .deck-icon').boundingBox();
- assert.equal(size.width,48);assert.equal(size.height,68);
+ assert.equal(size.width,52);assert.equal(size.height,75);
  await close(p);
 });
 
@@ -2868,7 +2868,7 @@ test('larger deck and footer property cards share readable dimensions',async()=>
   const p=await open(viewport);await fixture(p,'win',2);
   const deck=await p.locator('.draw-deck .deck-icon').boundingBox();
   const card=await p.locator('.current-properties .public-mini').first().boundingBox();
-  const width=viewport.width>=1024?88:72,height=viewport.width>=1024?128:104;
+  const width=viewport.width<=600?52:viewport.width>=1024?88:96,height=viewport.width<=600?75:viewport.width>=1024?128:139;
   assert.ok(Math.abs(deck.width-width)<1&&Math.abs(deck.height-height)<1,JSON.stringify({viewport,deck}));
   assert.ok(Math.abs(card.width-width)<1&&Math.abs(card.height-height)<1,JSON.stringify({viewport,card}));
   const strip=await p.locator('.current-properties .own-groups').boundingBox();
@@ -2971,4 +2971,31 @@ test('tablet optimization stays inactive on portrait phones',async()=>{
   assert.equal(await p.locator('.deal-table').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1);
   await close(p);
  }
+});
+
+test('compact phones reduce scrolling without moving panels or shrinking touch targets',async()=>{
+ for(const viewport of [{width:320,height:640},{width:360,height:840},{width:390,height:700},{width:420,height:740},{width:420,height:912},{width:466,height:678}])for(const hosted of [false,true]){
+  const p=await open(viewport,undefined,{isMobile:true,hasTouch:true});let game=p;
+  if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+  await fixture(game,'hand',2);await game.evaluate(()=>{const s=window.__dealTest.state;for(let i=0;i<2;i++){const j=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===1);s.players[0].props.push(s.draw.splice(j,1)[0]);}window.__dealTest.render()});
+  await game.locator('.modern-hand-card').nth(3).evaluate(el=>el.click());await p.waitForTimeout(100);
+  const measure=()=>game.evaluate(()=>({height:innerHeight,scroll:document.body.scrollHeight,overflow:Math.max(0,document.body.scrollHeight-document.body.clientHeight),wide:document.body.scrollWidth-innerWidth,hand:document.querySelector('.deal-hand').getBoundingClientRect().bottom,stage:document.querySelector('.deal-stage').getBoundingClientRect().height,assets:document.querySelector('.current-assets').getBoundingClientRect().height}));
+  const after=await measure();await game.locator('link[href^="phone-layout.css"]').evaluate(el=>el.disabled=true);const before=await measure();
+  assert.ok(after.wide<=1,JSON.stringify({viewport,hosted,before,after}));
+  assert.ok(after.scroll<=before.scroll-90||before.overflow===0,JSON.stringify({viewport,hosted,before,after}));
+  await game.locator('link[href^="phone-layout.css"]').evaluate(el=>el.disabled=false);
+  for(const id of ['bank-card','play-card','discard-card','end']){const box=await game.locator('#'+id).boundingBox();if(box)assert.ok(box.height>=44,JSON.stringify({id,box}));}
+  const deck=await game.locator('.deck-icon').boundingBox(),property=await game.locator('.current-properties .public-mini').first().boundingBox();assert.ok(Math.abs(deck.width-property.width)<1&&Math.abs(deck.height-property.height)<1);
+  await shot(p,`compact-phone-${viewport.width}-${viewport.height}-${hosted?'hosted':'direct'}`);await close(p);
+ }
+});
+
+test('phone compact view preserves enlargement and readable controls',async()=>{
+ const p=await open({width:420,height:740},undefined,{isMobile:true,hasTouch:true});await fixture(p,'birthday',2);
+ await p.locator('.modern-hand-card').first().evaluate(el=>el.click());await p.locator('#preview-open').click();
+ const reading=await p.locator('.selected-table-card').boundingBox();assert.ok(reading.width>=180,JSON.stringify(reading));
+ await p.locator('#preview-close').scrollIntoViewIfNeeded();await p.locator('#preview-close').click();
+ assert.equal(await p.locator('.deal-hand').isVisible(),true);assert.equal(await p.locator('.modern-hand-card').count(),1);
+ for(const selector of ['#table-settings','#undo','#discard-selected-card']){const box=await p.locator(selector).boundingBox();assert.ok(box.height>=44);}
+ await close(p);
 });
