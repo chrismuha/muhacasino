@@ -1,11 +1,11 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-property-fit-v134';
-import {paginateViewer} from './view-pages.mjs?build=20261105-deal-property-fit-v134';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-property-fit-v134';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-property-fit-v134';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-property-fit-v134';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-property-fit-v134';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-property-fit-v134';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-property-fit-v134';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-v160-warnings-v135';
+import {paginateViewer} from './view-pages.mjs?build=20261105-deal-v160-warnings-v135';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-v160-warnings-v135';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-v160-warnings-v135';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-v160-warnings-v135';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-v160-warnings-v135';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-v160-warnings-v135';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-v160-warnings-v135';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -112,6 +112,19 @@ function showToast(message, {items=[],detail='',type=items.length?'transfer':toa
   toastTimer=setTimeout(nextToast,180);
  },toastDurationSeconds()*1000);
 }
+// Rule explanations are mandatory and independent of optional toast settings.
+function showBlockedPlay(message){
+ let dialog=$('#blocked-play');
+ if(!dialog){
+  dialog=document.createElement('dialog');dialog.id='blocked-play';dialog.setAttribute('role','alertdialog');
+  dialog.setAttribute('aria-labelledby','blocked-play-title');dialog.setAttribute('aria-describedby','blocked-play-reason');
+  dialog.innerHTML='<div class="wizard-heading"><h2 id="blocked-play-title">Cannot play this card</h2><button type="button">Close</button></div><p id="blocked-play-reason"></p>';
+  dialog.querySelector('button').onclick=()=>dialog.close();document.body.append(dialog);
+ }
+ $('#blocked-play-reason').textContent=message;
+ const done=new Promise(resolve=>dialog.addEventListener('close',resolve,{once:true}));
+ if(!dialog.open)dialog.showModal();dialog.querySelector('button').focus();return done;
+}
 // ARIA-disabled buttons remain focusable/clickable solely to explain their state.
 document.addEventListener('click', event => {
  if(consumeHandSortClick(event)){
@@ -121,7 +134,8 @@ document.addEventListener('click', event => {
  if(!button)return;
  event.preventDefault();
  event.stopImmediatePropagation();
- showToast(button.dataset.unavailableReason || 'This control is not available right now.');
+ const reason=button.dataset.unavailableReason || 'This control is not available right now.';
+ if(['play-card','bank-card','flip-card','discard-card','discard-selected-card','wilds'].includes(button.id))showBlockedPlay(reason);else showToast(reason);
 }, true);
 
 const hardRules = () => (state?.difficulty || state?.players.find(player=>player.isAI)?.aiDifficulty || 'normal')==='hard';
@@ -193,7 +207,7 @@ function wireHandSorting() {
   onDrop(cardId,target){
    if(!canSort())return;
    lastCardTap=null;
-   if(!target.allowed){showToast(target.reason);return;}
+   if(!target.allowed){showBlockedPlay(target.reason);return;}
    const card=player.hand.find(card=>card.id===cardId);
    if(!card)return;
    const color=target.mode==='play'&&card.type==='property'&&card.colors.length===2?(card.id===selectedCardId?card.colors[previewFlipped?1:0]:card.colors[cardPreferredSide(card.id)?1:0]):null;
@@ -548,7 +562,7 @@ async function takeAITurns(){
 }
 async function run(fn){
  if(busy||state.winner)return;
- if(pendingDrawCount(me())&&!me().isAI){showToast('Tap the deck to draw your remaining cards first.');return;}
+ if(pendingDrawCount(me())&&!me().isAI){showBlockedPlay('Tap the deck to draw your remaining cards first.');return;}
  const actor=me(),turn=state.turn,playsBefore=state.plays;
  const snapshot={game:structuredClone(state),visible,turnHandoff,selected:[...selectedCardIds],selectedId:selectedCardId,flipped:previewFlipped};
  const transaction={locked:false,propertyNotices:[]};actionTransaction=transaction;saveGame(true);busy=true;updateUnavailableControls();
@@ -599,12 +613,12 @@ async function pay(p,to,amount){
 }
 async function collect(targets,amount,actionName){for(const p of targets){log(`${me().name} charged ${p.name} ${amount}M for ${actionName}.`,'action');if(await defend(p,me(),`${actionName}: Pay ${amount}M to ${me().name}.`))await pay(p,me(),amount);else log(`${p.name} blocked ${actionName}.`,'action')}}
 const opponents=()=>state.players.filter(p=>p!==me());
-async function play(c,chosenMode=null,chosenColor=null){if((!visible&&!me().isAI)||state.plays>=3||!c)return;let mode=chosenMode||await choose(label(c),[['Cancel','cancel'],...(canBank(c,hardRules()?'hard':'normal')?[['Put in bank','bank']]:[]),...(c.type!=='money'?[['Play card','play']]:[])]);if(mode==='cancel')return;if(mode==='bank'){if(!canBank(c,hardRules()?'hard':'normal')){showToast('Bank money, or properties with a cash value on Hard. Play or discard action cards.');return;}remove(me().hand,c);me().bank.push(c);state.plays++;log(`${me().name} banked ${c.value}M.`);return}
+async function play(c,chosenMode=null,chosenColor=null){if((!visible&&!me().isAI)||state.plays>=3||!c){if(!me().isAI)return showBlockedPlay(!visible?'Reveal your hand first.':state.plays>=3?'You have used all three plays. Pass to end your turn.':'Select a card to play.');return;}let mode=chosenMode||await choose(label(c),[['Cancel','cancel'],...(canBank(c,hardRules()?'hard':'normal')?[['Put in bank','bank']]:[]),...(c.type!=='money'?[['Play card','play']]:[])]);if(mode==='cancel')return;if(mode==='bank'){if(!canBank(c,hardRules()?'hard':'normal')){showBlockedPlay('Bank money, or properties with a cash value on Hard. Play or discard action cards.');return;}remove(me().hand,c);me().bank.push(c);state.plays++;log(`${me().name} banked ${c.value}M.`);return}
  if(c.type==='property'){c.color=chosenColor||await colorFor(c,{smart:true});remove(me().hand,c);me().props.push(c);state.plays++;log(`${me().name} laid ${c.name}.`);return}
  const a=c.action,p=me();if(a==='no'||a==='double'){await choose('Keep this card for a response or rent combo',[['OK',true]],a==='no'?'Just Say No is offered when an action targets you.':'Select a Rent card to add one or two Double the Rent cards.');return}
- if(a==='pass'){if(!canPassGo(p.hand,dealSettings.allowPassGoOverflow)){showToast('Pass Go would put your hand over seven cards. Play another card first, or enable Allow Pass Go over seven in Game settings.');return;}use(c);const automatic=dealCards(p,2);log(automatic?`${p.name} drew two cards.`:`${p.name}: tap the deck to draw two cards.`,'draw');return}
+ if(a==='pass'){if(!canPassGo(p.hand,dealSettings.allowPassGoOverflow)){showBlockedPlay('Pass Go would put your hand over seven cards. Play another card first, or enable Allow Pass Go over seven in Game settings.');return;}use(c);const automatic=dealCards(p,2);log(automatic?`${p.name} drew two cards.`:`${p.name}: tap the deck to draw two cards.`,'draw');return}
  if(a==='house'||a==='hotel'){const eligible=buildingSets(p,a);if(!eligible.length)return choose('No eligible complete set',[['OK',true]],'Buildings need a complete street-color set. No railroads or utilities. Only one house and one hotel per set; the house must be placed first.');let color=await choose('Build on which set?',orderedColors(eligible).map(k=>[GROUPS[k].name,k]));use(c);remove(state.discard,c);c.color=color;p.buildings.push(c);log(`${p.name} built ${c.name} on ${GROUPS[color].name}.`,'property');return}
- if(a==='rent'){const tenants=opponents().filter(hasPayableAssets);if(!tenants.length){showToast('No opponent has payable assets. Rent cannot be charged.');return;}const movable=color=>p.props.filter(card=>card.colors?.length>1&&card.colors.includes(color)&&card.color!==color);
+ if(a==='rent'){const tenants=opponents().filter(hasPayableAssets);if(!tenants.length){showBlockedPlay('No opponent has payable assets. Rent cannot be charged.');return;}const movable=color=>p.props.filter(card=>card.colors?.length>1&&card.colors.includes(color)&&card.color!==color);
  const rentFor=color=>{if(properties(p,color).length)return rent(p,color);const wild=movable(color)[0];return wild?rent({...p,props:[...p.props.filter(card=>card!==wild),{...wild,color}]},color):0;};
  let colors=c.colors.filter(k=>properties(p,k).length||(state.plays<2&&movable(k).length));if(!colors.length)return choose('You need a matching property',[['OK',true]]);let color=await choose('Charge rent on which color?',[...colors].sort((a,b)=>rentFor(a)-rentFor(b)||GROUPS[a].name.localeCompare(GROUPS[b].name)).map(k=>[`${GROUPS[k].name}: ${rentFor(k)}M${properties(p,k).length?'':' · move wild: 1 play'}`,k]));if(!properties(p,color).length){
  const wild=await choose('Move a wild to '+GROUPS[color].name+'? Costs 1 play',movable(color).map(card=>[label(card),card]));
@@ -920,7 +934,7 @@ document.querySelectorAll('[data-table-color]').forEach(button => {
 // Only public table cards appear here; private hands and the draw order stay hidden.
 let tableViewIndex = 0;
 function tableViews() {
-  const guideViews = [{key:'rules',title:'Rules',description:'A step-by-step guide to playing Monopoly Deal.'},{key:'cards',title:'Cards',description:'Browse every card design. Use the arrows or Left/Right keys.'},{key:'release-notes',title:'Release notes',description:'Monopoly Deal · v1.5.0 · October 28, 2026 · Larger cards and compact tables'}];
+  const guideViews = [{key:'rules',title:'Rules',description:'A step-by-step guide to playing Monopoly Deal.'},{key:'cards',title:'Cards',description:'Browse every card design. Use the arrows or Left/Right keys.'},{key:'release-notes',title:'Release notes',description:'Monopoly Deal · v1.6.0 · TBD · Clear play warnings and player panels'}];
   if (!state) return guideViews;
   return [
     {key:'discard', kind:'deck', title:'Discard pile', cards:[...state.discard].reverse(), description:'Newest discard first. These cards may return when the draw pile runs out.'},

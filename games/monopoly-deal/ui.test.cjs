@@ -312,10 +312,11 @@ test('opponent property and bank previews fit completely on phones and landscape
  for(const viewport of [{width:390,height:680},{width:320,height:568},{width:844,height:390}]){
   const p=await open(viewport);await fixture(p,'hand',4);
   await p.evaluate(()=>{const s=window.__dealTest.state;for(const player of s.players.slice(1)){for(const zone of ['props','bank']){for(let i=0;i<3;i++){const index=s.draw.findIndex(c=>zone==='props'?c.type==='property'&&c.colors.length===1:c.type==='money');player[zone].push(s.draw.splice(index,1)[0]);}}}window.__dealTest.render()});
-  assert.equal(await p.locator('.opponent-bank-preview .public-mini').count(),9);
+  assert.equal(await p.locator('.opponent-bank-preview .public-mini').count(),0);
+  assert.equal(await p.locator('.opponent-bank-preview').first().innerText().then(text=>text.includes('3 cards')),true);
   for(const opponent of await p.locator('.opponent').all()){
    await opponent.scrollIntoViewIfNeeded();
-   const issues=await opponent.evaluate(panel=>{const issues=[];for(const selector of ['.opponent-bank-cards','.opponent-groups']){const pane=panel.querySelector(selector),r=pane.getBoundingClientRect();for(const child of pane.querySelectorAll('.public-mini,.group-caption')){const c=child.getBoundingClientRect();if(c.top<r.top-1||c.bottom>r.bottom+1)issues.push(selector+' clips '+child.className);}if(r.bottom>panel.getBoundingClientRect().bottom+1)issues.push(selector+' outside panel');}return issues;});
+   const issues=await opponent.evaluate(panel=>{const issues=[];for(const selector of ['.opponent-groups']){const pane=panel.querySelector(selector),r=pane.getBoundingClientRect();for(const child of pane.querySelectorAll('.public-mini,.group-caption')){const c=child.getBoundingClientRect();if(c.top<r.top-1||c.bottom>r.bottom+1)issues.push(selector+' clips '+child.className);}if(r.bottom>panel.getBoundingClientRect().bottom+1)issues.push(selector+' outside panel');}return issues;});
    assert.deepEqual(issues,[],`${viewport.width}px public cards fit`);
   }
   assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
@@ -680,14 +681,14 @@ test('hand trackpad scrolling and catalog swipe/trackpad navigation preserve pla
  await close(p);
 });
 
-test('guide and release notes match deck facts, current controls, and the current v1.5.0 label',async()=>{
+test('guide and release notes match deck facts, current controls, and the current v1.6.0 label',async()=>{
  const p=await open();const facts=await p.evaluate(async()=>{const {GUIDE_RULES,RELEASE_NOTES,cardDesigns}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),notes:JSON.stringify(RELEASE_NOTES),designs:cardDesigns().length,cards:deck().length,title:RELEASE_NOTES[0][0]}});
- assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.equal(facts.title,'v1.5.0 · November 5, 2026');
+ assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.equal(facts.title,'v1.6.0 · TBD');
  for(const instruction of ['Double-tap','Close returns','no manual Hide','trackpad','Coming soon','Continue turn','same category','Bank cards first','one bullet for each card','Forced Deal lists both'])assert.ok(facts.rules.toLowerCase().includes(instruction.toLowerCase()),instruction);
  assert.doesNotMatch(facts.notes,/overlapping hand below|Privacy separately hides|actions below the selected|Collapsible Table appearance/);
  const history=await readFile(path.join(root,'about.html'),'utf8'),section=history.slice(history.indexOf('<article id="monopoly-deal"'),history.indexOf('<article id="sorry"'));
- assert.equal((section.match(/2026-11-05/g)||[]).length,1);assert.match(section,/v1\.5\.0/);assert.doesNotMatch(section,/separate Privacy control/);
- const releasePage=await readFile(path.join(root,'release-notes.html'),'utf8');assert.equal((releasePage.match(/<h2>Monopoly Deal v1\.5\.0<\/h2>/g)||[]).length,1);assert.match(releasePage,/<time datetime="2026-11-05">November 5, 2026<\/time><h2>Monopoly Deal v1\.5\.0<\/h2>/);
+ assert.equal((section.match(/2026-11-05/g)||[]).length,1);assert.match(section,/v1\.6\.0/);assert.doesNotMatch(section,/separate Privacy control/);
+ const releasePage=await readFile(path.join(root,'release-notes.html'),'utf8');assert.equal((releasePage.match(/<h2>Monopoly Deal v1\.6\.0<\/h2>/g)||[]).length,1);assert.match(releasePage,/<p class="release-date">Release date: TBD<\/p><h2>Monopoly Deal v1\.6\.0<\/h2>/);
  await close(p);
 });
 test('private payment resumes the same turn with Continue turn rather than Reveal my hand',async()=>{
@@ -1146,8 +1147,8 @@ test('Undo restores cards and plays in order and clears when the turn ends',asyn
  const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
  await p.locator('[data-card]').first().click();await p.locator('#play-card').click();await idle(p);
  const afterProperty=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
- const money=await p.evaluate(()=>window.__dealTest.state.players[0].hand.find(c=>c.type==='money').id);
- await p.locator(`[data-card="${money}"]`).click();await p.locator('#bank-card').click();await idle(p);
+ const pass=await p.evaluate(()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='pass').id);
+ await p.locator(`[data-card="${pass}"]`).click();await p.locator('#bank-card').click();await idle(p);
  await p.locator('#undo').click();assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),afterProperty);
  await p.locator('#undo').click();assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
  assert.equal(await p.locator('#undo').getAttribute('aria-disabled'),'true');
@@ -1249,11 +1250,11 @@ test('refresh cancels an unfinished human action without losing its card or play
  await playFirst(p);await choose(p,0);await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);await conservation(p);await close(p);
 });
 
-test('v1.5.0 matches the game, launcher and single same-day release entry',async()=>{
- const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v1\.5\.0/);
- await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v1\.5\.0/);
- await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v1.5.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-11-05'}).count(),1);
- await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v1.5.0');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();await close(p);
+test('v1.6.0 matches the game, launcher and single same-day release entry',async()=>{
+ const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v1\.6\.0/);
+ await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v1\.6\.0/);
+ await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v1.6.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-11-05'}).count(),1);
+ await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v1.6.0');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();await close(p);
 });
 
 test('own table wilds change color directly without opening Manage',async()=>{
@@ -1312,7 +1313,7 @@ test('selected cards show an actual face and phone property cards fit without ov
  await close(p);
 });
 
-test('secondary text is white and the guide consistently documents the v1.5.0 rules',async()=>{
+test('secondary text is white and the guide consistently documents the v1.6.0 rules',async()=>{
  const p=await open({width:420,height:780});await fixture(p,'house',2);
  for(const selector of ['.asset-count','.opponent-count','.action-summary-status','.current-properties .group-caption']){
   const style=await p.locator(selector).first().evaluate(el=>({color:getComputedStyle(el).color,size:parseFloat(getComputedStyle(el).fontSize)}));
@@ -2713,4 +2714,30 @@ test('single-tap center rent artwork matches the hand on all screen sizes',async
   assert.ok(Math.abs(preview.y-hand.y)<.04,JSON.stringify({viewport,hand,preview}));
   assert.ok(Math.abs(preview.width-hand.width)<.04,JSON.stringify({viewport,hand,preview}));await close(p);
  }
+});
+
+
+test('blocked play always opens a popup with toasts disabled and preserves cards',async()=>{
+ const p=await open(undefined,undefined,{},false);await fixture(p,'hand',2);
+ const pass=await p.evaluate(()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='pass').id);
+ await p.locator(`[data-card="${pass}"]`).click();
+ const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
+ await p.locator('#play-card').click({force:true});await p.locator('#blocked-play[open]').waitFor();
+ assert.match(await p.locator('#blocked-play-reason').innerText(),/Pass Go would put your hand over seven/);
+ assert.equal(await p.locator('#game-toast').isVisible(),false);
+ assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
+ await p.locator('#blocked-play button').click();
+ await p.evaluate(()=>{window.__dealTest.state.plays=3;window.__dealTest.render()});
+ await p.locator('#play-card').click({force:true});assert.match(await p.locator('#blocked-play-reason').innerText(),/all three plays/);
+ await p.keyboard.press('Escape');await close(p);
+});
+
+test('rent with no payable opponents explains the rejection with toasts disabled',async()=>{
+ const p=await open(undefined,undefined,{},false);await fixture(p,'hand',2);
+ const rent=await p.evaluate(()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='rent').id);
+ await p.locator(`[data-card="${rent}"]`).click();const before=await p.evaluate(()=>window.__dealTest.state.players[0].hand.length);
+ await p.locator('#play-card').click();await p.locator('#blocked-play[open]').waitFor();
+ assert.match(await p.locator('#blocked-play-reason').innerText(),/No opponent has payable assets/);
+ await p.locator('#blocked-play button').click();await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].hand.length),before);await close(p);
 });
