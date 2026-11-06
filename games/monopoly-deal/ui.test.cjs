@@ -1234,12 +1234,12 @@ test('refresh during an AI payment replays only that unpaid action without dupli
  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].bank.length),2);assert.equal(await p.evaluate(()=>window.__dealTest.state.discard.filter(c=>c.action==='debt').length),1);await conservation(p);await close(p);
 });
 
-test('action summary reports the last move, remaining plays and Undo availability',async()=>{
+test('turn dots and Undo retain status without the redundant hand summary',async()=>{
  const p=await open();await fixture(p,'hand',2);
- assert.match(await p.locator('.action-summary-status').innerText(),/3 plays left · Undo unavailable/);
- await playFirst(p);await idle(p);assert.match(await p.locator('.action-summary-status').innerText(),/2 plays left · Undo available/);
+ assert.equal(await p.locator('.plays-dots').getAttribute('aria-label'),'3 plays left');assert.equal(await p.locator('#undo').getAttribute('aria-disabled'),'true');
+ await playFirst(p);await idle(p);assert.equal(await p.locator('.plays-dots').getAttribute('aria-label'),'2 plays left');assert.equal(await p.locator('#undo').getAttribute('aria-disabled'),'false');
  await p.locator('.action-history-button').click();assert.match(await p.locator('.last-action').innerText(),/New York Avenue/);
- await p.locator('#action-history-close').click();await p.locator('#undo').click();assert.match(await p.locator('.action-summary-status').innerText(),/3 plays left · Undo unavailable/);await conservation(p);await close(p);
+ await p.locator('#action-history-close').click();await p.locator('#undo').click();assert.equal(await p.locator('.plays-dots').getAttribute('aria-label'),'3 plays left');assert.equal(await p.locator('#undo').getAttribute('aria-disabled'),'true');await conservation(p);await close(p);
 });
 
 test('refresh cancels an unfinished human action without losing its card or plays',async()=>{
@@ -1323,7 +1323,7 @@ test('selected cards show an actual face and phone property cards fit without ov
 
 test('secondary text is white and the guide consistently documents the v1.6.0 rules',async()=>{
  const p=await open({width:420,height:780});await fixture(p,'house',2);
- for(const selector of ['.asset-count','.opponent-count','.action-summary-status','.current-properties .group-caption']){
+ for(const selector of ['.asset-count','.opponent-count','.current-properties .group-caption']){
   const style=await p.locator(selector).first().evaluate(el=>({color:getComputedStyle(el).color,size:parseFloat(getComputedStyle(el).fontSize)}));
   assert.equal(style.color,'rgb(255, 255, 255)');assert.ok(style.size>=12,`${selector}: ${JSON.stringify(style)}`);
  }
@@ -1338,7 +1338,7 @@ test('history popup preserves the phone table and deck and toolbar labels are re
  const p=await open({width:420,height:742});await fixture(p,'hand',2);
  const before=await p.locator('.deal-table').boundingBox();const plays=await p.evaluate(()=>window.__dealTest.state.plays);
  await p.locator('.action-history-button').click();await p.locator('#action-history[open]').waitFor();
- assert.deepEqual(await p.locator('.deal-table').boundingBox(),before);assert.equal(await p.locator('details.action-summary').count(),0);
+ assert.deepEqual(await p.locator('.deal-table').boundingBox(),before);
  await p.keyboard.press('Escape');assert.equal(await p.locator('#action-history').evaluate(el=>el.open),false);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),plays);
  for(const id of ['move','discard-card','undo','deselect']){
@@ -2919,4 +2919,12 @@ test('consistent left-aligned bank summary and redesigned elapsed badge fit iPho
  assert.equal(await p.locator('.elapsed-label').innerText(),'Time elapsed');assert.match(await p.locator('.elapsed-value').innerText(),/^\d+:\d{2}$/);
  const timer=await p.locator('#elapsed-game-time').boundingBox(),dots=await p.locator('.plays-dots').boundingBox();assert.ok(timer.y>=dots.y+dots.height&&timer.width<=116);
  await shot(p,'iphone-air-bank-timer');await close(p);
+});
+
+test('iPhone Air hand starts directly after tools without a redundant status row',async()=>{
+ const p=await open({width:420,height:740},undefined,{isMobile:true,hasTouch:true});await fixture(p,'hand',2);
+ assert.equal(await p.locator('.deal-hand').evaluate(el=>el.children.length===1&&el.firstElementChild.classList.contains('cards')),true);
+ assert.equal(await p.locator('.deal-hand [aria-describedby]').count(),0);
+ const hand=await p.locator('.deal-hand .cards').boundingBox();assert.ok(hand.y+hand.height<=740,JSON.stringify(hand));
+ await shot(p,'iphone-air-hand-without-status');await close(p);
 });

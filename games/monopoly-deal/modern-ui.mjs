@@ -1,4 +1,4 @@
-import {GROUPS,properties,complete,sets,rent,canBank} from './engine.mjs?build=20261106-deal-v160-panels-v141';
+import {GROUPS,properties,complete,sets,rent,canBank} from './engine.mjs?build=20261106-deal-v160-hand-v142';
 const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const faceColors={orange:'#fa8020',yellow:'#ffd10c',red:'#fa3b25',pink:'#ff2c8c',brown:'#945629',lightblue:'#77cfe9',green:'#18a26b',blue:'#1c60c9',railroad:'#30383f',utility:'#b9d691'};
 const paint=color=>faceColors[color]||GROUPS[color].color;
@@ -52,7 +52,7 @@ function playerPanel(player,index,colorIndex){
  <button class="opponent-bank-preview" data-table-view="bank-${index}" aria-haspopup="dialog" aria-label="View ${esc(player.name)}’s bank: ${bankTotal}M, ${player.bank.length} cards"><span class="inspect-label">Bank</span><strong>${bankTotal}M</strong><span>${player.bank.length} cards</span></button>
  <button class="opponent-properties" aria-haspopup="dialog" data-table-view="properties-${index}" aria-label="View ${esc(player.name)}’s properties"><span class="inspect-label">Properties</span><span class="opponent-groups">${propertyGroups(player)||'<span class="asset-empty">None yet</span>'}</span></button></section>`;
 }
-export function modernBoard(state,visible,selectedId,flipped,expanded=false,turnHandoff=true,selectedIds=new Set(selectedId===null?[]:[selectedId]),undoAvailable=false){
+export function modernBoard(state,visible,selectedId,flipped,expanded=false,turnHandoff=true,selectedIds=new Set(selectedId===null?[]:[selectedId])){
  const player=state.players[state.turn], selected=visible?player.hand.find(c=>c.id===selectedId):null;
  const finished=!!state.winner,canAct=visible&&!finished&&state.plays<3;
  const bankTotal=player.bank.reduce((sum,card)=>sum+card.value,0),completeSets=sets(player).length;
@@ -90,5 +90,5 @@ export function modernBoard(state,visible,selectedId,flipped,expanded=false,turn
  <button data-table-view="activity" aria-haspopup="dialog" aria-label="View table"><span class="tool-label-long">View table</span><span class="tool-label-short" aria-hidden="true">Table</span></button>
  <button type="button" class="action-history-button" aria-label="Open move history" aria-haspopup="dialog"><span class="tool-label-long">Move history</span><span class="tool-label-short" aria-hidden="true">History</span></button>
  </div></div></section>
- <section class="deal-hand" aria-label="${esc(player.name)}’s private hand">${visible?`<div id="hand-sort-help" class="hand-sort-hint action-summary"><span class="action-summary-status">${Math.max(0,3-state.plays)} plays left · Undo ${undoAvailable?'available':'unavailable'} · ${player.hand.length} cards</span></div><div class="cards" tabindex="0" role="region" aria-label="Your hand; scroll sideways for more cards" aria-describedby="hand-sort-help">${player.hand.map(c=>`<button class="modern-hand-card ${selectedIds.has(c.id)?'is-selected':''} ${c.id===selectedId?'is-active':''}" data-card="${c.id}" aria-label="${esc(c.name)} · ${c.value}M" aria-pressed="${selectedIds.has(c.id)}" ${disabled(!finished)}>${modernFace(c,c.id===selectedId?{flipped}:{})}</button>`).join('')||'<p>Your hand is empty.</p>'}</div>`:''}</section></div>`;
+ <section class="deal-hand" aria-label="${esc(player.name)}’s private hand">${visible?`<div class="cards" tabindex="0" role="region" aria-label="Your hand; scroll sideways for more cards">${player.hand.map(c=>`<button class="modern-hand-card ${selectedIds.has(c.id)?'is-selected':''} ${c.id===selectedId?'is-active':''}" data-card="${c.id}" aria-label="${esc(c.name)} · ${c.value}M" aria-pressed="${selectedIds.has(c.id)}" ${disabled(!finished)}>${modernFace(c,c.id===selectedId?{flipped}:{})}</button>`).join('')||'<p>Your hand is empty.</p>'}</div>`:''}</section></div>`;
 }

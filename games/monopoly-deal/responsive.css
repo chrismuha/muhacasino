@@ -153,7 +153,6 @@ button:not(.modern-hand-card):not(.current-properties):not(.current-bank):not(.o
 .cards.is-hand-sorting [data-card]{cursor:grabbing}
 .cards [data-card].is-hand-dragging{opacity:.25;outline:2px dashed #ffe297;outline-offset:1px}
 .hand-drag-ghost{position:fixed!important;z-index:10000!important;margin:0!important;max-width:none!important;min-height:0!important;max-height:none!important;pointer-events:none!important;opacity:.96!important;transform:rotate(-3deg)!important;transition:none!important;box-shadow:0 10px 28px #00153c66!important}
-.hand-sort-hint{font-size:clamp(10px,2.1vw,13px);line-height:1.4;color:#e4efff;margin:4px 0 0;white-space:nowrap;overflow-x:auto;scrollbar-width:thin}
 
 /* Disabled controls still receive clicks so a toast can explain their state. */
 button[aria-disabled=true]{opacity:.4;cursor:help}
