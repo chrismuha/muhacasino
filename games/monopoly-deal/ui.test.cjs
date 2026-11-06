@@ -2785,3 +2785,21 @@ test('fresh unselected phone deals fit without body scrolling before and after r
   await close(p);
  }
 });
+
+test('property browsing keeps face heights and controls stable; selection keeps empty opponent summaries compact',async()=>{
+ const p=await open({width:430,height:760});await fixture(p,'hand',2);
+ const summary=()=>p.locator('.opponent-properties').boundingBox();
+ const before=await summary();await p.locator('.modern-hand-card').first().click();
+ const after=await summary();assert.equal(after.height,before.height);
+ await p.evaluate(async()=>{const t=window.__dealTest,s=t.state,{deck}=await import('./engine.mjs');s.players[1].props=['brown','green','orange'].map(color=>deck().find(c=>c.type==='property'&&c.colors.length===1&&c.color===color));t.render()});
+ await p.locator('.opponent-properties').click();
+ await p.waitForTimeout(150);await p.locator('.property-stack-card.is-active').waitFor();
+ const heights=[];const offsets=[];
+ for(let i=0;i<3;i++){
+  heights.push(await p.locator('.property-stack-card.is-active .deal-face').evaluate(n=>n.getBoundingClientRect().height));
+  offsets.push(await p.locator('.property-stack-controls').evaluate(n=>n.getBoundingClientRect().top));
+  if(i<2)await p.locator('.content-page-nav button').last().click();
+ }
+ assert.equal(new Set(heights).size,1);assert.equal(new Set(offsets).size,1);
+ await close(p);
+});

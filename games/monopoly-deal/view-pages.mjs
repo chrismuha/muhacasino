@@ -1,4 +1,4 @@
-import {attachHorizontalNavigation,isViewportZoomed} from './horizontal-nav.mjs?build=20261105-deal-v160-fresh-fit-v137';
+import {attachHorizontalNavigation,isViewportZoomed} from './horizontal-nav.mjs?build=20261105-deal-v160-stable-cards-v138';
 // Paginate rendered content without shrinking text or hiding oversized items.
 let dispose = () => {};
 export function paginateViewer(dialog,content){
@@ -51,6 +51,19 @@ export function paginateViewer(dialog,content){
     });
    });
   }
+  // Include inactive cards when measuring the shared height at this width.
+  content.style.removeProperty('--property-face-height');
+  let faceHeight=0;
+  for(const original of originals){
+   if(!original.matches('.property-stack-page'))continue;
+   const section=original.cloneNode(true);content.replaceChildren(section);
+   for(const card of section.querySelectorAll('.property-stack-card')){
+    card.style.display='block';
+    faceHeight=Math.max(faceHeight,card.querySelector('.deal-face').getBoundingClientRect().height);
+    card.style.removeProperty('display');
+   }
+  }
+  if(faceHeight)content.style.setProperty('--property-face-height',`${Math.ceil(faceHeight)}px`);
   const units=originals.flatMap(node=>split(node.cloneNode(true)));
   pages=[[]];content.replaceChildren();
   for(const unit of units){
@@ -88,5 +101,6 @@ export function paginateViewer(dialog,content){
   cancelAnimationFrame(frame);window.removeEventListener('resize',schedule);
   window.visualViewport?.removeEventListener('resize',schedule);nav.remove();
   content.style.removeProperty('--content-page-height');
+  content.style.removeProperty('--property-face-height');
  };
 }

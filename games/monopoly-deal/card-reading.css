@@ -1131,8 +1131,11 @@ body.is-finished .game-over-controls>*{flex:1 1 140px}
  #game .deal-table:not(.card-selected):not(.has-selection) .current-properties:has(.own-groups>.asset-empty){min-height:0;grid-template-rows:auto auto}
  #game .deal-table:not(.card-selected):not(.has-selection) .own-groups:has(>.asset-empty){display:none}
  #game .deal-table:not(.card-selected):not(.has-selection) .current-stats{padding-block:0}
- #game .deal-table:not(.card-selected):not(.has-selection) .opponent-count{padding-block:4px}
- #game .deal-table:not(.card-selected):not(.has-selection) .opponent-properties:has(.opponent-groups>.asset-empty){flex-direction:row;align-items:center;gap:8px;padding-block:2px;min-height:0}
- #game .deal-table:not(.card-selected):not(.has-selection) .opponent-groups:has(>.asset-empty){width:auto;flex:0 1 auto;padding:0;min-height:0}
- #game .deal-table:not(.card-selected):not(.has-selection) .opponent-groups>.asset-empty{min-height:0}
+ #game .deal-table .opponent-count{padding-block:4px}
+ #game .deal-table .opponent-properties:has(.opponent-groups>.asset-empty){flex-direction:row;align-items:center;gap:8px;padding-block:2px;min-height:0}
+ #game .deal-table .opponent-groups:has(>.asset-empty){width:auto;flex:0 1 auto;padding:0;min-height:0}
+ #game .deal-table .opponent-groups>.asset-empty{min-height:0}
 }
+
+/* Keep stack controls at a shared height across property cards and pages. */
+[data-theme=modern] #table-viewer .property-stack .deal-face[data-reading=true]{min-height:var(--property-face-height,320px)}
