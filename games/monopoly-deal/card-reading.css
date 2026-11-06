@@ -954,10 +954,10 @@ html[data-theme=modern]{background:var(--modern-table-background,#0064db)}
 
 #table-view-previous,#table-view-next,#table-view-close,#drawn-card-close{min-height:48px;font-weight:800;border:2px solid #fff;}
 
-/* Reserve the edge-tab lane; keep table status readable at every viewport. */
-[data-theme=modern] .current-seat-heading{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding-right:48px}
+/* Keep table status aligned and readable at every viewport. */
+[data-theme=modern] .current-seat-heading{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
 [data-theme=modern] .current-seat-heading>span{text-align:left;align-self:flex-start;white-space:normal}
-[data-theme=modern] .current-properties .asset-panel-heading{flex-wrap:wrap;justify-content:flex-start;padding-right:40px}
+[data-theme=modern] .current-properties .asset-panel-heading{flex-wrap:wrap;justify-content:flex-start}
 [data-theme=modern] .current-properties .asset-progress{white-space:normal;text-align:left}
 
 /* Move history and card browsing remain readable during and after a deal. */
@@ -1033,7 +1033,7 @@ html:has(#appearance-dialog[open]),body:has(#appearance-dialog[open]){overflow:h
 #appearance-dialog label,#appearance-dialog p,#appearance-dialog legend{white-space:normal;overflow-wrap:anywhere}
 #appearance-dialog input:not([type=checkbox]){max-width:100%;box-sizing:border-box}
 #appearance-dialog .upcoming-actions{display:flex;flex-wrap:wrap;gap:8px}
-/* Keep both Discard controls and the other utility buttons visible. */
+/* Keep utility buttons visible without sideways browsing. */
 @media(max-width:600px){
  #game .deal-table .current-stats .table-tools{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));overflow:visible;gap:4px}
  #game .deal-table .table-tools button{min-width:0;min-height:44px;padding:4px;white-space:normal}

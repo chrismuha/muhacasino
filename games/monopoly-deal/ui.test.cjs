@@ -15,9 +15,11 @@ before(async()=>{
  browser=process.env.DEAL_QA_BROWSER==='webkit'?await webkit.launch({headless:true}):await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH}:existsSync(macChrome)?{executablePath:macChrome}:{})});
 });
 after(async()=>{await browser?.close();await new Promise(resolve=>server?server.close(resolve):resolve())});
-async function open(viewport={width:430,height:932},storage,contextOptions={}){
+async function open(viewport={width:430,height:932},storage,contextOptions={},enableToasts=true){
  const context=await browser.newContext({viewport,...contextOptions});
- if(storage)await context.addInitScript(values=>{for(const [key,value]of Object.entries(values))localStorage.setItem(key,value)},storage);
+ // Gameplay notification checks opt in explicitly; default-preference checks use enableToasts=false.
+ if(enableToasts)await context.addInitScript(()=>{if(localStorage.getItem('muha-deal-toasts-v1')===null)localStorage.setItem('muha-deal-toasts-v1',JSON.stringify({all:true}))});
+ if(storage)await context.addInitScript(({values,enableToasts})=>{for(const [key,value]of Object.entries(values)){let stored=value;if(enableToasts&&key==='muha-deal-toasts-v1'){try{stored=JSON.stringify({all:true,...JSON.parse(value)})}catch{}}localStorage.setItem(key,stored)}},{values:storage,enableToasts});
  const page=await context.newPage();page.setDefaultTimeout(5000);page.setDefaultNavigationTimeout(15000);page.errors=[];page.on('pageerror',error=>page.errors.push(error.message));
  // Test-only instrumentation is added by the test server response interceptor.
  // The shipped app has no fixture or private-state access API.
@@ -680,11 +682,12 @@ test('hand trackpad scrolling and catalog swipe/trackpad navigation preserve pla
 
 test('guide and release notes match deck facts, current controls, and the current v1.5.0 label',async()=>{
  const p=await open();const facts=await p.evaluate(async()=>{const {GUIDE_RULES,RELEASE_NOTES,cardDesigns}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),notes:JSON.stringify(RELEASE_NOTES),designs:cardDesigns().length,cards:deck().length,title:RELEASE_NOTES[0][0]}});
- assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.match(facts.title,/v1\.5\.0/);
+ assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.equal(facts.title,'v1.5.0 · November 5, 2026');
  for(const instruction of ['Double-tap','Close returns','no manual Hide','trackpad','Coming soon','Continue turn','same category','Bank cards first','one bullet for each card','Forced Deal lists both'])assert.ok(facts.rules.toLowerCase().includes(instruction.toLowerCase()),instruction);
  assert.doesNotMatch(facts.notes,/overlapping hand below|Privacy separately hides|actions below the selected|Collapsible Table appearance/);
  const history=await readFile(path.join(root,'about.html'),'utf8'),section=history.slice(history.indexOf('<article id="monopoly-deal"'),history.indexOf('<article id="sorry"'));
- assert.equal((section.match(/2026-11-02/g)||[]).length,1);assert.match(section,/v1\.5\.0/);assert.doesNotMatch(section,/separate Privacy control/);
+ assert.equal((section.match(/2026-11-05/g)||[]).length,1);assert.match(section,/v1\.5\.0/);assert.doesNotMatch(section,/separate Privacy control/);
+ const releasePage=await readFile(path.join(root,'release-notes.html'),'utf8');assert.equal((releasePage.match(/<h2>Monopoly Deal v1\.5\.0<\/h2>/g)||[]).length,1);assert.match(releasePage,/<time datetime="2026-11-05">November 5, 2026<\/time><h2>Monopoly Deal v1\.5\.0<\/h2>/);
  await close(p);
 });
 test('private payment resumes the same turn with Continue turn rather than Reveal my hand',async()=>{
@@ -1249,7 +1252,7 @@ test('refresh cancels an unfinished human action without losing its card or play
 test('v1.5.0 matches the game, launcher and single same-day release entry',async()=>{
  const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v1\.5\.0/);
  await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v1\.5\.0/);
- await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v1.5.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-11-02'}).count(),1);
+ await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v1.5.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-11-05'}).count(),1);
  await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v1.5.0');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();await close(p);
 });
 
@@ -2395,11 +2398,11 @@ test('mobile library navigation scrolls to Games and Help leaves lower-right fre
  await p.locator('#primaryNavigation a[href="#games"]').click();
  await p.waitForFunction(()=>{const r=document.querySelector('#games').getBoundingClientRect();return r.top>=-1&&r.top<200;});
  assert.equal(await p.locator('.nav-menu-button').getAttribute('aria-expanded'),'false');
- const help=p.locator('suite-help:not([data-floating])').locator('.suite-help-trigger');await help.waitFor();
+ const help=p.locator('suite-help').locator('.suite-help-trigger');await help.waitFor();
  assert.equal(await help.getAttribute('data-placement'),'inline');
- await help.click();await p.locator('suite-help:not([data-floating])').locator('dialog[open]').waitFor();
- assert.ok(await p.locator('suite-help:not([data-floating])').locator('[data-page="coming"]').isVisible());
- await p.locator('suite-help:not([data-floating])').locator('.suite-help-close').click();
+ await help.click();await p.locator('suite-help').locator('dialog[open]').waitFor();
+ assert.ok(await p.locator('suite-help').locator('[data-page="coming"]').isVisible());
+ await p.locator('suite-help').locator('.suite-help-close').click();
  await close(p);
 });
 
@@ -2428,16 +2431,15 @@ test('display switches persist and turn labels stay left at phone tablet desktop
   assert.ok(Math.abs(rects[0].x-rects[2].x)<2);assert.ok(rects[2].y>=rects[1].bottom-1);
  }
  await p.locator('#table-settings').click();
- await p.locator('#show-help').uncheck();await p.locator('#show-elapsed-time').uncheck();
+ await p.locator('#show-elapsed-time').uncheck();
  assert.equal(await p.locator('#elapsed-game-time').isVisible(),false);
  await p.reload();await p.waitForFunction(()=>window.__dealTest);
- assert.equal(await p.locator('suite-help:not([data-floating]) .suite-help-trigger').isVisible(),true);
- assert.equal(await p.locator('suite-help[data-floating] .suite-help-trigger').isVisible(),false);
+ assert.equal(await p.locator('suite-help .suite-help-trigger').isVisible(),true);
  assert.equal(await p.locator('#elapsed-game-time').isVisible(),false);
- await p.locator('#table-settings').click();await p.locator('#show-help').check();await p.locator('#show-elapsed-time').check();
+ await p.locator('#table-settings').click();await p.locator('#show-elapsed-time').check();
  await p.locator('#appearance-dialog button').first().click();
  await p.waitForFunction(()=>!document.querySelector('#elapsed-game-time').hidden);
- await p.locator('suite-help:not([data-floating]) .suite-help-trigger').waitFor({state:'visible'});
+ await p.locator('suite-help .suite-help-trigger').waitFor({state:'visible'});
  await close(p);
 });
 
@@ -2460,22 +2462,19 @@ test('rent offers a played universal wild move and cancellation restores it',asy
  await close(p);
 });
 
-test('Deal navigation Help stays available and optional floating Help defaults off',async()=>{
- const p=await open();await p.goto(origin+'/index.html#monopoly-deal');
+test('Deal navigation is the only Help access even with an obsolete saved preference',async()=>{
+ const p=await open({width:420,height:742},{'muha-deal-settings-v1':JSON.stringify({showFloatingHelp:true})});await p.goto(origin+'/index.html#monopoly-deal');
  const game=p.frameLocator('#gameFrame');await game.locator('#ready-new').waitFor();
- const help=p.locator('suite-help:not([data-floating]) .suite-help-trigger');
- const floater=p.locator('suite-help[data-floating] .suite-help-trigger');
+ const help=p.locator('suite-help .suite-help-trigger');
  await p.locator('#toolbarCollapseButton').click();await help.waitFor();
- assert.equal(await help.getAttribute('data-placement'),'inline');assert.equal(await floater.isVisible(),false);
- await help.click();await p.locator('suite-help:not([data-floating]) dialog[open]').waitFor();await p.locator('suite-help:not([data-floating]) .suite-help-close').click();
- await game.locator('#ready-settings').click();assert.equal(await game.locator('#show-help').isChecked(),false);
- await game.locator('#show-help').check();await game.locator('#appearance-dialog button').first().click();await floater.waitFor();
- await p.reload();await game.locator('#ready-new').waitFor();await floater.waitFor();
- await game.locator('#ready-settings').click();await game.locator('#show-help').uncheck();await game.locator('#appearance-dialog button').first().click();
- assert.equal(await floater.isVisible(),false);
+ assert.equal(await p.locator('suite-help').count(),1);assert.equal(await help.getAttribute('data-placement'),'inline');
+ await help.click();await p.locator('suite-help dialog[open]').waitFor();await p.locator('suite-help .suite-help-close').click();
+ await game.locator('#ready-settings').click();assert.equal(await game.locator('#show-help').count(),0);
+ await game.locator('#appearance-dialog button').first().click();
+ await p.reload();await game.locator('#ready-new').waitFor();assert.equal(await p.locator('suite-help').count(),1);
  if(await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded')==='false')await p.locator('#toolbarCollapseButton').click();
- await help.waitFor();await help.click();await p.locator('suite-help:not([data-floating]) dialog[open]').waitFor();
- await p.locator('suite-help:not([data-floating]) .suite-help-close').click();await close(p);
+ await help.waitFor();await help.click();await p.locator('suite-help dialog[open]').waitFor();
+ await p.locator('suite-help .suite-help-close').click();await close(p);
 });
 
 test('every other hosted game reserves header space for inline Help',async()=>{
@@ -2484,14 +2483,14 @@ test('every other hosted game reserves header space for inline Help',async()=>{
   await p.setViewportSize({width,height:900});
   for(const id of ['big-money-deluxe','neon-slots','pretty-penny','treasurepots','bingo','sorry','yahtzee']){
    await p.goto(origin+'/index.html#'+id);await p.locator('#gameFrame').waitFor();
-   const help=p.locator('suite-help:not([data-floating]) .suite-help-trigger');
+   const help=p.locator('suite-help .suite-help-trigger');
    await p.waitForFunction(()=>document.querySelector('suite-help')?.shadowRoot.querySelector('button')?.dataset.placement==='inline');
    if(await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded')==='false')await p.locator('#toolbarCollapseButton').click();
    await help.waitFor();
    const box=await help.boundingBox(),frame=await p.locator('#gameFrame').boundingBox();
    assert.ok(box.y+box.height<=frame.y+1,`${id} ${width}: Help stays above game content`);
    assert.ok(box.x>=0&&box.x+box.width<=width,`${id}: Help fits the viewport`);
-   await help.click();await p.locator('suite-help:not([data-floating]) dialog[open]').waitFor();await p.locator('suite-help:not([data-floating]) .suite-help-close').click();
+   await help.click();await p.locator('suite-help dialog[open]').waitFor();await p.locator('suite-help .suite-help-close').click();
   }
  }
  await close(p);
@@ -2566,16 +2565,29 @@ test('settings keep one vertical scroll area without sideways movement standalon
  }
 });
 
-test('both discard buttons share selection availability and one confirmation flow',async()=>{
+test('only the circular discard button remains and confirms selected cards',async()=>{
  const p=await open();await fixture(p,'hand',2);
- for(const id of ['discard-card','discard-selected-card'])assert.equal(await p.locator('#'+id).getAttribute('aria-disabled'),'true');
+ assert.equal(await p.locator('#discard-selected-card').count(),0);
+ assert.equal(await p.locator('#discard-card').getAttribute('aria-disabled'),'true');
  await p.locator('[data-card]').first().click();
- for(const id of ['discard-card','discard-selected-card']){assert.equal(await p.locator('#'+id).getAttribute('aria-disabled'),'false');assert.match(await p.locator('#'+id).innerText(),/Discard \(1\)/);}
- await p.locator('#discard-selected-card').click();await choose(p,'Cancel');await idle(p);
+ assert.equal(await p.locator('#discard-card').getAttribute('aria-disabled'),'false');
+ await p.locator('#discard-card').click();await choose(p,'Cancel');await idle(p);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.discard.length),0);
  await p.locator('#discard-card').click();await choose(p,'Discard selected cards');await idle(p);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.discard.length),1);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);
- for(const id of ['discard-card','discard-selected-card'])assert.equal(await p.locator('#'+id).getAttribute('aria-disabled'),'true');
+ assert.equal(await p.locator('#discard-card').getAttribute('aria-disabled'),'true');await close(p);
+});
+
+test('toast notifications default off and explicit enablement survives reload',async()=>{
+ const p=await open({width:420,height:742},undefined,{},false);await fixture(p,'hand',2);
+ await playFirst(p);await idle(p);assert.equal(await p.locator('#game-toast').isVisible(),false);
+ assert.ok(await p.evaluate(()=>window.__dealTest.state.log.length)>0);
+ await p.locator('#table-settings').click();assert.equal(await p.locator('[data-toast-type=all]').isChecked(),false);
+ assert.equal(await p.locator('[data-toast-type=bank]').isDisabled(),true);
+ await p.locator('[data-toast-type=all]').check();await p.locator('#appearance-dialog .wizard-heading button').click();
+ await p.reload();await p.waitForFunction(()=>window.__dealTest);
+ await p.evaluate(()=>window.__dealTest.showToast('Notifications enabled'));assert.equal(await p.locator('#game-toast').isVisible(),true);
+ await p.locator('#game-toast button').click();await p.locator('#table-settings').click();assert.equal(await p.locator('[data-toast-type=all]').isChecked(),true);
  await close(p);
 });

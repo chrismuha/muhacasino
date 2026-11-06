@@ -91,12 +91,14 @@ Played wild color changes use one play in the card-table layout, including multi
 
 November phone regressions start a real hosted deal through setup before selecting or playing the first card, check the unaltered full-screen card artwork, and verify deck-side/default and saved footer toast placement. Slot responsive checks cover the shared Controls layout, fixed heading with scrolled content, Buy Bonus typography/order, and persisted paid/free/bonus spin history.
 
-Appearance checks verify a single card-table renderer, no appearance-selector controls, preserved saved table colors and hands, and current release dates matching November 2, 2026.
+Appearance checks verify a single card-table renderer, no appearance-selector controls, preserved saved table colors and hands, and current release dates matching November 5, 2026.
 
 ## November 4 controls follow-up
 
 Hard permits banking properties with positive cash value; other difficulties and action cards retain their restrictions. Pass Go is blocked when its net draw would leave more than seven cards unless the saved Allow Pass Go over seven setting is enabled (off by default). Regression checks cover the default guard, override, property banking, mobile library navigation, compact Help access, elapsed time across reload, and scalable Pass Go artwork. No Mercy combined with Hard rules remains Coming soon pending verified card counts and debt interactions.
 
-November 5: verify left-aligned turn and complete-set labels at 320, 430, 768, and 1440 pixels; saved Help/timer switches and re-enabling; inline Help outside Monopoly Deal; wild movement from rent with the one-play cost and cancellation rollback.
+November 5: verify left-aligned turn and complete-set labels at 320, 430, 768, and 1440 pixels; saved elapsed-time switch and re-enabling; inline Help outside Monopoly Deal; wild movement from rent with the one-play cost and cancellation rollback.
 
-Help access: verify navigation-bar Help stays available with the floating tab disabled (the default), and that explicitly enabling/disabling the tab survives reload without changing navigation-bar Help.
+Help access: verify navigation-bar Help remains available after reload, with exactly one Help component and no optional tab or tab setting.
+
+November 5 defaults: toast notifications are off without an explicit saved opt-in; notification-specific fixtures opt in deliberately. Checks cover navigation-only Help (including obsolete saved settings), the sole circular Discard action, and the unique v1.5.0 release dated November 5, 2026.

@@ -1,11 +1,11 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-controls-settings-v127';
-import {paginateViewer} from './view-pages.mjs?build=20261105-deal-controls-settings-v127';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-controls-settings-v127';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-controls-settings-v127';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-controls-settings-v127';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-controls-settings-v127';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-controls-settings-v127';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-controls-settings-v127';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-defaults-help-v128';
+import {paginateViewer} from './view-pages.mjs?build=20261105-deal-defaults-help-v128';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-defaults-help-v128';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-defaults-help-v128';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-defaults-help-v128';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-defaults-help-v128';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-defaults-help-v128';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-defaults-help-v128';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -31,12 +31,12 @@ const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,c=>({'
 let detachHandSorting = () => {};
 const toastTypes={bank:'Banking',property:'Playing properties',action:'Action cards',payment:'Payments',transfer:'Property transfers',wild:'Moving wilds',discard:'Discards',turn:'Turn changes',draw:'Drawing cards',game:'Game start and wins',undo:'Undo and cancellation',sort:'Hand sorting',help:'Hints and unavailable actions'};
 const toastPreferenceKey='muha-deal-toasts-v1';
-let toastPreferences={};
-try{const saved=JSON.parse(localStorage.getItem(toastPreferenceKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))toastPreferences=saved;}catch{}
+let toastPreferences={all:false};
+try{const saved=JSON.parse(localStorage.getItem(toastPreferenceKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))toastPreferences={...toastPreferences,...saved};}catch{}
 const dealSettingsKey='muha-deal-settings-v1';
-let dealSettings={automaticDealing:true,allowPassGoOverflow:false,showFloatingHelp:false,showElapsedTime:true};
+let dealSettings={automaticDealing:true,allowPassGoOverflow:false,showElapsedTime:true};
 try{const saved=JSON.parse(localStorage.getItem(dealSettingsKey)||'{}');if(typeof saved?.allowPassGoOverflow==='boolean')dealSettings.allowPassGoOverflow=saved.allowPassGoOverflow;if(typeof saved?.automaticDealing==='boolean')dealSettings.automaticDealing=saved.automaticDealing;}catch{}
-for(const key of ['showFloatingHelp','showElapsedTime']){try{const saved=JSON.parse(localStorage.getItem(dealSettingsKey)||'{}');if(typeof saved[key]==='boolean')dealSettings[key]=saved[key];}catch{}}
+for(const key of ['showElapsedTime']){try{const saved=JSON.parse(localStorage.getItem(dealSettingsKey)||'{}');if(typeof saved[key]==='boolean')dealSettings[key]=saved[key];}catch{}}
 const toastDurationSeconds=()=>Number.isFinite(Number(toastPreferences.durationSeconds))?Math.min(30,Math.max(1,Number(toastPreferences.durationSeconds))):2;
 function toastType(message){
  if(/banked/.test(message))return 'bank';
@@ -148,10 +148,10 @@ function updateUnavailableControls() {
  const noPlays = state.plays >= 3 ? 'You have used all three plays. Pass to end your turn.' : '';
  for(const button of document.querySelectorAll('#game button')){
   let reason = finished && !['undo','game-restart'].includes(button.id)&&!button.hasAttribute('data-table-view')&&!button.classList.contains('action-history-button') ? finished : waiting;
-  if(!reason&&awaitingDraw&&['end','undo','play-card','bank-card','discard-card','discard-selected-card','move','wilds'].includes(button.id))reason=awaitingDraw;
+  if(!reason&&awaitingDraw&&['end','undo','play-card','bank-card','discard-card','move','wilds'].includes(button.id))reason=awaitingDraw;
   if(!reason){
    if(button.id === 'undo')reason=hiddenHand||(!undoHistory.length?'No move to undo in this turn.':'');
-   else if(button.hasAttribute('data-discard-cards'))reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.') || (discardPlayCost(selectedCardIds.size)>3-state.plays?`Discard uses one play per card. Select at most ${(hardRules()?0:Math.max(0,me().hand.length-7))+3-state.plays} card${3-state.plays===1?'':'s'}.`:'');
+   else if(button.id === 'discard-card')reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.') || (discardPlayCost(selectedCardIds.size)>3-state.plays?`Discard uses one play per card. Select at most ${(hardRules()?0:Math.max(0,me().hand.length-7))+3-state.plays} card${3-state.plays===1?'':'s'}.`:'');
    else if(button.id === 'deselect')reason = selectedCardIds.size?'':'No cards are selected.';
    else if(button.id === 'preview-previous'||button.id === 'preview-next')reason = hiddenHand || (me().hand.length<2 ? 'This is the only card in your hand.' : '');
    else if(button.id === 'wilds')reason = hiddenHand || noPlays || (!me().props.some(card=>card.colors.length>1)?'You have no wild properties on the table to rearrange.':'');
@@ -325,7 +325,7 @@ function browseSelectedCard(direction,focusTarget=null){
  preview.setAttribute('aria-label',`${card.name} · Card ${next+1} of ${hand.length}`);
  $('#selected-card-help').textContent=`${next+1} / ${hand.length}`;
  document.querySelectorAll('#game [data-card]').forEach(button=>{const id=Number(button.dataset.card),selected=selectedCardIds.has(id);button.classList.toggle('is-selected',selected);button.classList.toggle('is-active',id===selectedCardId);button.setAttribute('aria-pressed',String(selected));});
- document.querySelectorAll('[data-discard-label]').forEach(label=>label.textContent=`Discard${selectedCardIds.size?` (${selectedCardIds.size})`:''}`);
+ $('#discard-card .discard-label').textContent=`Discard${selectedCardIds.size?` (${selectedCardIds.size})`:''}`;
  $('#deselect').textContent=`Clear${selectedCardIds.size?` (${selectedCardIds.size})`:''}`;
  updateUnavailableControls();fitCompactPreview();
  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)preview.animate([{transform:`translateX(${direction*28}px)`,opacity:.65},{transform:'translateX(0)',opacity:1}],{duration:170,easing:'cubic-bezier(.2,.7,.2,1)'});
@@ -425,7 +425,7 @@ function render(){
  $('#preview-open')?.addEventListener('click',()=>{previewExpanded=true;lastCardTap=null;render();});
  $('#end').onclick=()=>run(end);
  $('#undo').onclick=undoLastMove;
- document.querySelectorAll('[data-discard-cards]').forEach(button=>button.onclick=()=>run(async()=>{
+ $('#discard-card').onclick=()=>run(async()=>{
   const cards=me().hand.filter(card=>selectedCardIds.has(card.id));
   if(!cards.length||!visible||state.winner)return;
   const cost=discardPlayCost(cards.length);
@@ -437,7 +437,7 @@ function render(){
   selectedCardId=null;previewExpanded=false;lastCardTap=null;
   log(`${me().name} discarded ${cards.length} card${cards.length===1?'':'s'}.`);
   showToast(`${cards.length} card${cards.length===1?'':'s'} discarded.`);
- }));
+ });
  $('#move').onclick=()=>openTableViewer(`properties-${state.turn}`);
  $('#wilds').onclick=()=>run(()=>rearrange());
  $('#table-settings').onclick=openGameSettings;
@@ -1137,10 +1137,10 @@ function openGameSettings(){
  overflowInput.onchange=()=>{dealSettings.allowPassGoOverflow=overflowInput.checked;try{localStorage.setItem(dealSettingsKey,JSON.stringify(dealSettings));}catch{}if(state)render();};
  dealing.append(overflow);
  const display=document.createElement('fieldset');display.className='display-settings';
- display.innerHTML='<legend>Display</legend><label><input id="show-help" type="checkbox"> Show floating Help tab (off by default)</label><label><input id="show-elapsed-time" type="checkbox"> Show elapsed game time</label><p>Help always remains available in the navigation bar. The optional right-edge tab is off by default. These preferences are saved on this device. Hiding elapsed time does not reset the clock.</p>';
- for(const [id,key] of [['show-help','showFloatingHelp'],['show-elapsed-time','showElapsedTime']]){
+ display.innerHTML='<legend>Display</legend><label><input id="show-elapsed-time" type="checkbox"> Show elapsed game time</label><p>Help always remains available in the navigation bar. This preference is saved on this device. Hiding elapsed time does not reset the clock.</p>';
+ for(const [id,key] of [['show-elapsed-time','showElapsedTime']]){
   const input=display.querySelector('#'+id);input.checked=dealSettings[key];
-  input.onchange=()=>{dealSettings[key]=input.checked;try{localStorage.setItem(dealSettingsKey,JSON.stringify(dealSettings));}catch{}document.dispatchEvent(new Event('deal-display-settings'));updateGameTimer();};
+  input.onchange=()=>{dealSettings[key]=input.checked;try{localStorage.setItem(dealSettingsKey,JSON.stringify(dealSettings));}catch{}updateGameTimer();};
  }
  document.querySelector('.table-settings').append(display);
  document.querySelector('.table-settings').append(dealing,notifications);

@@ -8,12 +8,14 @@ Vue apps use the identical portable `SuiteHelp.vue` owned by `MCR SOFTWARE SUITE
 
 Keep documented issues, planned features, user guides, and release notes in sync. Preserve the app’s support contact overrides. No app version or installer release is changed by adopting this Help interface.
 
-## Help access update · November 4, 2026
+## Help access update · November 5, 2026
 
-Standalone floating Help launchers now use a compact 44px-wide tab on the right edge above the bottom controls. Tap it or focus it with the keyboard to open the same five Help sections. Existing inline Help buttons keep their location. Close or Escape returns focus to Help. This access change does not change the app version.
+Help uses the inline navigation button to open the same five Help sections. The floating tab and its setting have been removed. Close or Escape returns focus to Help. This access change does not change the app version.
 
 ## Monopoly Deal current guide and release notes
 
 Monopoly Deal remains v1.5.0. The in-game guide, Release Notes page, and About version history describe Hard property banking, the seven-card Pass Go restriction and its default-off override, the elapsed timer, and the updated mobile controls. No Mercy combined with Hard rules is Coming soon and is not playable yet. Unwanted mobile page scrolling remains unresolved and is listed under Known issues in the game guide and shared Help, without claims of a scrolling fix in the release history.
 
-November 5 follow-up: turn and complete-set labels align left above Properties without colliding with Help. Help is always available in the navigation bar, including Monopoly Deal. Monopoly Deal’s optional right-edge Help tab is off by default; Game settings saves Show floating Help tab and Show elapsed game time independently. Rent can offer to move a played wild to a matching color for one play when a second play remains for rent; cancellation restores the move and plays.
+November 5 follow-up: turn and complete-set labels align left above Properties without colliding with Help. Help is available only in the navigation bar, including Monopoly Deal. Game settings saves Show elapsed game time. Rent can offer to move a played wild to a matching color for one play when a second play remains for rent; cancellation restores the move and plays.
+
+The v1.5.0 release is dated November 5, 2026. Toast notifications are off by default, with explicit saved choices preserved. The circular Discard action is the sole Discard control.
