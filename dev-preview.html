@@ -15,7 +15,9 @@
     .audit { min-width: 92px; color: #7ee2b8; font-size: 12px; font-weight: 800; }
     .audit.warning { color: #ffb36a; }
     label { display: grid; gap: 4px; }
+    .preview-preset, .device-preset { flex: 0 1 240px; min-width: 0; }
     select, input, button { height: 34px; border: 1px solid #465269; border-radius: 7px; background: #252c3a; color: inherit; padding: 0 10px; font: inherit; }
+    .preview-preset select, .device-preset select { width: 100%; min-width: 0; max-width: 100%; }
     input { width: 82px; }
     button { cursor: pointer; }
     button:hover { background: #323c4f; }
@@ -105,7 +107,7 @@
 <body>
   <header class="toolbar">
     <div class="brand"><strong>Muha Casino mobile preview</strong><span>Choose a viewport to test the responsive layout</span></div>
-    <label><span>Preview</span>
+    <label class="preview-preset"><span>Preview</span>
       <select id="preview">
         <option value="/">Game Library</option>
         <option value="/#big-money-deluxe">Big Money Deluxe</option>
@@ -117,7 +119,7 @@
         <option value="/#yahtzee">Yahtzee</option>
       </select>
     </label>
-    <label><span>Device</span>
+    <label class="device-preset"><span>Device</span>
       <select id="preset">
         <option value="current" selected>Current device</option>
         <option value="1280x1024" data-cabinet>Casino Cabinet · 4-screen 5:4</option>
