@@ -1064,3 +1064,14 @@ body.is-finished .game-over-controls>*{flex:1 1 140px}
 .history-filters{display:flex;flex-wrap:wrap;gap:12px;margin-block:16px}
 .history-filters label{display:flex;flex:1 1 180px;flex-direction:column;gap:6px;font-size:16px}
 .history-filters select{width:100%;min-height:44px}
+
+/* Keep name-step navigation beside the fields instead of following keyboard height. */
+#setup-wizard[data-step="2"] [data-wizard-step="2"]:not([hidden]){flex:0 1 auto;overflow-y:auto}
+#setup-wizard[data-step="2"] .wizard-actions{margin-top:12px}
+
+/* Elapsed time belongs with turn status, clear of the hand cards. */
+[data-theme=modern] .deal-actions #elapsed-game-time{position:static;grid-column:1/-1;align-self:center;justify-self:center;flex-shrink:0;margin:4px auto 0;padding:3px 6px;font-size:12px;line-height:1.3;max-width:100%}
+
+/* Enlarge action and money artwork uniformly, using the thumbnail composition. */
+[data-theme=modern] .has-selection .selected-table-card:has(>.deal-face:not([data-reading=true])){aspect-ratio:.69}
+[data-theme=modern] .selected-table-card>.deal-face:not([data-reading=true]){height:100%;min-height:0;aspect-ratio:.69}

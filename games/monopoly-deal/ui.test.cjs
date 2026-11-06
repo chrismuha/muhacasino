@@ -2603,3 +2603,41 @@ test('finished table is replaced and history filters work',async()=>{
  assert.equal(await p.locator('#action-history li').first().innerText(),'Chris drew 2 cards.');
  await close(p);
 });
+
+
+test('name-step buttons stay in place while typing and opening the keyboard',async()=>{
+ const p=await open({width:390,height:700});await p.locator('#ready-new').click();await p.locator('#start').click();
+ const before=await p.locator('.wizard-actions').boundingBox();
+ await p.locator('#player-name-0').fill('Chris');
+ await p.evaluate(()=>{Object.defineProperty(visualViewport,'height',{configurable:true,value:360});visualViewport.dispatchEvent(new Event('resize'))});
+ await p.waitForTimeout(100);
+ const after=await p.locator('.wizard-actions').boundingBox();
+ assert.equal(after.y,before.y);assert.equal(after.height,before.height);
+ assert.ok(after.y+after.height<=360);await close(p);
+});
+
+
+test('elapsed time sits below turn dots without covering the hand',async()=>{
+ const p=await open({width:390,height:700});await fixture(p,'hand',2);
+ await p.waitForFunction(()=>document.querySelector('.plays-dots')?.nextElementSibling?.id==='elapsed-game-time');
+ const timer=await p.locator('#elapsed-game-time').boundingBox(),dots=await p.locator('.plays-dots').boundingBox(),hand=await p.locator('.deal-hand .cards').boundingBox();
+ assert.ok(timer.y>=dots.y+dots.height);assert.ok(timer.y+timer.height<=hand.y);
+ await p.locator('[data-card]').first().click();
+ await p.waitForFunction(()=>document.querySelector('.plays-dots')?.nextElementSibling?.id==='elapsed-game-time');
+ assert.equal(await p.locator('#elapsed-game-time').count(),1);await close(p);
+});
+
+
+test('enlarged rent artwork keeps thumbnail proportions and centering',async()=>{
+ const p=await open({width:390,height:840});await fixture(p,'hand',2);
+ const id=await p.evaluate(()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='rent').id);
+ await p.locator(`[data-card="${id}"]`).click();
+ const geometry=selector=>p.locator(selector).evaluate(el=>{const r=el.getBoundingClientRect(),m=el.querySelector('.action-medallion').getBoundingClientRect();return {x:(m.x-r.x+m.width/2)/r.width,y:(m.y-r.y)/r.height,width:m.width/r.width,ratio:r.width/r.height}});
+ const small=await geometry(`[data-card="${id}"] .deal-face`);
+ await p.locator('#preview-open').click();
+ const large=await geometry('.selected-table-card .deal-face');
+ assert.ok(Math.abs(large.x-.5)<.02);
+ assert.ok(Math.abs(small.y-large.y)<.03,JSON.stringify({small,large}));
+ assert.ok(Math.abs(small.width-large.width)<.03);
+ assert.ok(Math.abs(large.ratio-.69)<.02);await close(p);
+});

@@ -321,7 +321,7 @@ function browseSelectedCard(direction,focusTarget=null){
  selectedCardId=card.id;
  previewFlipped=Boolean(cardPreferredSide(selectedCardId));
  const preview=$('.selected-table-card');
- preview.innerHTML=modernFace(card,{flipped:previewFlipped,reading:true});
+ preview.innerHTML=modernFace(card,{flipped:previewFlipped,reading:card.type==='property'});
  preview.setAttribute('aria-label',`${card.name} · Card ${next+1} of ${hand.length}`);
  $('#selected-card-help').textContent=`${next+1} / ${hand.length}`;
  document.querySelectorAll('#game [data-card]').forEach(button=>{const id=Number(button.dataset.card),selected=selectedCardIds.has(id);button.classList.toggle('is-selected',selected);button.classList.toggle('is-active',id===selectedCardId);button.setAttribute('aria-pressed',String(selected));});
@@ -395,7 +395,7 @@ function fitCompactPreview(){
 }
 
 function render(){
- requestAnimationFrame(syncToastViewport);
+ requestAnimationFrame(()=>{syncToastViewport();updateGameTimer();});
  completeAutomaticDraws();
  if(state&&!busy)saveGame();
  // Keep the human table mounted throughout background computer actions.
@@ -768,6 +768,7 @@ function setup() {
   let wizardStep = 1;
   function showStep(step) {
     wizardStep = step;
+    $('#setup-wizard').dataset.step=String(step);
     document.querySelectorAll('[data-wizard-step]').forEach(section=>section.hidden=Number(section.dataset.wizardStep)!==step);
     $('#wizard-progress').textContent = `Step ${step} of 3 · ${['Players', 'Names', 'Review'][step-1]}`;
     $('#wizard-back').hidden = step === 1;
@@ -1204,6 +1205,9 @@ function wireActionHistory(){
 // Elapsed deal time survives reloads and stops at victory.
 const gameTimer=document.createElement('output');gameTimer.id='elapsed-game-time';gameTimer.setAttribute('aria-label','Elapsed game time');gameTimer.setAttribute('aria-live','off');document.body.append(gameTimer);
 function updateGameTimer(){
+ const dots=$('#game .plays-dots');
+ if(dots){if(dots.nextElementSibling!==gameTimer)dots.after(gameTimer);}
+ else if(gameTimer.parentElement!==document.body)document.body.append(gameTimer);
  gameTimer.hidden=!state||!dealSettings.showElapsedTime;
  if(!state)return;
  if(!state.startedAt)state.startedAt=Date.now();
