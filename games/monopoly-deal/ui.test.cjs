@@ -2565,9 +2565,9 @@ test('settings keep one vertical scroll area without sideways movement standalon
  }
 });
 
-test('only the circular discard button remains and confirms selected cards',async()=>{
+test('both discard buttons share confirmation and play costs',async()=>{
  const p=await open();await fixture(p,'hand',2);
- assert.equal(await p.locator('#discard-selected-card').count(),0);
+ assert.equal(await p.locator('#discard-selected-card').isVisible(),true);
  assert.equal(await p.locator('#discard-card').getAttribute('aria-disabled'),'true');
  await p.locator('[data-card]').first().click();
  assert.equal(await p.locator('#discard-card').getAttribute('aria-disabled'),'false');
@@ -2589,5 +2589,17 @@ test('toast notifications default off and explicit enablement survives reload',a
  await p.reload();await p.waitForFunction(()=>window.__dealTest);
  await p.evaluate(()=>window.__dealTest.showToast('Notifications enabled'));assert.equal(await p.locator('#game-toast').isVisible(),true);
  await p.locator('#game-toast button').click();await p.locator('#table-settings').click();assert.equal(await p.locator('[data-toast-type=all]').isChecked(),true);
+ await close(p);
+});
+
+
+test('finished table is replaced and history filters work',async()=>{
+ const p=await open({width:390,height:680});await fixture(p,'hand',2);
+ await p.evaluate(()=>{const s=window.__dealTest.state;s.log=['Chris banked 1M.','Alex begins their turn.','Chris drew 2 cards.'];s.winner='Chris';window.__dealTest.render()});
+ assert.equal(await p.locator('.deal-table').count(),0);
+ await p.locator('.action-history-button').click();
+ await p.locator('#history-player').selectOption('Chris');assert.equal(await p.locator('#action-history li').count(),2);
+ await p.locator('#history-order').selectOption('oldest');
+ assert.equal(await p.locator('#action-history li').first().innerText(),'Chris drew 2 cards.');
  await close(p);
 });

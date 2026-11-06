@@ -148,10 +148,10 @@ function updateUnavailableControls() {
  const noPlays = state.plays >= 3 ? 'You have used all three plays. Pass to end your turn.' : '';
  for(const button of document.querySelectorAll('#game button')){
   let reason = finished && !['undo','game-restart'].includes(button.id)&&!button.hasAttribute('data-table-view')&&!button.classList.contains('action-history-button') ? finished : waiting;
-  if(!reason&&awaitingDraw&&['end','undo','play-card','bank-card','discard-card','move','wilds'].includes(button.id))reason=awaitingDraw;
+  if(!reason&&awaitingDraw&&['end','undo','play-card','bank-card','discard-card','discard-selected-card','move','wilds'].includes(button.id))reason=awaitingDraw;
   if(!reason){
    if(button.id === 'undo')reason=hiddenHand||(!undoHistory.length?'No move to undo in this turn.':'');
-   else if(button.id === 'discard-card')reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.') || (discardPlayCost(selectedCardIds.size)>3-state.plays?`Discard uses one play per card. Select at most ${(hardRules()?0:Math.max(0,me().hand.length-7))+3-state.plays} card${3-state.plays===1?'':'s'}.`:'');
+   else if(['discard-card','discard-selected-card'].includes(button.id))reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.') || (discardPlayCost(selectedCardIds.size)>3-state.plays?`Discard uses one play per card. Select at most ${(hardRules()?0:Math.max(0,me().hand.length-7))+3-state.plays} card${3-state.plays===1?'':'s'}.`:'');
    else if(button.id === 'deselect')reason = selectedCardIds.size?'':'No cards are selected.';
    else if(button.id === 'preview-previous'||button.id === 'preview-next')reason = hiddenHand || (me().hand.length<2 ? 'This is the only card in your hand.' : '');
    else if(button.id === 'wilds')reason = hiddenHand || noPlays || (!me().props.some(card=>card.colors.length>1)?'You have no wild properties on the table to rearrange.':'');
@@ -326,6 +326,7 @@ function browseSelectedCard(direction,focusTarget=null){
  $('#selected-card-help').textContent=`${next+1} / ${hand.length}`;
  document.querySelectorAll('#game [data-card]').forEach(button=>{const id=Number(button.dataset.card),selected=selectedCardIds.has(id);button.classList.toggle('is-selected',selected);button.classList.toggle('is-active',id===selectedCardId);button.setAttribute('aria-pressed',String(selected));});
  $('#discard-card .discard-label').textContent=`Discard${selectedCardIds.size?` (${selectedCardIds.size})`:''}`;
+ $('#discard-selected-card').textContent=`Discard${selectedCardIds.size?` (${selectedCardIds.size})`:''}`;
  $('#deselect').textContent=`Clear${selectedCardIds.size?` (${selectedCardIds.size})`:''}`;
  updateUnavailableControls();fitCompactPreview();
  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)preview.animate([{transform:`translateX(${direction*28}px)`,opacity:.65},{transform:'translateX(0)',opacity:1}],{duration:170,easing:'cubic-bezier(.2,.7,.2,1)'});
@@ -402,11 +403,17 @@ function render(){
  detachHandSorting();
  detachHandSorting = () => {};
  document.body.classList.toggle('is-ready',!state);
+ document.body.classList.toggle('is-finished',Boolean(state?.winner));
  if(!state){
   document.body.classList.remove('is-playing');
   $('#game').innerHTML='<section class="game-ready" aria-labelledby="ready-title"><h2 id="ready-title">Ready to deal?</h2><p>Play against computer opponents or with two to four people on this device.</p><div class="ready-actions"><button type="button" class="primary" id="ready-new">New game</button><button type="button" id="ready-settings" aria-haspopup="dialog">Game settings</button></div></section>';
   $('#ready-new').onclick=setup;
   $('#ready-settings').onclick=openGameSettings;
+  return;
+ }
+ if(state.winner){
+  $('#game').innerHTML=gameOverHTML();
+  wireGameOverControls();wireActionHistory();updateGameTimer();
   return;
  }
  queueHandLimit();
@@ -438,6 +445,7 @@ function render(){
   log(`${me().name} discarded ${cards.length} card${cards.length===1?'':'s'}.`);
   showToast(`${cards.length} card${cards.length===1?'':'s'} discarded.`);
  });
+ $('#discard-selected-card').onclick=()=>$('#discard-card').click();
  $('#move').onclick=()=>openTableViewer(`properties-${state.turn}`);
  $('#wilds').onclick=()=>run(()=>rearrange());
  $('#table-settings').onclick=openGameSettings;
@@ -1180,7 +1188,15 @@ function wireActionHistory(){
   if(!state)return;
   let popup=$('#action-history');
   if(!popup){popup=document.createElement('dialog');popup.id='action-history';popup.setAttribute('aria-labelledby','action-history-title');document.body.append(popup);}
-  popup.innerHTML=`<div class="wizard-heading"><h2 id="action-history-title">Move history</h2><button type="button" id="action-history-close">Close</button></div><p>${Math.max(0,3-state.plays)} plays left · Undo ${undoHistory.length?'available':'unavailable'} · ${me().hand.length} cards in hand</p><p class="last-action">Last action: ${esc(lastAction(state))}</p><p>All recorded moves · Most recent first</p><ol>${state.log.map(entry=>`<li>${esc(entry)}</li>`).join('')||'<li>No moves yet.</li>'}</ol><p>Tap a card to select it. Tap its preview or double-tap the card to read it enlarged. Hold to drag to Bank or Properties. Alt+Left/Right reorders a focused card.</p>`;
+  popup.innerHTML=`<div class="wizard-heading"><h2 id="action-history-title">Move history</h2><button type="button" id="action-history-close">Close</button></div>${state.winner?'':`<p>${Math.max(0,3-state.plays)} plays left · Undo ${undoHistory.length?'available':'unavailable'} · ${me().hand.length} cards in hand</p>`}<p class="last-action">Last action: ${esc(lastAction(state))}</p><div class="history-filters"><label>Player<select id="history-player"><option value="">All players</option>${state.players.map(p=>`<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('')}</select></label><label>Order<select id="history-order"><option value="newest">Most recent first</option><option value="oldest">Oldest first</option></select></label></div><p id="history-count" role="status"></p><ol></ol>`;
+  const showMoves=()=>{
+   const player=$('#history-player').value;
+   const entries=state.log.map((entry,index)=>({entry,number:state.log.length-index})).filter(({entry})=>!player||entry.startsWith(player+' ' )||entry.startsWith(player+':'));
+   if($('#history-order').value==='oldest')entries.reverse();
+   popup.querySelector('ol').innerHTML=entries.map(({entry,number})=>`<li value="${number}">${esc(entry)}</li>`).join('');
+   $('#history-count').textContent=entries.length?`${entries.length} recorded move${entries.length===1?'':'s'}`:'No matching moves.';
+  };
+  $('#history-player').onchange=showMoves;$('#history-order').onchange=showMoves;showMoves();
   $('#action-history-close').onclick=()=>popup.close();popup.showModal();$('#action-history-close').focus();
  });
 }

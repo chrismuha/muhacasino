@@ -1052,3 +1052,15 @@ html:has(#appearance-dialog[open]),body:has(#appearance-dialog[open]){overflow:h
  #game .deal-table .table-tools button,#game .deal-table .table-tools #move{min-width:0;padding:4px;white-space:normal;overflow-wrap:anywhere}
  #game .deal-table .table-tools button>span{min-width:0;white-space:normal;overflow-wrap:anywhere}
 }
+
+/* Finished deals replace the live table and keep all navigation in one screen. */
+body.is-finished #game{min-height:calc(100dvh - 80px);display:grid;place-items:center}
+body.is-finished .game-over-banner{position:static;width:min(100%,640px);min-width:0;margin:0;padding:24px;display:flex;flex-direction:column;align-items:stretch;gap:20px;text-align:center}
+body.is-finished .game-over-banner h2{font-size:clamp(18px,5vw,26px);overflow-wrap:anywhere}
+body.is-finished .game-over-controls{justify-content:center}
+body.is-finished .game-over-controls>*{flex:1 1 140px}
+[data-theme=modern] .action-history-button{font-family:inherit;font-weight:750;font-size:14px;border:1px solid #9ecfff;border-radius:9px;background:#0b3e77;line-height:1.2}
+[data-theme=modern] .action-summary .action-history-button{font-size:14px;min-height:36px;height:auto;padding:6px 10px}
+.history-filters{display:flex;flex-wrap:wrap;gap:12px;margin-block:16px}
+.history-filters label{display:flex;flex:1 1 180px;flex-direction:column;gap:6px;font-size:16px}
+.history-filters select{width:100%;min-height:44px}
