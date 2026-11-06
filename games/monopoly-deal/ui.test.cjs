@@ -2679,15 +2679,17 @@ test('elapsed timer uses only the turn-dot location and larger text',async()=>{
  assert.equal(await p.locator('#elapsed-game-time').count(),1);await close(p);
 });
 
-test('mobile icons fit without scrolling and active player has one turn dot',async()=>{
+test('mobile text buttons fit without icons or toolbar scrolling and active player has one turn dot',async()=>{
  for(const width of [320,390,420]){
   const p=await open({width,height:740});await fixture(p,'hand',2);
   assert.equal(await p.locator('.turn-indicator:visible').count(),1);
   assert.equal(await p.locator('.current-seat-heading').innerText(),'Chris');
   assert.equal(await p.locator('.table-tools').evaluate(el=>el.scrollWidth<=el.clientWidth),true);
   for(const button of await p.locator('.table-tools button').all()){
-   assert.ok(await button.getAttribute('aria-label'));
-   assert.equal(await button.evaluate(el=>getComputedStyle(el).fontSize),'0px');
+   assert.ok(await button.evaluate(el=>parseFloat(getComputedStyle(el).fontSize)>=14));
+   assert.ok((await button.innerText()).trim());
+   assert.equal(await button.getAttribute('data-tool-icon'),null);
+   assert.equal(await button.locator('.table-tool-icon').count(),0);
   }
   await p.locator('#end').click();await idle(p);
   assert.equal(await p.locator('.turn-indicator:visible').count(),1);

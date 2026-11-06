@@ -9,3 +9,7 @@ Keep the launcher, game UI, guide, About history, release-notes page, and versio
 ## Content punctuation
 
 Do not use em dashes or long runs of hyphens in Coming soon content or release notes. Use short sentences, commas, or colons.
+
+## Mobile scrolling issue
+
+Keep the Chrome mobile page-scrolling issue listed in Known issues until the user explicitly verifies that it is fixed. Automated checks alone do not authorize removing it.

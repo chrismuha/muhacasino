@@ -1,11 +1,11 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-mobile-tools-v132';
-import {paginateViewer} from './view-pages.mjs?build=20261105-deal-mobile-tools-v132';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-mobile-tools-v132';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-mobile-tools-v132';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-mobile-tools-v132';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-mobile-tools-v132';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-mobile-tools-v132';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-mobile-tools-v132';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-text-tools-v133';
+import {paginateViewer} from './view-pages.mjs?build=20261105-deal-text-tools-v133';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-text-tools-v133';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-text-tools-v133';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-text-tools-v133';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-text-tools-v133';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-text-tools-v133';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-text-tools-v133';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -427,11 +427,6 @@ function render(){
  const scroll=$('.cards')?.scrollLeft||0;
  $('#game').innerHTML=gameOverHTML()+modernBoard({...state,turn:tableSeat()},visible&&!me().isAI,selectedCardId,previewFlipped,previewExpanded,turnHandoff,selectedCardIds,undoHistory.length>0);
  wireGameOverControls();wireActionHistory();
- const utilityIcons={move:['↔','Property manager'],wilds:['◆','Move wild properties'],'table-settings':['⚙','Settings'],undo:['↶','Undo last move'],'discard-selected-card':['🗑','Discard selected cards'],deselect:['×','Clear all selected cards']};
- document.querySelectorAll('.table-tools button').forEach(button=>{
-  const [icon,label]=utilityIcons[button.id]||['▦','View table'];
-  button.dataset.toolIcon=icon;button.setAttribute('aria-label',label);button.title=label;
- });
  if($('.cards'))$('.cards').scrollLeft=scroll;
  $('#reveal')?.addEventListener('click',()=>{visible=true;turnHandoff=false;render()});
  $('#deselect')?.addEventListener('click',()=>{selectedCardIds.clear();selectedCardId=null;previewExpanded=false;previewFlipped=false;lastCardTap=null;render();});
