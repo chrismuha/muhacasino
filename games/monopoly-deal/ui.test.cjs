@@ -2412,6 +2412,9 @@ test('elapsed deal timer survives reload and Pass Go uses a scalable arrow',asyn
  await select(p,()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='pass').id);
  assert.ok(await p.locator('svg.go-arrow').count()>0);
  await p.locator('#preview-open').click();
+ const pageLabel=await p.locator('#selected-card-help').evaluate(el=>({text:el.textContent,color:getComputedStyle(el).color,size:parseFloat(getComputedStyle(el).fontSize)}));
+ assert.match(pageLabel.text,/^\d+ \/ \d+$/);assert.equal(pageLabel.color,'rgb(255, 255, 255)');assert.ok(pageLabel.size>=18);
+ const centers=await p.locator('.selected-table-card .deal-face').evaluate(el=>{const face=el.getBoundingClientRect(),art=el.querySelector('.action-medallion').getBoundingClientRect();return {face:(face.left+face.right)/2,art:(art.left+art.right)/2}});assert.ok(Math.abs(centers.face-centers.art)<1);
  if(process.env.DEAL_REVIEW_SCREENSHOTS)await p.screenshot({path:'/tmp/deal-v122-card.png'});
  await close(p);
 });
@@ -2492,4 +2495,31 @@ test('every other hosted game reserves header space for inline Help',async()=>{
   }
  }
  await close(p);
+});
+
+
+test('move history keeps the full deal and opens from the finished banner',async()=>{
+ const p=await open();await fixture(p,'hand',2);
+ await p.evaluate(()=>{window.__dealTest.state.log=Array.from({length:45},(_,i)=>`Earlier move ${i}`)});
+ await playFirst(p);await idle(p);
+ assert.ok(await p.evaluate(()=>window.__dealTest.state.log.length)>30);
+ await p.locator('.action-history-button').click();
+ assert.equal(await p.locator('#action-history-title').innerText(),'Move history');
+ assert.ok(await p.locator('#action-history ol li').count()>30);
+ await p.locator('#action-history-close').click();
+ await p.evaluate(()=>{window.__dealTest.state.winner='Chris';window.__dealTest.render()});
+ await p.locator('.game-over-controls .action-history-button').click();
+ assert.equal(await p.locator('#action-history').evaluate(el=>el.open),true);
+ assert.equal(await p.locator('.game-over-banner p').evaluate(el=>getComputedStyle(el).color),'rgb(255, 255, 255)');
+ await close(p);
+});
+
+test('computer steal and swap warnings identify requested properties',async()=>{
+ for(const kind of ['sly','forced']){
+  const p=await open();await fixture(p,kind,2);
+  const expected=await p.evaluate(()=>{const t=window.__dealTest,s=t.state;const names=[...s.players[1].props,...s.players[0].props].map(c=>c.name);s.players[0].isAI=true;s.players[0].name='Computer 1';s.players[1].name='Chris';window.__warningRun=t.run(()=>t.play(s.players[0].hand[0]));return names});
+  await p.locator('#choice[open]').waitFor();
+  for(const name of expected)assert.ok((await p.locator('#detail').innerText()).includes(name));
+  await choose(p,'Continue');await p.evaluate(()=>window.__warningRun);await idle(p);await close(p);
+ }
 });

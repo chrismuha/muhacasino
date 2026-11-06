@@ -1,11 +1,11 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-navbar-help-v125';
-import {paginateViewer} from './view-pages.mjs?build=20261105-deal-navbar-help-v125';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-navbar-help-v125';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-navbar-help-v125';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-navbar-help-v125';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-navbar-help-v125';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-navbar-help-v125';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-navbar-help-v125';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-move-history-v126';
+import {paginateViewer} from './view-pages.mjs?build=20261105-deal-move-history-v126';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-move-history-v126';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-move-history-v126';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-move-history-v126';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-move-history-v126';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-move-history-v126';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-move-history-v126';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -281,7 +281,7 @@ function undoLastMove(){
  if($('#table-viewer').open)showTableView(tableViewIndex);
 }
 
-function log(s,type=toastType(s)){showToast(s,{type});state.log.unshift(s);state.log=state.log.slice(0,30);$('#log').innerHTML=state.log.map(x=>`<li>${esc(x)}</li>`).join('')}
+function log(s,type=toastType(s)){showToast(s,{type});state.log.unshift(s);$('#log').innerHTML=state.log.map(x=>`<li>${esc(x)}</li>`).join('')}
 const label=c=>`${c.name} · ${c.value}M${c.color?' · '+GROUPS[c.color].name:''}`;
 function completingWildColor(card) {
  if(card.type !== 'property' || card.colors.length < 2)return null;
@@ -301,7 +301,7 @@ function cardPreferredSide(id){
  return card?.colors?.length===2 && completingWildColor(card)===card.colors[1];
 }
 function gameOverHTML(){
- return state?.winner?`<section class="game-over-banner" role="status"><div><h2>${esc(state.winner)} wins!</h2><p>This deal is finished.</p></div><div class="game-over-controls"><button id="game-restart" class="primary" type="button">New game</button><a href="../../index.html" target="_top">Game Library</a></div></section>`:'';
+ return state?.winner?`<section class="game-over-banner" role="status"><div><h2>${esc(state.winner)} wins!</h2><p>This deal is finished.</p></div><div class="game-over-controls"><button id="game-restart" class="primary" type="button">New game</button><button type="button" class="action-history-button">Move history</button><a href="../../index.html" target="_top">Game Library</a></div></section>`:'';
 }
 function wireGameOverControls(){
  $('#game-restart')?.addEventListener('click',setup);
@@ -323,9 +323,9 @@ function browseSelectedCard(direction,focusTarget=null){
  const preview=$('.selected-table-card');
  preview.innerHTML=modernFace(card,{flipped:previewFlipped,reading:true});
  preview.setAttribute('aria-label',`${card.name} · Card ${next+1} of ${hand.length}`);
- $('#selected-card-help').textContent=`Swipe · ${next+1} / ${hand.length}`;
+ $('#selected-card-help').textContent=`${next+1} / ${hand.length}`;
  document.querySelectorAll('#game [data-card]').forEach(button=>{const id=Number(button.dataset.card),selected=selectedCardIds.has(id);button.classList.toggle('is-selected',selected);button.classList.toggle('is-active',id===selectedCardId);button.setAttribute('aria-pressed',String(selected));});
- $('#discard-card').textContent=`Discard${selectedCardIds.size?` (${selectedCardIds.size})`:''}`;
+ $('#discard-card .discard-label').textContent=`Discard${selectedCardIds.size?` (${selectedCardIds.size})`:''}`;
  $('#deselect').textContent=`Clear${selectedCardIds.size?` (${selectedCardIds.size})`:''}`;
  updateUnavailableControls();fitCompactPreview();
  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)preview.animate([{transform:`translateX(${direction*28}px)`,opacity:.65},{transform:'translateX(0)',opacity:1}],{duration:170,easing:'cubic-bezier(.2,.7,.2,1)'});
@@ -605,7 +605,10 @@ async function play(c,chosenMode=null,chosenColor=null){if((!visible&&!me().isAI
  let targets=opponents().flatMap(x=>a==='breaker'?sets(x).map(color=>({p:x,color})):x.props.filter(card=>!complete(x,card.color)).map(card=>({p:x,card})));
  targets.sort((left,right)=>GROUPS[left.color||left.card.color].name.localeCompare(GROUPS[right.color||right.card.color].name)||left.p.name.localeCompare(right.p.name)||(left.card?.name||'').localeCompare(right.card?.name||''));
  if(!targets.length)return choose('No eligible opponent properties',[['OK',true]]);let own;if(a==='forced'){let options=p.props.filter(x=>!complete(p,x.color));if(!options.length)return choose('You need a property outside a full set',[['OK',true]]);own=await choose('Choose your property to give',options.sort((a,b)=>GROUPS[a.color].name.localeCompare(GROUPS[b.color].name)||a.value-b.value||a.name.localeCompare(b.name)).map(x=>[label(x),x]));}
- let t=await choose(a==='breaker'?'Steal which complete set?':'Choose a property',targets.map(t=>[`${t.p.name} · ${t.card?label(t.card):GROUPS[t.color].name}`,t]));use(c);if(!await defend(t.p,p,c.name)){log(`${t.p.name} blocked ${c.name}.`,'action');return;}
+ let t=await choose(a==='breaker'?'Steal which complete set?':'Choose a property',targets.map(t=>[`${t.p.name} · ${t.card?label(t.card):GROUPS[t.color].name}`,t]));
+ const requested=a==='breaker'?[...properties(t.p,t.color),...t.p.buildings.filter(card=>card.color===t.color)]:[t.card];
+ const description=`${c.name}: ${p.name} would take ${requested.map(label).join('; ')} from ${t.p.name}${own?` and give ${label(own)} to ${t.p.name}` :''}.`;
+ use(c);if(!await defend(t.p,p,description)){log(`${t.p.name} blocked ${c.name}.`,'action');return;}
  const taken=a==='breaker'?[...properties(t.p,t.color),...t.p.buildings.filter(card=>card.color===t.color)]:[t.card];
  if(a==='breaker'){
   for(const card of taken){const from=card.type==='property'?t.p.props:t.p.buildings,to=card.type==='property'?p.props:p.buildings;remove(from,card);to.push(card);}
@@ -1177,7 +1180,7 @@ function wireActionHistory(){
   if(!state)return;
   let popup=$('#action-history');
   if(!popup){popup=document.createElement('dialog');popup.id='action-history';popup.setAttribute('aria-labelledby','action-history-title');document.body.append(popup);}
-  popup.innerHTML=`<div class="wizard-heading"><h2 id="action-history-title">Action history</h2><button type="button" id="action-history-close">Close</button></div><p>${Math.max(0,3-state.plays)} plays left · Undo ${undoHistory.length?'available':'unavailable'} · ${me().hand.length} cards in hand</p><p class="last-action">Last action: ${esc(lastAction(state))}</p><ol>${state.log.map(entry=>`<li>${esc(entry)}</li>`).join('')||'<li>No moves yet.</li>'}</ol><p>Tap a card to select it. Tap its preview or double-tap the card to read it enlarged. Hold to drag to Bank or Properties. Alt+Left/Right reorders a focused card.</p>`;
+  popup.innerHTML=`<div class="wizard-heading"><h2 id="action-history-title">Move history</h2><button type="button" id="action-history-close">Close</button></div><p>${Math.max(0,3-state.plays)} plays left · Undo ${undoHistory.length?'available':'unavailable'} · ${me().hand.length} cards in hand</p><p class="last-action">Last action: ${esc(lastAction(state))}</p><p>All recorded moves · Most recent first</p><ol>${state.log.map(entry=>`<li>${esc(entry)}</li>`).join('')||'<li>No moves yet.</li>'}</ol><p>Tap a card to select it. Tap its preview or double-tap the card to read it enlarged. Hold to drag to Bank or Properties. Alt+Left/Right reorders a focused card.</p>`;
   $('#action-history-close').onclick=()=>popup.close();popup.showModal();$('#action-history-close').focus();
  });
 }
