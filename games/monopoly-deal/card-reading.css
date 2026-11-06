@@ -1075,3 +1075,10 @@ body.is-finished .game-over-controls>*{flex:1 1 140px}
 /* Enlarge action and money artwork uniformly, using the thumbnail composition. */
 [data-theme=modern] .has-selection .selected-table-card:has(>.deal-face:not([data-reading=true])){aspect-ratio:.69}
 [data-theme=modern] .selected-table-card>.deal-face:not([data-reading=true]){height:100%;min-height:0;aspect-ratio:.69}
+
+/* Give property artwork the space; keep the bank's existing large typography. */
+[data-theme=modern] .deal-table .current-assets{grid-template-columns:clamp(76px,19%,112px) minmax(0,1fr);height:auto;align-items:stretch}
+[data-theme=modern] .deal-table .current-assets .current-bank{padding:8px;min-width:0}
+[data-theme=modern] .deal-table .current-assets .current-properties{height:auto;min-height:150px;grid-template-rows:auto minmax(96px,auto) auto;gap:4px}
+[data-theme=modern] .deal-table .current-assets .own-groups{display:flex;min-height:96px;gap:16px;overflow-x:auto;overflow-y:hidden;padding-block:4px}
+[data-theme=modern] .deal-table .current-properties .public-mini{width:clamp(58px,7vw,76px)}

@@ -2641,3 +2641,29 @@ test('enlarged rent artwork keeps thumbnail proportions and centering',async()=>
  assert.ok(Math.abs(small.width-large.width)<.03);
  assert.ok(Math.abs(large.ratio-.69)<.02);await close(p);
 });
+
+
+test('hosted iPhone Air places time below dots and preserves rent artwork',async()=>{
+ const p=await open({width:420,height:740});await p.goto(origin+'/index.html#monopoly-deal');
+ await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();
+ const game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));await fixture(game,'hand',2);
+ await game.waitForFunction(()=>document.querySelector('.plays-dots')?.nextElementSibling?.id==='elapsed-game-time');
+ const timer=await game.locator('#elapsed-game-time').boundingBox(),dots=await game.locator('.plays-dots').boundingBox(),cards=await game.locator('.deal-hand .cards').boundingBox();
+ assert.ok(timer.y>=dots.y+dots.height);assert.ok(timer.y+timer.height<=cards.y);
+ const id=await game.evaluate(()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='rent').id);
+ await game.locator(`[data-card="${id}"]`).click();await game.locator('#preview-open').click();
+ const art=await game.locator('.selected-table-card .deal-face').evaluate(el=>{const r=el.getBoundingClientRect(),m=el.querySelector('.action-medallion').getBoundingClientRect();return {reading:el.dataset.reading,center:(m.x+m.width/2-r.x)/r.width,ratio:r.width/r.height}});
+ assert.notEqual(art.reading,'true');assert.ok(Math.abs(art.center-.5)<.02);assert.ok(Math.abs(art.ratio-.69)<.02);await close(p);
+});
+
+
+test('property previews are larger and bank stays narrow at every screen size',async()=>{
+ for(const viewport of [{width:390,height:700},{width:420,height:740},{width:844,height:390},{width:820,height:1180},{width:1440,height:900}]){
+  const p=await open(viewport);await fixture(p,'win',2);
+  const bank=await p.locator('.current-bank').boundingBox(),properties=await p.locator('.current-properties').boundingBox();
+  assert.ok(bank.width<=112.5,JSON.stringify({viewport,bank}));assert.ok(properties.width>bank.width*2);
+  const card=await p.locator('.current-properties .public-mini').first().boundingBox();assert.ok(card.width>=57.5,JSON.stringify({viewport,card}));
+  assert.equal(await p.locator('.current-properties .own-groups').evaluate(el=>el.scrollWidth>=el.clientWidth),true);
+  await close(p);
+ }
+});
