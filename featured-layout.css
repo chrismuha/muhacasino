@@ -86,3 +86,7 @@
  #featured .hero-dot::after{inset-inline:5px}
  #featured .hero-dot.active::after{inset-inline:2px}
 }
+
+/* Readable game descriptions throughout the casino dashboard. */
+#featured .hero-content>p:not(.eyebrow){color:#fff;font-size:clamp(18px,1.6vw,22px);line-height:1.45}
+.game-card .card-details small{color:#fff;font-size:clamp(16px,1.3vw,18px);line-height:1.4}

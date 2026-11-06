@@ -1079,3 +1079,18 @@ body.is-finished .game-over-controls>*{flex:1 1 140px}
 /* Keep Bank compact without shrinking its label or balance. */
 [data-theme=modern] .deal-table .current-assets{grid-template-columns:clamp(76px,19%,112px) minmax(0,1fr);height:auto;align-items:start}
 [data-theme=modern] .deal-table .current-assets .current-bank{padding:8px;min-width:0;min-height:0;height:auto;align-self:start;gap:4px}
+
+/* The center preview uses the same composition as the hand artwork. */
+[data-theme=modern] .has-card-preview .deal-face[data-face=action] .face-action-top{height:27%}
+[data-theme=modern] .has-card-preview .deal-face[data-face=action] .action-medallion{width:64%;height:auto;aspect-ratio:1;align-self:center;flex-shrink:0;margin:8% auto 4%;padding:7%}
+[data-theme=modern] .has-card-preview .deal-face[data-face=action] .face-instructions{font-size:5.5cqw;line-height:1.2;padding:4% 10% 7%;margin:auto 0 0}
+[data-theme=modern] .has-card-preview .money-medallion{margin-inline:auto;align-self:center}
+.turn-indicator{display:inline-block;width:12px;height:12px;margin-right:7px;border:1px solid #fff;border-radius:50%;background:#36ec83;vertical-align:middle;flex-shrink:0}
+.turn-indicator[hidden]{display:none}
+@media(max-width:600px){
+ #game .deal-table .current-stats .table-tools{display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr));overflow:visible;gap:4px}
+ #game .deal-table .table-tools button[data-tool-icon]{font-size:0!important;min-width:0;min-height:44px;padding:4px;line-height:1}
+ #game .deal-table .table-tools button[data-tool-icon]>span{display:none}
+ #game .deal-table .table-tools button[data-tool-icon]::before{content:attr(data-tool-icon);font:700 24px/1 system-ui;color:inherit}
+}
+@media(max-width:360px){#game .deal-table .current-stats .table-tools{grid-template-columns:repeat(4,minmax(0,1fr))}}

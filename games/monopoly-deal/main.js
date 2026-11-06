@@ -1,11 +1,11 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-bank-timer-v130';
-import {paginateViewer} from './view-pages.mjs?build=20261105-deal-bank-timer-v130';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-bank-timer-v130';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-bank-timer-v130';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-bank-timer-v130';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-bank-timer-v130';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-bank-timer-v130';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-bank-timer-v130';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-mobile-tools-v132';
+import {paginateViewer} from './view-pages.mjs?build=20261105-deal-mobile-tools-v132';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-mobile-tools-v132';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-mobile-tools-v132';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-mobile-tools-v132';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-mobile-tools-v132';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-mobile-tools-v132';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-mobile-tools-v132';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -140,6 +140,7 @@ new MutationObserver(()=>syncNavigationControls()).observe(document.body,{subtre
 
 function updateUnavailableControls() {
  syncNavigationControls();
+ document.querySelectorAll('[data-turn-player]').forEach(dot=>dot.hidden=!state||Boolean(state.winner)||Number(dot.dataset.turnPlayer)!==state.turn);
  const selected = visible ? me().hand.find(card => card.id === selectedCardId) : null;
  const finished = state.winner ? 'This game is finished. Start a new game to play again.' : '';
  const waiting = busy ? 'Finish the current action first.' : '';
@@ -426,6 +427,11 @@ function render(){
  const scroll=$('.cards')?.scrollLeft||0;
  $('#game').innerHTML=gameOverHTML()+modernBoard({...state,turn:tableSeat()},visible&&!me().isAI,selectedCardId,previewFlipped,previewExpanded,turnHandoff,selectedCardIds,undoHistory.length>0);
  wireGameOverControls();wireActionHistory();
+ const utilityIcons={move:['↔','Property manager'],wilds:['◆','Move wild properties'],'table-settings':['⚙','Settings'],undo:['↶','Undo last move'],'discard-selected-card':['🗑','Discard selected cards'],deselect:['×','Clear all selected cards']};
+ document.querySelectorAll('.table-tools button').forEach(button=>{
+  const [icon,label]=utilityIcons[button.id]||['▦','View table'];
+  button.dataset.toolIcon=icon;button.setAttribute('aria-label',label);button.title=label;
+ });
  if($('.cards'))$('.cards').scrollLeft=scroll;
  $('#reveal')?.addEventListener('click',()=>{visible=true;turnHandoff=false;render()});
  $('#deselect')?.addEventListener('click',()=>{selectedCardIds.clear();selectedCardId=null;previewExpanded=false;previewFlipped=false;lastCardTap=null;render();});

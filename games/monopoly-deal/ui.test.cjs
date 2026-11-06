@@ -2428,7 +2428,7 @@ test('display switches persist and turn labels stay left at phone tablet desktop
  for(const width of [320,430,768,1440]){
   await p.setViewportSize({width,height:932});
   const rects=await p.evaluate(()=>{const heading=document.querySelector('.current-seat-heading'),status=heading.querySelector('span'),title=heading.querySelector('h2');return [heading,title,status].map(el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,bottom:r.bottom}})});
-  assert.ok(Math.abs(rects[0].x-rects[2].x)<2);assert.ok(rects[2].y>=rects[1].bottom-1);
+  assert.ok(Math.abs(rects[0].x-rects[1].x)<2);assert.ok(rects[2].y>=rects[1].y&&rects[2].bottom<=rects[1].bottom);
  }
  await p.locator('#table-settings').click();
  await p.locator('#show-elapsed-time').uncheck();
@@ -2677,4 +2677,33 @@ test('elapsed timer uses only the turn-dot location and larger text',async()=>{
  await p.evaluate(()=>{window.__dealTest.state.winner='Chris';window.__dealTest.render()});
  assert.equal(await p.locator('#elapsed-game-time').isVisible(),false);
  assert.equal(await p.locator('#elapsed-game-time').count(),1);await close(p);
+});
+
+test('mobile icons fit without scrolling and active player has one turn dot',async()=>{
+ for(const width of [320,390,420]){
+  const p=await open({width,height:740});await fixture(p,'hand',2);
+  assert.equal(await p.locator('.turn-indicator:visible').count(),1);
+  assert.equal(await p.locator('.current-seat-heading').innerText(),'Chris');
+  assert.equal(await p.locator('.table-tools').evaluate(el=>el.scrollWidth<=el.clientWidth),true);
+  for(const button of await p.locator('.table-tools button').all()){
+   assert.ok(await button.getAttribute('aria-label'));
+   assert.equal(await button.evaluate(el=>getComputedStyle(el).fontSize),'0px');
+  }
+  await p.locator('#end').click();await idle(p);
+  assert.equal(await p.locator('.turn-indicator:visible').count(),1);
+  assert.match(await p.locator('.current-seat-heading').innerText(),/Alex/);await close(p);
+ }
+});
+
+test('single-tap center rent artwork matches the hand on all screen sizes',async()=>{
+ for(const viewport of [{width:390,height:740},{width:820,height:1180},{width:1440,height:900}]){
+  const p=await open(viewport);await fixture(p,'hand',2);
+  const id=await p.evaluate(()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='rent').id);
+  await p.locator(`[data-card="${id}"]`).click();
+  const geometry=selector=>p.locator(selector).evaluate(el=>{const r=el.getBoundingClientRect(),m=el.querySelector('.action-medallion').getBoundingClientRect();return {center:(m.x+m.width/2-r.x)/r.width,y:(m.y-r.y)/r.height,width:m.width/r.width}});
+  const hand=await geometry(`[data-card="${id}"] .deal-face`),preview=await geometry('#preview-open .deal-face');
+  assert.ok(Math.abs(preview.center-.5)<.02,JSON.stringify({viewport,hand,preview}));
+  assert.ok(Math.abs(preview.y-hand.y)<.04,JSON.stringify({viewport,hand,preview}));
+  assert.ok(Math.abs(preview.width-hand.width)<.04,JSON.stringify({viewport,hand,preview}));await close(p);
+ }
 });
