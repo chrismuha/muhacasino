@@ -2928,3 +2928,47 @@ test('iPhone Air hand starts directly after tools without a redundant status row
  const hand=await p.locator('.deal-hand .cards').boundingBox();assert.ok(hand.y+hand.height<=740,JSON.stringify(hand));
  await shot(p,'iphone-air-hand-without-status');await close(p);
 });
+
+test('tablet and open-foldable screens use width and fit normal play without page scrolling',async()=>{
+ const sizes=[{width:890,height:626},{width:750,height:832},{width:626,height:890},{width:744,height:1133},{width:768,height:1024},{width:820,height:1180},{width:834,height:1210},{width:1032,height:1376},{width:1180,height:820},{width:1366,height:1024}];
+ for(const viewport of sizes)for(const hosted of [false,true]){
+  const p=await open(viewport,undefined,{isMobile:true,hasTouch:true});let game=p;
+  if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+  if(hosted&&viewport.width===890)await p.evaluate(()=>document.documentElement.style.setProperty('--safe-area-inset-top','54px'));
+  if(hosted&&viewport.width===750)await p.evaluate(()=>document.documentElement.style.setProperty('--safe-area-inset-top','36px'));
+  await fixture(game,'hand',2);
+  await game.evaluate(()=>{const s=window.__dealTest.state;for(let i=0;i<2;i++){const j=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===1);s.players[0].props.push(s.draw.splice(j,1)[0]);}window.__dealTest.render()});
+  for(const selector of [null,'.modern-hand-card:nth-child(4)','.modern-hand-card:first-child']){
+   if(selector)await game.locator(selector).evaluate(el=>el.click());
+   await p.waitForTimeout(30);
+   const g=await game.evaluate(()=>{const r=s=>document.querySelector(s).getBoundingClientRect().toJSON();return {w:innerWidth,h:innerHeight,scroll:document.body.scrollHeight,client:document.body.clientHeight,wide:document.body.scrollWidth,main:r('body>main'),stage:r('.deal-stage'),assets:r('.current-seat'),hand:r('.deal-hand'),preview:document.querySelector('#preview-open')?r('#preview-open'):null,deck:r('.draw-deck .deck-icon'),actions:r('.deal-actions'),rows:[...document.querySelectorAll('.current-seat>*,.current-assets>*,.current-properties>*,.opponent>*')].map(el=>({name:el.className,h:el.getBoundingClientRect().height})),tools:document.querySelector('.table-tools').scrollWidth-document.querySelector('.table-tools').clientWidth}});
+   assert.ok(g.main.width>=g.w-1&&g.wide<=g.w+1&&g.tools<=1,JSON.stringify({viewport,hosted,selector,g}));
+   assert.ok(g.scroll<=g.client+1&&g.hand.bottom<=g.h+1,JSON.stringify({viewport,hosted,selector,g}));
+   assert.ok(g.assets.left>=g.stage.right,JSON.stringify({viewport,hosted,g}));
+   if(g.preview)assert.ok(g.preview.left>=g.deck.right+8&&g.actions.left>=g.preview.right+8,JSON.stringify({viewport,hosted,g}));
+  }
+  await shot(p,`tablet-open-${viewport.width}-${viewport.height}-${hosted?'hosted':'direct'}`);await close(p);
+ }
+});
+
+test('tablet four-player tables fit and enlarged cards retain reachable reading controls',async()=>{
+ for(const viewport of [{width:890,height:626},{width:750,height:832},{width:820,height:1180},{width:1366,height:1024}]){
+  const p=await open(viewport,undefined,{isMobile:true,hasTouch:true});await fixture(p,'hand',4);
+  await p.locator('.modern-hand-card').nth(3).evaluate(el=>el.click());
+  const fit=await p.evaluate(()=>({scroll:document.body.scrollHeight,client:document.body.clientHeight,bottom:document.querySelector('.deal-hand').getBoundingClientRect().bottom,h:innerHeight}));
+  assert.ok(fit.scroll<=fit.client+1&&fit.bottom<=fit.h+1,JSON.stringify({viewport,fit}));
+  await p.locator('#preview-open').click();await p.locator('.selected-table-card').waitFor();
+  await p.locator('#preview-close').scrollIntoViewIfNeeded();assert.equal(await p.locator('#preview-close').isVisible(),true);
+  await p.locator('#preview-close').click();assert.equal(await p.locator('.deal-hand').isVisible(),true);await close(p);
+ }
+});
+
+test('tablet optimization stays inactive on portrait phones',async()=>{
+ for(const viewport of [{width:360,height:840},{width:420,height:740},{width:466,height:678}]){
+  const p=await open(viewport);await fixture(p,'birthday',2);
+  assert.equal(await p.evaluate(()=>matchMedia('(min-width:601px) and (max-width:1366px) and (min-height:480px)').matches),false);
+  await p.locator('.modern-hand-card').first().evaluate(el=>el.click());
+  assert.equal(await p.locator('.deal-table').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1);
+  await close(p);
+ }
+});
