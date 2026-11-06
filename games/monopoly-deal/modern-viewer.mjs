@@ -1,5 +1,5 @@
-import {modernFace} from './modern-ui.mjs?build=20261106-deal-v160-selection-v139';
-import {GROUPS,properties,complete,sets,rent} from './engine.mjs?build=20261106-deal-v160-selection-v139';
+import {modernFace} from './modern-ui.mjs?build=20261106-deal-v160-cards-v140';
+import {GROUPS,properties,complete,sets,rent} from './engine.mjs?build=20261106-deal-v160-cards-v140';
 
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const plural = (count, name) => `${count} ${count === 1 ? name : name === 'property' ? 'properties' : `${name}s`}`;

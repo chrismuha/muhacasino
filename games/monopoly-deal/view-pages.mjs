@@ -1,4 +1,4 @@
-import {attachHorizontalNavigation,isViewportZoomed} from './horizontal-nav.mjs?build=20261106-deal-v160-selection-v139';
+import {attachHorizontalNavigation,isViewportZoomed} from './horizontal-nav.mjs?build=20261106-deal-v160-cards-v140';
 // Paginate rendered content without shrinking text or hiding oversized items.
 let dispose = () => {};
 export function paginateViewer(dialog,content){

@@ -1,11 +1,11 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261106-deal-v160-selection-v139';
-import {paginateViewer} from './view-pages.mjs?build=20261106-deal-v160-selection-v139';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261106-deal-v160-selection-v139';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261106-deal-v160-selection-v139';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261106-deal-v160-selection-v139';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261106-deal-v160-selection-v139';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261106-deal-v160-selection-v139';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261106-deal-v160-selection-v139';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261106-deal-v160-cards-v140';
+import {paginateViewer} from './view-pages.mjs?build=20261106-deal-v160-cards-v140';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261106-deal-v160-cards-v140';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261106-deal-v160-cards-v140';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261106-deal-v160-cards-v140';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261106-deal-v160-cards-v140';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261106-deal-v160-cards-v140';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261106-deal-v160-cards-v140';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -396,7 +396,29 @@ function wireSelectedCardBrowsing(){
  });
  preview.addEventListener('dragstart',event=>event.preventDefault());
 }
+function fitTableCards(){
+ const table=$('.deal-table'),cards=$('.deal-hand .cards'),preview=$('#preview-open');
+ if(!table||!cards)return;
+ table.style.removeProperty('--hand-card-width');
+ if(preview)preview.style.removeProperty('width');
+ if(innerWidth>600||table.classList.contains('has-selection'))return;
+ const card=cards.querySelector('.modern-hand-card');
+ if(!card)return;
+ // Spend only unused viewport height, preserving the existing short-screen minimums.
+ const bottom=cards.getBoundingClientRect().bottom;
+ let spare=Math.max(0,innerHeight-bottom-32);
+ if(preview){
+  const current=preview.getBoundingClientRect().width;
+  const target=Math.min(144,preview.parentElement.clientWidth,preview.closest(".card-stage").clientHeight*.69,current+spare*.69*.4);
+  preview.style.width=`${Math.max(current,target)}px`;
+  spare=Math.max(0,innerHeight-cards.getBoundingClientRect().bottom-32);
+ }
+ const width=card.getBoundingClientRect().width;
+ const target=Math.min(112,innerWidth*.25,width+spare*.69);
+ table.style.setProperty('--hand-card-width',`${Math.max(width,target)}px`);
+}
 function fitCompactPreview(){
+ fitTableCards();
  const preview=$('.selected-table-card'),face=preview?.querySelector('.deal-face');
  if(!face)return;
  const phone=innerWidth<=600,width=phone?230:300,height=phone?330:460;

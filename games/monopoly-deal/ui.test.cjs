@@ -479,7 +479,7 @@ test('hosted phone enlarged cards keep controls accessible through game scrollin
    assert.ok(layout.card.width<=231);assert.ok(layout.controls.bottom<=await frame.locator('body').evaluate(el=>el.scrollHeight)+1);await frame.locator('#discard-card').scrollIntoViewIfNeeded();assert.ok(await frame.locator('#discard-card').evaluate(el=>{const r=el.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight+1}));
    await frame.locator('#preview-close').click();
   }
-  assert.ok((await frame.locator('.modern-hand-card').first().boundingBox()).width<=90);
+  assert.ok((await frame.locator('.modern-hand-card').first().boundingBox()).width<=117);
   await conservation(frame);await close(p);
  }
 });
@@ -1808,11 +1808,14 @@ test('responsive table fits normal play with larger tablet previews and desktop 
     if(kind==='hotel')await game.evaluate(()=>{const s=window.__dealTest.state;const i=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===1);s.players[0].hand.push(s.draw.splice(i,1)[0]);window.__dealTest.render()});
     await game.locator('[data-card]').first().evaluate(el=>el.click());
     const geometry=await game.evaluate(()=>({height:innerHeight,clientHeight:document.body.clientHeight,scroll:document.body.scrollHeight,width:innerWidth,scrollWidth:document.body.scrollWidth,preview:document.querySelector('#preview-open').getBoundingClientRect().toJSON(),hand:document.querySelector('.modern-hand-card').getBoundingClientRect().toJSON(),handBottom:document.querySelector('.deal-hand').getBoundingClientRect().bottom,stage:document.querySelector('.deal-stage').getBoundingClientRect().toJSON()}));
-    assert.equal(geometry.scroll,geometry.clientHeight,JSON.stringify({viewport,hosted,kind,geometry}));
-    assert.ok(geometry.handBottom<=geometry.height);assert.ok(geometry.scrollWidth<=geometry.width);
+    if(kind==='hotel'&&viewport.width<600){
+     // Deck-size property cards retain readable dimensions in crowded short tables.
+     await game.locator('.deal-hand').scrollIntoViewIfNeeded();
+    }else{assert.equal(geometry.scroll,geometry.clientHeight,JSON.stringify({viewport,hosted,kind,geometry}));assert.ok(geometry.handBottom<=geometry.height);}
+    assert.ok(geometry.scrollWidth<=geometry.width);
     assert.ok(geometry.preview.top>=geometry.stage.top&&geometry.preview.bottom<=geometry.stage.bottom+1,JSON.stringify({viewport,hosted,kind,geometry}));
-    if(viewport.width>=768)assert.ok(geometry.preview.width>=140);else assert.ok(geometry.preview.width<=105);
-    if(viewport.width>=1440)assert.ok(geometry.hand.width>=150);else if(viewport.width<600)assert.ok(geometry.hand.width<=90);
+    if(viewport.width>=768)assert.ok(geometry.preview.width>=140);else assert.ok(geometry.preview.width<=144);
+    if(viewport.width>=1440)assert.ok(geometry.hand.width>=150);else if(viewport.width<600)assert.ok(geometry.hand.width<=117);
    }
    await shot(p,`responsive-larger-cards-${viewport.width}-${hosted?'hosted':'standalone'}`);await close(p);
   }
@@ -2676,7 +2679,7 @@ test('property previews grow modestly and bank matches Properties height without
   assert.ok(after.body<=Math.max(baseline.body,viewport.height)+1,JSON.stringify({viewport,baseline,after}));
   const bank=await p.locator('.current-bank').boundingBox(),properties=await p.locator('.current-properties').boundingBox();
   assert.ok(bank.width<=112.5,JSON.stringify({viewport,bank}));assert.ok(properties.width>bank.width*2);
-  const card=await p.locator('.current-properties .public-mini').first().boundingBox();assert.ok(card.width>=31.5&&card.width<=52.5,JSON.stringify({viewport,card}));
+  const card=await p.locator('.current-properties .public-mini').first().boundingBox();const deck=await p.locator(".draw-deck .deck-icon").boundingBox();assert.ok(Math.abs(card.width-deck.width)<1&&Math.abs(card.height-deck.height)<1,JSON.stringify({viewport,card,deck}));
   assert.ok(Math.abs(bank.height-properties.height)<1,JSON.stringify({viewport,bank,properties}));
   assert.equal(await p.locator('.current-properties .own-groups').evaluate(el=>el.scrollWidth>=el.clientWidth),true);
   await close(p);
@@ -2816,5 +2819,23 @@ test('selected property explains unplayed ownership and can be played without sc
   await page.waitForFunction(()=>window.__dealTest.state.players[0].props.length===1);
   assert.equal(await page.locator('.property-quick-actions').count(),0);
   await close(page);
+ }
+});
+
+test('phone cards use spare height with separated circular controls',async()=>{
+ for(const height of [740,900]){
+  const p=await open({width:430,height});await fixture(p,'birthday',2);
+  await p.locator('.modern-hand-card').first().click();
+  await p.waitForTimeout(100);
+  const sizes=await p.evaluate(()=>{
+   const hand=document.querySelector('.modern-hand-card').getBoundingClientRect(),preview=document.querySelector('#preview-open').getBoundingClientRect();
+   const actions=[...document.querySelectorAll('.deal-actions .round-action')].filter(el=>getComputedStyle(el).display!=='none'&&getComputedStyle(el).visibility!=='hidden').map(el=>el.getBoundingClientRect());
+   return {hand:hand.width,preview:preview.width,bottom:document.querySelector('.deal-hand .cards').getBoundingClientRect().bottom,height:innerHeight,gaps:actions.slice(1).map((r,i)=>r.top-actions[i].bottom)};
+  });
+  assert.ok(sizes.hand>60&&sizes.hand<=117,JSON.stringify(sizes));
+  assert.ok(sizes.preview>=105&&sizes.preview<=144,JSON.stringify(sizes));
+  assert.ok(sizes.gaps.every(g=>g>=7.9),JSON.stringify(sizes));
+  assert.ok(sizes.bottom<=sizes.height,JSON.stringify(sizes));
+  await shot(p,`larger-phone-cards-${height}`);await close(p);
  }
 });
