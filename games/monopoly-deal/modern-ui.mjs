@@ -1,4 +1,4 @@
-import {GROUPS,properties,complete,sets,rent,canBank} from './engine.mjs?build=20261106-deal-v160-cards-v140';
+import {GROUPS,properties,complete,sets,rent,canBank} from './engine.mjs?build=20261106-deal-v160-panels-v141';
 const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const faceColors={orange:'#fa8020',yellow:'#ffd10c',red:'#fa3b25',pink:'#ff2c8c',brown:'#945629',lightblue:'#77cfe9',green:'#18a26b',blue:'#1c60c9',railroad:'#30383f',utility:'#b9d691'};
 const paint=color=>faceColors[color]||GROUPS[color].color;
@@ -72,7 +72,7 @@ export function modernBoard(state,visible,selectedId,flipped,expanded=false,turn
  <span class="plays-dots" aria-label="${Math.max(0,3-state.plays)} plays left">${[0,1,2].map(i=>`<i class="${i<state.plays?'used':!finished&&i===state.plays?'is-current':''}" aria-label="Play ${i+1}: ${i<state.plays?'completed':!finished&&i===state.plays?'current':'unused'}"></i>`).join('')}</span></div></section>
  <section class="current-seat" aria-label="${esc(player.name)}’s table">
  <div class="current-seat-heading"><h2 data-fit-label><span class="turn-indicator" data-turn-player="${state.turn}" role="img" aria-label="Current turn" hidden></span>${esc(player.name)}</h2></div>
- <div class="current-assets">
+ <div class="current-assets" role="group" aria-label="Your bank and properties">
  <button class="current-bank" data-table-view="bank-${state.turn}" aria-haspopup="dialog" aria-label="${esc(player.name)}’s bank: ${bankTotal}M, ${player.bank.length} banked cards">
  <span class="asset-panel-heading"><span class="asset-panel-title">Bank</span></span><strong class="bank-balance">${bankTotal}<span class="bank-unit">M</span></strong>
  <span class="bank-miniatures">${[...player.bank].sort((a,b)=>b.value-a.value).slice(0,4).map(card=>publicCard(card)).join('')||'<span class="asset-empty">Empty</span>'}</span><span class="asset-count">${player.bank.length} cards</span></button>
@@ -88,7 +88,7 @@ export function modernBoard(state,visible,selectedId,flipped,expanded=false,turn
  <button id="discard-selected-card" type="button">Discard${selectedIds.size?` (${selectedIds.size})`: ''}</button>
  <button id="deselect" type="button" aria-label="Clear all selected cards">Clear${selectedIds.size?` (${selectedIds.size})`: ''}</button>
  <button data-table-view="activity" aria-haspopup="dialog" aria-label="View table"><span class="tool-label-long">View table</span><span class="tool-label-short" aria-hidden="true">Table</span></button>
- <button type="button" class="action-history-button" aria-label="Open move history" aria-haspopup="dialog">Move history</button>
+ <button type="button" class="action-history-button" aria-label="Open move history" aria-haspopup="dialog"><span class="tool-label-long">Move history</span><span class="tool-label-short" aria-hidden="true">History</span></button>
  </div></div></section>
  <section class="deal-hand" aria-label="${esc(player.name)}’s private hand">${visible?`<div id="hand-sort-help" class="hand-sort-hint action-summary"><span class="action-summary-status">${Math.max(0,3-state.plays)} plays left · Undo ${undoAvailable?'available':'unavailable'} · ${player.hand.length} cards</span></div><div class="cards" tabindex="0" role="region" aria-label="Your hand; scroll sideways for more cards" aria-describedby="hand-sort-help">${player.hand.map(c=>`<button class="modern-hand-card ${selectedIds.has(c.id)?'is-selected':''} ${c.id===selectedId?'is-active':''}" data-card="${c.id}" aria-label="${esc(c.name)} · ${c.value}M" aria-pressed="${selectedIds.has(c.id)}" ${disabled(!finished)}>${modernFace(c,c.id===selectedId?{flipped}:{})}</button>`).join('')||'<p>Your hand is empty.</p>'}</div>`:''}</section></div>`;
 }

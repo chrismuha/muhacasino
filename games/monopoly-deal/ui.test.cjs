@@ -2678,9 +2678,9 @@ test('property previews grow modestly and bank matches Properties height without
   const after=await p.evaluate(()=>({body:document.body.scrollHeight,root:document.documentElement.scrollHeight}));
   assert.ok(after.body<=Math.max(baseline.body,viewport.height)+1,JSON.stringify({viewport,baseline,after}));
   const bank=await p.locator('.current-bank').boundingBox(),properties=await p.locator('.current-properties').boundingBox();
-  assert.ok(bank.width<=112.5,JSON.stringify({viewport,bank}));assert.ok(properties.width>bank.width*2);
+  assert.ok(Math.abs(bank.width-properties.width)<1,JSON.stringify({viewport,bank,properties}));
   const card=await p.locator('.current-properties .public-mini').first().boundingBox();const deck=await p.locator(".draw-deck .deck-icon").boundingBox();assert.ok(Math.abs(card.width-deck.width)<1&&Math.abs(card.height-deck.height)<1,JSON.stringify({viewport,card,deck}));
-  assert.ok(Math.abs(bank.height-properties.height)<1,JSON.stringify({viewport,bank,properties}));
+  assert.ok(properties.y>=bank.y+bank.height-1,JSON.stringify({viewport,bank,properties}));
   assert.equal(await p.locator('.current-properties .own-groups').evaluate(el=>el.scrollWidth>=el.clientWidth),true);
   await close(p);
  }
@@ -2690,7 +2690,7 @@ test('property previews grow modestly and bank matches Properties height without
 test('elapsed timer uses only the turn-dot location and larger text',async()=>{
  const p=await open();await fixture(p,'hand',2);
  await p.waitForFunction(()=>document.querySelector('.plays-dots')?.nextElementSibling?.id==='elapsed-game-time');
- assert.equal(await p.locator('#elapsed-game-time').evaluate(el=>getComputedStyle(el).fontSize),'16px');
+ assert.equal(await p.locator('#elapsed-game-time .elapsed-value').evaluate(el=>getComputedStyle(el).fontSize),'20px');
  await p.evaluate(()=>{window.__dealTest.state.winner='Chris';window.__dealTest.render()});
  assert.equal(await p.locator('#elapsed-game-time').isVisible(),false);
  assert.equal(await p.locator('#elapsed-game-time').count(),1);await close(p);
@@ -2838,4 +2838,85 @@ test('phone cards use spare height with separated circular controls',async()=>{
   assert.ok(sizes.bottom<=sizes.height,JSON.stringify(sizes));
   await shot(p,`larger-phone-cards-${height}`);await close(p);
  }
+});
+
+test('name limit warnings bypass disabled notifications and setup frame has no focus outline',async()=>{
+ for(const preferences of [{all:false},{all:true,help:false}]){
+  const p=await open({width:420,height:780},{'muha-deal-toasts-v1':JSON.stringify(preferences)},{},false);
+  await p.locator('#ready-new').click();
+  for(const selector of ['#setup-wizard','#wizard-title']){
+   await p.locator(selector).evaluate(el=>el.focus());
+   assert.equal(await p.locator(selector).evaluate(el=>getComputedStyle(el).outlineStyle),'none');
+  }
+  await p.locator('#start').click();const input=p.locator('#player-name-0');
+  await input.fill('abcdefghijkl');await input.press('End');await input.pressSequentially('m');
+  assert.equal(await input.inputValue(),'abcdefghijkl');
+  assert.equal(await p.locator('#game-toast').isVisible(),true);
+  assert.match(await p.locator('#game-toast').textContent(),/Maximum 12 characters/);
+  await p.locator('#game-toast button').click();await input.fill('Chris');
+  await input.evaluate(el=>{el.setSelectionRange(5,5);const data=new DataTransfer();data.setData('text',' far too long');el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:data,bubbles:true,cancelable:true}));});
+  assert.equal(await input.inputValue(),'Chris');assert.equal(await p.locator('#game-toast').isVisible(),true);
+  await p.locator('#game-toast button').click();
+  await input.evaluate(el=>{el.value='abcdefghijklm';el.dispatchEvent(new Event('input',{bubbles:true}));});
+  assert.equal(await input.inputValue(),'abcdefghijkl');assert.equal(await p.locator('#game-toast').isVisible(),true);
+  await close(p);
+ }
+});
+
+test('larger deck and footer property cards share readable dimensions',async()=>{
+ for(const viewport of [{width:420,height:780},{width:820,height:1180},{width:1440,height:900}]){
+  const p=await open(viewport);await fixture(p,'win',2);
+  const deck=await p.locator('.draw-deck .deck-icon').boundingBox();
+  const card=await p.locator('.current-properties .public-mini').first().boundingBox();
+  const width=viewport.width>=1024?88:72,height=viewport.width>=1024?128:104;
+  assert.ok(Math.abs(deck.width-width)<1&&Math.abs(deck.height-height)<1,JSON.stringify({viewport,deck}));
+  assert.ok(Math.abs(card.width-width)<1&&Math.abs(card.height-height)<1,JSON.stringify({viewport,card}));
+  const strip=await p.locator('.current-properties .own-groups').boundingBox();
+  assert.ok(card.y>=strip.y&&card.y+card.height<=strip.y+strip.height,JSON.stringify({card,strip}));
+  await shot(p,`larger-footer-properties-${viewport.width}`);await close(p);
+ }
+});
+
+test('iPhone Air circular actions keep generous separation with browser bars visible',async()=>{
+ for(const height of [620,740,912])for(const hosted of [false,true]){
+  const p=await open({width:420,height},undefined,{isMobile:true,hasTouch:true});let game=p;
+  if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+  await fixture(game,'birthday',2);
+  assert.equal(await game.locator('.deal-actions').evaluate(el=>getComputedStyle(el).rowGap),'14px');
+  await game.locator('.modern-hand-card').first().evaluate(el=>el.click());
+  const controls=await game.evaluate(()=>[...document.querySelectorAll('.deal-actions .round-action')].filter(el=>getComputedStyle(el).display!=='none'&&getComputedStyle(el).visibility!=='hidden').map(el=>({id:el.id,rect:el.getBoundingClientRect().toJSON(),disc:el.querySelector('.action-disc').getBoundingClientRect().toJSON()})));
+  assert.ok(controls.length>=4,JSON.stringify(controls));
+  for(const [i,c]of controls.entries()){
+   assert.ok(c.rect.height>=44&&c.disc.width>=44,JSON.stringify({height,hosted,controls}));
+   if(i)assert.ok(c.rect.top-controls[i-1].rect.bottom>=13.9,JSON.stringify({height,hosted,controls}));
+  }
+  await shot(p,`iphone-air-actions-${height}-${hosted?'hosted':'standalone'}`);await close(p);
+ }
+});
+
+test('combined assets and matching History button remain readable on iPhone Air',async()=>{
+ const p=await open({width:420,height:740},undefined,{isMobile:true,hasTouch:true});await fixture(p,'win',2);
+ const panel=p.locator('.current-assets');assert.equal(await panel.getAttribute('aria-label'),'Your bank and properties');
+ const bank=await p.locator('.current-bank').boundingBox(),props=await p.locator('.current-properties').boundingBox();
+ assert.ok(Math.abs(bank.width-props.width)<1&&props.y>=bank.y+bank.height-1);
+ const style=selector=>p.locator(selector).evaluate(el=>{const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.color,s.backgroundColor,s.padding,s.borderRadius]});
+ assert.deepEqual(await style('.table-tools .action-history-button'),await style('#table-settings'));
+ assert.equal(await p.locator('.action-history-button').innerText(),'History');
+ await shot(p,'iphone-air-combined-assets');
+ await p.locator('.action-history-button').click();await p.locator('#action-history').waitFor();await p.locator('#action-history button').first().click();
+ await p.locator('.current-bank').click();await p.locator('#table-viewer[open]').waitFor();
+ await close(p);
+});
+
+test('consistent left-aligned bank summary and redesigned elapsed badge fit iPhone Air',async()=>{
+ const p=await open({width:420,height:740});await fixture(p,'birthday',2);
+ await p.waitForFunction(()=>document.querySelector('#elapsed-game-time .elapsed-value'));
+ const bank=await p.locator('.current-bank').boundingBox(),label=await p.locator('.current-bank .asset-panel-heading').boundingBox(),balance=await p.locator('.current-bank .bank-balance').boundingBox();
+ assert.ok(label.x>=bank.x&&label.x<bank.x+20&&balance.x>=label.x+label.width);
+ assert.ok(Math.abs((label.y+label.height/2)-(balance.y+balance.height/2))<1);
+ const headingStyle=selector=>p.locator(selector).evaluate(el=>{const s=getComputedStyle(el);return [s.fontSize,s.fontWeight,s.lineHeight]});
+ assert.deepEqual(await headingStyle('.current-bank .asset-panel-title'),await headingStyle('.current-properties .asset-panel-title'));
+ assert.equal(await p.locator('.elapsed-label').innerText(),'Time elapsed');assert.match(await p.locator('.elapsed-value').innerText(),/^\d+:\d{2}$/);
+ const timer=await p.locator('#elapsed-game-time').boundingBox(),dots=await p.locator('.plays-dots').boundingBox();assert.ok(timer.y>=dots.y+dots.height&&timer.width<=116);
+ await shot(p,'iphone-air-bank-timer');await close(p);
 });

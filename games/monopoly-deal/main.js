@@ -1,11 +1,11 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261106-deal-v160-cards-v140';
-import {paginateViewer} from './view-pages.mjs?build=20261106-deal-v160-cards-v140';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261106-deal-v160-cards-v140';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261106-deal-v160-cards-v140';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261106-deal-v160-cards-v140';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261106-deal-v160-cards-v140';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261106-deal-v160-cards-v140';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261106-deal-v160-cards-v140';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261106-deal-v160-panels-v141';
+import {paginateViewer} from './view-pages.mjs?build=20261106-deal-v160-panels-v141';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261106-deal-v160-panels-v141';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261106-deal-v160-panels-v141';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261106-deal-v160-panels-v141';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261106-deal-v160-panels-v141';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261106-deal-v160-panels-v141';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261106-deal-v160-panels-v141';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -38,6 +38,7 @@ let dealSettings={automaticDealing:true,allowPassGoOverflow:false,showElapsedTim
 try{const saved=JSON.parse(localStorage.getItem(dealSettingsKey)||'{}');if(typeof saved?.allowPassGoOverflow==='boolean')dealSettings.allowPassGoOverflow=saved.allowPassGoOverflow;if(typeof saved?.automaticDealing==='boolean')dealSettings.automaticDealing=saved.automaticDealing;}catch{}
 for(const key of ['showElapsedTime']){try{const saved=JSON.parse(localStorage.getItem(dealSettingsKey)||'{}');if(typeof saved[key]==='boolean')dealSettings[key]=saved[key];}catch{}}
 const toastDurationSeconds=()=>Number.isFinite(Number(toastPreferences.durationSeconds))?Math.min(30,Math.max(1,Number(toastPreferences.durationSeconds))):2;
+const gameTimer=document.createElement('output');gameTimer.id='elapsed-game-time';gameTimer.setAttribute('aria-label','Elapsed game time');gameTimer.setAttribute('aria-live','off');document.body.append(gameTimer);
 function toastType(message){
  if(/banked/.test(message))return 'bank';
  if(/ laid /.test(message))return 'property';
@@ -75,12 +76,12 @@ function syncToastViewport(){
  toast.style.bottom=table?`${innerHeight-(area.top+area.height/2+Math.min(144,area.height)/2)}px`:`${Math.max(16,innerHeight-bottom+12)}px`;
  toast.style.setProperty('--toast-available-height',`${Math.max(44,bottom-top-32)}px`);
 }
-function showToast(message, {items=[],detail='',type=items.length?'transfer':toastType(message)}={}) {
- if(toastPreferences.all===false||toastPreferences[type]===false)return;
+function showToast(message, {items=[],detail='',type=items.length?'transfer':toastType(message),mandatory=false}={}) {
+ if(!mandatory&&(toastPreferences.all===false||toastPreferences[type]===false))return;
  const active=$('#game-toast');
  // Routine events stay current. A transfer gets its reading time, with only
  // the latest follow-up retained so fast play cannot build a stale backlog.
- if(!active.hidden&&active.classList.contains('has-card-details')){
+ if(!mandatory&&!active.hidden&&active.classList.contains('has-card-details')){
   toastQueue.splice(0,toastQueue.length,[message,{items,detail,type}]);return;
  }
  toastQueue.length=0;
@@ -826,7 +827,7 @@ function setup() {
       <p class="setup-error" id="player-error-${i}" hidden></p>`).join('');
     document.querySelectorAll('#names input:not([readonly])').forEach(input=>{
       const exceedsLimit=text=>input.value.length-(input.selectionEnd-input.selectionStart)+text.length>12;
-      const warnLimit=()=>showToast('Maximum 12 characters.');
+      const warnLimit=()=>showToast('Maximum 12 characters.',{mandatory:true});
       input.addEventListener('beforeinput',event=>{
         if(event.inputType?.startsWith('insert')&&event.data&&exceedsLimit(event.data)){
           event.preventDefault();warnLimit();
@@ -838,7 +839,7 @@ function setup() {
       });
     });
     document.querySelectorAll('#names input').forEach(input=>input.addEventListener('input',()=>{
-      if(input.value.length>12){input.value=input.value.slice(0,12);showToast('Maximum 12 characters.');}
+      if(input.value.length>12){input.value=input.value.slice(0,12);showToast('Maximum 12 characters.',{mandatory:true});}
       input.removeAttribute('aria-invalid');
       document.getElementById(input.getAttribute('aria-describedby')).hidden = true;
     }));
@@ -1240,7 +1241,6 @@ function wireActionHistory(){
 }
 
 // Elapsed deal time survives reloads and stops at victory.
-const gameTimer=document.createElement('output');gameTimer.id='elapsed-game-time';gameTimer.setAttribute('aria-label','Elapsed game time');gameTimer.setAttribute('aria-live','off');document.body.append(gameTimer);
 function updateGameTimer(){
  const dots=$('#game .plays-dots');
  if(dots){if(dots.nextElementSibling!==gameTimer)dots.after(gameTimer);}
@@ -1250,7 +1250,10 @@ function updateGameTimer(){
  if(!state.startedAt)state.startedAt=Date.now();
  if(state.winner&&!state.finishedAt)state.finishedAt=Date.now();
  const seconds=Math.max(0,Math.floor(((state.finishedAt||Date.now())-state.startedAt)/1000));
- gameTimer.textContent=`Time ${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;
+ const value=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;
+ if(!gameTimer.querySelector('.elapsed-value'))gameTimer.innerHTML='<span class="elapsed-label">Time elapsed</span><span class="elapsed-value"></span>';
+ gameTimer.querySelector('.elapsed-value').textContent=value;
+ gameTimer.setAttribute('aria-label',`Elapsed game time: ${Math.floor(seconds/60)} minutes, ${seconds%60} seconds`);
 }
 setInterval(updateGameTimer,1000);updateGameTimer();
 
