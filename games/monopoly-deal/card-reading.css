@@ -1005,3 +1005,50 @@ html[data-theme=modern]{background:var(--modern-table-background,#0064db)}
 @media(min-width:1024px) and (min-height:700px) and (max-height:900px) and (hover:hover) and (pointer:fine){
  [data-theme=modern] .deal-hand .modern-hand-card{flex-basis:clamp(150px,12vw,168px)}
 }
+
+/* All turn actions share one row size, label scale, and circle-to-circle gap. */
+#game .deal-table .deal-actions{gap:8px;padding-block:0;justify-content:center}
+#game .deal-table.hand-visible .deal-actions{display:flex;flex-direction:column}
+#game .deal-table .deal-actions :is(#flip-card,#bank-card,#play-card,#discard-card,#end).round-action{grid-template-columns:var(--deal-action-size,44px) minmax(0,1fr);column-gap:var(--deal-action-gap,8px);height:var(--deal-action-size,44px);min-height:var(--deal-action-size,44px);padding:0;margin:0;font-size:var(--deal-action-label,14px);line-height:1.15;align-items:center}
+#game .deal-table .deal-actions .round-action:not([aria-disabled=true]),#game .deal-table .deal-actions #end,#game .deal-table .deal-actions #discard-card{display:grid}
+#game .deal-table .deal-actions .action-disc{width:var(--deal-action-size,44px);height:var(--deal-action-size,44px);font-size:var(--deal-action-symbol,28px)}
+#game .deal-table .deal-actions .round-action>span:last-child{font-size:inherit;min-width:0;white-space:normal}
+@media(max-width:767px){
+ #game .deal-table{--deal-action-size:44px;--deal-action-label:14px;--deal-action-symbol:28px;--deal-action-gap:8px}
+}
+@media(max-width:600px){
+ #game .has-selection .deal-stage{grid-template-columns:minmax(0,1fr) 108px}
+ #game .deal-table:not(.has-selection) .deal-stage{grid-template-columns:64px minmax(0,1fr) 108px}
+}
+
+/* Settings have a fixed frame and one vertical scrolling surface. */
+html:has(#appearance-dialog[open]),body:has(#appearance-dialog[open]){overflow:hidden}
+#appearance-dialog[open]{display:grid;grid-template-rows:auto minmax(0,1fr);gap:12px;box-sizing:border-box;width:min(680px,calc(100% - 24px));height:min(800px,calc(100dvh - 24px));max-width:calc(100% - 24px);max-height:calc(100dvh - 24px);padding:16px;overflow:hidden;overscroll-behavior:none}
+#appearance-dialog .wizard-heading{min-width:0;margin:0;padding-bottom:12px;gap:12px}
+#appearance-dialog .wizard-heading button{flex-shrink:0;min-height:44px}
+#appearance-dialog .settings-content{min-width:0;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-gutter:stable;padding-right:4px}
+#appearance-dialog .table-settings{display:grid;grid-template-columns:minmax(0,1fr);width:100%;box-sizing:border-box;min-width:0;padding:12px;margin:0 0 16px;gap:12px}
+#appearance-dialog :is(fieldset,section,div,label,p,legend){min-width:0;max-width:100%;box-sizing:border-box}
+#appearance-dialog fieldset{width:100%;margin:0;padding:12px}
+#appearance-dialog label,#appearance-dialog p,#appearance-dialog legend{white-space:normal;overflow-wrap:anywhere}
+#appearance-dialog input:not([type=checkbox]){max-width:100%;box-sizing:border-box}
+#appearance-dialog .upcoming-actions{display:flex;flex-wrap:wrap;gap:8px}
+/* Keep both Discard controls and the other utility buttons visible. */
+@media(max-width:600px){
+ #game .deal-table .current-stats .table-tools{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));overflow:visible;gap:4px}
+ #game .deal-table .table-tools button{min-width:0;min-height:44px;padding:4px;white-space:normal}
+ html[data-theme=modern] body.is-playing:not(:has(.has-selection)){overflow-y:auto;overflow-x:hidden}
+}
+@media(min-width:1024px) and (min-height:601px){
+ #game .current-stats .table-tools{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+#appearance-dialog label:has(input[type=checkbox]){display:flex;align-items:flex-start;gap:10px;margin:12px 0;font-size:16px;line-height:1.45}
+#appearance-dialog input[type=checkbox]{flex:0 0 22px;width:22px;height:22px;margin:1px 0 0}
+#appearance-dialog p{font-size:16px;line-height:1.5}
+#appearance-dialog legend{font-size:18px;font-weight:700}
+@media(max-width:600px){
+ #game .deal-table .current-stats{display:block}
+ #game .deal-table .current-stats .table-tools{width:100%;max-width:100%;margin:0;grid-column:1/-1}
+ #game .deal-table .table-tools button,#game .deal-table .table-tools #move{min-width:0;padding:4px;white-space:normal;overflow-wrap:anywhere}
+ #game .deal-table .table-tools button>span{min-width:0;white-space:normal;overflow-wrap:anywhere}
+}

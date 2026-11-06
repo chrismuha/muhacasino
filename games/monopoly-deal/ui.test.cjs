@@ -1825,7 +1825,7 @@ test('tablet and desktop action controls grow while deck labels and preview artw
    });
    assert.equal(geometry.scroll,geometry.client,JSON.stringify({viewport,kind,geometry}));
    for(const control of geometry.controls){
-    assert.equal(control.disc.width,desktop?64:tablet?44:32);assert.equal(control.disc.height,control.disc.width);
+    assert.equal(control.disc.width,desktop?64:44);assert.equal(control.disc.height,control.disc.width);
     if(tablet||desktop)assert.equal(control.font,desktop?22:18);
     assert.ok(control.button.right<=geometry.stage.right+1&&control.button.left>=geometry.stage.left-1);
    }
@@ -2522,4 +2522,60 @@ test('computer steal and swap warnings identify requested properties',async()=>{
   for(const name of expected)assert.ok((await p.locator('#detail').innerText()).includes(name));
   await choose(p,'Continue');await p.evaluate(()=>window.__warningRun);await idle(p);await close(p);
  }
+});
+
+
+test('circular actions use equal label sizes and evenly spaced larger mobile circles',async()=>{
+ for(const viewport of [{width:320,height:568},{width:420,height:742},{width:844,height:390},{width:768,height:1024},{width:1440,height:900}]){
+  const p=await open(viewport);await fixture(p,'hand',2);
+  const id=await p.evaluate(()=>window.__dealTest.state.players[0].hand.find(c=>c.type==='property'&&c.colors.length===2).id);
+  await p.locator(`[data-card="${id}"]`).evaluate(el=>el.click());
+  for(const expanded of [false,true]){
+   if(expanded)await p.locator('#preview-open').click();
+   const rows=await p.locator('.deal-actions .round-action').evaluateAll(nodes=>nodes.filter(el=>el.getBoundingClientRect().height).map(el=>{const r=el.getBoundingClientRect(),c=el.querySelector('.action-disc').getBoundingClientRect();return {id:el.id,top:r.top,height:r.height,circle:c.width,circleHeight:c.height,font:parseFloat(getComputedStyle(el).fontSize)}}));
+   assert.ok(rows.some(row=>row.id==='discard-card'));
+   for(const row of rows){assert.equal(row.circle,rows[0].circle);assert.equal(row.circleHeight,row.circle);assert.equal(row.height,row.circle);assert.equal(row.font,rows[0].font);}
+   const gaps=rows.slice(1).map((row,i)=>row.top-(rows[i].top+rows[i].height));
+   for(const gap of gaps)assert.ok(Math.abs(gap-8)<1,JSON.stringify({viewport,expanded,rows,gaps}));
+   if(viewport.width<768){assert.equal(rows[0].circle,44);assert.equal(rows[0].font,14);}
+   if(viewport.width>=1440){assert.equal(rows[0].circle,64);assert.equal(rows[0].font,22);}
+   assert.deepEqual(await responsiveIssues(p),[],JSON.stringify({viewport,expanded}));
+   await shot(p,`action-spacing-${viewport.width}-${expanded?'enlarged':'selected'}`);
+  }
+  await close(p);
+ }
+});
+
+test('settings keep one vertical scroll area without sideways movement standalone and hosted',async()=>{
+ for(const viewport of [{width:320,height:568},{width:420,height:742},{width:1440,height:900}])for(const hosted of [false,true]){
+  const p=await open(viewport);let game=p;
+  if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+  await fixture(game,'hand',2);await game.locator('#table-settings').click();
+  const dialog=game.locator('#appearance-dialog'),content=dialog.locator('.settings-content');
+  const before=await dialog.boundingBox();
+  assert.equal(await content.evaluate(el=>el.scrollWidth<=el.clientWidth+1),true);
+  assert.equal(await dialog.evaluate(el=>el.scrollWidth<=el.clientWidth+1),true);
+  const labels=await dialog.locator('label:has(input[type=checkbox])').evaluateAll(nodes=>nodes.map(el=>({display:getComputedStyle(el).display,width:el.scrollWidth,client:el.clientWidth})));assert.ok(labels.every(label=>label.display==='flex'&&label.width<=label.client+1));
+  await shot(p,`settings-top-${viewport.width}-${hosted?'hosted':'direct'}`);
+  await content.hover();await p.mouse.wheel(300,0);
+  assert.equal(await content.evaluate(el=>el.scrollLeft),0);assert.deepEqual(await dialog.boundingBox(),before);
+  await p.mouse.wheel(0,500);await game.waitForFunction(()=>document.querySelector('.settings-content').scrollTop>0);
+  assert.deepEqual(await dialog.boundingBox(),before);assert.equal(await dialog.locator('.wizard-heading button').isVisible(),true);
+  await shot(p,`settings-fixed-${viewport.width}-${hosted?'hosted':'direct'}`);
+  await dialog.locator('.wizard-heading button').click();await close(p);
+ }
+});
+
+test('both discard buttons share selection availability and one confirmation flow',async()=>{
+ const p=await open();await fixture(p,'hand',2);
+ for(const id of ['discard-card','discard-selected-card'])assert.equal(await p.locator('#'+id).getAttribute('aria-disabled'),'true');
+ await p.locator('[data-card]').first().click();
+ for(const id of ['discard-card','discard-selected-card']){assert.equal(await p.locator('#'+id).getAttribute('aria-disabled'),'false');assert.match(await p.locator('#'+id).innerText(),/Discard \(1\)/);}
+ await p.locator('#discard-selected-card').click();await choose(p,'Cancel');await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.discard.length),0);
+ await p.locator('#discard-card').click();await choose(p,'Discard selected cards');await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.discard.length),1);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);
+ for(const id of ['discard-card','discard-selected-card'])assert.equal(await p.locator('#'+id).getAttribute('aria-disabled'),'true');
+ await close(p);
 });

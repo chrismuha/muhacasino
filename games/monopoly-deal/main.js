@@ -1,11 +1,11 @@
-import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-move-history-v126';
-import {paginateViewer} from './view-pages.mjs?build=20261105-deal-move-history-v126';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-move-history-v126';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-move-history-v126';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-move-history-v126';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-move-history-v126';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-move-history-v126';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-move-history-v126';
+import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261105-deal-controls-settings-v127';
+import {paginateViewer} from './view-pages.mjs?build=20261105-deal-controls-settings-v127';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261105-deal-controls-settings-v127';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261105-deal-controls-settings-v127';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261105-deal-controls-settings-v127';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261105-deal-controls-settings-v127';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261105-deal-controls-settings-v127';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261105-deal-controls-settings-v127';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -148,10 +148,10 @@ function updateUnavailableControls() {
  const noPlays = state.plays >= 3 ? 'You have used all three plays. Pass to end your turn.' : '';
  for(const button of document.querySelectorAll('#game button')){
   let reason = finished && !['undo','game-restart'].includes(button.id)&&!button.hasAttribute('data-table-view')&&!button.classList.contains('action-history-button') ? finished : waiting;
-  if(!reason&&awaitingDraw&&['end','undo','play-card','bank-card','discard-card','move','wilds'].includes(button.id))reason=awaitingDraw;
+  if(!reason&&awaitingDraw&&['end','undo','play-card','bank-card','discard-card','discard-selected-card','move','wilds'].includes(button.id))reason=awaitingDraw;
   if(!reason){
    if(button.id === 'undo')reason=hiddenHand||(!undoHistory.length?'No move to undo in this turn.':'');
-   else if(button.id === 'discard-card')reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.') || (discardPlayCost(selectedCardIds.size)>3-state.plays?`Discard uses one play per card. Select at most ${(hardRules()?0:Math.max(0,me().hand.length-7))+3-state.plays} card${3-state.plays===1?'':'s'}.`:'');
+   else if(button.hasAttribute('data-discard-cards'))reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.') || (discardPlayCost(selectedCardIds.size)>3-state.plays?`Discard uses one play per card. Select at most ${(hardRules()?0:Math.max(0,me().hand.length-7))+3-state.plays} card${3-state.plays===1?'':'s'}.`:'');
    else if(button.id === 'deselect')reason = selectedCardIds.size?'':'No cards are selected.';
    else if(button.id === 'preview-previous'||button.id === 'preview-next')reason = hiddenHand || (me().hand.length<2 ? 'This is the only card in your hand.' : '');
    else if(button.id === 'wilds')reason = hiddenHand || noPlays || (!me().props.some(card=>card.colors.length>1)?'You have no wild properties on the table to rearrange.':'');
@@ -325,7 +325,7 @@ function browseSelectedCard(direction,focusTarget=null){
  preview.setAttribute('aria-label',`${card.name} · Card ${next+1} of ${hand.length}`);
  $('#selected-card-help').textContent=`${next+1} / ${hand.length}`;
  document.querySelectorAll('#game [data-card]').forEach(button=>{const id=Number(button.dataset.card),selected=selectedCardIds.has(id);button.classList.toggle('is-selected',selected);button.classList.toggle('is-active',id===selectedCardId);button.setAttribute('aria-pressed',String(selected));});
- $('#discard-card .discard-label').textContent=`Discard${selectedCardIds.size?` (${selectedCardIds.size})`:''}`;
+ document.querySelectorAll('[data-discard-label]').forEach(label=>label.textContent=`Discard${selectedCardIds.size?` (${selectedCardIds.size})`:''}`);
  $('#deselect').textContent=`Clear${selectedCardIds.size?` (${selectedCardIds.size})`:''}`;
  updateUnavailableControls();fitCompactPreview();
  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)preview.animate([{transform:`translateX(${direction*28}px)`,opacity:.65},{transform:'translateX(0)',opacity:1}],{duration:170,easing:'cubic-bezier(.2,.7,.2,1)'});
@@ -425,7 +425,7 @@ function render(){
  $('#preview-open')?.addEventListener('click',()=>{previewExpanded=true;lastCardTap=null;render();});
  $('#end').onclick=()=>run(end);
  $('#undo').onclick=undoLastMove;
- $('#discard-card').onclick=()=>run(async()=>{
+ document.querySelectorAll('[data-discard-cards]').forEach(button=>button.onclick=()=>run(async()=>{
   const cards=me().hand.filter(card=>selectedCardIds.has(card.id));
   if(!cards.length||!visible||state.winner)return;
   const cost=discardPlayCost(cards.length);
@@ -437,7 +437,7 @@ function render(){
   selectedCardId=null;previewExpanded=false;lastCardTap=null;
   log(`${me().name} discarded ${cards.length} card${cards.length===1?'':'s'}.`);
   showToast(`${cards.length} card${cards.length===1?'':'s'} discarded.`);
- });
+ }));
  $('#move').onclick=()=>openTableViewer(`properties-${state.turn}`);
  $('#wilds').onclick=()=>run(()=>rearrange());
  $('#table-settings').onclick=openGameSettings;
@@ -1086,7 +1086,7 @@ function openGameSettings(){
  if(busy){showToast('Finish the current action or computer turn first.');return;}
  if(document.querySelector('dialog[open]'))return;
  const dialog=$('#appearance-dialog');
- if(window.parent===window){dialog.append(document.querySelector('.table-settings'),document.querySelector('.upcoming-game-settings'));}
+ if(window.parent===window){dialog.querySelector('.settings-content').append(document.querySelector('.table-settings'),document.querySelector('.upcoming-game-settings'));}
  dialog.showModal();dialog.querySelector('button').focus({preventScroll:true});
 }
 // The same settings dialog is available from the starting screen and utility bar.
@@ -1095,7 +1095,7 @@ function openGameSettings(){
  const appearance=document.createElement('dialog');
  appearance.id='appearance-dialog';
  appearance.setAttribute('aria-labelledby','appearance-title');
- appearance.innerHTML='<div class="wizard-heading"><h2 id="appearance-title">Game settings</h2><button type="button">Close</button></div>';
+ appearance.innerHTML='<div class="wizard-heading"><h2 id="appearance-title">Game settings</h2><button type="button">Close</button></div><div class="settings-content"></div>';
  const notifications=document.createElement('fieldset');
  notifications.className='toast-settings';notifications.innerHTML='<legend>Toast notifications</legend><label><input type="checkbox" data-toast-type="all"> Enable toast notifications</label>'+Object.entries(toastTypes).map(([key,label])=>`<label><input type="checkbox" data-toast-type="${key}"> ${label}</label>`).join('');
  for(const input of notifications.querySelectorAll('input')){
@@ -1146,7 +1146,7 @@ function openGameSettings(){
  document.querySelector('.table-settings').append(dealing,notifications);
  const close=appearance.querySelector('button');
  close.onclick=()=>appearance.close();
- if(window.parent!==window){appearance.append(document.querySelector('.table-settings'));appearance.append(upcomingGameSettings());}
+ if(window.parent!==window){appearance.querySelector('.settings-content').append(document.querySelector('.table-settings'),upcomingGameSettings());}
  else{
   const settings=document.querySelector('.appearance-settings');settings.querySelector('summary').textContent='Game settings';settings.append(upcomingGameSettings());
   appearance.addEventListener('close',()=>{settings.append(appearance.querySelector('.table-settings'),appearance.querySelector('.upcoming-game-settings'));});
