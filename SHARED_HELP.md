@@ -14,14 +14,14 @@ Help uses the inline navigation button to open the same five Help sections. The 
 
 ## Monopoly Deal current guide and release notes
 
-Monopoly Deal remains v1.6.0. The in-game guide, Release Notes page, and About version history describe Hard property banking, the seven-card Pass Go restriction and its default-off override, the elapsed timer, and the updated mobile controls. No Mercy combined with Hard rules is Coming soon and is not playable yet. Unwanted mobile page scrolling remains unresolved and is listed under Known issues in the game guide and shared Help, without claims of a scrolling fix in the release history.
+Monopoly Deal remains v1.6.0. The in-game guide, Release Notes page, and About version history describe valued property banking in every difficulty, the seven-card Pass Go restriction and its default-off override, the elapsed timer, and the updated mobile controls. No Mercy combined with Hard rules is Coming soon and is not playable yet. Unwanted mobile page scrolling remains unresolved and is listed under Known issues in the game guide and shared Help, without claims of a scrolling fix in the release history.
 
 November 5 follow-up: turn and complete-set labels align left above Properties without colliding with Help. Help is available only in the navigation bar, including Monopoly Deal. Game settings saves Show elapsed game time. Rent can offer to move a played wild to a matching color for one play when a second play remains for rent; cancellation restores the move and plays.
 
 The v1.6.0 release date is TBD. Toast notifications are off by default, with explicit saved choices preserved. Both Discard buttons share confirmation and play costs. Blocked card-play and banking attempts always open a readable popup, even when toast notifications are off. The popup explains the rule and stays until dismissed without spending cards or plays. Other-player panels now separate the player name, hand and complete-set counts, a compact Bank summary, and a full-width Properties strip. Bank details remain available by tapping the summary. The Chrome mobile scrolling issue remains listed until the user verifies it is fixed.
 
 
-v1.6.0 (TBD): action cards can be banked for cash in all difficulties, with one play per banked card. They remain cash-only when paying debts and cannot be used for actions or returned to hand through normal play. Hard also permits valued property banking. The release covers the other-player redesign, the narrower equal-height Bank panel, Hard difficulty rules, and mandatory blocked-play popups.
+v1.6.0 (TBD): action cards can be banked for cash in all difficulties, with one play per banked card. They remain cash-only when paying debts and cannot be used for actions or returned to hand through normal play. Every difficulty also permits valued property banking. The release covers the other-player redesign, the narrower equal-height Bank panel, Hard difficulty rules, and mandatory blocked-play popups.
 
 
 Remaining Chrome mobile scrolling report: partially fixed. The body can still scroll just after starting a new game with no card selected; refreshing resolves that reported case. Keep Known issues until the user verifies the remaining behavior is fixed.

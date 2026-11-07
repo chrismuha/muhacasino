@@ -496,19 +496,21 @@ async function dragHandCard(page,card,target,{wait=true}={}){
 test('dropping hand cards banks or plays the dropped card; invalid and cancelled drops spend nothing',async()=>{
  const p=await open();await fixture(p,'hand',2);
  const ids=await p.evaluate(()=>window.__dealTest.state.players[0].hand.map(c=>c.id));
+ await dragHandCard(p,p.locator(`[data-card="${ids[1]}"]`),p.locator('.current-properties'));
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);assert.match(await p.locator('#blocked-play-reason').innerText(),/Money cards belong in the Bank/);await p.locator('#blocked-play button').click();
  await dragHandCard(p,p.locator(`[data-card="${ids[0]}"]`),p.locator('.current-bank'));
- assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);assert.match(await p.locator('#game-toast').innerText(),/Bank money, or properties with a cash value on Hard/);
- await dragHandCard(p,p.locator(`[data-card="${ids[0]}"]`),p.locator('.current-properties'));
- assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[0].id),ids[0]);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank[0].id),ids[0]);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);
+ await dragHandCard(p,p.locator(`[data-card="${ids[5]}"]`),p.locator('.current-properties'));
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[0].id),ids[5]);
  await dragHandCard(p,p.locator(`[data-card="${ids[1]}"]`),p.locator('.current-bank'));
- assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank[0].id),ids[1]);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),2);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank[1].id),ids[1]);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),3);
  const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
  const source=p.locator('[data-card]').first();await source.scrollIntoViewIfNeeded();const r=await source.boundingBox();
  await p.mouse.move(r.x+r.width/2,r.y+r.height/2);await p.mouse.down();await p.mouse.move(5,5,{steps:10});await p.keyboard.press('Escape');await p.mouse.up();
  assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);assert.equal(await p.locator('.hand-drag-ghost').count(),0);
  await p.evaluate(()=>{window.__dealTest.state.plays=3;window.__dealTest.render()});
  await dragHandCard(p,p.locator('[data-card]').first(),p.locator('.current-bank'));
- assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),1);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),3);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),2);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),3);
  await conservation(p);await close(p);
 });
 test('whole hand cards have no overlap; end cards and close focus ring stay inside their panes',async()=>{
@@ -1330,7 +1332,7 @@ test('secondary text is white and the guide consistently documents the v1.6.0 ru
  assert.equal(await p.locator('#undo').getAttribute('aria-disabled'),'true');
  assert.equal(await p.locator('#undo').evaluate(el=>getComputedStyle(el).color),'rgb(255, 255, 255)');
  const guide=await p.evaluate(async()=>{const {GUIDE_RULES,cardFacts}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),facts:deck().filter(c=>c.type==='action').flatMap(cardFacts).join(' ')}});
- assert.match(guide.rules,/Hard also allows properties with a cash value to be banked/);assert.match(guide.rules,/Opponents with no payable assets cannot be charged rent/);assert.match(guide.rules,/tap a wild directly/i);assert.match(guide.rules,/Action cards can be banked/);
+ assert.match(guide.rules,/Properties with a cash value can be banked in Easy, Normal, and Hard/);assert.match(guide.rules,/Opponents with no payable assets cannot be charged rent/);assert.match(guide.rules,/tap a wild directly/i);assert.match(guide.rules,/Action cards can be banked/);
  await close(p);
 });
 
@@ -3150,5 +3152,31 @@ test('desktop tables fit as banks and property collections grow through selectio
   await game.evaluate(()=>{const t=window.__dealTest,s=t.state;s.discard.push(...s.players[0].hand.splice(0));t.render();});await p.waitForTimeout(100);
   assert.ok(await game.evaluate(()=>document.body.scrollHeight-document.body.clientHeight<=1),'Populated desktop tables must still fit with an empty hand');
   await close(p);
+ }
+});
+
+test('every difficulty banks regular and valued wild properties for one play and rejects zero-value wilds',async()=>{
+ for(const difficulty of ['easy','normal','hard']){
+  const p=await open(undefined,undefined,{},false);await fixture(p,'hand',2);
+  const ids=await p.evaluate(difficulty=>{const t=window.__dealTest,s=t.state,player=s.players[0];s.difficulty=difficulty;
+   const regular=player.hand.find(c=>c.type==='property'&&c.colors.length===1),wild=player.hand.find(c=>c.type==='property'&&c.colors.length===2);
+   s.draw.push(player.hand.splice(player.hand.findIndex(c=>c.action==='pass'),1)[0]);const j=s.draw.findIndex(c=>c.type==='property'&&c.value===0);const zero=s.draw.splice(j,1)[0];player.hand.push(zero);t.render();return {regular:regular.id,wild:wild.id,zero:zero.id};
+  },difficulty);
+  for(const [index,id]of [ids.regular,ids.wild].entries()){
+   await p.locator(`[data-card="${id}"]`).click();assert.equal(await p.locator('#bank-card').getAttribute('aria-disabled'),'false',difficulty);
+   await p.locator('#bank-card').click();await idle(p);
+   assert.equal(await p.evaluate(id=>window.__dealTest.state.players[0].bank.some(c=>c.id===id),id),true);
+   assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.length),0);
+   assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),index+1);
+  }
+  await p.locator(`[data-card="${ids.zero}"]`).click();assert.equal(await p.locator('#bank-card').getAttribute('aria-disabled'),'true');
+  const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
+  const rejected=p.evaluate(id=>window.__dealTest.play(window.__dealTest.state.players[0].hand.find(c=>c.id===id),'bank'),ids.zero);await p.locator('#blocked-play[open]').waitFor();
+  assert.match(await p.locator('#blocked-play-reason').innerText(),/cash value|zero-value/i);await p.locator('#blocked-play button').click();await rejected;
+  assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
+  const replay=p.evaluate(id=>window.__dealTest.play(window.__dealTest.state.players[0].bank.find(c=>c.id===id),'play'),ids.regular);
+  await p.locator('#blocked-play[open]').waitFor();assert.match(await p.locator('#blocked-play-reason').innerText(),/Banked cards are cash only/);await p.locator('#blocked-play button').click();await replay;
+  assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
+  await conservation(p);await close(p);
  }
 });

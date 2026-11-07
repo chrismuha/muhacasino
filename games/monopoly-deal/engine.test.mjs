@@ -26,16 +26,17 @@ test('buildings require full street sets, exclude railroads and utilities, and r
 
 test('money and action banking and payable rent assets exclude zero-value wilds',async()=>{
  const {canBank,hasPayableAssets}=await import('./engine.mjs');
- assert.equal(canBank({type:'money',value:1}),true);assert.equal(canBank({type:'action',value:4}),true);assert.equal(canBank({type:'property',value:4}),false);
+ assert.equal(canBank({type:'money',value:1}),true);assert.equal(canBank({type:'action',value:4}),true);assert.equal(canBank({type:'property',value:4}),true);
  const p={bank:[],props:[],buildings:[]};assert.equal(hasPayableAssets(p),false);p.props.push({value:0});assert.equal(hasPayableAssets(p),false);p.props.push({value:1});assert.equal(hasPayableAssets(p),true);
 });
 
- test('Hard banks only properties with a cash value; Pass Go respects its net draw',async()=>{
+test('all difficulties bank valued properties and reject zero-value cards; Pass Go respects its net draw',async()=>{
  const {canBank,canPassGo}=await import('./engine.mjs');
- for(const difficulty of ['easy','normal'])assert.equal(canBank({type:'property',value:4},difficulty),false);
- assert.equal(canBank({type:'property',value:4},'hard'),true);
- assert.equal(canBank({type:'property',value:0},'hard'),false);
- assert.equal(canBank({type:'action',value:4},'hard'),true);
+ for(const difficulty of ['easy','normal','hard']){
+  for(const card of deck())assert.equal(canBank(card,difficulty),card.value>0,`${difficulty}: ${card.name}`);
+  assert.equal(canBank({type:'property',value:0},difficulty),false);
+ }
+ assert.equal(canBank(null),false);assert.equal(canBank({type:'unknown',value:5}),false);
  assert.equal(canPassGo(Array(6)),true);assert.equal(canPassGo(Array(7)),false);assert.equal(canPassGo(Array(7),true),true);
  });
 

@@ -95,7 +95,7 @@ Appearance checks verify a single card-table renderer, no appearance-selector co
 
 ## November 4 controls follow-up
 
-Hard permits banking properties with positive cash value; other difficulties and action cards retain their restrictions. Pass Go is blocked when its net draw would leave more than seven cards unless the saved Allow Pass Go over seven setting is enabled (off by default). Regression checks cover the default guard, override, property banking, mobile library navigation, compact Help access, elapsed time across reload, and scalable Pass Go artwork. No Mercy combined with Hard rules remains Coming soon pending verified card counts and debt interactions.
+Easy, Normal, and Hard permit banking properties and action cards with a positive cash value. Pass Go is blocked when its net draw would leave more than seven cards unless the saved Allow Pass Go over seven setting is enabled (off by default). Regression checks cover the default guard, override, property banking, mobile library navigation, compact Help access, elapsed time across reload, and scalable Pass Go artwork. No Mercy combined with Hard rules remains Coming soon pending verified card counts and debt interactions.
 
 November 5: verify left-aligned turn and complete-set labels at 320, 430, 768, and 1440 pixels; saved elapsed-time switch and re-enabling; inline Help outside Monopoly Deal; wild movement from rent with the one-play cost and cancellation rollback.
 
@@ -104,7 +104,7 @@ Help access: verify navigation-bar Help remains available after reload, with exa
 November 5 defaults: toast notifications are off without an explicit saved opt-in; notification-specific fixtures opt in deliberately. Checks cover navigation-only Help (including obsolete saved settings), the sole circular Discard action, and the unique v1.5.0 release dated November 5, 2026.
 
 
-v1.6.0: verify cash-value action banking in every difficulty, one-play cost, bank-only debt transfers, and rejection of attempts to play banked actions. Preserve the Hard-only property-banking rule and zero-value-wild restriction.
+v1.6.0: verify cash-value action banking in every difficulty, one-play cost, bank-only debt transfers, and rejection of attempts to play banked actions. Preserve the shared property-banking rule and zero-value-wild restriction.
 
 Preview canvas checks cover phone, tablet, and cabinet shells at two browser sizes without changing their simulated viewport. Hosted canvas checks cover default and custom table colors. Notch checks cover expanded and collapsed headers with a 54px simulated inset. Physical iPhone confirmation remains required for the documented Chrome issue.
 
@@ -113,3 +113,6 @@ iPhone footer hand regression coverage checks larger card widths and stable widt
 
 
 Desktop progression coverage fills four players’ Bank and Properties panels and switches between property, wild, and money selections at 1280×720, 1440×800, 1536×864, and 1920×1080, both standalone and hosted. It verifies no page overflow, visible turn controls and previews, horizontal access to the last hand card, and fitted play after closing reading views, expanding the launcher header, and reducing the window height by 100 pixels. Run in Chromium and WebKit. The elapsed-time badge is present before layout measurements.
+
+
+Shared banking coverage enumerates all 106 cards and verifies positive cash values are eligible. UI checks bank a regular property and a valued wild in Easy, Normal, and Hard, verify one play per card, keep banked properties out of played sets, reject zero-value wilds without spending cards or plays, and block replaying banked properties. Mouse drops cover property banking, normal property play, invalid money-to-Properties drops, cancellation, and the three-play limit.

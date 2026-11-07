@@ -1,11 +1,11 @@
 import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261106-deal-v160-hand-v142';
 import {paginateViewer} from './view-pages.mjs?build=20261106-deal-v160-hand-v142';
-import {aiChoice,aiPlay} from './ai.mjs?build=20261106-deal-v160-hand-v142';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261106-deal-v160-hand-v142';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261106-deal-v160-hand-v142';
+import {aiChoice,aiPlay} from './ai.mjs?build=20261106-banking-v154';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261106-banking-v154';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261106-banking-v154';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261106-deal-v160-hand-v142';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261106-deal-v160-hand-v153';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261106-deal-v160-hand-v142';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261106-banking-v154';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261106-banking-v154';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -173,7 +173,7 @@ function updateUnavailableControls() {
    else if(button.id === 'wilds')reason = hiddenHand || noPlays || (!me().props.some(card=>card.colors.length>1)?'You have no wild properties on the table to rearrange.':'');
    else if(button.id === 'move')reason = hiddenHand;
    else if(button.id === 'flip-card')reason = hiddenHand || (!selected ? 'Select a two-color wild property card to flip it.' : '') || (handFlipPlayCost()?noPlays:'') || (selected.type !== 'property' || selected.colors.length !== 2 ? 'Only two-color wild property cards can be flipped.' : '');
-   else if(button.id === 'bank-card')reason = hiddenHand || (!selected ? 'Select money or an action card to bank; Hard also allows valued properties.' : '') || noPlays || (!canBank(selected,hardRules()?'hard':'normal') ? 'Bank money or action cards with a cash value; Hard also allows valued properties.' : '');
+   else if(button.id === 'bank-card')reason = hiddenHand || (!selected ? 'Select money, an action card, or a property with a cash value to bank.' : '') || noPlays || (!canBank(selected) ? 'Bank money, actions, or properties with a cash value. Zero-value wilds cannot be banked.' : '');
    else if(button.id === 'play-card')reason = hiddenHand || (!selected ? 'Select a property or action card to play.' : '') || noPlays || (selected.type === 'money' ? 'Money cards can only be banked, not played.' : selected.action==='pass'&&!canPassGo(me().hand,dealSettings.allowPassGoOverflow)?'Pass Go would put your hand over seven. Play another card first or change Game settings.':'');
   }
   button.disabled = false;
@@ -202,7 +202,7 @@ function wireHandSorting() {
    const element=document.elementFromPoint(x,y)?.closest('.current-bank,.current-properties');
    if(!element)return null;
    const card=player.hand.find(card=>card.id===cardId),mode=element.matches('.current-bank')?'bank':'play';
-   const reason=state.plays>=3?'You have used all three plays. Pass to end your turn.':mode==='bank'&&!canBank(card,hardRules()?'hard':'normal')?'Bank money or action cards with a cash value; Hard also allows valued properties.':mode==='play'&&card?.type==='money'?'Money cards belong in the Bank.':'';
+   const reason=state.plays>=3?'You have used all three plays. Pass to end your turn.':mode==='bank'&&!canBank(card)?'Bank money, actions, or properties with a cash value. Zero-value wilds cannot be banked.':mode==='play'&&card?.type==='money'?'Money cards belong in the Bank.':'';
    return {element,mode,allowed:!reason,reason};
   },
   onDrop(cardId,target){
@@ -668,7 +668,7 @@ async function pay(p,to,amount){
 }
 async function collect(targets,amount,actionName){for(const p of targets){log(`${me().name} charged ${p.name} ${amount}M for ${actionName}.`,'action');if(await defend(p,me(),`${actionName}: Pay ${amount}M to ${me().name}.`))await pay(p,me(),amount);else log(`${p.name} blocked ${actionName}.`,'action')}}
 const opponents=()=>state.players.filter(p=>p!==me());
-async function play(c,chosenMode=null,chosenColor=null){if(c&&!me().hand.some(card=>card.id===c.id)){if(!me().isAI)return showBlockedPlay('Only cards in your hand can be played. Banked cards are cash only and cannot return to your hand or be used for their action.');return;}if((!visible&&!me().isAI)||state.plays>=3||!c){if(!me().isAI)return showBlockedPlay(!visible?'Reveal your hand first.':state.plays>=3?'You have used all three plays. Pass to end your turn.':'Select a card to play.');return;}let mode=chosenMode||await choose(label(c),[['Cancel','cancel'],...(canBank(c,hardRules()?'hard':'normal')?[['Put in bank','bank']]:[]),...(c.type!=='money'?[['Play card','play']]:[])]);if(mode==='cancel')return;if(mode==='bank'){if(!canBank(c,hardRules()?'hard':'normal')){showBlockedPlay('Bank money or action cards with a cash value; Hard also allows valued properties.');return;}remove(me().hand,c);me().bank.push(c);state.plays++;log(`${me().name} banked ${c.value}M.`);return}
+async function play(c,chosenMode=null,chosenColor=null){if(c&&!me().hand.some(card=>card.id===c.id)){if(!me().isAI)return showBlockedPlay('Only cards in your hand can be played. Banked cards are cash only and cannot return to your hand or be used for their action.');return;}if((!visible&&!me().isAI)||state.plays>=3||!c){if(!me().isAI)return showBlockedPlay(!visible?'Reveal your hand first.':state.plays>=3?'You have used all three plays. Pass to end your turn.':'Select a card to play.');return;}let mode=chosenMode||await choose(label(c),[['Cancel','cancel'],...(canBank(c)?[['Put in bank','bank']]:[]),...(c.type!=='money'?[['Play card','play']]:[])]);if(mode==='cancel')return;if(mode==='bank'){if(!canBank(c)){showBlockedPlay('Bank money, actions, or properties with a cash value. Zero-value wilds cannot be banked.');return;}remove(me().hand,c);me().bank.push(c);state.plays++;log(`${me().name} banked ${c.value}M.`);return}
  if(c.type==='property'){c.color=chosenColor||await colorFor(c,{smart:true});remove(me().hand,c);me().props.push(c);state.plays++;log(`${me().name} laid ${c.name}.`);return}
  const a=c.action,p=me();if(a==='no'||a==='double'){await choose('Keep this card for a response or rent combo',[['OK',true]],a==='no'?'Just Say No is offered when an action targets you.':'Select a Rent card to add one or two Double the Rent cards.');return}
  if(a==='pass'){if(!canPassGo(p.hand,dealSettings.allowPassGoOverflow)){showBlockedPlay('Pass Go would put your hand over seven cards. Play another card first, or enable Allow Pass Go over seven in Game settings.');return;}use(c);const automatic=dealCards(p,2);log(automatic?`${p.name} drew two cards.`:`${p.name}: tap the deck to draw two cards.`,'draw');return}
@@ -994,7 +994,7 @@ function tableViews() {
   return [
     {key:'discard', kind:'deck', title:'Discard pile', cards:[...state.discard].reverse(), description:'Newest discard first. These cards may return when the draw pile runs out.'},
     ...state.players.flatMap((player, index) => [
-      {key:`bank-${index}`, kind:'bank', ownerIndex:index, title:`${player.name}’s bank`, cards:[...player.bank].sort((a,b)=>a.value-b.value||a.name.localeCompare(b.name)), description:`${player.bank.reduce((total, card) => total + card.value, 0)}M in the bank. Money and valued action cards can be banked; Hard also permits valued properties. Banked cards are cash only and cannot be played or returned to hand.`, bank:true},
+      {key:`bank-${index}`, kind:'bank', ownerIndex:index, title:`${player.name}’s bank`, cards:[...player.bank].sort((a,b)=>a.value-b.value||a.name.localeCompare(b.name)), description:`${player.bank.reduce((total, card) => total + card.value, 0)}M in the bank. Money, valued action cards, and valued properties can be banked in every difficulty. Banked cards are cash only and cannot be played or returned to hand.`, bank:true},
       {key:`properties-${index}`, kind:'properties', ownerIndex:index, title:`${player.name}’s properties`, cards:[...player.props].sort((a,b)=>a.value-b.value).concat([...player.buildings].sort((a,b)=>a.value-b.value)), description:`${sets(player).length} of 3 complete colors. Properties and buildings on the table.`}
     ]),
     {key:'activity', title:'Table activity', activity:state.log, description:'Most recent event first.'}, ...guideViews
