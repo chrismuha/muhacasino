@@ -1,4 +1,4 @@
-const CACHE_NAME = "muha-casino-shell-20261106-game-badge-v152";
+const CACHE_NAME = "muha-casino-shell-20261106-desktop-fit-v153";
 const APP_SHELL = [
   "./",
   "./index.html",

@@ -4,7 +4,7 @@ import {aiChoice,aiPlay} from './ai.mjs?build=20261106-deal-v160-hand-v142';
 import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261106-deal-v160-hand-v142';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261106-deal-v160-hand-v142';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261106-deal-v160-hand-v142';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261106-deal-v160-hand-v152';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261106-deal-v160-hand-v153';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261106-deal-v160-hand-v142';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -402,9 +402,28 @@ function fitTableCards(){
  if(!table||!cards)return;
  table.style.removeProperty('--hand-card-width');
  if(preview)preview.style.removeProperty('width');
+ table.classList.remove('compact-desktop');
  // Phone hand size follows screen width, independent of selection or spare height.
  if(innerWidth<=600||table.classList.contains('has-selection'))return;
  const card=cards.querySelector('.modern-hand-card');
+ if(innerWidth>=1024&&matchMedia('(hover:hover) and (pointer:fine)').matches){
+  // Recalculate from content coordinates, including after the player scrolls.
+  const bottom=()=>cards.getBoundingClientRect().bottom+document.body.scrollTop+window.scrollY;
+  const stage=table.querySelector('.deal-stage'),actions=table.querySelector('.deal-actions');
+  if(bottom()>innerHeight-20||actions.getBoundingClientRect().height>stage.clientHeight||document.body.scrollHeight>document.body.clientHeight)table.classList.add('compact-desktop');
+  if(!card)return;
+  const width=card.offsetWidth;
+  let target=Math.max(72,Math.min(180,width+(innerHeight-bottom()-20)*.69));
+  table.style.setProperty('--hand-card-width',`${target}px`);
+  for(let pass=0;pass<3;pass++){
+   const overflow=Math.max(0,document.body.scrollHeight-document.body.clientHeight);
+   if(!overflow||target<=72)break;
+   target=Math.max(72,target-(overflow+2)*.69);
+   table.style.setProperty('--hand-card-width',`${target}px`);
+  }
+  return;
+ }
+
  if(!card)return;
  // Spend only unused viewport height, preserving the existing short-screen minimums.
  // Body scrolling must not look like spare space after a card selection.
@@ -430,6 +449,8 @@ function fitTableCards(){
  }
 }
 function fitCompactPreview(){
+ // Include the timer before measuring the action column and the available hand space.
+ updateGameTimer();
  fitTableCards();
  const preview=$('.selected-table-card'),face=preview?.querySelector('.deal-face');
  if(!face)return;
@@ -1198,7 +1219,7 @@ function openGameSettings(){
  display.innerHTML='<legend>Display</legend><label><input id="show-elapsed-time" type="checkbox"> Show elapsed game time</label><p>Help always remains available in the navigation bar. This preference is saved on this device. Hiding elapsed time does not reset the clock.</p>';
  for(const [id,key] of [['show-elapsed-time','showElapsedTime']]){
   const input=display.querySelector('#'+id);input.checked=dealSettings[key];
-  input.onchange=()=>{dealSettings[key]=input.checked;try{localStorage.setItem(dealSettingsKey,JSON.stringify(dealSettings));}catch{}updateGameTimer();};
+  input.onchange=()=>{dealSettings[key]=input.checked;try{localStorage.setItem(dealSettingsKey,JSON.stringify(dealSettings));}catch{}fitCompactPreview();};
  }
  document.querySelector('.table-settings').append(display);
  document.querySelector('.table-settings').append(dealing,notifications);

@@ -1,0 +1,40 @@
+/* Compact only when normal desktop play would overflow the available window. */
+@media(min-width:1024px) and (hover:hover) and (pointer:fine){
+ #game .deal-table:not(.has-selection) .deal-hand .modern-hand-card{flex-basis:var(--hand-card-width,clamp(150px,12vw,180px))}
+ #game .deal-table.compact-desktop{--deal-action-size:44px;--deal-action-label:16px;--deal-action-symbol:28px;--deal-action-gap:8px;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:max-content auto auto;gap:6px 16px}
+ #game .compact-desktop .deal-stage{grid-column:1;grid-row:2;min-height:0;margin:0;padding:2px 0;container-type:inline-size}
+ #game .compact-desktop .card-stage{height:auto;container-type:normal;align-self:center}
+ #game .compact-desktop .current-seat{grid-column:2;grid-row:2/4;align-self:start}
+ #game .compact-desktop .deal-hand{grid-column:1;grid-row:3;min-height:0;align-self:start}
+ #game .compact-desktop .deal-hand .modern-hand-card{flex-basis:var(--hand-card-width,120px)}
+ #game .compact-desktop .deal-hand .cards{padding-top:16px;padding-bottom:18px}
+ #game .compact-desktop .current-seat-heading{padding:0 0 4px}
+ #game .compact-desktop .current-assets{min-height:0}
+ #game .compact-desktop .current-assets .current-bank{min-height:38px;padding:3px 8px}
+ #game .compact-desktop .current-assets .current-properties{padding:4px 8px;gap:4px}
+ #game .compact-desktop .current-properties .public-mini{width:72px;aspect-ratio:72/104}
+ #game .compact-desktop .current-properties .own-groups:has(.public-mini){min-height:130px}
+ #game .compact-desktop .property-inspect-hint{display:none}
+ #game .compact-desktop .current-stats{display:block;padding-block:2px}
+ #game .compact-desktop .current-stats>:is(.coin,b,span){display:none}
+ #game .compact-desktop .current-stats .table-tools{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;width:100%;margin:0}
+ #game .compact-desktop .table-tools button,#game .compact-desktop .table-tools #move{min-height:40px;padding:4px;font-size:14px}
+ #game .deal-table.compact-desktop .deal-stage{grid-template-columns:76px minmax(0,1fr) 232px;column-gap:12px}
+ #game .compact-desktop .has-card-preview #preview-open{width:min(100%,140px)}
+ #game .deal-table.compact-desktop .deal-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:center;gap:4px;--deal-action-label:14px}
+ #game .compact-desktop .deal-actions .plays-dots{grid-column:1/-1;justify-content:center;padding:0}
+ #game .compact-desktop .deal-actions #elapsed-game-time{grid-column:1/-1;max-width:none;flex-direction:row;gap:8px}
+ #game .compact-desktop .opponent{grid-template-columns:minmax(0,1fr) minmax(0,2fr);grid-template-rows:auto auto}
+ #game .compact-desktop .opponent .opponent-heading{grid-column:1;grid-row:1;padding:3px 6px}
+ #game .compact-desktop .opponent .opponent-count{grid-column:2;grid-row:1;flex-direction:row;justify-content:flex-end;gap:6px;padding:3px 6px;font-size:12px}
+ #game .compact-desktop .opponent .opponent-bank-preview{grid-column:1;grid-row:2;justify-content:flex-start;padding:3px 6px;white-space:normal;flex-wrap:wrap}
+ #game .compact-desktop .opponent .opponent-properties{grid-column:2;grid-row:2}
+
+ #game .compact-desktop .deal-actions #elapsed-game-time{min-height:34px;padding:2px 6px}
+ #game .compact-desktop .elapsed-value{font-size:18px}
+ #game .compact-desktop .opponent-groups{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;align-items:start}
+ #game .compact-desktop .deal-property-group{flex-shrink:0}
+ #game .compact-desktop .opponent-properties{min-height:0;padding-block:3px}
+ #game .compact-desktop .opponent-groups{min-height:0}
+ #game .compact-desktop .opponent-bank-cards{min-height:0}
+}

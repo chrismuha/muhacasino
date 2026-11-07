@@ -110,3 +110,6 @@ Preview canvas checks cover phone, tablet, and cabinet shells at two browser siz
 
 
 iPhone footer hand regression coverage checks larger card widths and stable width and height through regular property, wild, money, and action selection, opening and closing the reading view, and Clear, without spending plays. Standalone and hosted layouts cover 390×700, 420×740, and 430×932 CSS viewports in Chromium and WebKit. Short crowded screens may scroll vertically to preserve readable cards.
+
+
+Desktop progression coverage fills four players’ Bank and Properties panels and switches between property, wild, and money selections at 1280×720, 1440×800, 1536×864, and 1920×1080, both standalone and hosted. It verifies no page overflow, visible turn controls and previews, horizontal access to the last hand card, and fitted play after closing reading views, expanding the launcher header, and reducing the window height by 100 pixels. Run in Chromium and WebKit. The elapsed-time badge is present before layout measurements.

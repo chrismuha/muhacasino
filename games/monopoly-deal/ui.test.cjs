@@ -3120,3 +3120,35 @@ test('iPhone footer hand cards stay large through property selection and reading
   await shot(p,`stable-iphone-hand-${viewport.width}-${hosted?'hosted':'direct'}`);await close(p);
  }
 });
+
+test('desktop tables fit as banks and property collections grow through selection and resize',async()=>{
+ for(const viewport of [{width:1280,height:720},{width:1440,height:800},{width:1536,height:864},{width:1920,height:1080}])for(const hosted of [false,true]){
+  const p=await open(viewport,undefined,{},false);let game=p;
+  if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+  await fixture(game,'hand',4);
+  for(const populated of [false,true]){
+   if(populated)await game.evaluate(()=>{const t=window.__dealTest,s=t.state;for(const player of s.players){for(let i=0;i<6;i++){const j=s.draw.findIndex(c=>c.type==='property');if(j>=0)player.props.push(s.draw.splice(j,1)[0]);}for(let i=0;i<3;i++){const j=s.draw.findIndex(c=>c.type==='money');if(j>=0)player.bank.push(s.draw.splice(j,1)[0]);}}t.render();});
+   for(const index of [null,0,4,1]){
+    if(index===null){if(await game.locator('.modern-hand-card[aria-pressed=true]').count())await game.locator('#deselect').evaluate(el=>el.click());}else await game.locator('.modern-hand-card').nth(index).evaluate(el=>el.click());
+    await p.waitForTimeout(100);
+    const g=await game.evaluate(()=>{const box=selector=>document.querySelector(selector).getBoundingClientRect().toJSON();return {height:innerHeight,scroll:document.body.scrollHeight-document.body.clientHeight,wide:document.body.scrollWidth-innerWidth,hand:box('.deal-hand'),card:box('.modern-hand-card'),controls:[...document.querySelectorAll('.deal-actions .round-action')].filter(el=>getComputedStyle(el).visibility!=='hidden'&&el.offsetHeight).map(el=>el.getBoundingClientRect().toJSON()),stage:box('.deal-stage'),tools:box('.table-tools'),preview:document.querySelector('#preview-open')?box('#preview-open'):null,rows:[...document.querySelectorAll('.deal-table>*,.current-seat>*')].map(el=>({name:el.className,height:el.getBoundingClientRect().height}))};});
+    assert.ok(g.scroll<=1&&g.wide<=1&&g.hand.bottom<=g.height+1,JSON.stringify({viewport,hosted,populated,index,g}));
+    assert.ok(g.card.width>=72&&g.tools.bottom<=g.height,JSON.stringify(g));
+    if(g.preview)assert.ok(g.preview.top>=g.stage.top&&g.preview.bottom<=g.stage.bottom+1,JSON.stringify(g));
+    assert.ok(g.controls.every(r=>r.height>=40&&r.top>=g.stage.top&&r.bottom<=g.stage.bottom+1&&r.left>=g.stage.left&&r.right<=g.stage.right+1),JSON.stringify(g));
+   }
+  }
+  await game.locator('#preview-open').click();await game.locator('#preview-close').click();await p.waitForTimeout(100);
+  const browse=await game.locator('.deal-hand .cards').evaluate(el=>{el.scrollLeft=el.scrollWidth;const last=el.lastElementChild.getBoundingClientRect(),strip=el.getBoundingClientRect();return {last:last.right,edge:strip.right,scroll:document.body.scrollHeight-document.body.clientHeight};});
+  assert.ok(browse.last<=browse.edge+1&&browse.scroll<=1,JSON.stringify(browse));
+  await game.locator('.deal-hand .cards').evaluate(el=>el.scrollLeft=0);
+  if(hosted){await p.locator('#toolbarCollapseButton').click();await p.waitForTimeout(150);assert.ok(await game.evaluate(()=>document.body.scrollHeight-document.body.clientHeight<=1));}
+  await p.setViewportSize({width:viewport.width,height:viewport.height-100});await p.waitForTimeout(150);
+  const resized=await game.evaluate(()=>({height:innerHeight,scroll:document.body.scrollHeight-document.body.clientHeight,table:document.querySelector('.deal-table').className,hand:document.querySelector('.deal-table').style.getPropertyValue('--hand-card-width'),rows:[...document.querySelectorAll('.deal-table>*,.current-seat>*,.current-assets>*,.deal-stage>*')].map(el=>({name:el.className,height:el.getBoundingClientRect().height}))}));
+  assert.ok(resized.scroll<=1,JSON.stringify({viewport,hosted,resized}));
+  await shot(p,`desktop-grown-${viewport.width}-${hosted?'hosted':'direct'}`);
+  await game.evaluate(()=>{const t=window.__dealTest,s=t.state;s.discard.push(...s.players[0].hand.splice(0));t.render();});await p.waitForTimeout(100);
+  assert.ok(await game.evaluate(()=>document.body.scrollHeight-document.body.clientHeight<=1),'Populated desktop tables must still fit with an empty hand');
+  await close(p);
+ }
+});
