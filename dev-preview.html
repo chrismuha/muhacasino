@@ -27,8 +27,8 @@
     .cutout-size.hidden { display: none; }
     main { flex: 1 1 auto; min-height: 0; padding: 28px; overflow: auto; scrollbar-width: none; display: grid; place-items: start center; }
     main::-webkit-scrollbar { display: none; }
-    .device-stage { position: relative; flex: 0 0 auto; transition: width .2s, height .2s; }
-    .device { position: absolute; inset: 0 auto auto 0; padding: 10px; border-radius: 24px; background: #080a0e; box-shadow: 0 18px 60px #000b, 0 0 0 1px #3a4353; transform: scale(var(--preview-scale, 1)); transform-origin: top left; transition: width .2s, height .2s, transform .2s; }
+    .device-stage { position: relative; flex: 0 0 auto; overflow: clip; }
+    .device { position: absolute; inset: 0 auto auto 0; padding: 10px; border-radius: 24px; background: #080a0e; box-shadow: 0 18px 60px #000b, 0 0 0 1px #3a4353; transform: scale(var(--preview-scale, 1)); transform-origin: top left; }
     .app-screen { width: 100%; height: 100%; }
     .cabinet-screen { display: none; position: relative; overflow: hidden; border: 8px solid #11151d; border-radius: 16px; background: radial-gradient(circle at 50% 20%, #394a78, #121722 58%, #080a0e); box-shadow: inset 0 0 0 1px #4f5b70, 0 8px 24px #0009; color: #dce7ff; }
     .cabinet-screen::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, #fff0 0 5px, #9fc5ff0a 6px); pointer-events: none; }
@@ -99,7 +99,7 @@
     @media (max-width: 700px) { main { padding: 14px; } .toolbar { position: static; } }
     /* Current device uses the available browser area, without a simulated frame. */
     main.current-device { padding: 0; display: block; overflow: hidden; }
-    .device.current-device { width: 100%; height: 100%; padding: 0; border-radius: 0; box-shadow: none; transition: none; }
+    .device.current-device { transform: none; width: 100%; height: 100%; padding: 0; border-radius: 0; box-shadow: none; transition: none; }
     .device.current-device iframe { border-radius: 0; }
     main.current-device .device-stage { width: 100%; height: 100%; transition: none; }
   </style>
@@ -308,8 +308,8 @@
 
     function auditLayout() {
       const root = appPreview.contentDocument;
-      if (!root) return;
-      const documents = getDocuments(root);
+      if (!root?.documentElement || !root.defaultView) return;
+      const documents = getDocuments(root).filter(doc => doc.documentElement);
       const overflows = documents.filter((doc) => {
         const element = doc.documentElement;
         return element.scrollWidth > element.clientWidth + 2;
@@ -319,7 +319,7 @@
         return element.scrollHeight - element.clientHeight;
       }));
       const widthStatus = overflows.length ? `⚠ ${overflows.length} horizontal overflow` : '✓ Width fits';
-      const heightStatus = verticalOverflow > 2 ? `Vertical scrolling: ${verticalOverflow}px` : 'Height fits';
+      const heightStatus = verticalOverflow > 2 ? `Game scroll: ${verticalOverflow}px` : 'Game height fits';
       const safeTop = parseFloat(root.defaultView.getComputedStyle(root.documentElement).getPropertyValue('--safe-area-inset-top')) || 0;
       const safeBottom = parseFloat(root.defaultView.getComputedStyle(root.documentElement).getPropertyValue('--safe-area-inset-bottom')) || 0;
       const clippedTitles = documents.flatMap(doc => Array.from(doc.querySelectorAll('.topbar .brand, .game-toolbar .game-identity, .title'))).filter(title => {
@@ -396,7 +396,7 @@
       }
       dimensions.textContent = `${w} × ${h} CSS px${isCabinet ? ' main display · 4 live screens' : ''}`;
       updateCabinetScreens();
-      window.requestAnimationFrame(fitPreview);
+      fitPreview();
     }
 
     function fitPreview() {
@@ -405,9 +405,11 @@
       const naturalHeight = device.offsetHeight;
       if (!naturalWidth || !naturalHeight) return;
       const canvasStyle = getComputedStyle(previewCanvas);
-      const availableWidth = Math.max(240, previewCanvas.clientWidth - parseFloat(canvasStyle.paddingLeft) - parseFloat(canvasStyle.paddingRight));
-      const scale = device.classList.contains('cabinet') ? Math.min(1, availableWidth / naturalWidth) : 1;
-      device.style.setProperty('--preview-scale', scale.toFixed(4));
+      const availableWidth = Math.max(1, previewCanvas.clientWidth - parseFloat(canvasStyle.paddingLeft) - parseFloat(canvasStyle.paddingRight));
+      const availableHeight = Math.max(1, previewCanvas.clientHeight - parseFloat(canvasStyle.paddingTop) - parseFloat(canvasStyle.paddingBottom));
+      // Scale the shell only: the embedded app keeps its exact CSS viewport.
+      const scale = Math.min(1, availableWidth / naturalWidth, availableHeight / naturalHeight);
+      device.style.setProperty('--preview-scale', (Math.floor(scale * 10000) / 10000).toFixed(4));
       deviceStage.style.width = `${Math.ceil(naturalWidth * scale)}px`;
       deviceStage.style.height = `${Math.ceil(naturalHeight * scale)}px`;
     }

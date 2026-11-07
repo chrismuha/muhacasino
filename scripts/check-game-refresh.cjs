@@ -85,12 +85,39 @@ for(const game of games.slice(0,4))test(`${game}: text-entry keyboard shrinks th
  const p=await browser.newPage({...phone,viewport:{width:420,height:712}});
  try{
   await p.goto(`${origin}/index.html#${game}`);await checkFrame(p,game,'before editing');
-  await p.frameLocator('#gameFrame').locator('#creditStep').focus();
+  const child=p.frameLocator('#gameFrame');
+  await child.locator('#settingsButton').evaluate(el=>el.click());
+  await child.locator('.settings-page-jump').selectOption({label:'Adjust Money'});
+  await child.locator('#creditStep').focus();
   await p.evaluate(()=>{Object.defineProperty(visualViewport,'height',{configurable:true,value:350});visualViewport.dispatchEvent(new Event('resize'));});
   await p.waitForFunction(()=>document.querySelector('#gameView').getBoundingClientRect().bottom===350);
   await checkFrame(p,game,'editing');
   await p.frameLocator('#gameFrame').locator('#creditStep').evaluate(el=>el.blur());
   await p.waitForFunction(()=>document.querySelector('#gameView').getBoundingClientRect().bottom===712);
   await checkFrame(p,game,'after blur');
+ }finally{await p.close();}
+});
+
+test('every hosted game extends its navigation background behind the notch',async()=>{
+ const p=await browser.newPage({...phone,viewport:{width:420,height:912}});
+ try{
+  for(const game of games){
+   await p.goto(`${origin}/index.html#${game}`);await checkFrame(p,game,'notch initial');
+   const original=await p.locator('.game-toolbar').evaluate(el=>getComputedStyle(el).backgroundColor);
+   await p.evaluate(()=>document.documentElement.style.setProperty('--safe-area-inset-top','54px'));
+   for(const collapsed of [true,false]){
+    if((await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded')==='false')!==collapsed)await p.locator('#toolbarCollapseButton').click();
+    const g=await checkFrame(p,game,'notch');
+    assert.equal(g.view.top,0,game);assert.ok(g.frame.top>=54,game);
+    assert.equal(await p.locator('.game-toolbar').evaluate(el=>getComputedStyle(el).backgroundColor),original,game);
+    if(collapsed)assert.equal(g.bar.height,54,game);
+   }
+   if(process.env.GAME_QA_ARTIFACTS)await p.screenshot({path:path.join(process.env.GAME_QA_ARTIFACTS,`${game}-notch.png`)});
+   await p.setViewportSize({width:844,height:390});
+   await p.evaluate(()=>{document.documentElement.style.setProperty('--safe-area-inset-top','0px');document.documentElement.style.setProperty('--safe-area-inset-left','54px')});
+   const landscape=await checkFrame(p,game,'landscape notch');
+   assert.equal(landscape.bar.left,0,game);assert.equal(landscape.bar.width,844,game);assert.equal(landscape.frame.left,54,game);
+   await p.setViewportSize({width:420,height:912});
+  }
  }finally{await p.close();}
 });

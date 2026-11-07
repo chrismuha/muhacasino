@@ -16,11 +16,11 @@ before(async()=>{
 });
 after(async()=>{await browser?.close();await new Promise(resolve=>server?server.close(resolve):resolve())});
 async function open(viewport={width:430,height:932},storage,contextOptions={},enableToasts=true){
- const context=await browser.newContext({viewport,...contextOptions});
+ const context=await browser.newContext({viewport,serviceWorkers:'block',...contextOptions});
  // Gameplay notification checks opt in explicitly; default-preference checks use enableToasts=false.
  if(enableToasts)await context.addInitScript(()=>{if(localStorage.getItem('muha-deal-toasts-v1')===null)localStorage.setItem('muha-deal-toasts-v1',JSON.stringify({all:true}))});
  if(storage)await context.addInitScript(({values,enableToasts})=>{for(const [key,value]of Object.entries(values)){let stored=value;if(enableToasts&&key==='muha-deal-toasts-v1'){try{stored=JSON.stringify({all:true,...JSON.parse(value)})}catch{}}localStorage.setItem(key,stored)}},{values:storage,enableToasts});
- const page=await context.newPage();page.setDefaultTimeout(5000);page.setDefaultNavigationTimeout(15000);page.errors=[];page.on('pageerror',error=>page.errors.push(error.message));
+ const page=await context.newPage();page.setDefaultTimeout(5000);page.setDefaultNavigationTimeout(15000);page.errors=[];page.on('pageerror',error=>page.errors.push(error.stack || error.message));
  // Test-only instrumentation is added by the test server response interceptor.
  // The shipped app has no fixture or private-state access API.
  await page.route('**/monopoly-deal/main.js?*',async route=>{const response=await route.fetch();await route.fulfill({response,body:await response.text()+`\nwindow.__dealTest={get state(){return state},get visible(){return visible},get busy(){return busy},setState(s,show=true){state=s;visible=show;selectedCardId=null;previewFlipped=false;previewExpanded=false;lastCardTap=null;turnHandoff=!show;render()},render,run,play,end,rearrange,defend,pay,checkWin,tableViews,showToast,enforceHandLimit};`})});
@@ -1982,11 +1982,12 @@ test('iPhone Air normal play has no residual vertical scroll with populated tabl
    await fixture(game,kind,4);
    for(const selector of [null,'[data-card]','[data-card]:has(.wild-half)']){
     if(selector){const card=game.locator(selector).first();if(!await card.count())continue;await game.locator('#deselect').click({force:true});await card.evaluate(el=>el.click());}
-    const geometry=await game.evaluate(()=>{document.body.scrollTop=1e6;return {scroll:document.body.scrollTop,total:document.body.scrollHeight,height:document.body.clientHeight,hand:document.querySelector('.deal-hand').getBoundingClientRect().bottom,viewport:innerHeight,rows:[...document.querySelectorAll('.game-topbar,main,.deal-table>*,.deal-hand>*,.current-seat>*,.current-assets>*,.deal-actions>*')].map(el=>({name:el.className,top:el.getBoundingClientRect().top,height:el.getBoundingClientRect().height,padding:getComputedStyle(el).padding,margin:getComputedStyle(el).margin}))};});
+    const geometry=await game.evaluate(()=>{document.body.scrollTop=1e6;return {cardWidth:document.querySelector('.modern-hand-card')?.getBoundingClientRect().width,handWidth:document.querySelector('.deal-table')?.style.getPropertyValue('--hand-card-width'),scroll:document.body.scrollTop,total:document.body.scrollHeight,height:document.body.clientHeight,hand:document.querySelector('.deal-hand').getBoundingClientRect().bottom,viewport:innerHeight,rows:[...document.querySelectorAll('.game-topbar,main,.deal-table>*,.deal-hand>*,.current-seat>*,.current-assets>*,.deal-actions>*')].map(el=>({name:el.className,top:el.getBoundingClientRect().top,height:el.getBoundingClientRect().height,padding:getComputedStyle(el).padding,margin:getComputedStyle(el).margin}))};});
     assert.equal(geometry.scroll,0,JSON.stringify({height,hosted,expanded,kind,selector,geometry}));
     assert.ok(geometry.hand<=geometry.viewport,JSON.stringify({height,hosted,expanded,kind,selector,geometry}));
     const gutter=await game.locator('.deal-hand .cards').evaluate(el=>{const bottom=el.getBoundingClientRect().bottom;return Math.min(...[...el.children].map(card=>bottom-card.getBoundingClientRect().bottom))});
     assert.ok(gutter>=16,`Scrollbar must stay below card artwork: ${gutter}`);
+    if(height===700&&!hosted&&kind==='hotel'&&selector==='[data-card]')await shot(p,'short-phone-selected');
    }
   }
   }
@@ -2955,7 +2956,7 @@ test('tablet four-player tables fit and enlarged cards retain reachable reading 
  for(const viewport of [{width:890,height:626},{width:750,height:832},{width:820,height:1180},{width:1366,height:1024}]){
   const p=await open(viewport,undefined,{isMobile:true,hasTouch:true});await fixture(p,'hand',4);
   await p.locator('.modern-hand-card').nth(3).evaluate(el=>el.click());
-  const fit=await p.evaluate(()=>({scroll:document.body.scrollHeight,client:document.body.clientHeight,bottom:document.querySelector('.deal-hand').getBoundingClientRect().bottom,h:innerHeight}));
+  const fit=await p.evaluate(()=>({scroll:document.body.scrollHeight,client:document.body.clientHeight,bottom:document.querySelector('.deal-hand').getBoundingClientRect().bottom,h:innerHeight,rows:[...document.querySelectorAll('.deal-table>*,.deal-stage>*,.current-seat>*')].map(el=>({name:el.className,height:el.getBoundingClientRect().height})),card:document.querySelector('.modern-hand-card').offsetWidth}));
   assert.ok(fit.scroll<=fit.client+1&&fit.bottom<=fit.h+1,JSON.stringify({viewport,fit}));
   await p.locator('#preview-open').click();await p.locator('.selected-table-card').waitFor();
   await p.locator('#preview-close').scrollIntoViewIfNeeded();assert.equal(await p.locator('#preview-close').isVisible(),true);
@@ -2997,5 +2998,80 @@ test('phone compact view preserves enlargement and readable controls',async()=>{
  await p.locator('#preview-close').scrollIntoViewIfNeeded();await p.locator('#preview-close').click();
  assert.equal(await p.locator('.deal-hand').isVisible(),true);assert.equal(await p.locator('.modern-hand-card').count(),1);
  for(const selector of ['#table-settings','#undo','#discard-selected-card']){const box=await p.locator(selector).boundingBox();assert.ok(box.height>=44);}
+ await close(p);
+});
+
+
+test('device preview fits its canvas while preserving the simulated viewport',async()=>{
+ const p=await open({width:1400,height:850});
+ await p.goto(origin+'/dev-preview.html');
+ for(const viewport of [{width:1400,height:850},{width:700,height:600}]){
+  await p.setViewportSize(viewport);
+  for(const preset of await p.locator('#preset option').evaluateAll(options=>[...new Set(options.map(option=>option.value).filter(value=>/^\d+x\d+$/.test(value)))])){
+   await p.locator('#preset').selectOption(preset);
+   await p.waitForFunction(()=>{const c=document.querySelector('main');return c.scrollHeight<=c.clientHeight+1&&c.scrollWidth<=c.clientWidth+1});
+   const g=await p.evaluate(()=>{
+    const canvas=document.querySelector('main'),stage=document.querySelector('#device-stage').getBoundingClientRect(),screen=document.querySelector('iframe').contentWindow;
+    return {scrollX:canvas.scrollWidth-canvas.clientWidth,scrollY:canvas.scrollHeight-canvas.clientHeight,bottom:stage.bottom,right:stage.right,height:innerHeight,width:innerWidth,screen:[screen.innerWidth,screen.innerHeight]};
+   });
+   assert.deepEqual(g.screen,preset.split('x').map(Number));
+   assert.ok(g.scrollX<=1&&g.scrollY<=1&&g.bottom<=g.height&&g.right<=g.width,JSON.stringify({viewport,preset,g}));
+  }
+ }
+ await close(p);
+});
+
+test('hosted Deal canvas follows table color and preserves navigation color',async()=>{
+ const p=await open({width:420,height:912});
+ await p.goto(origin+'/index.html#monopoly-deal');
+ await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();
+ const game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));
+ for(const color of ['#0064db','#236944']){
+  await game.evaluate(color=>{document.documentElement.style.setProperty('--modern-table-background',color);parent.postMessage({type:'muha-deal-background',color},location.origin)},color);
+  await p.waitForTimeout(50);
+  const expected=await game.locator('html').evaluate(el=>getComputedStyle(el).backgroundColor);
+  for(const selector of ['html','body','#gameView','#gameFrame'])assert.equal(await p.locator(selector).evaluate(el=>getComputedStyle(el).backgroundColor),expected);
+  assert.equal(await p.locator('.game-toolbar').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(10, 12, 25)');
+  assert.deepEqual(await game.locator('body').evaluate(el=>[getComputedStyle(el).backgroundColor,getComputedStyle(el).backgroundImage]),[expected,'none']);
+ }
+ await close(p);
+});
+
+
+test('Deal collapsed menu sits beside the notch and content clears the cutout',async()=>{
+ const p=await open({width:420,height:912});
+ await p.goto(origin+'/index.html#monopoly-deal');
+ await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();
+ await p.evaluate(()=>document.documentElement.style.setProperty('--safe-area-inset-top','54px'));
+ for(const collapsed of [true,false]){
+  if((await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded')==='false')!==collapsed)await p.locator('#toolbarCollapseButton').click();
+  const g=await p.evaluate(()=>{const r=s=>document.querySelector(s).getBoundingClientRect().toJSON();return {host:r('#gameView'),header:r('.game-toolbar'),button:r('#toolbarCollapseButton'),game:r('#gameFrame')};});
+  assert.equal(g.host.top,0);
+  assert.ok(g.game.top>=54,JSON.stringify(g));
+  if(collapsed){assert.equal(g.header.height,54);assert.ok(g.button.left>268&&g.button.top>=0&&g.button.bottom<=54,JSON.stringify(g));}
+  else assert.ok(g.button.top>=54,JSON.stringify(g));
+ }
+ await close(p);
+});
+
+
+test('Current device follows window resizing and uses spare space for readable cards',async()=>{
+ const p=await open({width:783,height:760});
+ await p.goto(origin+'/dev-preview.html');
+ await p.locator('#preset').selectOption('420x912');
+ await p.locator('#preset').selectOption('current');
+ const launcher=p.frames().find(f=>f.parentFrame()===p.mainFrame());
+ await launcher.goto(origin+'/index.html#monopoly-deal');
+ await p.frameLocator('#app-preview').frameLocator('#gameFrame').locator('#ready-new').waitFor();
+ const game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));
+ await fixture(game,'hand',2);
+ for(const viewport of [{width:783,height:760},{width:1400,height:1000},{width:783,height:760}]){
+  await p.setViewportSize(viewport);await p.waitForTimeout(150);
+  const g=await p.evaluate(()=>{const stage=document.querySelector('main'),device=document.querySelector('#device'),child=document.querySelector('#app-preview').contentWindow;return {stage:[stage.clientWidth,stage.clientHeight],child:[child.innerWidth,child.innerHeight],transform:getComputedStyle(device).transform};});
+  assert.deepEqual(g.child,g.stage);assert.equal(g.transform,'none');
+  const hand=await game.locator('.modern-hand-card').first().evaluate(el=>({width:el.offsetWidth,height:innerHeight,scroll:document.body.scrollHeight-document.body.clientHeight}));
+  assert.ok(hand.width>=90,JSON.stringify({viewport,hand}));assert.equal(hand.scroll,0,JSON.stringify({viewport,hand}));
+  await shot(p,`current-device-${viewport.width}x${viewport.height}`);
+ }
  await close(p);
 });

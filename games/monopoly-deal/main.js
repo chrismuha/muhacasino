@@ -402,21 +402,31 @@ function fitTableCards(){
  if(!table||!cards)return;
  table.style.removeProperty('--hand-card-width');
  if(preview)preview.style.removeProperty('width');
- if(innerWidth>600||table.classList.contains('has-selection'))return;
+ if((innerWidth<=600&&innerHeight<=900)||table.classList.contains('has-selection'))return;
  const card=cards.querySelector('.modern-hand-card');
  if(!card)return;
  // Spend only unused viewport height, preserving the existing short-screen minimums.
- const bottom=cards.getBoundingClientRect().bottom;
+ // Body scrolling must not look like spare space after a card selection.
+ const contentBottom=()=>cards.getBoundingClientRect().bottom+document.body.scrollTop+window.scrollY;
+ const bottom=contentBottom();
  let spare=Math.max(0,innerHeight-bottom-32);
- if(preview){
+ if(preview&&innerWidth<=600){
   const current=preview.getBoundingClientRect().width;
   const target=Math.min(144,preview.parentElement.clientWidth,preview.closest(".card-stage").clientHeight*.69,current+spare*.69*.4);
   preview.style.width=`${Math.max(current,target)}px`;
-  spare=Math.max(0,innerHeight-cards.getBoundingClientRect().bottom-32);
+  spare=Math.max(0,innerHeight-contentBottom()-32);
  }
- const width=card.getBoundingClientRect().width;
- const target=Math.min(112,innerWidth*.25,width+spare*.69);
+ const width=card.offsetWidth;
+ const target=Math.min(innerWidth<=600 ? 112 : 180,innerWidth*(innerWidth<=600 ? .25 : .18),width+spare*.69);
  table.style.setProperty('--hand-card-width',`${Math.max(width,target)}px`);
+ // Recheck the complete scroll surface after changing card and preview sizes.
+ for(let pass=0;pass<3;pass++){
+  const overflow=Math.max(0,document.body.scrollHeight-document.body.clientHeight);
+  if(!overflow)break;
+  const current=parseFloat(table.style.getPropertyValue('--hand-card-width'));
+  if(current<=width)break;
+  table.style.setProperty('--hand-card-width',`${Math.max(width,current-(overflow+2)*.69)}px`);
+ }
 }
 function fitCompactPreview(){
  fitTableCards();

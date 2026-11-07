@@ -89,3 +89,39 @@ html.deal-host-open.deal-setup-locked #gameFrame{background:var(--deal-setup-bac
 
 /* Only settings and guide lock during setup, dialogs, and pending actions. */
 body.game-open #gameView [data-deal-command]:disabled{opacity:.4;cursor:default;filter:grayscale(1)}
+
+/* Every game paints edge to edge. Its header, rather than a separate blank strip,
+   reserves the notch; the collapsed control sits safely beside the cutout. */
+body.game-open #gameView:not([hidden]){
+ top:0;
+ height:calc(var(--casino-keyboard-height,100dvh) - var(--casino-safe-bottom));
+ --casino-header-height:calc(var(--casino-toolbar-height) + var(--casino-safe-top));
+ grid-template-rows:var(--casino-header-height) minmax(0,1fr);
+}
+body.game-open #gameView:not(.toolbar-collapsed) .game-toolbar{
+ box-sizing:border-box;
+ max-height:none;
+ height:100%;
+ padding-top:calc(6px + var(--casino-safe-top));
+}
+body.game-open #gameView.toolbar-collapsed{
+ --casino-header-height:max(28px,var(--casino-safe-top));
+}
+body.game-open #gameView.toolbar-collapsed .game-toolbar{
+ height:100%!important;
+}
+body.game-open #gameView.toolbar-collapsed .toolbar-collapse-button{
+ height:clamp(30px,var(--casino-safe-top),44px);
+}
+body.game-open #gameView .game-load-state{inset-block-start:var(--casino-header-height)}
+/* Landscape cutouts reserve content space without leaving an unpainted nav edge. */
+body.game-open #gameView:not([hidden]){left:0;right:0}
+body.game-open #gameView:not(.toolbar-collapsed) .game-toolbar{
+ padding-left:calc(12px + var(--casino-safe-left));
+ padding-right:calc(12px + var(--casino-safe-right));
+}
+body.game-open #gameView #gameFrame{
+ width:calc(100% - var(--casino-safe-left) - var(--casino-safe-right));
+ margin-left:var(--casino-safe-left);
+}
+body.game-open #gameView.toolbar-collapsed .toolbar-collapse-button{right:max(12px,var(--casino-safe-right))}

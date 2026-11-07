@@ -105,3 +105,5 @@ November 5 defaults: toast notifications are off without an explicit saved opt-i
 
 
 v1.6.0: verify cash-value action banking in every difficulty, one-play cost, bank-only debt transfers, and rejection of attempts to play banked actions. Preserve the Hard-only property-banking rule and zero-value-wild restriction.
+
+Preview canvas checks cover phone, tablet, and cabinet shells at two browser sizes without changing their simulated viewport. Hosted canvas checks cover default and custom table colors. Notch checks cover expanded and collapsed headers with a 54px simulated inset. Physical iPhone confirmation remains required for the documented Chrome issue.

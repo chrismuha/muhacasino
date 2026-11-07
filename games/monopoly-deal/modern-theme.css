@@ -1,6 +1,7 @@
 .property-rents,.modern-catalog-face{display:none}
 html[data-theme=modern]{background:var(--modern-table-background,#0064db);color:#fff;color-scheme:dark}
-[data-theme=modern] body{background:linear-gradient(180deg,color-mix(in srgb,var(--modern-table-background,#0064db),black 72%),transparent 42%),radial-gradient(ellipse at 48% 50%,color-mix(in srgb,var(--modern-table-background,#0064db),white 12%),var(--modern-table-background,#0064db) 42%,color-mix(in srgb,var(--modern-table-background,#0064db),#111344 85%) 100%);background-attachment:fixed}
+/* Use the same canvas color as the host safe areas and toolbar. */
+[data-theme=modern] body{background:var(--modern-table-background,#0064db)}
 [data-theme=modern] main{max-width:1180px;padding:12px 14px 24px}
 [data-theme=modern] .game-topbar{background:transparent;border:0;padding:14px 20px;gap:10px}
 [data-theme=modern] .game-topbar>a{background:#ff7300;border:2px solid white;border-radius:14px;padding:10px 14px;box-shadow:0 3px 0 #9b3e00;font-size:16px}

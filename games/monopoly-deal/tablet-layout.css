@@ -46,7 +46,7 @@
  #game .deal-table .table-tools .tool-label-short{display:inline}
  #game .deal-table .deal-hand{grid-column:1/-1;grid-row:3;min-height:0}
  #game .deal-table .deal-hand .cards{gap:10px;padding:14px 8px 8px;justify-content:safe center}
- #game .deal-table .deal-hand .modern-hand-card{flex-basis:clamp(64px,calc((100cqw - 100px)/9),126px);margin:0!important}
+ #game .deal-table .deal-hand .modern-hand-card{flex-basis:var(--hand-card-width,clamp(64px,calc((100cqw - 100px)/9),126px));margin:0!important}
  #game .deal-actions #elapsed-game-time{max-width:116px;min-height:44px;padding:5px 8px}
  #game .elapsed-label{font-size:12px}
  #game .elapsed-value{font-size:20px}
@@ -65,7 +65,7 @@
  #game .deal-table[data-selected-type=money] #play-card[aria-disabled=true]{display:none}
 }
 @media(min-width:601px) and (max-width:1366px) and (min-height:480px) and (max-height:740px){
- #game .deal-table .deal-hand .modern-hand-card{flex-basis:72px}
+ #game .deal-table .deal-hand .modern-hand-card{flex-basis:var(--hand-card-width,72px)}
  #game .deal-table .deal-hand .cards{padding-top:12px;padding-bottom:4px}
 }
 @media(min-width:601px) and (max-width:1366px) and (min-height:480px){
@@ -85,11 +85,11 @@
  #game .deal-table{row-gap:8px}
  #game .deal-table .current-seat-heading{padding-bottom:2px}
  #game .deal-table .current-assets .current-bank{min-height:34px;padding-block:2px}
- #game .deal-table .deal-hand .modern-hand-card{flex-basis:64px}
+ #game .deal-table .deal-hand .modern-hand-card{flex-basis:var(--hand-card-width,64px)}
 }
 
 /* A short open-foldable viewport puts Bank beside Properties in the same panel. */
-@media(min-width:601px) and (max-width:1366px) and (min-height:480px) and (max-height:620px){
+@media(min-width:601px) and (max-width:1366px) and (min-height:480px) and (max-height:680px){
  #game .deal-table .current-assets{grid-template-columns:104px minmax(0,1fr);grid-template-rows:auto}
  #game .deal-table .current-assets .current-bank{flex-wrap:wrap;align-content:flex-start;align-items:center;justify-content:flex-start;gap:4px;min-height:0;padding:8px;border-bottom:0;border-right:1px solid #91c9ff44}
  #game .deal-table .current-bank>.asset-count{flex-basis:100%;margin:0;text-align:left}
@@ -105,5 +105,5 @@
  #game .deal-table .draw-deck{width:100px}
  #game .deal-table .draw-deck .deal-card-back.deck-icon{width:96px;height:139px}
  #game .deal-table .current-properties .public-mini{width:96px;aspect-ratio:96/139}
- #game .deal-table .deal-hand .modern-hand-card{flex-basis:clamp(84px,calc((100cqw - 88px)/7),144px)}
+ #game .deal-table .deal-hand .modern-hand-card{flex-basis:var(--hand-card-width,clamp(84px,calc((100cqw - 88px)/7),144px))}
 }

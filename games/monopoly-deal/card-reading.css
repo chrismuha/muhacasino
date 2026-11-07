@@ -715,7 +715,7 @@ body:has(#setup-wizard[open])>.game-topbar,body:has(#setup-wizard[open])>main{op
 /* Keep scrolling inside the finite game surface and paint it edge to edge. */
 html[data-theme]{height:100%;overflow:hidden;overscroll-behavior:none}
 html[data-theme] body{height:100%;min-height:0;overflow-y:auto;overscroll-behavior:none}
-html[data-theme=modern] body{background-size:100% 100%;background-attachment:local;background-color:color-mix(in srgb,var(--modern-table-background,#0064db),#111344 85%)}
+html[data-theme=modern] body{background-size:100% 100%;background-attachment:local;background-color:var(--modern-table-background,#0064db)}
 
 .game-topbar button:disabled{opacity:.4;filter:grayscale(1);cursor:default}
 
@@ -1155,7 +1155,7 @@ body.is-finished .game-over-controls>*{flex:1 1 140px}
  #game .deal-table .deal-actions{gap:6px}
 }
 @media(min-width:1024px) and (min-height:601px) and (max-height:900px){
- #game .deal-hand .cards{padding-bottom:2px}
+ #game .deal-hand .cards{padding-bottom:18px}
 }
 
 /* The setup frame and programmatically focused heading need no browser outline. */
