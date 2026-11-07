@@ -3094,3 +3094,29 @@ test('phone settings follows color and large previews retain two rows of control
   await shot(p,`phone-settings-${viewport.width}-${hosted?'hosted':'direct'}`);await close(p);
  }
 });
+
+test('iPhone footer hand cards stay large through property selection and reading',async()=>{
+ for(const viewport of [{width:390,height:700},{width:420,height:740},{width:430,height:932}])for(const hosted of [false,true]){
+  const p=await open(viewport,undefined,{isMobile:true,hasTouch:true});let game=p;
+  if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+  await fixture(game,'hand',2);await p.waitForTimeout(100);
+  const measure=()=>game.locator('.modern-hand-card').first().evaluate(el=>({width:el.offsetWidth,height:el.offsetHeight}));
+  const before=await measure();
+  assert.ok(before.width>=Math.min(92,viewport.width*.2)-1,JSON.stringify({viewport,hosted,before}));
+  for(const index of [0,4,1,3]){
+   await game.locator('.modern-hand-card').nth(index).click();await p.waitForTimeout(100);
+   const after=await measure();
+   assert.ok(Math.abs(after.width-before.width)<1&&Math.abs(after.height-before.height)<1,JSON.stringify({viewport,hosted,index,before,after}));
+   if(index===0)await shot(p,`selected-iphone-property-${viewport.width}-${hosted?'hosted':'direct'}`);
+  }
+  await game.locator('.modern-hand-card').first().click();await game.locator('#preview-open').click();
+  await game.locator('#preview-close').click();await p.waitForTimeout(100);
+  assert.ok(Math.abs((await measure()).width-before.width)<1);
+  await game.locator('#deselect').click();await p.waitForTimeout(100);
+  assert.ok(Math.abs((await measure()).width-before.width)<1);
+  await p.setViewportSize({width:viewport.width,height:viewport.height-132});await p.waitForTimeout(100);
+  assert.ok(Math.abs((await measure()).width-before.width)<1,'Browser controls must not shrink hand cards');
+  const plays=await game.evaluate(()=>window.__dealTest.state.plays);assert.equal(plays,0);
+  await shot(p,`stable-iphone-hand-${viewport.width}-${hosted?'hosted':'direct'}`);await close(p);
+ }
+});

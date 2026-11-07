@@ -1,4 +1,4 @@
-const CACHE_NAME = "muha-casino-shell-20261106-deal-duo-buttons-v149";
+const CACHE_NAME = "muha-casino-shell-20261106-deal-phone-hand-v151";
 const APP_SHELL = [
   "./",
   "./index.html",

@@ -107,3 +107,6 @@ November 5 defaults: toast notifications are off without an explicit saved opt-i
 v1.6.0: verify cash-value action banking in every difficulty, one-play cost, bank-only debt transfers, and rejection of attempts to play banked actions. Preserve the Hard-only property-banking rule and zero-value-wild restriction.
 
 Preview canvas checks cover phone, tablet, and cabinet shells at two browser sizes without changing their simulated viewport. Hosted canvas checks cover default and custom table colors. Notch checks cover expanded and collapsed headers with a 54px simulated inset. Physical iPhone confirmation remains required for the documented Chrome issue.
+
+
+iPhone footer hand regression coverage checks larger card widths and stable width and height through regular property, wild, money, and action selection, opening and closing the reading view, and Clear, without spending plays. Standalone and hosted layouts cover 390×700, 420×740, and 430×932 CSS viewports in Chromium and WebKit. Short crowded screens may scroll vertically to preserve readable cards.
