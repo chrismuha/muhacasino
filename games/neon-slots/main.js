@@ -400,6 +400,17 @@ function getActiveTotalBetUSD(totalBetOverrideUSD = totalBetDisplayOverrideUSD) 
         : getTotalBet();
 }
 
+function lowerBetIfNeeded(totalBetOverrideUSD = totalBetDisplayOverrideUSD) {
+    if (isSpinning || freeSpinsRemaining > 0) return false;
+    return Boolean(window.slotExperience?.lowerBetToAffordable({
+        balance,
+        wager: getActiveTotalBetUSD(totalBetOverrideUSD),
+        denomination: getDenominationValue(),
+        lines: Number(linesEl.value),
+        betSelect: betEl,
+    }));
+}
+
 function shouldOfferLastChanceSpin(totalBetOverrideUSD = totalBetDisplayOverrideUSD) {
     if (freeSpinsRemaining > 0) return false;
     const totalBetUSD = getActiveTotalBetUSD(totalBetOverrideUSD);
@@ -987,6 +998,7 @@ function updateLastChanceOverlayContent() {
 }
 
 function openLastChanceOverlay() {
+    if (lowerBetIfNeeded()) return false;
     if (!shouldOfferLastChanceSpin() || !lastChanceOverlayEl || autoSpinRunning || isSpinning) return false;
     const totalBetUSD = getActiveTotalBetUSD();
     const requiredCreditUSD = roundUSD(Math.max(totalBetUSD - balance, 0));
@@ -1027,7 +1039,7 @@ async function tryLastChanceSpin() {
 }
 
 async function handleSpinAction() {
-    const totalBetOverrideUSD = Number.isFinite(totalBetDisplayOverrideUSD)
+    let totalBetOverrideUSD = Number.isFinite(totalBetDisplayOverrideUSD)
         ? roundUSD(totalBetDisplayOverrideUSD)
         : null;
 
@@ -1035,6 +1047,8 @@ async function handleSpinAction() {
         cancelAutoSpin();
         return;
     }
+
+    if (lowerBetIfNeeded(totalBetOverrideUSD)) totalBetOverrideUSD = null;
 
     if (shouldOfferLastChanceSpin(totalBetOverrideUSD)) {
         openLastChanceOverlay();
@@ -1135,6 +1149,7 @@ function getSettingsDefinitions() {
         { key: "playMode", title: "Credits or Money", element: document.getElementById("playModeSelect")?.closest(".select") },
         { key: "withdrawalDemo", title: "Withdrawal Demonstration", element: document.getElementById("withdrawalDemoToggle")?.closest(".checkbox-setting") },
         { key: "buyBonusButton", title: "Buy Bonus Button", element: document.getElementById("buyBonusToggle")?.closest(".checkbox-setting") },
+        { key: "autoLowerBet", title: "Automatically lower bet", element: document.getElementById("autoLowerBetToggle")?.closest(".checkbox-setting") },
         { key: "luckyWheel", title: "Lucky Wheel", element: document.getElementById("luckyWheelToggle")?.closest(".checkbox-setting") },
         { key: "pointerOdds", title: "Wheel Pointer Match Chances", element: document.querySelector(".slot-pointer-odds-setting") },
         { key: "resultBars", title: "Result Bar Layout", element: document.getElementById("collapseEmptyResultsToggle")?.closest(".checkbox-setting") },
@@ -1707,9 +1722,13 @@ async function doSpin(options = {}) {
         return { completed: false, reason: "busy", totalWinUSD: 0 };
     }
     const isFreeSpin = freeSpinsRemaining > 0;
-    const wagerConfig = isFreeSpin && freeSpinWagerConfig
+    let wagerConfig = isFreeSpin && freeSpinWagerConfig
         ? { ...freeSpinWagerConfig }
         : getWagerConfig(options.totalBetOverrideUSD);
+    if (!isFreeSpin && balance < wagerConfig.totalBetUSD && lowerBetIfNeeded(options.totalBetOverrideUSD)) {
+        wagerConfig = getWagerConfig();
+        options = { ...options, totalBetOverrideUSD: null };
+    }
     const { totalBetUSD } = wagerConfig;
     if (!isFreeSpin && balance < totalBetUSD) {
         totalBetDisplayOverrideUSD = null;
@@ -1815,6 +1834,7 @@ async function doSpin(options = {}) {
     pauseSpinElapsedTimer();
     totalBetDisplayOverrideUSD = null;
     if (freeSpinsRemaining === 0) freeSpinWagerConfig = null;
+    lowerBetIfNeeded();
     updateTotals();
     syncLastChanceOverlayState();
 

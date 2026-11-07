@@ -120,6 +120,7 @@
         withdrawalDemo: false,
         buyBonusEnabled: true,
         luckyWheel: true,
+        autoLowerBet: true,
         wheelOdds: 0.5,
         wheelSizes: [...defaultWheelSizes],
         wheelPrizes: defaultWheelPrizes.map((prize) => ({ ...prize })),
@@ -150,6 +151,7 @@
             : Boolean(saved.moneyMode);
         state.buyBonusEnabled = saved.buyBonusEnabled !== false;
         state.luckyWheel = saved.luckyWheel !== false;
+        state.autoLowerBet = saved.autoLowerBet !== false;
         state.wheelOdds = Math.min(0.99, Math.max(0.01, Number(saved.wheelOdds) || 0.5));
         state.wheelSizes = normalizeWheelSizes(saved.wheelSizes);
         state.pointerOdds = Array.isArray(saved.pointerOdds) && saved.pointerOdds.length === 3
@@ -216,6 +218,7 @@
                 withdrawalDemo: state.withdrawalDemo,
                 buyBonusEnabled: state.buyBonusEnabled,
                 luckyWheel: state.luckyWheel,
+                autoLowerBet: state.autoLowerBet,
                 wheelOdds: state.wheelOdds,
                 wheelSizes: state.wheelSizes,
                 wheelPrizes: state.wheelPrizes,
@@ -494,6 +497,10 @@
                 <input id="buyBonusToggle" type="checkbox" checked>
                 <span><strong>Show Buy Bonus button</strong><small>Show or hide Buy Bonus on the game screen and casino cabinet controls.</small></span>
             </label>
+            <label class="checkbox-setting slot-auto-lower-bet-setting">
+                <input id="autoLowerBetToggle" type="checkbox" checked>
+                <span><strong>Automatically lower bet</strong><small>Use the highest affordable lower bet step before offering a rescue. Keeps your denomination and paylines.</small></span>
+            </label>
             <label class="checkbox-setting slot-wheel-setting">
                 <input id="luckyWheelToggle" type="checkbox" checked>
                 <span><strong>One rescue wheel when credits run out</strong><small>Available once per session after paid play leaves too few credits for the current wager.</small></span>
@@ -725,11 +732,13 @@
 
         const withdrawalToggle = document.getElementById("withdrawalDemoToggle");
         const buyBonusToggle = document.getElementById("buyBonusToggle");
+        const autoLowerBetToggle = document.getElementById("autoLowerBetToggle");
         const wheelToggle = document.getElementById("luckyWheelToggle");
         const resultBarsToggle = document.getElementById("collapseEmptyResultsToggle");
         const revealDoors = document.getElementById("pennyRevealDoors");
         withdrawalToggle.checked = state.withdrawalDemo;
         buyBonusToggle.checked = state.buyBonusEnabled;
+        autoLowerBetToggle.checked = state.autoLowerBet;
         wheelToggle.checked = state.luckyWheel;
         resultBarsToggle.checked = state.collapseEmptyResults;
         const syncWheelSizeSummary = () => {
@@ -757,6 +766,11 @@
             state.buyBonusEnabled = buyBonusToggle.checked;
             updateBonusBuyButton();
             save();
+        });
+        autoLowerBetToggle.addEventListener("change", () => {
+            state.autoLowerBet = autoLowerBetToggle.checked;
+            save();
+            window.dispatchEvent(new CustomEvent("slot-experience-settings-change"));
         });
         wheelToggle.addEventListener("change", () => {
             state.luckyWheel = wheelToggle.checked;
@@ -1216,6 +1230,24 @@
         const overlay = document.getElementById("buyBonusOverlay");
         if (overlay && !overlay.hidden) openBonusBuyOverlay();
     }
+    function lowerBetToAffordable({ balance, wager, denomination, lines, betSelect }) {
+        if (!state.autoLowerBet || !betSelect) return null;
+        const availableCents = Math.round(Number(balance) * 100);
+        const wagerCents = Math.round(Number(wager) * 100);
+        if (!Number.isFinite(availableCents) || !Number.isFinite(wagerCents) || availableCents >= wagerCents) return null;
+        if (!(denomination > 0) || !(lines > 0)) return null;
+        const candidates = Array.from(betSelect.options).filter(option => !option.disabled).map(option => ({
+            value: option.value,
+            cents: Math.round(Number(option.value) * lines * denomination * 100),
+        })).filter(option => option.cents > 0 && option.cents <= availableCents && option.cents < wagerCents);
+        candidates.sort((a, b) => b.cents - a.cents);
+        if (!candidates.length) return null;
+        const selected = candidates[0];
+        betSelect.value = selected.value;
+        betSelect.dispatchEvent(new Event("change", { bubbles: true }));
+        return { bet: selected.value, totalBetUSD: selected.cents / 100 };
+    }
+
     function offerLuckyWheel({ needed, wager, denomination = 0.01, onAward }) {
         const currentWager = Math.max(0.01, Number(wager) || 0.01);
         const hasPlayedToDepletion = state.played > 0 && state.balance + 0.0001 < currentWager;
@@ -1810,6 +1842,7 @@
         resolveScheduledJackpots,
         isJackpotScheduleEnabled: () => state.jackpotSchedule.enabled,
         playDiamondCollector,
+        lowerBetToAffordable,
         offerLuckyWheel,
         spinWheel,
         pickWheelPointerCount,

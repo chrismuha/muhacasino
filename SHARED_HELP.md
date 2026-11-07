@@ -33,3 +33,12 @@ Verified fresh-deal layout correction: empty collection summaries compact on sho
 Preview and notch update (v1.6.0, TBD): Device previews fit both the available width and height while preserving their exact CSS viewport dimensions. Monopoly Deal uses one table color across its game canvas. Every hosted game extends its existing navigation background around the notch, preserving the navigation color. The collapsed header places its menu beside the notch, with game content below the cutout. Hand sizing ignores body scroll offsets, and short phone layouts reserve space below cards for the horizontal scrollbar. The Chrome mobile scrolling issue remains listed pending user verification.
 
 Current device follows the available browser area at full scale, including when the window is narrowed or maximized. Tablet and desktop hand cards grow into spare viewport space. Short phone views keep readable card sizes, place the timer beside selected-card actions, and offer horizontal browsing of utility buttons when height is limited.
+
+
+## Automatic affordable slot bets · November 6, 2026
+
+Automatically lower bet is on by default and saved separately for each slot. When the current wager is unaffordable, manual and auto spins use the highest affordable lower bet step without a confirmation. Denomination and paylines stay unchanged. Free spins retain their awarded wager. Turn this setting off to keep the existing low-credit flow. If no lower bet step is affordable, the optional Lucky Credit Wheel remains available under its existing rules, followed by the add-credit prompt when applicable.
+
+Big Money Deluxe v4.0.0, Neon Slots v4.2.0, Pretty Penny v4.0.0, and Treasurepots v3.3.0 include this setting.
+
+Monopoly Deal v1.6.0 (TBD) library artwork: Monopoly Deal uses a red title accent in the game library. Its smaller library card shows the full cover illustration without cropping.

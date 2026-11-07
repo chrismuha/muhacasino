@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <meta name="game-version" content="4.1.0">
+    <meta name="game-version" content="4.2.0">
     <title>Neon Slots</title>
     <link rel="icon" href="../../icons/casino-mark-v5.png" type="image/png" sizes="192x192">
   <link rel="icon" href="../../icons/casino-mark-v5.svg" type="image/svg+xml" />
@@ -255,7 +255,7 @@
                 </div>
 
                 <div class="overlay-section" data-info-page="0">
-                    <p class="overlay-note" data-game-release><strong>Neon Slots v4.1.0 · November 2, 2026</strong> — Responsive screens and controls. See <a href="../../about.html#neon">full release notes</a>.</p>
+                    <p class="overlay-note" data-game-release><strong>Neon Slots v4.2.0 · November 6, 2026</strong> — Automatic affordable bets. See <a href="../../about.html#neon">full release notes</a>.</p>
                     <h4>Payout Rules</h4>
                     <p><strong>Whole-dollar wins only:</strong> Every positive payout is rounded up to the next whole dollar, with a $1 minimum. This includes each winning line, LINK value, held-Wild gem, diamond, jackpot, wheel award, and bonus payout. Zero remains zero. Wagers, deposits, balances, and jackpot wager counters may still include cents; the rule applies to awards, not the amount spent.</p>
                     <p>Payout = multiplier x bet per line (credits) x denomination ($), rounded up to a whole dollar.</p>
@@ -269,6 +269,7 @@
                     <p>Free spins cost no credits and retain the denomination, active lines, and bet per line from the paid spin that awarded them. Their payouts are added to Available Credits. Free spins cannot retrigger either feature.</p>
                     <p>Six BONUS symbols anywhere on the reels in one paid spin trigger one of three equally likely games: the bonus wheel, Match &amp; Win, or Diamond Collector. Buy Bonus also lets you choose a game directly or select Random. Match &amp; Win has nine hidden cards with one guaranteed three-card jackpot match; reveal cards until three match. Relative Jackpot Odds settings select the guaranteed tier, and the award uses the configured jackpot value for the feature wager.</p>
                     <h4>Settings Guide</h4>
+                    <p class="overlay-note"><strong>Automatically lower bet:</strong> Automatically lower bet is on by default and saved separately for each slot. When the current wager is unaffordable, manual and auto spins use the highest affordable lower bet step without a confirmation. Denomination and paylines stay unchanged. Free spins retain their awarded wager. Turn this setting off to keep the existing low-credit flow. If no lower bet step is affordable, the optional Lucky Credit Wheel remains available under its existing rules, followed by the add-credit prompt when applicable.</p>
                     <p class="overlay-note"><strong>Session Stats Display:</strong> Chooses which stat boxes are visible (regular session totals, Net totals, or Actual Net totals).</p>
                     <p class="overlay-note"><strong>Winnings Only / Losses Only:</strong> Shows only regular session winnings or regular session losses.</p>
                     <p class="overlay-note"><strong>Both Net / Net Winnings Only / Net Losses Only:</strong> Uses your running net-style counters where wins and losses are tracked as separate buckets.</p>
@@ -366,7 +367,7 @@
                     <h4>Wheel Pointers</h4>
                     <p>Before the bonus wheel, match two cards to reveal 1, 2, or 3 pointers. Settings controls the relative chances, initially 60%, 30%, and 10%. The wheel award is the selected segment award multiplied by the pointer count. These settings do not affect Match &amp; Win or Diamond Collector.</p>
                     <h4>Lucky Credit Wheel and Low Credits</h4>
-                    <p>After paid play leaves too few credits for the current wager, the optional Lucky Credit Wheel offers one rescue attempt. If the rescue wheel is unavailable or already used, a low-credit prompt can offer to add the shortfall and spin, or keep the current bet. Its 12 rescue-wheel wedges have individually adjustable even-percentage sizes totaling 100%; six winning wedges can award wager multiples, fixed values, or configured jackpots, and six award nothing. Wedge sizes determine their actual chances. Results remain open until closed; winning does not start another spin automatically. Reset Session restores eligibility; adding enough credits and then wagering them can rearm the rescue attempt.</p>
+                    <p>After paid play leaves too few credits for the current wager, Automatically lower bet first chooses an affordable lower step when enabled. If no lower step is affordable, or automatic lowering is off, the optional Lucky Credit Wheel offers one rescue attempt. If the rescue wheel is unavailable or already used, a low-credit prompt can offer to add the shortfall and spin, or keep the current bet. Its 12 rescue-wheel wedges have individually adjustable even-percentage sizes totaling 100%; six winning wedges can award wager multiples, fixed values, or configured jackpots, and six award nothing. Wedge sizes determine their actual chances. Results remain open until closed; winning does not start another spin automatically. Reset Session restores eligibility; adding enough credits and then wagering them can rearm the rescue attempt.</p>
                     <h4>Display, Withdrawals, and Statistics</h4>
                     <p>Fake Money and Real Money change credit/money formatting only. All credits, prizes, and withdrawals are simulated. The optional withdrawal demo allows a simulated withdrawal after the amount played reaches the amount deposited. Overall wagered, won, lost, and net totals are saved separately from session counters.</p>
                     <h4>Spin history</h4><p>Choose Spin history from Controls on phones or the main controls on larger screens. It stores the last 100 completed paid spins, free spins, and bonus purchases for this game on this device, newest first. Each entry shows the time, wager, award, net result, and resulting balance. Free spins have no wager deduction. The spin award includes features resolved as part of that spin. History survives refresh and is separate for each slot; amounts follow the current display mode. Close or Escape returns to play.</p><h4>Controls and Settings</h4>
@@ -399,10 +400,10 @@
         </div>
     </div>
 
-    <link rel="stylesheet" href="../../slot-experience.css?v=1.20.8&amp;build=20261102-card-art-toast-history-v120">
+    <link rel="stylesheet" href="../../slot-experience.css?v=1.20.8&amp;build=20261106-auto-lower-bet-v147">
     <script src="../../interaction-lock.js?build=20260808-no-double-tap"></script>
-    <script src="../../slot-experience.js?v=1.20.17&amp;build=20261102-card-art-toast-history-v120"></script>
-    <script src="main.js?v=1.4.2&amp;build=20261102-card-art-toast-history-v120"></script>
+    <script src="../../slot-experience.js?v=1.20.17&amp;build=20261106-auto-lower-bet-v147"></script>
+    <script src="main.js?v=1.4.2&amp;build=20261106-auto-lower-bet-v147"></script>
 </body>
 
 </html>
