@@ -1,7 +1,7 @@
 {
   "name": "muhacasino",
   "private": true,
-  "description": "Muha Casino \u2014 slots, Bingo, and classic tabletop games in one game library.",
+  "description": "Muha Casino - slots, Bingo, and classic tabletop games in one game library.",
   "scripts": {
     "start": "vite --host 127.0.0.1 --port 5194 --strictPort --open",
     "dev": "vite --host 127.0.0.1 --port 5194 --strictPort --open",
@@ -28,7 +28,9 @@
     "mobile:open:android": "npx cap open android",
     "mobile:open:ios": "npx cap open ios",
     "test:monopoly-deal": "node --test games/monopoly-deal/engine.test.mjs games/monopoly-deal/ai.test.mjs games/monopoly-deal/ui.test.cjs",
-    "test:games:refresh": "node --test scripts/check-game-refresh.cjs scripts/check-service-worker.cjs"
+    "test:games:refresh": "node --test scripts/check-game-refresh.cjs scripts/check-service-worker.cjs",
+    "prebuild": "node ./scripts/prepare-build-output.cjs",
+    "prebuild:web": "node ./scripts/prepare-build-output.cjs"
   },
   "devDependencies": {
     "playwright": "^1.64.1",
@@ -48,5 +50,8 @@
     "xcode": {
       "uuid": "11.1.1"
     }
-  }
+  },
+  "mcrBuildOutputs": [
+    "dist"
+  ]
 }
