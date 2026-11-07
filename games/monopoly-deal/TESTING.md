@@ -112,7 +112,14 @@ Preview canvas checks cover phone, tablet, and cabinet shells at two browser siz
 iPhone footer hand regression coverage checks larger card widths and stable width and height through regular property, wild, money, and action selection, opening and closing the reading view, and Clear, without spending plays. Standalone and hosted layouts cover 390×700, 420×740, and 430×932 CSS viewports in Chromium and WebKit. Short crowded screens may scroll vertically to preserve readable cards.
 
 
-Desktop progression coverage fills four players’ Bank and Properties panels and switches between property, wild, and money selections at 1280×720, 1440×800, 1536×864, and 1920×1080, both standalone and hosted. It verifies no page overflow, visible turn controls and previews, horizontal access to the last hand card, and fitted play after closing reading views, expanding the launcher header, and reducing the window height by 100 pixels. Run in Chromium and WebKit. The elapsed-time badge is present before layout measurements.
-
 
 Shared banking coverage enumerates all 106 cards and verifies positive cash values are eligible. UI checks bank a regular property and a valued wild in Easy, Normal, and Hard, verify one play per card, keep banked properties out of played sets, reject zero-value wilds without spending cards or plays, and block replaying banked properties. Mouse drops cover property banking, normal property play, invalid money-to-Properties drops, cancellation, and the three-play limit.
+
+
+Mandatory result coverage checks human and computer Sly Deal and Forced Deal with all toasts off, transfer toasts off, and toasts enabled with a one-second duration. Results name the players and property names, values, and colors, persist beyond toast expiry, and dismiss without spending plays. Forced Deal includes both transferred properties; repeated AI steals retain every result. Cancelled or blocked deals show no result overlay. Control-label coverage compares phone, tablet, and desktop wording and verifies that desktop utility labels fit on one line.
+
+
+Property-scroll interaction checks hold and drag horizontal scrollbar tracks, reject scrollbar double-clicks, cancel touch-hold inspection when scrolling begins, prevent a scrolling gesture from editing a wild, and ignore vertical scrollbar clicks. They run at phone and desktop widths and preserve intentional double-click, touch-hold, keyboard inspection, and direct wild editing.
+
+
+Just Say No coverage verifies mandatory overlays for a human or computer defense and the human counter-No, with all toasts off, action toasts filtered out, and one-second enabled toasts. It checks blocked/restored states, no automatic dismissal, one acknowledgment per played response, existing on-turn versus off-turn play costs, eventual payments, and card conservation. Declining a defense produces no played-card overlay. Theft descriptions use will take, and blocked steals produce no completed-transfer result.

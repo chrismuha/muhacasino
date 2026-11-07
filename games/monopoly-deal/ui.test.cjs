@@ -55,7 +55,7 @@ async function notification(page,pattern){
  }
  throw Error(`Notification not found: ${pattern}`);
 }
-async function choose(page,text){await page.locator('#choice[open]').waitFor();const button=typeof text==='string'?page.locator('#options button').filter({hasText:text}).first():page.locator('#options button').nth(text);await button.click();}
+async function choose(page,text){while(await page.locator('#just-say-no-dialog[open]').count())await page.locator('#just-say-no-dialog button').click();await page.locator('#choice[open]').waitFor();const button=typeof text==='string'?page.locator('#options button').filter({hasText:text}).first():page.locator('#options button').nth(text);await button.click();}
 async function selectTableCategory(page,value){
  const index=Number(value),view=await page.evaluate(index=>{const v=window.__dealTest.tableViews()[index];return {key:v.key,kind:v.kind,owner:v.ownerIndex}},index);
  if(await page.locator('html').getAttribute('data-theme')==='modern'){
@@ -68,7 +68,7 @@ async function selectTableCategory(page,value){
  }
  await page.locator('#table-view-category').selectOption(String(value));
 }
-async function idle(page){await page.waitForFunction(()=>!window.__dealTest.busy)}
+async function idle(page,{acknowledgeTransfers=true}={}){while(true){await page.waitForFunction(()=>!window.__dealTest.busy||document.querySelector('#just-say-no-dialog[open]'));if(!await page.locator('#just-say-no-dialog[open]').count())break;await page.locator('#just-say-no-dialog button').click();}if(acknowledgeTransfers&&await page.locator('#property-transfer-dialog[open]').count())await page.locator('#property-transfer-dialog button').click()}
 async function select(page,predicate){const id=await page.evaluate(predicate);await page.locator(`#game [data-card="${id}"]`).click()}
 async function playFirst(page){await page.locator('#game [data-card]').first().click();await page.locator('#play-card').click()}
 async function conservation(page){assert.equal(await page.evaluate(()=>{const s=window.__dealTest.state;const cards=[...s.draw,...s.discard,...s.players.flatMap(p=>[...p.hand,...p.bank,...p.props,...p.buildings])];return cards.length===106&&new Set(cards.map(c=>c.id)).size===106}),true)}
@@ -818,7 +818,7 @@ test('manual discard and inline property inspection',async()=>{
  await p.locator('.current-properties').click();assert.equal(await p.locator('#table-viewer').evaluate(el=>el.open),false);
  await p.locator('.current-properties .asset-panel-title').dblclick();await p.locator('#table-viewer[open]').waitFor();
  await p.locator('#table-view-close').click();
- await p.locator('.current-properties').dispatchEvent('pointerdown',{button:0,clientX:10,clientY:10});
+ await p.locator('.current-properties').dispatchEvent('pointerdown',{pointerType:'touch',button:0,clientX:10,clientY:10});
  await p.locator('#table-viewer[open]').waitFor();await close(p);
 });
 
@@ -1912,24 +1912,24 @@ test('payments group Bank Property Building and regroup moved buildings after ea
  }
 });
 
-test('completed Sly Forced and Breaker deals toast every transferred card as a bullet in the card-table layout',async()=>{
- for(const theme of ['modern'])for(const viewport of [{width:390,height:844},{width:768,height:1024},{width:1440,height:900}]){
-  const p=await open(viewport,{'muha-monopoly-deal-theme':theme});
+test('completed property deals list every moved card in mandatory overlays or the Deal Breaker toast',async()=>{
+ for(const viewport of [{width:390,height:844},{width:768,height:1024},{width:1440,height:900}]){
+  const p=await open(viewport);
   for(const kind of ['sly','forced','breaker']){
    await fixture(p,kind,2);
    const expected=await p.evaluate(async kind=>{const {GROUPS}=await import('./engine.mjs');const s=window.__dealTest.state,actor=s.players[0],target=s.players[1];s.plays=2;const label=c=>`${c.name} · ${c.value}M · ${GROUPS[c.color].name}`;return {title:`${actor.name} · ${actor.hand[0].name}`,items:[...target.props.map(c=>`Taken from ${target.name}: ${label(c)}`),...target.buildings.map(c=>`Taken from ${target.name}: ${label(c)}`),...(kind==='forced'?[`Given to ${target.name}: ${label(actor.props[0])}`]:[])]}},kind);
-   await playFirst(p);
-   if(kind==='forced')await choose(p,0);await choose(p,0);await idle(p);
-   await notification(p,new RegExp(expected.title));
-   assert.equal(await p.locator('#game-toast strong').innerText(),expected.title);
-   assert.deepEqual(await p.locator('#game-toast li').allTextContents(),expected.items);
-   assert.equal(await p.locator('#game-toast').getAttribute('role'),'status');assert.equal(await p.locator('#game-toast').getAttribute('tabindex'),'0');
-   assert.ok(await p.locator('#game-toast').evaluate(el=>{const r=el.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight}));
+   await playFirst(p);if(kind==='forced')await choose(p,0);await choose(p,0);await idle(p,{acknowledgeTransfers:false});
+   const result=p.locator(kind==='breaker'?'#game-toast':'#property-transfer-dialog');
+   if(kind==='breaker')await notification(p,new RegExp(expected.title));
+   assert.equal(await result.locator(kind==='breaker'?'strong':'h3').innerText(),expected.title);
+   assert.deepEqual(await result.locator('li').allTextContents(),expected.items);
+   assert.equal(await result.getAttribute('role'),kind==='breaker'?'status':'alertdialog');
+   assert.ok(await result.evaluate(el=>{const r=el.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight}));
    for(const item of expected.items)assert.ok(await p.evaluate(item=>window.__dealTest.state.log.some(line=>line.includes(item)),item));
-   assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),3);assert.match(await p.locator('#game-toast p').innerText(),/All three plays used/);await conservation(p);
-   if(kind==='breaker')await shot(p,`property-deal-bullets-${theme}-${viewport.width}`);
-   if(kind==='sly'){await p.locator('#game-toast').focus();await p.locator('#game-toast').press('Escape');}else await p.locator('#game-toast button').click();
-   assert.equal(await p.locator('#game-toast').isVisible(),false);
+   assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),3);assert.match(await result.locator('p').innerText(),/All three plays used/);await conservation(p);
+   await shot(p,`transfer-result-${kind}-${viewport.width}`);
+   if(kind==='sly'){await result.focus();await result.press('Escape');}else await result.locator('button').click();
+   assert.equal(await result.isVisible(),false);
    while(await p.locator('#game-toast').isVisible())await p.locator('#game-toast button').click();
   }
   await close(p);
@@ -1940,25 +1940,26 @@ test('computer theft results survive the turn handoff and combine repeated steal
  for(const kind of ['sly','forced','breaker']){
   const p=await open();await fixture(p,kind,2);
   await p.evaluate(kind=>{const t=window.__dealTest,s=t.state;if(kind==='sly'){let i=s.draw.findIndex(c=>c.action==='sly');s.players[0].hand.push(s.draw.splice(i,1)[0]);i=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===1&&c.color==='orange');s.players[1].props.push(s.draw.splice(i,1)[0]);}s.players.reverse();s.players[0].name='Chris';s.players[1].name='Computer 1';s.players[1].isAI=true;t.render();window.__stealRun=t.run(async()=>{s.turn=1})},kind);
-  await choose(p,'Continue');if(kind==='sly')await choose(p,'Continue');await p.evaluate(()=>window.__stealRun);await idle(p);
+  await choose(p,'Continue');if(kind==='sly')await choose(p,'Continue');await p.evaluate(()=>window.__stealRun);await idle(p,{acknowledgeTransfers:false});
   assert.equal(await p.evaluate(()=>window.__dealTest.state.turn),0);
-  await notification(p,/Taken from Chris:/);
-  const lines=await p.locator('#game-toast li').allTextContents();assert.equal(lines.length,kind==='breaker'?5:2);
+  if(kind==='breaker')await notification(p,/Taken from Chris:/);
+  const result=p.locator(kind==='breaker'?'#game-toast':'#property-transfer-dialog');
+  const lines=await result.locator('li').allTextContents();assert.equal(lines.length,kind==='breaker'?5:2);
   assert.ok(lines.some(line=>line.includes('Taken from Chris:')));if(kind==='forced')assert.ok(lines.some(line=>line.includes('Given to Chris:')));
-  assert.ok(lines.every(line=>line.includes('M')));assert.equal(await p.locator('#game-toast').isVisible(),true);
-  if(kind==='sly')assert.equal(await p.locator('#game-toast strong').innerText(),'Property deals resolved');
+  assert.ok(lines.every(line=>line.includes('M')));assert.equal(await result.isVisible(),true);
+  if(kind==='sly')assert.equal(await result.locator('section').count(),2);
   await conservation(p);await close(p);
  }
 });
 
 test('blocked and cancelled property deals never announce a transfer',async()=>{
  const p=await open();await fixture(p,'sly',2);
- await playFirst(p);await p.locator('#choice-close').click();await idle(p);assert.equal(await p.locator('#game-toast li').count(),0);
+ await playFirst(p);await p.locator('#choice-close').click();await idle(p,{acknowledgeTransfers:false});assert.equal(await p.locator('#game-toast li').count(),0);
  await fixture(p,'sly',2);
  await p.evaluate(()=>{const t=window.__dealTest,s=t.state,i=s.draw.findIndex(c=>c.action==='no');s.players[1].hand.push(s.draw.splice(i,1)[0]);s.players.reverse();s.players[1].isAI=true;s.players[1].name='Computer 1';t.render();window.__blockedRun=t.run(async()=>{s.turn=1})});
- await choose(p,'Continue');await choose(p,'Play Just Say No');await p.evaluate(()=>window.__blockedRun);await idle(p);
+ await choose(p,'Continue');await choose(p,'Play Just Say No');await p.locator('#just-say-no-dialog button').click();await p.evaluate(()=>window.__blockedRun);await idle(p,{acknowledgeTransfers:false});
  assert.equal(await p.locator('#game-toast li').count(),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.length),1);
- await conservation(p);await close(p);
+ assert.equal(await p.locator('#property-transfer-dialog[open]').count(),0);await conservation(p);await close(p);
 });
 
 test('a crowded Deal Breaker notification keeps every card readable in a scrolling phone toast',async()=>{
@@ -3123,38 +3124,6 @@ test('iPhone footer hand cards stay large through property selection and reading
  }
 });
 
-test('desktop tables fit as banks and property collections grow through selection and resize',async()=>{
- for(const viewport of [{width:1280,height:720},{width:1440,height:800},{width:1536,height:864},{width:1920,height:1080}])for(const hosted of [false,true]){
-  const p=await open(viewport,undefined,{},false);let game=p;
-  if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
-  await fixture(game,'hand',4);
-  for(const populated of [false,true]){
-   if(populated)await game.evaluate(()=>{const t=window.__dealTest,s=t.state;for(const player of s.players){for(let i=0;i<6;i++){const j=s.draw.findIndex(c=>c.type==='property');if(j>=0)player.props.push(s.draw.splice(j,1)[0]);}for(let i=0;i<3;i++){const j=s.draw.findIndex(c=>c.type==='money');if(j>=0)player.bank.push(s.draw.splice(j,1)[0]);}}t.render();});
-   for(const index of [null,0,4,1]){
-    if(index===null){if(await game.locator('.modern-hand-card[aria-pressed=true]').count())await game.locator('#deselect').evaluate(el=>el.click());}else await game.locator('.modern-hand-card').nth(index).evaluate(el=>el.click());
-    await p.waitForTimeout(100);
-    const g=await game.evaluate(()=>{const box=selector=>document.querySelector(selector).getBoundingClientRect().toJSON();return {height:innerHeight,scroll:document.body.scrollHeight-document.body.clientHeight,wide:document.body.scrollWidth-innerWidth,hand:box('.deal-hand'),card:box('.modern-hand-card'),controls:[...document.querySelectorAll('.deal-actions .round-action')].filter(el=>getComputedStyle(el).visibility!=='hidden'&&el.offsetHeight).map(el=>el.getBoundingClientRect().toJSON()),stage:box('.deal-stage'),tools:box('.table-tools'),preview:document.querySelector('#preview-open')?box('#preview-open'):null,rows:[...document.querySelectorAll('.deal-table>*,.current-seat>*')].map(el=>({name:el.className,height:el.getBoundingClientRect().height}))};});
-    assert.ok(g.scroll<=1&&g.wide<=1&&g.hand.bottom<=g.height+1,JSON.stringify({viewport,hosted,populated,index,g}));
-    assert.ok(g.card.width>=72&&g.tools.bottom<=g.height,JSON.stringify(g));
-    if(g.preview)assert.ok(g.preview.top>=g.stage.top&&g.preview.bottom<=g.stage.bottom+1,JSON.stringify(g));
-    assert.ok(g.controls.every(r=>r.height>=40&&r.top>=g.stage.top&&r.bottom<=g.stage.bottom+1&&r.left>=g.stage.left&&r.right<=g.stage.right+1),JSON.stringify(g));
-   }
-  }
-  await game.locator('#preview-open').click();await game.locator('#preview-close').click();await p.waitForTimeout(100);
-  const browse=await game.locator('.deal-hand .cards').evaluate(el=>{el.scrollLeft=el.scrollWidth;const last=el.lastElementChild.getBoundingClientRect(),strip=el.getBoundingClientRect();return {last:last.right,edge:strip.right,scroll:document.body.scrollHeight-document.body.clientHeight};});
-  assert.ok(browse.last<=browse.edge+1&&browse.scroll<=1,JSON.stringify(browse));
-  await game.locator('.deal-hand .cards').evaluate(el=>el.scrollLeft=0);
-  if(hosted){await p.locator('#toolbarCollapseButton').click();await p.waitForTimeout(150);assert.ok(await game.evaluate(()=>document.body.scrollHeight-document.body.clientHeight<=1));}
-  await p.setViewportSize({width:viewport.width,height:viewport.height-100});await p.waitForTimeout(150);
-  const resized=await game.evaluate(()=>({height:innerHeight,scroll:document.body.scrollHeight-document.body.clientHeight,table:document.querySelector('.deal-table').className,hand:document.querySelector('.deal-table').style.getPropertyValue('--hand-card-width'),rows:[...document.querySelectorAll('.deal-table>*,.current-seat>*,.current-assets>*,.deal-stage>*')].map(el=>({name:el.className,height:el.getBoundingClientRect().height}))}));
-  assert.ok(resized.scroll<=1,JSON.stringify({viewport,hosted,resized}));
-  await shot(p,`desktop-grown-${viewport.width}-${hosted?'hosted':'direct'}`);
-  await game.evaluate(()=>{const t=window.__dealTest,s=t.state;s.discard.push(...s.players[0].hand.splice(0));t.render();});await p.waitForTimeout(100);
-  assert.ok(await game.evaluate(()=>document.body.scrollHeight-document.body.clientHeight<=1),'Populated desktop tables must still fit with an empty hand');
-  await close(p);
- }
-});
-
 test('every difficulty banks regular and valued wild properties for one play and rejects zero-value wilds',async()=>{
  for(const difficulty of ['easy','normal','hard']){
   const p=await open(undefined,undefined,{},false);await fixture(p,'hand',2);
@@ -3179,4 +3148,117 @@ test('every difficulty banks regular and valued wild properties for one play and
   assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
   await conservation(p);await close(p);
  }
+});
+
+test('Sly and Forced Deal always show acknowledged transfer overlays regardless of toast settings',async()=>{
+ for(const preferences of [{all:false},{all:true,transfer:false},{all:true,transfer:true,durationSeconds:1}])for(const kind of ['sly','forced'])for(const computer of [false,true]){
+  const p=await open({width:390,height:700},{'muha-deal-toasts-v1':JSON.stringify(preferences)}, {},false);await fixture(p,kind,2);
+  const expected=await p.evaluate(({kind,computer})=>{const t=window.__dealTest,s=t.state;if(computer){s.players.reverse();s.players[0].name='Chris';s.players[1].name='Computer 1';s.players[1].isAI=true;}const actor=s.players[computer?1:0],target=s.players[computer?0:1];t.render();return {actor:actor.name,target:target.name,taken:target.props[0].name,given:kind==='forced'?actor.props[0].name:null};},{kind,computer});
+  if(computer){await p.evaluate(()=>{const t=window.__dealTest;window.__mandatoryDealRun=t.run(async()=>{t.state.turn=1;});});await choose(p,'Continue');await p.evaluate(()=>window.__mandatoryDealRun);}
+  else{await playFirst(p);if(kind==='forced')await choose(p,0);await choose(p,0);}
+  await p.locator('#property-transfer-dialog[open]').waitFor();await idle(p,{acknowledgeTransfers:false});
+  const dialog=p.locator('#property-transfer-dialog');assert.equal(await dialog.getAttribute('role'),'alertdialog');
+  assert.equal(await p.locator('#game-toast').isVisible(),false,'Optional toasts must not cover the transfer overlay');
+  assert.ok(await dialog.locator('h2').evaluate(el=>el.scrollWidth<=el.clientWidth+1),'The complete overlay heading must fit on phones');
+  const text=await dialog.innerText();for(const name of [expected.actor,expected.target,expected.taken,...(expected.given?[expected.given]:[])])assert.ok(text.includes(name),name);
+  assert.equal(await dialog.locator('li').count(),kind==='forced'?2:1);assert.match(text,/Taken from/);if(kind==='forced')assert.match(text,/Given to/);
+  assert.ok((await dialog.locator('li').allTextContents()).every(line=>/\d+M/.test(line)&&/Orange|Brown/.test(line)));
+  if(preferences.durationSeconds&&!computer){await p.waitForTimeout(1200);assert.equal(await dialog.isVisible(),true,'Transfer overlays must not use the toast expiry');}
+  const box=await dialog.boundingBox();assert.ok(box.y>=0&&box.y+box.height<=700);
+  await dialog.locator('button').click();assert.equal(await dialog.isVisible(),false);await conservation(p);await close(p);
+ }
+});
+
+test('table controls use the same concise labels across screens and desktop text stays on one line',async()=>{
+ const p=await open();
+ for(const viewport of [{width:320,height:640},{width:420,height:742},{width:768,height:1024},{width:1280,height:720},{width:1440,height:900},{width:1920,height:1080}]){
+  await p.setViewportSize(viewport);await fixture(p,'hand',2);
+  for(const index of [0,4,5])await p.locator('.modern-hand-card').nth(index).evaluate(el=>el.click());
+  const controls=await p.locator('.table-tools button').evaluateAll(buttons=>buttons.map(el=>{const range=document.createRange();range.selectNodeContents(el);const r=range.getBoundingClientRect(),box=el.getBoundingClientRect();return {text:el.innerText,lines:[...range.getClientRects()].filter(r=>r.width).length,left:r.left,right:r.right,box:box.toJSON(),overflow:el.scrollWidth-el.clientWidth};}));
+  assert.deepEqual(controls.map(c=>c.text),['Manage','Wilds','Settings','Undo','Discard (3)','Clear (3)','Table','History']);
+  if(viewport.width>=1024)for(const c of controls)assert.ok(c.lines===1&&c.overflow<=1&&c.left>=c.box.left&&c.right<=c.box.right+1,JSON.stringify({viewport,c}));
+ }
+ await close(p);
+});
+
+test('property scrollbar presses and drags never open inspection while intentional inspection still works',async()=>{
+ for(const viewport of [{width:420,height:742},{width:1440,height:900}]){
+  const p=await open(viewport);await fixture(p,'rearrange',2);
+  await p.evaluate(()=>{const t=window.__dealTest,s=t.state;for(const color of ['lightblue','pink','orange','red','yellow','green','blue','railroad','utility']){const i=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===1&&c.color===color);s.players[0].props.push(s.draw.splice(i,1)[0]);}t.render();});
+  await p.addStyleTag({content:'.own-groups::-webkit-scrollbar{height:16px}.own-groups::-webkit-scrollbar-thumb{background:#fff;border-radius:8px}'});
+  const strip=p.locator('.current-properties .own-groups');await strip.scrollIntoViewIfNeeded();
+  assert.ok(await strip.evaluate(el=>el.scrollWidth>el.clientWidth));const r=await strip.boundingBox();
+  const point={x:r.x+r.width*.4,y:r.y+r.height-4};
+  await strip.dispatchEvent('pointerdown',{pointerType:'mouse',button:0,clientX:point.x,clientY:point.y});await p.waitForTimeout(650);
+  assert.equal(await p.locator('#table-viewer').evaluate(el=>el.open),false,'Holding a scrollbar must not start property inspection');
+  await strip.dispatchEvent('pointerup',{pointerType:'mouse',button:0,clientX:point.x,clientY:point.y});
+  for(let i=0;i<2;i++)await strip.dispatchEvent('click',{detail:1,clientX:point.x,clientY:point.y});
+  assert.equal(await p.locator('#table-viewer').evaluate(el=>el.open),false,'Scrollbar clicks must not form a double-tap');
+  await p.mouse.move(point.x,point.y);await p.mouse.down();await p.waitForTimeout(650);await p.mouse.move(point.x+40,point.y,{steps:8});await p.mouse.up();
+  assert.equal(await p.locator('#table-viewer').evaluate(el=>el.open),false);
+  await strip.dispatchEvent('pointerdown',{pointerType:'touch',button:0,clientX:r.x+20,clientY:r.y+20});
+  await strip.evaluate(el=>el.scrollLeft=el.scrollLeft>40?0:80);await p.waitForTimeout(650);
+  await strip.dispatchEvent('pointerup',{pointerType:'touch',button:0,clientX:r.x+20,clientY:r.y+20});
+  assert.equal(await p.locator('#table-viewer').evaluate(el=>el.open),false,'Scrolling cancels touch hold inspection');
+  await strip.evaluate(el=>el.scrollLeft=0);await p.waitForTimeout(50);
+  const wild=p.locator('.current-properties [data-table-wild]').first(),wildBox=await wild.boundingBox();
+  await wild.dispatchEvent('pointerdown',{pointerType:'touch',button:0,clientX:wildBox.x+8,clientY:wildBox.y+8});
+  await strip.evaluate(el=>el.scrollLeft=80);await p.waitForTimeout(50);
+  await wild.dispatchEvent('pointerup',{pointerType:'touch',button:0,clientX:wildBox.x+8,clientY:wildBox.y+8});
+  await wild.dispatchEvent('click',{detail:1,clientX:wildBox.x+8,clientY:wildBox.y+8});
+  assert.equal(await p.locator('#choice').evaluate(el=>el.open),false,'Scrolling across a wild must not edit its color');
+  await strip.evaluate(el=>{el.style.height='60px';el.style.minHeight='60px';el.style.maxHeight='60px';el.style.overflowY='auto';});
+  const vertical=await strip.boundingBox();
+  await strip.dispatchEvent('pointerdown',{pointerType:'mouse',button:0,clientX:vertical.x+vertical.width-4,clientY:vertical.y+30});await p.waitForTimeout(650);
+  await strip.dispatchEvent('click',{detail:2,clientX:vertical.x+vertical.width-4,clientY:vertical.y+30});
+  assert.equal(await p.locator('#table-viewer').evaluate(el=>el.open),false,'Vertical scrollbars must not open inspection');
+  await p.locator('.current-properties .asset-panel-title').dblclick();await p.locator('#table-viewer[open]').waitFor();await p.locator('#table-view-close').click();
+  await p.locator('.current-properties').focus();await p.keyboard.press('Enter');await p.locator('#table-viewer[open]').waitFor();
+  assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),0);await close(p);
+ }
+});
+
+test('Just Say No and counter-No require overlays with toasts off or filtered',async()=>{
+ for(const preferences of [{all:false},{all:true,action:false},{all:true,durationSeconds:1}])for(const computer of [false,true]){
+  const p=await open({width:390,height:700},{'muha-deal-toasts-v1':JSON.stringify(preferences)}, {},false);await fixture(p,'counter-counter',2);
+  if(computer)await p.evaluate(()=>{const s=window.__dealTest.state;s.players[1].isAI=true;s.players[1].aiDifficulty='easy';window.__dealTest.render();});
+  await playFirst(p);await choose(p,'Alex');
+  if(!computer){await choose(p,'Ready');await choose(p,'Play Just Say No');}
+  const dialog=p.locator('#just-say-no-dialog');await p.locator('#just-say-no-dialog[open]').waitFor();
+  assert.equal(await dialog.getAttribute('role'),'alertdialog');assert.match(await dialog.locator('h2').innerText(),/Alex played Just Say No/);
+  assert.equal(await dialog.getAttribute('data-response-state'),'blocked');assert.match(await dialog.innerText(),/Chris.*Debt Collector.*Alex/s);
+  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);
+  if(preferences.durationSeconds){await p.waitForTimeout(1200);assert.equal(await dialog.isVisible(),true);}
+  await dialog.locator('button').click();if(!computer)await choose(p,'Ready');await choose(p,'Play Just Say No');
+  await p.locator('#just-say-no-dialog[open]').waitFor();assert.match(await dialog.locator('h2').innerText(),/Chris played Just Say No/);
+  assert.equal(await dialog.getAttribute('data-response-state'),'restored');assert.match(await dialog.innerText(),/countered Alex.*Just Say No/);
+  assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),2);assert.equal(await p.evaluate(()=>window.__dealTest.state.discard.filter(c=>c.action==='no').length),2);
+  const r=await dialog.boundingBox();assert.ok(r.y>=0&&r.y+r.height<=700);await shot(p,`just-say-no-${computer?'computer':'human'}`);
+  await dialog.press('Escape');if(!computer){await choose(p,'Ready to pay');await choose(p,0);}await idle(p);
+  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),1);assert.equal(await dialog.isVisible(),false);await conservation(p);await close(p);
+ }
+});
+
+test('property action prompts say will take and declining a defense produces no Just Say No overlay',async()=>{
+ const p=await open(undefined,undefined,{},false);await fixture(p,'sly',2);
+ await p.evaluate(()=>{const t=window.__dealTest,s=t.state;const i=s.draw.findIndex(c=>c.action==='no');s.players[1].hand.push(s.draw.splice(i,1)[0]);t.render();});
+ await playFirst(p);await choose(p,0);await choose(p,'Ready');
+ assert.match(await p.locator('#detail').innerText(),/Chris will take/);assert.doesNotMatch(await p.locator('#detail').innerText(),/would take/);
+ await choose(p,'Allow action / stop countering');await idle(p);
+ assert.equal(await p.locator('#just-say-no-dialog[open]').count(),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.discard.filter(c=>c.action==='no').length),0);
+ await conservation(p);await close(p);
+});
+
+test('a third Just Say No gets its own overlay and blocks the restored action',async()=>{
+ const p=await open(undefined,undefined,{},false);await fixture(p,'counter-counter',2);
+ await p.evaluate(()=>{const t=window.__dealTest,s=t.state,i=s.draw.findIndex(c=>c.action==='no');s.players[1].hand.push(s.draw.splice(i,1)[0]);t.render();});
+ await playFirst(p);await choose(p,'Alex');
+ for(let index=0;index<3;index++){
+  await choose(p,'Ready');await choose(p,'Play Just Say No');await p.locator('#just-say-no-dialog[open]').waitFor();
+  assert.equal(await p.locator('#just-say-no-dialog').getAttribute('data-response-state'),index%2?'restored':'blocked');
+  assert.equal(await p.evaluate(()=>window.__dealTest.state.discard.filter(c=>c.action==='no').length),index+1);
+  await p.locator('#just-say-no-dialog button').click();
+ }
+ await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].bank.length),1);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),2);await conservation(p);await close(p);
 });

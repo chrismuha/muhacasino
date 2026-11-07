@@ -1088,3 +1088,7 @@ html { scrollbar-gutter: auto; }
 /* Inline Help shares reserved header space with library navigation. */
 #gameView .back-help-controls{grid-column:1;grid-row:1;display:flex;align-items:center;gap:6px;min-width:0}
 @media(max-width:900px){#gameView:not(.toolbar-collapsed) .game-toolbar{grid-template-columns:max-content minmax(0,1fr) 44px}}
+
+/* Library Help stays inside the padded footer, clear of edges and safe areas. */
+.footer-brand-group{display:flex;flex-direction:column;align-items:flex-start;align-self:flex-start;gap:16px}
+#libraryHelp{display:flex;min-width:0;padding-bottom:max(6px,var(--casino-safe-bottom,0px))}

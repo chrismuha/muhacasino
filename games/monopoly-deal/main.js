@@ -1,10 +1,10 @@
 import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261106-deal-v160-hand-v142';
 import {paginateViewer} from './view-pages.mjs?build=20261106-deal-v160-hand-v142';
 import {aiChoice,aiPlay} from './ai.mjs?build=20261106-banking-v154';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261106-banking-v154';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261106-banking-v154';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261106-deck-v157';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261106-deck-v157';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261106-deal-v160-hand-v142';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261106-banking-v154';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261106-just-say-no-v159';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261106-banking-v154';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -125,6 +125,54 @@ function showBlockedPlay(message){
  $('#blocked-play-reason').textContent=message;
  const done=new Promise(resolve=>dialog.addEventListener('close',resolve,{once:true}));
  if(!dialog.open)dialog.showModal();dialog.querySelector('button').focus();return done;
+}
+// Every played defense is acknowledged before checking for another counter.
+function showJustSayNo(player,other,actor,target,description,cancelled,counter){
+ toastQueue.length=0;nextToast();
+ let dialog=$('#just-say-no-dialog');
+ if(!dialog){
+  dialog=document.createElement('dialog');dialog.id='just-say-no-dialog';dialog.setAttribute('role','alertdialog');
+  dialog.setAttribute('aria-labelledby','just-say-no-title');dialog.setAttribute('aria-describedby','just-say-no-details');
+  dialog.innerHTML='<div class="wizard-heading"><h2 id="just-say-no-title"></h2><button type="button">Continue</button></div><div id="just-say-no-details" class="action-response-body"></div>';
+  dialog.querySelector('button').onclick=()=>dialog.close();document.body.append(dialog);
+ }
+ const action=description.split(':')[0];
+ $('#just-say-no-title').textContent=`${player.name} played Just Say No`;
+ dialog.dataset.responseState=cancelled?'blocked':'restored';
+ const body=$('#just-say-no-details');body.replaceChildren();
+ for(const [tag,text,kind]of [
+  ['p',counter?`${player.name} countered ${other.name}’s Just Say No.`:`${player.name} responded to ${actor.name}’s ${action}.`],
+  ['p',`${actor.name}’s ${action} against ${target.name} is ${cancelled?'blocked':'active again'}.`,'response-status'],
+  ['h3','Action being defended'],['p',description],['p','Another Just Say No can counter this response. Continue to check the next response.']
+ ]){const element=document.createElement(tag);element.textContent=text;if(kind)element.className=kind;body.append(element);}
+ const done=new Promise(resolve=>dialog.addEventListener('close',resolve,{once:true}));
+ dialog.showModal();dialog.querySelector('button').focus();return done;
+}
+// Completed steals and swaps must be acknowledged independently of toast preferences.
+function reportPropertyTransfers(notices,detail=''){
+ const required=notices.filter(notice=>['sly','forced'].includes(notice.action));
+ if(required.length){
+  toastQueue.length=0;nextToast();
+  let dialog=$('#property-transfer-dialog');
+  if(!dialog){
+   dialog=document.createElement('dialog');dialog.id='property-transfer-dialog';dialog.setAttribute('role','alertdialog');
+   dialog.setAttribute('aria-labelledby','property-transfer-title');dialog.setAttribute('aria-describedby','property-transfer-details');
+   dialog.innerHTML='<div class="wizard-heading"><h2 id="property-transfer-title">Property transfer completed</h2><button type="button">Continue</button></div><div id="property-transfer-details" class="property-transfer-body"></div>';
+   dialog.querySelector('button').onclick=()=>dialog.close();document.body.append(dialog);
+  }
+  const body=dialog.querySelector('.property-transfer-body');if(!dialog.open)body.replaceChildren();
+  for(const notice of notices){
+   const section=document.createElement('section'),title=document.createElement('h3'),list=document.createElement('ul');
+   title.textContent=notice.title;section.append(title,list);
+   for(const item of notice.items){const line=document.createElement('li');line.textContent=item;list.append(line);}
+   body.append(section);
+  }
+  if(detail){const reminder=document.createElement('p');reminder.textContent=detail;body.append(reminder);}
+  if(!dialog.open){dialog.showModal();dialog.querySelector('button').focus();}
+  return;
+ }
+ const optional=notices.filter(notice=>!['sly','forced'].includes(notice.action));
+ if(optional.length)showToast(optional.length===1?optional[0].title:'Property deals resolved',{items:optional.flatMap(notice=>notice.items.map(item=>optional.length===1?item:`${notice.title}: ${item}`)),detail});
 }
 // ARIA-disabled buttons remain focusable/clickable solely to explain their state.
 document.addEventListener('click', event => {
@@ -317,7 +365,7 @@ function cardPreferredSide(id){
  return card?.colors?.length===2 && completingWildColor(card)===card.colors[1];
 }
 function gameOverHTML(){
- return state?.winner?`<section class="game-over-banner" role="status"><div><h2>${esc(state.winner)} wins!</h2><p>This deal is finished.</p></div><div class="game-over-controls"><button id="game-restart" class="primary" type="button">New game</button><button type="button" class="action-history-button">Move history</button><a href="../../index.html" target="_top">Game Library</a></div></section>`:'';
+ return state?.winner?`<section class="game-over-banner" role="status"><div><h2>${esc(state.winner)} wins!</h2><p>This deal is finished.</p></div><div class="game-over-controls"><button id="game-restart" class="primary" type="button">New game</button><button type="button" class="action-history-button" aria-label="Open move history">History</button><a href="../../index.html" target="_top">Game Library</a></div></section>`:'';
 }
 function wireGameOverControls(){
  $('#game-restart')?.addEventListener('click',setup);
@@ -402,28 +450,9 @@ function fitTableCards(){
  if(!table||!cards)return;
  table.style.removeProperty('--hand-card-width');
  if(preview)preview.style.removeProperty('width');
- table.classList.remove('compact-desktop');
  // Phone hand size follows screen width, independent of selection or spare height.
  if(innerWidth<=600||table.classList.contains('has-selection'))return;
  const card=cards.querySelector('.modern-hand-card');
- if(innerWidth>=1024&&matchMedia('(hover:hover) and (pointer:fine)').matches){
-  // Recalculate from content coordinates, including after the player scrolls.
-  const bottom=()=>cards.getBoundingClientRect().bottom+document.body.scrollTop+window.scrollY;
-  const stage=table.querySelector('.deal-stage'),actions=table.querySelector('.deal-actions');
-  if(bottom()>innerHeight-20||actions.getBoundingClientRect().height>stage.clientHeight||document.body.scrollHeight>document.body.clientHeight)table.classList.add('compact-desktop');
-  if(!card)return;
-  const width=card.offsetWidth;
-  let target=Math.max(72,Math.min(180,width+(innerHeight-bottom()-20)*.69));
-  table.style.setProperty('--hand-card-width',`${target}px`);
-  for(let pass=0;pass<3;pass++){
-   const overflow=Math.max(0,document.body.scrollHeight-document.body.clientHeight);
-   if(!overflow||target<=72)break;
-   target=Math.max(72,target-(overflow+2)*.69);
-   table.style.setProperty('--hand-card-width',`${target}px`);
-  }
-  return;
- }
-
  if(!card)return;
  // Spend only unused viewport height, preserving the existing short-screen minimums.
  // Body scrolling must not look like spare space after a card selection.
@@ -449,8 +478,6 @@ function fitTableCards(){
  }
 }
 function fitCompactPreview(){
- // Include the timer before measuring the action column and the available hand space.
- updateGameTimer();
  fitTableCards();
  const preview=$('.selected-table-card'),face=preview?.querySelector('.deal-face');
  if(!face)return;
@@ -464,6 +491,22 @@ function fitCompactPreview(){
  face.style.transform=`scale(${scale})`;
 }
 
+// Native and overlay scrollbars are navigation, not property-inspection targets.
+function isTableScrollbar(event,button){
+ for(const element of event.composedPath()){
+  if(!(element instanceof HTMLElement)||!button.contains(element))continue;
+  const style=getComputedStyle(element),rect=element.getBoundingClientRect();
+  if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)continue;
+  const scaleX=rect.width/(element.offsetWidth||1),scaleY=rect.height/(element.offsetHeight||1);
+  const horizontal=/(auto|scroll)/.test(style.overflowX)&&element.scrollWidth>element.clientWidth+1;
+  const vertical=/(auto|scroll)/.test(style.overflowY)&&element.scrollHeight>element.clientHeight+1;
+  const barHeight=Math.max(12,element.offsetHeight-element.clientHeight-parseFloat(style.borderTopWidth)-parseFloat(style.borderBottomWidth))*scaleY;
+  const barWidth=Math.max(12,element.offsetWidth-element.clientWidth-parseFloat(style.borderLeftWidth)-parseFloat(style.borderRightWidth))*scaleX;
+  if(horizontal&&event.clientY>=rect.bottom-barHeight)return true;
+  if(vertical&&(style.direction==='rtl'?event.clientX<=rect.left+barWidth:event.clientX>=rect.right-barWidth))return true;
+ }
+ return false;
+}
 function render(){
  requestAnimationFrame(()=>{syncToastViewport();updateGameTimer();});
  completeAutomaticDraws();
@@ -560,16 +603,37 @@ function render(){
   });
  });
  document.querySelectorAll('#game [data-table-view]').forEach(button=>{
-  if(!button.matches('.current-properties')){button.onclick=()=>{if(!busy)openTableViewer(button.dataset.tableView)};return;}
-  let timer,lastTap=0,start;
+  const own=button.matches('.current-properties');
+  let timer,lastTap=0,start,scrollGesture=false;
   const cancel=()=>{clearTimeout(timer);timer=null;};
+  const scrolled=()=>{cancel();lastTap=0;scrollGesture=true;};
   const inspect=()=>{cancel();lastTap=0;if(!busy)openTableViewer(button.dataset.tableView)};
-  button.onclick=event=>{const wild=event.target.closest('[data-table-wild]');if(wild){cancel();if(!busy&&visible&&!state.winner)run(()=>rearrange(Number(wild.dataset.tableWild)));return;}if(event.detail===0){inspect();return;}const now=performance.now();if(lastTap&&now-lastTap<400)inspect();else lastTap=now;};
-  button.onpointerdown=event=>{if(event.button!==0||event.target.closest('[data-table-wild]'))return;start={x:event.clientX,y:event.clientY};timer=setTimeout(inspect,550)};
-  button.onpointermove=event=>{if(start&&Math.hypot(event.clientX-start.x,event.clientY-start.y)>10)cancel()};
-  for(const name of ['pointerup','pointercancel','pointerleave'])button.addEventListener(name,cancel);
-  button.oncontextmenu=event=>event.preventDefault();
-  button.addEventListener('keydown',event=>{const wild=event.target.closest('[data-table-wild]');if(wild&&['Enter',' '].includes(event.key)){event.preventDefault();if(!busy&&visible&&!state.winner)run(()=>rearrange(Number(wild.dataset.tableWild)));}});
+  button.onclick=event=>{
+   cancel();
+   if(isTableScrollbar(event,button)||(event.detail!==0&&scrollGesture)){lastTap=0;return;}
+   if(!own){inspect();return;}
+   const wild=event.target.closest('[data-table-wild]');
+   if(wild){if(!busy&&visible&&!state.winner)run(()=>rearrange(Number(wild.dataset.tableWild)));return;}
+   if(event.detail===0){inspect();return;}
+   const now=performance.now();if(lastTap&&now-lastTap<400)inspect();else lastTap=now;
+  };
+  button.onpointerdown=event=>{
+   cancel();start=null;scrollGesture=false;
+   if(event.button!==0)return;
+   if(isTableScrollbar(event,button)){scrolled();return;}
+   start={x:event.clientX,y:event.clientY};
+   if(own&&['touch','pen'].includes(event.pointerType)&&!event.target.closest('[data-table-wild]'))timer=setTimeout(()=>{scrollGesture=true;inspect();},550);
+  };
+  button.onpointermove=event=>{if(start&&Math.hypot(event.clientX-start.x,event.clientY-start.y)>10)scrolled()};
+  button.addEventListener('scroll',scrolled,true);
+  button.addEventListener('wheel',()=>{cancel();lastTap=0;},{passive:true});
+  button.addEventListener('pointerup',()=>{cancel();start=null;});
+  button.addEventListener('pointercancel',()=>{scrolled();start=null;});
+  button.addEventListener('pointerleave',cancel);
+  if(own){
+   button.oncontextmenu=event=>event.preventDefault();
+   button.addEventListener('keydown',event=>{const wild=event.target.closest('[data-table-wild]');if(wild&&['Enter',' '].includes(event.key)){event.preventDefault();if(!busy&&visible&&!state.winner)run(()=>rearrange(Number(wild.dataset.tableWild)));}});
+  }
  });
  wireSelectedCardBrowsing();
  updateUnavailableControls();
@@ -639,15 +703,26 @@ async function run(fn){
   const turnReminder=!state.winner&&state.turn===turn&&!actor.isAI&&playsBefore<3&&state.plays>=3?'All three plays used. Pass to end your turn.':'';
   if(turnReminder)showToast(turnReminder);
   // Report after turn/handoff messages so computer turns cannot erase the result.
-  if(transaction.propertyNotices.length){
-   const notices=transaction.propertyNotices;
-   showToast(notices.length===1?notices[0].title:'Property deals resolved',{items:notices.flatMap(notice=>notice.items.map(item=>notices.length===1?item:`${notice.title}: ${item}`)),detail:turnReminder});
-  }
+  if(transaction.propertyNotices.length)reportPropertyTransfers(transaction.propertyNotices,turnReminder);
  }
 }
 function checkWin(){if(sets(me()).length>=3&&!state.winner){state.winner=me().name;state.finishedAt=Date.now();log(`${state.winner} wins with three complete colors!`);choose(`${state.winner} wins!`,[['View table',true]],'Three complete property sets. Start a new game for a rematch.',null)}}
 function use(c){remove(me().hand,c);state.discard.push(c);state.plays++;log(`${me().name} played ${c.name}.`)}
-async function defend(target,actor,description){visible=false;render();if(actor.isAI&&!target.isAI)await choose(`${actor.name} played ${description.split(':')[0]} against you`,[['Continue',true]],description,target);let responder=target,other=actor,cancelled=false;while(true){const no=responder.hand.find(c=>c.action==='no');if(!no)return !cancelled;if(!responder.isAI&&!state.players.some(p=>p.isAI))await choose(`Pass to ${responder.name}`,[['Ready',true]],'An action response is available. Keep hands private.',responder);const yes=await choose(`${responder.name}: Just Say No?`,[['Allow action / stop countering',false],['Play Just Say No',true]],description,responder);if(!yes)return !cancelled;remove(responder.hand,no);state.discard.push(no);if(responder===me())state.plays++;cancelled=!cancelled;log(`${responder.name} played Just Say No.`);[responder,other]=[other,responder];}}
+async function defend(target,actor,description){
+ visible=false;render();
+ if(actor.isAI&&!target.isAI)await choose(`${actor.name} played ${description.split(':')[0]} against you`,[['Continue',true]],description,target);
+ let responder=target,other=actor,cancelled=false,responses=0;
+ while(true){
+  const no=responder.hand.find(c=>c.action==='no');if(!no)return !cancelled;
+  if(!responder.isAI&&!state.players.some(p=>p.isAI))await choose(`Pass to ${responder.name}`,[['Ready',true]],'An action response is available. Keep hands private.',responder);
+  const yes=await choose(`${responder.name}: Just Say No?`,[['Allow action / stop countering',false],['Play Just Say No',true]],description,responder);
+  if(!yes)return !cancelled;
+  remove(responder.hand,no);state.discard.push(no);if(responder===me())state.plays++;
+  cancelled=!cancelled;log(`${responder.name} played Just Say No.`);
+  await showJustSayNo(responder,other,actor,target,description,cancelled,responses>0);responses++;
+  [responder,other]=[other,responder];
+ }
+}
 async function pay(p,to,amount){
  visible=false;render();let remaining=amount;
  if(!p.isAI)await choose(p.name+': payment due',[['Ready to pay',true]],`${to.name} is owed ${amount}M. You choose payment; no change is given.`,p);
@@ -685,7 +760,7 @@ async function play(c,chosenMode=null,chosenColor=null){if(c&&!me().hand.some(ca
  if(!targets.length)return choose('No eligible opponent properties',[['OK',true]]);let own;if(a==='forced'){let options=p.props.filter(x=>!complete(p,x.color));if(!options.length)return choose('You need a property outside a full set',[['OK',true]]);own=await choose('Choose your property to give',options.sort((a,b)=>GROUPS[a.color].name.localeCompare(GROUPS[b.color].name)||a.value-b.value||a.name.localeCompare(b.name)).map(x=>[label(x),x]));}
  let t=await choose(a==='breaker'?'Steal which complete set?':'Choose a property',targets.map(t=>[`${t.p.name} · ${t.card?label(t.card):GROUPS[t.color].name}`,t]));
  const requested=a==='breaker'?[...properties(t.p,t.color),...t.p.buildings.filter(card=>card.color===t.color)]:[t.card];
- const description=`${c.name}: ${p.name} would take ${requested.map(label).join('; ')} from ${t.p.name}${own?` and give ${label(own)} to ${t.p.name}` :''}.`;
+ const description=`${c.name}: ${p.name} will take ${requested.map(label).join('; ')} from ${t.p.name}${own?` and give ${label(own)} to ${t.p.name}` :''}.`;
  use(c);if(!await defend(t.p,p,description)){log(`${t.p.name} blocked ${c.name}.`,'action');return;}
  const taken=a==='breaker'?[...properties(t.p,t.color),...t.p.buildings.filter(card=>card.color===t.color)]:[t.card];
  if(a==='breaker'){
@@ -694,10 +769,10 @@ async function play(c,chosenMode=null,chosenColor=null){if(c&&!me().hand.some(ca
   remove(t.p.props,t.card);p.props.push(t.card);
   if(own){remove(p.props,own);t.p.props.push(own)}
  }
- const notice={title:`${p.name} · ${c.name}`,items:[...taken.map(card=>`Taken from ${t.p.name}: ${label(card)}`),...(own?[`Given to ${t.p.name}: ${label(own)}`]:[])]};
+ const notice={action:a,title:`${p.name} · ${c.name}`,items:[...taken.map(card=>`Taken from ${t.p.name}: ${label(card)}`),...(own?[`Given to ${t.p.name}: ${label(own)}`]:[])]};
  for(const item of notice.items)log(`${notice.title}: ${item}`);
  if(actionTransaction)actionTransaction.propertyNotices.push(notice);
- else showToast(notice.title,{items:notice.items});
+ else reportPropertyTransfers([notice]);
 }
 async function rearrange(cardId=null){
  if(!visible||!state||state.winner)return;
@@ -1176,7 +1251,7 @@ function openGameSettings(){
  appearance.setAttribute('aria-labelledby','appearance-title');
  appearance.innerHTML='<div class="wizard-heading"><h2 id="appearance-title">Game settings</h2><button type="button">Close</button></div><div class="settings-content"></div>';
  const notifications=document.createElement('fieldset');
- notifications.className='toast-settings';notifications.innerHTML='<legend>Toast notifications</legend><label><input type="checkbox" data-toast-type="all"> Enable toast notifications</label>'+Object.entries(toastTypes).map(([key,label])=>`<label><input type="checkbox" data-toast-type="${key}"> ${label}</label>`).join('');
+ notifications.className='toast-settings';notifications.innerHTML='<legend>Toast notifications</legend><p>Sly Deal, Forced Deal, and every played Just Say No always show an overlay until dismissed, even when toast notifications are off.</p><label><input type="checkbox" data-toast-type="all"> Enable toast notifications</label>'+Object.entries(toastTypes).map(([key,label])=>`<label><input type="checkbox" data-toast-type="${key}"> ${label}</label>`).join('');
  for(const input of notifications.querySelectorAll('input')){
   input.checked=toastPreferences[input.dataset.toastType]!==false;
   input.disabled=input.dataset.toastType!=='all'&&toastPreferences.all===false;
@@ -1219,7 +1294,7 @@ function openGameSettings(){
  display.innerHTML='<legend>Display</legend><label><input id="show-elapsed-time" type="checkbox"> Show elapsed game time</label><p>Help always remains available in the navigation bar. This preference is saved on this device. Hiding elapsed time does not reset the clock.</p>';
  for(const [id,key] of [['show-elapsed-time','showElapsedTime']]){
   const input=display.querySelector('#'+id);input.checked=dealSettings[key];
-  input.onchange=()=>{dealSettings[key]=input.checked;try{localStorage.setItem(dealSettingsKey,JSON.stringify(dealSettings));}catch{}fitCompactPreview();};
+  input.onchange=()=>{dealSettings[key]=input.checked;try{localStorage.setItem(dealSettingsKey,JSON.stringify(dealSettings));}catch{}updateGameTimer();};
  }
  document.querySelector('.table-settings').append(display);
  document.querySelector('.table-settings').append(dealing,notifications);
@@ -1289,4 +1364,4 @@ function updateGameTimer(){
 }
 setInterval(updateGameTimer,1000);updateGameTimer();
 
-if(window.parent===window)import('../../shared-help/suite-help.js');
+if(window.parent===window)import('../../shared-help/suite-help.js?build=20261106-just-say-no-v159');

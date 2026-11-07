@@ -44,3 +44,12 @@ Big Money Deluxe v4.0.0, Neon Slots v4.2.0, Pretty Penny v4.0.0, and Treasurepot
 Monopoly Deal v1.6.0 (TBD) library artwork: Monopoly Deal uses a red title accent in the game library. Its smaller library card shows the full cover illustration without cropping.
 
 Monopoly Deal v1.6.0 (TBD) short phone controls: Phone table controls stay visible in two rows, including short iPhone screens. The larger center card preview is restored. Game settings follows the selected table color, including live color changes.
+
+
+Game library Help sits below the brand inside the padded library footer, with room for its keyboard focus outline and the device’s bottom safe area. While a game is open, Help remains beside Game Library in the game toolbar.
+
+
+Sly Deal and Forced Deal results always use an acknowledged overlay, independent of global and property-transfer toast settings. It identifies both players and every moved property, including both sides of a swap. Blocked or cancelled actions do not show transfer results. The table uses the same concise Manage, Table, and History labels on every screen.
+
+
+Every played Just Say No, including computer responses and counter-No cards, has a mandatory overlay showing who played it, the defended action, and its current blocked or active state. This pauses the response chain until Continue or Escape. Property action prompts use will take; completed-transfer results still report only cards that actually moved.
