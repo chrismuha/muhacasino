@@ -1,6 +1,7 @@
 const games = {
   "monopoly-deal": {
     title: "Monopoly Deal", version: "v1.6.0", subtitle: "2–4 Player Card Game",
+    isNew: false,
     path: "games/monopoly-deal/index.html", className: "card-deal",
     reels: "M DEAL M", icon: "▣", categories: ["table"],
   },
@@ -75,6 +76,13 @@ const games = {
     categories: ["table"],
   },
 };
+
+// Set isNew: true on any game to show its reusable badge in every library list.
+document.querySelectorAll('.game-card[data-game]').forEach(card => {
+  const badge = document.createElement('new-game-badge');
+  badge.isNew = games[card.dataset.game]?.isNew === true;
+  card.prepend(badge);
+});
 
 const categoryNames = {
   classic: "Casino Classics",
@@ -603,7 +611,7 @@ function gameCard(gameId) {
   card.dataset.game = gameId;
   card.innerHTML = `
     <span class="card-visual"><span class="mini-reels">${game.reels}</span><i>${game.icon}</i></span>
-    ${gameId === "monopoly-deal" ? '<span class="new-game-badge">NEW</span>' : ""}
+    <new-game-badge${game.isNew ? ' is-new' : ''}></new-game-badge>
     <span class="card-details"><strong>${game.title}</strong><small>${game.subtitle}</small></span>
     <span class="card-play">▶</span>
   `;
