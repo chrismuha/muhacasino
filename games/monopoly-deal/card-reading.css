@@ -1218,3 +1218,8 @@ body.is-finished .game-over-controls>*{flex:1 1 140px}
 #game .current-assets .current-bank .bank-balance{font-size:26px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
 #game .current-assets .current-bank>.asset-count{margin-left:auto;font-size:12px}
 #game .current-assets .current-bank>.asset-panel-heading,#game .current-assets .current-bank>.bank-balance{flex:0 0 auto;width:auto;align-self:center}
+
+/* Settings follows the saved table color, including live preset changes. */
+html[data-theme=modern] #appearance-dialog{background:var(--modern-table-background,#0064db);color:#fff}
+html[data-theme=modern] #appearance-dialog .table-settings{background:transparent}
+html[data-theme=modern] #appearance-dialog :is(fieldset,input:not([type=checkbox]),select,button){background-color:color-mix(in srgb,var(--modern-table-background,#0064db),#000 35%);color:#fff}

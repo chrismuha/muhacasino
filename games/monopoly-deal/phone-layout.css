@@ -6,7 +6,7 @@
  #game .deal-table:not(.has-selection).hand-visible .deal-stage{grid-template-columns:60px minmax(0,1fr) 108px;gap:10px;min-height:0;margin-top:8px;padding:2px 0}
  #game .deal-table:not(.has-selection) .card-stage{min-width:0;max-width:100%;container-type:normal;align-self:center;height:auto}
  #game .deal-table:not(.has-selection) .has-card-preview{min-width:0;max-width:100%;padding:0}
- #game .deal-table:not(.has-selection) .has-card-preview #preview-open{width:min(96px,100%);max-width:min(110px,100%);height:auto}
+ #game .deal-table:not(.has-selection) .has-card-preview #preview-open{width:min(144px,100%);max-width:100%;height:auto}
  #game .deal-table:not(.has-selection) .deal-actions{gap:6px;padding:0;align-self:center}
  #game .deal-table:not(.has-selection) .deal-actions :is(#flip-card,#bank-card,#play-card,#discard-card,#end).round-action{grid-template-columns:36px minmax(0,1fr);column-gap:7px;height:44px;min-height:44px;font-size:14px;flex-shrink:0}
  #game .deal-table:not(.has-selection) .deal-actions .action-disc{width:36px;height:36px;font-size:25px}
@@ -75,13 +75,14 @@
 @media(max-width:600px) and (max-height:780px){
  #game .deal-table:not(.has-selection) .current-properties{padding-block:2px;gap:1px}
 }
-/* When browser chrome leaves very little height, browse tools horizontally. */
-@media(max-width:600px) and (max-height:780px){
- #game .deal-table .current-stats .table-tools{display:flex!important;flex-wrap:nowrap;justify-content:flex-start;min-width:0;overflow-x:auto;gap:4px;overscroll-behavior-x:contain;touch-action:pan-x pinch-zoom;scrollbar-width:thin}
- #game .deal-table .current-stats .table-tools button{flex:0 0 auto;min-width:70px}
-}
 /* Selected-card actions must not gain a full extra row for the timer. */
 @media(max-width:600px) and (max-height:780px){
  #game .deal-table.card-selected:not(.has-selection) .deal-stage{position:relative;min-height:198px}
  #game .deal-table.card-selected:not(.has-selection) .deal-actions #elapsed-game-time{position:absolute;inset:auto auto 0 70px;transform:none;align-self:auto;justify-self:start;flex-direction:row;gap:6px;width:calc(100% - 188px);max-width:none;height:28px;min-height:28px;padding:2px 4px;margin:0}
+}
+
+/* Keep all eight table tools visible in two rows, including short phones. */
+@media(max-width:600px){
+ #game .deal-table .current-stats .table-tools{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));width:100%;overflow:visible;gap:4px}
+ #game .deal-table .current-stats .table-tools button{min-width:0;min-height:44px;white-space:normal;overflow-wrap:normal}
 }

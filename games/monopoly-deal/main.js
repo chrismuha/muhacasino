@@ -4,7 +4,7 @@ import {aiChoice,aiPlay} from './ai.mjs?build=20261106-deal-v160-hand-v142';
 import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261106-deal-v160-hand-v142';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261106-deal-v160-hand-v142';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261106-deal-v160-hand-v142';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261106-deal-v160-hand-v142';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261106-deal-v160-hand-v150';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261106-deal-v160-hand-v142';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();

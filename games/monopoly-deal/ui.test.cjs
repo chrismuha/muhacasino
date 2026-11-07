@@ -3077,24 +3077,20 @@ test('Current device follows window resizing and uses spare space for readable c
 });
 
 
-test('Duo Closed and short phones can scroll from the first utility button to the last',async()=>{
- for(const viewport of [{width:466,height:678},{width:466,height:568},{width:420,height:678}])for(const hosted of [false,true]){
+test('phone settings follows color and large previews retain two rows of controls',async()=>{
+ for(const viewport of [{width:320,height:640},{width:390,height:700},{width:420,height:740},{width:466,height:568}])for(const hosted of [false,true]){
   const p=await open(viewport,undefined,{isMobile:true,hasTouch:true});let game=p;
-  if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));await p.evaluate(()=>document.documentElement.style.setProperty('--safe-area-inset-top','54px'));}
-  try{
-   await fixture(game,'hand',2);
-   const tools=game.locator('.table-tools');
-   const first=await tools.evaluate(el=>{el.scrollLeft=0;const box=el.getBoundingClientRect(),button=el.querySelector('button').getBoundingClientRect();return {left:button.left,edge:box.left,overflow:el.scrollWidth-el.clientWidth,touch:getComputedStyle(el).touchAction};});
-   assert.ok(first.overflow>0,JSON.stringify({viewport,hosted,first}));assert.ok(first.left>=first.edge-1,JSON.stringify({viewport,hosted,first}));assert.ok(first.touch.includes('pan-x'));
-   // Mobile WebKit has no Playwright mouse-wheel support. Verify its native
-   // scroll range directly; Chromium also exercises a real horizontal wheel.
-   if(process.env.DEAL_QA_BROWSER==='webkit')await tools.evaluate(el=>el.scrollBy(800,0));
-   else{await tools.hover();await p.mouse.wheel(800,0);await p.waitForTimeout(100);}
-   assert.ok(await tools.evaluate(el=>el.scrollLeft>0),'Horizontal scrolling advances the button row');
-   const last=await tools.evaluate(el=>{el.scrollLeft=el.scrollWidth;const box=el.getBoundingClientRect(),button=el.querySelector('button:last-child').getBoundingClientRect();return {right:button.right,edge:box.right,height:button.height};});
-   assert.ok(last.right<=last.edge+1,JSON.stringify({viewport,hosted,last}));assert.ok(last.height>=44);
-   await tools.evaluate(el=>el.scrollLeft=0);
-   if(viewport.width===466&&viewport.height===678)await shot(p,`duo-closed-buttons-${hosted?'hosted':'direct'}`);
-  }finally{await close(p)}
+  if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+  await fixture(game,'hand',2);
+  const geometry=await game.locator('.table-tools').evaluate(el=>({overflow:el.scrollWidth-el.clientWidth,rows:[...new Set([...el.querySelectorAll('button')].map(b=>Math.round(b.getBoundingClientRect().top)))].length}));
+  assert.equal(geometry.rows,2);assert.ok(geometry.overflow<=1);
+  await game.locator('[data-card]').first().evaluate(el=>el.click());
+  const preview=await game.locator('#preview-open').boundingBox();assert.ok(preview.width>=120,JSON.stringify({viewport,hosted,preview}));
+  await game.locator('#table-settings').click();
+  for(const color of ['#236944','#35283f']){
+   await game.evaluate(color=>document.documentElement.style.setProperty('--modern-table-background',color),color);
+   assert.equal(await game.locator('#appearance-dialog').evaluate(el=>getComputedStyle(el).backgroundColor),await game.locator('html').evaluate(el=>getComputedStyle(el).backgroundColor));
+  }
+  await shot(p,`phone-settings-${viewport.width}-${hosted?'hosted':'direct'}`);await close(p);
  }
 });
