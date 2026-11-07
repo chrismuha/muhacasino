@@ -3075,3 +3075,26 @@ test('Current device follows window resizing and uses spare space for readable c
  }
  await close(p);
 });
+
+
+test('Duo Closed and short phones can scroll from the first utility button to the last',async()=>{
+ for(const viewport of [{width:466,height:678},{width:466,height:568},{width:420,height:678}])for(const hosted of [false,true]){
+  const p=await open(viewport,undefined,{isMobile:true,hasTouch:true});let game=p;
+  if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));await p.evaluate(()=>document.documentElement.style.setProperty('--safe-area-inset-top','54px'));}
+  try{
+   await fixture(game,'hand',2);
+   const tools=game.locator('.table-tools');
+   const first=await tools.evaluate(el=>{el.scrollLeft=0;const box=el.getBoundingClientRect(),button=el.querySelector('button').getBoundingClientRect();return {left:button.left,edge:box.left,overflow:el.scrollWidth-el.clientWidth,touch:getComputedStyle(el).touchAction};});
+   assert.ok(first.overflow>0,JSON.stringify({viewport,hosted,first}));assert.ok(first.left>=first.edge-1,JSON.stringify({viewport,hosted,first}));assert.ok(first.touch.includes('pan-x'));
+   // Mobile WebKit has no Playwright mouse-wheel support. Verify its native
+   // scroll range directly; Chromium also exercises a real horizontal wheel.
+   if(process.env.DEAL_QA_BROWSER==='webkit')await tools.evaluate(el=>el.scrollBy(800,0));
+   else{await tools.hover();await p.mouse.wheel(800,0);await p.waitForTimeout(100);}
+   assert.ok(await tools.evaluate(el=>el.scrollLeft>0),'Horizontal scrolling advances the button row');
+   const last=await tools.evaluate(el=>{el.scrollLeft=el.scrollWidth;const box=el.getBoundingClientRect(),button=el.querySelector('button:last-child').getBoundingClientRect();return {right:button.right,edge:box.right,height:button.height};});
+   assert.ok(last.right<=last.edge+1,JSON.stringify({viewport,hosted,last}));assert.ok(last.height>=44);
+   await tools.evaluate(el=>el.scrollLeft=0);
+   if(viewport.width===466&&viewport.height===678)await shot(p,`duo-closed-buttons-${hosted?'hosted':'direct'}`);
+  }finally{await close(p)}
+ }
+});

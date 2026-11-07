@@ -42,3 +42,5 @@ Automatically lower bet is on by default and saved separately for each slot. Whe
 Big Money Deluxe v4.0.0, Neon Slots v4.2.0, Pretty Penny v4.0.0, and Treasurepots v3.3.0 include this setting.
 
 Monopoly Deal v1.6.0 (TBD) library artwork: Monopoly Deal uses a red title accent in the game library. Its smaller library card shows the full cover illustration without cropping.
+
+Monopoly Deal v1.6.0 (TBD) short phone controls: On iPhone Duo Closed and other short phone screens, the table utility buttons scroll horizontally from Manage through History. The row starts at its first button and supports horizontal swipes while keeping 44-pixel button targets.

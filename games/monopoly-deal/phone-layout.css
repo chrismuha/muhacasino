@@ -77,7 +77,7 @@
 }
 /* When browser chrome leaves very little height, browse tools horizontally. */
 @media(max-width:600px) and (max-height:780px){
- #game .deal-table .current-stats .table-tools{display:flex!important;flex-wrap:nowrap;overflow-x:auto;gap:4px;overscroll-behavior-x:contain}
+ #game .deal-table .current-stats .table-tools{display:flex!important;flex-wrap:nowrap;justify-content:flex-start;min-width:0;overflow-x:auto;gap:4px;overscroll-behavior-x:contain;touch-action:pan-x pinch-zoom;scrollbar-width:thin}
  #game .deal-table .current-stats .table-tools button{flex:0 0 auto;min-width:70px}
 }
 /* Selected-card actions must not gain a full extra row for the timer. */
