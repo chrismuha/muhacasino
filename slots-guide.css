@@ -1,0 +1,10 @@
+.slot-comparison { padding: clamp(16px, 3vw, 32px); background: var(--panel); border: 1px solid var(--line); border-radius: 16px; line-height: 1.65; }
+.slot-comparison h2 { margin-top: 1.8em; } .slot-comparison h2:first-child { margin-top: 0; }
+.comparison-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+.slot-comparison table { width: 100%; min-width: 680px; border-collapse: collapse; }
+.slot-comparison caption { padding: 12px; text-align: left; font-weight: bold; }
+.slot-comparison th, .slot-comparison td { padding: 12px; border-bottom: 1px solid var(--line); text-align: left; }
+.slot-comparison thead { background: var(--panel-2); } .slot-comparison th[scope="row"] { min-width: 220px; }
+.slot-comparison li { margin: 12px 0; } .slot-comparison a { color: var(--cyan); text-decoration: underline; }
+.slot-comparison nav { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 24px; }
+.slot-comparison :focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }

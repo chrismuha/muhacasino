@@ -4051,3 +4051,10 @@ button:not(.info-btn) {
 .settings-panel,
 .overlay-panel,
 .feature-dialog { background-image: none; }
+
+/* Penny Wilds travel between cells without changing the reel layout. */
+.penny-spread-spark { position: fixed; z-index: 10000; pointer-events: none; color: #fff5dc; background: #9a4929; border: 2px solid #ffd18a; border-radius: 50%; width: 42px; height: 42px; display: grid; place-items: center; font: bold 30px Georgia, serif; }
+.penny-spread-source { outline: 3px solid #f6be72; outline-offset: -4px; }
+.penny-spread-target { animation: penny-spread-arrive 450ms ease-out; }
+@keyframes penny-spread-arrive { from { filter: brightness(1.8); } to { filter: brightness(1); } }
+@media (prefers-reduced-motion: reduce) { .penny-spread-target { animation: none; } }

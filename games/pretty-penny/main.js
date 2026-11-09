@@ -1073,6 +1073,72 @@ function getLineMatchResult(path, grid) {
     return { count, symbol: baseSymbol };
 }
 
+// Spread only when every winning line retains its symbol, length, and award.
+// This preserves the resolved outcome rather than adding another payout roll.
+function planPennySpread(grid, wagerConfig) {
+    const result = { grid: grid.map(row => [...row]), source: null, targets: [] };
+    const sources = [];
+    for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col < COLS; col++) {
+            if (grid[row][col] === WILD_SYMBOL) sources.push([row, col]);
+        }
+    }
+    if (!sources.length || Math.random() >= 0.35) return result;
+    const original = evaluateGrid(grid, wagerConfig);
+    if (!original.totalWinUSD) return result;
+    const signature = JSON.stringify(original.lineWins);
+    const candidates = shuffledCopy([...original.winningPositions]);
+    const limit = 2 + Math.floor(Math.random() * 3);
+    for (const key of candidates) {
+        const [row, col] = key.split(",").map(Number);
+        const symbol = result.grid[row][col];
+        if (symbol === WILD_SYMBOL || !SYMBOLS.includes(symbol)) continue;
+        result.grid[row][col] = WILD_SYMBOL;
+        if (JSON.stringify(evaluateGrid(result.grid, wagerConfig).lineWins) !== signature) {
+            result.grid[row][col] = symbol;
+            continue;
+        }
+        result.targets.push([row, col]);
+        if (result.targets.length === limit) break;
+    }
+    if (result.targets.length < 2) return { grid, source: null, targets: [] };
+    result.source = sources[Math.floor(Math.random() * sources.length)];
+    return result;
+}
+
+async function animatePennySpread(spread, winningPositions, instant = false) {
+    if (!spread.targets.length) return;
+    const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const source = reelsEl.children[spread.source[0] * COLS + spread.source[1]];
+    source?.classList.add("penny-spread-source");
+    setMessage("Penny Wilds are spreading!");
+    try {
+        for (const [row, col] of spread.targets) {
+            const cell = reelsEl.children[row * COLS + col];
+            if (!instant && !reducedMotion && source && cell) {
+                const from = source.getBoundingClientRect();
+                const to = cell.getBoundingClientRect();
+                const spark = document.createElement("span");
+                spark.className = "penny-spread-spark";
+                spark.setAttribute("aria-hidden", "true");
+                spark.textContent = "¢";
+                spark.style.left = `${from.left + from.width / 2}px`;
+                spark.style.top = `${from.top + from.height / 2}px`;
+                document.body.append(spark);
+                try {
+                    await spark.animate([
+                        { transform: "translate(-50%, -50%) scale(0.7)", opacity: 1 },
+                        { transform: `translate(calc(-50% + ${to.left - from.left}px), calc(-50% + ${to.top - from.top}px)) scale(1.2)`, opacity: 1 }
+                    ], { duration: 260, easing: "ease-in-out" }).finished;
+                } finally { spark.remove(); }
+            }
+            const replacement = createCell(WILD_SYMBOL, winningPositions.has(`${row},${col}`));
+            replacement.classList.add("penny-spread-target");
+            cell?.replaceWith(replacement);
+        }
+    } finally { source?.classList.remove("penny-spread-source"); }
+}
+
 function resolveSpinGrid(forceWin) {
     for (let attempt = 0; attempt < MAX_OUTCOME_ATTEMPTS; attempt++) {
         const grid = spinOnce();
@@ -2043,16 +2109,21 @@ async function doSpin(options = {}) {
     grid = gemResult.grid;
     const bonusResult = bonusTriggered ? addBonusChipWin(grid) : null;
     if (bonusResult) grid = bonusResult.grid;
+    const jackpotWins = resolveJackpotWins(totalBetUSD);
+    const jackpotTeasers = resolveJackpotTeasers(jackpotWins, totalBetUSD);
+    const beforeSpread = grid;
+    const spread = jackpotWins.length || jackpotTeasers.length
+        ? { grid, targets: [] } : planPennySpread(grid, wagerConfig);
+    grid = spread.grid;
     const { totalWinUSD: regularWinUSD, lineWins, winningPositions } = evaluateGrid(grid, wagerConfig);
     const displayWinningPositions = new Set(winningPositions);
     linkResult.winningPositions.forEach((position) => displayWinningPositions.add(position));
     gemResult.winningPositions.forEach((position) => displayWinningPositions.add(position));
     bonusResult?.winningPositions.forEach((position) => displayWinningPositions.add(position));
-    const jackpotWins = resolveJackpotWins(totalBetUSD);
-    const jackpotTeasers = resolveJackpotTeasers(jackpotWins, totalBetUSD);
     const jackpotWinUSD = jackpotWins.reduce((sum, jackpot) => sum + jackpot.amountUSD, 0);
-    renderOutcomeGrid(grid, displayWinningPositions, jackpotWins, jackpotTeasers);
+    renderOutcomeGrid(beforeSpread, displayWinningPositions, jackpotWins, jackpotTeasers);
     if (!instantSpin) await window.slotExperience?.revealReelDoors(reelsEl);
+    await animatePennySpread(spread, displayWinningPositions, instantSpin);
     if (bonusResult?.count === 6) await new Promise((resolve) => setTimeout(resolve, 650));
     const bonusOutcome = bonusResult?.count === 6 ? await playBonusGame(totalBetUSD) : null;
     const bonusWinUSD = bonusOutcome?.winUSD || 0;
