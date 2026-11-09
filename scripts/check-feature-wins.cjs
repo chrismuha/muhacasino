@@ -66,6 +66,10 @@ async function checkGame(game) {
         } } },
     });
     for (const name of ['startSpinElapsedTimer', 'updateTotals', 'clearMessage', 'updateFeatureStatus', 'renderOutcomeGrid', 'renderWinningPayouts', 'addSessionLosses', 'addNetSessionLosses', 'subtractNetSessionWinnings', 'adjustActualSessionNet', 'addSessionWinnings', 'addNetSessionWinnings', 'subtractNetSessionLosses', 'setMessage', 'pauseSpinElapsedTimer', 'syncLastChanceOverlayState', 'updateAllSessionDisplays']) ctx[name] = () => {};
+    ctx.hotReelsDisplay = { active: false };
+    ctx.hotReelsSettings = {};
+    ctx.hotReels = { advance: grid => ({ grid, active: false }), supplement: () => 0 };
+    ctx.updateHotReelsStatus = () => {};
     ctx.lowerBetIfNeeded = () => false;
     ctx.planPennySpread = grid => ({ grid, targets: [] });
     ctx.animatePennySpread = async () => {};

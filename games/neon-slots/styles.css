@@ -2011,3 +2011,15 @@ body.overlay-open {
 .neon-reveal-result p { margin: 0; line-height: 1.6; font-size: clamp(14px, 2vw, 18px); }
 .neon-reveal-result[data-outcome="loss"] h3 { color: #ffca9a; }
 .neon-reveal-mode .jackpot-board, .neon-reveal-mode .reel-result, .neon-reveal-mode #featureStatus { visibility: hidden; }
+
+.hot-reel-cell { position: relative; isolation: isolate; outline: 2px solid #ff952d; outline-offset: -2px; background: #402015 !important; }
+.hot-reel-cell::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: -1; background: radial-gradient(ellipse at 50% 120%, #ffe078 0%, #ff7029 35%, transparent 70%); animation: neon-flames 650ms ease-in-out infinite alternate; }
+.hot-sticky-wild { border: 2px solid #ffd06a; }
+.hot-wild-label { position: absolute; bottom: 3px; left: 0; right: 0; text-align: center; color: #fff6df; background: #5a2517; font-size: clamp(8px, 1.4vw, 12px); font-weight: 800; }
+.neon-hot-status { color: #ffd08c; padding: 8px; margin: 0; font-weight: 700; text-align: center; background: #382016; border-radius: 8px; }
+@keyframes neon-flames { from { opacity: .65; transform: scaleY(.85); } to { opacity: 1; transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) { .hot-reel-cell::after { animation: none; } }
+.hot-reel-cell::before { content: "🔥"; position: absolute; right: 1px; bottom: 4px; z-index: 3; font-size: clamp(20px, 3vw, 36px); line-height: 1; pointer-events: none; animation: neon-flames 650ms ease-in-out infinite alternate; }
+.hot-reel-cell::after { z-index: 2; background: linear-gradient(0deg, #ff7b2670, transparent 65%); }
+.hot-wild-label { z-index: 4; }
+@media (prefers-reduced-motion: reduce) { .hot-reel-cell::before { animation: none; } }

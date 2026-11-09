@@ -1,0 +1,33 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const path = require('node:path');
+const ctx = vm.createContext({ window: {}, Math });
+vm.runInContext(fs.readFileSync(path.join(__dirname, '../games/neon-slots/hot-reels.js'), 'utf8'), ctx);
+const engine = ctx.window.NeonHotReels.create(() => 0);
+const board = () => Array.from({ length: 5 }, () => Array(5).fill('normal'));
+const config = { enabled: true, triggerChance: 100, spins: 5, minimumMultiplier: 2 };
+const original = board();
+const before = JSON.stringify(original);
+let result = engine.advance(original, config);
+assert.equal(JSON.stringify(original), before, 'Input grid stays unchanged');
+for (let turn = 0; turn < 5; turn++) {
+    if (turn) result = engine.advance(board(), { ...config, triggerChance: 0, spins: 20, minimumMultiplier: 10 }, false);
+    assert.equal(result.active, true);
+    assert.equal(result.remaining, 4 - turn);
+    assert.equal(result.minimumMultiplier, 2, 'Active cycle retains starting settings');
+    assert.equal(result.row, 0); assert.equal(result.reel, 0);
+    assert.equal(result.grid[0][0].kind, 'hotWild');
+    assert.equal(result.grid.flat().filter(v => v?.kind === 'hotWild').length, 1);
+    assert.equal(engine.supplement(result, 2.5, 0), 5);
+    assert.equal(engine.supplement(result, 2.5, 3), 2);
+    assert.equal(engine.supplement(result, 2.5, 10), 0, 'Larger wins are never reduced');
+    assert.equal(engine.supplement(result, 0.25, 0), 1, 'Whole-dollar award minimum');
+}
+assert.equal(engine.advance(board(), config, false).active, false, 'Free spins cannot start a cycle');
+assert.equal(engine.advance(board(), { ...config, triggerChance: 0 }).active, false, 'Zero trigger disables starts');
+engine.advance(board(), config);
+assert.equal(engine.advance(board(), { ...config, enabled: false }).active, false, 'Disabling clears cycle');
+engine.advance(board(), config); engine.reset();
+assert.equal(engine.advance(board(), config, false).active, false, 'Session reset clears cycle');
+console.log('Hot Reels: exact five-spin duration, sticky position, free-spin rules, settings snapshot, guarantee math, zero trigger, disable, and reset passed.');

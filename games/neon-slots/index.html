@@ -205,6 +205,13 @@
                             </div>
                         </div>
 
+                        <div id="hotReelsSettings" class="checkbox-setting">
+                            <label class="checkbox-row" for="hotReelsEnabled"><input id="hotReelsEnabled" type="checkbox" checked /><span>Hot Reels</span></label>
+                            <label for="hotReelsChance">Trigger chance per paid spin (%)</label><input id="hotReelsChance" type="number" min="0" max="100" step="0.1" value="3" />
+                            <label for="hotReelsSpins">Spins per Hot Reel</label><input id="hotReelsSpins" type="number" min="1" max="100" step="1" value="5" />
+                            <label for="hotReelsMinimum">Minimum return per Hot Reel spin</label><select id="hotReelsMinimum"><option value="1">1× wager (bet back)</option><option value="2" selected>2× wager</option><option value="3">3× wager</option><option value="5">5× wager</option><option value="10">10× wager</option></select>
+                            <p class="overlay-note">One random reel burns with a sticky wild. Defaults: 3% paid-spin trigger, five spins including the trigger, and at least 2× the spin wager returned. Free spins can use an active Hot Reel but cannot start one. Bonus games do not use a turn. Minimum-return awards increase effective returns beyond regular Win Odds. Duration and minimum changes apply to the next activation; disabling clears the cycle before the next spin.</p>
+                        </div>
                         <div id="autoSpinSettings" class="checkbox-setting">
                             <label class="checkbox-row" for="autoSpinUseDefault"><input id="autoSpinUseDefault" type="checkbox" checked /><span>Use default auto-spin count</span></label>
                             <label for="autoSpinDefaultCount">Default auto spins</label><input id="autoSpinDefaultCount" type="number" min="1" max="10000" step="1" value="25" required />
@@ -278,6 +285,7 @@
                     <p id="featureOddsRules">Free Spins and Bonus Plays settings are loading.</p>
                     <p>Free spins cost no credits and retain the denomination, active lines, and bet per line from the paid spin that awarded them. Their payouts are added to Available Credits. Free spins cannot retrigger either feature.</p>
                     <p>Six BONUS symbols anywhere on the reels in one paid spin trigger one of three equally likely games: the bonus wheel, Match &amp; Win, or Diamond Collector. Buy Bonus also lets you choose a game directly or select Random. Match &amp; Win has nine hidden cards with one guaranteed three-card jackpot match; reveal cards until three match. Relative Jackpot Odds settings select the guaranteed tier, and the award uses the configured jackpot value for the feature wager.</p>
+                    <h4>Hot Reels</h4><p>Exclusive to Neon Slots: a paid spin can ignite one randomly chosen reel and lock one Wild in a random position on it. By default, it lasts five reel spins including the trigger and returns at least twice each spin’s wager. If line, jackpot, and bonus winnings fall below the minimum, a separately listed Hot Reels guarantee makes up the difference; larger wins are kept. Whole-dollar rounding still applies. Free spins use their awarded wager for the guarantee, cost no credits, and consume an active turn without triggering a new cycle. Bonus games and purchased bonuses neither trigger nor consume Hot Reel turns. Settings controls enable/disable, trigger chance, duration, and minimum return (1× through 10×). Turning it off clears the cycle before the next spin; other changes apply to the next activation. Reset Session and reload clear the current cycle. Works with Reveal winnings and counted auto spins. This feature increases effective win frequency and returns beyond regular Win Odds.</p>
                     <h4>Reveal winnings</h4><p>Exclusive to Neon Slots: enable Reveal winnings in Settings to cover the reels with a result panel. Spin immediately shows the wager, award, net win or loss, and remaining balance without reel animation. Bonuses and wheel pointers resolve automatically under their existing rules. Auto spin shows each result with a short pause and remains cancellable. The shared auto-spin count applies in this mode too. Credits, free spins, jackpots, statistics, and history update normally. Turn it off to see the reels again. This preference is saved on this device.</p>
                     <h4>Auto-spin count</h4><p>Use default auto-spin count is enabled initially, with 25 spins. Change the saved default in Settings, or turn the checkbox off to require a count before each run. Counts must be whole numbers from 1 to 10,000. Cancel or Escape in the count prompt spends nothing. Each completed paid or free spin counts toward the run; free spins retain their normal rules. Cancel stops after any spin already underway; insufficient credits can end a run early.</p>
                     <h4>Settings Guide</h4>
@@ -416,6 +424,7 @@
     <script src="../../interaction-lock.js?build=20260808-no-double-tap"></script>
     <script src="../../slot-experience.js?v=1.20.17&amp;build=20261106-auto-lower-bet-v147"></script>
     <script src="../../slot-auto-spin.js"></script>
+    <script src="hot-reels.js"></script>
     <script src="main.js?v=1.4.2&amp;build=20261106-auto-lower-bet-v147"></script>
 </body>
 

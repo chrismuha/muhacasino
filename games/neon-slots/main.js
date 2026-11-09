@@ -488,6 +488,31 @@ function getBonusPrizeMultipliers() {
     return [0, 1, 2].map(getBonusPrizeMultiplier);
 }
 
+const hotReels = window.NeonHotReels.create();
+let hotReelsDisplay = { active: false };
+let hotReelsSettings = { ...window.NeonHotReels.defaults };
+try { hotReelsSettings = window.NeonHotReels.normalize(JSON.parse(localStorage.getItem("neon-slots-hot-reels") || "{}")); } catch {}
+const hotReelsInputs = { enabled: document.getElementById("hotReelsEnabled"), triggerChance: document.getElementById("hotReelsChance"), spins: document.getElementById("hotReelsSpins"), minimumMultiplier: document.getElementById("hotReelsMinimum") };
+for (const [key, input] of Object.entries(hotReelsInputs)) {
+    if (key === "enabled") input.checked = hotReelsSettings.enabled;
+    else input.value = hotReelsSettings[key];
+    input.addEventListener("change", () => {
+        hotReelsSettings = window.NeonHotReels.normalize({ ...hotReelsSettings, [key]: key === "enabled" ? input.checked : input.value });
+        if (key === "enabled") input.checked = hotReelsSettings.enabled;
+        else input.value = hotReelsSettings[key];
+        try { localStorage.setItem("neon-slots-hot-reels", JSON.stringify(hotReelsSettings)); } catch {}
+    });
+}
+const hotReelsStatus = document.createElement("p");
+hotReelsStatus.className = "neon-hot-status";
+hotReelsStatus.setAttribute("role", "status");
+hotReelsStatus.hidden = true;
+reelsEl.after(hotReelsStatus);
+function updateHotReelsStatus() {
+    hotReelsStatus.hidden = !hotReelsDisplay.active;
+    hotReelsStatus.textContent = hotReelsDisplay.active ? `Hot Reel ${hotReelsDisplay.reel + 1} · ${hotReelsDisplay.remaining} spins left after this result · ${hotReelsDisplay.minimumMultiplier}× wager minimum` : "";
+}
+
 const revealWinningsEl = document.getElementById("revealWinnings");
 const revealResultEl = document.createElement("section");
 revealResultEl.className = "neon-reveal-result";
@@ -722,6 +747,13 @@ function createCell(symbol, isWinning = false) {
     const cell = document.createElement("div");
     cell.className = "cell";
     if (isWinning) cell.classList.add("win");
+    if (symbol?.kind === "hotWild") {
+        cell.classList.add("hot-sticky-wild");
+        cell.innerHTML = '<span class="icon-container" aria-hidden="true">🃏</span><span class="hot-wild-label">STICKY WILD</span>';
+        cell.setAttribute("role", "img");
+        cell.setAttribute("aria-label", "Hot Reel sticky wild");
+        return cell;
+    }
     if (symbol === BONUS_SYMBOL) {
         const chip = document.createElement("span");
         chip.className = "jackpot-chip bonus-chip";
@@ -793,9 +825,9 @@ function renderOutcomeGrid(grid, winningPositions, jackpotWins, jackpotTeasers =
     const jackpotPositions = new Set();
     for (const jackpotWin of jackpotSymbols) {
         const position = preferredPositions.find(([r, c]) =>
-            !displayPositions.has(`${r},${c}`) && displayGrid[r][c] !== BONUS_SYMBOL && !jackpotPositions.has(`${r},${c}`)
+            !displayPositions.has(`${r},${c}`) && displayGrid[r][c] !== BONUS_SYMBOL && displayGrid[r][c]?.kind !== "hotWild" && !jackpotPositions.has(`${r},${c}`)
         )
-            || preferredPositions.find(([r, c]) => displayGrid[r][c] !== BONUS_SYMBOL && !jackpotPositions.has(`${r},${c}`));
+            || preferredPositions.find(([r, c]) => displayGrid[r][c] !== BONUS_SYMBOL && displayGrid[r][c]?.kind !== "hotWild" && !jackpotPositions.has(`${r},${c}`));
         if (!position) continue;
         const [row, col] = position;
         displayGrid[row][col] = {
@@ -815,7 +847,10 @@ function renderGrid(grid, winningPositions = new Set()) {
         for (let col = 0; col < COLS; col++) {
             const key = `${row},${col}`;
             const isWin = winningPositions.has(key);
-            reelsEl.appendChild(createCell(grid[row][col], isWin));
+            const held = hotReelsDisplay.active && col === hotReelsDisplay.reel && row === hotReelsDisplay.row;
+            const cell = createCell(held ? { kind: "hotWild" } : grid[row][col], isWin);
+            if (hotReelsDisplay.active && col === hotReelsDisplay.reel) cell.classList.add("hot-reel-cell");
+            reelsEl.appendChild(cell);
         }
     }
 }
@@ -839,7 +874,7 @@ function addBonusChipWin(grid) {
 }
 
 function getLineMatchResult(path, grid) {
-    const lineSymbols = path.map((row, col) => grid[row][col]);
+    const lineSymbols = path.map((row, col) => grid[row][col]?.kind === "hotWild" ? WILD_SYMBOL : grid[row][col]);
     const baseSymbol = lineSymbols.find((symbol) => symbol !== WILD_SYMBOL) || WILD_SYMBOL;
 
     let count = 0;
@@ -1204,6 +1239,7 @@ function getSettingsDefinitions() {
         { key: "adjustMoney", title: "Adjust Money", element: creditStepEl?.closest(".credit-controls") },
         { key: "lines", title: "Lines", element: linesEl?.closest(".select") },
         { key: "maxBetCredits", title: "Max Bet Credits", element: maxBetUsesAvailableCreditsEl?.closest(".checkbox-setting") },
+        { key: "hotReels", title: "Hot Reels", element: document.getElementById("hotReelsSettings") },
         { key: "revealWinnings", title: "Reveal winnings", element: revealWinningsEl?.closest(".checkbox-setting") },
         { key: "autoSpinCount", title: "Auto-spin count", element: document.getElementById("autoSpinSettings") },
         { key: "winDelay", title: "Winning Highlight Delay", element: skipWinAnimationDelayEl?.closest(".checkbox-setting") },
@@ -1630,6 +1666,10 @@ function resetSessionState() {
     freeSpinsRemaining = 0;
     freeSpinWagerConfig = null;
     freeSpinWinTotalUSD = 0;
+    hotReels.reset();
+    hotReelsDisplay = { active: false };
+    updateHotReelsStatus();
+    renderGrid(createGrid(() => randomSymbol()));
     updateFeatureStatus();
     resetCustomJackpotOdds();
     updateGameOddsDisplay();
@@ -1815,6 +1855,9 @@ async function doSpin(options = {}) {
 
     const shouldWin = Math.random() < getTargetSpinWinRate();
     let grid = resolveSpinGrid(shouldWin);
+    hotReelsDisplay = hotReels.advance(grid, hotReelsSettings, !isFreeSpin);
+    grid = hotReelsDisplay.grid;
+    updateHotReelsStatus();
     const bonusTriggered = !isFreeSpin && Math.random() < getFeatureRate(bonusGameOddsEl, 0.01);
     const bonusResult = bonusTriggered ? addBonusChipWin(grid) : null;
     if (bonusResult) grid = bonusResult.grid;
@@ -1835,7 +1878,9 @@ async function doSpin(options = {}) {
         freeSpinWagerConfig = { ...wagerConfig };
         updateFeatureStatus();
     }
-    const totalWinUSD = roundWinUSD(regularWinUSD + jackpotWinUSD + bonusWinUSD);
+    const baseWinUSD = roundWinUSD(regularWinUSD + jackpotWinUSD + bonusWinUSD);
+    const hotReelsWinUSD = hotReels.supplement(hotReelsDisplay, totalBetUSD, baseWinUSD);
+    const totalWinUSD = roundWinUSD(baseWinUSD + hotReelsWinUSD);
     const lossComponentUSD = isFreeSpin ? 0 : Math.max(totalBetUSD - totalWinUSD, 0);
     addSessionLosses(lossComponentUSD);
     addNetSessionLosses(lossComponentUSD);
@@ -1853,6 +1898,7 @@ async function doSpin(options = {}) {
         const linesText = lineWins
             .map(w => `Line ${w.lineIndex}: ${w.symbol} × ${w.count} → ${fmtUSD(w.winUSD)}`)
             .concat(jackpotWins.map((jackpot) => `${jackpot.name.toUpperCase()} JACKPOT${jackpot.hitCount > 1 ? ` ×${jackpot.hitCount}` : ""} → ${fmtUSD(jackpot.amountUSD)}`))
+            .concat(hotReelsWinUSD ? [`HOT REELS GUARANTEE → ${fmtUSD(hotReelsWinUSD)}`] : [])
             .concat(bonusWinUSD ? [`BONUS × ${bonusResult.count} → ${fmtUSD(bonusWinUSD)}`] : [])
             .concat(freeSpinsTriggered ? [`${freeSpinsAwarded} FREE SPINS AWARDED`] : [])
             .join(" • ");
@@ -1877,6 +1923,7 @@ async function doSpin(options = {}) {
         : [
             ...jackpotWins.map((jackpot) => ({ label: `${jackpot.name} Jackpot${jackpot.hitCount > 1 ? ` ×${jackpot.hitCount}` : ""}`, amountUSD: jackpot.amountUSD })),
             { label: "Bonus game", amountUSD: bonusWinUSD },
+            { label: "Hot Reels guarantee", amountUSD: hotReelsWinUSD },
         ];
     updateTotals();
     updateAllSessionDisplays();
