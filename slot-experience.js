@@ -281,7 +281,7 @@
         });
     }
 
-    function pickWheelPointerCount() {
+    function pickWheelPointerCount(options = {}) {
         const totalOdds = state.pointerOdds.reduce((sum, value) => sum + value, 0) || 1;
         let roll = Math.random() * totalOdds;
         let winningValue = 1;
@@ -289,6 +289,7 @@
             roll -= state.pointerOdds[index];
             if (roll <= 0) { winningValue = index + 1; break; }
         }
+        if (options.automatic) return Promise.resolve(winningValue);
         const pointerLabel = `${winningValue} ${winningValue === 1 ? "POINTER" : "POINTERS"}`;
         const values = [
             { key: "winner-star", value: winningValue, label: `★ ${pointerLabel}` },
@@ -953,7 +954,7 @@
     let bonusBuyConfig = null;
 
     // One shared feature keeps board rules and awards consistent across every slot.
-    function playDiamondCollector(totalBetUSD) {
+    function playDiamondCollector(totalBetUSD, options = {}) {
         const wager = Math.max(0.01, Number(totalBetUSD) || 0.01);
         const previousFocus = document.activeElement;
         const wasLocked = state.interactionLocked;
@@ -970,8 +971,10 @@
             <p class="diamond-collector-total"></p>
             <button type="button" class="diamond-collector-spin">Free Spin</button>
         </div>`;
-        document.body.appendChild(overlay);
-        window.slotExperience.setInteractionLocked(true);
+        if (!options.automatic) {
+            document.body.appendChild(overlay);
+            window.slotExperience.setInteractionLocked(true);
+        }
         const board = overlay.querySelector(".diamond-collector-board");
         const status = overlay.querySelector(".diamond-collector-status");
         const total = overlay.querySelector(".diamond-collector-total");
@@ -985,6 +988,7 @@
         const sum = () => cells.reduce((value, cell) => value + cell, 0);
         const award = () => Math.round((banked + sum()) * 100) / 100;
         const render = (message = "") => {
+            if (options.automatic) return;
             board.style.setProperty("--diamond-size", size);
             board.replaceChildren(...cells.map((value) => {
                 const cell = document.createElement("div");
@@ -998,7 +1002,7 @@
             button.textContent = complete ? `Collect ${formatAmount(award())}` : "Free Spin";
         };
         render();
-        button.focus();
+        if (!options.automatic) button.focus();
         return new Promise((resolve) => {
             // Keep keyboard play within the active feature, including embedded cabinets.
             const handleKey = (event) => {
@@ -1008,14 +1012,16 @@
                     event.preventDefault(); event.stopImmediatePropagation(); button.click();
                 }
             };
-            document.addEventListener("keydown", handleKey, true);
+            if (!options.automatic) document.addEventListener("keydown", handleKey, true);
             button.onclick = () => {
                 if (complete) {
                     const winUSD = award();
                     document.removeEventListener("keydown", handleKey, true);
                     overlay.remove();
-                    window.slotExperience.setInteractionLocked(wasLocked);
-                    previousFocus?.focus();
+                    if (!options.automatic) {
+                        window.slotExperience.setInteractionLocked(wasLocked);
+                        previousFocus?.focus();
+                    }
                     resolve(winUSD);
                     return;
                 }
@@ -1037,6 +1043,10 @@
                 if (freeSpins === 0) { complete = true; message = "Bonus game over! "; }
                 render(message);
             };
+            if (options.automatic) {
+                while (!complete) button.onclick();
+                button.onclick();
+            }
         });
     }
 

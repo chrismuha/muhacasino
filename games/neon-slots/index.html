@@ -205,6 +205,11 @@
                             </div>
                         </div>
 
+                        <div id="autoSpinSettings" class="checkbox-setting">
+                            <label class="checkbox-row" for="autoSpinUseDefault"><input id="autoSpinUseDefault" type="checkbox" checked /><span>Use default auto-spin count</span></label>
+                            <label for="autoSpinDefaultCount">Default auto spins</label><input id="autoSpinDefaultCount" type="number" min="1" max="10000" step="1" value="25" required />
+                            <p class="overlay-note">Enabled by default: start 25 auto spins without a prompt. Turn off to choose a count before every run. Normal wagers apply; awarded free spins use a turn without charging a wager.</p>
+                        </div>
                         <div class="checkbox-setting">
                             <label class="checkbox-row" for="maxBetUsesAvailableCredits">
                                 <input id="maxBetUsesAvailableCredits" type="checkbox" />
@@ -213,6 +218,10 @@
                             <p class="overlay-note">Uses your full current credits as the wager and may create cent-based bets.</p>
                         </div>
 
+                        <div class="checkbox-setting">
+                            <label class="checkbox-row" for="revealWinnings"><input id="revealWinnings" type="checkbox" /><span>Reveal winnings</span></label>
+                            <p class="overlay-note">Cover the reels and show results immediately. Bonuses resolve automatically; bets, odds, and credits use the usual rules.</p>
+                        </div>
                         <div class="checkbox-setting">
                             <label class="checkbox-row" for="skipWinAnimationDelay">
                                 <input id="skipWinAnimationDelay" type="checkbox" checked />
@@ -269,6 +278,8 @@
                     <p id="featureOddsRules">Free Spins and Bonus Plays settings are loading.</p>
                     <p>Free spins cost no credits and retain the denomination, active lines, and bet per line from the paid spin that awarded them. Their payouts are added to Available Credits. Free spins cannot retrigger either feature.</p>
                     <p>Six BONUS symbols anywhere on the reels in one paid spin trigger one of three equally likely games: the bonus wheel, Match &amp; Win, or Diamond Collector. Buy Bonus also lets you choose a game directly or select Random. Match &amp; Win has nine hidden cards with one guaranteed three-card jackpot match; reveal cards until three match. Relative Jackpot Odds settings select the guaranteed tier, and the award uses the configured jackpot value for the feature wager.</p>
+                    <h4>Reveal winnings</h4><p>Exclusive to Neon Slots: enable Reveal winnings in Settings to cover the reels with a result panel. Spin immediately shows the wager, award, net win or loss, and remaining balance without reel animation. Bonuses and wheel pointers resolve automatically under their existing rules. Auto spin shows each result with a short pause and remains cancellable. The shared auto-spin count applies in this mode too. Credits, free spins, jackpots, statistics, and history update normally. Turn it off to see the reels again. This preference is saved on this device.</p>
+                    <h4>Auto-spin count</h4><p>Use default auto-spin count is enabled initially, with 25 spins. Change the saved default in Settings, or turn the checkbox off to require a count before each run. Counts must be whole numbers from 1 to 10,000. Cancel or Escape in the count prompt spends nothing. Each completed paid or free spin counts toward the run; free spins retain their normal rules. Cancel stops after any spin already underway; insufficient credits can end a run early.</p>
                     <h4>Settings Guide</h4>
                     <p class="overlay-note"><strong>Automatically lower bet:</strong> Automatically lower bet is on by default and saved separately for each slot. When the current wager is unaffordable, manual and auto spins use the highest affordable lower bet step without a confirmation. Denomination and paylines stay unchanged. Free spins retain their awarded wager. Turn this setting off to keep the existing low-credit flow. If no lower bet step is affordable, the optional Lucky Credit Wheel remains available under its existing rules, followed by the add-credit prompt when applicable.</p>
                     <p class="overlay-note"><strong>Session Stats Display:</strong> Chooses which stat boxes are visible (regular session totals, Net totals, or Actual Net totals).</p>
@@ -404,6 +415,7 @@
     <link rel="stylesheet" href="../../slot-experience.css?v=1.20.8&amp;build=20261106-auto-lower-bet-v147">
     <script src="../../interaction-lock.js?build=20260808-no-double-tap"></script>
     <script src="../../slot-experience.js?v=1.20.17&amp;build=20261106-auto-lower-bet-v147"></script>
+    <script src="../../slot-auto-spin.js"></script>
     <script src="main.js?v=1.4.2&amp;build=20261106-auto-lower-bet-v147"></script>
 </body>
 

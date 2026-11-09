@@ -58,7 +58,7 @@ async function checkGame(game) {
         advanceTreasurePots: () => ({ winUSD: 6, popped: [0] }), animatePotPop: () => Promise.resolve(),
         getCreditStatusMessage: () => '', shouldOfferLastChanceSpin: () => false,
         roundUSD: value => Math.round(value * 100) / 100, clampBalanceUSD: value => value, fmtUSD: value => String(value),
-        window: { slotExperience: { recordPlay() {}, showFeatureWin(notice) {
+        window: { slotExperience: { recordPlay() {}, recordSpin() {}, showFeatureWin(notice) {
             const wins = notice.entries.filter(entry => entry.amountUSD > 0);
             if (!wins.length) return Promise.resolve();
             notices.push({ ...notice, entries: wins });
@@ -66,6 +66,10 @@ async function checkGame(game) {
         } } },
     });
     for (const name of ['startSpinElapsedTimer', 'updateTotals', 'clearMessage', 'updateFeatureStatus', 'renderOutcomeGrid', 'renderWinningPayouts', 'addSessionLosses', 'addNetSessionLosses', 'subtractNetSessionWinnings', 'adjustActualSessionNet', 'addSessionWinnings', 'addNetSessionWinnings', 'subtractNetSessionLosses', 'setMessage', 'pauseSpinElapsedTimer', 'syncLastChanceOverlayState', 'updateAllSessionDisplays']) ctx[name] = () => {};
+    ctx.lowerBetIfNeeded = () => false;
+    ctx.planPennySpread = grid => ({ grid, targets: [] });
+    ctx.animatePennySpread = async () => {};
+    ctx.revealWinningsEnabled = () => false;
     vm.runInContext(extract(source, 'doSpin'), ctx);
     const spin = ctx.doSpin({ instant: true });
     await new Promise(resolve => setImmediate(resolve));

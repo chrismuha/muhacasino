@@ -9,3 +9,7 @@ These project-specific rules take precedence over conflicting inherited build an
 - A user-requested Muha Casino build/workflow still includes updating the current version’s release notes with completed changes, updating an existing matching GitHub draft prerelease when present, running appropriate non-build checks, and committing and pushing the relevant completed work to `main`. With Electron packaging, also complete the requested app build before pushing. This is the user’s explicit standing authorization for that workflow and overrides the generic requirement for a separate push request for Muha Casino build requests only. Do not force-push or include unrelated work.
 - Do not change versions, publish GitHub releases, deploy, or run Capacitor sync/mobile packaging unless explicitly requested. Merely editing code or instructions does not trigger the build/workflow or authorize a push.
 - Do not run routine test or verification builds. Prefer focused non-build checks. Diagnostic work alone does not authorize a push.
+
+## Slot feature comparison before pushing
+
+- Before pushing Muha Casino changes to `main`, check whether any slot feature was added, removed, or changed. Update `slots-guide.html` and related in-game guide/Help descriptions whenever shared or exclusive feature differences change. Verify the comparison against the actual implementations before pushing; keep release notes consistent.

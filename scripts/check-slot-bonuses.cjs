@@ -27,6 +27,7 @@ async function check(game) {
         assert.equal(JSON.stringify(grid), before, 'Input grid must not be mutated');
         for (let r = 0; r < 3; r++) assert.deepEqual(Array.from(result.grid[r]), grid[r]);
     }
+    context.revealWinningsEnabled = () => false;
     context.playWheelBonusGame = bet => ['wheel', bet];
     context.playMatchAndWinBonus = bet => ['match', bet];
     context.window = { slotExperience: { playDiamondCollector: bet => Promise.resolve(bet * 10) } };

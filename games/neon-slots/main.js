@@ -160,6 +160,7 @@ let overlayPageIndex = 0;
 let autoSpinRunning = false;
 let autoSpinStopRequested = false;
 let autoSpinRemaining = 0;
+let autoSpinLimit = 25;
 let autoSpinStartedAt = 0;
 let spinElapsedAccumulatedMs = 0;
 let autoSpinElapsedTimer = 0;
@@ -487,6 +488,44 @@ function getBonusPrizeMultipliers() {
     return [0, 1, 2].map(getBonusPrizeMultiplier);
 }
 
+const revealWinningsEl = document.getElementById("revealWinnings");
+const revealResultEl = document.createElement("section");
+revealResultEl.className = "neon-reveal-result";
+revealResultEl.hidden = true;
+revealResultEl.setAttribute("role", "status");
+revealResultEl.setAttribute("aria-live", "polite");
+revealResultEl.innerHTML = '<span>Reveal winnings</span><h3>Ready to reveal</h3><p>Press Spin to see your result.</p>';
+reelsEl.parentElement.append(revealResultEl);
+function revealWinningsEnabled() { return Boolean(revealWinningsEl?.checked); }
+function positionRevealResult() {
+    revealResultEl.style.top = `${reelsEl.offsetTop}px`;
+    revealResultEl.style.left = `${reelsEl.offsetLeft}px`;
+    revealResultEl.style.width = `${reelsEl.offsetWidth}px`;
+    revealResultEl.style.height = `${reelsEl.offsetHeight}px`;
+}
+function syncRevealWinnings() {
+    const enabled = revealWinningsEnabled();
+    document.body.classList.toggle("neon-reveal-mode", enabled);
+    revealResultEl.hidden = !enabled;
+    reelsEl.setAttribute("aria-hidden", String(enabled));
+    positionRevealResult();
+}
+try { revealWinningsEl.checked = localStorage.getItem("neon-slots-reveal-winnings") === "true"; } catch {}
+revealWinningsEl?.addEventListener("change", () => {
+    try { localStorage.setItem("neon-slots-reveal-winnings", String(revealWinningsEnabled())); } catch {}
+    syncRevealWinnings();
+});
+new ResizeObserver(positionRevealResult).observe(reelsEl);
+window.addEventListener("resize", positionRevealResult);
+syncRevealWinnings();
+function showRevealedWinnings({ wagerUSD, payoutUSD, free, freeSpinsAwarded = 0 }) {
+    const net = roundUSD(payoutUSD - wagerUSD);
+    const headline = payoutUSD > 0 ? `Won ${fmtUSD(payoutUSD)}` : "No win";
+    revealResultEl.querySelector("h3").textContent = headline;
+    revealResultEl.querySelector("p").textContent = `${free ? "Free spin" : `Bet ${fmtUSD(wagerUSD)}`} · Net ${net < 0 ? "loss" : "gain"} ${fmtUSD(Math.abs(net))} · Balance ${fmtUSD(balance)}${freeSpinsAwarded ? ` · ${freeSpinsAwarded} free spins awarded` : ""}`;
+    revealResultEl.dataset.outcome = net < 0 ? "loss" : "win";
+}
+
 function shuffledCopy(values) {
     const shuffled = [...values];
     for (let index = shuffled.length - 1; index > 0; index--) {
@@ -510,6 +549,7 @@ function chooseMatchJackpot() {
 
 function playMatchAndWinBonus(totalBetUSD) {
     const winningTier = chooseMatchJackpot();
+    if (revealWinningsEnabled()) return Promise.resolve(getScaledJackpotAmount(winningTier, totalBetUSD));
     const decoys = shuffledCopy(JACKPOT_TIERS.filter((tier) => tier !== winningTier).flatMap((tier) => [tier, tier]));
     const board = shuffledCopy([winningTier, winningTier, winningTier, ...decoys.slice(0, 6)]);
     const overlay = document.createElement("div");
@@ -584,7 +624,12 @@ function setupFeatureUI() {
 }
 
 async function playWheelBonusGame(totalBetUSD) {
-    const pointerCount = await window.slotExperience.pickWheelPointerCount();
+    const automatic = revealWinningsEnabled();
+    const pointerCount = await window.slotExperience.pickWheelPointerCount({ automatic });
+    if (automatic) {
+        const prizes = getBonusPrizeMultipliers();
+        return roundWinUSD(totalBetUSD * prizes[Math.floor(Math.random() * prizes.length)] * pointerCount);
+    }
     bonusOverlayEl.hidden = false;
     const prizes = getBonusPrizeMultipliers();
     bonusOverlayEl.innerHTML = `<div class="feature-dialog slot-bonus-wheel-dialog" role="dialog" aria-modal="true" aria-labelledby="bonusTitle"><span class="slot-wheel-kicker">Neon Bonus</span><h2 id="bonusTitle">Spin the Neon Wheel</h2><div class="slot-bonus-wheel-wrap"><span class="slot-bonus-pointer" aria-hidden="true"></span><div class="slot-bonus-wheel" role="img" aria-label="Prize wheel"><span>${prizes[0]}×</span><span>${prizes[1]}×</span><span>${prizes[2]}×</span></div><b class="slot-wheel-center" aria-hidden="true">★</b></div><p class="wheel-result" aria-live="polite">Ready to spin!</p><button type="button" class="wheel-spin">Spin Wheel</button></div>`;
@@ -614,7 +659,7 @@ async function playWheelBonusGame(totalBetUSD) {
 }
 
 function playBonusGame(totalBetUSD, choice = "random") {
-    if (choice === "diamonds") return window.slotExperience.playDiamondCollector(totalBetUSD);
+    if (choice === "diamonds") return window.slotExperience.playDiamondCollector(totalBetUSD, { automatic: revealWinningsEnabled() });
     if (choice === "wheel") return playWheelBonusGame(totalBetUSD);
     if (choice === "match") return playMatchAndWinBonus(totalBetUSD);
     const bonuses = ["wheel", "match", "diamonds"];
@@ -640,7 +685,8 @@ async function buyInstantBonus(option = {}) {
         window.slotExperience?.recordSpin({wagerUSD:cost,payoutUSD:award,balanceUSD:balance,kind:"Bonus purchase"});
         setMessage(`BONUS COMPLETE — Cost ${fmtUSD(cost)} • Award ${fmtUSD(award)}`);
         updateTotals();
-        await window.slotExperience?.showFeatureWin({ title: "Bonus Complete!", entries: [{ label: "Purchased bonus", amountUSD: award }] });
+        if (revealWinningsEnabled()) showRevealedWinnings({ wagerUSD: cost, payoutUSD: award, free: false });
+        else await window.slotExperience?.showFeatureWin({ title: "Bonus Complete!", entries: [{ label: "Purchased bonus", amountUSD: award }] });
     } finally { isSpinning = false; updateTotals(); }
 }
 
@@ -1158,6 +1204,8 @@ function getSettingsDefinitions() {
         { key: "adjustMoney", title: "Adjust Money", element: creditStepEl?.closest(".credit-controls") },
         { key: "lines", title: "Lines", element: linesEl?.closest(".select") },
         { key: "maxBetCredits", title: "Max Bet Credits", element: maxBetUsesAvailableCreditsEl?.closest(".checkbox-setting") },
+        { key: "revealWinnings", title: "Reveal winnings", element: revealWinningsEl?.closest(".checkbox-setting") },
+        { key: "autoSpinCount", title: "Auto-spin count", element: document.getElementById("autoSpinSettings") },
         { key: "winDelay", title: "Winning Highlight Delay", element: skipWinAnimationDelayEl?.closest(".checkbox-setting") },
         { key: "sessionStats", title: "Session Stats Display", element: sessionStatDisplayEl?.closest(".select") },
         { key: "elapsedTime", title: "Time Elapsed", element: autoSpinElapsedEl },
@@ -1655,7 +1703,7 @@ function updateAutoSpinHint() {
             autoSpinHintEl.textContent = `Auto spin paused. Add credits or tap Cancel to stop.`;
             return;
         }
-        autoSpinHintEl.textContent = `Auto spin running (${autoSpinRemaining} spins). Tap Cancel to stop.`;
+        autoSpinHintEl.textContent = `Auto spin running (${autoSpinRemaining} of ${autoSpinLimit} spins). Tap Cancel to stop.`;
         return;
     }
     autoSpinHintEl.textContent = "";
@@ -1669,6 +1717,9 @@ function cancelAutoSpin() {
 
 async function runAutoSpin() {
     if (autoSpinRunning || isSpinning) return;
+    const requestedCount = await window.slotAutoSpin.requestCount();
+    if (requestedCount === null || autoSpinRunning || isSpinning) return;
+    autoSpinLimit = requestedCount;
 
     autoSpinRunning = true;
     autoSpinStopRequested = false;
@@ -1678,7 +1729,7 @@ async function runAutoSpin() {
     updateTotals();
 
     let stoppedForInsufficientCredits = false;
-    while (!autoSpinStopRequested) {
+    while (!autoSpinStopRequested && autoSpinRemaining < autoSpinLimit) {
         const result = await doSpin({ silentNoWin: true });
         if (!result?.completed) {
             if (result?.reason === "insufficient_credits") {
@@ -1690,24 +1741,26 @@ async function runAutoSpin() {
             await new Promise((resolve) => setTimeout(resolve, 100));
             continue;
         }
-        if (autoSpinStopRequested) break;
         autoSpinRemaining += 1;
         updateAutoSpinHint();
+        if (autoSpinStopRequested || autoSpinRemaining >= autoSpinLimit) break;
 
-        if (result.totalWinUSD > 0 && !autoSpinStopRequested && !shouldSkipWinAnimationDelay()) {
+        if (revealWinningsEnabled()) await new Promise(resolve => setTimeout(resolve, 450));
+        else if (result.totalWinUSD > 0 && !autoSpinStopRequested && !shouldSkipWinAnimationDelay()) {
             await new Promise((resolve) => setTimeout(resolve, 5000));
         }
     }
 
     const wasStopped = autoSpinStopRequested;
+    const completedCount = autoSpinRemaining;
     autoSpinRunning = false;
     autoSpinStopRequested = false;
     autoSpinRemaining = 0;
 
     if (wasStopped) {
         setMessage("Auto spin canceled.");
-    } else {
-        clearMessage();
+    } else if (!stoppedForInsufficientCredits) {
+        setMessage(`Auto spin complete: ${completedCount} spins.`);
     }
 
     updateAutoSpinControls();
@@ -1752,7 +1805,8 @@ async function doSpin(options = {}) {
     }
     updateTotals();
 
-    const instantSpin = Boolean(options.instant);
+    const revealMode = revealWinningsEnabled();
+    const instantSpin = Boolean(options.instant) || revealMode;
     if (!instantSpin) {
         animateSpin(650);
         await new Promise(r => setTimeout(r, 700));
@@ -1771,7 +1825,7 @@ async function doSpin(options = {}) {
     const jackpotTeasers = resolveJackpotTeasers(jackpotWins);
     const jackpotWinUSD = jackpotWins.reduce((sum, jackpot) => sum + jackpot.amountUSD, 0);
     renderOutcomeGrid(grid, displayWinningPositions, jackpotWins, jackpotTeasers);
-    if (bonusResult?.count === 6) await new Promise((resolve) => setTimeout(resolve, 650));
+    if (!revealMode && bonusResult?.count === 6) await new Promise((resolve) => setTimeout(resolve, 650));
     const bonusWinUSD = bonusResult?.count === 6 ? await playBonusGame(totalBetUSD) : 0;
     const freeSpinsTriggered = !isFreeSpin && Math.random() < getFeatureRate(freeSpinsOddsEl, 0.03);
     const freeSpinsAwarded = getFreeSpinsAward();
@@ -1828,7 +1882,8 @@ async function doSpin(options = {}) {
     updateAllSessionDisplays();
     pauseSpinElapsedTimer();
     window.slotExperience?.recordSpin({wagerUSD:isFreeSpin?0:totalBetUSD,payoutUSD:totalWinUSD,balanceUSD:balance,free:isFreeSpin,kind:isFreeSpin?"Free spin":"Spin"});
-    await window.slotExperience?.showFeatureWin({ title: freeSpinsComplete ? "Free Spins Complete!" : "Feature Win!", entries: featureAwards });
+    if (revealMode) showRevealedWinnings({ wagerUSD: isFreeSpin ? 0 : totalBetUSD, payoutUSD: totalWinUSD, free: isFreeSpin, freeSpinsAwarded: freeSpinsTriggered ? freeSpinsAwarded : 0 });
+    else await window.slotExperience?.showFeatureWin({ title: freeSpinsComplete ? "Free Spins Complete!" : "Feature Win!", entries: featureAwards });
 
     isSpinning = false;
     pauseSpinElapsedTimer();

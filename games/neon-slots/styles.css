@@ -2003,3 +2003,11 @@ body.overlay-open {
 @media (prefers-reduced-motion: reduce) { .slot-bonus-wheel { transition-duration: .01s; } }
 .bonus-chip { border: 2px solid #ffd46a; background: #5a287c; color: white; }
 .bonus-chip strong, .bonus-chip span { display: block; }
+
+.reels-wrap { position: relative; }
+.neon-reveal-result { position: absolute; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: clamp(12px, 3vw, 32px); background: #101827; color: #f7f9ff; border: 2px solid #6ce9f5; border-radius: 12px; text-align: center; overflow: auto; }
+.neon-reveal-result[hidden] { display: none; }
+.neon-reveal-result h3 { font-size: clamp(24px, 5vw, 52px); margin: 0; color: #88f1c4; }
+.neon-reveal-result p { margin: 0; line-height: 1.6; font-size: clamp(14px, 2vw, 18px); }
+.neon-reveal-result[data-outcome="loss"] h3 { color: #ffca9a; }
+.neon-reveal-mode .jackpot-board, .neon-reveal-mode .reel-result, .neon-reveal-mode #featureStatus { visibility: hidden; }
