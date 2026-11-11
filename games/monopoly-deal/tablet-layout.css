@@ -1,5 +1,5 @@
 /* Use tablet and open-foldable width without changing portrait phone layouts. */
-@media(min-width:601px) and (max-width:1366px) and (min-height:480px){
+@media(min-width:601px) and (max-width:1366px) and (min-height:360px), (min-width:1367px) and (min-height:360px) and (max-height:800px){
  html[data-theme=modern] body.is-playing>main{width:100%;max-width:none;padding:6px 12px 10px}
  #game .deal-table,#game .deal-table.has-selection{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:max-content auto max-content;gap:10px 18px;min-height:0}
  #game .deal-table .opponents{grid-column:1/-1;grid-row:1;min-height:0;align-items:start}
@@ -59,16 +59,16 @@
  #game .deal-table.has-selection .current-seat{grid-column:1/-1;grid-row:3}
  #game .deal-table.has-selection .deal-hand{grid-column:1/-1;grid-row:4}
 }
-@media(min-width:601px) and (max-width:1366px) and (min-height:480px){
+@media(min-width:601px) and (max-width:1366px) and (min-height:360px){
  #game .deal-table:not(.card-selected):not(.has-selection) :is(#flip-card,#bank-card,#play-card){display:none}
  #game .deal-table #flip-card[aria-disabled=true],#game .deal-table #bank-card[aria-disabled=true]{display:none}
  #game .deal-table[data-selected-type=money] #play-card[aria-disabled=true]{display:none}
 }
-@media(min-width:601px) and (max-width:1366px) and (min-height:480px) and (max-height:740px){
+@media(min-width:601px) and (max-width:1366px) and (min-height:360px) and (max-height:740px){
  #game .deal-table .deal-hand .modern-hand-card{flex-basis:var(--hand-card-width,72px)}
  #game .deal-table .deal-hand .cards{padding-top:12px;padding-bottom:4px}
 }
-@media(min-width:601px) and (max-width:1366px) and (min-height:480px){
+@media(min-width:601px) and (max-width:1366px) and (min-height:360px){
  html[data-theme=modern] .game-topbar{padding:4px 12px;gap:8px;min-height:52px}
  html[data-theme=modern] .game-topbar>a{padding:7px 10px;min-height:40px;font-size:14px}
  html[data-theme=modern] .game-topbar .game-top-actions button{min-height:40px;font-size:14px;padding:6px 10px}
@@ -80,7 +80,7 @@
  #game .deal-table .opponent .opponent-properties>.inspect-label{font-size:12px;line-height:1.2;padding:0}
  #game .deal-table .opponent .opponent-groups{padding:0;min-height:0}
 }
-@media(min-width:601px) and (max-width:1366px) and (min-height:480px) and (max-height:740px){
+@media(min-width:601px) and (max-width:1366px) and (min-height:360px) and (max-height:740px){
  html[data-theme=modern] .game-topbar{padding-block:0;min-height:44px}
  #game .deal-table{row-gap:8px}
  #game .deal-table .current-seat-heading{padding-bottom:2px}
@@ -89,7 +89,7 @@
 }
 
 /* A short open-foldable viewport puts Bank beside Properties in the same panel. */
-@media(min-width:601px) and (max-width:1366px) and (min-height:480px) and (max-height:680px){
+@media(min-width:601px) and (max-width:1366px) and (min-height:360px) and (max-height:680px){
  #game .deal-table .current-assets{grid-template-columns:104px minmax(0,1fr);grid-template-rows:auto}
  #game .deal-table .current-assets .current-bank{flex-wrap:wrap;align-content:flex-start;align-items:center;justify-content:flex-start;gap:4px;min-height:0;padding:8px;border-bottom:0;border-right:1px solid #91c9ff44}
  #game .deal-table .current-bank>.asset-count{flex-basis:100%;margin:0;text-align:left}
@@ -106,4 +106,42 @@
  #game .deal-table .draw-deck .deal-card-back.deck-icon{width:96px;height:139px}
  #game .deal-table .current-properties .public-mini{width:96px;aspect-ratio:96/139}
  #game .deal-table .deal-hand .modern-hand-card{flex-basis:var(--hand-card-width,clamp(84px,calc((100cqw - 88px)/7),144px))}
+}
+
+/* Reserve room for the timer before fitting the hand. Native desktop hand
+   scrolling stays free of snap corrections and follows trackpad momentum. */
+@media(min-width:601px){
+ #game .deal-table{--deal-action-size:44px;--deal-action-label:14px;--deal-action-symbol:28px;--deal-action-gap:6px}
+ #game .deal-table.hand-visible .deal-actions{display:flex;flex-direction:column;gap:6px;align-self:center;container-type:normal}
+ #game .deal-table .deal-actions .round-action,#game .deal-table .deal-actions #end{flex:0 0 auto}
+ #game .deal-table .deal-actions .plays-dots{flex:0 0 12px}
+ #game .deal-actions #elapsed-game-time{position:static;inset:auto;flex:0 0 auto;box-sizing:border-box}
+ #game .deal-table:not(.has-selection) .deal-stage{container-type:inline-size;min-height:max-content}
+ #game .deal-table .deal-hand .cards{scroll-snap-type:none;overflow-anchor:none;scroll-behavior:auto}
+ #game .deal-table:not(.has-selection) .deal-hand .modern-hand-card{flex-basis:var(--hand-card-width,84px)}
+}
+/* Two columns keep every action readable in short desktop windows. */
+@media(min-width:601px) and (max-height:800px){
+ #game .deal-table{--deal-action-size:32px;--deal-action-label:12px;--deal-action-symbol:24px}
+ #game .deal-table.hand-visible .deal-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;width:100%;min-width:0}
+ #game .deal-table .deal-actions :is(#flip-card,#bank-card,#play-card,#discard-card,#end).round-action{grid-column:auto;grid-row:auto;grid-template-columns:minmax(0,1fr);grid-template-rows:32px auto;justify-items:center;align-items:center;gap:2px;min-height:56px;height:auto}
+ #game .deal-table .deal-actions .action-disc{justify-self:center}
+ #game .deal-table .deal-actions .round-action>span:last-child{width:100%;text-align:center;overflow-wrap:normal;word-break:normal}
+ #game .deal-table .deal-actions .plays-dots,#game .deal-actions #elapsed-game-time{grid-column:1/-1;justify-self:center}
+ #game .deal-table:not(.has-selection) .deal-stage{grid-template-columns:80px minmax(0,1fr) 160px;gap:8px;padding-block:4px}
+ #game .deal-table .deal-actions #elapsed-game-time{min-height:44px;padding:4px 8px}
+ #game .deal-table .has-card-preview #preview-open{max-height:210px;width:min(100%,145px)}
+}
+/* Compact desktop chrome before reducing the readable hand-card minimum. */
+@media(min-width:601px) and (max-height:480px){
+ html[data-theme=modern] body.is-playing>main{padding:0 12px}
+ #game .deal-table{row-gap:2px}
+ #game .deal-table .table-tools button,#game .deal-table .table-tools #move{min-height:36px;height:36px;padding:2px;font-size:12px}
+ #game .deal-table .opponent-count{padding-block:2px}
+}
+@media(min-width:601px) and (max-height:600px){
+ #game .deal-table .deal-hand .cards{padding-block:10px 2px}
+ #game .deal-table.hand-visible .deal-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #game .deal-table:not(.has-selection) .deal-stage{grid-template-columns:80px minmax(0,1fr) 180px}
+ #game .deal-table .deal-actions #elapsed-game-time{padding-block:2px;min-height:40px}
 }

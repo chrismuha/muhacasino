@@ -4,7 +4,7 @@ const {createServer}=require('node:http');
 const {readFile}=require('node:fs/promises');
 const {existsSync}=require('node:fs');
 const path=require('node:path');
-const {chromium,webkit,devices}=require('playwright');
+const {chromium,webkit,devices}=require(process.env.DEAL_QA_PLAYWRIGHT||'playwright');
 let browser,server,origin;
 const root=path.resolve(__dirname,'../..');
 const artifacts=process.env.DEAL_QA_ARTIFACTS;
@@ -3282,4 +3282,79 @@ test('phone opponent summaries and selected-card timer never overlap',async()=>{
    return issues;
   });assert.deepEqual(issues,[],JSON.stringify(viewport));await close(p);
  }
+});
+
+test('desktop window resizing keeps timer clear and normal play free of vertical scrolling',async()=>{
+ const p=await open({width:1440,height:900});
+ for(const size of [{width:1440,height:900},{width:1100,height:650},{width:900,height:600},{width:800,height:500},{width:800,height:450},{width:1280,height:720},{width:1440,height:600}]){
+  await p.setViewportSize(size);await fixture(p,'hand',4);
+  for(const selected of [null,'property','action','money','wild']){
+   if(await p.locator('#deselect').getAttribute('aria-disabled')==='false')await p.locator('#deselect').click();
+   if(selected){const id=await p.evaluate(type=>window.__dealTest.state.players[0].hand.find(c=>type==='wild'?c.type==='property'&&c.colors.length>1:c.type===type).id,selected);await p.locator(`[data-card="${id}"]`).click();}
+   await p.waitForTimeout(60);
+   const geometry=await p.evaluate(()=>{
+    const rect=s=>document.querySelector(s).getBoundingClientRect();const timer=rect('#elapsed-game-time'),dots=rect('.plays-dots'),hand=rect('.deal-hand');
+    return {overflow:document.body.scrollHeight-document.body.clientHeight,timerBottom:timer.bottom,handTop:hand.top,timerTop:timer.top,dotsBottom:dots.bottom,snap:getComputedStyle(document.querySelector('.cards')).scrollSnapType};
+   });
+   assert.ok(geometry.overflow<=1,JSON.stringify({size,selected,geometry}));
+   assert.ok(geometry.timerTop>=geometry.dotsBottom,JSON.stringify({size,selected,geometry}));
+   assert.ok(geometry.timerBottom<=geometry.handTop,JSON.stringify({size,selected,geometry}));
+   assert.equal(geometry.snap,'none');
+   await p.mouse.move(10,size.height-15);await p.mouse.wheel(0,250);await p.waitForTimeout(40);
+   assert.equal(await p.evaluate(()=>document.body.scrollTop),0);
+  }
+ }
+
+ await shot(p,'desktop-resize');await close(p);
+});
+
+test('rent without matching played properties explains rejection and preserves cards and plays',async()=>{
+ const p=await open({width:1100,height:650},undefined,{},false);
+ for(const anyColor of [false,true]){
+  await fixture(p,'rent',2);
+  await p.evaluate(anyColor=>{
+   const s=window.__dealTest.state;s.players[0].bank.push(...s.players[0].props.splice(0));
+   if(anyColor){const i=s.draw.findIndex(c=>c.action==='rent'&&c.colors.length===10);s.draw.push(...s.players[0].hand.splice(0,1,s.draw.splice(i,1)[0]));}
+   window.__dealTest.render();
+  },anyColor);
+  const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
+  await p.evaluate(()=>window.__dealTest.run(()=>window.__dealTest.play(window.__dealTest.state.players[0].hand[0],'play')));
+  await idle(p);assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
+  assert.match(await p.locator('#blocked-play-reason').innerText(),/matching property on the table/);
+  await p.locator('#blocked-play button').click();
+ }
+ await close(p);
+});
+
+test('hosted desktop smaller windows keep the table and elapsed badge within the game',async()=>{
+ const p=await open({width:1100,height:700});
+ await p.goto(origin+'/index.html#monopoly-deal',{waitUntil:'domcontentloaded'});
+ await p.frameLocator('#gameFrame').locator('#ready-new').waitFor({timeout:20000});
+ const game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));
+ for(const viewport of [{width:1440,height:900},{width:1100,height:700},{width:900,height:650},{width:800,height:560}]){
+  await p.setViewportSize(viewport);await fixture(game,'hand',4);
+  for(const selected of [false,true]){
+   if(selected)await game.locator('[data-card]').first().click();
+   await p.waitForTimeout(60);
+   const g=await game.evaluate(()=>({height:innerHeight,body:document.body.scrollHeight,client:document.body.clientHeight,timer:document.querySelector('#elapsed-game-time').getBoundingClientRect().bottom,hand:document.querySelector('.deal-hand').getBoundingClientRect().top}));
+   assert.ok(g.body<=g.client+1&&g.timer<=g.hand,JSON.stringify({viewport,selected,g}));
+  }
+ }
+ await close(p);
+});
+
+test('current release notes display alphabetical categories and preserve expandable history',async()=>{
+ const p=await open({width:1100,height:650});await fixture(p,'hand',2);
+ await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});
+ const headings=await p.locator('[aria-label="Latest Version"] h4').allTextContents();
+ assert.deepEqual(headings.map(t=>t.slice(2)),['Gameplay','Interface and accessibility']);
+ for(const section of await p.locator('[aria-label="Latest Version"] section').all()){
+  const items=await section.locator('li').allTextContents();assert.deepEqual(items,items.slice().sort((a,b)=>a.localeCompare(b)));
+ }
+ assert.match(await p.locator('[aria-label="Latest Version"]').innerText(),/Desktop hand scrolling/);
+ assert.match(await p.locator('[aria-label="Latest Version"]').innerText(),/Rent is blocked/);
+ assert.ok(await p.locator('.guide-rules details').count()>0);
+ await p.locator('.guide-rules details').first().locator('summary').click();
+ assert.ok(await p.locator('.guide-rules details[open] li').count()>0);
+ await close(p);
 });

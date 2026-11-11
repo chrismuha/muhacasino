@@ -3,7 +3,7 @@ import {attachHorizontalNavigation,isViewportZoomed} from './horizontal-nav.mjs?
 let dispose = () => {};
 export function paginateViewer(dialog,content){
  dispose();
- if(dialog.dataset.view==='cards')return; // The card catalog already has Previous/Next.
+ if(['cards','release-notes'].includes(dialog.dataset.view))return; // Catalog navigation and expandable release history manage their own content.
  const originals=[...content.children].map(node=>node.cloneNode(true));
  const nav=document.createElement('nav');
  nav.className='content-page-nav';nav.setAttribute('aria-label','Content pages');

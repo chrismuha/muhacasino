@@ -1,10 +1,10 @@
 import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261106-deal-v160-hand-v142';
-import {paginateViewer} from './view-pages.mjs?build=20261106-deal-v160-hand-v142';
+import {paginateViewer} from './view-pages.mjs?build=20261111-desktop-rent';
 import {aiChoice,aiPlay} from './ai.mjs?build=20261106-banking-v154';
 import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261106-deck-v157';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261106-deck-v157';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261111-smooth-hand';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261106-just-say-no-v159';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=20261111-desktop-rent';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261106-banking-v154';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -466,15 +466,18 @@ function fitTableCards(){
   spare=Math.max(0,innerHeight-contentBottom()-32);
  }
  const width=card.offsetWidth;
- const target=Math.min(innerWidth<=600 ? 112 : 180,innerWidth*(innerWidth<=600 ? .25 : .18),width+spare*.69);
- table.style.setProperty('--hand-card-width',`${Math.max(width,target)}px`);
+ const handTop=cards.getBoundingClientRect().top+document.body.scrollTop+window.scrollY;
+ const handPadding=cards.offsetHeight-card.offsetHeight;
+ const availableWidth=Math.max(64,(innerHeight-handTop-handPadding-24)*.69);
+ const target=Math.min(180,innerWidth*.18,width+spare*.69,availableWidth);
+ table.style.setProperty('--hand-card-width',`${Math.max(64,target)}px`);
  // Recheck the complete scroll surface after changing card and preview sizes.
  for(let pass=0;pass<3;pass++){
   const overflow=Math.max(0,document.body.scrollHeight-document.body.clientHeight);
   if(!overflow)break;
   const current=parseFloat(table.style.getPropertyValue('--hand-card-width'));
-  if(current<=width)break;
-  table.style.setProperty('--hand-card-width',`${Math.max(width,current-(overflow+2)*.69)}px`);
+  if(current<=64)break;
+  table.style.setProperty('--hand-card-width',`${Math.max(64,current-(overflow+2)*.69)}px`);
  }
 }
 function fitCompactPreview(){
@@ -639,6 +642,7 @@ function render(){
  updateUnavailableControls();
  wireHandSorting();
  wireDrawDeck();
+ updateGameTimer();
  fitResponsiveLabels();
  fitCompactPreview();
 }
@@ -750,7 +754,7 @@ async function play(c,chosenMode=null,chosenColor=null){if(c&&!me().hand.some(ca
  if(a==='house'||a==='hotel'){const eligible=buildingSets(p,a);if(!eligible.length)return choose('No eligible complete set',[['OK',true]],'Buildings need a complete street-color set. No railroads or utilities. Only one house and one hotel per set; the house must be placed first.');let color=await choose('Build on which set?',orderedColors(eligible).map(k=>[GROUPS[k].name,k]));use(c);remove(state.discard,c);c.color=color;p.buildings.push(c);log(`${p.name} built ${c.name} on ${GROUPS[color].name}.`,'property');return}
  if(a==='rent'){const tenants=opponents().filter(hasPayableAssets);if(!tenants.length){showBlockedPlay('No opponent has payable assets. Rent cannot be charged.');return;}const movable=color=>p.props.filter(card=>card.colors?.length>1&&card.colors.includes(color)&&card.color!==color);
  const rentFor=color=>{if(properties(p,color).length)return rent(p,color);const wild=movable(color)[0];return wild?rent({...p,props:[...p.props.filter(card=>card!==wild),{...wild,color}]},color):0;};
- let colors=c.colors.filter(k=>properties(p,k).length||(state.plays<2&&movable(k).length));if(!colors.length)return choose('You need a matching property',[['OK',true]]);let color=await choose('Charge rent on which color?',[...colors].sort((a,b)=>rentFor(a)-rentFor(b)||GROUPS[a].name.localeCompare(GROUPS[b].name)).map(k=>[`${GROUPS[k].name}: ${rentFor(k)}M${properties(p,k).length?'':' · move wild: 1 play'}`,k]));if(!properties(p,color).length){
+ let colors=c.colors.filter(k=>properties(p,k).length||(state.plays<2&&movable(k).length));if(!colors.length){showBlockedPlay('You need a matching property on the table to charge rent. Properties in your hand or bank do not count.');return;};let color=await choose('Charge rent on which color?',[...colors].sort((a,b)=>rentFor(a)-rentFor(b)||GROUPS[a].name.localeCompare(GROUPS[b].name)).map(k=>[`${GROUPS[k].name}: ${rentFor(k)}M${properties(p,k).length?'':' · move wild: 1 play'}`,k]));if(!properties(p,color).length){
  const wild=await choose('Move a wild to '+GROUPS[color].name+'? Costs 1 play',movable(color).map(card=>[label(card),card]));
  wild.color=color;state.plays++;normalize(p);log(`${p.name} moved a wild to ${GROUPS[color].name}.`,'wild');
  }let targets=c.value===3?[await choose('Choose a tenant',tenants.map(x=>[x.name,x]))]:tenants;let doubles=p.hand.filter(x=>x.action==='double');let max=Math.min(doubles.length,2-state.plays);let n=max>0?await choose('Add Double the Rent?',Array.from({length:max+1},(_,i)=>[`${i} doubler${i===1?'':'s'} · ${rent(p,color)*2**i}M · ${i+1} plays`,i])):0;use(c);for(let i=0;i<n;i++)use(doubles[i]);for(const target of targets){if(hasPayableAssets(target))await collect([target],rent(p,color)*2**n,c.name);else log(`${target.name} has no payable assets and pays 0M rent.`)}return}
@@ -1119,7 +1123,7 @@ function showTableView(index) {
   if (modernPublic) {
     content.innerHTML = modernViewerContent(state, view);
   } else if (view.key === 'release-notes') {
-    content.innerHTML = `<div class="guide-rules">${RELEASE_NOTES.map(([title,items])=>`<section><h3>${esc(title)}</h3><ul>${items.map(item=>`<li>${esc(item)}</li>`).join('')}</ul></section>`).join('')}<p><a class="release-history-link" href="../../about.html#monopoly-deal" target="_blank" rel="noopener">Open casino game version history ↗</a></p></div>`;
+    content.innerHTML = `<div class="guide-rules"><header><h2>What’s New · v1.6.0</h2><p>Clear rent requirements and desktop controls that fit smaller windows.</p></header>${RELEASE_NOTES.map(([title,items],index)=>{const groups=releaseNoteGroups(items).map(([category,bullets])=>`<section><h4>${category==='Gameplay'?'♟':'▣'} ${esc(category)}</h4><ul>${bullets.map(item=>`<li>${esc(item)}</li>`).join('')}</ul></section>`).join('');return index===0?`<section aria-label="Latest Version"><h3>Latest Version · ${esc(title)}</h3>${groups}</section>`:`<details><summary>Version History · ${esc(title)}</summary>${groups}</details>`;}).join('')}<p><a class="release-history-link" href="../../about.html#monopoly-deal" target="_blank" rel="noopener">Open casino game version history ↗</a></p></div>`;
   } else if (view.key === 'rules') {
     content.innerHTML = `<div class="guide-rules">${GUIDE_RULES.map(([title,items])=>`<section><h3>${esc(title)}</h3><ul>${items.map(item=>`<li>${esc(item)}</li>`).join('')}</ul></section>`).join('')}</div>`;
   } else if (view.key === 'cards') {
@@ -1359,7 +1363,8 @@ function updateGameTimer(){
  const seconds=Math.max(0,Math.floor(((state.finishedAt||Date.now())-state.startedAt)/1000));
  const value=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;
  if(!gameTimer.querySelector('.elapsed-value'))gameTimer.innerHTML='<span class="elapsed-label">Time elapsed</span><span class="elapsed-value"></span>';
- gameTimer.querySelector('.elapsed-value').textContent=value;
+ const valueNode=gameTimer.querySelector('.elapsed-value');
+ if(valueNode.textContent!==value)valueNode.textContent=value;
  gameTimer.setAttribute('aria-label',`Elapsed game time: ${Math.floor(seconds/60)} minutes, ${seconds%60} seconds`);
 }
 setInterval(updateGameTimer,1000);updateGameTimer();

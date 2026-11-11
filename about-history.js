@@ -40,13 +40,13 @@
     });
     const container = document.createElement("div");
     container.className = "release-categories";
-    groups.forEach((items, category) => {
+    [...groups].sort(([a],[b])=>a.localeCompare(b)).forEach(([category, items]) => {
       const group = document.createElement("div");
       group.className = "release-category";
       const heading = document.createElement("h4");
       const categorizedList = document.createElement("ul");
       heading.textContent = category;
-      items.forEach((item) => categorizedList.append(item));
+      items.sort((a,b)=>a.textContent.localeCompare(b.textContent)).forEach((item) => categorizedList.append(item));
       group.append(heading, categorizedList);
       container.append(group);
     });
