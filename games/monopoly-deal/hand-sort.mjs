@@ -186,13 +186,15 @@ export function attachHandSorting(hand, {canSort, onReorder, announce, dropTarge
     const current=gesture;
     const drop=current.mode==='drag'?dropTargetAt?.(Number(current.card.dataset.card),event.clientX,event.clientY):null;
     finish(inside||Boolean(drop),drop);
-    if(current.mode==='scroll'&&Math.abs(current.velocity)>.1){
+    if(current.mode==='scroll'&&performance.now()-current.lastTime<100&&Math.abs(current.velocity)>.1&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
       let velocity=-Math.max(-2,Math.min(2,current.velocity)),last=performance.now();
       hand.classList.add('is-hand-scrolling');
       const glide=now=>{
         const dt=Math.min(32,now-last);last=now;
         if(!hand.isConnected||!canSort()||Math.abs(velocity)<.03){hand.classList.remove('is-hand-scrolling');return;}
-        hand.scrollLeft+=velocity*dt;velocity*=Math.pow(.9,dt/16);
+        const before=hand.scrollLeft;
+        hand.scrollLeft+=velocity*dt;velocity*=Math.pow(.94,dt/16);
+        if(Math.abs(hand.scrollLeft-before)<.1){hand.classList.remove('is-hand-scrolling');return;}
         momentumFrame=requestAnimationFrame(glide);
       };
       momentumFrame=requestAnimationFrame(glide);

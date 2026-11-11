@@ -39,7 +39,7 @@
  #game .deal-table .table-tools button,#game .deal-table .table-tools #move{min-height:44px;padding:4px 3px;font-size:13px;line-height:1.2}
  #game .deal-table .deal-hand .cards{padding:12px 6px 18px;gap:8px}
  /* Keep footer cards readable and the same size in every selection state. */
- #game .deal-table .deal-hand .modern-hand-card{flex-basis:clamp(72px,20vw,92px)}
+ #game .deal-table .deal-hand .modern-hand-card{flex-basis:clamp(68.4px,19vw,87.4px)}
  #game .deal-table .opponent .opponent-heading{padding:3px 8px}
  #game .deal-table .opponent h3{font-size:14px;line-height:1.2}
  #game .deal-table .opponent .opponent-count{font-size:14px;line-height:1.2;gap:1px;padding:3px 8px}
@@ -77,14 +77,30 @@
 @media(max-width:600px) and (max-height:780px){
  #game .deal-table:not(.has-selection) .current-properties{padding-block:2px;gap:1px}
 }
-/* Selected-card actions must not gain a full extra row for the timer. */
-@media(max-width:600px) and (max-height:780px){
- #game .deal-table.card-selected:not(.has-selection) .deal-stage{position:relative;min-height:198px}
- #game .deal-table.card-selected:not(.has-selection) .deal-actions #elapsed-game-time{position:absolute;inset:auto auto 0 70px;transform:none;align-self:auto;justify-self:start;flex-direction:row;gap:6px;width:calc(100% - 188px);max-width:none;height:28px;min-height:28px;padding:2px 4px;margin:0}
-}
 
 /* Keep all eight table tools visible in two rows, including short phones. */
 @media(max-width:600px){
  #game .deal-table .current-stats .table-tools{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));width:100%;overflow:visible;gap:4px}
  #game .deal-table .current-stats .table-tools button{min-width:0;min-height:44px;white-space:normal;overflow-wrap:normal}
+}
+
+/* Each phone opponent owns a readable summary, with no competing columns. */
+@media(max-width:600px){
+ html[data-theme=modern] body.is-playing>main{padding-top:12px}
+ #game .deal-table .opponents{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:4px;align-items:stretch}
+ #game .deal-table .opponent{flex:0 0 min(280px,85%);grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto auto;scroll-snap-align:start}
+ #game .deal-table .opponent:only-child{flex-basis:100%}
+ #game .deal-table .opponent .opponent-heading{grid-column:1;grid-row:1}
+ #game .deal-table .opponent .opponent-count{grid-column:1;grid-row:2;white-space:normal;overflow-wrap:anywhere}
+ #game .deal-table .opponent .opponent-bank-preview{grid-column:1;grid-row:3;justify-content:flex-start;flex-wrap:wrap;white-space:normal;min-width:0}
+ #game .deal-table .opponent .opponent-properties{grid-column:1;grid-row:4;min-width:0}
+ #game .deal-table .opponent h3{white-space:normal;overflow-wrap:anywhere}
+ /* Keep the clock in the action column's flow, including selected cards. */
+ #game .deal-table .deal-actions #elapsed-game-time{position:static;inset:auto;transform:none;width:100%;max-width:108px;min-height:38px;height:auto;flex-direction:column;align-self:center;margin:0;padding:4px 6px}
+}
+
+/* Free horizontal travel avoids a snap at the end of every small swipe. */
+@media(max-width:600px){
+ #game .deal-table .deal-hand .cards{scroll-snap-type:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+ #game .deal-table .opponents{scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
 }

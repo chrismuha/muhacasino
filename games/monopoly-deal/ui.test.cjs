@@ -3041,7 +3041,7 @@ test('hosted Deal canvas follows table color and preserves navigation color',asy
 });
 
 
-test('Deal collapsed menu sits beside the notch and content clears the cutout',async()=>{
+test('Deal mobile header doubles the toggle and clears the Safari cutout',async()=>{
  const p=await open({width:420,height:912});
  await p.goto(origin+'/index.html#monopoly-deal');
  await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();
@@ -3051,7 +3051,7 @@ test('Deal collapsed menu sits beside the notch and content clears the cutout',a
   const g=await p.evaluate(()=>{const r=s=>document.querySelector(s).getBoundingClientRect().toJSON();return {host:r('#gameView'),header:r('.game-toolbar'),button:r('#toolbarCollapseButton'),game:r('#gameFrame')};});
   assert.equal(g.host.top,0);
   assert.ok(g.game.top>=54,JSON.stringify(g));
-  if(collapsed){assert.equal(g.header.height,54);assert.ok(g.button.left>268&&g.button.top>=0&&g.button.bottom<=54,JSON.stringify(g));}
+  if(collapsed){assert.equal(g.header.height,116);assert.equal(g.button.width,96);assert.equal(g.button.height,60);assert.ok(g.button.top>=54&&g.button.bottom<=g.game.top,JSON.stringify(g));}
   else assert.ok(g.button.top>=54,JSON.stringify(g));
  }
  await close(p);
@@ -3098,14 +3098,15 @@ test('phone settings follows color and large previews retain two rows of control
  }
 });
 
-test('iPhone footer hand cards stay large through property selection and reading',async()=>{
+test('iPhone footer hand cards shrink five percent and stay stable through selection and reading',async()=>{
  for(const viewport of [{width:390,height:700},{width:420,height:740},{width:430,height:932}])for(const hosted of [false,true]){
   const p=await open(viewport,undefined,{isMobile:true,hasTouch:true});let game=p;
   if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
   await fixture(game,'hand',2);await p.waitForTimeout(100);
   const measure=()=>game.locator('.modern-hand-card').first().evaluate(el=>({width:el.offsetWidth,height:el.offsetHeight}));
   const before=await measure();
-  assert.ok(before.width>=Math.min(92,viewport.width*.2)-1,JSON.stringify({viewport,hosted,before}));
+  assert.ok(Math.abs(before.width-Math.min(87.4,viewport.width*.19))<=1,JSON.stringify({viewport,hosted,before}));
+  assert.equal(await game.locator('.deal-hand .cards').evaluate(el=>getComputedStyle(el).scrollSnapType),'none');
   for(const index of [0,4,1,3]){
    await game.locator('.modern-hand-card').nth(index).click();await p.waitForTimeout(100);
    const after=await measure();
@@ -3261,4 +3262,24 @@ test('a third Just Say No gets its own overlay and blocks the restored action',a
  }
  await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].bank.length),1);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),2);await conservation(p);await close(p);
+});
+
+test('phone opponent summaries and selected-card timer never overlap',async()=>{
+ for(const viewport of [{width:320,height:568},{width:420,height:684},{width:430,height:932}]){
+  const p=await open(viewport);await fixture(p);await p.locator('.modern-hand-card').first().click();
+  await p.waitForFunction(()=>document.querySelector('.deal-actions #elapsed-game-time'));
+  const issues=await p.evaluate(()=>{
+   const issues=[];
+   for(const panel of document.querySelectorAll('.opponent')){
+    const count=panel.querySelector('.opponent-count').getBoundingClientRect(),bank=panel.querySelector('.opponent-bank-preview').getBoundingClientRect();
+    if(bank.top<count.bottom-1)issues.push('bank overlaps hand count');
+    if(panel.scrollWidth>panel.clientWidth+1)issues.push('opponent content overflows');
+   }
+   const timer=document.querySelector('#elapsed-game-time'),r=timer.getBoundingClientRect();
+   if(getComputedStyle(timer).position!=='static')issues.push('timer leaves normal flow');
+   const preview=document.querySelector('#preview-open');
+   if(preview){const c=preview.getBoundingClientRect();if(r.left<c.right&&r.right>c.left&&r.top<c.bottom&&r.bottom>c.top)issues.push('timer overlaps preview');}
+   return issues;
+  });assert.deepEqual(issues,[],JSON.stringify(viewport));await close(p);
+ }
 });

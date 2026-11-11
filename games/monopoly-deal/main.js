@@ -3,7 +3,7 @@ import {paginateViewer} from './view-pages.mjs?build=20261106-deal-v160-hand-v14
 import {aiChoice,aiPlay} from './ai.mjs?build=20261106-banking-v154';
 import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261106-deck-v157';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261106-deck-v157';
-import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261106-deal-v160-hand-v142';
+import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261111-smooth-hand';
 import {GUIDE_RULES,cardDesigns,RELEASE_NOTES} from './guide.mjs?build=20261106-just-say-no-v159';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261106-banking-v154';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
