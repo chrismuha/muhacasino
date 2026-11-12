@@ -78,9 +78,9 @@
  #game .deal-table:not(.has-selection) .current-properties{padding-block:2px;gap:1px}
 }
 
-/* Keep all eight table tools visible in two rows, including short phones. */
+/* Keep all six table tools visible in two rows, including short phones. */
 @media(max-width:600px){
- #game .deal-table .current-stats .table-tools{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));width:100%;overflow:visible;gap:4px}
+ #game .deal-table .current-stats .table-tools{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;overflow:visible;gap:4px}
  #game .deal-table .current-stats .table-tools button{min-width:0;min-height:44px;white-space:normal;overflow-wrap:normal}
 }
 

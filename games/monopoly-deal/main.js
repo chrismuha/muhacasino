@@ -1,10 +1,10 @@
 import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261106-deal-v160-hand-v142';
 import {paginateViewer} from './view-pages.mjs?build=20261111-desktop-rent';
 import {aiChoice,aiPlay} from './ai.mjs?build=20261106-banking-v154';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261106-deck-v157';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261112-selected-browsing';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261106-deck-v157';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261111-smooth-hand';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=20261111-desktop-rent';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=20261112-selected-browsing';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261106-banking-v154';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -184,7 +184,7 @@ document.addEventListener('click', event => {
  event.preventDefault();
  event.stopImmediatePropagation();
  const reason=button.dataset.unavailableReason || 'This control is not available right now.';
- if(['play-card','bank-card','flip-card','discard-card','discard-selected-card','wilds'].includes(button.id))showBlockedPlay(reason);else showToast(reason);
+ if(['play-card','bank-card','flip-card','discard-card','wilds'].includes(button.id))showBlockedPlay(reason);else showToast(reason);
 }, true);
 
 const hardRules = () => (state?.difficulty || state?.players.find(player=>player.isAI)?.aiDifficulty || 'normal')==='hard';
@@ -212,10 +212,10 @@ function updateUnavailableControls() {
  const noPlays = state.plays >= 3 ? 'You have used all three plays. Pass to end your turn.' : '';
  for(const button of document.querySelectorAll('#game button')){
   let reason = finished && !['undo','game-restart'].includes(button.id)&&!button.hasAttribute('data-table-view')&&!button.classList.contains('action-history-button') ? finished : waiting;
-  if(!reason&&awaitingDraw&&['end','undo','play-card','bank-card','discard-card','discard-selected-card','move','wilds'].includes(button.id))reason=awaitingDraw;
+  if(!reason&&awaitingDraw&&['end','undo','play-card','bank-card','discard-card','move','wilds'].includes(button.id))reason=awaitingDraw;
   if(!reason){
    if(button.id === 'undo')reason=hiddenHand||(!undoHistory.length?'No move to undo in this turn.':'');
-   else if(['discard-card','discard-selected-card'].includes(button.id))reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.') || (discardPlayCost(selectedCardIds.size)>3-state.plays?`Discard uses one play per card. Select at most ${(hardRules()?0:Math.max(0,me().hand.length-7))+3-state.plays} card${3-state.plays===1?'':'s'}.`:'');
+   else if(button.id==='discard-card')reason = hiddenHand || (selectedCardIds.size?'':'Select cards in your hand to discard.') || (discardPlayCost(selectedCardIds.size)>3-state.plays?`Discard uses one play per card. Select at most ${(hardRules()?0:Math.max(0,me().hand.length-7))+3-state.plays} card${3-state.plays===1?'':'s'}.`:'');
    else if(button.id === 'deselect')reason = selectedCardIds.size?'':'No cards are selected.';
    else if(button.id === 'preview-previous'||button.id === 'preview-next')reason = hiddenHand || (me().hand.length<2 ? 'This is the only card in your hand.' : '');
    else if(button.id === 'wilds')reason = hiddenHand || noPlays || (!me().props.some(card=>card.colors.length>1)?'You have no wild properties on the table to rearrange.':'');
@@ -378,19 +378,20 @@ function selectHandCard(card){
 }
 function browseSelectedCard(direction,focusTarget=null){
  if(busy||!visible||!state||state.winner||me().isAI||document.querySelector('dialog[open]'))return;
- const hand=me().hand,index=hand.findIndex(card=>card.id===selectedCardId);
+ const multiple=selectedCardIds.size>1;
+ const hand=multiple?me().hand.filter(card=>selectedCardIds.has(card.id)):me().hand,index=hand.findIndex(card=>card.id===selectedCardId);
  if(index<0||hand.length<2)return;
  const next=(index+direction+hand.length)%hand.length,card=hand[next];
- selectedCardIds.delete(selectedCardId);selectHandCard(card);
+ if(!multiple){selectedCardIds.delete(selectedCardId);selectHandCard(card);}
  selectedCardId=card.id;
+ $('.deal-table').dataset.selectedType=card.type;
  previewFlipped=Boolean(cardPreferredSide(selectedCardId));
- const preview=$('.selected-table-card');
- preview.innerHTML=modernFace(card,{flipped:previewFlipped,reading:card.type==='property'});
- preview.setAttribute('aria-label',`${card.name} · Card ${next+1} of ${hand.length}`);
- $('#selected-card-help').textContent=`${next+1} / ${hand.length}`;
+ const preview=$('.selected-table-card')||$('#preview-open');
+ preview.innerHTML=modernFace(card,{flipped:previewFlipped,reading:previewExpanded&&card.type==='property'});
+ preview.setAttribute('aria-label',previewExpanded?`${card.name} · Card ${next+1} of ${hand.length}${multiple?' selected':''}`:`Read ${card.name} enlarged`);
+ if($('#selected-card-help'))$('#selected-card-help').textContent=`${next+1} / ${hand.length}${multiple?' selected':''}`;
  document.querySelectorAll('#game [data-card]').forEach(button=>{const id=Number(button.dataset.card),selected=selectedCardIds.has(id);button.classList.toggle('is-selected',selected);button.classList.toggle('is-active',id===selectedCardId);button.setAttribute('aria-pressed',String(selected));});
  $('#discard-card .discard-label').textContent=`Discard${selectedCardIds.size?` (${selectedCardIds.size})`:''}`;
- $('#discard-selected-card').textContent=`Discard${selectedCardIds.size?` (${selectedCardIds.size})`:''}`;
  $('#deselect').textContent=`Clear${selectedCardIds.size?` (${selectedCardIds.size})`:''}`;
  updateUnavailableControls();fitCompactPreview();
  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)preview.animate([{transform:`translateX(${direction*28}px)`,opacity:.65},{transform:'translateX(0)',opacity:1}],{duration:170,easing:'cubic-bezier(.2,.7,.2,1)'});
@@ -404,17 +405,18 @@ function browseSelectedCard(direction,focusTarget=null){
  if(focusTarget)$(focusTarget)?.focus({preventScroll:true});
 }
 function wireSelectedCardBrowsing(){
- const preview=$('.selected-table-card');
+ const preview=$('.selected-table-card')||$('#preview-open');
  if(!preview)return;
  attachHorizontalNavigation(preview,direction=>browseSelectedCard(direction),{pointer:false});
- $('#preview-close').onclick=()=>{previewExpanded=false;lastCardTap=null;render();};
- $('#preview-previous').onclick=()=>browseSelectedCard(-1,'#preview-previous');
- $('#preview-next').onclick=()=>browseSelectedCard(1,'#preview-next');
+ if($('#preview-close'))$('#preview-close').onclick=()=>{previewExpanded=false;lastCardTap=null;render();};
+ if($('#preview-previous'))$('#preview-previous').onclick=()=>browseSelectedCard(-1,'#preview-previous');
+ if($('#preview-next'))$('#preview-next').onclick=()=>browseSelectedCard(1,'#preview-next');
  preview.addEventListener('keydown',event=>{
   if(event.altKey||event.ctrlKey||event.metaKey||!['ArrowLeft','ArrowRight'].includes(event.key))return;
   event.preventDefault();browseSelectedCard(event.key==='ArrowLeft'?-1:1,'.selected-table-card');
  });
- let gesture=null;
+ let gesture=null,suppressClick=false;
+ preview.addEventListener('click',event=>{if(suppressClick){event.preventDefault();event.stopImmediatePropagation();suppressClick=false;}},true);
  const reset=()=>{
   gesture=null;
   preview.style.transform='';
@@ -422,6 +424,7 @@ function wireSelectedCardBrowsing(){
  };
  preview.addEventListener('pointerdown',event=>{
   if(!event.isPrimary||event.button!==0||busy||!visible)return;
+  suppressClick=false;
   preview.getAnimations().forEach(animation=>animation.cancel());
   gesture={id:event.pointerId,x:event.clientX,y:event.clientY,time:performance.now(),horizontal:false};
   preview.style.transition='none';
@@ -441,7 +444,7 @@ function wireSelectedCardBrowsing(){
   const dx=event.clientX-start.x,dy=event.clientY-start.y;
   reset();
   const threshold=performance.now()-start.time<250?28:40;
-  if(Math.abs(dx)>=threshold&&Math.abs(dx)>Math.abs(dy)*1.5)browseSelectedCard(dx<0?1:-1);
+  if(Math.abs(dx)>=threshold&&Math.abs(dx)>Math.abs(dy)*1.5){suppressClick=true;browseSelectedCard(dx<0?1:-1);}
  });
  preview.addEventListener('dragstart',event=>event.preventDefault());
 }
@@ -561,7 +564,6 @@ function render(){
   log(`${me().name} discarded ${cards.length} card${cards.length===1?'':'s'}.`);
   showToast(`${cards.length} card${cards.length===1?'':'s'} discarded.`);
  });
- $('#discard-selected-card').onclick=()=>$('#discard-card').click();
  $('#move').onclick=()=>openTableViewer(`properties-${state.turn}`);
  $('#wilds').onclick=()=>run(()=>rearrange());
  $('#table-settings').onclick=openGameSettings;

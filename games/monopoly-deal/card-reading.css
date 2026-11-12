@@ -268,7 +268,7 @@
 
 /* Browse the enlarged card without interfering with vertical table scrolling. */
 [data-theme=modern] .has-selection .card-stage{flex-direction:column;gap:8px}
-[data-theme=modern] .selected-table-card{touch-action:pan-y pinch-zoom;user-select:none;-webkit-user-select:none}
+[data-theme=modern] :is(.selected-table-card,#preview-open){touch-action:pan-y pinch-zoom;user-select:none;-webkit-user-select:none}
 [data-theme=modern] .selected-table-card:focus-visible{outline:2px solid #fff69a;outline-offset:3px;border-radius:12px}
 [data-theme=modern] .selected-card-navigation{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;max-width:440px;flex-shrink:0}
 [data-theme=modern] .selected-card-navigation button{min-width:44px;min-height:44px;padding:6px 12px;font-size:22px}

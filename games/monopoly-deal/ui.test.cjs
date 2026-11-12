@@ -1875,16 +1875,17 @@ test('multi-card selections stay in one category through taps keyboard and enlar
   await tap(actions[1]);assert.deepEqual(await selected(),actions.map(c=>c.id).sort((a,b)=>a-b));
   await tap(props[0]);await tap(props[1]);assert.equal((await selected()).length,2);
   await p.locator('#preview-open').click();
-  // Browse across every category, including wrapping, without spending a play.
-  const count=await p.locator('[data-card]').count();let crossed=false;
-  for(let i=0;i<count;i++){
+  // Multiple selected cards browse as a stable set, including wrapping.
+  const expected=props.slice(0,2).map(c=>c.id).sort((a,b)=>a-b);
+  for(let i=0;i<4;i++){
    await p.locator('#preview-next').click();
-   const ids=await selected(),types=cards.filter(c=>ids.includes(c.id)).map(c=>c.type);
-   assert.equal(new Set(types).size,1);if(types[0]!=='property'){crossed=true;assert.equal(ids.length,1);}
-   assert.equal(await p.locator('#deselect').innerText(),`Clear (${ids.length})`);
-   assert.equal(await p.locator('#discard-card').innerText(),`Discard (${ids.length})`);
+   assert.deepEqual(await selected(),expected);
+   assert.equal(await p.locator('.modern-hand-card.is-active').getAttribute('data-card'),String(props[i%2].id));
+   assert.match(await p.locator('#selected-card-help').innerText(),/\/ 2 selected/);
+   assert.equal(await p.locator('#deselect').innerText(),'Clear (2)');
+   assert.equal(await p.locator('#discard-card').innerText(),'Discard (2)');
   }
-  assert.ok(crossed);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);
+  assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);
   await p.locator('#preview-close').click();await p.locator('#deselect').click();assert.deepEqual(await selected(),[]);
   await conservation(p);await close(p);
  }
@@ -2581,9 +2582,9 @@ test('settings keep one vertical scroll area without sideways movement standalon
  }
 });
 
-test('both discard buttons share confirmation and play costs',async()=>{
+test('circular discard keeps confirmation and play costs without duplicate toolbar controls',async()=>{
  const p=await open();await fixture(p,'hand',2);
- assert.equal(await p.locator('#discard-selected-card').isVisible(),true);
+ assert.equal(await p.locator('#discard-selected-card,.table-tools [data-table-view]').count(),0);
  assert.equal(await p.locator('#discard-card').getAttribute('aria-disabled'),'true');
  await p.locator('[data-card]').first().click();
  assert.equal(await p.locator('#discard-card').getAttribute('aria-disabled'),'false');
@@ -3000,7 +3001,7 @@ test('phone compact view preserves enlargement and readable controls',async()=>{
  const reading=await p.locator('.selected-table-card').boundingBox();assert.ok(reading.width>=180,JSON.stringify(reading));
  await p.locator('#preview-close').scrollIntoViewIfNeeded();await p.locator('#preview-close').click();
  assert.equal(await p.locator('.deal-hand').isVisible(),true);assert.equal(await p.locator('.modern-hand-card').count(),1);
- for(const selector of ['#table-settings','#undo','#discard-selected-card']){const box=await p.locator(selector).boundingBox();assert.ok(box.height>=44);}
+ for(const selector of ['#table-settings','#undo','#discard-card']){const box=await p.locator(selector).boundingBox();assert.ok(box.height>=44);}
  await close(p);
 });
 
@@ -3176,7 +3177,7 @@ test('table controls use the same concise labels across screens and desktop text
   await p.setViewportSize(viewport);await fixture(p,'hand',2);
   for(const index of [0,4,5])await p.locator('.modern-hand-card').nth(index).evaluate(el=>el.click());
   const controls=await p.locator('.table-tools button').evaluateAll(buttons=>buttons.map(el=>{const range=document.createRange();range.selectNodeContents(el);const r=range.getBoundingClientRect(),box=el.getBoundingClientRect();return {text:el.innerText,lines:[...range.getClientRects()].filter(r=>r.width).length,left:r.left,right:r.right,box:box.toJSON(),overflow:el.scrollWidth-el.clientWidth};}));
-  assert.deepEqual(controls.map(c=>c.text),['Manage','Wilds','Settings','Undo','Discard (3)','Clear (3)','Table','History']);
+  assert.deepEqual(controls.map(c=>c.text),['Manage','Wilds','Settings','Undo','Clear (3)','History']);
   if(viewport.width>=1024)for(const c of controls)assert.ok(c.lines===1&&c.overflow<=1&&c.left>=c.box.left&&c.right<=c.box.right+1,JSON.stringify({viewport,c}));
  }
  await close(p);
@@ -3357,4 +3358,52 @@ test('current release notes display alphabetical categories and preserve expanda
  await p.locator('.guide-rules details').first().locator('summary').click();
  assert.ok(await p.locator('.guide-rules details[open] li').count()>0);
  await close(p);
+});
+
+
+test('center preview swipes cycle selected cards without opening reading view or changing selection',async()=>{
+ const p=await open({width:420,height:742});await fixture(p,'hand',2);
+ const ids=await p.evaluate(()=>window.__dealTest.state.players[0].hand.filter(c=>c.type==='property').map(c=>c.id));
+ for(const id of ids)await p.locator(`[data-card="${id}"]`).evaluate(el=>el.click());
+ const selected=()=>p.locator('[data-card][aria-pressed=true]').evaluateAll(nodes=>nodes.map(el=>Number(el.dataset.card)));
+ const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
+ for(const dx of [-85,-85,85]){
+  const previous=await p.locator('.modern-hand-card.is-active').getAttribute('data-card');
+  const face=p.locator('#preview-open');await face.scrollIntoViewIfNeeded();const r=await face.boundingBox();
+  await p.mouse.move(r.x+r.width/2,r.y+60);await p.mouse.down();await p.mouse.move(r.x+r.width/2+dx,r.y+60,{steps:8});await p.mouse.up();
+  assert.notEqual(await p.locator('.modern-hand-card.is-active').getAttribute('data-card'),previous);
+  assert.deepEqual(await selected(),ids);assert.equal(await p.locator('.selected-table-card').count(),0);
+ }
+ assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
+ await p.locator('#preview-open').click();await swipePreview(p,-90);
+ assert.deepEqual(await selected(),ids);
+ assert.match(await p.locator('#selected-card-help').innerText(),/selected/);
+ await p.locator('#preview-close').click();assert.deepEqual(await selected(),ids);
+ await close(p);
+});
+
+
+test('touch swipes preserve multiple selections in both center preview and reading view',async t=>{
+ if(browser.browserType().name()!=='chromium'){t.skip('Chromium touch injection');return;}
+ const p=await open({width:420,height:742},undefined,{isMobile:true,hasTouch:true});await fixture(p,'hand',2);
+ const ids=await p.evaluate(()=>window.__dealTest.state.players[0].hand.filter(c=>c.type==='money').map(c=>c.id));
+ for(const id of ids){const card=p.locator(`[data-card="${id}"]`);await card.scrollIntoViewIfNeeded();await card.tap();}
+ const session=await p.context().newCDPSession(p);
+ for(const expanded of [false,true]){
+  if(expanded)await p.locator('#preview-open').tap();
+  const face=p.locator(expanded?'.selected-table-card':'#preview-open');await face.scrollIntoViewIfNeeded();const r=await face.boundingBox(),x=r.x+r.width*.8,y=r.y+80;
+  const previous=await p.locator('.modern-hand-card.is-active').getAttribute('data-card');
+  await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});
+  for(let i=1;i<=6;i++)await session.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x-75*i/6,y}]});
+  await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+  assert.notEqual(await p.locator('.modern-hand-card.is-active').getAttribute('data-card'),previous);
+  assert.deepEqual(await p.locator('[data-card][aria-pressed=true]').evaluateAll(nodes=>nodes.map(el=>Number(el.dataset.card))),ids);
+  assert.equal(await p.locator('.selected-table-card').count(),expanded?1:0);
+  assert.equal(await p.locator('#discard-card .discard-label').innerText(),`Discard (${ids.length})`);
+ }
+ await p.locator('#preview-close').click();await shot(p,'selected-card-controls');
+ await p.locator('#bank-card').click();await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),1);
+ assert.equal(await p.locator('[data-card][aria-pressed=true]').count(),1);
+ await session.detach();await conservation(p);await close(p);
 });
