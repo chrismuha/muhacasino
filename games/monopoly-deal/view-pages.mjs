@@ -35,7 +35,7 @@ export function paginateViewer(dialog,content){
   const fits=()=>content.scrollHeight<=height+1;
   function split(node){
    content.replaceChildren(node);
-   if(fits()||!node.children.length||node.matches('.property-stack-page,li,.modern-public-card,.modern-view-summary,.modern-view-empty'))return [node];
+   if(fits()||!node.children.length||node.matches('.guide-fixed-issue,.property-stack-page,li,.modern-public-card,.modern-view-summary,.modern-view-empty'))return [node];
    const children=[...node.children];
    const heading=children[0]?.matches('h3,header')?children.shift():null;
    return children.flatMap(child=>{

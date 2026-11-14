@@ -126,12 +126,10 @@ body.game-open #gameView #gameFrame{
 }
 body.game-open #gameView.toolbar-collapsed .toolbar-collapse-button{right:max(12px,var(--casino-safe-right))}
 
-/* Reserve a full control row below the cutout on phones, including Safari. */
+/* Keep a compact, touch-sized control below the cutout, including Safari.
+   Viewport sizing and notch clearance do not depend on oversized artwork. */
 @media(max-width:600px){
- body.game-open #gameView[data-hosted-game="monopoly-deal"].toolbar-collapsed{--casino-header-height:calc(var(--casino-safe-top) + 62px)}
- body.game-open #gameView[data-hosted-game="monopoly-deal"].toolbar-collapsed .toolbar-collapse-button{width:96px;height:60px;bottom:0}
- body.game-open #gameView[data-hosted-game="monopoly-deal"] .bar-collapse-chevron>span{scale:2}
- body.game-open #gameView[data-hosted-game="monopoly-deal"]:not(.toolbar-collapsed) .toolbar-collapse-button{position:absolute;width:84px;height:84px;top:calc(var(--casino-safe-top) + 6px);transform:none}
- body.game-open #gameView[data-hosted-game="monopoly-deal"]:not(.toolbar-collapsed){--casino-toolbar-height:156px!important}
- body.game-open #gameView[data-hosted-game="monopoly-deal"]:not(.toolbar-collapsed) .game-toolbar{grid-template-columns:max-content minmax(0,1fr) 84px;grid-template-rows:88px 48px}
+ body.game-open #gameView[data-hosted-game="monopoly-deal"].toolbar-collapsed{--casino-header-height:calc(var(--casino-safe-top) + 46px)}
+ body.game-open #gameView[data-hosted-game="monopoly-deal"].toolbar-collapsed .toolbar-collapse-button{width:48px;height:44px;bottom:0}
+ body.game-open #gameView[data-hosted-game="monopoly-deal"]:not(.toolbar-collapsed) .toolbar-collapse-button{position:absolute;width:44px;height:44px;top:calc(var(--casino-safe-top) + 6px);transform:none}
 }

@@ -3042,7 +3042,7 @@ test('hosted Deal canvas follows table color and preserves navigation color',asy
 });
 
 
-test('Deal mobile header doubles the toggle and clears the Safari cutout',async()=>{
+test('Deal mobile header keeps a compact touch target and clears the Safari cutout',async()=>{
  const p=await open({width:420,height:912});
  await p.goto(origin+'/index.html#monopoly-deal');
  await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();
@@ -3052,8 +3052,10 @@ test('Deal mobile header doubles the toggle and clears the Safari cutout',async(
   const g=await p.evaluate(()=>{const r=s=>document.querySelector(s).getBoundingClientRect().toJSON();return {host:r('#gameView'),header:r('.game-toolbar'),button:r('#toolbarCollapseButton'),game:r('#gameFrame')};});
   assert.equal(g.host.top,0);
   assert.ok(g.game.top>=54,JSON.stringify(g));
-  if(collapsed){assert.equal(g.header.height,116);assert.equal(g.button.width,96);assert.equal(g.button.height,60);assert.ok(g.button.top>=54&&g.button.bottom<=g.game.top,JSON.stringify(g));}
-  else assert.ok(g.button.top>=54,JSON.stringify(g));
+  if(collapsed){assert.equal(g.header.height,100);assert.equal(g.button.width,48);assert.equal(g.button.height,44);}
+  else {assert.equal(g.button.width,44);assert.equal(g.button.height,44);}
+  assert.ok(g.button.top>=54&&g.button.bottom<=g.game.top,JSON.stringify(g));
+  assert.equal(await p.locator('.bar-collapse-chevron>span').evaluate(el=>getComputedStyle(el).scale),'none');
  }
  await close(p);
 });
@@ -3357,6 +3359,29 @@ test('current release notes display alphabetical categories and preserve expanda
  assert.ok(await p.locator('.guide-rules details').count()>0);
  await p.locator('.guide-rules details').first().locator('summary').click();
  assert.ok(await p.locator('.guide-rules details[open] li').count()>0);
+ await close(p);
+});
+
+test('mobile scrolling stays under Known issues as Fixed with a separate explanation paragraph',async()=>{
+ const p=await open();await fixture(p,'hand',2);
+ await p.locator('#rules').click();
+ const section=p.locator('.guide-rules section').filter({has:p.getByRole('heading',{name:'Known issues',exact:true})});
+ for(let page=0;page<60&&!(await section.count());page++){
+  const next=p.locator('.content-page-nav button').last();
+  if(await next.isDisabled())break;
+  await next.click();
+ }
+ assert.equal(await section.locator('h4').innerText(),'Fixed');
+ const paragraphs=await section.locator('p').allTextContents();
+ assert.equal(paragraphs.length,2);assert.match(paragraphs[0],/^Fixed: Monopoly Deal mobile scrolling/);assert.match(paragraphs[1],/^How it was fixed:/);
+ await p.goto(origin+'/index.html');
+ await p.locator('suite-help .suite-help-trigger').click();
+ await p.locator('suite-help [data-page="known"]').click();
+ const known=p.locator('suite-help [data-section="known"]');
+ assert.equal(await known.locator('h3').first().innerText(),'Fixed');
+ assert.equal(await known.locator('article').count(),1);
+ const fixed=await known.locator('article p').allTextContents();
+ assert.equal(fixed.length,2);assert.match(fixed[0],/no longer requires a refresh/);assert.match(fixed[1],/^How it was fixed:/);
  await close(p);
 });
 

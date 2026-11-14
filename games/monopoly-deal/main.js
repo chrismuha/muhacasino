@@ -1,10 +1,10 @@
 import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261106-deal-v160-hand-v142';
-import {paginateViewer} from './view-pages.mjs?build=20261111-desktop-rent';
+import {paginateViewer} from './view-pages.mjs?build=20261113-fixed-scrolling';
 import {aiChoice,aiPlay} from './ai.mjs?build=20261106-banking-v154';
 import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261112-selected-browsing';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261106-deck-v157';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261111-smooth-hand';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=20261112-selected-browsing';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=20261113-compact-deal-nav';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261106-banking-v154';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -1127,7 +1127,7 @@ function showTableView(index) {
   } else if (view.key === 'release-notes') {
     content.innerHTML = `<div class="guide-rules"><header><h2>What’s New · v1.6.0</h2><p>Clear rent requirements and desktop controls that fit smaller windows.</p></header>${RELEASE_NOTES.map(([title,items],index)=>{const groups=releaseNoteGroups(items).map(([category,bullets])=>`<section><h4>${category==='Gameplay'?'♟':'▣'} ${esc(category)}</h4><ul>${bullets.map(item=>`<li>${esc(item)}</li>`).join('')}</ul></section>`).join('');return index===0?`<section aria-label="Latest Version"><h3>Latest Version · ${esc(title)}</h3>${groups}</section>`:`<details><summary>Version History · ${esc(title)}</summary>${groups}</details>`;}).join('')}<p><a class="release-history-link" href="../../about.html#monopoly-deal" target="_blank" rel="noopener">Open casino game version history ↗</a></p></div>`;
   } else if (view.key === 'rules') {
-    content.innerHTML = `<div class="guide-rules">${GUIDE_RULES.map(([title,items])=>`<section><h3>${esc(title)}</h3><ul>${items.map(item=>`<li>${esc(item)}</li>`).join('')}</ul></section>`).join('')}</div>`;
+    content.innerHTML = `<div class="guide-rules">${GUIDE_RULES.map(([title,items,status])=>`<section${status==='fixed'?' class="guide-fixed-issue"':''}><h3>${esc(title)}</h3>${status==='fixed'?`<h4>Fixed</h4>${items.map(item=>`<p>${esc(item)}</p>`).join('')}`:`<ul>${items.map(item=>`<li>${esc(item)}</li>`).join('')}</ul>`}</section>`).join('')}</div>`;
   } else if (view.key === 'cards') {
     showCardDesign();
   }

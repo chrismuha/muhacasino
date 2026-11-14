@@ -104,3 +104,16 @@
  #game .deal-table .deal-hand .cards{scroll-snap-type:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
  #game .deal-table .opponents{scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
 }
+
+/* Fresh deals have no center preview. Use that space for deck counts on short
+   views so expanding the header does not create page overflow. */
+@media(max-width:600px) and (max-height:650px){
+ #game .deal-table.hand-visible:not(.card-selected):not(.has-selection) .deal-stage{grid-template-columns:116px minmax(0,1fr) 108px}
+ #game .deal-table:not(.card-selected):not(.has-selection) .draw-deck{display:grid;grid-template-columns:52px minmax(0,1fr);align-items:center;column-gap:8px;width:116px}
+ #game .deal-table:not(.card-selected):not(.has-selection) .deck-label{grid-column:1/-1}
+ #game .deal-table:not(.card-selected):not(.has-selection) .draw-deck .deck-count{margin:0}
+}
+@media(min-width:390px) and (max-width:600px) and (max-height:650px){
+ #game .deal-table.hand-visible:not(.card-selected):not(.has-selection) .deal-stage{position:relative}
+ #game .deal-table:not(.card-selected):not(.has-selection) .deal-actions #elapsed-game-time{position:absolute;left:126px;bottom:0;width:108px}
+}
