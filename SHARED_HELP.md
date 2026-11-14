@@ -53,3 +53,9 @@ Sly Deal and Forced Deal results always use an acknowledged overlay, independent
 
 
 Every played Just Say No, including computer responses and counter-No cards, has a mandatory overlay showing who played it, the defended action, and its current blocked or active state. This pauses the response chain until Continue or Escape. Property action prompts use will take; completed-transfer results still report only cards that actually moved.
+
+## Fixed issues and bug reports
+
+Open Help → Known issues to see documented problems and the Fixed section. Each completed fix can show its version, what happened, a **How we fixed it** explanation, and **What this means for you** notes. Only verified fixes belong here; an empty section means none are currently listed. Existing unresolved issues remain under Known issues.
+
+Use the small **🐛 Bug Report** button at the bottom of the Help window from any section. It opens Report an issue inside the same window, where you can prepare an email draft, review it, and send it from your email app. It never sends a report automatically. Close or Escape returns to the program.
