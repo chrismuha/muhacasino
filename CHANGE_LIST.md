@@ -16,9 +16,11 @@
 ### Interface and accessibility
 
 - Consolidated Monopoly Deal's completed changes under v1.6.0, the next version after v1.5.0, while preserving older release history.
-- Phone Bank, Play, Flip, Discard, and Pass controls use 48-pixel circles and 16-pixel labels. Browsing keeps all action slots in place with unavailable actions dimmed and explained, so card options do not shift the center preview or hand.
+- Phone Bank, Play, Flip, Discard, and Pass controls retain 48-pixel circles. Normal phone play uses compact 14-pixel labels in two columns at widths of at least 390 pixels; enlarged reading views keep larger labels. Browsing keeps all action slots in place with unavailable actions dimmed and explained, so card options do not shift the center preview or hand.
+- Phone elapsed time sits between the player name and Tools, clear of deck counts and card previews. Normal play on phones at least 390 pixels wide uses two action columns with 48-pixel tap targets and compact labels, keeping the hand visible when selecting or clearing cards. Enlarged reading views retain scrolling.
 - Redesigned New game with aligned headers, consistent field sizes, a visible step indicator, and a fixed navigation row across Players, Names, and Review. Only the form content scrolls above the keyboard, without shrinking labels or hiding instructions. Switching opponent modes keeps Players in place and clears generated computer names from human seats.
 - Reduced the casino header arrows to compact artwork while preserving their existing navigation controls and touch targets.
+- Short desktop windows remove excess padding above the hand while preserving selected-card lift and focus clearance. Very short windows also tighten action spacing and use a compact elapsed-time badge. The 800 by 450 and 800 by 500 layouts fit without vertical page scrolling when selecting properties, actions, money, or wilds.
 - Tools opens Manage, Wilds, Settings, Undo, Clear, and History in a separate dialog. Close or Escape returns to the table, and choosing a tool closes the dialog before continuing. Utility button rows no longer add height to the game.
 
 ### Reliability

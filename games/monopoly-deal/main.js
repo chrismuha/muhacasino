@@ -1234,7 +1234,7 @@ render();
 
 // Refit after rotation, split-screen resizing, browser zoom, or container resizing.
 let labelResizeFrame;
-function scheduleLabelFit(){cancelAnimationFrame(labelResizeFrame);labelResizeFrame=requestAnimationFrame(()=>{fitResponsiveLabels();fitCompactPreview();});}
+function scheduleLabelFit(){cancelAnimationFrame(labelResizeFrame);labelResizeFrame=requestAnimationFrame(()=>{updateGameTimer();fitResponsiveLabels();fitCompactPreview();});}
 window.addEventListener('resize',scheduleLabelFit);
 window.visualViewport?.addEventListener('resize',scheduleLabelFit);
 let lastLabelWidth=-1;
@@ -1367,7 +1367,9 @@ function wireActionHistory(){
 // Elapsed deal time survives reloads and stops at victory.
 function updateGameTimer(){
  const dots=$('#game .plays-dots');
- if(dots){if(dots.nextElementSibling!==gameTimer)dots.after(gameTimer);}
+ const phoneHeading=innerWidth<=600&&!$('.deal-table')?.classList.contains('has-selection')?$('#game .current-seat-heading'):null;
+ if(phoneHeading){if(gameTimer.parentElement!==phoneHeading)phoneHeading.insertBefore(gameTimer,phoneHeading.querySelector('#table-tools-open'));}
+ else if(dots){if(dots.nextElementSibling!==gameTimer)dots.after(gameTimer);}
  else if(gameTimer.parentElement!==document.body)document.body.append(gameTimer);
  gameTimer.hidden=!state||!dots||!dealSettings.showElapsedTime;
  if(!state)return;

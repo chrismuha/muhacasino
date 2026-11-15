@@ -2663,13 +2663,13 @@ test('setup keeps field sizes and navigation consistent across steps and keyboar
 });
 
 
-test('elapsed time sits below turn dots without covering the hand',async()=>{
+test('phone elapsed time sits in the player heading without covering the hand',async()=>{
  const p=await open({width:390,height:700});await fixture(p,'hand',2);
- await p.waitForFunction(()=>document.querySelector('.plays-dots')?.nextElementSibling?.id==='elapsed-game-time');
+ await p.waitForFunction(()=>document.querySelector('.current-seat-heading #elapsed-game-time'));
  const timer=await p.locator('#elapsed-game-time').boundingBox(),dots=await p.locator('.plays-dots').boundingBox(),hand=await p.locator('.deal-hand .cards').boundingBox();
  assert.ok(timer.y>=dots.y+dots.height);assert.ok(timer.y+timer.height<=hand.y);
  await p.locator('[data-card]').first().click();
- await p.waitForFunction(()=>document.querySelector('.plays-dots')?.nextElementSibling?.id==='elapsed-game-time');
+ await p.waitForFunction(()=>document.querySelector('.current-seat-heading #elapsed-game-time'));
  assert.equal(await p.locator('#elapsed-game-time').count(),1);await close(p);
 });
 
@@ -2689,11 +2689,11 @@ test('enlarged rent artwork keeps thumbnail proportions and centering',async()=>
 });
 
 
-test('hosted iPhone Air places time below dots and preserves rent artwork',async()=>{
+test('hosted iPhone Air places time in the player heading and preserves rent artwork',async()=>{
  const p=await open({width:420,height:740});await p.goto(origin+'/index.html#monopoly-deal');
  await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();
  const game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));await fixture(game,'hand',2);
- await game.waitForFunction(()=>document.querySelector('.plays-dots')?.nextElementSibling?.id==='elapsed-game-time');
+ await game.waitForFunction(()=>document.querySelector('.current-seat-heading #elapsed-game-time'));
  const timer=await game.locator('#elapsed-game-time').boundingBox(),dots=await game.locator('.plays-dots').boundingBox(),cards=await game.locator('.deal-hand .cards').boundingBox();
  assert.ok(timer.y>=dots.y+dots.height);assert.ok(timer.y+timer.height<=cards.y);
  const id=await game.evaluate(()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='rent').id);
@@ -2721,10 +2721,10 @@ test('property previews grow modestly and bank matches Properties height without
 });
 
 
-test('elapsed timer uses only the turn-dot location and larger text',async()=>{
+test('phone elapsed timer uses the player heading and hides after victory',async()=>{
  const p=await open();await fixture(p,'hand',2);
- await p.waitForFunction(()=>document.querySelector('.plays-dots')?.nextElementSibling?.id==='elapsed-game-time');
- assert.equal(await p.locator('#elapsed-game-time .elapsed-value').evaluate(el=>getComputedStyle(el).fontSize),'20px');
+ await p.waitForFunction(()=>document.querySelector('.current-seat-heading #elapsed-game-time'));
+ assert.equal(await p.locator('#elapsed-game-time .elapsed-value').evaluate(el=>getComputedStyle(el).fontSize),'18px');
  await p.evaluate(()=>{window.__dealTest.state.winner='Chris';window.__dealTest.render()});
  assert.equal(await p.locator('#elapsed-game-time').isVisible(),false);
  assert.equal(await p.locator('#elapsed-game-time').count(),1);await close(p);
@@ -3312,7 +3312,7 @@ test('a third Just Say No gets its own overlay and blocks the restored action',a
 test('phone opponent summaries and selected-card timer never overlap',async()=>{
  for(const viewport of [{width:320,height:568},{width:420,height:684},{width:430,height:932}]){
   const p=await open(viewport);await fixture(p);await p.locator('.modern-hand-card').first().click();
-  await p.waitForFunction(()=>document.querySelector('.deal-actions #elapsed-game-time'));
+  await p.waitForFunction(()=>document.querySelector('.current-seat-heading #elapsed-game-time'));
   const issues=await p.evaluate(()=>{
    const issues=[];
    for(const panel of document.querySelectorAll('.opponent')){
@@ -3517,4 +3517,22 @@ test('hosted iPhone table keeps larger actions and tools outside normal play flo
  assert.equal(await game.locator('#move').isVisible(),false);await game.locator('#table-tools-open').click();assert.equal(await game.locator('#move').isVisible(),true);
  await game.locator('#table-tools-close').press('Escape');assert.equal(await game.locator('#move').isVisible(),false);
  await close(page);
+});
+
+
+test('phone selection keeps elapsed time clear of the deck and the hand in view',async()=>{
+ for(const hosted of [false,true])for(const viewport of [{width:390,height:667},{width:420,height:667},{width:420,height:684},{width:430,height:740}]){
+  const host=await open(viewport,undefined,{isMobile:true,hasTouch:true});let p=host;
+  if(hosted){await host.goto(origin+'/index.html#monopoly-deal');await host.frameLocator('#gameFrame').locator('#ready-new').waitFor();p=host.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+  await fixture(p,'hand',2);
+  for(const selected of [null,'money','property','action',null]){
+   if(selected){const id=await p.evaluate(type=>window.__dealTest.state.players[0].hand.find(c=>c.type===type).id,selected);await p.locator(`[data-card="${id}"]`).click();}
+   else if(await p.locator('#deselect').getAttribute('aria-disabled')==='false')await clickTableTool(p,'#deselect');
+   await p.waitForTimeout(80);
+   const g=await p.evaluate(()=>{const rect=s=>document.querySelector(s).getBoundingClientRect(),t=rect('#elapsed-game-time'),d=rect('.draw-deck'),h=rect('.deal-hand .cards');return {overflow:document.body.scrollHeight-document.body.clientHeight,timerParent:document.querySelector('#elapsed-game-time').parentElement.className,timerTop:t.top,deckBottom:d.bottom,handBottom:h.bottom,height:innerHeight};});
+   if(selected==='money')await shot(host,`phone-clock-selected-${viewport.width}-${viewport.height}-${hosted?'hosted':'direct'}`);
+   assert.equal(g.timerParent,'current-seat-heading');assert.ok(g.timerTop>=g.deckBottom,JSON.stringify(g));assert.ok(g.overflow<=1,JSON.stringify({viewport,selected,g}));assert.ok(g.handBottom<=g.height+1,JSON.stringify({viewport,selected,g}));
+  }
+  await shot(host,`phone-clock-${viewport.width}-${viewport.height}-${hosted?'hosted':'direct'}`);await close(host);
+ }
 });
