@@ -1081,7 +1081,7 @@ document.querySelectorAll('[data-table-color]').forEach(button => {
 // Only public table cards appear here; private hands and the draw order stay hidden.
 let tableViewIndex = 0;
 function tableViews() {
-  const guideViews = [{key:'rules',title:'Rules',description:'A step-by-step guide to playing Monopoly Deal.'},{key:'cards',title:'Cards',description:'Browse every card design. Use the arrows or Left/Right keys.'},{key:'release-notes',title:'Release notes',description:'Monopoly Deal · v2.2.0 · TBD · Table tools, stable browsing, and 15M wilds'}];
+  const guideViews = [{key:'rules',title:'Rules',description:'A step-by-step guide to playing Monopoly Deal.'},{key:'cards',title:'Cards',description:'Browse every card design. Use the arrows or Left/Right keys.'},{key:'release-notes',title:'Release notes',description:'Monopoly Deal · v1.6.0 · TBD · Table tools, stable browsing, and 15M wilds'}];
   if (!state) return guideViews;
   return [
     {key:'discard', kind:'deck', title:'Discard pile', cards:[...state.discard].reverse(), description:'Newest discard first. These cards may return when the draw pile runs out.'},
@@ -1136,7 +1136,7 @@ function showTableView(index) {
   if (modernPublic) {
     content.innerHTML = modernViewerContent(state, view);
   } else if (view.key === 'release-notes') {
-    content.innerHTML = `<div class="guide-rules"><header><h2>What’s New · v2.2.0</h2><p>Separate table tools, larger phone actions, stable card browsing, and 15M Multicolor Wilds.</p></header>${RELEASE_NOTES.map(([title,items],index)=>{const groups=releaseNoteGroups(items).map(([category,bullets])=>`<section><h4>${category==='Gameplay'?'♟':'▣'} ${esc(category)}</h4><ul>${bullets.map(item=>`<li>${esc(item)}</li>`).join('')}</ul></section>`).join('');return index===0?`<section aria-label="Latest Version"><h3>Latest Version · ${esc(title)}</h3>${groups}</section>`:`<details><summary>Version History · ${esc(title)}</summary>${groups}</details>`;}).join('')}<p><a class="release-history-link" href="../../about.html#monopoly-deal" target="_blank" rel="noopener">Open casino game version history ↗</a></p></div>`;
+    content.innerHTML = `<div class="guide-rules"><header><h2>What’s New · v1.6.0</h2><p>Separate table tools, larger phone actions, stable card browsing, and 15M Multicolor Wilds.</p></header>${RELEASE_NOTES.map(([title,items],index)=>{const groups=releaseNoteGroups(items).map(([category,bullets])=>`<section><h4>${category==='Gameplay'?'♟':'▣'} ${esc(category)}</h4><ul>${bullets.map(item=>`<li>${esc(item)}</li>`).join('')}</ul></section>`).join('');return index===0?`<section aria-label="Latest Version"><h3>Latest Version · ${esc(title)}</h3>${groups}</section>`:`<details><summary>Version History · ${esc(title)}</summary>${groups}</details>`;}).join('')}<p><a class="release-history-link" href="../../about.html#monopoly-deal" target="_blank" rel="noopener">Open casino game version history ↗</a></p></div>`;
   } else if (view.key === 'rules') {
     content.innerHTML = `<div class="guide-rules">${GUIDE_RULES.map(([title,items,status])=>`<section${status==='fixed'?' class="guide-fixed-issue"':''}><h3>${esc(title)}</h3>${status==='fixed'?`<h4>Fixed</h4>${items.map(item=>`<p>${esc(item)}</p>`).join('')}`:`<ul>${items.map(item=>`<li>${esc(item)}</li>`).join('')}</ul>`}</section>`).join('')}</div>`;
   } else if (view.key === 'cards') {

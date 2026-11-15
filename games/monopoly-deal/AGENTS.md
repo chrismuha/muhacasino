@@ -39,10 +39,10 @@ These rules apply to this workspace and all child repositories. They supersede c
 
 # Monopoly Deal release version
 
-The current Monopoly Deal version is **v2.2.0**, explicitly authorized by the user on November 15, 2026 after reviewing the commit history.
-Keep the v1.6.0 baseline and the v2.0.0 and v2.1.0 development milestones in release history. Preserve the dated v1.5.0 and older history.
-The historical v1.6.0 entry remains an exception to the suite numbering range. Subsequent versions follow the suite's major.minor.0 sequence with minor numbers from 0 through 4.
-Do not advance the version unless the user explicitly requests a new version for the current work. Merge subsequent fixes into the existing current-version entry and preserve distinct notes.
+The current Monopoly Deal version is **v1.6.0**, one increment from v1.5.0, following the user's correction on November 15, 2026.
+This game-specific version is an exception to the suite's minor-number range. Do not infer extra releases from commits or development milestones.
+Keep all completed current work in one v1.6.0 release entry. Preserve distinct change notes and the dated v1.5.0 and older history.
+Do not advance the version unless the user explicitly requests a new version for the current work.
 Keep the launcher, game UI, guide, About history, release-notes page, and version tests consistent.
 
 ## Content punctuation
@@ -57,4 +57,4 @@ The user has now confirmed that the reported Chrome mobile scrolling issue is fi
 
 ## Release date
 
-The unpublished v2.2.0, v2.1.0, v2.0.0, and v1.6.0 development entries use **TBD** until the user provides release dates. Commit dates establish the order of completed changes, not publication dates. Preserve the dated v1.5.0 history and add new changes to v2.2.0.
+The unpublished v1.6.0 release uses **TBD** until the user provides a release date. Commit dates are not publication dates. Preserve the dated v1.5.0 history and add new changes to v1.6.0.

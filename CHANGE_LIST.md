@@ -15,10 +15,10 @@
 
 ### Interface and accessibility
 
+- Consolidated Monopoly Deal's completed changes under v1.6.0, the next version after v1.5.0, while preserving older release history.
 - Phone Bank, Play, Flip, Discard, and Pass controls use 48-pixel circles and 16-pixel labels. Browsing keeps all action slots in place with unavailable actions dimmed and explained, so card options do not shift the center preview or hand.
 - Redesigned New game with aligned headers, consistent field sizes, a visible step indicator, and a fixed navigation row across Players, Names, and Review. Only the form content scrolls above the keyboard, without shrinking labels or hiding instructions. Switching opponent modes keeps Players in place and clears generated computer names from human seats.
 - Reduced the casino header arrows to compact artwork while preserving their existing navigation controls and touch targets.
-- Release history now separates the original v1.6.0 banking and play-warning work, v2.0.0 responsive layouts and interaction feedback, v2.1.0 rent, browsing, setup, and guide improvements, and v2.2.0 table tools, larger phone actions, stable browsing, and 15M Multicolor Wilds. These development milestones remain unpublished with TBD dates.
 - Tools opens Manage, Wilds, Settings, Undo, Clear, and History in a separate dialog. Close or Escape returns to the table, and choosing a tool closes the dialog before continuing. Utility button rows no longer add height to the game.
 
 ### Reliability
