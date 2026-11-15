@@ -14,11 +14,11 @@ Help uses the inline navigation button to open the same five Help sections. The 
 
 ## Monopoly Deal current guide and release notes
 
-Monopoly Deal remains v1.6.0. The in-game guide, Release Notes page, and About version history describe valued property banking in every difficulty, the seven-card Pass Go restriction and its default-off override, the elapsed timer, and the updated mobile controls. No Mercy combined with Hard rules is Coming soon and is not playable yet. The user confirmed that unwanted mobile page scrolling is fixed. The game guide, release history, and Help retain the Fixed status and completed layout explanation.
+Monopoly Deal is now v2.2.0. The commit-based development history separates the v1.6.0 banking and warning baseline, v2.0.0 responsive layouts and interaction feedback, v2.1.0 rent, browsing, setup, and guide improvements, and v2.2.0 Tools, larger phone actions, stable card browsing, and 15M Multicolor Wilds. These milestones are unpublished and use TBD dates. The in-game guide, Release Notes page, and About version history describe valued property banking in every difficulty, the seven-card Pass Go restriction and its default-off override, the elapsed timer, and the updated mobile controls. No Mercy combined with Hard rules is Coming soon and is not playable yet. The user confirmed that unwanted mobile page scrolling is fixed. The game guide, release history, and Help retain the Fixed status and completed layout explanation.
 
 November 5 follow-up: turn and complete-set labels align left above Properties without colliding with Help. Help is available only in the navigation bar, including Monopoly Deal. Game settings saves Show elapsed game time. Rent can offer to move a played wild to a matching color for one play when a second play remains for rent; cancellation restores the move and plays.
 
-The v1.6.0 release date is TBD. Toast notifications are off by default, with explicit saved choices preserved. Both Discard buttons share confirmation and play costs. Blocked card-play and banking attempts always open a readable popup, even when toast notifications are off. The popup explains the rule and stays until dismissed without spending cards or plays. Other-player panels now separate the player name, hand and complete-set counts, a compact Bank summary, and a full-width Properties strip. Bank details remain available by tapping the summary. The Chrome mobile scrolling issue is confirmed fixed by the user.
+The v2.2.0 release date is TBD. Toast notifications are off by default, with explicit saved choices preserved. Use the circular Discard action beside the preview to confirm selected discards with the existing play costs. Blocked card-play and banking attempts always open a readable popup, even when toast notifications are off. The popup explains the rule and stays until dismissed without spending cards or plays. Other-player panels now separate the player name, hand and complete-set counts, a compact Bank summary, and a full-width Properties strip. Bank details remain available by tapping the summary. The Chrome mobile scrolling issue is confirmed fixed by the user.
 
 
 v1.6.0 (TBD): action cards can be banked for cash in all difficulties, with one play per banked card. They remain cash-only when paying debts and cannot be used for actions or returned to hand through normal play. Every difficulty also permits valued property banking. The release covers the other-player redesign, the narrower equal-height Bank panel, Hard difficulty rules, and mandatory blocked-play popups.
@@ -30,9 +30,9 @@ Chrome mobile scrolling: confirmed fixed by the user. A refresh is no longer req
 Verified fresh-deal layout correction: empty collection summaries compact on short phones, keeping the full hand visible without body overflow in tested Chromium/WebKit layouts before and after refresh. The user confirmed the Chrome iPhone scrolling issue is fixed.
 
 
-Preview and notch update (v1.6.0, TBD): Device previews fit both the available width and height while preserving their exact CSS viewport dimensions. Monopoly Deal uses one table color across its game canvas. Every hosted game extends its existing navigation background around the notch, preserving the navigation color. The collapsed header places its menu beside the notch, with game content below the cutout. Hand sizing ignores body scroll offsets, and short phone layouts reserve space below cards for the horizontal scrollbar. The user confirmed the Chrome mobile scrolling issue is fixed.
+Preview and notch update (v2.0.0 development milestone, TBD): Device previews fit both the available width and height while preserving their exact CSS viewport dimensions. Monopoly Deal uses one table color across its game canvas. Every hosted game extends its existing navigation background around the notch, preserving the navigation color. The collapsed header places its menu beside the notch, with game content below the cutout. Hand sizing ignores body scroll offsets, and short phone layouts reserve space below cards for the horizontal scrollbar. The user confirmed the Chrome mobile scrolling issue is fixed.
 
-Current device follows the available browser area at full scale, including when the window is narrowed or maximized. Tablet and desktop hand cards grow into spare viewport space. Short phone views keep readable card sizes, place the timer beside selected-card actions, and keep utility buttons in two rows when height is limited.
+Current device follows the available browser area at full scale, including when the window is narrowed or maximized. Tablet and desktop hand cards grow into spare viewport space. Short phone views keep readable card sizes, place the timer beside selected-card actions, and keep utilities in a separate Tools dialog. The current v2.2.0 controls use 48-pixel action circles and 16-pixel labels. Unavailable actions stay dimmed in fixed slots while browsing. The clock uses deck-side space on short phones.
 
 
 ## Automatic affordable slot bets · November 6, 2026
@@ -41,15 +41,15 @@ Automatically lower bet is on by default and saved separately for each slot. Whe
 
 Big Money Deluxe v4.0.0, Neon Slots v4.2.0, Pretty Penny v4.0.0, and Treasurepots v3.3.0 include this setting.
 
-Monopoly Deal v1.6.0 (TBD) library artwork: Monopoly Deal uses a red title accent in the game library. Its smaller library card shows the full cover illustration without cropping.
+Monopoly Deal v2.0.0 (TBD) library artwork: Monopoly Deal uses a red title accent in the game library. Its smaller library card shows the full cover illustration without cropping.
 
-Monopoly Deal v1.6.0 (TBD) short phone controls: Phone table controls stay visible in two rows, including short iPhone screens. The larger center card preview is restored. Game settings follows the selected table color, including live color changes.
+Monopoly Deal v2.0.0 (TBD) short phone controls: Phone table controls stay visible in two rows, including short iPhone screens. The larger center card preview is restored. Game settings follows the selected table color, including live color changes. In v2.2.0 the utilities move to a separate Tools dialog, replacing these earlier inline rows.
 
 
 Game library Help sits below the brand inside the padded library footer, with room for its keyboard focus outline and the device’s bottom safe area. While a game is open, Help remains beside Game Library in the game toolbar.
 
 
-Sly Deal and Forced Deal results always use an acknowledged overlay, independent of global and property-transfer toast settings. It identifies both players and every moved property, including both sides of a swap. Blocked or cancelled actions do not show transfer results. The table uses the same concise Manage, Table, and History labels on every screen.
+Sly Deal and Forced Deal results always use an acknowledged overlay, independent of global and property-transfer toast settings. It identifies both players and every moved property, including both sides of a swap. Blocked or cancelled actions do not show transfer results. Open Tools for Manage, Wilds, Settings, Undo, Clear, and History on every screen. The separate dialog keeps utility rows out of the game layout.
 
 
 Every played Just Say No, including computer responses and counter-No cards, has a mandatory overlay showing who played it, the defended action, and its current blocked or active state. This pauses the response chain until Continue or Escape. Property action prompts use will take; completed-transfer results still report only cards that actually moved.

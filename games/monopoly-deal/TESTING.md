@@ -104,7 +104,7 @@ Help access: verify navigation-bar Help remains available after reload, with exa
 November 5 defaults: toast notifications are off without an explicit saved opt-in; notification-specific fixtures opt in deliberately. Checks cover navigation-only Help (including obsolete saved settings), the sole circular Discard action, and the unique v1.5.0 release dated November 5, 2026.
 
 
-v1.6.0: verify cash-value action banking in every difficulty, one-play cost, bank-only debt transfers, and rejection of attempts to play banked actions. Preserve the shared property-banking rule and zero-value-wild restriction.
+v1.6.0: verify cash-value action banking in every difficulty, one-play cost, bank-only debt transfers, and rejection of attempts to play banked actions. Preserve the shared property-banking rule. Multicolor Wilds now have a 15M cash value.
 
 Preview canvas checks cover phone, tablet, and cabinet shells at two browser sizes without changing their simulated viewport. Hosted canvas checks cover default and custom table colors. Notch checks cover expanded and collapsed headers with a 54px simulated inset. Physical iPhone confirmation remains required for the documented Chrome issue.
 
@@ -113,7 +113,7 @@ iPhone footer hand regression coverage checks larger card widths and stable widt
 
 
 
-Shared banking coverage enumerates all 106 cards and verifies positive cash values are eligible. UI checks bank a regular property and a valued wild in Easy, Normal, and Hard, verify one play per card, keep banked properties out of played sets, reject zero-value wilds without spending cards or plays, and block replaying banked properties. Mouse drops cover property banking, normal property play, invalid money-to-Properties drops, cancellation, and the three-play limit.
+Shared banking coverage enumerates all 106 cards and verifies positive cash values are eligible. UI checks bank a regular property and a valued wild in Easy, Normal, and Hard, verify one play per card, keep banked properties out of played sets, bank 15M multicolor wilds for one play, and block replaying banked properties. Mouse drops cover property banking, normal property play, invalid money-to-Properties drops, cancellation, and the three-play limit.
 
 
 Mandatory result coverage checks human and computer Sly Deal and Forced Deal with all toasts off, transfer toasts off, and toasts enabled with a one-second duration. Results name the players and property names, values, and colors, persist beyond toast expiry, and dismiss without spending plays. Forced Deal includes both transferred properties; repeated AI steals retain every result. Cancelled or blocked deals show no result overlay. Control-label coverage compares phone, tablet, and desktop wording and verifies that desktop utility labels fit on one line.
@@ -125,3 +125,8 @@ Property-scroll interaction checks hold and drag horizontal scrollbar tracks, re
 Just Say No coverage verifies mandatory overlays for a human or computer defense and the human counter-No, with all toasts off, action toasts filtered out, and one-second enabled toasts. It checks blocked/restored states, no automatic dismissal, one acknowledgment per played response, existing on-turn versus off-turn play costs, eventual payments, and card conservation. Declining a defense produces no played-card overlay. Theft descriptions use will take, and blocked steals produce no completed-transfer result.
 
 Desktop resize regressions cover 800×450, 800×500, 900×600, 1100×650, 1280×720, 1440×600, and 1440×900 with four players and property, wild, action, money, and cleared selections. They require no normal-play body overflow or vertical wheel movement, elapsed time below turn dots and clear of the hand, and unsnapped native horizontal hand scrolling. Enlarged reading views retain scrolling. Rent rejection coverage verifies no matching played properties, banked properties that do not qualify, empty opponents, and Any Color Rent tenant filtering, preserving cards, doublers, and plays with notifications disabled.
+
+
+November 15 v2.2.0 checks cover a separate Tools dialog, opening Manage from it, Close and Escape, 48-pixel phone action circles with 16-pixel labels, unchanged preview/action/hand geometry while browsing every card type, and short-phone page containment. The short-phone timer uses the clear space beside the deck. Chromium and WebKit cover phone, tablet, and desktop sizes. Cash-value checks cover both 15M multicolor wilds, banking in all three difficulties, payments, set completion, and migration of saved wilds across hand, draw, discard, properties, and bank without losing cards. Hosted iPhone and real Chromium touch gestures cover browsing while retaining selections.
+
+Version-history reconstruction uses the v1.6.0 baseline through 1a856ab, responsive and feedback work through e044775 for v2.0.0, and the later rent, browsing, setup, and guide commits through 1c51e5c for v2.1.0. The current Tools, phone controls, and 15M wild work forms v2.2.0. Preserve every distinct note, keep unpublished dates TBD, and check descending version order, alphabetical categories and bullets, current labels, and the unchanged v1.5.0-and-older history.

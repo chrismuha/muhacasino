@@ -13,11 +13,12 @@ export const GROUPS = {
 export const ACTIONS = {
  pass:['Pass Go',10,1,'Draw two cards.'],sly:['Sly Deal',3,3,'Steal a property outside a complete set.'],forced:['Forced Deal',3,3,'Swap properties outside complete sets.'],breaker:['Deal Breaker',2,5,'Steal a complete set, including buildings.'],no:['Just Say No',3,4,'Cancel an action against you. Can counter another No.'],debt:['Debt Collector',3,3,'One opponent pays you 5M.'],birthday:["It’s My Birthday",3,2,'Every opponent pays you 2M.'],double:['Double the Rent',2,1,'Play with Rent. Each doubler uses one play.'],house:['House',3,3,'Complete street set only. +3M rent. No railroads or utilities.'],hotel:['Hotel',2,4,'Needs a house on a complete street set. +4M rent. No railroads or utilities.']
 };
+export const MULTICOLOR_WILD_VALUE=15;
 export function deck(){let cards=[],id=0;const add=c=>cards.push({...c,id:++id});
  for(const [color,g] of Object.entries(GROUPS))g.names.forEach(name=>add({type:'property',name,colors:[color],color,value:g.value}));
  const pairs=[['brown','lightblue',1,1],['lightblue','railroad',1,4],['pink','orange',2,2],['red','yellow',2,3],['blue','green',1,4],['green','railroad',1,4],['railroad','utility',1,2]];
  for(const [a,b,n,value] of pairs)for(let i=0;i<n;i++)add({type:'property',name:'Property Wild',colors:[a,b],color:a,value});
- for(let i=0;i<2;i++)add({type:'property',name:'Multicolor Wild',colors:Object.keys(GROUPS),color:'brown',value:0});
+ for(let i=0;i<2;i++)add({type:'property',name:'Multicolor Wild',colors:Object.keys(GROUPS),color:'brown',value:MULTICOLOR_WILD_VALUE});
  for(const [action,[name,n,value,description]] of Object.entries(ACTIONS))for(let i=0;i<n;i++)add({type:'action',action,name,value,description});
  for(const colors of [['brown','lightblue'],['pink','orange'],['red','yellow'],['blue','green'],['railroad','utility']])for(let i=0;i<2;i++)add({type:'action',action:'rent',name:'Rent',value:1,colors,description:'All opponents pay rent on one matching color you own.'});
  for(let i=0;i<3;i++)add({type:'action',action:'rent',name:'Any Color Rent',value:3,colors:Object.keys(GROUPS),description:'One opponent pays rent on any color you own.'});

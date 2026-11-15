@@ -1,4 +1,4 @@
-import {GROUPS,properties,complete,sets,rent,canBank} from './engine.mjs?build=20261106-banking-v154';
+import {GROUPS,properties,complete,sets,rent,canBank} from './engine.mjs?build=20261115-stable-tools';
 const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const faceColors={orange:'#fa8020',yellow:'#ffd10c',red:'#fa3b25',pink:'#ff2c8c',brown:'#945629',lightblue:'#77cfe9',green:'#18a26b',blue:'#1c60c9',railroad:'#30383f',utility:'#b9d691'};
 const paint=color=>faceColors[color]||GROUPS[color].color;
@@ -24,7 +24,7 @@ export function modernFace(card,{flipped=card.type==='property'&&card.colors?.le
  let body,band=card.action==='house'?'#22824b':card.action==='hotel'?'#c83737':colors[0]||'#d4d5a2';
  if(card.type==='property'){
   const wild=card.colors.length>1;
-  if(card.colors.length===10){band='conic-gradient(#ed962d,#e24d50,#f1d44e,#46aa77,#4376d5,#71cee8,#db65ad,#955d39,#ed962d)';body=`<div class="face-property-top">${value}${skyline}</div>${propertyHeading('PROPERTY WILD',reading,'PROPERTY WILD')}<div class="any-color-disc" aria-hidden="true"></div><p class="face-instructions">Use with any property color.<br>No cash value. Needs a valued property.</p>`;}
+  if(card.colors.length===10){band='conic-gradient(#ed962d,#e24d50,#f1d44e,#46aa77,#4376d5,#71cee8,#db65ad,#955d39,#ed962d)';body=`<div class="face-property-top">${value}${skyline}</div>${propertyHeading('PROPERTY WILD',reading,'PROPERTY WILD')}<div class="any-color-disc" aria-hidden="true"></div><p class="face-instructions">Use with any property color.<br>Cash value: ${card.value}M. Bank or play as a property.</p>`;}
   else if(wild&&reading){
    const active=card.colors[flipped?1:0],other=card.colors[flipped?0:1];
    band=paint(active);
@@ -72,7 +72,7 @@ export function modernBoard(state,visible,selectedId,flipped,expanded=false,turn
  <button id="end" class="round-action orange" ${disabled(!finished)}><span class="action-disc" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="m12 22 13-14 13 14h-8v8c0 10-10 14-18 10l4-8c4 1 6-1 6-4v-6z" fill="currentColor"/><path d="m12 17 13-14 13 14" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></span><span>Pass</span></button>
  <span class="plays-dots" aria-label="${Math.max(0,3-state.plays)} plays left">${[0,1,2].map(i=>`<i class="${i<state.plays?'used':!finished&&i===state.plays?'is-current':''}" aria-label="Play ${i+1}: ${i<state.plays?'completed':!finished&&i===state.plays?'current':'unused'}"></i>`).join('')}</span></div></section>
  <section class="current-seat" aria-label="${esc(player.name)}’s table">
- <div class="current-seat-heading"><h2 data-fit-label><span class="turn-indicator" data-turn-player="${state.turn}" role="img" aria-label="Current turn" hidden></span>${esc(player.name)}</h2></div>
+ <div class="current-seat-heading"><h2 data-fit-label><span class="turn-indicator" data-turn-player="${state.turn}" role="img" aria-label="Current turn" hidden></span>${esc(player.name)}</h2><button id="table-tools-open" type="button" aria-haspopup="dialog">Tools</button></div>
  <div class="current-assets" role="group" aria-label="Your bank and properties">
  <button class="current-bank" data-table-view="bank-${state.turn}" aria-haspopup="dialog" aria-label="${esc(player.name)}’s bank: ${bankTotal}M, ${player.bank.length} banked cards">
  <span class="asset-panel-heading"><span class="asset-panel-title">Bank</span></span><strong class="bank-balance">${bankTotal}<span class="bank-unit">M</span></strong>
@@ -82,12 +82,12 @@ export function modernBoard(state,visible,selectedId,flipped,expanded=false,turn
  <span class="own-groups">${propertyGroups(player,true)||(selected?.type==='property'?'<span class="asset-empty">Selected in hand. Choose Play to add it here.</span>':'<span class="asset-empty">None yet</span>')}</span><span class="asset-count">${player.props.length} properties · ${player.buildings.length} buildings</span><span class="property-inspect-hint">Double-tap or hold for details</span></button>
  </div>
  <div class="current-stats"><span class="coin" aria-hidden="true">M</span><b>${bankTotal}M</b><span>▱ ×${player.hand.length}</span>
- <div class="table-tools"><button id="move" ${disabled(visible&&!finished)} aria-label="Open property manager">Manage</button>
+ <dialog id="table-tools-dialog" aria-labelledby="table-tools-title"><div class="wizard-heading"><h2 id="table-tools-title">Table tools</h2><button id="table-tools-close" type="button" autofocus>Close</button></div><div class="table-tools"><button id="move" ${disabled(visible&&!finished)} aria-label="Open property manager">Manage</button>
  <button id="wilds" type="button" aria-haspopup="dialog">Wilds</button><button id="table-settings" type="button" aria-haspopup="dialog">Settings</button>
 
  <button id="undo" type="button" aria-label="Undo last move">Undo</button>
  <button id="deselect" type="button" aria-label="Clear all selected cards">Clear${selectedIds.size?` (${selectedIds.size})`: ''}</button>
  <button type="button" class="action-history-button" aria-label="Open move history" aria-haspopup="dialog">History</button>
- </div></div></section>
+ </div></dialog></div></section>
  <section class="deal-hand" aria-label="${esc(player.name)}’s private hand">${visible?`<div class="cards" tabindex="0" role="region" aria-label="Your hand; scroll sideways for more cards">${player.hand.map(c=>`<button class="modern-hand-card ${selectedIds.has(c.id)?'is-selected':''} ${c.id===selectedId?'is-active':''}" data-card="${c.id}" aria-label="${esc(c.name)} · ${c.value}M" aria-pressed="${selectedIds.has(c.id)}" ${disabled(!finished)}>${modernFace(c,c.id===selectedId?{flipped}:{})}</button>`).join('')||'<p>Your hand is empty.</p>'}</div>`:''}</section></div>`;
 }

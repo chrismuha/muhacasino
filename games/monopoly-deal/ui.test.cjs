@@ -26,6 +26,11 @@ async function open(viewport={width:430,height:932},storage,contextOptions={},en
  await page.route('**/monopoly-deal/main.js?*',async route=>{const response=await route.fetch();await route.fulfill({response,body:await response.text()+`\nwindow.__dealTest={get state(){return state},get visible(){return visible},get busy(){return busy},setState(s,show=true){state=s;visible=show;selectedCardId=null;previewFlipped=false;previewExpanded=false;lastCardTap=null;turnHandoff=!show;render()},render,run,play,end,rearrange,defend,pay,checkWin,tableViews,showToast,enforceHandLimit};`})});
  await page.goto(origin+'/games/monopoly-deal/');await page.waitForFunction(()=>window.__dealTest);return page;
 }
+async function clickTableTool(surface,selector){
+ const button=surface.locator(selector);
+ if(!await button.isVisible())await surface.locator('#table-tools-open').click();
+ await button.click();
+}
 async function close(page){assert.deepEqual(page.errors,[],'No browser runtime errors');await page.context().close()}
 async function fixture(page,kind='hand',count=4){return page.evaluate(async({kind,count})=>{
  const {createGame,deck}=await import('./engine.mjs');const names=['Chris','Alex','Sam','Taylor'].slice(0,count),s=createGame(names);s.players.forEach(p=>{p.hand=[];p.props=[];p.bank=[];p.buildings=[]});s.draw=deck();s.discard=[];s.log=[];s.turn=0;s.plays=0;delete s.winner;
@@ -122,7 +127,7 @@ test('selection, property placement, banking, Pass Go, 3-play cap, and turn priv
 
 test('wild flip controls played color; moving a played wild costs one play and normalizes buildings',async()=>{
  const p=await open();await fixture(p,'wild');await p.locator('[data-card]').first().click();assert.equal(await p.locator('#flip-card').isEnabled(),true);await p.locator('#flip-card').click();await p.locator('#play-card').click();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[0].color),'lightblue');assert.match(await p.locator('.current-properties .wild-half').first().getAttribute('style'),/#77cfe9/);
- await fixture(p,'rearrange');await p.evaluate(()=>{window.__dealTest.state.difficulty='hard';window.__dealTest.render()});await p.locator('#move').click();await p.locator('[data-stack-shift="1"]').click();await p.locator('[data-stack-shift="1"]').click();await p.locator('[data-change-wild]:visible').click();await choose(p,'Light Blue');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].buildings.length),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),2);await conservation(p);await close(p);
+ await fixture(p,'rearrange');await p.evaluate(()=>{window.__dealTest.state.difficulty='hard';window.__dealTest.render()});await clickTableTool(p,'#move');await p.locator('[data-stack-shift="1"]').click();await p.locator('[data-stack-shift="1"]').click();await p.locator('[data-change-wild]:visible').click();await choose(p,'Light Blue');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].buildings.length),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),2);await conservation(p);await close(p);
 });
 
 test('rent with two doublers charges every opponent, conserves cards, and hides hands during payment',async()=>{
@@ -375,9 +380,9 @@ test('starting-screen and table settings buttons open settings; Wilds directly o
   await game.locator('#appearance-dialog .wizard-heading button').click();
   await fixture(game,'wild',2);
   await game.evaluate(()=>{const t=window.__dealTest,s=t.state,c=s.players[0].hand.pop();c.color=c.colors[0];s.players[0].props.push(c);t.render();});
-  await game.locator('#table-settings').click();await game.locator('#appearance-dialog[open]').waitFor();await game.locator('#appearance-dialog .wizard-heading button').click();
+  await clickTableTool(game,'#table-settings');await game.locator('#appearance-dialog[open]').waitFor();await game.locator('#appearance-dialog .wizard-heading button').click();
   const before=await game.evaluate(()=>window.__dealTest.state.plays);
-  await game.locator('#wilds').click();await game.locator('#choice[open]').waitFor();assert.match(await game.locator('#question').innerText(),/Move a wild/);
+  await clickTableTool(game,'#wilds');await game.locator('#choice[open]').waitFor();assert.match(await game.locator('#question').innerText(),/Move a wild/);
   await game.locator('#options button').nth(1).click();await game.locator('#choice[open]').waitFor();assert.match(await game.locator('#question').innerText(),/property color/);
   await game.locator('#options button').last().click();await idle(game);
   assert.equal(await game.evaluate(()=>window.__dealTest.state.plays),before+1);
@@ -683,14 +688,16 @@ test('hand trackpad scrolling and catalog swipe/trackpad navigation preserve pla
  await close(p);
 });
 
-test('guide and release notes match deck facts, current controls, and the current v1.6.0 label',async()=>{
- const p=await open();const facts=await p.evaluate(async()=>{const {GUIDE_RULES,RELEASE_NOTES,cardDesigns}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),notes:JSON.stringify(RELEASE_NOTES),designs:cardDesigns().length,cards:deck().length,title:RELEASE_NOTES[0][0]}});
- assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.equal(facts.title,'v1.6.0 · TBD');
+test('guide and release notes match deck facts, current controls, and the current v2.2.0 label',async()=>{
+ const p=await open();const facts=await p.evaluate(async()=>{const {GUIDE_RULES,RELEASE_NOTES,cardDesigns}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),notes:JSON.stringify(RELEASE_NOTES),designs:cardDesigns().length,cards:deck().length,title:RELEASE_NOTES[0][0],versions:RELEASE_NOTES.map(([title])=>title)}});
+ assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.equal(facts.title,'v2.2.0 · TBD');
+ assert.deepEqual(facts.versions.slice(0,4),['v2.2.0 · TBD','v2.1.0 · TBD','v2.0.0 · TBD','v1.6.0 · TBD']);
+ assert.equal(new Set(facts.versions).size,facts.versions.length);
  for(const instruction of ['Double-tap','Close returns','no manual Hide','trackpad','Coming soon','Continue turn','same category','Bank cards first','one bullet for each card','Forced Deal lists both'])assert.ok(facts.rules.toLowerCase().includes(instruction.toLowerCase()),instruction);
  assert.doesNotMatch(facts.notes,/overlapping hand below|Privacy separately hides|actions below the selected|Collapsible Table appearance/);
  const history=await readFile(path.join(root,'about.html'),'utf8'),section=history.slice(history.indexOf('<article id="monopoly-deal"'),history.indexOf('<article id="sorry"'));
- assert.equal((section.match(/2026-11-05/g)||[]).length,1);assert.match(section,/v1\.6\.0/);assert.doesNotMatch(section,/separate Privacy control/);
- const releasePage=await readFile(path.join(root,'release-notes.html'),'utf8');assert.equal((releasePage.match(/<h2>Monopoly Deal v1\.6\.0<\/h2>/g)||[]).length,1);assert.match(releasePage,/<p class="release-date">Release date: TBD<\/p><h2>Monopoly Deal v1\.6\.0<\/h2>/);
+ assert.equal((section.match(/2026-11-05/g)||[]).length,1);assert.match(section,/v2\.2\.0/);assert.doesNotMatch(section,/separate Privacy control/);
+ const releasePage=await readFile(path.join(root,'release-notes.html'),'utf8');assert.equal((releasePage.match(/<h2>Monopoly Deal v2\.2\.0<\/h2>/g)||[]).length,1);assert.match(releasePage,/<p class="release-date">Release date: TBD<\/p><h2>Monopoly Deal v2\.2\.0<\/h2>/);
  await close(p);
 });
 test('private payment resumes the same turn with Continue turn rather than Reveal my hand',async()=>{
@@ -784,7 +791,7 @@ test('hand selections visibly lift, support individual deselection and clearing,
  const style=await p.locator(`[data-card="${ids[0]}"]`).evaluate(el=>({transform:getComputedStyle(el).transform,outline:getComputedStyle(el).outlineStyle,badge:getComputedStyle(el,'::after').content}));assert.notEqual(style.transform,'none');assert.equal(style.outline,'solid');assert.match(style.badge,/✓/);assert.equal(await p.locator('.selected-table-card').count(),0);
  await p.locator(`[data-card="${ids[5]}"]`).click();assert.equal(await p.locator('[data-card][aria-pressed=true]').count(),2);if(artifacts)await shot(p,'multiple-selected-card-feedback');
  await p.locator(`[data-card="${ids[0]}"]`).click();assert.equal(await p.locator('[data-card][aria-pressed=true]').count(),1);
- await p.locator('#deselect').click();assert.equal(await p.locator('[data-card][aria-pressed=true]').count(),0);
+ await clickTableTool(p,'#deselect');assert.equal(await p.locator('[data-card][aria-pressed=true]').count(),0);
  await p.locator(`[data-card="${ids[0]}"]`).click();await p.locator(`[data-card="${ids[5]}"]`).click();await p.locator('#play-card').click();await idle(p);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[0].id),ids[5]);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);
  assert.equal(await p.locator(`[data-card="${ids[0]}"]`).getAttribute('aria-pressed'),'true');await p.locator('#play-card').click();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props[1].id),ids[0]);
@@ -794,7 +801,7 @@ test('right-side action icons align and turn limit and end handoff produce clear
  const p=await open({width:390,height:844});await fixture(p,'hand',2);
  await p.locator('[data-card]').nth(3).click();
  const icons=await p.locator('.deal-actions .round-action').evaluateAll(nodes=>nodes.filter(n=>getComputedStyle(n).display!=='none'&&getComputedStyle(n).visibility!=='hidden').map(n=>n.querySelector('.action-disc').getBoundingClientRect().x));assert.ok(Math.max(...icons)-Math.min(...icons)<1);
- await p.locator('#deselect').click();await p.evaluate(()=>{window.__dealTest.state.plays=2;window.__dealTest.render()});
+ await clickTableTool(p,'#deselect');await p.evaluate(()=>{window.__dealTest.state.plays=2;window.__dealTest.render()});
  await p.locator('[data-card]').nth(1).click();await p.locator('#bank-card').click();await idle(p);
  assert.match(await notification(p,/All three plays used/),/All three plays used/);await p.locator('#end').click();await idle(p);
  assert.match(await notification(p,/Alex’s turn\./),/Alex’s turn\./);assert.equal(await p.locator('[data-card][aria-pressed=true]').count(),0);await close(p);
@@ -1036,7 +1043,7 @@ test('enlarged property and action headers stay on one line',async()=>{
    const header=p.locator('.selected-table-card .reading-property-title,.selected-table-card .face-action-top > span:last-child');
    assert.equal(await header.evaluate(el=>getComputedStyle(el).whiteSpace),'nowrap');assert.equal(await header.locator('br').count(),0);
    assert.ok(await header.evaluate(el=>{const r=document.createRange();r.selectNodeContents(el);return r.getClientRects().length===1}));
-   await p.locator('#preview-close').click();await p.locator('#deselect').click();
+   await p.locator('#preview-close').click();await clickTableTool(p,'#deselect');
   }
   await close(p);
  }
@@ -1091,7 +1098,7 @@ test('casino-hosted property zoom preserves frame height and the selected card',
 test('property manager taps move wilds out of completed sets for one play and normalize buildings',async()=>{
  const p=await open();await fixture(p,'rearrange',2);await p.evaluate(()=>{window.__dealTest.state.difficulty='hard';window.__dealTest.render()});
  const wild=await p.evaluate(()=>window.__dealTest.state.players[0].props.find(c=>c.colors.length>1).id);
- await p.locator('#move').click();await p.locator('.property-stack-card.is-active').waitFor();
+ await clickTableTool(p,'#move');await p.locator('.property-stack-card.is-active').waitFor();
  // Browsing the sorted stack must keep wild editing available even on other cards.
  for(let i=0;i<4&&await p.locator(`[data-move-wild="${wild}"]:visible`).count()===0;i++)await p.locator('[data-stack-shift="1"]').click();
  await p.locator(`[data-move-wild="${wild}"]`).click();await choose(p,'Cancel');await idle(p);
@@ -1151,10 +1158,10 @@ test('Undo restores cards and plays in order and clears when the turn ends',asyn
  const afterProperty=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
  const pass=await p.evaluate(()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='pass').id);
  await p.locator(`[data-card="${pass}"]`).click();await p.locator('#bank-card').click();await idle(p);
- await p.locator('#undo').click();assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),afterProperty);
- await p.locator('#undo').click();assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
+ await clickTableTool(p,'#undo');assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),afterProperty);
+ await clickTableTool(p,'#undo');assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
  assert.equal(await p.locator('#undo').getAttribute('aria-disabled'),'true');
- await p.locator('#deselect').click();await p.locator('[data-card]').first().click();await p.locator('#play-card').click();await idle(p);
+ await clickTableTool(p,'#deselect');await p.locator('[data-card]').first().click();await p.locator('#play-card').click();await idle(p);
  await p.locator('#end').click();await idle(p);await p.locator('#reveal').click();assert.equal(await p.locator('#undo').getAttribute('aria-disabled'),'true');
  await conservation(p);await close(p);
 });
@@ -1169,11 +1176,11 @@ test('required opponent payments cannot be cancelled and close the undo window',
 
 test('Undo restores discarded cards and wild-set buildings exactly',async()=>{
  const p=await open();await fixture(p,'hand',2);const beforeDiscard=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
- await p.locator('[data-card]').first().click();await p.locator('#discard-card').click();await choose(p,'Discard selected cards');await idle(p);await p.locator('#undo').click();
+ await p.locator('[data-card]').first().click();await p.locator('#discard-card').click();await choose(p,'Discard selected cards');await idle(p);await clickTableTool(p,'#undo');
  assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),beforeDiscard);
  await fixture(p,'rearrange',2);const beforeWild=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
- await p.locator('#move').click();await p.locator('[data-stack-shift="1"]').click();await p.locator('[data-stack-shift="1"]').click();await p.locator('[data-change-wild]:visible').click();await choose(p,'Light Blue');await idle(p);
- await p.locator('#table-view-close').click();await p.locator('#undo').click();
+ await clickTableTool(p,'#move');await p.locator('[data-stack-shift="1"]').click();await p.locator('[data-stack-shift="1"]').click();await p.locator('[data-change-wild]:visible').click();await choose(p,'Light Blue');await idle(p);
+ await p.locator('#table-view-close').click();await clickTableTool(p,'#undo');
  assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),beforeWild);await conservation(p);await close(p);
 });
 
@@ -1240,8 +1247,8 @@ test('turn dots and Undo retain status without the redundant hand summary',async
  const p=await open();await fixture(p,'hand',2);
  assert.equal(await p.locator('.plays-dots').getAttribute('aria-label'),'3 plays left');assert.equal(await p.locator('#undo').getAttribute('aria-disabled'),'true');
  await playFirst(p);await idle(p);assert.equal(await p.locator('.plays-dots').getAttribute('aria-label'),'2 plays left');assert.equal(await p.locator('#undo').getAttribute('aria-disabled'),'false');
- await p.locator('.action-history-button').click();assert.match(await p.locator('.last-action').innerText(),/New York Avenue/);
- await p.locator('#action-history-close').click();await p.locator('#undo').click();assert.equal(await p.locator('.plays-dots').getAttribute('aria-label'),'3 plays left');assert.equal(await p.locator('#undo').getAttribute('aria-disabled'),'true');await conservation(p);await close(p);
+ await clickTableTool(p,'.action-history-button');assert.match(await p.locator('.last-action').innerText(),/New York Avenue/);
+ await p.locator('#action-history-close').click();await clickTableTool(p,'#undo');assert.equal(await p.locator('.plays-dots').getAttribute('aria-label'),'3 plays left');assert.equal(await p.locator('#undo').getAttribute('aria-disabled'),'true');await conservation(p);await close(p);
 });
 
 test('refresh cancels an unfinished human action without losing its card or plays',async()=>{
@@ -1252,11 +1259,11 @@ test('refresh cancels an unfinished human action without losing its card or play
  await playFirst(p);await choose(p,0);await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);await conservation(p);await close(p);
 });
 
-test('v1.6.0 matches the game, launcher and single same-day release entry',async()=>{
- const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v1\.6\.0/);
- await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v1\.6\.0/);
- await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v1.6.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-11-05'}).count(),1);
- await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v1.6.0');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();await close(p);
+test('v2.2.0 matches the game, launcher and preserved chronological milestones',async()=>{
+ const p=await open();assert.match(await p.locator('.game-topbar > span').textContent(),/v2\.2\.0/);
+ await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});assert.match(await p.locator('#table-view-content').innerText(),/v2\.2\.0/);
+ await p.goto(origin+'/about.html');assert.equal(await p.locator('#monopoly-deal > header b').innerText(),'v2.2.0');assert.equal(await p.locator('#monopoly-deal h3').filter({hasText:'2026-11-05'}).count(),1);
+ await p.goto(origin+'/index.html#monopoly-deal');assert.equal(await p.locator('#currentGameVersion').innerText(),'v2.2.0');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();await close(p);
 });
 
 test('own table wilds change color directly without opening Manage',async()=>{
@@ -1323,7 +1330,7 @@ test('selected cards show an actual face and phone property cards fit without ov
  await close(p);
 });
 
-test('secondary text is white and the guide consistently documents the v1.6.0 rules',async()=>{
+test('secondary text is white and the guide consistently documents the v2.2.0 rules',async()=>{
  const p=await open({width:420,height:780});await fixture(p,'house',2);
  for(const selector of ['.asset-count','.opponent-count','.current-properties .group-caption']){
   const style=await p.locator(selector).first().evaluate(el=>({color:getComputedStyle(el).color,size:parseFloat(getComputedStyle(el).fontSize)}));
@@ -1339,7 +1346,7 @@ test('secondary text is white and the guide consistently documents the v1.6.0 ru
 test('history popup preserves the phone table and deck and toolbar labels are readable',async()=>{
  const p=await open({width:420,height:742});await fixture(p,'hand',2);
  const before=await p.locator('.deal-table').boundingBox();const plays=await p.evaluate(()=>window.__dealTest.state.plays);
- await p.locator('.action-history-button').click();await p.locator('#action-history[open]').waitFor();
+ await clickTableTool(p,'.action-history-button');await p.locator('#action-history[open]').waitFor();
  assert.deepEqual(await p.locator('.deal-table').boundingBox(),before);
  await p.keyboard.press('Escape');assert.equal(await p.locator('#action-history').evaluate(el=>el.open),false);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),plays);
@@ -1886,7 +1893,7 @@ test('multi-card selections stay in one category through taps keyboard and enlar
    assert.equal(await p.locator('#discard-card').innerText(),'Discard (2)');
   }
   assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);
-  await p.locator('#preview-close').click();await p.locator('#deselect').click();assert.deepEqual(await selected(),[]);
+  await p.locator('#preview-close').click();await clickTableTool(p,'#deselect');assert.deepEqual(await selected(),[]);
   await conservation(p);await close(p);
  }
 });
@@ -1985,7 +1992,7 @@ test('iPhone Air normal play has no residual vertical scroll with populated tabl
   for(const kind of ['hand','hotel']){
    await fixture(game,kind,4);
    for(const selector of [null,'[data-card]','[data-card]:has(.wild-half)']){
-    if(selector){const card=game.locator(selector).first();if(!await card.count())continue;await game.locator('#deselect').click({force:true});await card.evaluate(el=>el.click());}
+    if(selector){const card=game.locator(selector).first();if(!await card.count())continue;await clickTableTool(game,'#deselect');await card.evaluate(el=>el.click());}
     const geometry=await game.evaluate(()=>{document.body.scrollTop=1e6;return {cardWidth:document.querySelector('.modern-hand-card')?.getBoundingClientRect().width,handWidth:document.querySelector('.deal-table')?.style.getPropertyValue('--hand-card-width'),scroll:document.body.scrollTop,total:document.body.scrollHeight,height:document.body.clientHeight,hand:document.querySelector('.deal-hand').getBoundingClientRect().bottom,viewport:innerHeight,rows:[...document.querySelectorAll('.game-topbar,main,.deal-table>*,.deal-hand>*,.current-seat>*,.current-assets>*,.deal-actions>*')].map(el=>({name:el.className,top:el.getBoundingClientRect().top,height:el.getBoundingClientRect().height,padding:getComputedStyle(el).padding,margin:getComputedStyle(el).margin}))};});
     assert.equal(geometry.scroll,0,JSON.stringify({height,hosted,expanded,kind,selector,geometry}));
     assert.ok(geometry.hand<=geometry.viewport,JSON.stringify({height,hosted,expanded,kind,selector,geometry}));
@@ -2020,13 +2027,13 @@ test('rent cannot consume cards or plays against empty opponents, including any-
 
 test('toast preferences persist and suppress individual events or all events',async()=>{
  const p=await open();await fixture(p);
- await p.locator('#table-settings').click();
+ await clickTableTool(p,'#table-settings');
  await p.locator('[data-toast-type=bank]').uncheck();
  await p.locator('#appearance-dialog .wizard-heading button').click();
  await p.evaluate(async()=>{const t=window.__dealTest;await t.run(()=>t.play(t.state.players[0].hand.find(c=>c.type==='money'),'bank'));});
  assert.equal(await p.locator('#game-toast').isVisible(),false);
  await p.reload();await p.waitForFunction(()=>window.__dealTest);
- await p.locator('#table-settings').click();assert.equal(await p.locator('[data-toast-type=bank]').isChecked(),false);
+ await clickTableTool(p,'#table-settings');assert.equal(await p.locator('[data-toast-type=bank]').isChecked(),false);
  await p.locator('[data-toast-type=all]').uncheck();
  await p.locator('#appearance-dialog .wizard-heading button').click();
  await fixture(p);await p.evaluate(async()=>{const t=window.__dealTest;await t.run(()=>t.play(t.state.players[0].hand.find(c=>c.type==='property'),'play','orange'));});
@@ -2184,7 +2191,7 @@ test('manual Pass Go draws are required, empty hands draw five, and enabling aut
  await p.evaluate(()=>{const s=window.__dealTest.state;s.draw.push(...s.players[1].hand.splice(0));});
  await p.locator('#end').click();await idle(p);await p.locator('#reveal').click();
  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].pendingDraw),5);
- await p.locator('#table-settings').click();await p.locator('#automatic-dealing').check();
+ await clickTableTool(p,'#table-settings');await p.locator('#automatic-dealing').check();
  await p.locator('#appearance-dialog .wizard-heading button').click();
  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].hand.length),5);
  assert.equal(await p.locator('#drawn-card-dialog').isVisible(),false);
@@ -2270,7 +2277,7 @@ test('two-color and multicolor wild moves spend a dot, cancel and same color are
  const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));await move();await idle(p);
  assert.equal(await p.locator('#choice[open]').count(),0);
  assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
- await p.locator('#undo').click();await idle(p);
+ await clickTableTool(p,'#undo');await idle(p);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),2);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.find(c=>c.colors.length>1).color),'lightblue');
  if(theme==='modern')assert.equal(await p.locator('.plays-dots i.used').count(),2);
@@ -2310,11 +2317,11 @@ test('default toasts occupy the deck-side space and footer placement persists',a
  await p.waitForFunction(()=>document.querySelector('#game-toast').dataset.placement==='table');
  const box=await p.locator('#game-toast').boundingBox(),area=await p.locator('.card-stage').boundingBox();
  assert.ok(box.x>=area.x-1&&box.x+box.width<=area.x+area.width+1&&box.y>=area.y-1&&box.y+box.height<=area.y+area.height+1,JSON.stringify({box,area}));
- await p.locator('#game-toast button').click();await p.locator('#table-settings').click();
+ await p.locator('#game-toast button').click();await clickTableTool(p,'#table-settings');
  assert.equal(await p.locator('#toast-placement').inputValue(),'table');await p.locator('#toast-placement').selectOption('footer');
  await p.locator('#appearance-dialog .wizard-heading button').click();await p.evaluate(()=>window.__dealTest.showToast('Footer choice'));
  assert.equal(await p.locator('#game-toast').getAttribute('data-placement'),'footer');
- await p.reload();await p.waitForFunction(()=>window.__dealTest);await p.locator('#table-settings').click();assert.equal(await p.locator('#toast-placement').inputValue(),'footer');
+ await p.reload();await p.waitForFunction(()=>window.__dealTest);await clickTableTool(p,'#table-settings');assert.equal(await p.locator('#toast-placement').inputValue(),'footer');
  await p.locator('#appearance-dialog .wizard-heading button').click();await close(p);
 });
 
@@ -2388,7 +2395,7 @@ test('Hard hand wild flips spend a play and Undo restores the flip and play',asy
  await p.locator('[data-card]').first().click();await p.locator('#flip-card').click();await idle(p);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),3);
  assert.equal(await p.locator('#flip-card').getAttribute('aria-disabled'),'true');
- await p.locator('#undo').click();await idle(p);
+ await clickTableTool(p,'#undo');await idle(p);
  assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),2);
  await conservation(p);await close(p);
 });
@@ -2447,13 +2454,13 @@ test('display switches persist and turn labels stay left at phone tablet desktop
   const rects=await p.evaluate(()=>{const heading=document.querySelector('.current-seat-heading'),status=heading.querySelector('span'),title=heading.querySelector('h2');return [heading,title,status].map(el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,bottom:r.bottom}})});
   assert.ok(Math.abs(rects[0].x-rects[1].x)<2);assert.ok(rects[2].y>=rects[1].y&&rects[2].bottom<=rects[1].bottom);
  }
- await p.locator('#table-settings').click();
+ await clickTableTool(p,'#table-settings');
  await p.locator('#show-elapsed-time').uncheck();
  assert.equal(await p.locator('#elapsed-game-time').isVisible(),false);
  await p.reload();await p.waitForFunction(()=>window.__dealTest);
  assert.equal(await p.locator('suite-help .suite-help-trigger').isVisible(),true);
  assert.equal(await p.locator('#elapsed-game-time').isVisible(),false);
- await p.locator('#table-settings').click();await p.locator('#show-elapsed-time').check();
+ await clickTableTool(p,'#table-settings');await p.locator('#show-elapsed-time').check();
  await p.locator('#appearance-dialog button').first().click();
  await p.waitForFunction(()=>!document.querySelector('#elapsed-game-time').hidden);
  await p.locator('suite-help .suite-help-trigger').waitFor({state:'visible'});
@@ -2519,7 +2526,7 @@ test('move history keeps the full deal and opens from the finished banner',async
  await p.evaluate(()=>{window.__dealTest.state.log=Array.from({length:45},(_,i)=>`Earlier move ${i}`)});
  await playFirst(p);await idle(p);
  assert.ok(await p.evaluate(()=>window.__dealTest.state.log.length)>30);
- await p.locator('.action-history-button').click();
+ await clickTableTool(p,'.action-history-button');
  assert.equal(await p.locator('#action-history-title').innerText(),'Move history');
  assert.ok(await p.locator('#action-history ol li').count()>30);
  await p.locator('#action-history-close').click();
@@ -2566,7 +2573,7 @@ test('settings keep one vertical scroll area without sideways movement standalon
  for(const viewport of [{width:320,height:568},{width:420,height:742},{width:1440,height:900}])for(const hosted of [false,true]){
   const p=await open(viewport);let game=p;
   if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
-  await fixture(game,'hand',2);await game.locator('#table-settings').click();
+  await fixture(game,'hand',2);await clickTableTool(game,'#table-settings');
   const dialog=game.locator('#appearance-dialog'),content=dialog.locator('.settings-content');
   const before=await dialog.boundingBox();
   assert.equal(await content.evaluate(el=>el.scrollWidth<=el.clientWidth+1),true);
@@ -2600,12 +2607,12 @@ test('toast notifications default off and explicit enablement survives reload',a
  const p=await open({width:420,height:742},undefined,{},false);await fixture(p,'hand',2);
  await playFirst(p);await idle(p);assert.equal(await p.locator('#game-toast').isVisible(),false);
  assert.ok(await p.evaluate(()=>window.__dealTest.state.log.length)>0);
- await p.locator('#table-settings').click();assert.equal(await p.locator('[data-toast-type=all]').isChecked(),false);
+ await clickTableTool(p,'#table-settings');assert.equal(await p.locator('[data-toast-type=all]').isChecked(),false);
  assert.equal(await p.locator('[data-toast-type=bank]').isDisabled(),true);
  await p.locator('[data-toast-type=all]').check();await p.locator('#appearance-dialog .wizard-heading button').click();
  await p.reload();await p.waitForFunction(()=>window.__dealTest);
  await p.evaluate(()=>window.__dealTest.showToast('Notifications enabled'));assert.equal(await p.locator('#game-toast').isVisible(),true);
- await p.locator('#game-toast button').click();await p.locator('#table-settings').click();assert.equal(await p.locator('[data-toast-type=all]').isChecked(),true);
+ await p.locator('#game-toast button').click();await clickTableTool(p,'#table-settings');assert.equal(await p.locator('[data-toast-type=all]').isChecked(),true);
  await close(p);
 });
 
@@ -2614,7 +2621,7 @@ test('finished table is replaced and history filters work',async()=>{
  const p=await open({width:390,height:680});await fixture(p,'hand',2);
  await p.evaluate(()=>{const s=window.__dealTest.state;s.log=['Chris banked 1M.','Alex begins their turn.','Chris drew 2 cards.'];s.winner='Chris';window.__dealTest.render()});
  assert.equal(await p.locator('.deal-table').count(),0);
- await p.locator('.action-history-button').click();
+ await clickTableTool(p,'.action-history-button');
  await p.locator('#history-player').selectOption('Chris');assert.equal(await p.locator('#action-history li').count(),2);
  await p.locator('#history-order').selectOption('oldest');
  assert.equal(await p.locator('#action-history li').first().innerText(),'Chris drew 2 cards.');
@@ -2726,7 +2733,8 @@ test('mobile text buttons fit without icons or toolbar scrolling and active play
  for(const width of [320,390,420]){
   const p=await open({width,height:740});await fixture(p,'hand',2);
   assert.equal(await p.locator('.turn-indicator:visible').count(),1);
-  assert.equal(await p.locator('.current-seat-heading').innerText(),'Chris');
+  assert.equal(await p.locator('.current-seat-heading h2').innerText(),'Chris');
+  await p.locator('#table-tools-open').click();
   assert.equal(await p.locator('.table-tools').evaluate(el=>el.scrollWidth<=el.clientWidth),true);
   for(const button of await p.locator('.table-tools button').all()){
    assert.ok(await button.evaluate(el=>parseFloat(getComputedStyle(el).fontSize)>=14));
@@ -2734,7 +2742,7 @@ test('mobile text buttons fit without icons or toolbar scrolling and active play
    assert.equal(await button.getAttribute('data-tool-icon'),null);
    assert.equal(await button.locator('.table-tool-icon').count(),0);
   }
-  await p.locator('#end').click();await idle(p);
+  await p.locator('#table-tools-close').click();await p.locator('#end').click();await idle(p);
   assert.equal(await p.locator('.turn-indicator:visible').count(),1);
   assert.match(await p.locator('.current-seat-heading').innerText(),/Alex/);await close(p);
  }
@@ -2929,7 +2937,7 @@ test('combined assets and matching History button remain readable on iPhone Air'
  assert.deepEqual(await style('.table-tools .action-history-button'),await style('#table-settings'));
  assert.equal(await p.locator('.action-history-button').innerText(),'History');
  await shot(p,'iphone-air-combined-assets');
- await p.locator('.action-history-button').click();await p.locator('#action-history').waitFor();await p.locator('#action-history button').first().click();
+ await clickTableTool(p,'.action-history-button');await p.locator('#action-history').waitFor();await p.locator('#action-history button').first().click();
  await p.locator('.current-bank').click();await p.locator('#table-viewer[open]').waitFor();
  await close(p);
 });
@@ -3022,7 +3030,8 @@ test('phone compact view preserves enlargement and readable controls',async()=>{
  const reading=await p.locator('.selected-table-card').boundingBox();assert.ok(reading.width>=180,JSON.stringify(reading));
  await p.locator('#preview-close').scrollIntoViewIfNeeded();await p.locator('#preview-close').click();
  assert.equal(await p.locator('.deal-hand').isVisible(),true);assert.equal(await p.locator('.modern-hand-card').count(),1);
- for(const selector of ['#table-settings','#undo','#discard-card']){const box=await p.locator(selector).boundingBox();assert.ok(box.height>=44);}
+ assert.ok((await p.locator('#discard-card').boundingBox()).height>=48);await p.locator('#table-tools-open').click();
+ for(const selector of ['#table-settings','#undo']){const box=await p.locator(selector).boundingBox();assert.ok(box.height>=52);}
  await close(p);
 });
 
@@ -3110,16 +3119,17 @@ test('Current device follows window resizing and uses spare space for readable c
 });
 
 
-test('phone settings follows color and large previews retain two rows of controls',async()=>{
+test('phone settings follows color and table utilities use a separate three-row Tools page',async()=>{
  for(const viewport of [{width:320,height:640},{width:390,height:700},{width:420,height:740},{width:466,height:568}])for(const hosted of [false,true]){
   const p=await open(viewport,undefined,{isMobile:true,hasTouch:true});let game=p;
   if(hosted){await p.goto(origin+'/index.html#monopoly-deal');await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
   await fixture(game,'hand',2);
+  await game.locator('#table-tools-open').click();
   const geometry=await game.locator('.table-tools').evaluate(el=>({overflow:el.scrollWidth-el.clientWidth,rows:[...new Set([...el.querySelectorAll('button')].map(b=>Math.round(b.getBoundingClientRect().top)))].length}));
-  assert.equal(geometry.rows,2);assert.ok(geometry.overflow<=1);
+  assert.equal(geometry.rows,3);assert.ok(geometry.overflow<=1);await game.locator('#table-tools-close').click();
   await game.locator('[data-card]').first().evaluate(el=>el.click());
   const preview=await game.locator('#preview-open').boundingBox();assert.ok(preview.width>=120,JSON.stringify({viewport,hosted,preview}));
-  await game.locator('#table-settings').click();
+  await clickTableTool(game,'#table-settings');
   for(const color of ['#236944','#35283f']){
    await game.evaluate(color=>document.documentElement.style.setProperty('--modern-table-background',color),color);
    assert.equal(await game.locator('#appearance-dialog').evaluate(el=>getComputedStyle(el).backgroundColor),await game.locator('html').evaluate(el=>getComputedStyle(el).backgroundColor));
@@ -3146,7 +3156,7 @@ test('iPhone footer hand cards shrink five percent and stay stable through selec
   await game.locator('.modern-hand-card').first().click();await game.locator('#preview-open').click();
   await game.locator('#preview-close').click();await p.waitForTimeout(100);
   assert.ok(Math.abs((await measure()).width-before.width)<1);
-  await game.locator('#deselect').click();await p.waitForTimeout(100);
+  await clickTableTool(game,'#deselect');await p.waitForTimeout(100);
   assert.ok(Math.abs((await measure()).width-before.width)<1);
   await p.setViewportSize({width:viewport.width,height:viewport.height-132});await p.waitForTimeout(100);
   assert.ok(Math.abs((await measure()).width-before.width)<1,'Browser controls must not shrink hand cards');
@@ -3155,25 +3165,27 @@ test('iPhone footer hand cards shrink five percent and stay stable through selec
  }
 });
 
-test('every difficulty banks regular and valued wild properties for one play and rejects zero-value wilds',async()=>{
+test('every difficulty banks regular, two-color and 15M multicolor wild properties for one play',async()=>{
  for(const difficulty of ['easy','normal','hard']){
   const p=await open(undefined,undefined,{},false);await fixture(p,'hand',2);
   const ids=await p.evaluate(difficulty=>{const t=window.__dealTest,s=t.state,player=s.players[0];s.difficulty=difficulty;
    const regular=player.hand.find(c=>c.type==='property'&&c.colors.length===1),wild=player.hand.find(c=>c.type==='property'&&c.colors.length===2);
-   s.draw.push(player.hand.splice(player.hand.findIndex(c=>c.action==='pass'),1)[0]);const j=s.draw.findIndex(c=>c.type==='property'&&c.value===0);const zero=s.draw.splice(j,1)[0];player.hand.push(zero);t.render();return {regular:regular.id,wild:wild.id,zero:zero.id};
+   s.draw.push(player.hand.splice(player.hand.findIndex(c=>c.action==='pass'),1)[0]);const j=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===10);const multicolor=s.draw.splice(j,1)[0];player.hand.push(multicolor);t.render();return {regular:regular.id,wild:wild.id,multicolor:multicolor.id};
   },difficulty);
-  for(const [index,id]of [ids.regular,ids.wild].entries()){
+  for(const [index,id]of [ids.regular,ids.wild,ids.multicolor].entries()){
    await p.locator(`[data-card="${id}"]`).click();assert.equal(await p.locator('#bank-card').getAttribute('aria-disabled'),'false',difficulty);
+   if(id===ids.multicolor){
+    assert.match(await p.locator(`[data-card="${id}"]`).getAttribute('aria-label'),/15M/);
+    await p.locator('#preview-open').click();assert.match(await p.locator('.selected-table-card .deal-face').getAttribute('aria-label'),/15M/);
+    assert.match(await p.locator('.selected-table-card .face-instructions').innerText(),/Cash value: 15M/);await p.locator('#preview-close').click();
+   }
    await p.locator('#bank-card').click();await idle(p);
    assert.equal(await p.evaluate(id=>window.__dealTest.state.players[0].bank.some(c=>c.id===id),id),true);
    assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.length),0);
    assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),index+1);
   }
-  await p.locator(`[data-card="${ids.zero}"]`).click();assert.equal(await p.locator('#bank-card').getAttribute('aria-disabled'),'true');
+  assert.equal(await p.evaluate(id=>window.__dealTest.state.players[0].bank.find(c=>c.id===id).value,ids.multicolor),15);
   const before=await p.evaluate(()=>JSON.stringify(window.__dealTest.state));
-  const rejected=p.evaluate(id=>window.__dealTest.play(window.__dealTest.state.players[0].hand.find(c=>c.id===id),'bank'),ids.zero);await p.locator('#blocked-play[open]').waitFor();
-  assert.match(await p.locator('#blocked-play-reason').innerText(),/cash value|zero-value/i);await p.locator('#blocked-play button').click();await rejected;
-  assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
   const replay=p.evaluate(id=>window.__dealTest.play(window.__dealTest.state.players[0].bank.find(c=>c.id===id),'play'),ids.regular);
   await p.locator('#blocked-play[open]').waitFor();assert.match(await p.locator('#blocked-play-reason').innerText(),/Banked cards are cash only/);await p.locator('#blocked-play button').click();await replay;
   assert.equal(await p.evaluate(()=>JSON.stringify(window.__dealTest.state)),before);
@@ -3205,9 +3217,11 @@ test('table controls use the same concise labels across screens and desktop text
  for(const viewport of [{width:320,height:640},{width:420,height:742},{width:768,height:1024},{width:1280,height:720},{width:1440,height:900},{width:1920,height:1080}]){
   await p.setViewportSize(viewport);await fixture(p,'hand',2);
   for(const index of [0,4,5])await p.locator('.modern-hand-card').nth(index).evaluate(el=>el.click());
+  await p.locator('#table-tools-open').click();
   const controls=await p.locator('.table-tools button').evaluateAll(buttons=>buttons.map(el=>{const range=document.createRange();range.selectNodeContents(el);const r=range.getBoundingClientRect(),box=el.getBoundingClientRect();return {text:el.innerText,lines:[...range.getClientRects()].filter(r=>r.width).length,left:r.left,right:r.right,box:box.toJSON(),overflow:el.scrollWidth-el.clientWidth};}));
   assert.deepEqual(controls.map(c=>c.text),['Manage','Wilds','Settings','Undo','Clear (3)','History']);
   if(viewport.width>=1024)for(const c of controls)assert.ok(c.lines===1&&c.overflow<=1&&c.left>=c.box.left&&c.right<=c.box.right+1,JSON.stringify({viewport,c}));
+  await p.locator('#table-tools-close').click();
  }
  await close(p);
 });
@@ -3319,7 +3333,7 @@ test('desktop window resizing keeps timer clear and normal play free of vertical
  for(const size of [{width:1440,height:900},{width:1100,height:650},{width:900,height:600},{width:800,height:500},{width:800,height:450},{width:1280,height:720},{width:1440,height:600}]){
   await p.setViewportSize(size);await fixture(p,'hand',4);
   for(const selected of [null,'property','action','money','wild']){
-   if(await p.locator('#deselect').getAttribute('aria-disabled')==='false')await p.locator('#deselect').click();
+   if(await p.locator('#deselect').getAttribute('aria-disabled')==='false')await clickTableTool(p,'#deselect');
    if(selected){const id=await p.evaluate(type=>window.__dealTest.state.players[0].hand.find(c=>type==='wild'?c.type==='property'&&c.colors.length>1:c.type===type).id,selected);await p.locator(`[data-card="${id}"]`).click();}
    await p.waitForTimeout(60);
    const geometry=await p.evaluate(()=>{
@@ -3459,4 +3473,47 @@ test('touch swipes preserve multiple selections in both center preview and readi
  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].bank.length),1);
  assert.equal(await p.locator('[data-card][aria-pressed=true]').count(),1);
  await session.detach();await conservation(p);await close(p);
+});
+
+for(const viewport of [{width:390,height:700},{width:430,height:932},{width:768,height:1024},{width:1440,height:900}])test(`stable action browsing and separate Tools page ${viewport.width}x${viewport.height}`,async()=>{
+ const page=await open(viewport,undefined,{hasTouch:viewport.width<800});await fixture(page,'hand',2);
+ await page.locator('[data-card]').first().click();
+ const geometry=()=>page.evaluate(()=>{const rect=s=>{const r=document.querySelector(s).getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}};return {preview:rect('#preview-open'),hand:rect('.deal-hand'),actions:['#flip-card','#bank-card','#play-card','#discard-card','#end'].map(rect),overflow:Math.max(...[document.documentElement,document.body,document.querySelector("main")].map(node=>node.scrollHeight-node.clientHeight))}});
+ await page.waitForTimeout(100);const initial=await geometry();
+ if(artifacts)await page.screenshot({path:path.join(artifacts,`deal-tools-${viewport.width}.png`)});
+ for(let i=0;i<7;i++){
+  await page.evaluate(()=>{const node=document.querySelector('#preview-open');node.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));});
+  await page.locator('#preview-open').evaluate(async node=>{await Promise.all(node.getAnimations().map(animation=>animation.finished));});
+  const current=await geometry();assert.deepEqual(current.preview,initial.preview,'preview stays in place');assert.deepEqual(current.hand,initial.hand,'hand stays in place');assert.deepEqual(current.actions,initial.actions,'actions retain their positions');
+ }
+ if(viewport.width<600){for(const box of initial.actions)assert.ok(box.height>=48,'larger phone targets '+JSON.stringify(initial));assert.equal(initial.overflow,0,'normal phone table fits '+JSON.stringify(initial));}
+ assert.equal(await page.locator('#move').isVisible(),false);
+ await page.locator('#table-tools-open').click();assert.equal(await page.locator('#move').isVisible(),true);
+ await page.locator('#table-tools-close').click();assert.equal(await page.locator('#move').isVisible(),false);
+ await page.locator('#table-tools-open').click();await clickTableTool(page,'#move');assert.equal(await page.locator('#table-tools-dialog').evaluate(node=>node.open),false);assert.equal(await page.locator('#table-viewer').evaluate(node=>node.open),true);
+ await close(page);
+});
+
+test('saved zero-value and 4M multicolor wilds migrate to 15M in every card location',async()=>{
+ const page=await open();await fixture(page,'hand',2);
+ for(const previousValue of [0,4])for(const zones of [['hand','draw'],['props','bank'],['discard','draw']]){
+  await page.evaluate(({zones,previousValue})=>{const s=window.__dealTest.state,all=[s.draw,s.discard,...s.players.flatMap(p=>[p.hand,p.props,p.bank,p.buildings])],wilds=[];for(const cards of all)for(let i=cards.length-1;i>=0;i--)if(cards[i].type==='property'&&cards[i].colors.length===10)wilds.push(...cards.splice(i,1));zones.forEach((zone,i)=>{wilds[i].value=previousValue;(s[zone]||s.players[0][zone]).push(wilds[i]);});sessionStorage.setItem('muha-deal-session-v1',JSON.stringify({...s,_handView:{visible:true,turnHandoff:false}}));},{zones,previousValue});
+  await page.reload();await page.waitForFunction(()=>window.__dealTest?.state);
+  const values=await page.evaluate(()=>{const s=window.__dealTest.state;return [s.draw,s.discard,...s.players.flatMap(p=>[p.hand,p.props,p.bank,p.buildings])].flat().filter(c=>c.type==='property'&&c.colors.length===10).map(c=>c.value);});assert.deepEqual(values,[15,15]);await conservation(page);
+ }
+ await close(page);
+});
+
+test('hosted iPhone table keeps larger actions and tools outside normal play flow',async()=>{
+ const page=await open({width:420,height:742},undefined,{isMobile:true,hasTouch:true});await page.goto(origin+'/index.html#monopoly-deal',{waitUntil:'domcontentloaded',timeout:30000});await page.frameLocator('#gameFrame').locator('#ready-new').waitFor({timeout:30000});
+ const game=page.frames().find(frame=>frame.url().includes('/games/monopoly-deal/'));await fixture(game,'hand',4);await game.locator('[data-card]').first().click();
+ const before=await game.locator('.deal-hand').boundingBox();
+ for(let i=0;i<7;i++)await game.locator('#preview-open').press('ArrowRight');
+ assert.deepEqual(await game.locator('.deal-hand').boundingBox(),before);
+ for(const selector of ['#bank-card','#play-card','#end']){
+  const size=await game.locator(selector+' .action-disc').boundingBox();assert.equal(size.width,48);assert.equal(size.height,48);
+ }
+ assert.equal(await game.locator('#move').isVisible(),false);await game.locator('#table-tools-open').click();assert.equal(await game.locator('#move').isVisible(),true);
+ await game.locator('#table-tools-close').press('Escape');assert.equal(await game.locator('#move').isVisible(),false);
+ await close(page);
 });

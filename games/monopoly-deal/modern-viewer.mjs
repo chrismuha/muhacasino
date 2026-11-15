@@ -1,5 +1,5 @@
-import {modernFace} from './modern-ui.mjs?build=20261106-deck-v157';
-import {GROUPS,properties,complete,sets,rent} from './engine.mjs?build=20261106-banking-v154';
+import {modernFace} from './modern-ui.mjs?build=20261115-stable-tools';
+import {GROUPS,properties,complete,sets,rent} from './engine.mjs?build=20261115-stable-tools';
 
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const plural = (count, name) => `${count} ${count === 1 ? name : name === 'property' ? 'properties' : `${name}s`}`;
@@ -31,7 +31,7 @@ function gallery(cards, {bank = false, newest = false} = {}) {
     if (bank) description = `Banked for ${card.value}M. Available for payments; this card cannot be played as an action.`;
     else if (card.type === 'property') {
       const active = GROUPS[card.color].name;
-      if (card.colors.length === 10) description = `Any-color wild. Active color: ${active}. No cash value; needs a valued property to complete a set.`;
+      if (card.colors.length === 10) description = `Any-color wild. Active color: ${active}. Cash value: ${card.value}M. Can be banked or played as a property.`;
       else description = `${card.colors.length > 1 ? `Wild property. Active color: ${active}. ` : ''}${card.colors.map(color => {
         const group = GROUPS[color];
         return `${group.name}: ${group.names.length} for a full set. Rent ${group.rent.map((value,i) => `${plural(i+1,'card')}: ${value}M`).join('; ')}.`;

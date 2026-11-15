@@ -5,6 +5,7 @@
 ### Gameplay
 
 - Added Growing Penny Wild exclusively to Pretty Penny. On eligible paid and free reel spins, a natural Penny Wild can grow across all five cells of one random row for the current result. The saved trigger setting defaults to 3% and can be adjusted or disabled. Active paylines pay from the expanded grid; existing line awards never decrease, special-symbol rows and jackpot displays are protected, and growth increases effective returns beyond Regular Win Odds.
+- Multicolor Wilds now have a 15M cash value in new and saved deals. They can be banked for one play, used for payments, or played in any color, including completing a set together.
 
 ### Help and support
 
@@ -12,11 +13,13 @@
 - Added a Fixed section in Help Known issues with How we fixed it explanations and user-facing notes for completed fixes.
 - Added a shared user-guide index for all eight casino games, with current-version labels, quick starts, detailed-rule directions, and release-history links. Help and the game-library footer link to the guides; Sorry! and Yahtzee also have direct guide and release-history links.
 
-
 ### Interface and accessibility
 
+- Phone Bank, Play, Flip, Discard, and Pass controls use 48-pixel circles and 16-pixel labels. Browsing keeps all action slots in place with unavailable actions dimmed and explained, so card options do not shift the center preview or hand.
 - Redesigned New game with aligned headers, consistent field sizes, a visible step indicator, and a fixed navigation row across Players, Names, and Review. Only the form content scrolls above the keyboard, without shrinking labels or hiding instructions. Switching opponent modes keeps Players in place and clears generated computer names from human seats.
 - Reduced the casino header arrows to compact artwork while preserving their existing navigation controls and touch targets.
+- Release history now separates the original v1.6.0 banking and play-warning work, v2.0.0 responsive layouts and interaction feedback, v2.1.0 rent, browsing, setup, and guide improvements, and v2.2.0 table tools, larger phone actions, stable browsing, and 15M Multicolor Wilds. These development milestones remain unpublished with TBD dates.
+- Tools opens Manage, Wilds, Settings, Undo, Clear, and History in a separate dialog. Close or Escape returns to the table, and choosing a tool closes the dialog before continuing. Utility button rows no longer add height to the game.
 
 ### Reliability
 

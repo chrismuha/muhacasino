@@ -1,11 +1,11 @@
 import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261106-deal-v160-hand-v142';
 import {paginateViewer} from './view-pages.mjs?build=20261113-fixed-scrolling';
 import {aiChoice,aiPlay} from './ai.mjs?build=20261106-banking-v154';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261112-selected-browsing';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261106-deck-v157';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261115-stable-tools';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261115-stable-tools';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261111-smooth-hand';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=20261114-scroll-fixed';
-import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261106-banking-v154';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=20261115-wild-15m';
+import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets,MULTICOLOR_WILD_VALUE} from './engine.mjs?build=20261115-wild-15m';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
 let selectionOwner=null;
@@ -26,7 +26,16 @@ function saveGame(pending=false){
 if('scrollRestoration' in history)history.scrollRestoration='manual';
 window.addEventListener('pageshow',()=>requestAnimationFrame(()=>window.scrollTo(0,0)));
 
-try { const saved=JSON.parse(sessionStorage.getItem(sessionKey)||'null'); if(saved?.players?.length>=2 && Array.isArray(saved.draw) && Array.isArray(saved.discard) && saved.players[saved.turn]){state=saved;visible=saved._handView?.visible??true;turnHandoff=saved._handView?.turnHandoff??false;delete state._handView;state.players.forEach(player=>{if(player.isAI&&!player.aiDifficulty)player.aiDifficulty='easy'})} } catch {}
+try {
+ const saved=JSON.parse(sessionStorage.getItem(sessionKey)||'null');
+ if(saved?.players?.length>=2 && Array.isArray(saved.draw) && Array.isArray(saved.discard) && saved.players[saved.turn]){
+  state=saved;
+  const cards=[...state.draw,...state.discard,...state.players.flatMap(player=>[...player.hand,...player.bank,...player.props,...player.buildings])];
+  for(const card of cards)if(card.type==='property'&&card.colors?.length===10)card.value=MULTICOLOR_WILD_VALUE;
+  visible=saved._handView?.visible??true;turnHandoff=saved._handView?.turnHandoff??false;delete state._handView;
+  state.players.forEach(player=>{if(player.isAI&&!player.aiDifficulty)player.aiDifficulty='easy'});
+ }
+} catch {}
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let detachHandSorting = () => {};
 const toastTypes={bank:'Banking',property:'Playing properties',action:'Action cards',payment:'Payments',transfer:'Property transfers',wild:'Moving wilds',discard:'Discards',turn:'Turn changes',draw:'Drawing cards',game:'Game start and wins',undo:'Undo and cancellation',sort:'Hand sorting',help:'Hints and unavailable actions'};
@@ -221,7 +230,7 @@ function updateUnavailableControls() {
    else if(button.id === 'wilds')reason = hiddenHand || noPlays || (!me().props.some(card=>card.colors.length>1)?'You have no wild properties on the table to rearrange.':'');
    else if(button.id === 'move')reason = hiddenHand;
    else if(button.id === 'flip-card')reason = hiddenHand || (!selected ? 'Select a two-color wild property card to flip it.' : '') || (handFlipPlayCost()?noPlays:'') || (selected.type !== 'property' || selected.colors.length !== 2 ? 'Only two-color wild property cards can be flipped.' : '');
-   else if(button.id === 'bank-card')reason = hiddenHand || (!selected ? 'Select money, an action card, or a property with a cash value to bank.' : '') || noPlays || (!canBank(selected) ? 'Bank money, actions, or properties with a cash value. Zero-value wilds cannot be banked.' : '');
+   else if(button.id === 'bank-card')reason = hiddenHand || (!selected ? 'Select money, an action card, or a property with a cash value to bank.' : '') || noPlays || (!canBank(selected) ? 'Bank money, actions, or properties with a cash value. Cards without a cash value cannot be banked.' : '');
    else if(button.id === 'play-card')reason = hiddenHand || (!selected ? 'Select a property or action card to play.' : '') || noPlays || (selected.type === 'money' ? 'Money cards can only be banked, not played.' : selected.action==='pass'&&!canPassGo(me().hand,dealSettings.allowPassGoOverflow)?'Pass Go would put your hand over seven. Play another card first or change Game settings.':'');
   }
   button.disabled = false;
@@ -250,7 +259,7 @@ function wireHandSorting() {
    const element=document.elementFromPoint(x,y)?.closest('.current-bank,.current-properties');
    if(!element)return null;
    const card=player.hand.find(card=>card.id===cardId),mode=element.matches('.current-bank')?'bank':'play';
-   const reason=state.plays>=3?'You have used all three plays. Pass to end your turn.':mode==='bank'&&!canBank(card)?'Bank money, actions, or properties with a cash value. Zero-value wilds cannot be banked.':mode==='play'&&card?.type==='money'?'Money cards belong in the Bank.':'';
+   const reason=state.plays>=3?'You have used all three plays. Pass to end your turn.':mode==='bank'&&!canBank(card)?'Bank money, actions, or properties with a cash value. Cards without a cash value cannot be banked.':mode==='play'&&card?.type==='money'?'Money cards belong in the Bank.':'';
    return {element,mode,allowed:!reason,reason};
   },
   onDrop(cardId,target){
@@ -564,6 +573,10 @@ function render(){
   log(`${me().name} discarded ${cards.length} card${cards.length===1?'':'s'}.`);
   showToast(`${cards.length} card${cards.length===1?'':'s'} discarded.`);
  });
+ const toolsDialog=$('#table-tools-dialog');
+ $('#table-tools-open').onclick=()=>{toolsDialog.showModal();$('#table-tools-close').focus();};
+ $('#table-tools-close').onclick=()=>toolsDialog.close();
+ toolsDialog.addEventListener('click',event=>{if(event.target.closest('.table-tools button'))toolsDialog.close();},true);
  $('#move').onclick=()=>openTableViewer(`properties-${state.turn}`);
  $('#wilds').onclick=()=>run(()=>rearrange());
  $('#table-settings').onclick=openGameSettings;
@@ -749,7 +762,7 @@ async function pay(p,to,amount){
 }
 async function collect(targets,amount,actionName){for(const p of targets){log(`${me().name} charged ${p.name} ${amount}M for ${actionName}.`,'action');if(await defend(p,me(),`${actionName}: Pay ${amount}M to ${me().name}.`))await pay(p,me(),amount);else log(`${p.name} blocked ${actionName}.`,'action')}}
 const opponents=()=>state.players.filter(p=>p!==me());
-async function play(c,chosenMode=null,chosenColor=null){if(c&&!me().hand.some(card=>card.id===c.id)){if(!me().isAI)return showBlockedPlay('Only cards in your hand can be played. Banked cards are cash only and cannot return to your hand or be used for their action.');return;}if((!visible&&!me().isAI)||state.plays>=3||!c){if(!me().isAI)return showBlockedPlay(!visible?'Reveal your hand first.':state.plays>=3?'You have used all three plays. Pass to end your turn.':'Select a card to play.');return;}let mode=chosenMode||await choose(label(c),[['Cancel','cancel'],...(canBank(c)?[['Put in bank','bank']]:[]),...(c.type!=='money'?[['Play card','play']]:[])]);if(mode==='cancel')return;if(mode==='bank'){if(!canBank(c)){showBlockedPlay('Bank money, actions, or properties with a cash value. Zero-value wilds cannot be banked.');return;}remove(me().hand,c);me().bank.push(c);state.plays++;log(`${me().name} banked ${c.value}M.`);return}
+async function play(c,chosenMode=null,chosenColor=null){if(c&&!me().hand.some(card=>card.id===c.id)){if(!me().isAI)return showBlockedPlay('Only cards in your hand can be played. Banked cards are cash only and cannot return to your hand or be used for their action.');return;}if((!visible&&!me().isAI)||state.plays>=3||!c){if(!me().isAI)return showBlockedPlay(!visible?'Reveal your hand first.':state.plays>=3?'You have used all three plays. Pass to end your turn.':'Select a card to play.');return;}let mode=chosenMode||await choose(label(c),[['Cancel','cancel'],...(canBank(c)?[['Put in bank','bank']]:[]),...(c.type!=='money'?[['Play card','play']]:[])]);if(mode==='cancel')return;if(mode==='bank'){if(!canBank(c)){showBlockedPlay('Bank money, actions, or properties with a cash value. Cards without a cash value cannot be banked.');return;}remove(me().hand,c);me().bank.push(c);state.plays++;log(`${me().name} banked ${c.value}M.`);return}
  if(c.type==='property'){c.color=chosenColor||await colorFor(c,{smart:true});remove(me().hand,c);me().props.push(c);state.plays++;log(`${me().name} laid ${c.name}.`);return}
  const a=c.action,p=me();if(a==='no'||a==='double'){await choose('Keep this card for a response or rent combo',[['OK',true]],a==='no'?'Just Say No is offered when an action targets you.':'Select a Rent card to add one or two Double the Rent cards.');return}
  if(a==='pass'){if(!canPassGo(p.hand,dealSettings.allowPassGoOverflow)){showBlockedPlay('Pass Go would put your hand over seven cards. Play another card first, or enable Allow Pass Go over seven in Game settings.');return;}use(c);const automatic=dealCards(p,2);log(automatic?`${p.name} drew two cards.`:`${p.name}: tap the deck to draw two cards.`,'draw');return}
@@ -1068,7 +1081,7 @@ document.querySelectorAll('[data-table-color]').forEach(button => {
 // Only public table cards appear here; private hands and the draw order stay hidden.
 let tableViewIndex = 0;
 function tableViews() {
-  const guideViews = [{key:'rules',title:'Rules',description:'A step-by-step guide to playing Monopoly Deal.'},{key:'cards',title:'Cards',description:'Browse every card design. Use the arrows or Left/Right keys.'},{key:'release-notes',title:'Release notes',description:'Monopoly Deal · v1.6.0 · TBD · Clear play warnings and player panels'}];
+  const guideViews = [{key:'rules',title:'Rules',description:'A step-by-step guide to playing Monopoly Deal.'},{key:'cards',title:'Cards',description:'Browse every card design. Use the arrows or Left/Right keys.'},{key:'release-notes',title:'Release notes',description:'Monopoly Deal · v2.2.0 · TBD · Table tools, stable browsing, and 15M wilds'}];
   if (!state) return guideViews;
   return [
     {key:'discard', kind:'deck', title:'Discard pile', cards:[...state.discard].reverse(), description:'Newest discard first. These cards may return when the draw pile runs out.'},
@@ -1123,7 +1136,7 @@ function showTableView(index) {
   if (modernPublic) {
     content.innerHTML = modernViewerContent(state, view);
   } else if (view.key === 'release-notes') {
-    content.innerHTML = `<div class="guide-rules"><header><h2>What’s New · v1.6.0</h2><p>Clear rent requirements and desktop controls that fit smaller windows.</p></header>${RELEASE_NOTES.map(([title,items],index)=>{const groups=releaseNoteGroups(items).map(([category,bullets])=>`<section><h4>${category==='Gameplay'?'♟':'▣'} ${esc(category)}</h4><ul>${bullets.map(item=>`<li>${esc(item)}</li>`).join('')}</ul></section>`).join('');return index===0?`<section aria-label="Latest Version"><h3>Latest Version · ${esc(title)}</h3>${groups}</section>`:`<details><summary>Version History · ${esc(title)}</summary>${groups}</details>`;}).join('')}<p><a class="release-history-link" href="../../about.html#monopoly-deal" target="_blank" rel="noopener">Open casino game version history ↗</a></p></div>`;
+    content.innerHTML = `<div class="guide-rules"><header><h2>What’s New · v2.2.0</h2><p>Separate table tools, larger phone actions, stable card browsing, and 15M Multicolor Wilds.</p></header>${RELEASE_NOTES.map(([title,items],index)=>{const groups=releaseNoteGroups(items).map(([category,bullets])=>`<section><h4>${category==='Gameplay'?'♟':'▣'} ${esc(category)}</h4><ul>${bullets.map(item=>`<li>${esc(item)}</li>`).join('')}</ul></section>`).join('');return index===0?`<section aria-label="Latest Version"><h3>Latest Version · ${esc(title)}</h3>${groups}</section>`:`<details><summary>Version History · ${esc(title)}</summary>${groups}</details>`;}).join('')}<p><a class="release-history-link" href="../../about.html#monopoly-deal" target="_blank" rel="noopener">Open casino game version history ↗</a></p></div>`;
   } else if (view.key === 'rules') {
     content.innerHTML = `<div class="guide-rules">${GUIDE_RULES.map(([title,items,status])=>`<section${status==='fixed'?' class="guide-fixed-issue"':''}><h3>${esc(title)}</h3>${status==='fixed'?`<h4>Fixed</h4>${items.map(item=>`<p>${esc(item)}</p>`).join('')}`:`<ul>${items.map(item=>`<li>${esc(item)}</li>`).join('')}</ul>`}</section>`).join('')}</div>`;
   } else if (view.key === 'cards') {
