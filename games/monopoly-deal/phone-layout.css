@@ -52,7 +52,7 @@
  #game .deal-table .opponent .opponent-groups:has(.asset-empty){width:auto}
  #game .deal-table .opponent .opponent-groups>.asset-empty{min-height:0;margin:0}
  #game .deal-table .opponent .opponent-properties>.inspect-label{font-size:12px;line-height:1.2;padding:0}
- #game .deal-table:not(.has-selection) .deal-actions #elapsed-game-time{max-width:108px;min-height:38px;margin:0;padding:4px 6px;gap:0}
+ #game .deal-table:not(.has-selection) .deal-actions #elapsed-game-time{max-width:108px;min-height:38px;margin:0;padding:0;gap:0}
  #game .deal-table:not(.has-selection) .elapsed-label{font-size:11px;line-height:1.2}
  #game .deal-table:not(.has-selection) .elapsed-value{font-size:18px;line-height:1.2}
 }
@@ -96,7 +96,7 @@
  #game .deal-table .opponent .opponent-properties{grid-column:1;grid-row:4;min-width:0}
  #game .deal-table .opponent h3{white-space:normal;overflow-wrap:anywhere}
  /* Keep the clock in the action column's flow, including selected cards. */
- #game .deal-table .deal-actions #elapsed-game-time{position:static;inset:auto;transform:none;width:100%;max-width:108px;min-height:38px;height:auto;flex-direction:column;align-self:center;margin:0;padding:4px 6px}
+ #game .deal-table .deal-actions #elapsed-game-time{position:static;inset:auto;transform:none;width:100%;max-width:108px;min-height:38px;height:auto;flex-direction:column;align-self:center;margin:0;padding:0}
 }
 
 /* Free horizontal travel avoids a snap at the end of every small swipe. */
@@ -142,7 +142,39 @@
 }
 @media(max-width:600px) and (max-height:780px){
  /* Use the clear deck-side space for the clock rather than another action row. */
- #game .deal-table.hand-visible:not(.has-selection) .deal-actions #elapsed-game-time{position:absolute;left:0;bottom:0;width:80px;max-width:80px;min-height:38px;padding:3px 4px}
+ #game .deal-table.hand-visible:not(.has-selection) .deal-actions #elapsed-game-time{position:absolute;left:0;bottom:0;width:80px;max-width:80px;min-height:38px;padding:0}
  #game .deal-table.hand-visible:not(.has-selection) .draw-deck{align-self:start;margin-top:28px}
  #game .deal-table .deal-hand .cards{padding-top:6px;padding-bottom:8px}
+}
+
+/* Keep turn actions distinct across phone, tablet, and desktop layouts. */
+#game .deal-table .deal-stage .deal-actions,
+#game .deal-table.hand-visible .deal-stage .deal-actions{gap:8px}
+@media(min-height:800px){
+ #game .deal-table .deal-stage .deal-actions,
+ #game .deal-table.hand-visible .deal-stage .deal-actions{gap:12px}
+}
+/* Keep the clock beside the deck so wider action gaps do not lengthen the page. */
+@media(max-width:600px) and (min-height:781px){
+ #game .deal-table.hand-visible:not(.has-selection) .deal-stage{position:relative}
+ #game .deal-table.hand-visible:not(.has-selection) .deal-actions #elapsed-game-time{position:absolute;left:0;bottom:0;width:80px;max-width:80px;min-height:38px;padding:0}
+}
+
+@media(max-width:600px) and (max-height:799px){
+ #game .deal-table.hand-visible:not(.has-selection) .deal-stage{margin-top:0;padding-block:0}
+}
+
+/* Keep the timer caption above the bordered value, on one readable line. */
+#game .deal-table .deal-actions #elapsed-game-time{border:0;background:transparent;box-shadow:none;gap:0}
+#game #elapsed-game-time .elapsed-label{display:block;margin-bottom:4px;white-space:nowrap;text-align:center;letter-spacing:0}
+#game #elapsed-game-time .elapsed-value{display:block;width:100%;padding:4px 8px;border:1px solid #a9d2ff66;border-radius:12px;background:#052b60;text-align:center;white-space:nowrap}
+
+/* Reserve space for the selected card's lift, scale, and focus outline. */
+#game .deal-table .deal-hand .cards{padding-top:20px}
+
+/* Deck and timer captions share the same white label typography. */
+#game .draw-deck .deck-label,#game #elapsed-game-time .elapsed-label{font:800 15px/1.3 Inter,system-ui,sans-serif;color:#fff;letter-spacing:0}
+#game #elapsed-game-time .elapsed-label{align-self:flex-start;width:max-content;text-align:left}
+@media(max-width:600px){
+ #game .draw-deck .deck-label,#game #elapsed-game-time .elapsed-label{font-size:14px}
 }

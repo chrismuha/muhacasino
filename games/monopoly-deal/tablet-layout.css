@@ -47,7 +47,7 @@
  #game .deal-table .deal-hand{grid-column:1/-1;grid-row:3;min-height:0}
  #game .deal-table .deal-hand .cards{gap:10px;padding:14px 8px 8px;justify-content:safe center}
  #game .deal-table .deal-hand .modern-hand-card{flex-basis:var(--hand-card-width,clamp(64px,calc((100cqw - 100px)/9),126px));margin:0!important}
- #game .deal-actions #elapsed-game-time{max-width:116px;min-height:44px;padding:5px 8px}
+ #game .deal-actions #elapsed-game-time{max-width:116px;min-height:44px;padding:0}
  #game .elapsed-label{font-size:12px}
  #game .elapsed-value{font-size:20px}
  /* Reading mode gets the table width and can scroll to preserve card text. */
@@ -129,7 +129,7 @@
  #game .deal-table .deal-actions .round-action>span:last-child{width:100%;text-align:center;overflow-wrap:normal;word-break:normal}
  #game .deal-table .deal-actions .plays-dots,#game .deal-actions #elapsed-game-time{grid-column:1/-1;justify-self:center}
  #game .deal-table:not(.has-selection) .deal-stage{grid-template-columns:80px minmax(0,1fr) 160px;gap:8px;padding-block:4px}
- #game .deal-table .deal-actions #elapsed-game-time{min-height:44px;padding:4px 8px}
+ #game .deal-table .deal-actions #elapsed-game-time{min-height:44px;padding:0}
  #game .deal-table .has-card-preview #preview-open{max-height:210px;width:min(100%,145px)}
 }
 /* Compact desktop chrome before reducing the readable hand-card minimum. */
@@ -143,5 +143,5 @@
  #game .deal-table .deal-hand .cards{padding-block:10px 2px}
  #game .deal-table.hand-visible .deal-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
  #game .deal-table:not(.has-selection) .deal-stage{grid-template-columns:80px minmax(0,1fr) 180px}
- #game .deal-table .deal-actions #elapsed-game-time{padding-block:2px;min-height:40px}
+ #game .deal-table .deal-actions #elapsed-game-time{padding:0;min-height:40px}
 }
