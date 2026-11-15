@@ -3404,7 +3404,7 @@ test('current release notes display alphabetical categories and preserve expanda
  await close(p);
 });
 
-test('mobile scrolling stays under Known issues as Fixed with a separate explanation paragraph',async()=>{
+test('mobile scrolling retains the earlier Fixed explanation and the recurring issue awaiting verification',async()=>{
  const p=await open();await fixture(p,'hand',2);
  await p.locator('#rules').click();
  const section=p.locator('.guide-rules section').filter({has:p.getByRole('heading',{name:'Known issues',exact:true})});
@@ -3415,14 +3415,14 @@ test('mobile scrolling stays under Known issues as Fixed with a separate explana
  }
  assert.equal(await section.locator('h4').innerText(),'Fixed');
  const paragraphs=await section.locator('p').allTextContents();
- assert.equal(paragraphs.length,2);assert.match(paragraphs[0],/^Fixed: Monopoly Deal mobile scrolling/);assert.match(paragraphs[1],/^How it was fixed:/);
+ assert.equal(paragraphs.length,3);assert.match(paragraphs[0],/^Awaiting device verification:/);assert.match(paragraphs[1],/^Fixed: Monopoly Deal mobile scrolling/);assert.match(paragraphs[2],/^How it was fixed:/);
  await p.goto(origin+'/index.html');
  await p.locator('suite-help .suite-help-trigger').click();
  await p.locator('suite-help [data-page="known"]').click();
  const known=p.locator('suite-help [data-section="known"]');
  assert.equal(await known.locator('.suite-help-fixed-heading').innerText(),'Fixed');
- assert.equal(await known.locator('h3').first().innerText(),'Monopoly Deal mobile scrolling');
- assert.equal(await known.locator('article').count(),1);
+ assert.equal(await known.locator('h3').first().innerText(),'Monopoly Deal phone layout verification');
+ assert.equal(await known.locator('article').count(),2);
  const fixed=await known.locator('article p').allTextContents();
  assert.match(fixed.join(' '),/no longer requires a refresh/);assert.match(fixed.join(' '),/How we fixed it:/);
  await close(p);
@@ -3535,4 +3535,48 @@ test('phone selection keeps elapsed time clear of the deck and the hand in view'
   }
   await shot(host,`phone-clock-${viewport.width}-${viewport.height}-${hosted?'hosted':'direct'}`);await close(host);
  }
+});
+
+test('reported phone table keeps populated collections in view and hides unselected Discard',async()=>{
+ for(const hosted of [false,true])for(const viewport of [{width:390,height:667},{width:420,height:684},{width:430,height:740}]){
+  const host=await open(viewport,undefined,{isMobile:true,hasTouch:true});let p=host;
+  if(hosted){await host.goto(origin+'/index.html#monopoly-deal');await host.frameLocator('#gameFrame').locator('#ready-new').waitFor();p=host.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+  await fixture(p,'hand',2);
+  await p.evaluate(()=>{const s=window.__dealTest.state;for(const [player,colors]of [[0,['pink','utility']],[1,['orange','pink']]])for(const color of colors){const index=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===1&&c.color===color);s.players[player].props.push(s.draw.splice(index,1)[0]);}window.__dealTest.render();});
+  for(const selected of [false,true,false]){
+   if(selected)await p.locator('.modern-hand-card').first().click();
+   else await p.evaluate(()=>document.querySelector('.modern-hand-card.is-selected')?.click());
+   await host.waitForTimeout(80);
+   assert.equal(await p.locator('#discard-card').isVisible(),selected);
+   const g=await p.evaluate(()=>({overflow:document.body.scrollHeight-document.body.clientHeight,bottom:document.querySelector('.deal-hand .cards').getBoundingClientRect().bottom,height:innerHeight,boxes:[...document.querySelectorAll('.game-topbar,main,.opponents,.opponent-groups,.deal-stage,.current-seat,.current-assets,.current-properties,.own-groups,.deal-hand')].map(el=>({name:el.className,height:el.getBoundingClientRect().height,top:el.getBoundingClientRect().top,rows:getComputedStyle(el).gridTemplateRows,min:getComputedStyle(el).minHeight}))}));
+   assert.ok(g.overflow<=1&&g.bottom<=g.height+1,JSON.stringify({viewport,hosted,selected,g}));
+  }
+  await p.locator('#table-tools-open').click();
+  const heading=await p.locator('#table-tools-title').boundingBox(),button=await p.locator('#table-tools-close').boundingBox(),dialog=await p.locator('#table-tools-dialog').boundingBox();
+  assert.ok(heading.y>=button.y+button.height);assert.ok(Math.abs(heading.x+heading.width/2-dialog.x-dialog.width/2)<2);
+  await close(host);
+ }
+});
+
+test('elapsed time pauses on inactive window or tab and preserves pauses on reload',async()=>{
+ const p=await open();await fixture(p,'hand',2);await p.clock.install();
+ const seconds=()=>p.locator('#elapsed-game-time .elapsed-value').innerText();
+ await p.clock.runFor(2100);await p.evaluate(()=>window.__dealTest.render());const active=await seconds();
+ await p.evaluate(()=>window.dispatchEvent(new Event('blur')));await p.clock.runFor(10000);assert.equal(await seconds(),active);
+ await p.evaluate(()=>window.dispatchEvent(new Event('focus')));await p.clock.runFor(2100);await p.evaluate(()=>window.__dealTest.render());assert.notEqual(await seconds(),active);
+ await p.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));});const hidden=await seconds();
+ await p.clock.runFor(15000);assert.equal(await seconds(),hidden);
+ await p.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,value:false});document.dispatchEvent(new Event('visibilitychange'));});
+ await p.clock.runFor(1100);await p.evaluate(()=>window.__dealTest.render());const resumed=await seconds();assert.notEqual(resumed,hidden);
+ await p.reload();await p.waitForFunction(()=>window.__dealTest);assert.equal(await seconds(),resumed);
+ await close(p);
+});
+
+test('hosted elapsed timer follows the casino window focus',async()=>{
+ const host=await open();await host.goto(origin+'/index.html#monopoly-deal');await host.frameLocator('#gameFrame').locator('#ready-new').waitFor();
+ const p=host.frames().find(f=>f.url().includes('/games/monopoly-deal/'));await fixture(p,'hand',2);await host.clock.install();
+ await host.evaluate(()=>window.dispatchEvent(new Event('blur')));const paused=await p.locator('#elapsed-game-time .elapsed-value').innerText();
+ await host.clock.runFor(9000);await p.evaluate(()=>window.__dealTest.render());assert.equal(await p.locator('#elapsed-game-time .elapsed-value').innerText(),paused);
+ await host.evaluate(()=>window.dispatchEvent(new Event('focus')));await host.clock.runFor(2100);await p.evaluate(()=>window.__dealTest.render());assert.notEqual(await p.locator('#elapsed-game-time .elapsed-value').innerText(),paused);
+ await close(host);
 });

@@ -4,7 +4,7 @@ import {aiChoice,aiPlay} from './ai.mjs?build=20261106-banking-v154';
 import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261115-stable-tools';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261115-stable-tools';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261111-smooth-hand';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=20261115-wild-15m';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=20261115-active-table';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets,MULTICOLOR_WILD_VALUE} from './engine.mjs?build=20261115-wild-15m';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -48,6 +48,9 @@ try{const saved=JSON.parse(localStorage.getItem(dealSettingsKey)||'{}');if(typeo
 for(const key of ['showElapsedTime']){try{const saved=JSON.parse(localStorage.getItem(dealSettingsKey)||'{}');if(typeof saved[key]==='boolean')dealSettings[key]=saved[key];}catch{}}
 const toastDurationSeconds=()=>Number.isFinite(Number(toastPreferences.durationSeconds))?Math.min(30,Math.max(1,Number(toastPreferences.durationSeconds))):2;
 const gameTimer=document.createElement('output');gameTimer.id='elapsed-game-time';gameTimer.setAttribute('aria-label','Elapsed game time');gameTimer.setAttribute('aria-live','off');document.body.append(gameTimer);
+let timerWindow=window;
+try{if(window.parent!==window)timerWindow=window.parent;}catch{}
+let timerActive=!document.hidden&&!timerWindow.document.hidden&&timerWindow.document.hasFocus();
 function toastType(message){
  if(/banked/.test(message))return 'bank';
  if(/ laid /.test(message))return 'property';
@@ -1364,7 +1367,39 @@ function wireActionHistory(){
  });
 }
 
-// Elapsed deal time survives reloads and stops at victory.
+// Persist only timing fields into the existing checkpoint. A focus change must
+// not commit a partially completed action or clear its recovery marker.
+function saveTimerCheckpoint(){
+ try{
+  const saved=JSON.parse(sessionStorage.getItem(sessionKey)||'null');
+  if(!state||!saved||saved.startedAt!==state.startedAt)return;
+  saved.timerPausedMs=state.timerPausedMs;saved.timerPausedAt=state.timerPausedAt;
+  sessionStorage.setItem(sessionKey,JSON.stringify(saved));
+ }catch{}
+}
+function syncTimerActivity(active){
+ timerActive=active&&!document.hidden&&!timerWindow.document.hidden;
+ updateGameTimer();saveTimerCheckpoint();
+}
+const timerBlur=()=>syncTimerActivity(false),timerFocus=()=>syncTimerActivity(true);
+const timerVisibility=()=>syncTimerActivity(timerWindow.document.hasFocus());
+function connectTimerActivity(){
+ timerWindow.addEventListener('blur',timerBlur);
+ timerWindow.addEventListener('focus',timerFocus);
+ if(timerWindow!==window)timerWindow.document.addEventListener('visibilitychange',timerVisibility);
+}
+connectTimerActivity();
+document.addEventListener('visibilitychange',timerVisibility);
+window.addEventListener('pagehide',()=>{
+ syncTimerActivity(false);
+ timerWindow.removeEventListener('blur',timerBlur);
+ timerWindow.removeEventListener('focus',timerFocus);
+ if(timerWindow!==window)timerWindow.document.removeEventListener('visibilitychange',timerVisibility);
+});
+window.addEventListener('pageshow',()=>{connectTimerActivity();timerVisibility();});
+// Elapsed deal time survives reloads, pauses outside the active window/tab,
+// and stops at victory. Use the host window's focus for the casino iframe.
+
 function updateGameTimer(){
  const dots=$('#game .plays-dots');
  const phoneHeading=innerWidth<=600&&!$('.deal-table')?.classList.contains('has-selection')?$('#game .current-seat-heading'):null;
@@ -1374,8 +1409,14 @@ function updateGameTimer(){
  gameTimer.hidden=!state||!dots||!dealSettings.showElapsedTime;
  if(!state)return;
  if(!state.startedAt)state.startedAt=Date.now();
- if(state.winner&&!state.finishedAt)state.finishedAt=Date.now();
- const seconds=Math.max(0,Math.floor(((state.finishedAt||Date.now())-state.startedAt)/1000));
+ const now=Date.now();
+ if(!state.winner){
+  if(!timerActive&&!state.timerPausedAt)state.timerPausedAt=now;
+  if(timerActive&&state.timerPausedAt){state.timerPausedMs=(state.timerPausedMs||0)+Math.max(0,now-state.timerPausedAt);delete state.timerPausedAt;}
+ }
+ if(state.winner&&!state.finishedAt)state.finishedAt=state.timerPausedAt||now;
+ const endTime=Math.min(state.finishedAt||now,state.timerPausedAt||now);
+ const seconds=Math.max(0,Math.floor((endTime-state.startedAt-(state.timerPausedMs||0))/1000));
  const value=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;
  if(!gameTimer.querySelector('.elapsed-value'))gameTimer.innerHTML='<span class="elapsed-label">Time elapsed</span><span class="elapsed-value"></span>';
  const valueNode=gameTimer.querySelector('.elapsed-value');
