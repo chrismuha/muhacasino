@@ -1,0 +1,56 @@
+/* One layout for every setup step. Only the content scrolls above the keyboard. */
+#setup-wizard[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  inset: var(--setup-top, 0px) 0 auto;
+  width: 100%;
+  max-width: 100%;
+  height: var(--setup-height, 100dvh);
+  max-height: var(--setup-height, 100dvh);
+  margin: 0;
+  padding: 16px max(16px, env(safe-area-inset-right)) 12px max(16px, env(safe-area-inset-left));
+  border: 0;
+  border-radius: 0;
+  overflow: hidden;
+  transition: none;
+  scrollbar-gutter: auto;
+}
+#setup-wizard .wizard-heading,
+#setup-wizard #wizard-progress,
+#setup-wizard #setup-content {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 680px;
+  margin-inline: auto;
+}
+#setup-wizard .wizard-heading { flex: 0 0 auto; padding: 0 0 12px; gap: 16px; }
+#setup-wizard .wizard-heading h2 { font-size: 24px; line-height: 1.25; white-space: normal; overflow: visible; }
+#setup-wizard .wizard-heading button { min-height: 44px; padding: 8px 14px; font-size: 16px; }
+#setup-wizard #wizard-progress { flex: 0 0 auto; margin-block: 0; padding: 14px 0; font-size: 14px; line-height: 1.4; letter-spacing: .04em; }
+#setup-wizard #setup-content { display: flex; flex: 1; min-height: 0; }
+#setup-wizard .setup { display: flex; flex-direction: column; flex: 1; min-height: 0; min-width: 0; width: 100%; max-width: none; margin: 0; padding: 0; border: 0; background: transparent; }
+#setup-wizard [data-wizard-step]:not([hidden]) { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; overflow-anchor: none; scroll-behavior: auto; scrollbar-gutter: stable; padding: 18px 16px; border: 1px solid #ffffff30; border-radius: 14px; background: #00000018; scroll-padding: 16px; }
+#setup-wizard h3 { font-size: 20px; line-height: 1.35; margin: 0 0 16px; white-space: normal; overflow: visible; }
+#setup-wizard .setup p { display: block; margin: 10px 0 16px; font-size: 15px; line-height: 1.5; }
+#setup-wizard .setup label,
+#setup-wizard label[for=opponent-mode],
+#setup-wizard label[for=count],
+#setup-wizard label[for=ai-difficulty] { display: grid; grid-template-columns: 1fr; gap: 6px; margin: 0 0 16px; font-size: 15px; line-height: 1.4; white-space: normal; overflow: visible; }
+#setup-wizard .setup input,
+#setup-wizard .setup select,
+#setup-wizard #names input { box-sizing: border-box; width: 100%; height: 48px; min-height: 48px; margin: 0; padding: 10px 12px; font-size: 16px; line-height: 1.4; border-radius: 9px; }
+#setup-wizard .setup select { padding-right: 32px; }
+#setup-wizard .setup input::placeholder { font-size: 16px; }
+#setup-wizard #names { display: grid; grid-template-columns: 1fr; gap: 8px; }
+#setup-wizard #names label { margin: 8px 0 0; font-size: 15px; }
+#setup-wizard #names label:first-child { margin-top: 0; }
+#setup-wizard #names .required-label { display: none; }
+#setup-wizard #names .setup-error { margin: 0; font-size: 14px; }
+#setup-wizard .wizard-actions { display: flex; flex: 0 0 auto; justify-content: space-between; gap: 12px; margin: 12px 0 0; padding: 12px 0 0; }
+#setup-wizard #start,
+#setup-wizard #wizard-back { min-height: 48px; margin-block: 0; padding: 10px 16px; font-size: 16px; }
+#setup-wizard #start { margin-left: auto; }
+#setup-wizard #wizard-review { margin: 12px 0; font-size: 16px; }
+#setup-wizard #wizard-review li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; }
+#setup-wizard .name-check-reminder { display: block; font-size: 14px; line-height: 1.5; }

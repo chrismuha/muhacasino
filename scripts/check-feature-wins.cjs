@@ -71,6 +71,8 @@ async function checkGame(game) {
     ctx.hotReels = { advance: grid => ({ grid, active: false }), supplement: () => 0 };
     ctx.updateHotReelsStatus = () => {};
     ctx.lowerBetIfNeeded = () => false;
+    ctx.growingWildOddsEl = {};
+    ctx.planGrowingPennyWild = grid => ({ grid, targets: [], extraWinUSD: 0 });
     ctx.planPennySpread = grid => ({ grid, targets: [] });
     ctx.animatePennySpread = async () => {};
     ctx.revealWinningsEnabled = () => false;

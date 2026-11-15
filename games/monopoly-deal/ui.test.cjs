@@ -2622,15 +2622,36 @@ test('finished table is replaced and history filters work',async()=>{
 });
 
 
-test('name-step buttons stay in place while typing and opening the keyboard',async()=>{
- const p=await open({width:390,height:700});await p.locator('#ready-new').click();await p.locator('#start').click();
- const before=await p.locator('.wizard-actions').boundingBox();
- await p.locator('#player-name-0').fill('Chris');
- await p.evaluate(()=>{Object.defineProperty(visualViewport,'height',{configurable:true,value:360});visualViewport.dispatchEvent(new Event('resize'))});
- await p.waitForTimeout(100);
- const after=await p.locator('.wizard-actions').boundingBox();
- assert.equal(after.y,before.y);assert.equal(after.height,before.height);
- assert.ok(after.y+after.height<=360);await close(p);
+test('setup keeps field sizes and navigation consistent across steps and keyboard resizing',async()=>{
+ for(const viewport of [{width:320,height:568},{width:390,height:700},{width:768,height:1024},{width:1440,height:900}]){
+  const p=await open(viewport);await p.locator('#ready-new').click();
+  const footer=await p.locator('.wizard-actions').boundingBox();
+  const countBefore=await p.locator('#count').boundingBox();
+  await p.locator('#opponent-mode').selectOption('human');
+  const countAfter=await p.locator('#count').boundingBox();
+  assert.equal(countAfter.y,countBefore.y,'Mode changes keep Players in place');
+  await p.locator('#count').selectOption('4');await p.locator('#start').click();
+  const namesFooter=await p.locator('.wizard-actions').boundingBox();
+  assert.equal(namesFooter.y,footer.y,'Names uses the same action row as Players');
+  for(let i=0;i<4;i++)await p.locator(`#player-name-${i}`).fill(['Chris','Alex','Sam','Taylor'][i]);
+  const field=await p.locator('#player-name-0').boundingBox();
+  assert.equal(field.height,48);
+  await p.locator('#start').click();
+  assert.equal((await p.locator('.wizard-actions').boundingBox()).y,footer.y,'Review uses the same action row');
+  await p.locator('#wizard-back').click();
+  await p.evaluate(()=>{Object.defineProperty(visualViewport,'height',{configurable:true,value:360});visualViewport.dispatchEvent(new Event('resize'))});
+  await p.waitForTimeout(100);
+  const keyboardFooter=await p.locator('.wizard-actions').boundingBox();
+  const keyboardField=await p.locator('#player-name-0').boundingBox();
+  assert.equal(keyboardFooter.height,footer.height);
+  assert.ok(keyboardFooter.y+keyboardFooter.height<=360,'Navigation remains above the keyboard');
+  assert.equal(keyboardField.height,field.height,'Keyboard does not shrink name text or fields');
+  assert.equal(keyboardField.width,field.width);
+  assert.equal(await p.locator('#wizard-progress').isVisible(),true);
+  const last=p.locator('#player-name-3');await last.scrollIntoViewIfNeeded();
+  const lastBounds=await last.boundingBox();assert.ok(lastBounds.y+lastBounds.height<=keyboardFooter.y,'Last name can scroll above navigation');
+  await close(p);
+ }
 });
 
 
@@ -3056,6 +3077,12 @@ test('Deal mobile header keeps a compact touch target and clears the Safari cuto
   else {assert.equal(g.button.width,44);assert.equal(g.button.height,44);}
   assert.ok(g.button.top>=54&&g.button.bottom<=g.game.top,JSON.stringify(g));
   assert.equal(await p.locator('.bar-collapse-chevron>span').evaluate(el=>getComputedStyle(el).scale),'none');
+  const icon=await p.locator('.bar-collapse-chevron>span').boundingBox();
+  assert.ok(icon.width<=14&&icon.height<=14,'Chevron artwork stays compact in both header states');
+  if(!collapsed){
+   assert.equal(await p.locator('#backButton>span').evaluate(el=>getComputedStyle(el).fontSize),'20px');
+   assert.ok((await p.locator('#backButton').boundingBox()).height>=44);
+  }
  }
  await close(p);
 });
@@ -3378,10 +3405,11 @@ test('mobile scrolling stays under Known issues as Fixed with a separate explana
  await p.locator('suite-help .suite-help-trigger').click();
  await p.locator('suite-help [data-page="known"]').click();
  const known=p.locator('suite-help [data-section="known"]');
- assert.equal(await known.locator('h3').first().innerText(),'Fixed');
+ assert.equal(await known.locator('.suite-help-fixed-heading').innerText(),'Fixed');
+ assert.equal(await known.locator('h3').first().innerText(),'Monopoly Deal mobile scrolling');
  assert.equal(await known.locator('article').count(),1);
  const fixed=await known.locator('article p').allTextContents();
- assert.equal(fixed.length,2);assert.match(fixed[0],/no longer requires a refresh/);assert.match(fixed[1],/^How it was fixed:/);
+ assert.match(fixed.join(' '),/no longer requires a refresh/);assert.match(fixed.join(' '),/How we fixed it:/);
  await close(p);
 });
 

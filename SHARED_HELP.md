@@ -14,25 +14,25 @@ Help uses the inline navigation button to open the same five Help sections. The 
 
 ## Monopoly Deal current guide and release notes
 
-Monopoly Deal remains v1.6.0. The in-game guide, Release Notes page, and About version history describe valued property banking in every difficulty, the seven-card Pass Go restriction and its default-off override, the elapsed timer, and the updated mobile controls. No Mercy combined with Hard rules is Coming soon and is not playable yet. Unwanted mobile page scrolling remains unresolved and is listed under Known issues in the game guide and shared Help, without claims of a scrolling fix in the release history.
+Monopoly Deal remains v1.6.0. The in-game guide, Release Notes page, and About version history describe valued property banking in every difficulty, the seven-card Pass Go restriction and its default-off override, the elapsed timer, and the updated mobile controls. No Mercy combined with Hard rules is Coming soon and is not playable yet. The user confirmed that unwanted mobile page scrolling is fixed. The game guide, release history, and Help retain the Fixed status and completed layout explanation.
 
 November 5 follow-up: turn and complete-set labels align left above Properties without colliding with Help. Help is available only in the navigation bar, including Monopoly Deal. Game settings saves Show elapsed game time. Rent can offer to move a played wild to a matching color for one play when a second play remains for rent; cancellation restores the move and plays.
 
-The v1.6.0 release date is TBD. Toast notifications are off by default, with explicit saved choices preserved. Both Discard buttons share confirmation and play costs. Blocked card-play and banking attempts always open a readable popup, even when toast notifications are off. The popup explains the rule and stays until dismissed without spending cards or plays. Other-player panels now separate the player name, hand and complete-set counts, a compact Bank summary, and a full-width Properties strip. Bank details remain available by tapping the summary. The Chrome mobile scrolling issue remains listed until the user verifies it is fixed.
+The v1.6.0 release date is TBD. Toast notifications are off by default, with explicit saved choices preserved. Both Discard buttons share confirmation and play costs. Blocked card-play and banking attempts always open a readable popup, even when toast notifications are off. The popup explains the rule and stays until dismissed without spending cards or plays. Other-player panels now separate the player name, hand and complete-set counts, a compact Bank summary, and a full-width Properties strip. Bank details remain available by tapping the summary. The Chrome mobile scrolling issue is confirmed fixed by the user.
 
 
 v1.6.0 (TBD): action cards can be banked for cash in all difficulties, with one play per banked card. They remain cash-only when paying debts and cannot be used for actions or returned to hand through normal play. Every difficulty also permits valued property banking. The release covers the other-player redesign, the narrower equal-height Bank panel, Hard difficulty rules, and mandatory blocked-play popups.
 
 
-Remaining Chrome mobile scrolling report: partially fixed. The body can still scroll just after starting a new game with no card selected; refreshing resolves that reported case. Keep Known issues until the user verifies the remaining behavior is fixed.
+Chrome mobile scrolling: confirmed fixed by the user. A refresh is no longer required after a fresh deal or selecting a card. Keep the completed explanation in the Fixed section.
 
 
-Verified fresh-deal layout correction: empty collection summaries compact on short phones, keeping the full hand visible without body overflow in tested Chromium/WebKit layouts before and after refresh. Preserve the Chrome iPhone Known issue until user verification.
+Verified fresh-deal layout correction: empty collection summaries compact on short phones, keeping the full hand visible without body overflow in tested Chromium/WebKit layouts before and after refresh. The user confirmed the Chrome iPhone scrolling issue is fixed.
 
 
-Preview and notch update (v1.6.0, TBD): Device previews fit both the available width and height while preserving their exact CSS viewport dimensions. Monopoly Deal uses one table color across its game canvas. Every hosted game extends its existing navigation background around the notch, preserving the navigation color. The collapsed header places its menu beside the notch, with game content below the cutout. Hand sizing ignores body scroll offsets, and short phone layouts reserve space below cards for the horizontal scrollbar. The Chrome mobile scrolling issue remains listed pending user verification.
+Preview and notch update (v1.6.0, TBD): Device previews fit both the available width and height while preserving their exact CSS viewport dimensions. Monopoly Deal uses one table color across its game canvas. Every hosted game extends its existing navigation background around the notch, preserving the navigation color. The collapsed header places its menu beside the notch, with game content below the cutout. Hand sizing ignores body scroll offsets, and short phone layouts reserve space below cards for the horizontal scrollbar. The user confirmed the Chrome mobile scrolling issue is fixed.
 
-Current device follows the available browser area at full scale, including when the window is narrowed or maximized. Tablet and desktop hand cards grow into spare viewport space. Short phone views keep readable card sizes, place the timer beside selected-card actions, and offer horizontal browsing of utility buttons when height is limited.
+Current device follows the available browser area at full scale, including when the window is narrowed or maximized. Tablet and desktop hand cards grow into spare viewport space. Short phone views keep readable card sizes, place the timer beside selected-card actions, and keep utility buttons in two rows when height is limited.
 
 
 ## Automatic affordable slot bets · November 6, 2026
@@ -59,3 +59,11 @@ Every played Just Say No, including computer responses and counter-No cards, has
 Open Help → Known issues to see documented problems and the Fixed section. Each completed fix can show its version, what happened, a **How we fixed it** explanation, and **What this means for you** notes. Only verified fixes belong here; an empty section means none are currently listed. Existing unresolved issues remain under Known issues.
 
 Use the small **🐛 Bug Report** button at the bottom of the Help window from any section. It opens Report an issue inside the same window, where you can prepare an email draft, review it, and send it from your email app. It never sends a report automatically. Close or Escape returns to the program.
+
+New-game setup: Players, Names, and Review use aligned headers, consistent 48-pixel fields, a visible step indicator, and fixed bottom navigation. Only step content scrolls above the keyboard. Keyboard resizing keeps text and control sizes unchanged, and switching to human opponents clears generated computer names. Casino header arrows use compact artwork inside the existing navigation controls.
+
+Pretty Penny v4.0.0 (TBD): Added Growing Penny Wild exclusively to Pretty Penny. On eligible paid and free reel spins, a natural Penny Wild can grow across all five cells of one random row for the current result. The saved trigger setting defaults to 3% and can be adjusted or disabled. Active paylines pay from the expanded grid; existing line awards never decrease, special-symbol rows and jackpot displays are protected, and growth increases effective returns beyond Regular Win Odds. Spreading wilds remain a separate presentation effect; Treasure Pots SCATTER chests award free spins and do not substitute as wilds.
+
+## Game documentation audit
+
+All eight casino games have quick-start guides and release-history links in `game-guides.html`, available from Help and the library footer. Sorry! and Yahtzee also link directly from their game screens. Existing detailed in-game rules remain available. The user confirmed Monopoly Deal Chrome mobile scrolling is fixed. Keep it in Fixed with the completed layout explanation. Every requested build includes a documentation audit across all eight games, even when production packaging is skipped.

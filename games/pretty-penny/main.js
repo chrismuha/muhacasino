@@ -95,6 +95,7 @@ const winOddsEl = document.getElementById("winOdds");
 const freeSpinsOddsEl = document.getElementById("freeSpinsOdds");
 const freeSpinsAwardEl = document.getElementById("freeSpinsAward");
 const bonusGameOddsEl = document.getElementById("bonusGameOdds");
+const growingWildOddsEl = document.getElementById("growingWildOdds");
 const gemHoldOddsEl = document.getElementById("gemHoldOdds");
 const linkWinOddsEl = document.getElementById("linkWinOdds");
 const linkTeaserOddsEl = document.getElementById("linkTeaserOdds");
@@ -534,7 +535,18 @@ function updateFeatureRules() {
     const linkTeaserRate = linkSettings.teaserChance / 100;
     const wager = getActiveTotalBetUSD();
     const jackpotAwards = JACKPOT_TIERS.map((tier) => `${tier.name} ${fmtUSD(getScaledJackpotAmount(tier, wager))}`).join(", ");
-    featureOddsRulesEl.textContent = `With the current settings, each paid spin independently has a ${(freeRate * 100).toFixed(0)}% win / ${((1 - freeRate) * 100).toFixed(0)}% loss chance to award ${getFreeSpinsAward()} free spins, a ${(bonusRate * 100).toFixed(0)}% win / ${((1 - bonusRate) * 100).toFixed(0)}% loss chance to land six BONUS symbols anywhere and choose equally among the bonus wheel, Match & Win, and Diamond Collector, and a ${(gemHoldRate * 100).toFixed(0)}% chance to trigger the three-spin Hold & Win Wild feature. Eligible winning spins have a ${(linkWinRate * 100).toFixed(0)}% winning-LINK chance; spins without one have a ${(linkTeaserRate * 100).toFixed(0)}% chance to display a non-paying Not Connected chain. Regular wheel prizes are 10×, 25×, 50×, and 100× bet. Jackpot outcomes are ${jackpotAwards}.`;
+    featureOddsRulesEl.textContent = `With the current settings, each paid spin independently has a ${(freeRate * 100).toFixed(0)}% win / ${((1 - freeRate) * 100).toFixed(0)}% loss chance to award ${getFreeSpinsAward()} free spins, a ${(bonusRate * 100).toFixed(0)}% win / ${((1 - bonusRate) * 100).toFixed(0)}% loss chance to land six BONUS symbols anywhere and choose equally among the bonus wheel, Match & Win, and Diamond Collector, and a ${(gemHoldRate * 100).toFixed(0)}% chance to trigger the three-spin Hold & Win Wild feature. Eligible winning spins have a ${(linkWinRate * 100).toFixed(0)}% winning-LINK chance; spins without one have a ${(linkTeaserRate * 100).toFixed(0)}% chance to display a non-paying Not Connected chain. On paid and free reel spins with an eligible natural Penny Wild, Growing Penny Wild has a ${(getFeatureRate(growingWildOddsEl, 0.03) * 100).toFixed(0)}% trigger chance to fill one whole row. It lasts for that result and pays through active paylines, increasing effective returns beyond Regular Win Odds. Rows containing special symbols, existing awards, and jackpot displays are protected. Regular wheel prizes are 10×, 25×, 50×, and 100× bet. Jackpot outcomes are ${jackpotAwards}.`;
+}
+
+function setupGrowingWildSetting() {
+    try {
+        const saved = localStorage.getItem("pretty-penny-growing-wild-odds");
+        if (saved !== null && [...growingWildOddsEl.options].some(option => option.value === saved)) growingWildOddsEl.value = saved;
+    } catch {}
+    growingWildOddsEl.addEventListener("change", () => {
+        try { localStorage.setItem("pretty-penny-growing-wild-odds", growingWildOddsEl.value); } catch {}
+        updateFeatureRules();
+    });
 }
 
 function setupFeatureUI() {
@@ -1074,6 +1086,33 @@ function getLineMatchResult(path, grid) {
     return { count, symbol: baseSymbol };
 }
 
+// A natural Penny Wild can grow across one ordinary-symbol row for this result.
+// Reject candidates that would reduce an already resolved payline award.
+function planGrowingPennyWild(grid, wagerConfig, triggerRate = 0.03) {
+    const idle = { grid, source: null, targets: [], row: null, extraWinUSD: 0 };
+    if (Math.random() >= triggerRate) return idle;
+    const original = evaluateGrid(grid, wagerConfig);
+    const candidates = [];
+    for (let row = 0; row < ROWS; row++) {
+        const symbols = grid[row];
+        if (!symbols.every(symbol => SYMBOLS.includes(symbol)) ||
+            !symbols.includes(WILD_SYMBOL) || symbols.every(symbol => symbol === WILD_SYMBOL)) continue;
+        const grown = grid.map(line => [...line]);
+        grown[row].fill(WILD_SYMBOL);
+        const after = evaluateGrid(grown, wagerConfig);
+        if (original.lineWins.some(before =>
+            (after.lineWins.find(win => win.lineIndex === before.lineIndex)?.winUSD || 0) < before.winUSD)) continue;
+        candidates.push({ row, grid: grown, extraWinUSD: roundUSD(after.totalWinUSD - original.totalWinUSD) });
+    }
+    if (!candidates.length) return idle;
+    const result = candidates[Math.floor(Math.random() * candidates.length)];
+    const sources = grid[result.row].flatMap((symbol, col) => symbol === WILD_SYMBOL ? [col] : []);
+    const sourceCol = sources[Math.floor(Math.random() * sources.length)];
+    const targets = grid[result.row].flatMap((symbol, col) => symbol !== WILD_SYMBOL ? [[result.row, col]] : []);
+    targets.sort((a, b) => Math.abs(a[1] - sourceCol) - Math.abs(b[1] - sourceCol));
+    return { ...result, source: [result.row, sourceCol], targets };
+}
+
 // Spread only when every winning line retains its symbol, length, and award.
 // This preserves the resolved outcome rather than adding another payout roll.
 function planPennySpread(grid, wagerConfig) {
@@ -1107,12 +1146,18 @@ function planPennySpread(grid, wagerConfig) {
     return result;
 }
 
-async function animatePennySpread(spread, winningPositions, instant = false) {
+async function animatePennySpread(spread, winningPositions, instant = false, growing = false) {
     if (!spread.targets.length) return;
     const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     const source = reelsEl.children[spread.source[0] * COLS + spread.source[1]];
     source?.classList.add("penny-spread-source");
-    setMessage("Penny Wilds are spreading!");
+    setMessage(growing ? `Growing Penny Wild fills row ${spread.row + 1}!` : "Penny Wilds are spreading!");
+    if (growing) {
+        for (let col = 0; col < COLS; col++) {
+            const cell = reelsEl.children[spread.row * COLS + col];
+            if (cell) cell.classList.add("growing-penny-wild");
+        }
+    }
     try {
         for (const [row, col] of spread.targets) {
             const cell = reelsEl.children[row * COLS + col];
@@ -1134,7 +1179,11 @@ async function animatePennySpread(spread, winningPositions, instant = false) {
                 } finally { spark.remove(); }
             }
             const replacement = createCell(WILD_SYMBOL, winningPositions.has(`${row},${col}`));
-            replacement.classList.add("penny-spread-target");
+            if (!instant && !reducedMotion) replacement.classList.add("penny-spread-target");
+            if (growing) {
+                replacement.classList.add("growing-penny-wild");
+                replacement.setAttribute("aria-label", "Growing Penny Wild");
+            }
             cell?.replaceWith(replacement);
         }
     } finally { source?.classList.remove("penny-spread-source"); }
@@ -1510,6 +1559,7 @@ function getSettingsDefinitions() {
         { key: "freeSpinsOdds", title: "Free Spins Odds", element: freeSpinsOddsEl?.closest(".select") },
         { key: "freeSpinsAward", title: "Free Spins Award", element: freeSpinsAwardEl?.closest(".select") },
         { key: "bonusGameOdds", title: "Six BONUS Symbols Odds", element: bonusGameOddsEl?.closest(".select") },
+        { key: "growingWildOdds", title: "Growing Penny Wild Trigger", element: growingWildOddsEl?.closest(".select") },
         { key: "gemHoldOdds", title: "Hold & Win Wild Trigger Odds", element: gemHoldOddsEl?.closest(".select") },
         { key: "linkWinOdds", title: "Winning LINK Chain Odds", element: linkWinOddsEl?.closest(".select") },
         { key: "linkTeaserOdds", title: "Not Connected LINK Display Odds", element: linkTeaserOddsEl?.closest(".select") },
@@ -2117,7 +2167,11 @@ async function doSpin(options = {}) {
     if (bonusResult) grid = bonusResult.grid;
     const jackpotWins = resolveJackpotWins(totalBetUSD);
     const jackpotTeasers = resolveJackpotTeasers(jackpotWins, totalBetUSD);
-    const beforeSpread = grid;
+    const beforeGrowth = grid;
+    const growth = jackpotWins.length || jackpotTeasers.length
+        ? { grid, targets: [], row: null, extraWinUSD: 0 }
+        : planGrowingPennyWild(grid, wagerConfig, getFeatureRate(growingWildOddsEl, 0.03));
+    grid = growth.grid;
     const spread = jackpotWins.length || jackpotTeasers.length
         ? { grid, targets: [] } : planPennySpread(grid, wagerConfig);
     grid = spread.grid;
@@ -2127,8 +2181,9 @@ async function doSpin(options = {}) {
     gemResult.winningPositions.forEach((position) => displayWinningPositions.add(position));
     bonusResult?.winningPositions.forEach((position) => displayWinningPositions.add(position));
     const jackpotWinUSD = jackpotWins.reduce((sum, jackpot) => sum + jackpot.amountUSD, 0);
-    renderOutcomeGrid(beforeSpread, displayWinningPositions, jackpotWins, jackpotTeasers);
+    renderOutcomeGrid(beforeGrowth, displayWinningPositions, jackpotWins, jackpotTeasers);
     if (!instantSpin) await window.slotExperience?.revealReelDoors(reelsEl);
+    await animatePennySpread(growth, displayWinningPositions, instantSpin, true);
     await animatePennySpread(spread, displayWinningPositions, instantSpin);
     if (bonusResult?.count === 6) await new Promise((resolve) => setTimeout(resolve, 650));
     const bonusOutcome = bonusResult?.count === 6 ? await playBonusGame(totalBetUSD) : null;
@@ -2164,6 +2219,7 @@ async function doSpin(options = {}) {
             .concat(jackpotWins.map((jackpot) => `${jackpot.name.toUpperCase()} JACKPOT${jackpot.hitCount > 1 ? ` ×${jackpot.hitCount}` : ""} → ${fmtUSD(jackpot.amountUSD)}`))
             .concat(bonusWinUSD ? [`BONUS × 6: ${bonusOutcome.label} → ${fmtUSD(bonusWinUSD)}`] : [])
             .concat(linkResult.winUSD ? [`LINK × ${linkResult.count} VALUES → ${fmtUSD(linkResult.winUSD)}`] : [])
+            .concat(growth.targets.length ? [`GROWING PENNY WILD → ROW ${growth.row + 1}`] : [])
             .concat(gemResult.winUSD ? [`GEM ROW ${gemResult.row} COMPLETE → ${fmtUSD(gemResult.winUSD)}`] : [])
             .concat(potWinUSD ? [`${potResult.popped.map((index) => SAVINGS_BANKS[index].name).join(" + ")} OPENED → ${fmtUSD(potWinUSD)}`] : [])
             .concat(freeSpinsTriggered ? [`${freeSpinsAwarded} FREE SPINS AWARDED`] : [])
@@ -2193,6 +2249,7 @@ async function doSpin(options = {}) {
             ...jackpotWins.map((jackpot) => ({ label: `${jackpot.name} Jackpot${jackpot.hitCount > 1 ? ` ×${jackpot.hitCount}` : ""}`, amountUSD: jackpot.amountUSD })),
             { label: "Bonus game", amountUSD: bonusWinUSD },
             ...potResult.popped.map((index) => ({ label: SAVINGS_BANKS[index].name, amountUSD: SAVINGS_BANKS[index].amountUSD })),
+            { label: "Growing Penny Wild extra line winnings", amountUSD: growth.extraWinUSD },
             { label: "Hold & Win Wild", amountUSD: gemResult.winUSD },
             { label: linkResult.sticky ? "Sticky LINK row" : "LINK feature", amountUSD: linkResult.winUSD },
         ];
@@ -2434,6 +2491,7 @@ document.addEventListener("keyup", (e) => {
 
 
 (function init() {
+    setupGrowingWildSetting();
     setupSettingsOverlay();
     setupFeatureUI();
     updatePotDisplay();

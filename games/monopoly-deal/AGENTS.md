@@ -53,6 +53,8 @@ Do not use em dashes or long runs of hyphens in Coming soon content or release n
 
 Keep the Chrome mobile page-scrolling issue listed in Known issues until the user explicitly verifies that it is fixed. Automated checks alone do not authorize removing it.
 
+The user has now confirmed that the reported Chrome mobile scrolling issue is fixed. Keep its Fixed status and completed layout explanation in the guide, Help, and release notes unless a new issue is reported.
+
 ## Release date
 
 The v1.6.0 release date is **TBD** until the user provides a date. Preserve the dated v1.5.0 history and add new changes to v1.6.0.

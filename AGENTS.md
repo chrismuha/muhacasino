@@ -4,6 +4,7 @@
 
 These project-specific rules take precedence over conflicting inherited build and push rules. Other workspace policies still apply.
 
+- When the user says `build` for Muha Casino, that request explicitly authorizes committing and pushing the completed, relevant work to `main` after the required documentation audit and applicable checks/builds succeed. Do not ask for a separate push instruction. This still applies when Electron packaging is absent and production builds are skipped. Do not force-push, publish a release, change versions, or include unrelated work.
 - When the user requests a Muha Casino build, check whether this project already has an Electron app and configured Electron packaging. Build desktop apps/installers only when both exist; follow the applicable installer delivery rules. Do not add Electron just to fulfill a build request.
 - Without Electron app packaging, skip all builds, including web-asset builds, and skip installer destination searches and delivery. Local browser development uses the existing dev command and does not require a production build. Run a web build only if the user explicitly requests web build output for the current task.
 - A user-requested Muha Casino build/workflow still includes updating the current version’s release notes with completed changes, updating an existing matching GitHub draft prerelease when present, running appropriate non-build checks, and committing and pushing the relevant completed work to `main`. With Electron packaging, also complete the requested app build before pushing. This is the user’s explicit standing authorization for that workflow and overrides the generic requirement for a separate push request for Muha Casino build requests only. Do not force-push or include unrelated work.
@@ -13,3 +14,12 @@ These project-specific rules take precedence over conflicting inherited build an
 ## Slot feature comparison before pushing
 
 - Before pushing Muha Casino changes to `main`, check whether any slot feature was added, removed, or changed. Update `slots-guide.html` and related in-game guide/Help descriptions whenever shared or exclusive feature differences change. Verify the comparison against the actual implementations before pushing; keep release notes consistent.
+
+## Documentation required for every build request
+
+- When the user says `build`, audit every launcher game, not only the most recently edited game. Check each game's user guide, in-game rules, Help content, current-version release notes, release-note source data, shared changelog, and current labels against the actual implementation.
+- Ensure every game has accessible user-guide and release-history links. Use `game-guides.html` as the suite guide index and preserve each game's more detailed existing rules and guide.
+- Synchronize shared and exclusive slot descriptions in `slots-guide.html`, in-game Payouts & rules, Help, and release notes. Include completed changes only; preserve historical notes and do not change versions merely to document or build.
+- Check for an existing matching GitHub draft prerelease when notes change, update it when present, and verify its alphabetical bullet-only body, title, tag, and draft/prerelease status. Do not create or publish a release without authorization.
+- Verify guide links, version labels, note ordering, and documented behavior with focused non-build checks. Keep unresolved issues listed until the required user verification is received, even when automated checks pass.
+- Perform this audit even when Electron packaging is absent and production builds are skipped. The existing build-scope and push rules still apply. Asking about build instructions does not itself request a build or authorize a push.

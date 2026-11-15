@@ -4,7 +4,7 @@ import {aiChoice,aiPlay} from './ai.mjs?build=20261106-banking-v154';
 import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261112-selected-browsing';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261106-deck-v157';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261111-smooth-hand';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=20261113-compact-deal-nav';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=20261114-scroll-fixed';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets} from './engine.mjs?build=20261106-banking-v154';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -893,7 +893,6 @@ function syncSetupViewport(){
  const bottom=Math.min(innerHeight,(viewport?.offsetTop||0)+(viewport?.height||innerHeight)-frameTop);
  wizard.style.setProperty('--setup-top',`${top}px`);
  wizard.style.setProperty('--setup-height',`${Math.max(80,bottom-top)}px`);
- wizard.classList.toggle('setup-compact',innerWidth<=600||bottom-top<520);
 }
 function scheduleSetupViewport(){
  cancelAnimationFrame(setupViewportFrame);
@@ -911,7 +910,7 @@ window.addEventListener('pagehide',()=>{setupViewport?.removeEventListener('resi
 $('#setup-wizard').addEventListener('focusin',scheduleSetupViewport);
 function setup() {
   $('#setup-content').innerHTML = `<form class="setup" id="setup-form" novalidate>
-    <section data-wizard-step="1"><h3>Choose your opponents</h3><label for="opponent-mode">Mode <select id="opponent-mode"><option value="ai" selected>Human vs AI</option><option value="human">Human vs human</option></select></label><p>Choose the total number of players. In AI mode, the other seats are computer opponents.</p><div id="ai-difficulty-field"><label for="ai-difficulty">Difficulty <select id="ai-difficulty" aria-describedby="ai-difficulty-help"><option value="easy">Easy</option><option value="normal" selected>Normal</option><option value="hard">Hard</option></select></label><p id="ai-difficulty-help">Easy uses the original computer strategy. Normal builds different color sets and targets opponents close to winning. Hard protects sets, saves cash and steals, and charges one play per discard or wild flip. Easy and Normal hand flips are free. Reassigning a played wild costs one play in every difficulty.</p></div><label for="count">Players <select id="count" required><option>2</option><option>3</option><option>4</option></select></label></section>
+    <section data-wizard-step="1"><h3>Choose your opponents</h3><label for="opponent-mode">Mode <select id="opponent-mode"><option value="ai" selected>Human vs AI</option><option value="human">Human vs human</option></select></label><p>Choose the total number of players. In AI mode, the other seats are computer opponents.</p><label for="count">Players <select id="count" required><option>2</option><option>3</option><option>4</option></select></label><div id="ai-difficulty-field"><label for="ai-difficulty">Difficulty <select id="ai-difficulty" aria-describedby="ai-difficulty-help"><option value="easy">Easy</option><option value="normal" selected>Normal</option><option value="hard">Hard</option></select></label><p id="ai-difficulty-help">Easy uses the original computer strategy. Normal builds different color sets and targets opponents close to winning. Hard protects sets, saves cash and steals, and charges one play per discard or wild flip. Easy and Normal hand flips are free. Reassigning a played wild costs one play in every difficulty.</p></div></section>
     <section data-wizard-step="2" hidden><h3>Who’s at the table?</h3><p class="setup-required">Enter a different name for everyone. All player names are required.</p><div id="names"></div></section>
     <section data-wizard-step="3" hidden><h3>Ready to deal?</h3><p>Each player gets five private cards. The first player draws two more to start.</p><small class="name-check-reminder">Check that these are the names you want before dealing.</small><ul id="wizard-review"></ul><p id="wizard-replace" hidden>Dealing starts a new game and replaces the current one.</p></section>
     <div class="wizard-actions"><button id="wizard-back" type="button" hidden>← Back</button><button id="start" type="submit" class="primary">Continue →</button></div>
@@ -924,16 +923,15 @@ function setup() {
     $('#wizard-progress').textContent = `Step ${step} of 3 · ${['Players', 'Names', 'Review'][step-1]}`;
     $('#wizard-back').hidden = step === 1;
     $('#start').textContent = step === 3 ? (dealSettings.automaticDealing?'Deal the cards →':'Start game →') : 'Continue →';
-    if(step === 1) $('#wizard-title').focus({preventScroll:true});
+    $('#wizard-title').focus({preventScroll:true});
     $('#setup-wizard').scrollTop=0;
     syncSetupViewport();
-    if(step === 2) $('#wizard-title').focus({preventScroll:true});
-    if(step === 3) $('#start').focus();
+    document.querySelector(`[data-wizard-step="${step}"]`).scrollTop=0;
     fitResponsiveLabels();
   }
   $('#wizard-back').onclick=()=>showStep(wizardStep-1);
   function names() {
-    const previous = [...document.querySelectorAll('#names input')].map(input=>input.value);
+    const previous = [...document.querySelectorAll('#names input')].map(input=>input.readOnly ? '' : input.value);
     $('#names').innerHTML = Array.from({length:Number($('#count').value)}, (_,i)=>`
       <label for="player-name-${i}">Player ${i+1} name <span class="required-label">(required)</span></label>
       <input id="player-name-${i}" name="player-${i+1}" required aria-required="true" data-name-limit="12" title="Maximum 12 characters" placeholder="Enter player ${i+1}’s name" aria-describedby="player-error-${i}" autocomplete="off" value="${esc($('#opponent-mode').value==='ai'&&i>0?'Computer '+i:previous[i] || '')}" ${$('#opponent-mode').value==='ai'&&i>0?'readonly aria-label="Computer opponent '+i+'"':''}>

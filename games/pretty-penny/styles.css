@@ -4058,3 +4058,9 @@ button:not(.info-btn) {
 .penny-spread-target { animation: penny-spread-arrive 450ms ease-out; }
 @keyframes penny-spread-arrive { from { filter: brightness(1.8); } to { filter: brightness(1); } }
 @media (prefers-reduced-motion: reduce) { .penny-spread-target { animation: none; } }
+
+/* The expanded row stays visibly connected after the outward coin animation. */
+.growing-penny-wild { outline: 2px solid #ffe09b; outline-offset: -3px; box-shadow: inset 0 0 18px #ffbe5d80; }
+.growing-penny-wild.penny-spread-target { animation: growing-penny-arrive 360ms ease-out; }
+@keyframes growing-penny-arrive { from { transform: scale(.65); filter: brightness(1.7); } to { transform: scale(1); filter: brightness(1); } }
+@media (prefers-reduced-motion: reduce) { .growing-penny-wild.penny-spread-target { animation: none; } }
