@@ -190,3 +190,53 @@ for(const game of games)test(`${game}: Controls has matching actions, an isolate
  if(process.env.SLOT_QA_ARTIFACTS)await p.screenshot({path:path.join(process.env.SLOT_QA_ARTIFACTS,`${game}-history.png`)});
  }finally{await p.close()}
 });
+
+for (const game of games) test(`${game}: reel artwork and award labels fit short phone cells`, async () => {
+ const p = await browser.newPage({viewport:{width:420,height:712},isMobile:true,hasTouch:true});
+ try {
+  await p.goto(`${origin}/index.html#${game}`);
+  await p.locator('#gameLoadState').waitFor({state:'hidden'});
+  const frame = p.frameLocator('#gameFrame');
+  await frame.locator('.slot-phone-dock').waitFor();
+  await frame.locator('.reels').evaluate((reels, game) => {
+   const values = game === 'big-money-deluxe' ? ['250 cr', {jackpot:'GRAND',value:'25K cr'}, BONUS_SYMBOL] : [...SYMBOLS, BONUS_SYMBOL, {jackpot:'GRAND',value:25000}];
+   if (game === 'pretty-penny' || game === 'treasurepots') values.push(
+    {kind:'link',anchor:true,sticky:true,spinsRemaining:2},
+    {kind:'link',meterIndex:0,value:13}, {kind:'link',meterIndex:1,value:8},
+    {kind:'gem',value:100}
+   );
+   if (game === 'treasurepots') values.push(SCATTER_SYMBOL);
+   reels.replaceChildren(...Array.from({length:25}, (_, i) => createCell(values[i % values.length])));
+   document.querySelector('.reel-result').textContent = 'WIN 28.00 cr – LINK × 4 VALUES → 28.00 cr';
+   document.querySelector('.slot-feature-indicator').textContent = 'STICKY LINK ROW 3 · 2 SPINS LEFT';
+  }, game);
+  for (const viewport of [{width:420,height:712},{width:390,height:664},{width:320,height:568},{width:844,height:390}]) {
+   await p.setViewportSize(viewport);
+   for (let toolbar = 0; toolbar < 2; toolbar++) {
+    await p.waitForTimeout(150);
+    const issues = await frame.locator('.reels .cell').evaluateAll(cells => cells.flatMap(cell => {
+     const issues = [], bounds = cell.getBoundingClientRect();
+     const icon = cell.querySelector('.icon-container');
+     if (icon) {
+      const art = icon.querySelector('.symbol-art');
+      const pseudo = art && getComputedStyle(art,'::before');
+      if (!art || !['none','normal'].includes(pseudo.content)) {
+       const size = parseFloat((art ? pseudo : getComputedStyle(icon)).fontSize);
+       const box = (art || icon).getBoundingClientRect();
+       if (size * 1.2 > box.height + 1 || size * 1.2 > box.width + 1) issues.push(`Artwork ${size}px in ${box.width}×${box.height}`);
+      }
+     }
+     for (const label of cell.querySelectorAll('strong, .link-chip > span, .jackpot-chip > span, .hold-gem > span, .scatter-chip > span')) {
+      if (!label.getClientRects().length) continue;
+      const range = document.createRange(); range.selectNodeContents(label);
+      for (const r of range.getClientRects()) if (r.top < bounds.top - 1 || r.bottom > bounds.bottom + 1 || r.left < bounds.left - 1 || r.right > bounds.right + 1) issues.push(`${label.textContent} outside cell ${bounds.width}×${bounds.height}`);
+     }
+     return issues;
+    }));
+    assert.deepEqual(issues, [], `${game} ${viewport.width}×${viewport.height}, toolbar ${toolbar}`);
+    if (process.env.SLOT_QA_ARTIFACTS && viewport.width === 420) await p.screenshot({path:path.join(process.env.SLOT_QA_ARTIFACTS,`${game}-cell-fit-${toolbar}.png`)});
+    await p.locator('#toolbarCollapseButton').click();
+   }
+  }
+ } finally { await p.close(); }
+});

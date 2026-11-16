@@ -1999,3 +1999,36 @@ body:not(.cabinet-game-surface):not(.slot-phone-play) .hud > .right > :is(#spin,
 .slot-auto-count-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 .slot-auto-count-actions button { flex: 1; min-height: 44px; padding: 12px; font: inherit; color: #f5f7ff; background: #244c66; border: 1px solid #65d7e9; border-radius: 8px; }
 .slot-auto-count-dialog :focus-visible { outline: 3px solid #65d7e9; outline-offset: 3px; }
+
+/* Phone reel tracks shrink with browser chrome and the casino toolbar.
+   Size artwork and award text from the cell, including short portrait screens. */
+body.slot-phone-play .reels .cell { container-type: size; }
+body.slot-phone-play .reels .icon-container {
+  box-sizing: border-box;
+  width: 100%; height: 100% !important; min-height: 0; max-height: 100%;
+  font-size: min(48px, 72cqh, 72cqw) !important;
+  line-height: 1;
+}
+body.slot-phone-play .reels .symbol-art::before {
+  font-size: min(48px, 72cqh, 72cqw) !important;
+  line-height: 1;
+}
+body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-gem,.hold-coin,.scatter-chip) {
+  box-sizing: border-box;
+  gap: 0 !important;
+  padding: 1px !important;
+}
+body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-gem,.hold-coin,.scatter-chip) > strong {
+  font-size: min(16px, 24cqh, 23cqw) !important;
+  line-height: 1.05 !important;
+}
+body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-gem,.hold-coin,.scatter-chip) > span {
+  font-size: min(14px, 22cqh, 21cqw) !important;
+  line-height: 1.05 !important;
+}
+body.slot-phone-play .reels .money-chip:not(:has(*)) {
+  font-size: min(22px, 40cqh, 25cqw) !important;
+}
+/* Extremely short play areas retain usable reels inside their own scroll area. */
+body.slot-phone-play .reels-wrap { overflow: auto; }
+body.slot-phone-play .reels-wrap > .reels { min-height: 200px !important; flex-shrink: 0; }

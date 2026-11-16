@@ -17,6 +17,8 @@
 
 ### Interface and accessibility
 
+- Phone reel icons and award labels scale to the available cell width and height, keeping symbols and Sticky LINK values inside their frames when browser bars or the casino header reduce the play area.
+
 - Phone opponent panels keep their full height above the play area. Pass uses a full action column when no card is selected, Deck stays centered above the pile, property thumbnails are larger, and selected center previews use more available width without adding page scrolling in checked phone layouts.
 - Property rent rows use evenly spaced round dots with consistent proportions in thumbnails, hand cards, and center previews, matching the enlarged card artwork.
 

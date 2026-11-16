@@ -67,3 +67,5 @@ Pretty Penny v4.0.0 (TBD): Added Growing Penny Wild exclusively to Pretty Penny.
 ## Game documentation audit
 
 All eight casino games have quick-start guides and release-history links in `game-guides.html`, available from Help and the library footer. Sorry! and Yahtzee also link directly from their game screens. Existing detailed in-game rules remain available. The user confirmed Monopoly Deal Chrome mobile scrolling is fixed. Keep it in Fixed with the completed layout explanation. Every requested build includes a documentation audit across all eight games, even when production packaging is skipped.
+
+Phone slot reels: Icons and award labels scale to the actual reel cell dimensions across all four slots. Very short play areas keep a minimum reel height and scroll internally so every row and the result remain reachable while the bottom play controls stay visible.
