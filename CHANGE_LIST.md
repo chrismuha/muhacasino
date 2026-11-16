@@ -4,6 +4,8 @@
 
 ### Gameplay
 
+- Low hands refill to at least five cards when drawing at the start of a turn or with Pass Go, drawing the usual two when that already reaches five. Empty hands draw five, and seven remains the end-of-turn limit. Automatic dealing adds the cards immediately; manual dealing requires one deck tap per owed card. This minimum-five refill is a house rule; standard rules draw two unless the hand is empty.
+
 - Added Growing Penny Wild exclusively to Pretty Penny. On eligible paid and free reel spins, a natural Penny Wild can grow across all five cells of one random row for the current result. The saved trigger setting defaults to 3% and can be adjusted or disabled. Active paylines pay from the expanded grid; existing line awards never decrease, special-symbol rows and jackpot displays are protected, and growth increases effective returns beyond Regular Win Odds.
 - Multicolor Wilds now have a 15M cash value in new and saved deals. They can be banked for one play, used for payments, or played in any color, including completing a set together.
 
@@ -14,6 +16,9 @@
 - Added a shared user-guide index for all eight casino games, with current-version labels, quick starts, detailed-rule directions, and release-history links. Help and the game-library footer link to the guides; Sorry! and Yahtzee also have direct guide and release-history links.
 
 ### Interface and accessibility
+
+- Phone opponent panels keep their full height above the play area. Pass uses a full action column when no card is selected, Deck stays centered above the pile, property thumbnails are larger, and selected center previews use more available width without adding page scrolling in checked phone layouts.
+- Property rent rows use evenly spaced round dots with consistent proportions in thumbnails, hand cards, and center previews, matching the enlarged card artwork.
 
 - Consolidated Monopoly Deal's completed changes under v1.6.0, the next version after v1.5.0, while preserving older release history.
 - Discard stays hidden when no hand card is selected. Selecting cards restores Discard and its selected-card count.

@@ -1,10 +1,10 @@
 import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261106-deal-v160-hand-v142';
 import {paginateViewer} from './view-pages.mjs?build=20261113-fixed-scrolling';
 import {aiChoice,aiPlay} from './ai.mjs?build=20261106-banking-v154';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261115-stable-tools';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261115-rent-dots';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261115-stable-tools';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261111-smooth-hand';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=20261115-active-table';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=20261115-minimum-five';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets,MULTICOLOR_WILD_VALUE} from './engine.mjs?build=20261115-wild-15m';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -768,7 +768,7 @@ const opponents=()=>state.players.filter(p=>p!==me());
 async function play(c,chosenMode=null,chosenColor=null){if(c&&!me().hand.some(card=>card.id===c.id)){if(!me().isAI)return showBlockedPlay('Only cards in your hand can be played. Banked cards are cash only and cannot return to your hand or be used for their action.');return;}if((!visible&&!me().isAI)||state.plays>=3||!c){if(!me().isAI)return showBlockedPlay(!visible?'Reveal your hand first.':state.plays>=3?'You have used all three plays. Pass to end your turn.':'Select a card to play.');return;}let mode=chosenMode||await choose(label(c),[['Cancel','cancel'],...(canBank(c)?[['Put in bank','bank']]:[]),...(c.type!=='money'?[['Play card','play']]:[])]);if(mode==='cancel')return;if(mode==='bank'){if(!canBank(c)){showBlockedPlay('Bank money, actions, or properties with a cash value. Cards without a cash value cannot be banked.');return;}remove(me().hand,c);me().bank.push(c);state.plays++;log(`${me().name} banked ${c.value}M.`);return}
  if(c.type==='property'){c.color=chosenColor||await colorFor(c,{smart:true});remove(me().hand,c);me().props.push(c);state.plays++;log(`${me().name} laid ${c.name}.`);return}
  const a=c.action,p=me();if(a==='no'||a==='double'){await choose('Keep this card for a response or rent combo',[['OK',true]],a==='no'?'Just Say No is offered when an action targets you.':'Select a Rent card to add one or two Double the Rent cards.');return}
- if(a==='pass'){if(!canPassGo(p.hand,dealSettings.allowPassGoOverflow)){showBlockedPlay('Pass Go would put your hand over seven cards. Play another card first, or enable Allow Pass Go over seven in Game settings.');return;}use(c);const automatic=dealCards(p,2);log(automatic?`${p.name} drew two cards.`:`${p.name}: tap the deck to draw two cards.`,'draw');return}
+ if(a==='pass'){if(!canPassGo(p.hand,dealSettings.allowPassGoOverflow)){showBlockedPlay('Pass Go would put your hand over seven cards. Play another card first, or enable Allow Pass Go over seven in Game settings.');return;}use(c);const count=Math.max(2,5-p.hand.length-pendingDrawCount(p));const automatic=dealCards(p,count);log(automatic?`${p.name} drew ${count} cards.`:`${p.name}: tap the deck to draw ${count} cards.`,'draw');return}
  if(a==='house'||a==='hotel'){const eligible=buildingSets(p,a);if(!eligible.length)return choose('No eligible complete set',[['OK',true]],'Buildings need a complete street-color set. No railroads or utilities. Only one house and one hotel per set; the house must be placed first.');let color=await choose('Build on which set?',orderedColors(eligible).map(k=>[GROUPS[k].name,k]));use(c);remove(state.discard,c);c.color=color;p.buildings.push(c);log(`${p.name} built ${c.name} on ${GROUPS[color].name}.`,'property');return}
  if(a==='rent'){const tenants=opponents().filter(hasPayableAssets);if(!tenants.length){showBlockedPlay('No opponent has payable assets. Rent cannot be charged.');return;}const movable=color=>p.props.filter(card=>card.colors?.length>1&&card.colors.includes(color)&&card.color!==color);
  const rentFor=color=>{if(properties(p,color).length)return rent(p,color);const wild=movable(color)[0];return wild?rent({...p,props:[...p.props.filter(card=>card!==wild),{...wild,color}]},color):0;};
@@ -860,7 +860,7 @@ function showDrawnCard(card,remaining){
  });
 }
 
-async function end(){const ending=me().name;selectedCardIds.clear();selectedCardId=null;lastCardTap=null;await enforceHandLimit(me());state.turn=(state.turn+1)%state.players.length;state.plays=0;visible=false;turnHandoff=true;const count=me().hand.length||pendingDrawCount(me())?2:5;const automatic=dealCards(me(),count);log(automatic?`${me().name} drew ${count} cards.`:`${me().name}: tap the deck to draw ${pendingDrawCount(me())} cards.`,'draw');log(`${me().name} begins their turn.`);if(!state.players.some(player=>player.isAI)||!me().isAI)showToast(`${me().name}’s turn.`);saveGame()}
+async function end(){const ending=me().name;selectedCardIds.clear();selectedCardId=null;lastCardTap=null;await enforceHandLimit(me());state.turn=(state.turn+1)%state.players.length;state.plays=0;visible=false;turnHandoff=true;const count=Math.max(2,5-me().hand.length-pendingDrawCount(me()));const automatic=dealCards(me(),count);log(automatic?`${me().name} drew ${count} cards.`:`${me().name}: tap the deck to draw ${pendingDrawCount(me())} cards.`,'draw');log(`${me().name} begins their turn.`);if(!state.players.some(player=>player.isAI)||!me().isAI)showToast(`${me().name}’s turn.`);saveGame()}
 // Size only the setup dialog; never scroll the document in response to keyboard panning.
 let setupViewportFrame=0;
 let releaseSetupScrollLock=null;

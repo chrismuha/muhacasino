@@ -233,3 +233,33 @@
  #game .deal-table:not(.has-selection) .current-bank>.asset-count{display:none}
  #game .deal-table:not(.has-selection) .has-card-preview #preview-open{width:min(98px,100%)}
 }
+
+/* Keep every phone stage track within the table, including the Pass label. */
+@media(max-width:600px){
+ #game .deal-table .opponents{flex-shrink:0;overflow-y:visible;min-height:max-content;align-self:start}
+ #game .deal-table .opponent{flex-shrink:0;min-height:max-content}
+ #game .deal-table:not(.has-selection) .draw-deck .deck-label{grid-column:1;grid-row:1;justify-self:center;width:100%;text-align:center}
+ #game .deal-table.hand-visible:not(.card-selected):not(.has-selection) .deal-stage .deal-actions{grid-template-columns:minmax(0,1fr)}
+ #game .deal-table:not(.card-selected):not(.has-selection) .deal-actions #end{grid-column:1;grid-row:1;width:100%}
+ #game .deal-table:not(.card-selected):not(.has-selection) .deal-actions .plays-dots{grid-column:1;grid-row:2}
+ #game .deal-table .current-properties .public-mini{width:36px}
+}
+@media(min-width:390px) and (max-width:600px){
+ #game .deal-table.hand-visible.card-selected:not(.has-selection) .deal-stage{grid-template-columns:56px minmax(0,1fr) 192px;gap:6px}
+ #game .deal-table:not(.has-selection) .has-card-preview #preview-open{width:min(112px,100%)}
+}
+@media(max-width:600px) and (min-height:781px){
+ #game .deal-table .current-properties .public-mini{width:56px}
+}
+
+@media(max-width:600px){
+ #game .deal-table:not(.card-selected):not(.has-selection) .draw-deck .deck-icon{grid-column:1;grid-row:2}
+ #game .deal-table:not(.card-selected):not(.has-selection) .draw-deck .deck-count{grid-column:2;grid-row:2}
+}
+/* Narrow phones put labels below their circles to preserve the hand's height. */
+@media(max-width:389px){
+ #game .deal-table.hand-visible.card-selected:not(.has-selection) .deal-stage{grid-template-columns:52px minmax(0,1fr) 148px;gap:6px}
+ #game .deal-table.hand-visible.card-selected:not(.has-selection) .deal-stage .deal-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+ html[data-theme=modern] #game .deal-table.card-selected:not(.has-selection) .deal-actions :is(#flip-card,#bank-card,#play-card,#discard-card,#end).round-action{grid-template-columns:minmax(0,1fr);justify-items:center;height:auto;min-height:68px;gap:2px;font-size:13px}
+ #game .deal-table.card-selected:not(.has-selection) .deal-actions .plays-dots{grid-column:2;grid-row:3;justify-self:center}
+}

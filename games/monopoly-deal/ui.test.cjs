@@ -835,7 +835,7 @@ test('rent dotted leaders retain visible width and paint after repeated wild fli
   const p=await open({width,height:844});await fixture(p,'wild');await p.locator('[data-card]').first().click();
   for(let i=0;i<4;i++){
    await p.locator('#flip-card').click();await p.waitForTimeout(450);
-   const dots=await p.locator('.modern-hand-card.is-active .rent-dots,#preview-open .rent-dots').evaluateAll(nodes=>nodes.map(el=>({width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height,painted:!!el.querySelector('svg path[stroke-dasharray]')})));
+   const dots=await p.locator('.modern-hand-card.is-active .rent-dots,#preview-open .rent-dots').evaluateAll(nodes=>nodes.map(el=>({width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height,painted:el.querySelectorAll('svg circle').length===16})));
    assert.ok(dots.length>0);assert.ok(dots.every(d=>d.width>=3&&d.height>=1&&d.painted),'Every rent row keeps painted dots');
   }
   await conservation(p);if(width===390)await shot(p,'wild-rent-dots-after-flip');await close(p);
@@ -3579,4 +3579,45 @@ test('hosted elapsed timer follows the casino window focus',async()=>{
  await host.clock.runFor(9000);await p.evaluate(()=>window.__dealTest.render());assert.equal(await p.locator('#elapsed-game-time .elapsed-value').innerText(),paused);
  await host.evaluate(()=>window.dispatchEvent(new Event('focus')));await host.clock.runFor(2100);await p.evaluate(()=>window.__dealTest.render());assert.notEqual(await p.locator('#elapsed-game-time .elapsed-value').innerText(),paused);
  await close(host);
+});
+
+
+test('turn draws refill a low hand to five in automatic and manual dealing',async()=>{
+ for(const automaticDealing of [true,false]){
+  const p=await open({width:420,height:684},{'muha-deal-settings-v1':JSON.stringify({automaticDealing})});
+  for(const held of [0,1,2,3,4,5]){
+   await fixture(p,'hand',2);
+   await p.evaluate(held=>{const s=window.__dealTest.state,player=s.players[1];s.draw.push(...player.hand.splice(held));},held);
+   await p.evaluate(async()=>{await window.__dealTest.end();window.__dealTest.render();});
+   const expected=Math.max(2,5-held);
+   assert.deepEqual(await p.evaluate(()=>{const p=window.__dealTest.state.players[1];return [p.hand.length,p.pendingDraw||0];}),automaticDealing?[held+expected,0]:[held,expected]);
+   if(!automaticDealing){await p.locator('#reveal').click();for(let i=0;i<expected;i++)await drawOne(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].hand.length),held+expected);}
+   await conservation(p);
+  }
+  await close(p);
+ }
+});
+
+test('phone summaries, Pass and deck caption fit their visible boxes',async()=>{
+ for(const width of [320,390,420,430]){
+  const p=await open({width,height:684},undefined,{isMobile:true,hasTouch:true});await fixture(p,'hand',2);
+  await p.evaluate(()=>{const s=window.__dealTest.state;for(const color of ['lightblue','red','railroad']){const i=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===1&&c.color===color);s.players[1].props.push(s.draw.splice(i,1)[0]);}window.__dealTest.render();});
+  for(const selected of [false,true]){
+   if(selected)await p.locator('.modern-hand-card').first().click();
+   const g=await p.evaluate(()=>{const r=s=>document.querySelector(s).getBoundingClientRect(),o=r('.opponents'),seat=r('.opponent'),stage=r('.deal-stage'),end=r('#end'),label=r('.deck-label'),deck=r('.deck-icon');return {opponentFits:seat.top>=o.top-1&&seat.bottom<=o.bottom+1,passFits:end.right<=stage.right+1&&document.querySelector('#end').scrollWidth<=end.width+1,deckCentered:Math.abs(label.left+label.width/2-deck.left-deck.width/2)<1,overflow:document.body.scrollHeight-document.body.clientHeight};});
+   assert.ok(g.opponentFits&&g.passFits&&g.deckCentered&&g.overflow<=1,JSON.stringify({width,selected,g}));
+  }
+  await shot(p,`phone-boxes-${width}`);await close(p);
+ }
+});
+
+test('Pass Go refills a low hand to five with automatic or one-at-a-time manual draws',async()=>{
+ for(const automaticDealing of [true,false]){
+  const p=await open({width:420,height:684},{'muha-deal-settings-v1':JSON.stringify({automaticDealing})});await fixture(p,'hand',2);
+  await p.evaluate(()=>{const s=window.__dealTest.state,player=s.players[0];s.draw.push(...player.hand.filter(c=>c.action!=='pass'));player.hand=player.hand.filter(c=>c.action==='pass');window.__dealTest.render();});
+  await p.locator('.modern-hand-card').click();await p.locator('#play-card').click();await idle(p);
+  assert.deepEqual(await p.evaluate(()=>{const player=window.__dealTest.state.players[0];return [player.hand.length,player.pendingDraw||0];}),automaticDealing?[5,0]:[0,5]);
+  if(!automaticDealing)for(let i=0;i<5;i++)await drawOne(p);
+  assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].hand.length),5);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);await conservation(p);await close(p);
+ }
 });
