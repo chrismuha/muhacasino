@@ -263,3 +263,24 @@
  html[data-theme=modern] #game .deal-table.card-selected:not(.has-selection) .deal-actions :is(#flip-card,#bank-card,#play-card,#discard-card,#end).round-action{grid-template-columns:minmax(0,1fr);justify-items:center;height:auto;min-height:68px;gap:2px;font-size:13px}
  #game .deal-table.card-selected:not(.has-selection) .deal-actions .plays-dots{grid-column:2;grid-row:3;justify-self:center}
 }
+
+/* Readable collections take their natural height, including the bottom frame. */
+@media(max-width:600px){
+ #game .deal-table .opponents{padding:0 0 8px;overflow-y:hidden}
+ #game .deal-table .opponent{height:auto;align-self:flex-start}
+ #game .deal-table .opponent .opponent-properties{padding-bottom:8px}
+ #game .deal-table .current-properties .public-mini,
+ #game .deal-table:not(.has-selection) .current-properties .public-mini,
+ #game .deal-table:not(.has-selection) .opponent .public-mini{width:64px;aspect-ratio:64/93}
+ #game .deal-table .current-properties .own-groups,
+ #game .deal-table .opponent .opponent-groups{flex-shrink:0;padding-block:4px}
+ /* Center the caption over the actual pile in selected and cleared states. */
+ #game .deal-table .draw-deck .deck-label{display:block;width:52px;max-width:none;margin-inline:0;text-align:center;justify-self:start}
+ #game .deal-table .draw-deck .deal-card-back.deck-icon{margin-inline:0}
+ #game .deal-table:not(.has-selection) .draw-deck .deck-label{width:52px;justify-self:start}
+ /* Full labels fit beneath the icons instead of being clipped at the right. */
+ #game .deal-table.hand-visible.card-selected:not(.has-selection) .deal-stage .deal-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ html[data-theme=modern] #game .deal-table.card-selected:not(.has-selection) .deal-actions :is(#flip-card,#bank-card,#play-card,#discard-card,#end).round-action{grid-template-columns:minmax(0,1fr);grid-template-rows:48px auto;justify-items:center;align-content:start;height:auto;min-height:76px;gap:4px;font-size:14px}
+ #game .deal-table.card-selected:not(.has-selection) .deal-actions .round-action>span:last-child{width:100%;text-align:center;line-height:1.2;overflow-wrap:normal}
+ #game .deal-table.card-selected:not(.has-selection) .deal-actions .plays-dots{grid-column:2;grid-row:3;justify-self:center;align-self:center}
+}

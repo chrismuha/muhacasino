@@ -1179,3 +1179,12 @@ html[data-theme=modern] #appearance-dialog :is(fieldset,input:not([type=checkbox
 #game .draw-deck .deck-icon .card-back-city{width:auto;aspect-ratio:1}
 
 #just-say-no-dialog .response-status{font-weight:800;border-left:3px solid #ffe297;padding-left:12px}
+
+/* One vector badge avoids tiny stacked-card borders and number underlines. */
+[data-theme=modern] .rent-number-badge{display:block;width:10cqw;height:10cqw;overflow:visible;flex-shrink:0}
+[data-theme=modern] .wild-half .rent-number-badge{width:6cqw;height:6cqw}
+[data-theme=modern] .deal-face[data-reading=true] .rent-number-badge{width:28px;height:28px}
+/* Keep round leaders round when the rent row changes width. */
+[data-theme=modern] .rent-dots svg{height:auto;aspect-ratio:160/6}
+/* A complete white frame remains visible below populated computer collections. */
+[data-theme=modern] #game .deal-table .opponent{border:2px solid #fff;border-radius:12px}

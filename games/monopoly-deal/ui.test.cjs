@@ -3601,13 +3601,25 @@ test('turn draws refill a low hand to five in automatic and manual dealing',asyn
 test('phone summaries, Pass and deck caption fit their visible boxes',async()=>{
  for(const width of [320,390,420,430]){
   const p=await open({width,height:684},undefined,{isMobile:true,hasTouch:true});await fixture(p,'hand',2);
-  await p.evaluate(()=>{const s=window.__dealTest.state;for(const color of ['lightblue','red','railroad']){const i=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===1&&c.color===color);s.players[1].props.push(s.draw.splice(i,1)[0]);}window.__dealTest.render();});
+  await p.evaluate(()=>{const s=window.__dealTest.state;for(const color of ['lightblue','red','railroad']){const i=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===1&&c.color===color);s.players[1].props.push(s.draw.splice(i,1)[0]);}const i=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===1&&c.color==='pink');s.players[0].props.push(s.draw.splice(i,1)[0]);window.__dealTest.render();});
   for(const selected of [false,true]){
    if(selected)await p.locator('.modern-hand-card').first().click();
    const g=await p.evaluate(()=>{const r=s=>document.querySelector(s).getBoundingClientRect(),o=r('.opponents'),seat=r('.opponent'),stage=r('.deal-stage'),end=r('#end'),label=r('.deck-label'),deck=r('.deck-icon');return {opponentFits:seat.top>=o.top-1&&seat.bottom<=o.bottom+1,passFits:end.right<=stage.right+1&&document.querySelector('#end').scrollWidth<=end.width+1,deckCentered:Math.abs(label.left+label.width/2-deck.left-deck.width/2)<1,overflow:document.body.scrollHeight-document.body.clientHeight};});
-   assert.ok(g.opponentFits&&g.passFits&&g.deckCentered&&g.overflow<=1,JSON.stringify({width,selected,g}));
+   assert.ok(g.opponentFits&&g.passFits&&g.deckCentered,JSON.stringify({width,selected,g}));
+   const bounds=await p.evaluate(()=>{
+    const opponent=document.querySelector('.opponent'),style=getComputedStyle(opponent);
+    const cards=[...document.querySelectorAll('.current-properties .public-mini,.opponent .public-mini')];
+    const labels=[...document.querySelectorAll('.round-action')].filter(e=>e.offsetHeight).map(e=>{const t=e.lastElementChild,r=t.getBoundingClientRect(),b=e.getBoundingClientRect();return r.right<=b.right+1&&r.left>=b.left-1&&t.scrollWidth<=t.clientWidth+1&&t.scrollHeight<=t.clientHeight+1});
+    return {white:style.borderBottomColor==='rgb(255, 255, 255)'&&parseFloat(style.borderBottomWidth)>=2,large:cards.length>=3&&cards.every(e=>e.getBoundingClientRect().width>=64),labels:labels.every(Boolean),badges:document.querySelectorAll('.rent-number-badge').length,old:document.querySelectorAll('.tiny-property').length};
+   });
+   assert.ok(bounds.white&&bounds.large&&bounds.labels&&bounds.badges>0&&bounds.old===0,JSON.stringify({width,selected,bounds}));
   }
-  await shot(p,`phone-boxes-${width}`);await close(p);
+  await shot(p,`phone-boxes-${width}`);
+  // Larger public cards may need vertical travel on short phones. The full
+  // hand must be reachable instead of clipped by a fixed-height table.
+  await p.evaluate(()=>{document.body.scrollTop=10000;window.scrollTo(0,10000)});
+  assert.ok(await p.locator('.deal-hand .cards').evaluate(e=>e.getBoundingClientRect().bottom<=innerHeight+1));
+  await shot(p,`phone-boxes-${width}-hand`);await close(p);
  }
 });
 
