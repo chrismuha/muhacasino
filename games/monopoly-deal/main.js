@@ -1381,7 +1381,9 @@ function syncTimerActivity(active){
  timerActive=active&&!document.hidden&&!timerWindow.document.hidden;
  updateGameTimer();saveTimerCheckpoint();
 }
-const timerBlur=()=>syncTimerActivity(false),timerFocus=()=>syncTimerActivity(true);
+// Focusing the game iframe blurs its host window without leaving the page.
+// Only pause when the whole casino document has actually lost focus.
+const timerBlur=()=>syncTimerActivity(timerWindow.document.hasFocus()),timerFocus=()=>syncTimerActivity(true);
 const timerVisibility=()=>syncTimerActivity(timerWindow.document.hasFocus());
 function connectTimerActivity(){
  timerWindow.addEventListener('blur',timerBlur);
@@ -1390,6 +1392,9 @@ function connectTimerActivity(){
 }
 connectTimerActivity();
 document.addEventListener('visibilitychange',timerVisibility);
+// Mobile browsers can open a visible page before reporting window focus.
+document.addEventListener('pointerdown',timerFocus,{passive:true});
+document.addEventListener('keydown',timerFocus);
 window.addEventListener('pagehide',()=>{
  syncTimerActivity(false);
  timerWindow.removeEventListener('blur',timerBlur);

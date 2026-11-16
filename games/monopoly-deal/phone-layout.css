@@ -271,7 +271,7 @@
  #game .deal-table .opponent .opponent-properties{padding-bottom:8px}
  #game .deal-table .current-properties .public-mini,
  #game .deal-table:not(.has-selection) .current-properties .public-mini,
- #game .deal-table:not(.has-selection) .opponent .public-mini{width:64px;aspect-ratio:64/93}
+ #game .deal-table:not(.has-selection) .opponent .public-mini{width:28px;aspect-ratio:64/93}
  #game .deal-table .current-properties .own-groups,
  #game .deal-table .opponent .opponent-groups{flex-shrink:0;padding-block:4px}
  /* Center the caption over the actual pile in selected and cleared states. */
@@ -283,4 +283,16 @@
  html[data-theme=modern] #game .deal-table.card-selected:not(.has-selection) .deal-actions :is(#flip-card,#bank-card,#play-card,#discard-card,#end).round-action{grid-template-columns:minmax(0,1fr);grid-template-rows:48px auto;justify-items:center;align-content:start;height:auto;min-height:76px;gap:4px;font-size:14px}
  #game .deal-table.card-selected:not(.has-selection) .deal-actions .round-action>span:last-child{width:100%;text-align:center;line-height:1.2;overflow-wrap:normal}
  #game .deal-table.card-selected:not(.has-selection) .deal-actions .plays-dots{grid-column:2;grid-row:3;justify-self:center;align-self:center}
+}
+
+/* Compact summaries leave room for the full hand on short phone screens. */
+@media(max-width:600px){
+ #game .deal-table:not(.has-selection) .opponents{padding-bottom:2px}
+ #game .deal-table:not(.has-selection) .opponent .opponent-properties{padding-bottom:2px}
+ #game .deal-table:not(.has-selection) .current-properties .own-groups,
+ #game .deal-table:not(.has-selection) .opponent .opponent-groups{padding-block:0}
+ #game .deal-table.hand-visible.card-selected:not(.has-selection) .deal-stage{grid-template-columns:52px minmax(0,1fr) 208px;gap:6px}
+ #game .deal-table.hand-visible.card-selected:not(.has-selection) .deal-stage .deal-actions{gap:4px}
+ html[data-theme=modern] #game .deal-table.card-selected:not(.has-selection) .deal-actions :is(#flip-card,#bank-card,#play-card,#discard-card,#end).round-action{grid-template-columns:48px minmax(0,1fr);grid-template-rows:auto;align-items:center;align-content:center;height:48px;min-height:48px;gap:3px;padding:0;font-size:12px}
+ #game .deal-table.card-selected:not(.has-selection) .deal-actions .round-action>span:last-child{white-space:normal;overflow-wrap:anywhere}
 }

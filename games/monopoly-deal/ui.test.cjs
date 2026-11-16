@@ -3562,8 +3562,8 @@ test('elapsed time pauses on inactive window or tab and preserves pauses on relo
  const p=await open();await fixture(p,'hand',2);await p.clock.install();
  const seconds=()=>p.locator('#elapsed-game-time .elapsed-value').innerText();
  await p.clock.runFor(2100);await p.evaluate(()=>window.__dealTest.render());const active=await seconds();
- await p.evaluate(()=>window.dispatchEvent(new Event('blur')));await p.clock.runFor(10000);assert.equal(await seconds(),active);
- await p.evaluate(()=>window.dispatchEvent(new Event('focus')));await p.clock.runFor(2100);await p.evaluate(()=>window.__dealTest.render());assert.notEqual(await seconds(),active);
+ await p.evaluate(()=>{Object.defineProperty(document,'hasFocus',{configurable:true,value:()=>false});window.dispatchEvent(new Event('blur'));});await p.clock.runFor(10000);assert.equal(await seconds(),active);
+ await p.evaluate(()=>{Object.defineProperty(document,'hasFocus',{configurable:true,value:()=>true});window.dispatchEvent(new Event('focus'));});await p.clock.runFor(2100);await p.evaluate(()=>window.__dealTest.render());assert.notEqual(await seconds(),active);
  await p.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));});const hidden=await seconds();
  await p.clock.runFor(15000);assert.equal(await seconds(),hidden);
  await p.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,value:false});document.dispatchEvent(new Event('visibilitychange'));});
@@ -3575,7 +3575,7 @@ test('elapsed time pauses on inactive window or tab and preserves pauses on relo
 test('hosted elapsed timer follows the casino window focus',async()=>{
  const host=await open();await host.goto(origin+'/index.html#monopoly-deal');await host.frameLocator('#gameFrame').locator('#ready-new').waitFor();
  const p=host.frames().find(f=>f.url().includes('/games/monopoly-deal/'));await fixture(p,'hand',2);await host.clock.install();
- await host.evaluate(()=>window.dispatchEvent(new Event('blur')));const paused=await p.locator('#elapsed-game-time .elapsed-value').innerText();
+ await host.evaluate(()=>{Object.defineProperty(document,'hasFocus',{configurable:true,value:()=>false});window.dispatchEvent(new Event('blur'));});const paused=await p.locator('#elapsed-game-time .elapsed-value').innerText();
  await host.clock.runFor(9000);await p.evaluate(()=>window.__dealTest.render());assert.equal(await p.locator('#elapsed-game-time .elapsed-value').innerText(),paused);
  await host.evaluate(()=>window.dispatchEvent(new Event('focus')));await host.clock.runFor(2100);await p.evaluate(()=>window.__dealTest.render());assert.notEqual(await p.locator('#elapsed-game-time .elapsed-value').innerText(),paused);
  await close(host);
@@ -3610,14 +3610,12 @@ test('phone summaries, Pass and deck caption fit their visible boxes',async()=>{
     const opponent=document.querySelector('.opponent'),style=getComputedStyle(opponent);
     const cards=[...document.querySelectorAll('.current-properties .public-mini,.opponent .public-mini')];
     const labels=[...document.querySelectorAll('.round-action')].filter(e=>e.offsetHeight).map(e=>{const t=e.lastElementChild,r=t.getBoundingClientRect(),b=e.getBoundingClientRect();return r.right<=b.right+1&&r.left>=b.left-1&&t.scrollWidth<=t.clientWidth+1&&t.scrollHeight<=t.clientHeight+1});
-    return {white:style.borderBottomColor==='rgb(255, 255, 255)'&&parseFloat(style.borderBottomWidth)>=2,large:cards.length>=3&&cards.every(e=>e.getBoundingClientRect().width>=64),labels:labels.every(Boolean),badges:document.querySelectorAll('.rent-number-badge').length,old:document.querySelectorAll('.tiny-property').length};
+    return {white:style.borderBottomColor==='rgb(255, 255, 255)'&&parseFloat(style.borderBottomWidth)>=2,compact:cards.length>=3&&cards.every(e=>Math.abs(e.getBoundingClientRect().width-28)<1),labels:labels.every(Boolean),labelBoxes:[...document.querySelectorAll('.round-action')].filter(e=>e.offsetHeight).map(e=>({text:e.innerText,w:e.clientWidth,labelW:e.lastElementChild.clientWidth,scrollW:e.lastElementChild.scrollWidth,h:e.lastElementChild.clientHeight,scrollH:e.lastElementChild.scrollHeight})),badges:document.querySelectorAll('.rent-number-badge').length,old:document.querySelectorAll('.tiny-property').length};
    });
-   assert.ok(bounds.white&&bounds.large&&bounds.labels&&bounds.badges>0&&bounds.old===0,JSON.stringify({width,selected,bounds}));
+   assert.ok(bounds.white&&bounds.compact&&bounds.labels&&bounds.badges>0&&bounds.old===0,JSON.stringify({width,selected,bounds}));
   }
   await shot(p,`phone-boxes-${width}`);
-  // Larger public cards may need vertical travel on short phones. The full
-  // hand must be reachable instead of clipped by a fixed-height table.
-  await p.evaluate(()=>{document.body.scrollTop=10000;window.scrollTo(0,10000)});
+  assert.ok(await p.evaluate(()=>document.body.scrollHeight<=document.body.clientHeight+1),'Phone table fits without page scrolling');
   assert.ok(await p.locator('.deal-hand .cards').evaluate(e=>e.getBoundingClientRect().bottom<=innerHeight+1));
   await shot(p,`phone-boxes-${width}-hand`);await close(p);
  }
@@ -3632,4 +3630,20 @@ test('Pass Go refills a low hand to five with automatic or one-at-a-time manual 
   if(!automaticDealing)for(let i=0;i<5;i++)await drawOne(p);
   assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].hand.length),5);assert.equal(await p.evaluate(()=>window.__dealTest.state.plays),1);await conservation(p);await close(p);
  }
+});
+
+
+test('hosted timer keeps counting when focus enters the game and recovers on interaction',async()=>{
+ const host=await open();await host.goto(origin+'/index.html#monopoly-deal');await host.frameLocator('#gameFrame').locator('#ready-new').waitFor();
+ const p=host.frames().find(f=>f.url().includes('/games/monopoly-deal/'));await fixture(p,'hand',2);await host.clock.install();
+ await host.evaluate(()=>{Object.defineProperty(document,'hasFocus',{configurable:true,value:()=>true});window.dispatchEvent(new Event('focus'));});
+ const value=()=>p.locator('#elapsed-game-time .elapsed-value').innerText();
+ const before=await value();
+ await p.locator('.modern-hand-card').first().click();
+ await host.evaluate(()=>window.dispatchEvent(new Event('blur')));
+ await host.clock.runFor(2100);await p.evaluate(()=>window.__dealTest.render());assert.notEqual(await value(),before);
+ await host.evaluate(()=>{Object.defineProperty(document,'hasFocus',{configurable:true,value:()=>false});window.dispatchEvent(new Event('blur'));});
+ const paused=await value();await host.clock.runFor(2100);await p.evaluate(()=>window.__dealTest.render());assert.equal(await value(),paused);
+ await p.locator('.modern-hand-card').first().click();await host.clock.runFor(2100);await p.evaluate(()=>window.__dealTest.render());assert.notEqual(await value(),paused);
+ await close(host);
 });
