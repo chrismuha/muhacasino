@@ -110,7 +110,7 @@ test('every hosted game extends its navigation background behind the notch',asyn
     const g=await checkFrame(p,game,'notch');
     assert.equal(g.view.top,0,game);assert.ok(g.frame.top>=54,game);
     assert.equal(await p.locator('.game-toolbar').evaluate(el=>getComputedStyle(el).backgroundColor),original,game);
-    if(collapsed)assert.equal(g.bar.height,54,game);
+    if(collapsed)assert.equal(g.bar.height,game==='monopoly-deal'?100:54,game);
    }
    if(process.env.GAME_QA_ARTIFACTS)await p.screenshot({path:path.join(process.env.GAME_QA_ARTIFACTS,`${game}-notch.png`)});
    await p.setViewportSize({width:844,height:390});

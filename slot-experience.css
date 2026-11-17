@@ -2019,7 +2019,7 @@ body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-gem,.
   padding: 1px !important;
 }
 body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-gem,.hold-coin,.scatter-chip) > strong {
-  font-size: min(16px, 24cqh, 23cqw) !important;
+  font-size: max(12px, min(16px, 24cqh, 23cqw)) !important;
   line-height: 1.05 !important;
 }
 body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-gem,.hold-coin,.scatter-chip) > span {
@@ -2027,7 +2027,7 @@ body.slot-phone-play .reels :is(.money-chip,.jackpot-chip,.link-chip,.hold-gem,.
   line-height: 1.05 !important;
 }
 body.slot-phone-play .reels .money-chip:not(:has(*)) {
-  font-size: min(22px, 40cqh, 25cqw) !important;
+  font-size: max(12px, min(22px, 40cqh, 25cqw)) !important;
 }
 /* Extremely short play areas retain usable reels inside their own scroll area. */
 body.slot-phone-play .reels-wrap { overflow: auto; }

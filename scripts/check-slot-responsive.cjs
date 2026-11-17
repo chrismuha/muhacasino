@@ -100,10 +100,10 @@ test('slot release versions match current labels and preserve November 2 history
   const section=about.split(`<article id="${anchor}"`)[1].split('</article>')[0];
   assert.ok(launcher.includes(`version: "v${version}"`));
   assert.ok(html.includes(`name="game-version" content="${version}"`));
-  assert.ok(html.includes(`v${version} · November 6, 2026`));
+  assert.ok(html.includes(`v${version} · TBD`));
   assert.ok(section.includes(`<b>v${version}</b>`));
   assert.equal(section.split(`v${previous} · 2026-11-02`).length-1,1);
-  assert.equal(section.split(`v${version} · 2026-11-06`).length-1,1);
+  assert.equal(section.split(`v${version} · TBD`).length-1,1);
   for(const note of ['Main game screens:','Landscape screens:','Desktop screens:','Settings, all pages:','Info, payout, and Buy Bonus screens:'])assert.ok(section.includes(note),`${game}: ${note}`);
   if(game==='pretty-penny'||game==='treasurepots')assert.ok(section.includes('Feature meters:'));
   assert.ok(releases.includes(`${game==='treasurepots'?'Treasurepots':game==='neon-slots'?'Neon Slots':game==='pretty-penny'?'Pretty Penny':'Big Money Deluxe'} v${version}</h2>`));

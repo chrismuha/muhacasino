@@ -3666,3 +3666,24 @@ test('phone preview is vertically centered and the deck stays fixed through sele
   await shot(host,`stable-deck-${viewport.width}-${hosted?'hosted':'direct'}`);await close(host);
  }
 });
+
+test('populated tables fit short phones, landscape and the narrow tablet breakpoint',async()=>{
+ for(const viewport of [{width:320,height:568},{width:360,height:640},{width:601,height:800},{width:844,height:390},{width:932,height:430},{width:800,height:500}])for(const count of [2,4])for(const hosted of [false,true]){
+  const host=await open(viewport,undefined,{isMobile:true,hasTouch:true});let p=host;
+  if(hosted){await host.goto(origin+'/index.html#monopoly-deal');await host.frameLocator('#gameFrame').locator('#ready-new').waitFor();p=host.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+  await p.waitForFunction(()=>document.readyState==='complete'&&[...document.querySelectorAll('link[rel=stylesheet]')].every(link=>link.sheet));
+  await fixture(p,'hand',count);
+  await p.evaluate(()=>{const s=window.__dealTest.state;for(const player of [0,1])for(const color of ['pink','utility']){const i=s.draw.findIndex(c=>c.type==='property'&&c.colors.length===1&&c.color===color);if(i>=0)s.players[player].props.push(s.draw.splice(i,1)[0]);}window.__dealTest.render();});
+  for(const selected of [false,true,false]){
+   if(selected)await p.locator('.modern-hand-card').first().click();
+   else await p.evaluate(()=>document.querySelector('.modern-hand-card.is-selected')?.click());
+   await host.waitForTimeout(60);
+   const g=await p.evaluate(()=>{document.body.scrollTop=0;window.scrollTo(0,0);return {overflowY:document.body.scrollHeight-document.body.clientHeight,overflowX:document.body.scrollWidth-innerWidth,handBottom:document.querySelector('.deal-hand .cards').getBoundingClientRect().bottom,height:innerHeight,names:[...document.querySelectorAll('.opponent h3')].map(e=>({width:e.clientWidth,scrollWidth:e.scrollWidth})),labels:[...document.querySelectorAll('.round-action')].filter(e=>e.offsetHeight).map(e=>({text:e.innerText,width:e.clientWidth,scrollWidth:e.scrollWidth,height:e.clientHeight,scrollHeight:e.scrollHeight}))};});
+   assert.ok(g.overflowY<=1&&g.overflowX<=1&&g.handBottom<=g.height+1,JSON.stringify({viewport,count,hosted,selected,g}));
+   assert.ok(g.names.every(e=>e.width>0&&e.scrollWidth<=e.width+1),JSON.stringify(g));
+   assert.ok(g.labels.every(e=>e.scrollWidth<=e.width+1&&e.scrollHeight<=e.height+1),JSON.stringify(g));
+   if(selected)await shot(host,`edge-table-${viewport.width}-${viewport.height}-${count}-${hosted?'hosted':'direct'}`);
+  }
+  await close(host);
+ }
+});
