@@ -296,3 +296,12 @@
  html[data-theme=modern] #game .deal-table.card-selected:not(.has-selection) .deal-actions :is(#flip-card,#bank-card,#play-card,#discard-card,#end).round-action{grid-template-columns:48px minmax(0,1fr);grid-template-rows:auto;align-items:center;align-content:center;height:48px;min-height:48px;gap:3px;padding:0;font-size:12px}
  #game .deal-table.card-selected:not(.has-selection) .deal-actions .round-action>span:last-child{white-space:normal;overflow-wrap:anywhere}
 }
+
+/* Reserve the same play area and deck footprint while selecting cards. */
+@media(max-width:600px){
+ #game .deal-table.hand-visible:not(.has-selection) .deal-stage{grid-template-columns:52px minmax(0,1fr) 208px;gap:6px;min-height:160px;margin-top:0;padding:0}
+ #game .deal-table.hand-visible:not(.has-selection) .draw-deck{display:flex;flex-direction:column;align-items:center;align-self:center;justify-self:start;width:52px;margin:0;gap:0}
+ #game .deal-table:not(.card-selected):not(.has-selection) .draw-deck .deck-count{margin-top:4px}
+ #game .deal-table:not(.has-selection) .card-stage{align-self:stretch;display:flex;align-items:center;justify-content:center;height:auto;padding:8px 0;box-sizing:border-box}
+ #game .deal-table:not(.has-selection) .has-card-preview #preview-open{width:min(98px,100%);max-height:144px;flex-shrink:0}
+}

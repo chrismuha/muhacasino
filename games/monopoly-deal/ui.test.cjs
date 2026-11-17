@@ -3647,3 +3647,22 @@ test('hosted timer keeps counting when focus enters the game and recovers on int
  await p.locator('.modern-hand-card').first().click();await host.clock.runFor(2100);await p.evaluate(()=>window.__dealTest.render());assert.notEqual(await value(),paused);
  await close(host);
 });
+
+test('phone preview is vertically centered and the deck stays fixed through selection',async()=>{
+ for(const hosted of [false,true])for(const viewport of [{width:390,height:667},{width:420,height:684},{width:430,height:740}]){
+  const host=await open(viewport,undefined,{isMobile:true,hasTouch:true});let p=host;
+  if(hosted){await host.goto(origin+'/index.html#monopoly-deal');await host.frameLocator('#gameFrame').locator('#ready-new').waitFor();p=host.frames().find(f=>f.url().includes('/games/monopoly-deal/'));}
+  await fixture(p,'hand',2);
+  const geometry=()=>p.evaluate(()=>{const r=s=>{const b=document.querySelector(s).getBoundingClientRect();return {x:b.x,y:b.y,width:b.width,height:b.height,bottom:b.bottom}};return {deck:r('.deck-icon'),stage:r('.deal-stage'),preview:document.querySelector('#preview-open')?r('#preview-open'):null,overflow:document.body.scrollHeight-document.body.clientHeight};});
+  const initial=await geometry();
+  for(const type of ['property','money','action',null]){
+   if(type){const id=await p.evaluate(type=>window.__dealTest.state.players[0].hand.find(c=>c.type===type).id,type);await p.locator(`[data-card="${id}"]`).click();}
+   else await clickTableTool(p,'#deselect');
+   await host.waitForTimeout(80);const g=await geometry();
+   assert.ok(Math.abs(g.deck.x-initial.deck.x)<1&&Math.abs(g.deck.y-initial.deck.y)<1,JSON.stringify({viewport,hosted,type,initial,g}));
+   if(type)assert.ok(Math.abs(g.preview.y+g.preview.height/2-g.stage.y-g.stage.height/2)<1&&g.preview.y>=g.stage.y+6,JSON.stringify(g));
+   assert.ok(g.overflow<=1,JSON.stringify({viewport,hosted,type,g}));
+  }
+  await shot(host,`stable-deck-${viewport.width}-${hosted?'hosted':'direct'}`);await close(host);
+ }
+});
