@@ -34,7 +34,7 @@
     "prebuild:web": "node ./scripts/prepare-build-output.cjs"
   },
   "devDependencies": {
-    "playwright": "^1.65.0",
+    "playwright": "^1.65.1",
     "vite": "^8.3.6"
   },
   "dependencies": {
