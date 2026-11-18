@@ -41,7 +41,7 @@
     "@capacitor/android": "^8.6.0",
     "@capacitor/cli": "^8.6.0",
     "@capacitor/core": "^8.5.3",
-    "@capacitor/ios": "^8.6.0"
+    "@capacitor/ios": "^8.6.2"
   },
   "overrides": {
     "source-map-js": "1.2.2",
