@@ -58,3 +58,9 @@ The user has now confirmed that the reported Chrome mobile scrolling issue is fi
 ## Release date
 
 The unpublished v1.6.0 release uses **TBD** until the user provides a release date. Commit dates are not publication dates. Preserve the dated v1.5.0 history and add new changes to v1.6.0.
+
+## Git commit messages
+
+- Use this format for every Git commit you create in this workspace and its repositories. Write a short, specific subject in the imperative mood, followed by a blank line and a bulleted body. Keep any repository-required prefix or ticket ID in the subject.
+- Start each body line with `- ` and describe one concrete change or outcome. Include enough detail to understand what changed and add relevant verification when it helps. Keep the bullets short enough to scan quickly.
+- Follow the existing authorization rules for commits, pushes, history rewrites, and releases.

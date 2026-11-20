@@ -23,3 +23,9 @@ These project-specific rules take precedence over conflicting inherited build an
 - Check for an existing matching GitHub draft prerelease when notes change, update it when present, and verify its alphabetical bullet-only body, title, tag, and draft/prerelease status. Do not create or publish a release without authorization.
 - Verify guide links, version labels, note ordering, and documented behavior with focused non-build checks. Keep unresolved issues listed until the required user verification is received, even when automated checks pass.
 - Perform this audit even when Electron packaging is absent and production builds are skipped. The existing build-scope and push rules still apply. Asking about build instructions does not itself request a build or authorize a push.
+
+## Git commit messages
+
+- Use this format for every Git commit you create in this workspace and its repositories. Write a short, specific subject in the imperative mood, followed by a blank line and a bulleted body. Keep any repository-required prefix or ticket ID in the subject.
+- Start each body line with `- ` and describe one concrete change or outcome. Include enough detail to understand what changed and add relevant verification when it helps. Keep the bullets short enough to scan quickly.
+- Follow the existing authorization rules for commits, pushes, history rewrites, and releases.
