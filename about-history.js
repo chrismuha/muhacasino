@@ -83,7 +83,7 @@
     versionNav.className = "release-version-nav";
     versionNav.setAttribute("aria-label", `${card.querySelector("h2")?.textContent || card.id} versions`);
     versionNav.innerHTML = releases.map((release, index) => {
-      const version = release.querySelector("h3")?.textContent.match(/v\d+\.\d+\.\d+/)?.[0] || `Release ${index + 1}`;
+      const version = release.querySelector("h3")?.textContent.match(/v\d+\.\d+(?:\.\d+)?\b/)?.[0] || `Release ${index + 1}`;
       return `<button type="button" data-release-index="${index}" aria-pressed="false">${version}</button>`;
     }).join("");
     versionNav.addEventListener("click", (event) => {

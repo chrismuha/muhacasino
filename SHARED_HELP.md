@@ -39,7 +39,7 @@ Current device follows the available browser area at full scale, including when 
 
 Automatically lower bet is on by default and saved separately for each slot. When the current wager is unaffordable, manual and auto spins use the highest affordable lower bet step without a confirmation. Denomination and paylines stay unchanged. Free spins retain their awarded wager. Turn this setting off to keep the existing low-credit flow. If no lower bet step is affordable, the optional Lucky Credit Wheel remains available under its existing rules, followed by the add-credit prompt when applicable.
 
-Big Money Deluxe v1.4.0, Neon Slots v1.4.0, Pretty Penny v1.4.0, and Treasurepots v1.4.0 include this setting.
+Big Money Deluxe v1.4, Neon Slots v1.4, Pretty Penny v1.4, and Treasurepots v1.4 include this setting.
 
 Monopoly Deal v1.6.0 (TBD) library artwork: Monopoly Deal uses a red title accent in the game library. Its smaller library card shows the full cover illustration without cropping.
 
@@ -62,7 +62,7 @@ Use the small **🐛 Bug Report** button at the bottom of the Help window from a
 
 New-game setup: Players, Names, and Review use aligned headers, consistent 48-pixel fields, a visible step indicator, and fixed bottom navigation. Only step content scrolls above the keyboard. Keyboard resizing keeps text and control sizes unchanged, and switching to human opponents clears generated computer names. Casino header arrows use compact artwork inside the existing navigation controls.
 
-Pretty Penny v1.4.0 (TBD): Added Growing Penny Wild exclusively to Pretty Penny. On eligible paid and free reel spins, a natural Penny Wild can grow across all five cells of one random row for the current result. The saved trigger setting defaults to 3% and can be adjusted or disabled. Active paylines pay from the expanded grid; existing line awards never decrease, special-symbol rows and jackpot displays are protected, and growth increases effective returns beyond Regular Win Odds. Spreading wilds remain a separate presentation effect; Treasure Pots SCATTER chests award free spins and do not substitute as wilds.
+Pretty Penny v1.4 (TBD): Added Growing Penny Wild exclusively to Pretty Penny. On eligible paid and free reel spins, a natural Penny Wild can grow across all five cells of one random row for the current result. The saved trigger setting defaults to 3% and can be adjusted or disabled. Active paylines pay from the expanded grid; existing line awards never decrease, special-symbol rows and jackpot displays are protected, and growth increases effective returns beyond Regular Win Odds. Spreading wilds remain a separate presentation effect; Treasure Pots SCATTER chests award free spins and do not substitute as wilds.
 
 ## Game documentation audit
 

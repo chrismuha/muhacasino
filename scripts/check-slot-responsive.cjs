@@ -95,20 +95,20 @@ test('slot release versions match current labels and preserve November 2 history
  const launcher=await readFile(path.join(root,'launcher.js'),'utf8');
  const about=await readFile(path.join(root,'about.html'),'utf8');
  const releases=await readFile(path.join(root,'release-notes.html'),'utf8');
- const version="1.4.0",previous="1.3.1";
+ const version="1.4.0",publicVersion="1.4",previous="1.3.1";
  for(const [game,anchor]of [['big-money-deluxe','big-money'],['neon-slots','neon'],['pretty-penny','pretty-penny'],['treasurepots','treasurepots']]){
   const html=await readFile(path.join(root,'games',game,'index.html'),'utf8');
   const section=about.split(`<article id="${anchor}"`)[1].split('</article>')[0];
   const gameEntry=launcher.split(new RegExp(`^  "?${game}"?: \\{`, "m"))[1]?.split("\n  },")[0];
-  assert.ok(gameEntry?.includes(`version: "v${version}"`),game);
+  assert.ok(gameEntry?.includes(`version: "v${publicVersion}"`),game);
   assert.ok(html.includes(`name="game-version" content="${version}"`));
-  assert.ok(html.includes(`v${version} · TBD`));
-  assert.ok(section.includes(`<b>v${version}</b>`));
+  assert.ok(html.includes(`v${publicVersion} · TBD`));
+  assert.ok(section.includes(`<b>v${publicVersion}</b>`));
   assert.equal(section.split(`v${previous} · 2026-11-02`).length-1,1);
-  assert.equal(section.split(`v${version} · TBD`).length-1,1);
+  assert.equal(section.split(`v${publicVersion} · TBD`).length-1,1);
   for(const note of ['Main game screens:','Landscape screens:','Desktop screens:','Settings, all pages:','Info, payout, and Buy Bonus screens:'])assert.ok(section.includes(note),`${game}: ${note}`);
   if(game==='pretty-penny'||game==='treasurepots')assert.ok(section.includes('Feature meters:'));
-  assert.ok(releases.includes(`${game==='treasurepots'?'Treasurepots':game==='neon-slots'?'Neon Slots':game==='pretty-penny'?'Pretty Penny':'Big Money Deluxe'} v${version}</h2>`));
+  assert.ok(releases.includes(`${game==='treasurepots'?'Treasurepots':game==='neon-slots'?'Neon Slots':game==='pretty-penny'?'Pretty Penny':'Big Money Deluxe'} v${publicVersion}</h2>`));
  }
 });
 
