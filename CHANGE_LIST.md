@@ -14,6 +14,7 @@
 - Added a Fixed section in Help Known issues with How we fixed it explanations and user-facing notes for completed fixes.
 - Added a shared user-guide index for all eight casino games, with current-version labels, quick starts, detailed-rule directions, and release-history links. Help and the game-library footer link to the guides; Sorry! and Yahtzee also have direct guide and release-history links.
 - Consolidated closely spaced game updates into release milestones across all eight game histories, retaining the original change notes and recorded milestone dates.
+- Renumbered seven game histories into the 1.0 through 1.4 series. Patch numbers identify small updates, and minor numbers identify larger releases.
 
 ### Interface and accessibility
 

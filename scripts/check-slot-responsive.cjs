@@ -95,10 +95,12 @@ test('slot release versions match current labels and preserve November 2 history
  const launcher=await readFile(path.join(root,'launcher.js'),'utf8');
  const about=await readFile(path.join(root,'about.html'),'utf8');
  const releases=await readFile(path.join(root,'release-notes.html'),'utf8');
- for(const [game,anchor,version,previous]of [['big-money-deluxe','big-money','4.0.0','3.4.0'],['neon-slots','neon','4.2.0','4.1.0'],['pretty-penny','pretty-penny','4.0.0','3.4.0'],['treasurepots','treasurepots','3.3.0','3.2.0']]){
+ const version="1.4.0",previous="1.3.1";
+ for(const [game,anchor]of [['big-money-deluxe','big-money'],['neon-slots','neon'],['pretty-penny','pretty-penny'],['treasurepots','treasurepots']]){
   const html=await readFile(path.join(root,'games',game,'index.html'),'utf8');
   const section=about.split(`<article id="${anchor}"`)[1].split('</article>')[0];
-  assert.ok(launcher.includes(`version: "v${version}"`));
+  const gameEntry=launcher.split(new RegExp(`^  "?${game}"?: \\{`, "m"))[1]?.split("\n  },")[0];
+  assert.ok(gameEntry?.includes(`version: "v${version}"`),game);
   assert.ok(html.includes(`name="game-version" content="${version}"`));
   assert.ok(html.includes(`v${version} · TBD`));
   assert.ok(section.includes(`<b>v${version}</b>`));

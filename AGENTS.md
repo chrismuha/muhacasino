@@ -24,6 +24,11 @@ These project-specific rules take precedence over conflicting inherited build an
 - Verify guide links, version labels, note ordering, and documented behavior with focused non-build checks. Keep unresolved issues listed until the required user verification is received, even when automated checks pass.
 - Perform this audit even when Electron packaging is absent and production builds are skipped. The existing build-scope and push rules still apply. Asking about build instructions does not itself request a build or authorize a push.
 
+## Game version numbering
+
+- For Muha Casino games other than Monopoly Deal, use three-part versions starting at 1.0.0. Increase the patch number for a small fix or refinement and increase the minor number for a larger feature release, resetting the patch number to zero. Use the 1.0 through 1.4 series for these release histories.
+- Keep each game's release history chronological and use matching versions in the launcher, game UI, guides, and release notes. Monopoly Deal follows its own version policy in `games/monopoly-deal/AGENTS.md`.
+
 ## Git commit messages
 
 - Use this format for every Git commit you create in this workspace and its repositories. Write a short, specific subject in the imperative mood, followed by a blank line and a bulleted body. Keep any repository-required prefix or ticket ID in the subject.

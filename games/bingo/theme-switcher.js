@@ -2379,7 +2379,7 @@
       brand = document.createElement("span");
       brand.className = "bingo-popout-brand";
       brand.setAttribute("aria-label", "Muha Bingo");
-      brand.innerHTML = '<strong>MUHA</strong><b>BINGO</b><small>v3.2.0</small>';
+      brand.innerHTML = '<strong>MUHA</strong><b>BINGO</b><small>v1.2.1</small>';
       returnButton?.insertAdjacentElement("afterend", brand);
     }
     let appearanceButton = toolbar.querySelector(".window-appearance-button");

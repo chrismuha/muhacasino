@@ -7,7 +7,7 @@ const games = {
   },
   "big-money-deluxe": {
     title: "Big Money Deluxe",
-    version: "v4.0.0",
+    version: "v1.4.0",
     subtitle: "Classic Cash",
     path: "games/big-money-deluxe/index.html",
     className: "card-money",
@@ -17,7 +17,7 @@ const games = {
   },
   "neon-slots": {
     title: "Neon Slots",
-    version: "v4.2.0",
+    version: "v1.4.0",
     subtitle: "Electric Casino",
     path: "games/neon-slots/index.html",
     className: "card-neon",
@@ -27,7 +27,7 @@ const games = {
   },
   "pretty-penny": {
     title: "Pretty Penny",
-    version: "v4.0.0",
+    version: "v1.4.0",
     subtitle: "Feature Game",
     path: "games/pretty-penny/index.html",
     className: "card-penny",
@@ -37,7 +37,7 @@ const games = {
   },
   treasurepots: {
     title: "TreasurePots",
-    version: "v3.3.0",
+    version: "v1.4.0",
     subtitle: "Hold & Link",
     path: "games/treasurepots/index.html",
     className: "card-treasure",
@@ -47,7 +47,7 @@ const games = {
   },
   bingo: {
     title: "Muha Bingo",
-    version: "v3.2.0",
+    version: "v1.2.1",
     subtitle: "75-Ball Bingo",
     path: "games/bingo/index.html",
     className: "card-bingo",
@@ -57,7 +57,7 @@ const games = {
   },
   sorry: {
     title: "Sorry!",
-    version: "v1.2.0",
+    version: "v1.1.0",
     subtitle: "Classic Board Game",
     path: "games/sorry/index.html",
     className: "card-sorry",
@@ -67,7 +67,7 @@ const games = {
   },
   yahtzee: {
     title: "Yahtzee",
-    version: "v1.2.0",
+    version: "v1.1.0",
     subtitle: "Classic Dice Game",
     path: "games/yahtzee/index.html",
     className: "card-yahtzee",
