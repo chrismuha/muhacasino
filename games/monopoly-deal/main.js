@@ -4,7 +4,7 @@ import {aiChoice,aiPlay} from './ai.mjs?build=20261106-banking-v154';
 import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261116-rent-badges';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261115-stable-tools';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261111-smooth-hand';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=deal-dark-blue';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=deal-table-colors';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets,MULTICOLOR_WILD_VALUE} from './engine.mjs?build=20261115-wild-15m';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -1265,7 +1265,9 @@ function openGameSettings(){
  if(document.querySelector('dialog[open]'))return;
  const dialog=$('#appearance-dialog');
  if(window.parent===window){dialog.querySelector('.settings-content').append(document.querySelector('.table-settings'),document.querySelector('.upcoming-game-settings'));}
- dialog.showModal();dialog.querySelector('button').focus({preventScroll:true});
+ dialog.showModal();
+ dialog.querySelector('.settings-content').scrollTop=0;
+ dialog.querySelector('button').focus({preventScroll:true});
 }
 // The same settings dialog is available from the starting screen and utility bar.
 {

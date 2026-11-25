@@ -3075,6 +3075,7 @@ test('hosted Deal canvas follows table color and preserves navigation color',asy
  async function verifyCanvas(expected){
   await p.waitForFunction(color=>getComputedStyle(document.querySelector('#gameFrame')).backgroundColor===color,expected);
   for(const selector of ['html','body','#gameView','#gameFrame'])assert.equal(await p.locator(selector).evaluate(el=>getComputedStyle(el).backgroundColor),expected);
+  assert.equal(await game.locator('html').evaluate(el=>getComputedStyle(el).backgroundColor),expected);
   assert.equal(await p.locator('.game-toolbar').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(10, 12, 25)');
   assert.deepEqual(await game.locator('body').evaluate(el=>[getComputedStyle(el).backgroundColor,getComputedStyle(el).backgroundImage]),[expected,'none']);
  }
@@ -3082,6 +3083,9 @@ test('hosted Deal canvas follows table color and preserves navigation color',asy
  await game.locator('#ready-settings').click();
  await game.getByRole('button',{name:'Blue',exact:true}).click();
  await verifyCanvas('rgb(0, 100, 219)');
+ await game.getByRole('button',{name:'Plum',exact:true}).click();
+ await verifyCanvas('rgb(53, 40, 63)');
+ assert.equal(await game.locator('#appearance-dialog').evaluate(el=>getComputedStyle(el,'::backdrop').backgroundColor),'rgba(0, 0, 0, 0.6)');
  await game.locator('#table-hex').fill('#236944');
  await verifyCanvas('rgb(35, 105, 68)');
  await game.locator('#reset-color').click();
@@ -3148,11 +3152,66 @@ test('phone settings follows color and table utilities use a separate three-row 
   await game.locator('[data-card]').first().evaluate(el=>el.click());
   const preview=await game.locator('#preview-open').boundingBox();assert.ok(preview.width>=120,JSON.stringify({viewport,hosted,preview}));
   await clickTableTool(game,'#table-settings');
-  for(const color of ['#236944','#35283f']){
-   await game.evaluate(color=>document.documentElement.style.setProperty('--modern-table-background',color),color);
-   assert.equal(await game.locator('#appearance-dialog').evaluate(el=>getComputedStyle(el).backgroundColor),await game.locator('html').evaluate(el=>getComputedStyle(el).backgroundColor));
-  }
+  const settings=game.locator('#appearance-dialog');
+  const original=await settings.evaluate(el=>getComputedStyle(el).backgroundColor);
+  await game.getByRole('button',{name:'Plum',exact:true}).click();
+  assert.notEqual(await settings.evaluate(el=>getComputedStyle(el).backgroundColor),original);
   await shot(p,`phone-settings-${viewport.width}-${hosted?'hosted':'direct'}`);await close(p);
+ }
+});
+
+test('color presets keep the heading and swatches inside one panel on phone and desktop',async()=>{
+ for(const viewport of [{width:320,height:640},{width:420,height:712},{width:844,height:390},{width:1440,height:900}]){
+  const hosted=viewport.width!==320;
+  const p=await open(viewport,undefined,viewport.width<=844?{isMobile:true,hasTouch:true}:{});
+  let game=p;
+  if(hosted){
+   await p.goto(origin+'/index.html#monopoly-deal');
+   await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();
+   game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));
+  }
+  if(viewport.width===420)await p.locator('#toolbarCollapseButton').click();
+  const openSettings=viewport.width===420?p.locator('[data-deal-command=appearance]'):game.locator('#ready-settings');
+  await openSettings.click();
+  const panel=game.getByRole('region',{name:'Comfortable table colors'});
+  const settings=game.locator('#appearance-dialog');
+  const colors=async()=>[
+   await settings.evaluate(el=>getComputedStyle(el).backgroundColor),
+   await panel.evaluate(el=>getComputedStyle(el).backgroundColor)
+  ];
+  await panel.getByRole('button',{name:'Blue',exact:true}).click();
+  const blue=await colors();
+  await panel.getByRole('button',{name:'Plum',exact:true}).click();
+  const plum=await colors();
+  assert.notEqual(blue[0],plum[0]);
+  assert.notEqual(blue[1],plum[1]);
+  assert.notEqual(plum[0],plum[1]);
+  await settings.locator('.settings-content').evaluate(el=>el.scrollTop=0);
+  const bounds=await panel.evaluate(el=>{
+   const panel=el.getBoundingClientRect();
+   const heading=el.querySelector('h3').getBoundingClientRect();
+   const scroller=el.closest('.settings-content');
+   const buttons=[...el.querySelectorAll('button')];
+   return {
+    headingInside:heading.top>panel.top&&heading.left>panel.left&&heading.right<panel.right,
+    headingVisible:heading.top>=scroller.getBoundingClientRect().top&&heading.bottom<=scroller.getBoundingClientRect().bottom,
+    panelVisible:panel.bottom<=scroller.getBoundingClientRect().bottom,
+    noOverflow:scroller.scrollWidth===scroller.clientWidth&&buttons.every(button=>button.scrollWidth===button.clientWidth),
+    touchTargets:buttons.every(button=>button.offsetHeight>=48)
+   };
+  });
+  assert.ok(bounds.headingInside&&bounds.headingVisible&&bounds.noOverflow&&bounds.touchTargets,JSON.stringify({viewport,bounds}));
+  if(viewport.height>=640)assert.ok(bounds.panelVisible,JSON.stringify({viewport,bounds}));
+  const closeButton=settings.getByRole('button',{name:'Close',exact:true});
+  await game.locator('#reset-color').scrollIntoViewIfNeeded();
+  assert.ok(await closeButton.evaluate(el=>el.getBoundingClientRect().top>=0&&el.getBoundingClientRect().bottom<=innerHeight));
+  await settings.locator('.settings-content').evaluate(el=>el.scrollTop=0);
+  await shot(p,`table-colors-${viewport.width}`);
+  await settings.locator('.settings-content').evaluate(el=>el.scrollTop=el.scrollHeight);
+  await closeButton.click();
+  await openSettings.click();
+  assert.equal(await settings.locator('.settings-content').evaluate(el=>el.scrollTop),0);
+  await close(p);
  }
 });
 

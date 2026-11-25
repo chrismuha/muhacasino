@@ -950,7 +950,7 @@ html:has(#appearance-dialog[open]),body:has(#appearance-dialog[open]){overflow:h
 #appearance-dialog .wizard-heading{min-width:0;margin:0;padding-bottom:12px;gap:12px}
 #appearance-dialog .wizard-heading button{flex-shrink:0;min-height:44px}
 #appearance-dialog .settings-content{min-width:0;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-gutter:stable;padding-right:4px}
-#appearance-dialog .table-settings{display:grid;grid-template-columns:minmax(0,1fr);width:100%;box-sizing:border-box;min-width:0;padding:12px;margin:0 0 16px;gap:12px}
+#appearance-dialog .table-settings{display:grid;grid-template-columns:minmax(0,1fr);width:100%;min-width:0;padding:0;margin:0 0 16px;gap:12px;border:0}
 #appearance-dialog :is(fieldset,section,div,label,p,legend){min-width:0;max-width:100%;box-sizing:border-box}
 #appearance-dialog fieldset{width:100%;margin:0;padding:12px}
 #appearance-dialog label,#appearance-dialog p,#appearance-dialog legend{white-space:normal;overflow-wrap:anywhere}
@@ -1156,9 +1156,14 @@ body.is-finished .game-over-controls>*{flex:1 1 140px}
 #game .current-assets .current-bank>.asset-panel-heading,#game .current-assets .current-bank>.bank-balance{flex:0 0 auto;width:auto;align-self:center}
 
 /* Settings follows the saved table color, including live preset changes. */
-html[data-theme=modern] #appearance-dialog{background:var(--modern-table-background,#17458a);color:#fff}
+html[data-theme=modern] #appearance-dialog{
+ --settings-surface:color-mix(in srgb,var(--modern-table-background,#17458a) 42%,#101621);
+ background:#162437;
+ background:var(--settings-surface);
+ color:#fff;
+}
 html[data-theme=modern] #appearance-dialog .table-settings{background:transparent}
-html[data-theme=modern] #appearance-dialog :is(fieldset,input:not([type=checkbox]),select,button){background-color:color-mix(in srgb,var(--modern-table-background,#17458a),#000 35%);color:#fff}
+html[data-theme=modern] #appearance-dialog :is(fieldset,input:not([type=checkbox]),select,button:not(.table-preset)){background-color:color-mix(in srgb,var(--settings-surface),#000 25%);color:#fff}
 
 /* Mandatory action results remain readable until the player dismisses them. */
 :is(#property-transfer-dialog,#just-say-no-dialog){width:min(640px,calc(100vw - 24px));max-height:calc(100dvh - 24px);padding:0;overflow:hidden;background:#05265e;color:#fff}

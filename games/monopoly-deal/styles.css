@@ -51,15 +51,45 @@ body{background:radial-gradient(ellipse at 50% 20%,#ffffff12,transparent 70%),va
 #table-hex[aria-invalid="true"]{border-color:#ff9d8c;outline:2px solid #ff9d8c}
 #hex-help{flex-basis:100%;font-size:18px;color:#e0e9e2;line-height:1.5}
 
-.table-presets{flex-basis:100%;min-width:0;margin:0 0 8px;padding:0;border:0}
-.table-presets legend{font-size:22px;font-weight:700;color:#f0f6ef;margin-bottom:14px;padding:0}
-.preset-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:10px}
-.table-preset{display:flex;align-items:center;gap:10px;min-height:56px;padding:12px;color:#f0f6ef;background:#17362e;border:2px solid #91ad9c;font-size:18px;font-weight:700}
-.preset-swatch{flex:0 0 26px;height:26px;border:2px solid #cbd9cf;border-radius:50%;background:var(--swatch)}
-.preset-check{margin-left:auto;min-width:18px;font-size:22px;color:#ffe297}
-.table-preset[aria-pressed="true"]{border-color:#ffe297;box-shadow:inset 0 0 0 1px #ffe297}
-.table-preset:hover{background:#2a4c40}
-@media(max-width:400px){.preset-grid{grid-template-columns:1fr}}
+.table-presets {
+  flex-basis: 100%;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #ffffff45;
+  border-radius: 14px;
+  background: #203245;
+  background: color-mix(in srgb, var(--modern-table-background) 30%, #252c39);
+  color: #fff;
+}
+.table-presets h3 { margin: 0 0 12px; font-size: 18px; line-height: 1.3; }
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 112px), 1fr));
+  gap: 8px;
+}
+.table-presets .table-preset {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  min-height: 48px;
+  padding: 6px 8px;
+  border: 1px solid #ffffff55;
+  background: #0005;
+  color: #fff;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: normal;
+}
+.table-presets .table-preset:hover { background: #0008; }
+.preset-label { grid-area: 1 / 2; overflow-wrap: anywhere; }
+.preset-swatch { grid-area: 1 / 1; width: 20px; height: 20px; border: 1px solid #fff9; border-radius: 50%; background: var(--swatch); }
+.preset-check { grid-area: 1 / 1; text-align: center; font-size: 14px; color: #ffe297; text-shadow: 0 1px 2px #000; }
+.table-presets .table-preset[aria-pressed="true"] { border-color: #ffe297; box-shadow: inset 0 0 0 1px #ffe297; }
+.table-presets .table-preset:focus-visible { outline-offset: -4px; }
+
 
 /* Large, readable setup copy at every screen size. */
 .setup .eyebrow{font-size:28px;font-weight:800;letter-spacing:.5px;line-height:1.4;color:#ffe4a6}

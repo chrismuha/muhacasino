@@ -19,7 +19,7 @@ html[data-theme=modern]{background:var(--modern-table-background,#17458a);color:
 [data-theme=modern] .table-settings{background:#092c69}
 [data-theme=modern] .history{display:none}
 [data-theme=modern] dialog,[data-theme=modern] #setup-wizard{background:var(--deal-setup-background,#092c69);border-color:#88c5ff;color:white}
-[data-theme=modern] dialog::backdrop{background:#021442df}
+[data-theme=modern] dialog::backdrop{background:#0009}
 [data-theme=modern] .setup input{background:#0a3677}
 /* Every context uses the same card face: hand, table, selection, and catalog. */
 .deal-face{position:relative;display:flex;flex-direction:column;width:100%;height:100%;aspect-ratio:0.69;background:#fff;color:#070a09;border:0.055em solid white;border-radius:.12em;box-shadow:0 .035em .08em #00164180;overflow:hidden;container-type:inline-size;font-family:'Arial Narrow','Helvetica Neue',Arial,sans-serif;font-weight:750;text-align:center;line-height:1.15;font-size:100px}
@@ -91,7 +91,6 @@ html[data-theme=modern]{background:var(--modern-table-background,#17458a);color:
 .wild-half .face-property-name{width:100%}
 [data-theme=modern] .table-tools #move{background:#002b6880;border:1px solid #81b9ff55;color:#fff;box-shadow:none}
 .currency,.coin{text-decoration:line-through;text-decoration-thickness:.07em}
-[data-theme=modern] body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;background:linear-gradient(127deg,transparent 30%,#6acaff07 30% 48%,transparent 48%),linear-gradient(26deg,transparent 68%,#0516500d 68% 88%,transparent 88%)}
 @media(max-width:600px){.deal-table{grid-template-rows:clamp(170px,56cqw,340px) clamp(220px,48cqw,300px) auto auto}.selected-table-card{position:absolute;top:10%;height:auto;width:40cqw;max-width:100%;aspect-ratio:.69;z-index:1;pointer-events:none}}
 .deal-table:not(.has-selection) #flip-card,.deal-table:not(.has-selection) #bank-card,.deal-table:not(.has-selection) #play-card{visibility:hidden}
 .action-disc svg{width:65%;height:65%;display:block}

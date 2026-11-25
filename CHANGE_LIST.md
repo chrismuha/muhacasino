@@ -33,6 +33,7 @@
 - Phone tables use compact populated property previews and opponent summaries. Windows up to 700 pixels tall place Bank beside Properties and cap the center preview, keeping full-sized hand cards visible. The recurring mobile scrolling report remains awaiting verification on the original device.
 - Property rent rows use evenly spaced round dots with consistent proportions in thumbnails, hand cards, and center previews, matching the enlarged card artwork.
 - Redesigned New game with aligned headers, consistent field sizes, a visible step indicator, and a fixed navigation row across Players, Names, and Review. Only the form content scrolls above the keyboard, without shrinking labels or hiding instructions. Switching opponent modes keeps Players in place and clears generated computer names from human seats.
+- Redesigned the Comfortable table colors panel with a fully contained heading, a responsive swatch grid, and a clear selected-color indicator. Dialogs dim the selected background across the game canvas without adding a blue tint.
 - Reduced the casino header arrows to compact artwork while preserving their existing navigation controls and touch targets.
 - Short desktop windows remove excess padding above the hand while preserving selected-card lift and focus clearance. Very short windows also tighten action spacing and use a compact elapsed-time badge. The 800 by 450 and 800 by 500 layouts fit without vertical page scrolling when selecting properties, actions, money, or wilds.
 - Table tools has a centered heading below its Close button.
