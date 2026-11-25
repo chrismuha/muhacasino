@@ -81,12 +81,6 @@ html.casino-standalone-slot body {
 /* Paint the complete host canvas, including Safari's exposed viewport edges. */
 html.deal-host-open,html.deal-host-open body,html.deal-host-open #gameView,html.deal-host-open #gameFrame{background:var(--deal-host-background,#17458a)}
 
-/* Setup uses the same dark blue across the host canvas and dialog backdrop. */
-html.deal-host-open.deal-setup-locked,
-html.deal-host-open.deal-setup-locked body,
-html.deal-host-open.deal-setup-locked #gameView,
-html.deal-host-open.deal-setup-locked #gameFrame{background:var(--deal-setup-background,#092c69)}
-
 /* Only settings and guide lock during setup, dialogs, and pending actions. */
 body.game-open #gameView [data-deal-command]:disabled{opacity:.4;cursor:default;filter:grayscale(1)}
 

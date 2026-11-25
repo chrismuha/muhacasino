@@ -72,6 +72,8 @@ Phone slot reels: Icons and award labels scale to the actual reel cell dimension
 
 Phone regression follow-up (v1.6.0, TBD): played property thumbnails are reduced to 28 pixels in both collections. Compact two-column selected actions preserve 48-pixel circles and keep the hand visible without page scrolling in checked phone layouts. The recurring populated-table scrolling issue still awaits verification on the original device. The earlier confirmed Chrome refresh fix remains in Fixed. Elapsed time now keeps counting when focus moves into the game iframe and recovers on touch or keyboard input; leaving the tab or browser still pauses it.
 
+New game setup (v1.6.0, TBD). The setup screen uses the table color saved in Game settings. On shorter screens, scroll inside the setup panel to read the full difficulty description. The Continue button stays below the panel.
+
 Card artwork (v1.6.0, TBD). Enlarged hand cards, drawn cards, Bank, Properties, the discard pile, and the card catalog all use the hand artwork, including rent dots and both halves of two-color wilds.
 
 Phone play area (v1.6.0, TBD): the selected center card is vertically centered with breathing room above and below. The deck retains the same footprint and position when selecting, browsing, or clearing hand cards. A reserved compact play area keeps the hand visible in the checked phone layouts. Enlarged reading views retain their separate layout.

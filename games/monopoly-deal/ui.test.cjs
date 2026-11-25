@@ -1533,11 +1533,31 @@ test('setup text has no nested scroll panes and browser hosted table has no bott
  await close(p);
 });
 
-test('hosted blue canvas remains painted and frame stays stable while keyboard viewport pans',async()=>{
- const p=await open({width:420,height:780});
+test('hosted setup uses the saved table color and stays stable while the keyboard viewport pans',async()=>{
+ const p=await open({width:420,height:712});
+ await p.locator('#ready-settings').click();
+ await p.locator('#table-hex').fill('#FFE9A0');
+ await p.locator('#table-hex').dispatchEvent('change');
+ await p.locator('#appearance-dialog .wizard-heading button').click();
+ const tableColor='rgb(255, 233, 160)';
  await p.goto(origin+'/index.html#monopoly-deal');
  const game=p.frameLocator('#gameFrame');await game.locator('#ready-new').waitFor();
- await game.locator('#ready-new').click();await game.locator('#start').click();
+ await game.locator('#ready-new').click();
+ const wizard=game.locator('#setup-wizard');
+ assert.equal(await wizard.evaluate(w=>getComputedStyle(w).backgroundColor),tableColor);
+ assert.equal(await game.locator('#ai-difficulty-help').evaluate(el=>getComputedStyle(el).color),'rgb(0, 0, 0)');
+ const spacing=await game.locator('[data-wizard-step="1"]').evaluate(section=>{
+  const panel=section.parentElement.getBoundingClientRect();
+  const viewport=section.getBoundingClientRect();
+  const overflows=section.scrollHeight>section.clientHeight;
+  section.scrollTop=section.scrollHeight;
+  const textBottom=section.querySelector('#ai-difficulty-help').getBoundingClientRect().bottom;
+  return {overflows, clippingGap:panel.bottom-viewport.bottom, lastLineVisible:textBottom<=viewport.bottom+1};
+ });
+ assert.ok(spacing.overflows,JSON.stringify(spacing));
+ assert.ok(spacing.clippingGap>=12,JSON.stringify(spacing));
+ assert.ok(spacing.lastLineVisible,JSON.stringify(spacing));
+ await game.locator('#start').click();
  await game.locator('#player-name-0').focus();
  const original=await p.locator('#gameFrame').evaluate(el=>el.getBoundingClientRect().height);
  await p.evaluate(()=>{
@@ -1548,9 +1568,9 @@ test('hosted blue canvas remains painted and frame stays stable while keyboard v
  await p.waitForTimeout(450);
  assert.equal(await p.locator('#gameFrame').evaluate(el=>el.getBoundingClientRect().height),original);
  assert.equal(await p.locator('#gameView').evaluate(el=>el.getBoundingClientRect().top),0);
- for(const selector of ['html','body','#gameView','#gameFrame'])assert.equal(await p.locator(selector).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(9, 44, 105)');
+ for(const selector of ['html','body','#gameView','#gameFrame'])assert.equal(await p.locator(selector).evaluate(el=>getComputedStyle(el).backgroundColor),tableColor);
  const button=await game.locator('#start').boundingBox();assert.ok(button.y+button.height<=415,JSON.stringify(button));
- assert.equal(await game.locator('#setup-wizard').evaluate(el=>getComputedStyle(el,'::backdrop').backgroundColor),'rgb(9, 44, 105)');
+ assert.equal(await game.locator('#setup-wizard').evaluate(el=>getComputedStyle(el,'::backdrop').backgroundColor),tableColor);
  const panelTop=await game.locator('#setup-wizard').evaluate(el=>el.getBoundingClientRect().top);
  await game.locator('#player-name-0').evaluate(el=>el.blur());
  await p.evaluate(()=>visualViewport.dispatchEvent(new Event('resize')));await p.waitForTimeout(250);
@@ -1558,7 +1578,7 @@ test('hosted blue canvas remains painted and frame stays stable while keyboard v
  assert.equal(await game.locator('#setup-wizard').evaluate(el=>el.getBoundingClientRect().top),panelTop);
  await game.locator('#wizard-cancel').click();
  await p.waitForFunction(()=>!document.documentElement.classList.contains('deal-setup-locked'));
- for(const selector of ['html','body','#gameView','#gameFrame'])assert.equal(await p.locator(selector).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(23, 69, 138)');
+ for(const selector of ['html','body','#gameView','#gameFrame'])assert.equal(await p.locator(selector).evaluate(el=>getComputedStyle(el).backgroundColor),tableColor);
  await p.locator('#backButton').evaluate(el=>el.click());
  assert.equal(await p.locator('html').evaluate(el=>el.classList.contains('deal-host-open')),false);
  await close(p);
