@@ -4,34 +4,37 @@ const faceColors={orange:'#fa8020',yellow:'#ffd10c',red:'#fa3b25',pink:'#ff2c8c'
 const paint=color=>faceColors[color]||GROUPS[color].color;
 export const lastAction=state=>(state.log||[]).find(entry=>!(/begins their turn\.$|^Cards dealt\.|^Computer difficulty:/.test(entry)))||'No moves yet.';
 const propertyName=name=>{const words=name.split(' ');return words.length>1?esc(words.slice(0,-1).join(' '))+'<br>'+esc(words.at(-1)):esc(name)};
-const propertyHeading=(name,reading,art=propertyName(name))=>reading
- ? `<h3 class="face-property-name reading-property-title" data-fit-label tabindex="0">${esc(name)}</h3>`
- : `<div class="face-property-name">${art}</div>`;
 // Fixed, separate drawing bounds keep the symbol clear of one- and two-digit values.
 const cash=value=>{
  const wide=String(value).length>1,width=wide?144:116,unitX=wide?112:78;
  return `<span class="cash-number" data-digits="${String(value).length}"><svg class="cash-print" viewBox="0 0 ${width} 100" aria-hidden="true" focusable="false"><text x="6" y="80" font-size="80" textLength="${wide?88:48}" lengthAdjust="spacingAndGlyphs">${esc(value)}</text><text x="${unitX}" y="80" font-size="30" textLength="26" lengthAdjust="spacingAndGlyphs">M</text><path d="M${unitX-1} 65h28m-28 6h28" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>`;
 };
 const skyline='<svg class="property-skyline" viewBox="0 0 80 90" aria-hidden="true"><path fill="currentColor" d="M5 90V72h16v18h7V42h7V30h6V12h3V0h3v12h3v18h6v12h7v48h7V65h8v25z"/><path stroke="var(--face-band,#ed962d)" stroke-width="3" stroke-dasharray="4 4" d="M35 49v40m9-40v40m9-40v40"/></svg>';
-function rentSchedule(color,reading=false){
+function rentSchedule(color){
  const g=GROUPS[color];
- if(reading)return `<div class="reading-rent-wrap"><table class="reading-rent"><caption>${g.name} rent</caption><thead><tr><th scope="col">Properties</th><th scope="col">Rent</th></tr></thead><tbody>${g.rent.map((value,i)=>`<tr${i===g.names.length-1?' class="reading-full-set"':''}><th scope="row"><span class="reading-rent-owned"><span>${i+1}</span>${i===g.names.length-1?'<span class="reading-full-label">Full set</span>':''}</span></th><td><span class="reading-rent-price"><span>${value}</span><span>M</span></span></td></tr>`).join('')}</tbody></table></div>`;
  return `<div class="face-rent rows-${g.rent.length}"><div class="rent-caption">RENT</div>${g.rent.map((v,i)=>`<div class="face-rent-row"><span class="rent-count"><svg class="rent-number-badge" viewBox="0 0 28 28" aria-hidden="true" focusable="false"><rect x="1" y="1" width="26" height="26" rx="7" fill="white" stroke="#17242d" stroke-width="1.5"/><rect x="5" y="5" width="18" height="4" rx="2" fill="${paint(color)}"/><text x="14" y="21" text-anchor="middle" fill="#111" font-family="Arial,sans-serif" font-size="15" font-weight="700">${i+1}</text></svg></span><span class="rent-dots" aria-hidden="true"><svg viewBox="0 0 160 6" preserveAspectRatio="none" focusable="false">${Array.from({length:16},(_,dot)=>`<circle cx="${5+dot*10}" cy="3" r="1.5" fill="#222"/>`).join('')}</svg></span><b>${v}<small>M</small></b></div>`).join('')}</div>`;
 }
-export function modernFace(card,{flipped=card.type==='property'&&card.colors?.length===2&&card.color===card.colors[1],reading=false}={}){
+const isFlippedWild=card=>card.type==='property'&&card.colors?.length===2&&card.color===card.colors[1];
+
+export function cardRentDescription(card,flipped=isFlippedWild(card)){
+ if(card.type!=='property'||card.colors.length===10)return '';
+ const colors=flipped?[...card.colors].reverse():card.colors;
+ return colors.map(color=>{
+  const group=GROUPS[color];
+  const rows=group.rent.map((amount,index)=>`${index+1} ${index===0?'property':'properties'}: ${amount}M`);
+  return `${group.name} rent. ${rows.join(', ')}`;
+ }).join('. ');
+}
+
+export function modernFace(card,{flipped=isFlippedWild(card),describeRent=false}={}){
  const colors=card.colors?.map(k=>paint(k))||[];
  const value=`<span class="face-value">${cash(card.value)}</span>`;
  let body,band=card.action==='house'?'#22824b':card.action==='hotel'?'#c83737':colors[0]||'#d4d5a2';
  if(card.type==='property'){
   const wild=card.colors.length>1;
-  if(card.colors.length===10){band='conic-gradient(#ed962d,#e24d50,#f1d44e,#46aa77,#4376d5,#71cee8,#db65ad,#955d39,#ed962d)';body=`<div class="face-property-top">${value}${skyline}</div>${propertyHeading('PROPERTY WILD',reading,'PROPERTY WILD')}<div class="any-color-disc" aria-hidden="true"></div><p class="face-instructions">Use with any property color.<br>Cash value: ${card.value}M. Bank or play as a property.</p>`;}
-  else if(wild&&reading){
-   const active=card.colors[flipped?1:0],other=card.colors[flipped?0:1];
-   band=paint(active);
-   body=`<div class="face-property-top">${value}${skyline}</div>${propertyHeading('PROPERTY WILD',reading)}<div class="reading-color">${GROUPS[active].name}</div>${rentSchedule(active,true)}<p class="face-instructions reading-flip-note">Flip for ${GROUPS[other].name}.</p>`;
-  }
+  if(card.colors.length===10){band='conic-gradient(#ed962d,#e24d50,#f1d44e,#46aa77,#4376d5,#71cee8,#db65ad,#955d39,#ed962d)';body=`<div class="face-property-top">${value}${skyline}</div><div class="face-property-name">PROPERTY WILD</div><div class="any-color-disc" aria-hidden="true"></div><p class="face-instructions">Use with any property color.<br>Cash value: ${card.value}M. Bank or play as a property.</p>`;}
   else if(wild){const ordered=flipped?[...card.colors].reverse():card.colors;body=ordered.map((color,i)=>`<div class="wild-half ${i?'wild-reverse':''}" style="--face-band:${paint(color)}"><div class="face-property-top">${value}${skyline}</div><div class="face-property-name">PROPERTY WILD</div>${rentSchedule(color)}</div>`).join('');}
-  else body=`<div class="face-property-top">${value}${skyline}</div>${propertyHeading(card.name,reading)}${rentSchedule(card.colors[0],reading)}`;
+  else body=`<div class="face-property-top">${value}${skyline}</div><div class="face-property-name">${propertyName(card.name)}</div>${rentSchedule(card.colors[0])}`;
  }else if(card.type==='money'){
   band='#99beb6';body=`<div class="face-money-top">${value}</div><div class="money-medallion">${cash(card.value)}</div><div class="face-money-bottom">${value}</div>`;
  }else{
@@ -40,7 +43,9 @@ export function modernFace(card,{flipped=card.type==='property'&&card.colors?.le
   const title=rentCard?'RENT':card.action==='pass'?'PASS<br><b>GO</b><svg class="go-arrow" viewBox="0 0 100 30" aria-hidden="true"><path d="M96 10H25V3L4 15l21 12v-7h71z" fill="#ed3c25" stroke="#111" stroke-width="2" stroke-linejoin="round"/></svg>':esc(card.name).toUpperCase();
   body=`<div class="face-action-top">${value}<span>ACTION CARD</span></div><div class="action-medallion" style="${ring}"><span>${title}</span></div><p class="face-instructions">${esc(rentCard?(card.colors.length===10?'One player pays you rent for properties you own in any color.':'All players pay you rent for properties you own in one of these colors.'):card.description)}</p>`;
  }
- return `<span class="deal-face" data-face="${card.type}" data-action="${card.action||''}" data-wild="${card.type==='property'&&card.colors.length===2}" data-reading="${reading}" style="--face-band:${band}" role="${reading?'group':'img'}" aria-label="${esc(card.name)} · ${card.value}M">${body}</span>`;
+ const rentText=describeRent?cardRentDescription(card,flipped):'';
+ const label=`${card.name} · ${card.value}M${rentText?`. ${rentText}`:''}`;
+ return `<span class="deal-face" data-face="${card.type}" data-action="${card.action||''}" data-wild="${card.type==='property'&&card.colors.length===2}" style="--face-band:${band}" role="img" aria-label="${esc(label)}">${body}</span>`;
 }
 const publicCard=(card,editable=false)=>`<span ${editable&&card.colors?.length>1?`data-table-wild="${card.id}" tabindex="0" role="button" aria-label="Change ${esc(card.name)} color"`:''} class="public-mini" title="${esc(card.name)}">${modernFace(card)}</span>`;
 function propertyGroups(player,editable=false){return Object.entries(GROUPS).filter(([key])=>properties(player,key).length).sort(([a],[b])=>Math.min(...properties(player,a).map(card=>card.value))-Math.min(...properties(player,b).map(card=>card.value))).map(([key,g])=>`<div class="deal-property-group ${complete(player,key)?'complete':''}" style="--group-color:${g.color}" aria-label="${g.name}: ${properties(player,key).length} of ${g.names.length}, rent ${rent(player,key)}M"><div class="public-cards">${properties(player,key).sort((a,b)=>a.value-b.value).map(card=>publicCard(card,editable)).join('')}</div><span class="group-caption">${properties(player,key).length}/${g.names.length} · ${rent(player,key)}M${player.buildings.filter(b=>b.color===key).map(b=>` · ${esc(b.name)}`).join('')}</span></div>`).join('');}
@@ -63,7 +68,7 @@ export function modernBoard(state,visible,selectedId,flipped,expanded=false,turn
  <div class="opponents">${Array.from({length:state.players.length-1},(_,offset)=>{const i=(state.turn+offset+1)%state.players.length;return playerPanel(state.players[i],i,offset)}).join('')}</div>
  <section class="deal-stage" aria-label="Card table">
  <button class="draw-deck" data-table-view="discard" aria-haspopup="dialog" aria-label="Deck and discard: ${state.draw.length} cards to draw, ${state.discard.length} discarded"><span class="deck-label">Deck</span><span class="deal-card-back deck-icon" aria-hidden="true"><span class="card-back-city" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><path fill="currentColor" d="M5 39V23h10v16h4V10h12v29h4V19h8v20z"/><path fill="#fff1c9" d="M8 27h4v3H8zm0 6h4v3H8zm15-18h4v4h-4zm0 8h4v4h-4zm0 8h4v4h-4zm15-8h2v4h-2zm0 8h2v4h-2z"/></svg></span><b>MONOPOLY<br>DEAL</b></span><span class="deck-count"><span><b>${state.draw.length}</b> left</span><span><b>${state.discard.length}</b> used</span></span></button>
- <div class="card-stage" aria-live="polite">${selected&&expanded?`<div class="selected-table-card" tabindex="0" role="group" aria-label="${esc(selected.name)} · Card ${browseCards.indexOf(selected)+1} of ${browseCards.length}${selectedIds.size>1?' selected':''}" aria-describedby="selected-card-help">${modernFace(selected,{flipped,reading:selected.type==='property'})}</div><nav class="selected-card-navigation" aria-label="${selectedIds.size>1?'Browse selected cards':'Browse your hand'}"><button type="button" id="preview-previous" aria-label="Previous card" aria-disabled="${browseCards.length<2}">←</button><button type="button" id="preview-close" aria-label="Close enlarged card">Close</button><span id="selected-card-help">${browseCards.indexOf(selected)+1} / ${browseCards.length}${selectedIds.size>1?' selected':''}</span><button type="button" id="preview-next" aria-label="Next card" aria-disabled="${browseCards.length<2}">→</button></nav>`:selected?`<div class="selected-card-summary has-card-preview"><button id="preview-open" type="button" aria-label="Read ${esc(selected.name)} enlarged">${modernFace(selected,{flipped})}</button></div>`:!visible?`<div class="table-privacy"><h2 data-fit-label>${turnHandoff?'Pass to':'Return to'} ${esc(player.name)}</h2><p>Keep your hand private.</p><button id="reveal" class="primary">${turnHandoff?'Reveal my hand':'Continue turn'}</button></div>`:finished?`<div class="table-privacy"><h2>${esc(state.winner)} wins!</h2><p>Three complete property colors.</p></div>`:''}</div>
+ <div class="card-stage" aria-live="polite">${selected&&expanded?`<div class="selected-table-card" tabindex="0" role="group" aria-label="${esc(selected.name)} · Card ${browseCards.indexOf(selected)+1} of ${browseCards.length}${selectedIds.size>1?' selected':''}" aria-describedby="selected-card-help">${modernFace(selected,{flipped,describeRent:true})}</div><nav class="selected-card-navigation" aria-label="${selectedIds.size>1?'Browse selected cards':'Browse your hand'}"><button type="button" id="preview-previous" aria-label="Previous card" aria-disabled="${browseCards.length<2}">←</button><button type="button" id="preview-close" aria-label="Close enlarged card">Close</button><span id="selected-card-help">${browseCards.indexOf(selected)+1} / ${browseCards.length}${selectedIds.size>1?' selected':''}</span><button type="button" id="preview-next" aria-label="Next card" aria-disabled="${browseCards.length<2}">→</button></nav>`:selected?`<div class="selected-card-summary has-card-preview"><button id="preview-open" type="button" aria-label="Read ${esc(selected.name)} enlarged">${modernFace(selected,{flipped})}</button></div>`:!visible?`<div class="table-privacy"><h2 data-fit-label>${turnHandoff?'Pass to':'Return to'} ${esc(player.name)}</h2><p>Keep your hand private.</p><button id="reveal" class="primary">${turnHandoff?'Reveal my hand':'Continue turn'}</button></div>`:finished?`<div class="table-privacy"><h2>${esc(state.winner)} wins!</h2><p>Three complete property colors.</p></div>`:''}</div>
  <div class="deal-actions" aria-label="Turn actions">
  <button id="flip-card" class="round-action" ${disabled(selectedWild&&canAct)}><span class="action-disc" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="15" y="13" width="19" height="24" rx="2" fill="currentColor" transform="rotate(-28 24 24)"/><path d="M8 23q-4 13 9 18m-8-7-1 8 8-1M40 26q4-14-9-19m8 7 1-8-8 1" fill="none" stroke="currentColor" stroke-width="3"/></svg></span><span>Flip</span></button>
  <button id="bank-card" class="round-action green" ${disabled(selected&&canBank(selected)&&canAct)}><span class="action-disc" aria-hidden="true">M</span><span>Bank</span></button>

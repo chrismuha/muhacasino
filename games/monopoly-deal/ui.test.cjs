@@ -122,7 +122,7 @@ test('screenshot states and responsive layout: 320, 390, 430, 768, 1260 portrait
   assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'No page overflow');await shot(p,`${viewport.width}-table`);
   for(const [type,find] of [['property',()=>window.__dealTest.state.players[0].hand.find(c=>c.name==='New York Avenue').id],['money',()=>window.__dealTest.state.players[0].hand.find(c=>c.type==='money').id],['rent',()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='rent').id]]){
    await select(p,find);await p.locator('#preview-open').click();assert.equal(await p.locator('.selected-table-card .deal-face').count(),1);assert.equal(await p.locator('#bank-card').getAttribute('aria-disabled'),String(type!=='money'));assert.equal(await p.locator('#play-card').getAttribute('aria-disabled'),String(type==='money'));
-   const box=await p.locator('.selected-table-card .deal-face').boundingBox();assert.ok(Math.abs(box.width/box.height-(viewport.width<=600?230/330:300/460))<.01,`${viewport.width}: proper selected card ratio`);const action=await p.locator('#end').boundingBox();assert.ok(box.x+box.width<=action.x+1||box.y+box.height<=action.y+1||action.y+action.height<=box.y+1,'Preview does not cover actions');await shot(p,`${viewport.width}-${type}`);await p.locator('#preview-close').click();
+   const box=await p.locator('.selected-table-card .deal-face').boundingBox();assert.ok(Math.abs(box.width/box.height-.69)<.01,`${viewport.width}: proper selected card ratio`);const action=await p.locator('#end').boundingBox();assert.ok(box.x+box.width<=action.x+1||box.y+box.height<=action.y+1||action.y+action.height<=box.y+1,'Preview does not cover actions');await shot(p,`${viewport.width}-${type}`);await p.locator('#preview-close').click();
   }
   await close(p);
  }
@@ -661,7 +661,7 @@ test('enlarged cards keep identical bounds across designs and trackpad gestures 
    for(let i=0;i<count;i++){
     const rect=await p.locator('.selected-table-card .deal-face').boundingBox();size??=rect;
     assert.ok(Math.abs(rect.width-size.width)<1&&Math.abs(rect.height-size.height)<1,`design ${start+i} stays same size`);
-    const clipped=await p.locator('.selected-table-card .deal-face').evaluate(face=>{const r=face.getBoundingClientRect();return [...face.querySelectorAll('.reading-property-title,.reading-rent-wrap,.face-instructions,.action-medallion,.money-medallion,.reading-color')].filter(el=>{const p=el.getBoundingClientRect();return p.top<r.top-1||p.bottom>r.bottom+1||p.left<r.left-1||p.right>r.right+1}).map(el=>el.className)});
+    const clipped=await p.locator('.selected-table-card .deal-face').evaluate(face=>{const r=face.getBoundingClientRect();return [...face.querySelectorAll('.face-property-name,.face-rent,.face-instructions,.action-medallion,.money-medallion')].filter(el=>{const p=el.getBoundingClientRect();return p.top<r.top-1||p.bottom>r.bottom+1||p.left<r.left-1||p.right>r.right+1}).map(el=>el.className)});
     assert.deepEqual(clipped,[],`${viewport.width} design ${start+i} fits inside its frame`);
     await p.locator('#preview-next').click();
    }
@@ -1043,37 +1043,56 @@ test('iPhone Air property and wild selections fit shorter portrait viewports',as
  }
 });
 
-test('enlarged property and action headers stay on one line',async()=>{
+test('enlarged hand cards match their thumbnails when opened, browsed, and flipped',async()=>{
  for(const viewport of [{width:420,height:742},{width:1440,height:900}]){
-  const p=await open(viewport);
-  await p.evaluate(async()=>{
-   const {createGame,deck}=await import('./engine.mjs');const s=createGame(['Chris','Alex']);s.draw=deck();s.discard=[];s.players.forEach(p=>{p.hand=[];p.props=[];p.bank=[];p.buildings=[]});
-   for(const fn of [c=>c.name==='North Carolina Avenue',c=>c.type==='property'&&c.colors.length===2,c=>c.action==='sly'])s.players[0].hand.push(s.draw.splice(s.draw.findIndex(fn),1)[0]);window.__dealTest.setState(s);
-  });
-  for(let index=0;index<3;index++){
-   await p.locator('[data-card]').nth(index).click();await p.locator('#preview-open').click();
-   const header=p.locator('.selected-table-card .reading-property-title,.selected-table-card .face-action-top > span:last-child');
-   assert.equal(await header.evaluate(el=>getComputedStyle(el).whiteSpace),'nowrap');assert.equal(await header.locator('br').count(),0);
-   assert.ok(await header.evaluate(el=>{const r=document.createRange();r.selectNodeContents(el);return r.getClientRects().length===1}));
-   await p.locator('#preview-close').click();await clickTableTool(p,'#deselect');
+  const p=await open(viewport);await fixture(p,'hand',2);
+  const face=p.locator('.selected-table-card .deal-face');
+  const handFace=p.locator('.modern-hand-card.is-active .deal-face');
+  const assertMatchingArt=async()=>{
+   assert.equal(await face.innerHTML(),await handFace.innerHTML());
+  };
+  await select(p,()=>window.__dealTest.state.players[0].hand.find(c=>c.name==='New York Avenue').id);
+  await p.locator('#preview-open').click();
+  await assertMatchingArt();
+  assert.ok(await face.locator('.rent-dots').count()>0);
+  assert.match(await face.getAttribute('aria-label'),/Orange rent.*1 property: 1M/);
+  for(let index=1;index<await p.locator('.modern-hand-card').count();index++){
+   await p.locator('#preview-next').click();
+   await assertMatchingArt();
+   if(await face.getAttribute('data-wild')==='true'){
+    assert.equal(await face.locator('.wild-half').count(),2);
+    const before=await face.locator('.wild-half').first().getAttribute('style');
+    await p.locator('#flip-card').click();
+    await assertMatchingArt();
+    assert.notEqual(await face.locator('.wild-half').first().getAttribute('style'),before);
+   }
   }
   await close(p);
  }
 });
 
-test('Bank and Properties show full reading cards and preserve live content through pinch zoom',async()=>{
+test('Bank and Properties use shared card artwork and preserve live content through pinch zoom',async()=>{
  for(const viewport of [{width:320,height:568},{width:420,height:780},{width:1440,height:900}]){
   const p=await open(viewport,undefined,{isMobile:true,hasTouch:true});await fixture(p,'hotel',2);
   await p.evaluate(()=>{const s=window.__dealTest.state;for(const fn of [c=>c.type==='money'&&c.value===2,c=>c.action==='debt'])s.players[0].bank.push(s.draw.splice(s.draw.findIndex(fn),1)[0]);window.__dealTest.render()});
   for(const kind of ['properties','bank']){
    await p.locator(kind==='properties'?'.current-properties':'.current-bank')[kind==='properties'?'dblclick':'click']();
    await p.locator('.content-page-nav span').waitFor();await p.waitForTimeout(100);
-   if(kind==='bank')while(await p.locator('.modern-public-face [data-reading=true]').count()===0)await p.locator('.content-page-nav button').last().click();
+   if(kind==='bank')while(await p.locator('.modern-public-face .deal-face').count()===0)await p.locator('.content-page-nav button').last().click();
    else await p.locator('[data-stack-shift="1"]').click();
    const face=p.locator(kind==='properties'?'.property-stack-card.is-active .deal-face':'.modern-public-face .deal-face').first();
-   assert.equal(await face.getAttribute('data-reading'),'true');
-   const size=await face.boundingBox();assert.ok(size.width>=220&&size.height>=(kind==='properties'?320:406),`${kind}: ${JSON.stringify(size)}`);
-   if(kind==='properties')assert.ok(await face.locator('.reading-rent').evaluate(el=>parseFloat(getComputedStyle(el).fontSize)>=16));
+   const size=await face.boundingBox();
+   assert.ok(size.width>=220&&Math.abs(size.width/size.height-.69)<.02,`${kind}: ${JSON.stringify(size)}`);
+   const art=await face.evaluate(async el=>{
+    const {modernFace}=await import('./modern-ui.mjs');
+    const {deck}=await import('./engine.mjs');
+    const name=el.getAttribute('aria-label').split(' · ')[0];
+    const card=deck().find(c=>c.name===name);
+    const reference=document.createElement('template');
+    reference.innerHTML=modernFace(card);
+    return el.innerHTML===reference.content.firstElementChild.innerHTML;
+   });
+   assert.ok(art,`${kind} uses the standard card face`);
    await shot(p,`reading-${kind}-${viewport.width}`);
    const saved=await p.locator('#table-view-content').evaluate(el=>{el.scrollTop=80;window.__zoomContent=el.firstElementChild;return {html:el.innerHTML,scroll:el.scrollTop,page:document.querySelector('.content-page-nav span').textContent}});
    let session;
@@ -2222,7 +2241,7 @@ test('manual drawn cards show complete reading faces and a reachable Close in th
   if(index<0)throw Error(`No ${kind} card`);s.draw.push(s.draw.splice(index,1)[0]);p.pendingDraw=1;t.render();
  },kind);
  await p.locator('.draw-deck').click();await p.locator('#drawn-card-dialog[open]').waitFor();
- const face=p.locator('#drawn-card-face .deal-face');assert.equal(await face.getAttribute('data-reading'),'false');
+ const face=p.locator('#drawn-card-face .deal-face');
  const value=await face.locator('.cash-print').first().boundingBox();assert.ok(value&&value.width>0&&value.height>0,JSON.stringify({theme,viewport,kind,value}));
  const button=await p.locator('#drawn-card-close').boundingBox();assert.ok(button.y>=0&&button.y+button.height<=viewport.height,JSON.stringify({theme,viewport,kind,button}));
  if(kind==='wild'){const before=await face.locator('.wild-half').first().getAttribute('style');await p.locator('#drawn-card-flip').click();assert.notEqual(await face.locator('.wild-half').first().getAttribute('style'),before);}
@@ -2709,8 +2728,8 @@ test('hosted iPhone Air places time in the player heading and preserves rent art
  assert.ok(timer.y>=dots.y+dots.height);assert.ok(timer.y+timer.height<=cards.y);
  const id=await game.evaluate(()=>window.__dealTest.state.players[0].hand.find(c=>c.action==='rent').id);
  await game.locator(`[data-card="${id}"]`).click();await game.locator('#preview-open').click();
- const art=await game.locator('.selected-table-card .deal-face').evaluate(el=>{const r=el.getBoundingClientRect(),m=el.querySelector('.action-medallion').getBoundingClientRect();return {reading:el.dataset.reading,center:(m.x+m.width/2-r.x)/r.width,ratio:r.width/r.height}});
- assert.notEqual(art.reading,'true');assert.ok(Math.abs(art.center-.5)<.02);assert.ok(Math.abs(art.ratio-.69)<.02);await close(p);
+ const art=await game.locator('.selected-table-card .deal-face').evaluate(el=>{const r=el.getBoundingClientRect(),m=el.querySelector('.action-medallion').getBoundingClientRect();return {center:(m.x+m.width/2-r.x)/r.width,ratio:r.width/r.height}});
+ assert.ok(Math.abs(art.center-.5)<.02);assert.ok(Math.abs(art.ratio-.69)<.02);await close(p);
 });
 
 
@@ -3473,6 +3492,7 @@ test('current release notes display alphabetical categories and preserve expanda
   const items=await section.locator('li').allTextContents();assert.deepEqual(items,items.slice().sort((a,b)=>a.localeCompare(b)));
  }
  assert.match(await p.locator('[aria-label="Latest Version"]').innerText(),/Dark Blue is now the default table background/);
+ assert.match(await p.locator('[aria-label="Latest Version"]').innerText(),/All card previews use the same artwork and proportions as the hand/);
  assert.match(await p.locator('[aria-label="Latest Version"]').innerText(),/Desktop hand scrolling/);
  assert.match(await p.locator('[aria-label="Latest Version"]').innerText(),/Rent is blocked/);
  assert.ok(await p.locator('.guide-rules details').count()>0);

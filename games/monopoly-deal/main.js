@@ -1,10 +1,10 @@
 import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261106-deal-v160-hand-v142';
-import {paginateViewer} from './view-pages.mjs?build=20261113-fixed-scrolling';
+import {paginateViewer} from './view-pages.mjs?build=deal-shared-card-art';
 import {aiChoice,aiPlay} from './ai.mjs?build=20261106-banking-v154';
-import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261116-rent-badges';
-import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261115-stable-tools';
+import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=deal-shared-card-art';
+import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=deal-shared-card-art';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261111-smooth-hand';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=deal-table-colors';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=deal-shared-card-art';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets,MULTICOLOR_WILD_VALUE} from './engine.mjs?build=20261115-wild-15m';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -399,7 +399,7 @@ function browseSelectedCard(direction,focusTarget=null){
  $('.deal-table').dataset.selectedType=card.type;
  previewFlipped=Boolean(cardPreferredSide(selectedCardId));
  const preview=$('.selected-table-card')||$('#preview-open');
- preview.innerHTML=modernFace(card,{flipped:previewFlipped,reading:previewExpanded&&card.type==='property'});
+ preview.innerHTML=modernFace(card,{flipped:previewFlipped,describeRent:previewExpanded});
  preview.setAttribute('aria-label',previewExpanded?`${card.name} · Card ${next+1} of ${hand.length}${multiple?' selected':''}`:`Read ${card.name} enlarged`);
  if($('#selected-card-help'))$('#selected-card-help').textContent=`${next+1} / ${hand.length}${multiple?' selected':''}`;
  document.querySelectorAll('#game [data-card]').forEach(button=>{const id=Number(button.dataset.card),selected=selectedCardIds.has(id);button.classList.toggle('is-selected',selected);button.classList.toggle('is-active',id===selectedCardId);button.setAttribute('aria-pressed',String(selected));});
@@ -499,7 +499,7 @@ function fitCompactPreview(){
  fitTableCards();
  const preview=$('.selected-table-card'),face=preview?.querySelector('.deal-face');
  if(!face)return;
- const phone=innerWidth<=600,width=phone?230:300,height=phone?330:460;
+ const width=innerWidth<=600?230:300,height=width/.69;
  preview.style.position='relative';preview.style.width=`${width}px`;preview.style.height=`${height}px`;
  Object.assign(face.style,{position:'absolute',left:'0',top:'0',width:`${width}px`,height:`${height}px`,minHeight:'0',zoom:'1',transform:'none',transformOrigin:'top left'});
  const availableWidth=preview.parentElement.clientWidth-8;
@@ -847,7 +847,7 @@ async function drawManualCard(){
 function showDrawnCard(card,remaining){
  const dialog=$('#drawn-card-dialog');
  let flipped=false;
- const paint=()=>{$('#drawn-card-face').innerHTML=modernFace(card,{flipped});};
+ const paint=()=>{$('#drawn-card-face').innerHTML=modernFace(card,{flipped,describeRent:true});};
  paint();
  $('#drawn-card-title').textContent='Card drawn';
  $('#drawn-card-remaining').textContent=remaining?`${remaining} more card${remaining===1?'':'s'} to draw. Close, then tap the deck.`:'Added to your hand. Close to continue.';
@@ -1213,7 +1213,7 @@ function showCardDesign() {
   $('#table-view-content').innerHTML = `<div class="catalog-browser-tools"><label for="catalog-type">Type</label><select id="catalog-type"><option value="all">All cards</option><option value="property">Properties</option><option value="action">Action cards</option><option value="money">Money</option></select><span class="catalog-position" aria-live="polite">${designIndex+1} / ${filtered.length}</span><span class="catalog-copy-count">Deck: ${card.copies} ${card.copies===1?'copy':'copies'}</span></div><div class="catalog-stage">
     <button type="button" id="design-previous" class="catalog-arrow" aria-label="Previous card design">‹</button>
     <article class="catalog-face" data-type="${card.type}" data-building="${card.action || ''}" aria-label="${esc(card.name)} card">
-      <div class="modern-catalog-face">${modernFace(card)}</div>
+      <div class="modern-catalog-face">${modernFace(card,{describeRent:true})}</div>
     </article><button type="button" id="design-next" class="catalog-arrow" aria-label="Next card design">›</button></div>`;
   $('#catalog-type').value=designFilter;
   $('#catalog-type').onchange=event=>{designFilter=event.target.value;designIndex=0;showCardDesign();$('#catalog-type').focus()};
