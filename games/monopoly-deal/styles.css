@@ -34,7 +34,7 @@ header>a,header>button,.masthead>button{flex-shrink:0}
 
 /* Player panels use large, high-contrast text, including their empty states. */
 
-:root{--modern-table-background:#0064db;background:var(--modern-table-background)}
+:root{--modern-table-background:#17458a;background:var(--modern-table-background)}
 body{background:radial-gradient(ellipse at 50% 20%,#ffffff12,transparent 70%),var(--modern-table-background)}
 .table-settings{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:0 0 24px;padding:16px 20px;border:1px solid #ffffff40;border-radius:14px;background:#0b201de8}
 .table-settings label{font-size:20px;color:#f0f6ef}

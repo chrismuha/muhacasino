@@ -94,14 +94,25 @@ test('setup: 2–4 unique named players, validation, review, cancellation, and p
 test('table colors persist without an appearance selector or alternate layout',async()=>{
  const p=await open();await fixture(p);await p.locator('.appearance-settings').evaluate(el=>el.open=true);
  assert.equal(await p.locator('[data-theme-choice],.theme-settings').count(),0);
+ const darkBlue=p.getByRole('button',{name:'Dark Blue',exact:true});
+ const blue=p.getByRole('button',{name:'Blue',exact:true});
+ assert.equal(await p.locator('#table-color').inputValue(),'#17458a');
+ assert.equal(await darkBlue.getAttribute('aria-pressed'),'true');
+ assert.equal(await blue.getAttribute('aria-pressed'),'false');
+ await blue.click();
+ assert.equal(await p.locator('#table-color').inputValue(),'#0064db');
+ await p.reload();await p.waitForFunction(()=>window.__dealTest);
+ await p.locator('.appearance-settings').evaluate(el=>el.open=true);
+ assert.equal(await p.locator('#table-color').inputValue(),'#0064db');
+ assert.equal(await blue.getAttribute('aria-pressed'),'true');
  await p.locator('#table-hex').fill('#803050');assert.equal(await p.locator('#table-color').inputValue(),'#803050');
  await p.locator('[data-table-color="#27313C"]').click();assert.equal(await p.locator('#table-color').inputValue(),'#27313c');
  await p.locator('#table-hex').fill('oops');assert.equal(await p.locator('#table-hex').getAttribute('aria-invalid'),'true');
- await p.locator('#reset-color').click();assert.equal(await p.locator('#table-color').inputValue(),'#0064db');
+ await p.locator('#reset-color').click();assert.equal(await p.locator('#table-color').inputValue(),'#17458a');assert.equal(await darkBlue.getAttribute('aria-pressed'),'true');
  await p.locator('#table-color').evaluate(e=>{e.value='#665533';e.dispatchEvent(new Event('input',{bubbles:true}))});
  await p.reload();await p.waitForFunction(()=>window.__dealTest);assert.equal(await p.locator('#table-color').inputValue(),'#665533');assert.equal(await p.locator('.modern-hand-card').count(),7);await close(p);
- const broken=await open(undefined,{'muha-monopoly-deal-modern-table-color':'bad'});assert.equal(await broken.locator('#table-color').inputValue(),'#0064db');await close(broken);
- const blocked=await open();await blocked.addInitScript(()=>{Object.defineProperty(window,'localStorage',{get(){throw Error('blocked')}})});await blocked.reload();await blocked.waitForFunction(()=>window.__dealTest);assert.equal(await blocked.locator('.theme-settings').count(),0);await close(blocked);
+ const broken=await open(undefined,{'muha-monopoly-deal-modern-table-color':'bad'});assert.equal(await broken.locator('#table-color').inputValue(),'#17458a');await close(broken);
+ const blocked=await open();await blocked.addInitScript(()=>{Object.defineProperty(window,'localStorage',{get(){throw Error('blocked')}})});await blocked.reload();await blocked.waitForFunction(()=>window.__dealTest);assert.equal(await blocked.locator('#table-color').inputValue(),'#17458a');await close(blocked);
 });
 
 test('screenshot states and responsive layout: 320, 390, 430, 768, 1260 portrait and desktop/landscape',async()=>{
@@ -691,14 +702,14 @@ test('hand trackpad scrolling and catalog swipe/trackpad navigation preserve pla
 test('guide and release notes match deck facts, current controls, and the current v1.6.0 label',async()=>{
  const p=await open();const facts=await p.evaluate(async()=>{const {GUIDE_RULES,RELEASE_NOTES,cardDesigns}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),notes:JSON.stringify(RELEASE_NOTES),designs:cardDesigns().length,cards:deck().length,title:RELEASE_NOTES[0][0],versions:RELEASE_NOTES.map(([title])=>title)}});
  assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.equal(facts.title,'v1.6.0 · TBD');
- assert.deepEqual(facts.versions.slice(0,2),['v1.6.0 · TBD','v1.5.0 · November 5, 2026']);
+ assert.deepEqual(facts.versions,['v1.6.0 · TBD','v1.5.0 · November 5, 2026','v1.1.0 · October 24, 2026']);
  assert.ok(!facts.versions.some(title=>/^v2\./.test(title)));
  assert.equal(new Set(facts.versions).size,facts.versions.length);
  for(const instruction of ['Double-tap','Close returns','no manual Hide','trackpad','Coming soon','Continue turn','same category','Bank cards first','one bullet for each card','Forced Deal lists both'])assert.ok(facts.rules.toLowerCase().includes(instruction.toLowerCase()),instruction);
  assert.doesNotMatch(facts.notes,/overlapping hand below|Privacy separately hides|actions below the selected|Collapsible Table appearance/);
  const history=await readFile(path.join(root,'about.html'),'utf8'),section=history.slice(history.indexOf('<article id="monopoly-deal"'),history.indexOf('<article id="sorry"'));
  assert.equal((section.match(/2026-11-05/g)||[]).length,1);assert.match(section,/v1\.6\.0/);assert.doesNotMatch(section,/separate Privacy control/);
- const releasePage=await readFile(path.join(root,'release-notes.html'),'utf8');assert.equal((releasePage.match(/<h2>Monopoly Deal v1\.6\.0<\/h2>/g)||[]).length,1);assert.match(releasePage,/<p class="release-date">Release date: TBD<\/p><h2>Monopoly Deal v1\.6\.0<\/h2>/);
+ const releasePage=await readFile(path.join(root,'release-notes.html'),'utf8');assert.equal((releasePage.match(/<h2>Monopoly Deal v1\.6\.0<\/h2>/g)||[]).length,1);assert.match(releasePage,/<p class="release-date">Release date: TBD<\/p><h2>Monopoly Deal v1\.6\.0<\/h2>/);assert.doesNotMatch(releasePage,/Monopoly Deal v1\.4\.0/);
  await close(p);
 });
 test('private payment resumes the same turn with Continue turn rather than Reveal my hand',async()=>{
@@ -1528,7 +1539,7 @@ test('hosted blue canvas remains painted and frame stays stable while keyboard v
  assert.equal(await game.locator('#setup-wizard').evaluate(el=>el.getBoundingClientRect().top),panelTop);
  await game.locator('#wizard-cancel').click();
  await p.waitForFunction(()=>!document.documentElement.classList.contains('deal-setup-locked'));
- for(const selector of ['html','body','#gameView','#gameFrame'])assert.equal(await p.locator(selector).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(0, 100, 219)');
+ for(const selector of ['html','body','#gameView','#gameFrame'])assert.equal(await p.locator(selector).evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(23, 69, 138)');
  await p.locator('#backButton').evaluate(el=>el.click());
  assert.equal(await p.locator('html').evaluate(el=>el.classList.contains('deal-host-open')),false);
  await close(p);
@@ -3061,14 +3072,20 @@ test('hosted Deal canvas follows table color and preserves navigation color',asy
  await p.goto(origin+'/index.html#monopoly-deal');
  await p.frameLocator('#gameFrame').locator('#ready-new').waitFor();
  const game=p.frames().find(f=>f.url().includes('/games/monopoly-deal/'));
- for(const color of ['#0064db','#236944']){
-  await game.evaluate(color=>{document.documentElement.style.setProperty('--modern-table-background',color);parent.postMessage({type:'muha-deal-background',color},location.origin)},color);
-  await p.waitForTimeout(50);
-  const expected=await game.locator('html').evaluate(el=>getComputedStyle(el).backgroundColor);
+ async function verifyCanvas(expected){
+  await p.waitForFunction(color=>getComputedStyle(document.querySelector('#gameFrame')).backgroundColor===color,expected);
   for(const selector of ['html','body','#gameView','#gameFrame'])assert.equal(await p.locator(selector).evaluate(el=>getComputedStyle(el).backgroundColor),expected);
   assert.equal(await p.locator('.game-toolbar').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(10, 12, 25)');
   assert.deepEqual(await game.locator('body').evaluate(el=>[getComputedStyle(el).backgroundColor,getComputedStyle(el).backgroundImage]),[expected,'none']);
  }
+ await verifyCanvas('rgb(23, 69, 138)');
+ await game.locator('#ready-settings').click();
+ await game.getByRole('button',{name:'Blue',exact:true}).click();
+ await verifyCanvas('rgb(0, 100, 219)');
+ await game.locator('#table-hex').fill('#236944');
+ await verifyCanvas('rgb(35, 105, 68)');
+ await game.locator('#reset-color').click();
+ await verifyCanvas('rgb(23, 69, 138)');
  await close(p);
 });
 
@@ -3396,6 +3413,7 @@ test('current release notes display alphabetical categories and preserve expanda
  for(const section of await p.locator('[aria-label="Latest Version"] section').all()){
   const items=await section.locator('li').allTextContents();assert.deepEqual(items,items.slice().sort((a,b)=>a.localeCompare(b)));
  }
+ assert.match(await p.locator('[aria-label="Latest Version"]').innerText(),/Dark Blue is now the default table background/);
  assert.match(await p.locator('[aria-label="Latest Version"]').innerText(),/Desktop hand scrolling/);
  assert.match(await p.locator('[aria-label="Latest Version"]').innerText(),/Rent is blocked/);
  assert.ok(await p.locator('.guide-rules details').count()>0);

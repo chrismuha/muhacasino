@@ -640,8 +640,8 @@ html.casino-hosted body{padding:0;min-height:100%}
 
 /* Anchor the blue table paint to the large viewport, rather than the keyboard's
    changing height. The setup controls alone follow the visible viewport. */
-html[data-theme=modern]{min-height:100%;background:var(--modern-table-background,#0064db)}
-html[data-theme=modern] body{min-height:100vh;min-height:100lvh;background-size:100% 100lvh;background-repeat:no-repeat;background-color:var(--modern-table-background,#0064db)}
+html[data-theme=modern]{min-height:100%;background:var(--modern-table-background,#17458a)}
+html[data-theme=modern] body{min-height:100vh;min-height:100lvh;background-size:100% 100lvh;background-repeat:no-repeat;background-color:var(--modern-table-background,#17458a)}
 
 /* The dialog covers the visible controls; its backdrop paints the rest of the
    layout viewport, including the area revealed around the software keyboard. */
@@ -655,7 +655,7 @@ body:has(#setup-wizard[open])>.game-topbar,body:has(#setup-wizard[open])>main{op
 /* Keep scrolling inside the finite game surface and paint it edge to edge. */
 html[data-theme]{height:100%;overflow:hidden;overscroll-behavior:none}
 html[data-theme] body{height:100%;min-height:0;overflow-y:auto;overscroll-behavior:none}
-html[data-theme=modern] body{background-size:100% 100%;background-attachment:local;background-color:var(--modern-table-background,#0064db)}
+html[data-theme=modern] body{background-size:100% 100%;background-attachment:local;background-color:var(--modern-table-background,#17458a)}
 
 .game-topbar button:disabled{opacity:.4;filter:grayscale(1);cursor:default}
 
@@ -816,8 +816,8 @@ body.is-ready .game-ready{margin-block:0;padding:clamp(12px,3vh,24px)}
 @media(prefers-reduced-motion:reduce){.game-toast{transition:none}}
 
 /* Stop root rubber-banding without changing the body positioning during setup. */
-html[data-theme]{overscroll-behavior-y:none;background:var(--modern-table-background,#0064db)}
-html[data-theme=modern]{background:var(--modern-table-background,#0064db)}
+html[data-theme]{overscroll-behavior-y:none;background:var(--modern-table-background,#17458a)}
+html[data-theme=modern]{background:var(--modern-table-background,#17458a)}
 
 /* Draw preferences stay separate from the per-event toast switches. */
 .toast-settings .toast-duration-setting{display:grid;gap:8px;white-space:normal}
@@ -827,7 +827,7 @@ html[data-theme=modern]{background:var(--modern-table-background,#0064db)}
 .dealing-settings label{display:flex;align-items:center;gap:10px;white-space:normal;font-size:16px}
 .dealing-settings input{width:22px;height:22px;flex:none;margin:0}
 /* A manually drawn card owns the screen until Close or Escape. */
-#drawn-card-dialog[open]{position:fixed;inset:0;box-sizing:border-box;margin:0;width:100%;max-width:none;height:100dvh;max-height:none;border:0;border-radius:0;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background:var(--modern-table-background,#0064db);color:white;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:10px;overflow:hidden}
+#drawn-card-dialog[open]{position:fixed;inset:0;box-sizing:border-box;margin:0;width:100%;max-width:none;height:100dvh;max-height:none;border:0;border-radius:0;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background:var(--modern-table-background,#17458a);color:white;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:10px;overflow:hidden}
 #drawn-card-dialog .drawn-card-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:0;border:0}
 #drawn-card-dialog h2{font-size:20px;margin:0}
 #drawn-card-dialog button{min-height:44px;padding:8px 16px;color:white;background:#07366b;border:1px solid #a4c8ee;font-size:16px}
@@ -1156,9 +1156,9 @@ body.is-finished .game-over-controls>*{flex:1 1 140px}
 #game .current-assets .current-bank>.asset-panel-heading,#game .current-assets .current-bank>.bank-balance{flex:0 0 auto;width:auto;align-self:center}
 
 /* Settings follows the saved table color, including live preset changes. */
-html[data-theme=modern] #appearance-dialog{background:var(--modern-table-background,#0064db);color:#fff}
+html[data-theme=modern] #appearance-dialog{background:var(--modern-table-background,#17458a);color:#fff}
 html[data-theme=modern] #appearance-dialog .table-settings{background:transparent}
-html[data-theme=modern] #appearance-dialog :is(fieldset,input:not([type=checkbox]),select,button){background-color:color-mix(in srgb,var(--modern-table-background,#0064db),#000 35%);color:#fff}
+html[data-theme=modern] #appearance-dialog :is(fieldset,input:not([type=checkbox]),select,button){background-color:color-mix(in srgb,var(--modern-table-background,#17458a),#000 35%);color:#fff}
 
 /* Mandatory action results remain readable until the player dismisses them. */
 :is(#property-transfer-dialog,#just-say-no-dialog){width:min(640px,calc(100vw - 24px));max-height:calc(100dvh - 24px);padding:0;overflow:hidden;background:#05265e;color:#fff}

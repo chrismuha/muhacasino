@@ -13,10 +13,12 @@
 - Added a compact Bug Report button with a bug icon inside Help that opens the issue-report instructions and email template.
 - Added a Fixed section in Help Known issues with How we fixed it explanations and user-facing notes for completed fixes.
 - Added a shared user-guide index for all eight casino games, with current-version labels, quick starts, detailed-rule directions, and release-history links. Help and the game-library footer link to the guides; Sorry! and Yahtzee also have direct guide and release-history links.
+- Consolidated closely spaced game updates into release milestones across all eight game histories, retaining the original change notes and recorded milestone dates.
 
 ### Interface and accessibility
 
 - Consolidated Monopoly Deal's completed changes under v1.6.0, the next version after v1.5.0, while preserving older release history.
+- Dark Blue is now the default table background. Choose the original, brighter Blue in the Settings controls.
 - Discard stays hidden when no hand card is selected. Selecting cards restores Discard and its selected-card count.
 - Elapsed game time keeps counting when focus moves into the casino game and resumes on touch or keyboard interaction. It pauses while the browser tab or window is inactive, resumes on return, and preserves paused time across reloads.
 - Phone Bank, Play, Flip, Discard, and Pass controls retain 48-pixel circles. Normal phone play uses compact labels in two columns at widths of at least 390 pixels; enlarged reading views keep larger labels. Browsing keeps all action slots in place with unavailable actions dimmed and explained, so card options do not shift the center preview or hand.

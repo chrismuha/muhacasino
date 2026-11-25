@@ -4,7 +4,7 @@ import {aiChoice,aiPlay} from './ai.mjs?build=20261106-banking-v154';
 import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=20261116-rent-badges';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=20261115-stable-tools';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261111-smooth-hand';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=20261115-minimum-five';
+import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=deal-dark-blue';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets,MULTICOLOR_WILD_VALUE} from './engine.mjs?build=20261115-wild-15m';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -1048,7 +1048,9 @@ $('.history').hidden=true;
 // A device preference shared by all seats; no hand or game state is stored.
 const tableColor = document.querySelector('#table-color');
 const tableHex = document.querySelector('#table-hex');
-function setTableColor(color) {
+const defaultTableColor = tableColor.defaultValue;
+const tableColorKey = 'muha-monopoly-deal-modern-table-color';
+function setTableColor(color, { save = true } = {}) {
   if (!/^#[0-9a-f]{6}$/i.test(color)) return;
   document.documentElement.style.setProperty('--modern-table-background', color);
   if(window.parent!==window)window.parent.postMessage({type:'muha-deal-background',color},location.origin);
@@ -1061,10 +1063,12 @@ function setTableColor(color) {
     button.setAttribute('aria-pressed', String(selected));
     button.querySelector('.preset-check').textContent = selected ? '✓' : '';
   });
-  try { localStorage.setItem('muha-monopoly-deal-modern-table-color', color); } catch { /* Storage may be unavailable. */ }
+  if (save) {
+    try { localStorage.setItem(tableColorKey, color); } catch { /* Storage may be unavailable. */ }
+  }
 }
 tableColor.addEventListener('input', () => setTableColor(tableColor.value));
-document.querySelector('#reset-color').addEventListener('click', () => setTableColor('#0064db'));
+document.querySelector('#reset-color').addEventListener('click', () => setTableColor(defaultTableColor));
 
 tableHex.addEventListener('input', () => {
   const color = tableHex.value.trim();
@@ -1230,9 +1234,9 @@ document.addEventListener('keydown', event => {
 });
 
 // One card-table appearance. Saved table colors remain available.
-let savedColor='#0064db';
-try{savedColor=localStorage.getItem('muha-monopoly-deal-modern-table-color')||savedColor;}catch{}
-setTableColor(/^#[0-9a-f]{6}$/i.test(savedColor)?savedColor:'#0064db');
+let savedColor;
+try { savedColor = localStorage.getItem(tableColorKey); } catch { /* Storage may be unavailable. */ }
+setTableColor(/^#[0-9a-f]{6}$/i.test(savedColor) ? savedColor : defaultTableColor, { save: false });
 render();
 
 // Refit after rotation, split-screen resizing, browser zoom, or container resizing.
@@ -1328,7 +1332,7 @@ function openGameSettings(){
  document.body.append(appearance);
  window.addEventListener('message',event=>{
   if(event.source!==window.parent||event.origin!==location.origin)return;
-  if(event.data?.type==='muha-deal-host-ready'){document.documentElement.classList.add('casino-hosted');setTableColor(tableColor.value);syncNavigationControls(true);return;}
+  if(event.data?.type==='muha-deal-host-ready'){document.documentElement.classList.add('casino-hosted');setTableColor(tableColor.value, { save: false });syncNavigationControls(true);return;}
   if(event.data?.type!=='muha-deal-command')return;
   if(busy){showToast('Finish the current action or computer turn first.');return;}
   if(document.querySelector('dialog[open]'))return;
