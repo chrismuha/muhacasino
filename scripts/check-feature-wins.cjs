@@ -4,11 +4,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const shared = fs.readFileSync(path.join(__dirname, '../slot-experience.js'), 'utf8');
-function extract(source, name) {
+function extract(source, name, indent = "") {
     let start = source.indexOf(`async function ${name}(`);
     if (start < 0) start = source.indexOf(`function ${name}(`);
     assert.ok(start >= 0, name);
-    return source.slice(start, source.indexOf('\n}', start) + 2);
+    const close = `\n${indent}}`;
+    return source.slice(start, source.indexOf(close, start) + close.length);
 }
 async function checkDialog() {
     const nodes = {};
@@ -103,20 +104,39 @@ async function checkGame(game) {
     closeWin();
     await lastFreeSpin;
     assert.equal(ctx.freeSpinWagerConfig, null);
-    // A delayed animation callback must not overwrite an already rendered result.
-    const frames = [];
-    let renders = 0;
-    const animation = vm.createContext({ roundWinUSD, Math, performance: { now: () => 0 }, requestAnimationFrame: fn => frames.push(fn), createGrid: () => [], randomSymbol: () => 'normal', renderGrid: () => { renders++; } });
-    vm.runInContext(extract(source, 'animateSpin'), animation);
-    animation.animateSpin(650);
-    frames.shift()(100);
-    assert.equal(renders, 1);
-    frames.shift()(800);
-    assert.equal(renders, 1, 'Late animation frame must not repaint the final outcome');
     assert.match(extract(source, 'buyInstantBonus'), /await window\.slotExperience\?\.showFeatureWin/);
 }
+async function checkReelAnimation() {
+    const frames = [];
+    let renders = 0;
+    let timeout;
+    const context = vm.createContext({
+        performance: { now: () => 0 },
+        requestAnimationFrame: callback => frames.push(callback),
+        cancelAnimationFrame() {},
+        setTimeout: callback => { timeout = callback; },
+        clearTimeout() {},
+    });
+    vm.runInContext(extract(shared, 'animateReels', '    '), context);
+    const manuallyStopped = context.animateReels(() => { renders++; });
+    frames.shift()(100);
+    assert.equal(renders, 1);
+    manuallyStopped.stop();
+    frames.shift()(200);
+    timeout();
+    assert.equal(renders, 1, 'A canceled callback must never redraw the settled reels');
+    assert.equal(await manuallyStopped.finished, true);
+
+    const naturalStop = context.animateReels(() => { renders++; });
+    frames.shift()(800);
+    timeout();
+    assert.equal(renders, 1, 'An overdue callback must not draw another frame');
+    assert.equal(await naturalStop.finished, false);
+}
+
 (async () => {
     await checkDialog();
+    await checkReelAnimation();
     for (const game of ['pretty-penny', 'treasurepots', 'neon-slots', 'big-money-deluxe']) await checkGame(game);
     console.log('Feature wins: close-only acknowledgment, breakdown, input lock, one-time credit, free-spin batch totals, and all four game integrations passed');
 })().catch(error => { console.error(error); process.exitCode = 1; });

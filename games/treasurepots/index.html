@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <meta name="game-version" content="1.4.0">
+    <meta name="game-version" content="1.5.0">
     <title>Treasure Pots</title>
     <link rel="icon" href="../../icons/casino-mark-v5.png" type="image/png" sizes="192x192">
   <link rel="icon" href="../../icons/casino-mark-v5.svg" type="image/svg+xml" />
@@ -232,6 +232,10 @@
                         </div>
 
                         <div class="checkbox-setting">
+                            <label class="checkbox-row" for="revealWinnings"><input id="revealWinnings" type="checkbox" /><span>Reveal winnings</span></label>
+                            <p class="overlay-note">Cover the reels and show results immediately. Bonuses resolve automatically; bets, odds, and credits use the usual rules.</p>
+                        </div>
+                        <div class="checkbox-setting">
                             <label class="checkbox-row" for="skipWinAnimationDelay">
                                 <input id="skipWinAnimationDelay" type="checkbox" checked />
                                 <span>Skip winning highlight delay</span>
@@ -273,7 +277,14 @@
                 </div>
 
                 <div class="overlay-section" data-info-page="0">
-                    <p class="overlay-note" data-game-release><strong>Treasurepots v1.4 · TBD</strong> — Automatic affordable bets and guide corrections. See <a href="../../about.html#treasurepots">full release notes</a>.</p>
+                    <section class="slot-latest-release" aria-label="Latest version">
+                        <h4>What’s New</h4>
+                        <p class="overlay-note" data-game-release><strong>Treasurepots v1.5 · TBD</strong> · Rapid spins and instant results</p>
+                        <h5>Gameplay</h5>
+                        <ul><li>Press Spin to start the reels and press Stop to show that spin’s result early. The next press starts a new spin once the result settles.</li><li>Reveal winnings shows the wager, award, net result, and balance immediately. Bonuses resolve automatically under their usual rules.</li></ul>
+                        <p><a href="../../about.html#treasurepots">full release notes</a></p>
+                    </section>
+                    <h4>Rapid spins and Reveal winnings</h4><p>Press Spin to start the reels, then press Stop to reveal the current result early. Once it settles, press Spin again. Stop changes only the animation. With Reveal winnings enabled in Settings, each press shows the wager, award, net result, and balance without reel animation. Bonuses resolve automatically under their usual rules. Hold Spin for counted auto spins and use Cancel to end the run after the current spin.</p>
                     <h4>Payout Rules</h4>
                     <p><a href="../../slots-guide.html" target="_blank" rel="noopener">Compare all four slot games (opens a new tab)</a> — shared features, exclusive features, and free-spin symbols.</p>
                     <p><strong>Whole-dollar wins only:</strong> Every positive payout is rounded up to the next whole dollar, with a $1 minimum. This includes each winning line, LINK value, held-Wild gem, diamond, jackpot, wheel award, and bonus payout. Zero remains zero. Wagers, deposits, balances, and jackpot wager counters may still include cents; the rule applies to awards, not the amount spent.</p>
@@ -430,11 +441,11 @@
         </div>
     </div>
 
-    <link rel="stylesheet" href="../../slot-experience.css?v=1.20.8&amp;build=20261106-auto-lower-bet-v147">
+    <link rel="stylesheet" href="../../slot-experience.css?v=1.20.8&amp;build=rapid-spins">
     <script src="../../interaction-lock.js?build=20260808-no-double-tap"></script>
-    <script src="../../slot-experience.js?v=1.20.17&amp;build=20261106-auto-lower-bet-v147"></script>
+    <script src="../../slot-experience.js?v=1.20.17&amp;build=rapid-spins"></script>
     <script src="../../slot-auto-spin.js"></script>
-    <script src="main.js?v=1.4.2&amp;build=20261106-auto-lower-bet-v147"></script>
+    <script src="main.js?v=1.5.0&amp;build=rapid-spins"></script>
 </body>
 
 </html>

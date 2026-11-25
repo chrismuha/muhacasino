@@ -96,7 +96,7 @@ async function check(game) {
             assert.equal((rotation + index * 120 + 60) % 360, 0, 'Winning wedge must align with pointer');
         }
     }
-    assert.match(source, /bonusResult\?\.count === 6 \? await playBonusGame\(totalBetUSD\)/);
+    assert.match(source, /bonusResult\?\.count === 6 \? await playBonusGame\(totalBetUSD, "random", revealMode\)/);
     assert.match(source, /function buyInstantBonus\(option = \{\}\)/, 'Every slot must expose an amount-aware instant bonus purchase');
     assert.match(source, /getCost: \(\) => 40, getOptions:.*\[40, 80, 120\].*cost \/ 100/, 'Every slot must expose fixed $40, $80, and $120 bonus purchases with increasing feature wagers');
     assert.match(source, /configureBonusBuy/, 'Every slot must register its Buy Bonus button');

@@ -5,8 +5,10 @@
 ### Gameplay
 
 - Added Growing Penny Wild exclusively to Pretty Penny. On eligible paid and free reel spins, a natural Penny Wild can grow across all five cells of one random row for the current result. The saved trigger setting defaults to 3% and can be adjusted or disabled. Active paylines pay from the expanded grid; existing line awards never decrease, special-symbol rows and jackpot displays are protected, and growth increases effective returns beyond Regular Win Odds.
+- Advanced all four slots to v1.5. Press Spin to start and Stop to reveal the current result early.
 - Low hands refill to at least five cards when drawing at the start of a turn or with Pass Go, drawing the usual two when that already reaches five. Empty hands draw five, and seven remains the end-of-turn limit. Automatic dealing adds the cards immediately; manual dealing requires one deck tap per owed card. This minimum-five refill is a house rule; standard rules draw two unless the hand is empty.
 - Multicolor Wilds now have a 15M cash value in new and saved deals. They can be banked for one play, used for payments, or played in any color, including completing a set together.
+- Reveal winnings is available in every slot. It shows each result immediately and resolves bonuses automatically using existing odds and awards.
 
 ### Help and support
 

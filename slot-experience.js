@@ -1314,6 +1314,77 @@
         return true;
     }
 
+    function animateReels(drawFrame) {
+        let frameId;
+        let timerId;
+        let active = true;
+        let resolve;
+        const finished = new Promise((done) => { resolve = done; });
+        const end = (stopped) => {
+            if (!active) return;
+            active = false;
+            cancelAnimationFrame(frameId);
+            clearTimeout(timerId);
+            resolve(stopped);
+        };
+        const start = performance.now();
+        const frame = (now) => {
+            if (!active || now - start >= 650) return;
+            drawFrame();
+            frameId = requestAnimationFrame(frame);
+        };
+        frameId = requestAnimationFrame(frame);
+        timerId = setTimeout(() => end(false), 700);
+        return { finished, stop: () => end(true) };
+    }
+
+    function configureRevealWinnings({ reels, setting, getBalance, format }) {
+        const key = `${gameKey}-reveal-winnings`;
+        const result = document.createElement("section");
+        result.className = "slot-reveal-result";
+        result.hidden = true;
+        result.setAttribute("role", "status");
+        result.innerHTML = '<span>Reveal winnings</span><h3>Ready to reveal</h3><p>Press Spin to see your result.</p>';
+        reels.after(result);
+        const headline = result.querySelector("h3");
+        const details = result.querySelector("p");
+        const enabled = () => Boolean(setting.checked);
+        const position = () => {
+            if (!enabled()) return;
+            Object.assign(result.style, {
+                top: `${reels.offsetTop}px`,
+                left: `${reels.offsetLeft}px`,
+                width: `${reels.offsetWidth}px`,
+                height: `${reels.offsetHeight}px`,
+            });
+        };
+        const sync = () => {
+            document.body.classList.toggle("slot-reveal-mode", enabled());
+            result.hidden = !enabled();
+            reels.setAttribute("aria-hidden", String(enabled()));
+            position();
+        };
+        try { setting.checked = localStorage.getItem(key) === "true"; } catch {}
+        setting.addEventListener("change", () => {
+            try { localStorage.setItem(key, String(enabled())); } catch {}
+            sync();
+        });
+        new ResizeObserver(position).observe(reels);
+        window.addEventListener("resize", position);
+        sync();
+        return {
+            enabled,
+            show({ wagerUSD, payoutUSD, free, freeSpinsAwarded = 0 }) {
+                const net = Math.round((payoutUSD - wagerUSD) * 100) / 100;
+                headline.textContent = payoutUSD > 0 ? `Won ${format(payoutUSD)}` : "No win";
+                const netLabel = net < 0 ? "Net loss" : "Net gain";
+                const award = freeSpinsAwarded ? ` · ${freeSpinsAwarded} free spins awarded` : "";
+                details.textContent = `${free ? "Free spin" : `Bet ${format(wagerUSD)}`} · ${netLabel} ${format(Math.abs(net))} · Balance ${format(getBalance())}${award}`;
+                result.dataset.outcome = net < 0 ? "loss" : "win";
+            },
+        };
+    }
+
     function closeReelDoors(reels) {
         if (state.revealDoors === "off" || state.revealDoorRows.length === 0) return;
         const host = reels?.parentElement;
@@ -1337,12 +1408,14 @@
         doors.style.height = `${reels.offsetHeight}px`;
     }
 
-    async function revealReelDoors(reels) {
+    async function revealReelDoors(reels, { instant = false } = {}) {
         const doors = reels?.parentElement?.querySelector(":scope > .penny-reveal-doors");
         if (!doors) return;
-        await new Promise((resolve) => window.setTimeout(resolve, 450));
-        doors.classList.add("open");
-        await new Promise((resolve) => window.setTimeout(resolve, 850));
+        if (!instant) {
+            await new Promise((resolve) => window.setTimeout(resolve, 450));
+            doors.classList.add("open");
+            await new Promise((resolve) => window.setTimeout(resolve, 850));
+        }
         doors.remove();
         reels.classList.remove("penny-doors-active");
         reels.parentElement?.classList.remove("penny-door-host");
@@ -1597,7 +1670,11 @@
             };
             controls.querySelectorAll("[data-cabinet-action]").forEach((button) => {
                 const action = button.dataset.cabinetAction;
-                if (action === "spin") button.disabled = Boolean(document.querySelector("#spin")?.disabled);
+                if (action === "spin") {
+                    const spin = document.querySelector("#spin");
+                    button.disabled = Boolean(spin?.disabled);
+                    if (spin && button.textContent !== spin.textContent) button.textContent = spin.textContent;
+                }
                 else if (cabinetActions[action]) button.disabled = Boolean(document.querySelector(cabinetActions[action][0])?.disabled);
             });
             const cabinetBuyBonus = controls.querySelector('[data-slot-cabinet-action="buy-bonus"]');
@@ -1857,6 +1934,8 @@
         spinWheel,
         pickWheelPointerCount,
         showWheelPointers,
+        animateReels,
+        configureRevealWinnings,
         closeReelDoors,
         revealReelDoors,
         renderResultMessage,

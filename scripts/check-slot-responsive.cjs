@@ -95,7 +95,7 @@ test('slot release versions match current labels and preserve November 2 history
  const launcher=await readFile(path.join(root,'launcher.js'),'utf8');
  const about=await readFile(path.join(root,'about.html'),'utf8');
  const releases=await readFile(path.join(root,'release-notes.html'),'utf8');
- const version="1.4.0",publicVersion="1.4",previous="1.3.1";
+ const version="1.5.0",publicVersion="1.5",previous="1.3.1";
  for(const [game,anchor]of [['big-money-deluxe','big-money'],['neon-slots','neon'],['pretty-penny','pretty-penny'],['treasurepots','treasurepots']]){
   const html=await readFile(path.join(root,'games',game,'index.html'),'utf8');
   const section=about.split(`<article id="${anchor}"`)[1].split('</article>')[0];
@@ -106,6 +106,7 @@ test('slot release versions match current labels and preserve November 2 history
   assert.ok(section.includes(`<b>v${publicVersion}</b>`));
   assert.equal(section.split(`v${previous} · 2026-11-02`).length-1,1);
   assert.equal(section.split(`v${publicVersion} · TBD`).length-1,1);
+  assert.equal(section.split("v1.4 · TBD").length-1,1);
   for(const note of ['Main game screens:','Landscape screens:','Desktop screens:','Settings, all pages:','Info, payout, and Buy Bonus screens:'])assert.ok(section.includes(note),`${game}: ${note}`);
   if(game==='pretty-penny'||game==='treasurepots')assert.ok(section.includes('Feature meters:'));
   assert.ok(releases.includes(`${game==='treasurepots'?'Treasurepots':game==='neon-slots'?'Neon Slots':game==='pretty-penny'?'Pretty Penny':'Big Money Deluxe'} v${publicVersion}</h2>`));
@@ -241,4 +242,90 @@ for (const game of games) test(`${game}: reel artwork and award labels fit short
    }
   }
  } finally { await p.close(); }
+});
+
+for (const game of games) test(`${game}: rapid taps stop one spin and reveal results without overlapping wagers`, async () => {
+ const page = await browser.newPage({viewport:{width:420,height:712},isMobile:true,hasTouch:true});
+ page.setDefaultTimeout(5000);
+ const errors = [];
+ page.on('pageerror', error => errors.push(error.message));
+ try {
+  await page.goto(`${origin}/games/${game}/`);
+  await page.locator('.slot-phone-dock #spin').waitFor();
+  await page.evaluate(() => {
+   resolveJackpotWins = () => [];
+   window.slotExperience.getLinkChipSettings = () => ({winChance:0,teaserChance:0});
+   window.slotExperience.getStickyLinkSettings = () => ({enabled:false});
+   for (const id of ['freeSpinsOdds','bonusGameOdds','gemHoldOdds','linkWinOdds','linkTeaserOdds','growingWildOdds']) {
+    const setting = document.getElementById(id);
+    if (setting) setting.value = '0';
+   }
+  });
+  const history = () => page.evaluate(() => JSON.parse(localStorage.getItem(Object.keys(localStorage).find(key => key.endsWith('.spinHistory'))) || '[]'));
+  const spin = page.locator('#spin');
+  const button = await spin.boundingBox();
+  const tap = () => page.touchscreen.tap(button.x + button.width/2, button.y + button.height/2);
+  for (let completed=0; completed<3; completed++) {
+   await tap();
+   assert.equal(await spin.textContent(),'Stop');
+   assert.equal((await history()).length,completed);
+   await tap();
+   // A real touch tap under 300 ms must end the animation rather than wait out its 700 ms timer.
+   await page.waitForFunction(() => document.querySelector('#spin').textContent === 'Spin' && !document.querySelector('#spin').disabled, null, {timeout:350});
+   assert.equal((await history()).length,completed+1);
+  }
+
+  await page.locator('.slot-phone-open').click();
+  await page.locator('#settingsButton').click();
+  await page.locator('.settings-page-jump').selectOption({label:'Reveal winnings'});
+  await page.locator('#revealWinnings').check();
+  await page.locator('.settings-close').click();
+  const result = page.locator('.slot-reveal-result');
+  await result.waitFor();
+  const [covered, reels] = await Promise.all([
+   result.boundingBox(),
+   page.locator('#reels').evaluate(el => el.getBoundingClientRect().toJSON()),
+  ]);
+  for (const metric of ['x','y','width','height']) assert.ok(Math.abs(covered[metric]-reels[metric])<=1,`${metric}: ${JSON.stringify({covered,reels})}`);
+  for (let completed=3; completed<6; completed++) {
+   await tap();
+   await page.waitForFunction(() => !document.querySelector('#spin').disabled, null, {timeout:350});
+   assert.equal(await spin.textContent(),'Spin');
+   assert.equal((await history()).length,completed+1);
+   assert.match(await result.innerText(),/Bet .* · Net .* · Balance /);
+  }
+  await page.evaluate(() => {
+   const originalRate = getFeatureRate;
+   getFeatureRate = (setting, fallback) => setting === bonusGameOddsEl ? 1 : originalRate(setting, fallback);
+   const originalBonus = playBonusGame;
+   playBonusGame = (wager, _choice, automatic) => originalBonus(wager, 'wheel', automatic);
+  });
+  await tap();
+  await page.waitForFunction(() => !document.querySelector('#spin').disabled, null, {timeout:350});
+  const rows = (await history()).reverse();
+  assert.equal(rows.length,7,'A triggered automatic bonus settles as part of its spin');
+  assert.ok(rows.at(-1).payoutUSD>0,'The automatic wheel awards credits');
+  let credits = 100;
+  for (const row of rows) {
+   assert.ok(row.wagerUSD > 0);
+   credits = Math.round((credits - row.wagerUSD + row.payoutUSD)*100)/100;
+   assert.equal(row.balanceUSD,credits);
+  }
+
+  const bonuses = await page.evaluate(async () => {
+   const results = [];
+   for (const choice of ['wheel','match','diamonds']) {
+    const outcome = await playBonusGame(.5,choice);
+    results.push(Number(outcome?.winUSD ?? outcome));
+   }
+   return results;
+  });
+  assert.ok(bonuses.every(award => Number.isFinite(award) && award >= 0));
+  assert.equal(await page.locator('.feature-overlay:visible, .feature-win-overlay:visible, .diamond-collector-overlay:visible').count(),0);
+  await page.reload();
+  assert.equal(await page.locator('#revealWinnings').isChecked(),true,'Reveal setting persists per game');
+  assert.deepEqual(errors,[]);
+ } finally {
+  await page.close();
+ }
 });
