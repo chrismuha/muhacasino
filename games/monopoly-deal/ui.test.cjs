@@ -63,6 +63,10 @@ async function notification(page,pattern){
 async function choose(page,text){while(await page.locator('#just-say-no-dialog[open]').count())await page.locator('#just-say-no-dialog button').click();await page.locator('#choice[open]').waitFor();const button=typeof text==='string'?page.locator('#options button').filter({hasText:text}).first():page.locator('#options button').nth(text);await button.click();}
 async function selectTableCategory(page,value){
  const index=Number(value),view=await page.evaluate(index=>{const v=window.__dealTest.tableViews()[index];return {key:v.key,kind:v.kind,owner:v.ownerIndex}},index);
+ if(await page.locator('#table-view-category').isVisible()){
+  await page.locator('#table-view-category').selectOption(String(value));
+  return;
+ }
  if(await page.locator('html').getAttribute('data-theme')==='modern'){
   if(view.kind||view.key==='activity'){
    await page.locator(`[data-modern-section="${view.kind||'activity'}"]`).click();
@@ -165,9 +169,17 @@ test('payment breaks sets, normalizes buildings, allows insufficient assets with
  const p=await open();await fixture(p,'pay-property',2);await playFirst(p);await choose(p,'Alex');await choose(p,'Ready to pay');await choose(p,'Mediterranean');await choose(p,'House');await choose(p,'Baltic');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].buildings.length),0);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].bank.length),1);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].props.length),2);await conservation(p);await close(p);
 });
 
-test('discard down to seven, next-player draw, victory, and post-win table access',async()=>{
+test('discard down to seven, next-player draw, victory, and readable game summary',async()=>{
  const p=await open();await fixture(p,'discard',2);await choose(p,0);await choose(p,0);await idle(p);await p.locator('#end').click();await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[0].hand.length),7);assert.equal(await p.evaluate(()=>window.__dealTest.state.players[1].hand.length),5);await conservation(p);
- await fixture(p,'win',2);await playFirst(p);await choose(p,'View table');await idle(p);assert.equal(await p.evaluate(()=>window.__dealTest.state.winner),'Chris');assert.equal(await p.locator('#end').isDisabled(),true);await p.locator('.current-properties .asset-panel-title').dblclick();assert.equal(await p.locator('#table-viewer').getAttribute('open'),'');await p.locator('#table-view-close').click();await conservation(p);await close(p);
+ await fixture(p,'win',2);await playFirst(p);await choose(p,'Game summary');await idle(p);
+ assert.equal(await p.evaluate(()=>window.__dealTest.state.winner),'Chris');
+ const summary=p.locator('.game-over-banner');
+ await summary.getByRole('heading',{name:'Chris wins!'}).waitFor();
+ const sizes=await summary.locator('.game-over-controls > *').evaluateAll(buttons=>buttons.map(button=>getComputedStyle(button).fontSize));
+ assert.equal(new Set(sizes).size,1,JSON.stringify(sizes));
+ await summary.getByRole('button',{name:'Open move history'}).click();
+ await p.locator('#action-history[open]').waitFor();
+ await p.keyboard.press('Escape');await conservation(p);await close(p);
 });
 
 test('all 58 card designs and every table-view category work in the card-table layout',async()=>{
@@ -700,7 +712,7 @@ test('hand trackpad scrolling and catalog swipe/trackpad navigation preserve pla
 });
 
 test('guide and release notes match deck facts, current controls, and the current v1.6.0 label',async()=>{
- const p=await open();const facts=await p.evaluate(async()=>{const {GUIDE_RULES,RELEASE_NOTES,cardDesigns}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),notes:JSON.stringify(RELEASE_NOTES),designs:cardDesigns().length,cards:deck().length,title:RELEASE_NOTES[0][0],versions:RELEASE_NOTES.map(([title])=>title)}});
+ const p=await open();const facts=await p.evaluate(async()=>{const {GUIDE_RULES,GUIDE_REFERENCE,RELEASE_NOTES,cardDesigns}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify([...GUIDE_RULES,...GUIDE_REFERENCE]),notes:JSON.stringify(RELEASE_NOTES),designs:cardDesigns().length,cards:deck().length,title:RELEASE_NOTES[0][0],versions:RELEASE_NOTES.map(([title])=>title)}});
  assert.equal(facts.designs,58);assert.equal(facts.cards,106);assert.equal(facts.title,'v1.6.0 · TBD');
  assert.deepEqual(facts.versions,['v1.6.0 · TBD','v1.5.0 · November 5, 2026','v1.1.0 · October 24, 2026']);
  assert.ok(!facts.versions.some(title=>/^v2\./.test(title)));
@@ -1369,7 +1381,7 @@ test('secondary text is white and the guide consistently documents the v1.6.0 ru
  }
  assert.equal(await p.locator('#undo').getAttribute('aria-disabled'),'true');
  assert.equal(await p.locator('#undo').evaluate(el=>getComputedStyle(el).color),'rgb(255, 255, 255)');
- const guide=await p.evaluate(async()=>{const {GUIDE_RULES,cardFacts}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify(GUIDE_RULES),facts:deck().filter(c=>c.type==='action').flatMap(cardFacts).join(' ')}});
+ const guide=await p.evaluate(async()=>{const {GUIDE_RULES,GUIDE_REFERENCE,cardFacts}=await import('./guide.mjs');const {deck}=await import('./engine.mjs');return {rules:JSON.stringify([...GUIDE_RULES,...GUIDE_REFERENCE]),facts:deck().filter(c=>c.type==='action').flatMap(cardFacts).join(' ')}});
  assert.match(guide.rules,/Properties with a cash value can be banked in Easy, Normal, and Hard/);assert.match(guide.rules,/Opponents with no payable assets cannot be charged rent/);assert.match(guide.rules,/tap a wild directly/i);assert.match(guide.rules,/Action cards can be banked/);
  await close(p);
 });
@@ -3503,11 +3515,38 @@ test('hosted desktop smaller windows keep the table and elapsed badge within the
  await close(p);
 });
 
+test('the hosted phone guide gives rules and releases a single accessible reading pane',async()=>{
+ const p=await open({width:420,height:690});
+ await p.goto(origin+'/index.html#monopoly-deal');
+ const frame=p.frameLocator('#gameFrame');
+ await frame.locator('#ready-new').waitFor();
+ await p.locator('#toolbarCollapseButton').click();
+ await p.locator('[data-deal-command="guide"]').click();
+ const viewer=frame.locator('#table-viewer[open]');
+ await viewer.getByRole('heading',{name:'Game guide'}).waitFor();
+ const reading=viewer.locator('#table-view-content');
+ assert.equal(await viewer.locator('.modern-section-nav,.content-page-nav').count(),0);
+ const height=await reading.evaluate(el=>({reading:el.clientHeight,viewport:innerHeight}));
+ assert.ok(height.reading>=height.viewport*.72,JSON.stringify(height));
+ await viewer.getByText('Jump to a rule',{exact:true}).click();
+ await viewer.getByRole('link',{name:'Take your turn',exact:true}).press('Enter');
+ assert.equal(await reading.evaluate(el=>document.activeElement.textContent),'Take your turn');
+ await viewer.locator('#table-view-category').selectOption({label:'Release notes'});
+ assert.equal(await reading.evaluate(el=>el.scrollTop),0);
+ assert.equal(await viewer.locator('#table-view-description').isVisible(),false);
+ const first=await viewer.locator('.guide-latest li').first().boundingBox();
+ const pane=await reading.boundingBox();
+ assert.ok(first.y+first.height<=pane.y+pane.height,JSON.stringify({first,pane}));
+ await viewer.getByRole('button',{name:'Close',exact:true}).click();
+ assert.equal(await viewer.count(),0);
+ await close(p);
+});
+
 test('current release notes display alphabetical categories and preserve expandable history',async()=>{
  const p=await open({width:1100,height:650});await fixture(p,'hand',2);
  await p.locator('#rules').click();await p.locator('#table-view-category').selectOption({label:'Release notes'});
  const headings=await p.locator('[aria-label="Latest Version"] h4').allTextContents();
- assert.deepEqual(headings.map(t=>t.slice(2)),['Gameplay','Interface and accessibility']);
+ assert.deepEqual(headings,['Gameplay','Interface and accessibility']);
  for(const section of await p.locator('[aria-label="Latest Version"] section').all()){
   const items=await section.locator('li').allTextContents();assert.deepEqual(items,items.slice().sort((a,b)=>a.localeCompare(b)));
  }
@@ -3525,11 +3564,6 @@ test('mobile scrolling retains the earlier Fixed explanation and the recurring i
  const p=await open();await fixture(p,'hand',2);
  await p.locator('#rules').click();
  const section=p.locator('.guide-rules section').filter({has:p.getByRole('heading',{name:'Known issues',exact:true})});
- for(let page=0;page<60&&!(await section.count());page++){
-  const next=p.locator('.content-page-nav button').last();
-  if(await next.isDisabled())break;
-  await next.click();
- }
  assert.equal(await section.locator('h4').innerText(),'Fixed');
  const paragraphs=await section.locator('p').allTextContents();
  assert.equal(paragraphs.length,3);assert.match(paragraphs[0],/^Awaiting device verification:/);assert.match(paragraphs[1],/^Fixed: Monopoly Deal mobile scrolling/);assert.match(paragraphs[2],/^How it was fixed:/);

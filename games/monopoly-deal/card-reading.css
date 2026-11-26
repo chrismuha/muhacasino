@@ -1086,3 +1086,113 @@ html[data-theme=modern] #appearance-dialog :is(fieldset,input:not([type=checkbox
 [data-theme=modern] .rent-dots svg{height:auto;aspect-ratio:160/6}
 /* A complete white frame remains visible below populated computer collections. */
 [data-theme=modern] #game .deal-table .opponent{border:2px solid #fff;border-radius:12px}
+
+/* Give all three guide sections one compact header and one reading surface. */
+[data-theme=modern] #table-viewer[data-guide=true][open] {
+  display: grid !important;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  overflow: hidden;
+}
+#table-viewer[data-guide=true] .table-view-heading {
+  padding: 6px max(12px, env(safe-area-inset-right)) 6px max(12px, env(safe-area-inset-left));
+}
+#table-viewer[data-guide=true] .table-view-heading h2 { font-size: clamp(18px, 4vw, 24px); }
+#table-viewer[data-guide=true] #table-view-close { border-radius: 8px; }
+#table-viewer[data-guide=true] .table-view-navigation {
+  grid-row: 2;
+  padding: 4px max(12px, env(safe-area-inset-right)) 6px max(12px, env(safe-area-inset-left));
+  background: #041d4a;
+  border-bottom: 1px solid #8abfff66;
+}
+#table-viewer[data-guide=true] .table-view-selector {
+  grid-template-columns: auto minmax(0, 340px);
+  gap: 10px;
+}
+#table-viewer[data-guide=true] .table-view-selector label { color: #f0f6ff; font-size: 15px; }
+#table-viewer[data-guide=true] .table-view-selector::after {
+  content: "";
+  grid-area: 1 / 2;
+  place-self: center end;
+  margin-right: 14px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+#table-viewer[data-guide=true] #table-view-category {
+  grid-area: 1 / 2;
+  appearance: none;
+  min-height: 44px;
+  padding: 6px 32px 6px 12px;
+  border: 1px solid #a0caff;
+  border-radius: 8px;
+  background: #0b336c;
+  color: #fff;
+  font-size: 16px;
+}
+[data-theme=modern] #table-viewer[data-guide=true] .table-view-body {
+  display: grid !important;
+  grid-row: 3;
+  grid-template-rows: minmax(0, 1fr);
+  min-height: 0;
+  margin: 0;
+  overflow: hidden !important;
+}
+#table-viewer[data-guide=true] #table-view-description { display: none; }
+[data-theme=modern] #table-viewer[data-guide=true] #table-view-content {
+  background: #062357;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+#table-viewer:is([data-view=rules], [data-view=release-notes]) #table-view-content {
+  padding: 16px max(16px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+#table-viewer .guide-rules {
+  max-width: 68ch;
+  margin-inline: auto;
+  color: #f2f6ff;
+  font-size: clamp(16px, 2vw, 18px);
+  line-height: 1.6;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+#table-viewer .guide-rules :is(h2, h3, h4) {
+  color: #f2f6ff;
+  margin: 0 0 8px;
+  line-height: 1.25;
+}
+#table-viewer .guide-rules h2 { font-size: clamp(24px, 4.5vw, 32px); }
+#table-viewer .guide-rules h3 { font-size: clamp(19px, 3.5vw, 23px); }
+#table-viewer .guide-rules h4 { font-size: clamp(17px, 3vw, 20px); }
+#table-viewer .guide-rules :is(p, li) { color: inherit; font: inherit; margin: 0 0 .55em; }
+#table-viewer .guide-rules ul { padding-inline: 1.35em 0; }
+#table-viewer .guide-rules section { padding: 14px 0; }
+#table-viewer .guide-rules section section:last-child { border-bottom: 0; padding-bottom: 0; }
+#table-viewer .guide-rules .guide-latest > h3 { color: #ffe4a6; }
+#table-viewer .guide-rules details { margin-block: 10px; }
+#table-viewer .guide-rules summary {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #8abfff66;
+  border-radius: 8px;
+  background: #0b336c;
+  cursor: pointer;
+  font-weight: 700;
+}
+#table-viewer .guide-rules details[open] > summary { margin-bottom: 10px; }
+#table-viewer .guide-rules a { color: #bee4ff; font: inherit; text-decoration: underline; text-underline-offset: 3px; }
+#table-viewer .guide-rules .guide-topics a { display: inline-block; padding-block: 8px; }
+#table-viewer .guide-rules :focus-visible,
+#table-viewer[data-guide=true] :is(button, select):focus-visible {
+  outline: 2px solid #ffe4a6;
+  outline-offset: -2px;
+}
+#table-viewer .guide-rules :is(p, li, h2, h3, h4) { user-select: text; -webkit-user-select: text; }
+#table-viewer .guide-rules ::selection { background: #bee4ff; color: #062357; }
+
+body.is-finished .game-over-controls > :is(button, a) {
+  font-size: 16px;
+  font-weight: 750;
+}

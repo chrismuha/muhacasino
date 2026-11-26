@@ -1745,7 +1745,6 @@
         sheet.className = "slot-phone-sheet";
         sheet.setAttribute("aria-labelledby", "slotPhoneControlsTitle");
         sheet.innerHTML = `<div class="slot-phone-sheet-heading"><h2 id="slotPhoneControlsTitle">Game controls</h2><button type="button" class="slot-phone-close" autofocus>Done</button></div>
-            <p class="slot-phone-sheet-note">Choose your bet, manage credits, or open settings. Done returns to the reels.</p>
             <div class="slot-phone-sheet-content"></div>`;
         document.body.append(sheet);
         const open = dock.querySelector(".slot-phone-open");
@@ -1753,7 +1752,6 @@
         open.addEventListener("click", () => { sheet.showModal(); sheet.scrollTop = 0; sheet.querySelector('.slot-phone-sheet-content').scrollTop=0; open.setAttribute("aria-expanded", "true"); });
         sheet.querySelector(".slot-phone-close").addEventListener("click", close);
         sheet.addEventListener("close", () => open.setAttribute("aria-expanded", "false"));
-        sheet.addEventListener("click", event => { if (event.target === sheet) { const r=sheet.getBoundingClientRect(); if(event.clientY<r.top||event.clientX<r.left||event.clientX>r.right)close(); } });
         // Close the top-layer sheet before existing settings/bonus dialogs open.
         sheet.addEventListener("click", event => { if (event.target.closest("#settingsButton,#buyBonus,#withdrawalButton,.slot-phone-info,.slot-history-button")) close(); }, true);
         sheet.addEventListener("keydown", event => { if(event.key !== "Escape" && !event.target.matches("input,select,textarea")) event.stopPropagation(); });

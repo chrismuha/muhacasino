@@ -12,7 +12,11 @@ Keep documented issues, planned features, user guides, and release notes in sync
 
 Help uses the inline navigation button to open the same five Help sections. The floating tab and its setting have been removed. Close or Escape returns focus to Help. This access change does not change the app version.
 
+Phone slots use full-screen Controls with a fixed Done button. Scroll the reel area to read a long winning message. Settings descriptions are centered with space on both sides. Neon Slots uses square-top reel tiles and chips with inset win outlines.
+
 ## Monopoly Deal current guide and release notes
+
+Game guide uses compact navigation and one scrollable area for rules and release notes. A topic index links to rules, and display details and past releases can expand. Release categories use plain-text headings. Game summary opens from the victory prompt, and its History button matches the text size of New game and Game Library.
 
 Monopoly Deal is v1.6.0, the next release after v1.5.0. Completed banking, layout, interaction, browsing, setup, Tools, larger phone control, and 15M Multicolor Wild changes belong to this single unpublished release with a TBD date. The in-game guide, Release Notes page, and About version history describe valued property banking in every difficulty, the seven-card Pass Go restriction and its default-off override, the elapsed timer, and the updated mobile controls. No Mercy combined with Hard rules is Coming soon and is not playable yet. The user confirmed that unwanted mobile page scrolling is fixed. The game guide, release history, and Help retain the Fixed status and completed layout explanation.
 

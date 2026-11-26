@@ -143,6 +143,41 @@ for(const game of games)test(`${game}: phone controls sheet preserves wager, pin
  }finally{await p.close()}
 });
 
+test('Neon Slots on a hosted phone keeps Controls full-screen and the complete winning message readable',async()=>{
+ const p=await browser.newPage({viewport:{width:420,height:712},isMobile:true,hasTouch:true});
+ try{
+  await p.goto(`${origin}/index.html#neon-slots`);
+  const frame=p.frameLocator('#gameFrame');
+  await frame.locator('.slot-phone-open').click();
+  const sheet=frame.locator('.slot-phone-sheet[open]');
+  const panel=await sheet.evaluate(el=>{
+   const rect=el.getBoundingClientRect();
+   return {x:rect.x,y:rect.y,w:rect.width,h:rect.height,viewportWidth:innerWidth,viewportHeight:innerHeight};
+  });
+  assert.deepEqual(panel,{x:0,y:0,w:panel.viewportWidth,h:panel.viewportHeight,viewportWidth:panel.viewportWidth,viewportHeight:panel.viewportHeight});
+  await frame.locator('#settingsButton').click();
+  await frame.locator('.settings-page-jump').selectOption({label:'Hot Reels'});
+  const settings=await frame.locator('#hotReelsSettings .overlay-note').evaluate(el=>({align:getComputedStyle(el).textAlign,pad:parseFloat(getComputedStyle(el).paddingInlineStart)}));
+  assert.equal(settings.align,'center');assert.ok(settings.pad>=12,JSON.stringify(settings));
+  await frame.locator('.settings-close').click();
+  const geometry=await frame.locator('#message').evaluate(message=>{
+   message.textContent=Array.from({length:14},(_,index)=>'Line '+(index+1)+' · 20.00 cr').join(' · ');
+   const cell=document.querySelector('.reels .cell');
+   cell.classList.add('win');
+   const art=cell.querySelector('.icon-container'),style=getComputedStyle(art);
+   const tile=cell.getBoundingClientRect(),icon=art.getBoundingClientRect();
+   const lines=document.createRange();
+   lines.selectNodeContents(message);
+   const text=lines.getBoundingClientRect(),box=message.getBoundingClientRect();
+   return {top:style.borderTopLeftRadius,bottom:style.borderBottomLeftRadius,outline:style.outlineOffset,iconFits:icon.top>=tile.top&&icon.bottom<=tile.bottom+1,above:text.top-box.top,below:box.bottom-text.bottom,outer:getComputedStyle(message.parentElement).overflowY};
+  });
+  assert.equal(geometry.top,'0px');assert.equal(geometry.bottom,'3px');assert.equal(geometry.outline,'-4px');
+  assert.ok(geometry.iconFits,JSON.stringify(geometry));
+  assert.ok(geometry.above>=5&&geometry.below>=5,JSON.stringify(geometry));
+  assert.equal(geometry.outer,'auto');
+ }finally{await p.close()}
+});
+
 for(const game of games)test(`${game}: phone chip values and captions remain readable`,async()=>{
  const p=await browser.newPage({viewport:{width:320,height:568},isMobile:true,hasTouch:true});
  try{

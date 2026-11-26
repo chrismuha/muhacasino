@@ -1,10 +1,10 @@
 import {attachHorizontalNavigation} from './horizontal-nav.mjs?build=20261106-deal-v160-hand-v142';
-import {paginateViewer} from './view-pages.mjs?build=deal-shared-card-art';
+import {paginateViewer} from './view-pages.mjs?build=readable-game-guide';
 import {aiChoice,aiPlay} from './ai.mjs?build=20261106-banking-v154';
 import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=deal-shared-card-art';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=deal-shared-card-art';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261111-smooth-hand';
-import {GUIDE_RULES,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=deal-setup-color';
+import {GUIDE_RULES,GUIDE_REFERENCE,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=readable-game-guide';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets,MULTICOLOR_WILD_VALUE} from './engine.mjs?build=20261115-wild-15m';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -728,7 +728,7 @@ async function run(fn){
   if(transaction.propertyNotices.length)reportPropertyTransfers(transaction.propertyNotices,turnReminder);
  }
 }
-function checkWin(){if(sets(me()).length>=3&&!state.winner){state.winner=me().name;state.finishedAt=Date.now();log(`${state.winner} wins with three complete colors!`);choose(`${state.winner} wins!`,[['View table',true]],'Three complete property sets. Start a new game for a rematch.',null)}}
+function checkWin(){if(sets(me()).length>=3&&!state.winner){state.winner=me().name;state.finishedAt=Date.now();log(`${state.winner} wins with three complete colors!`);choose(`${state.winner} wins!`,[['Game summary',true]],'Three complete property sets. Start a new game for a rematch.',null)}}
 function use(c){remove(me().hand,c);state.discard.push(c);state.plays++;log(`${me().name} played ${c.name}.`)}
 async function defend(target,actor,description){
  visible=false;render();
@@ -1097,7 +1097,7 @@ document.querySelectorAll('[data-table-color]').forEach(button => {
 // Only public table cards appear here; private hands and the draw order stay hidden.
 let tableViewIndex = 0;
 function tableViews() {
-  const guideViews = [{key:'rules',title:'Rules',description:'A step-by-step guide to playing Monopoly Deal.'},{key:'cards',title:'Cards',description:'Browse every card design. Use the arrows or Left/Right keys.'},{key:'release-notes',title:'Release notes',description:'Monopoly Deal · v1.6.0 · TBD · Table tools, stable browsing, and 15M wilds'}];
+  const guideViews = [{key:'rules',title:'Rules',description:'A step-by-step guide to playing Monopoly Deal.'},{key:'cards',title:'Cards',description:'Browse every card design. Use the arrows or Left/Right keys.'},{key:'release-notes',title:'Release notes',description:''}];
   if (!state) return guideViews;
   return [
     {key:'discard', kind:'deck', title:'Discard pile', cards:[...state.discard].reverse(), description:'Newest discard first. These cards may return when the draw pile runs out.'},
@@ -1116,7 +1116,8 @@ function showTableView(index) {
   const modernPublic = state && (view.kind || view.key === 'activity');
   $('#table-viewer').dataset.view = view.key;
   $('#table-viewer').dataset.modernPublic = String(Boolean(modernPublic));
-  $('#table-view-title').textContent = view.kind === 'deck' ? 'Deck & discard' : view.title;
+  $('#table-viewer').dataset.guide = String(!modernPublic);
+  $('#table-view-title').textContent = modernPublic ? (view.kind === 'deck' ? 'Deck & discard' : view.title) : 'Game guide';
   $('#table-view-description').textContent = view.description;
   $('#table-view-position').textContent = `${tableViewIndex + 1} of ${views.length}`;
   $('#table-view-category').replaceChildren(...views.map((entry, i) => {
@@ -1128,7 +1129,7 @@ function showTableView(index) {
   }));
   const tools = $('#modern-table-tools');
   const toolsScroll = tools.querySelector('.modern-section-nav')?.scrollLeft || 0;
-  tools.innerHTML = modernViewerTools(state, view);
+  tools.innerHTML = modernPublic ? modernViewerTools(state, view) : '';
   tools.hidden = !tools.innerHTML;
   if(tools.querySelector('.modern-section-nav'))tools.querySelector('.modern-section-nav').scrollLeft=toolsScroll;
   tools.querySelectorAll('[data-modern-view]').forEach(button => {
@@ -1152,9 +1153,9 @@ function showTableView(index) {
   if (modernPublic) {
     content.innerHTML = modernViewerContent(state, view);
   } else if (view.key === 'release-notes') {
-    content.innerHTML = `<div class="guide-rules"><header><h2>What’s New · v1.6.0</h2><p>Separate table tools, larger phone actions, stable card browsing, and 15M Multicolor Wilds.</p></header>${RELEASE_NOTES.map(([title,items],index)=>{const groups=releaseNoteGroups(items).map(([category,bullets])=>`<section><h4>${category==='Gameplay'?'♟':'▣'} ${esc(category)}</h4><ul>${bullets.map(item=>`<li>${esc(item)}</li>`).join('')}</ul></section>`).join('');return index===0?`<section aria-label="Latest Version"><h3>Latest Version · ${esc(title)}</h3>${groups}</section>`:`<details><summary>Version History · ${esc(title)}</summary>${groups}</details>`;}).join('')}<p><a class="release-history-link" href="../../about.html#monopoly-deal" target="_blank" rel="noopener">Open casino game version history ↗</a></p></div>`;
+    content.innerHTML = releaseNotesHTML();
   } else if (view.key === 'rules') {
-    content.innerHTML = `<div class="guide-rules">${GUIDE_RULES.map(([title,items,status])=>`<section${status==='fixed'?' class="guide-fixed-issue"':''}><h3>${esc(title)}</h3>${status==='fixed'?`<h4>Fixed</h4>${items.map(item=>`<p>${esc(item)}</p>`).join('')}`:`<ul>${items.map(item=>`<li>${esc(item)}</li>`).join('')}</ul>`}</section>`).join('')}</div>`;
+    content.innerHTML = guideRulesHTML();
   } else if (view.key === 'cards') {
     showCardDesign();
   }
@@ -1164,6 +1165,35 @@ function showTableView(index) {
   $('.table-view-body').scrollTop = 0;
   fitResponsiveLabels();
 }
+function guideRulesHTML() {
+  const topics = GUIDE_RULES.map(([title],index)=>`<li><a href="#guide-rule-${index}" data-guide-topic>${esc(title)}</a></li>`).join('');
+  const ruleSection = ([title,items,status],index) => {
+    const heading = index === undefined
+      ? `<h3>${esc(title)}</h3>`
+      : `<h3 id="guide-rule-${index}" tabindex="-1">${esc(title)}</h3>`;
+    return `<section${status==='fixed'?' class="guide-fixed-issue"':''}>${heading}${
+      status==='fixed'
+        ? `<h4>Fixed</h4>${items.map(item=>`<p>${esc(item)}</p>`).join('')}`
+        : `<ul>${items.map(item=>`<li>${esc(item)}</li>`).join('')}</ul>`
+    }</section>`;
+  };
+  return `<article class="guide-rules"><h2>How to play</h2><details class="guide-topics"><summary>Jump to a rule</summary><ul>${topics}</ul></details>
+    ${GUIDE_RULES.map(ruleSection).join('')}
+    <details class="guide-reference"><summary>Display and control reference</summary>${GUIDE_REFERENCE.map(entry=>ruleSection(entry)).join('')}</details></article>`;
+}
+
+function releaseNotesHTML() {
+  const [[current,changes],...history] = RELEASE_NOTES;
+  const groups = items => releaseNoteGroups(items).map(([category,bullets])=>
+    `<section><h4>${esc(category)}</h4><ul>${bullets.map(item=>`<li>${esc(item)}</li>`).join('')}</ul></section>`).join('');
+  return `<article class="guide-rules guide-release-notes">
+    <header><h2>What’s New</h2><p>A clearer game guide, consistent card artwork, and updated table tools.</p></header>
+    <section class="guide-latest" aria-label="Latest Version"><h3>Latest Version · ${esc(current)}</h3>${groups(changes)}</section>
+    <section aria-label="Version History"><h3>Version History</h3>${history.map(([title,items])=>`<details><summary>${esc(title)}</summary>${groups(items)}</details>`).join('')}</section>
+    <p><a class="release-history-link" href="../../about.html#monopoly-deal" target="_blank" rel="noopener">Casino game version history</a></p>
+  </article>`;
+}
+
 function revealModernSection() {
   const button = $('#modern-table-tools [aria-current="page"]');
   const nav = button?.closest('.modern-section-nav');
@@ -1189,6 +1219,15 @@ $('#table-view-category').onchange = event => {
   if($('#table-viewer').dataset.modernPublic === 'true')revealModernSection()?.focus({preventScroll:true});
 };
 $('#table-view-content').addEventListener('click',async event=>{
+ const topic=event.target.closest('[data-guide-topic]');
+ if(topic){
+  event.preventDefault();
+  const heading=document.getElementById(topic.hash.slice(1));
+  topic.closest('details').open=false;
+  heading?.focus({preventScroll:true});
+  heading?.scrollIntoView({block:'start'});
+  return;
+ }
  browsePropertyStack(event);
  const control=event.target.closest('[data-move-wild],[data-change-wild]');
  if(!control||busy||!visible||state?.winner||$('#table-viewer').dataset.view!==`properties-${state.turn}`)return;
@@ -1201,6 +1240,7 @@ $('#table-view-close').onclick = () => $('#table-viewer').close();
 $('#table-viewer').addEventListener('keydown', event => {
   if (['INPUT', 'SELECT', 'TEXTAREA'].includes(event.target.tagName)) return;
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    if ($('#table-viewer').dataset.view === 'rules' || $('#table-viewer').dataset.view === 'release-notes') return;
     event.preventDefault();
     const direction = event.key === 'ArrowLeft' ? -1 : 1;
     if (tableViews()[tableViewIndex].key === 'cards') {designIndex += direction;showCardDesign();} else {
@@ -1235,10 +1275,10 @@ function showCardDesign() {
 
 // Leave typing intact while blocking selection gestures throughout the game.
 document.addEventListener('selectstart', event => {
-  if (!event.target.closest('input, textarea, [contenteditable="true"]')) event.preventDefault();
+  if (!event.target.closest('input, textarea, [contenteditable="true"], .guide-rules')) event.preventDefault();
 });
 document.addEventListener('keydown', event => {
-  if (event.target.closest('input, textarea, [contenteditable="true"]')) return;
+  if (event.target.closest('input, textarea, [contenteditable="true"], .guide-rules')) return;
   if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'a') event.preventDefault();
 });
 
