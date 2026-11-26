@@ -30,7 +30,7 @@
             const dialog = document.createElement('dialog');
             dialog.className = 'slot-auto-count-dialog';
             dialog.setAttribute('aria-labelledby', 'autoCountTitle');
-            dialog.innerHTML = `<form><h2 id="autoCountTitle">How many auto spins?</h2><p>Choose 1–10,000 spins. Normal wagers apply. Free spins use a turn without charging a wager.</p><label for="autoCountInput">Number of spins</label><input id="autoCountInput" name="count" type="number" min="1" max="10000" step="1" required><div class="slot-auto-count-actions"><button type="button" data-cancel>Cancel</button><button type="submit">Start auto spin</button></div></form>`;
+            dialog.innerHTML = `<form><h2 id="autoCountTitle">How many auto spins?</h2><p>Choose 1–10,000 spins. Normal wagers apply. Free spins use a turn without charging a wager.</p><label for="autoCountInput">Number of Spins</label><input id="autoCountInput" name="count" type="number" min="1" max="10000" step="1" required><div class="slot-auto-count-actions"><button type="button" data-cancel>Cancel</button><button type="submit">Start auto spin</button></div></form>`;
             const input = dialog.querySelector('input');
             input.value = count;
             document.body.append(dialog);

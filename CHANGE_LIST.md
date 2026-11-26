@@ -8,7 +8,7 @@
 - Advanced all four slots to v1.5. Press Spin to start and Stop to reveal the current result early.
 - Low hands refill to at least five cards when drawing at the start of a turn or with Pass Go, drawing the usual two when that already reaches five. Empty hands draw five, and seven remains the end-of-turn limit. Automatic dealing adds the cards immediately; manual dealing requires one deck tap per owed card. This minimum-five refill is a house rule; standard rules draw two unless the hand is empty.
 - Multicolor Wilds now have a 15M cash value in new and saved deals. They can be banked for one play, used for payments, or played in any color, including completing a set together.
-- Reveal winnings is available in every slot. It shows each result immediately and resolves bonuses automatically using existing odds and awards.
+- Reveal Winnings is available in every slot. It shows each result immediately and resolves bonuses automatically using existing odds and awards.
 
 ### Help and support
 
@@ -28,6 +28,7 @@
 - Elapsed game time keeps counting when focus moves into the casino game and resumes on touch or keyboard interaction. It pauses while the browser tab or window is inactive, resumes on return, and preserves paused time across reloads.
 - Game controls fill the phone game area, with a fixed Done button and a scrollable control list.
 - Game guide uses compact navigation and one scrollable area for rules and release notes. A topic index links to rules, and display details and past releases can expand. Release categories use plain-text headings.
+- Game Settings displays option names in title case, with short connecting words such as “and” kept lowercase.
 - Game summary opens from the victory prompt, and its History button matches the text size of New game and Game Library.
 - Neon Slots uses square-top reel tiles, award chips, and jackpot badges with small rounded bottom corners. Winning symbols have an inset outline.
 - New game setup uses your selected table background color and keeps scrolling instructions clear of the panel edges.
@@ -41,10 +42,13 @@
 - Redesigned New game with aligned headers, consistent field sizes, a visible step indicator, and a fixed navigation row across Players, Names, and Review. Only the form content scrolls above the keyboard, without shrinking labels or hiding instructions. Switching opponent modes keeps Players in place and clears generated computer names from human seats.
 - Redesigned the Comfortable table colors panel with a fully contained heading, a responsive swatch grid, and a clear selected-color indicator. Dialogs dim the selected background across the game canvas without adding a blue tint.
 - Reduced the casino header arrows to compact artwork while preserving their existing navigation controls and touch targets.
+- Reveal Winnings keeps the result panel and text positions steady across losses, wins, and free-spin awards.
 - Settings descriptions are centered and padded, and multiline win messages scroll with the phone reel area.
+- Settings page titles and option labels use consistent title case.
 - Short desktop windows remove excess padding above the hand while preserving selected-card lift and focus clearance. Very short windows also tighten action spacing and use a compact elapsed-time badge. The 800 by 450 and 800 by 500 layouts fit without vertical page scrolling when selecting properties, actions, money, or wilds.
 - Table tools has a centered heading below its Close button.
 - Tools opens Manage, Wilds, Settings, Undo, Clear, and History in a separate dialog. Close or Escape returns to the table, and choosing a tool closes the dialog before continuing. Utility button rows no longer add height to the game.
+- Updated Bingo settings labels to use title case across the Hall, Dealer Console, and dauber options.
 
 ### Reliability
 

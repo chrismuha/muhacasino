@@ -558,8 +558,8 @@
     if (fields && !fields.querySelector("[data-card-serial-start]")) {
       const { start, step } = cardSerialSettings();
       fields.insertAdjacentHTML("beforeend", `
-        <label><span>First card number</span><input type="number" min="1" max="999999" step="1" value="${start}" data-card-serial-start></label>
-        <label><span>Card number increment</span><input type="number" min="1" max="9999" step="1" value="${step}" data-card-serial-step></label>
+        <label><span>First Card Number</span><input type="number" min="1" max="999999" step="1" value="${start}" data-card-serial-start></label>
+        <label><span>Card Number Increment</span><input type="number" min="1" max="9999" step="1" value="${step}" data-card-serial-step></label>
       `);
     }
   }
@@ -625,22 +625,22 @@
           <span class="eyebrow">SPECIAL BALL SETTINGS</span>
           <h2>Hot Ball and Birthday Ball</h2>
           <p>Matching card squares stamp automatically and count like Free Space. Bonus multipliers appear with winning results.</p>
-          <label class="other-theme-flashboard-setting"><input type="checkbox" data-special-ball-setting="showOtherThemesFlashboard"><span><strong>Show waiting flashboard in Planet Hall 1</strong><small>Classic keeps its own pre-game screen.</small></span></label>
+          <label class="other-theme-flashboard-setting"><input type="checkbox" data-special-ball-setting="showOtherThemesFlashboard"><span><strong>Show Waiting Flashboard in Planet Hall 1</strong><small>Classic keeps its own pre-game screen.</small></span></label>
         </div>
         <div class="special-ball-grid">
           <fieldset class="special-ball-card hot-ball-settings">
             <legend>Hot Ball</legend>
             <label class="special-ball-switch"><input type="checkbox" data-special-ball-setting="hotEnabled"><span>Enable Hot Ball</span></label>
-            <label><span>Ball number</span><input type="number" min="1" max="75" step="1" data-special-ball-setting="hotNumber"></label>
-            <label><span>Prize multiplier</span><select data-special-ball-setting="hotMultiplier"><option value="2">2× prize</option><option value="3">3× prize</option><option value="4">4× prize</option><option value="5">5× prize</option><option value="10">10× prize</option></select></label>
+            <label><span>Ball Number</span><input type="number" min="1" max="75" step="1" data-special-ball-setting="hotNumber"></label>
+            <label><span>Prize Multiplier</span><select data-special-ball-setting="hotMultiplier"><option value="2">2× prize</option><option value="3">3× prize</option><option value="4">4× prize</option><option value="5">5× prize</option><option value="10">10× prize</option></select></label>
             <small>Every matching square is automatically stamped for the full game.</small>
           </fieldset>
           <fieldset class="special-ball-card birthday-ball-settings">
             <legend>Birthday Ball</legend>
             <label class="special-ball-switch"><input type="checkbox" data-special-ball-setting="birthdayEnabled"><span>Enable Birthday Ball</span></label>
-            <label><span>Ball number</span><input type="number" min="1" max="75" step="1" data-special-ball-setting="birthdayNumber"></label>
-            <label><span>Birthday date</span><input type="date" data-special-ball-setting="birthdayDate"></label>
-            <label><span>Prize multiplier</span><select data-special-ball-setting="birthdayMultiplier"><option value="2">2× prize</option><option value="3">3× prize</option><option value="4">4× prize</option><option value="5">5× prize</option><option value="10">10× prize</option></select></label>
+            <label><span>Ball Number</span><input type="number" min="1" max="75" step="1" data-special-ball-setting="birthdayNumber"></label>
+            <label><span>Birthday Date</span><input type="date" data-special-ball-setting="birthdayDate"></label>
+            <label><span>Prize Multiplier</span><select data-special-ball-setting="birthdayMultiplier"><option value="2">2× prize</option><option value="3">3× prize</option><option value="4">4× prize</option><option value="5">5× prize</option><option value="10">10× prize</option></select></label>
             <small data-birthday-ball-status></small>
           </fieldset>
         </div>`;
@@ -934,10 +934,10 @@
         <p>Set when each game begins and choose whether the Dealer starts it automatically.</p>
       </div>
       <form class="bingo-schedule-form" novalidate>
-        <label><span>Event title <b aria-hidden="true">*</b></span><input name="title" type="text" required maxlength="80" placeholder="Saturday Night Bingo"></label>
+        <label><span>Event Title <b aria-hidden="true">*</b></span><input name="title" type="text" required maxlength="80" placeholder="Saturday Night Bingo"></label>
         <label><span>Date</span><input name="date" type="date"></label>
         <label><span>Time</span><input name="time" type="time"></label>
-        <label class="bingo-schedule-check"><input name="autoStart" type="checkbox"><span>Start automatically</span></label>
+        <label class="bingo-schedule-check"><input name="autoStart" type="checkbox"><span>Start Automatically</span></label>
         <button type="submit">Add event</button>
         <p class="bingo-schedule-error" role="alert" hidden></p>
       </form>
@@ -1056,10 +1056,10 @@
         <p>Give each winner an individual prize and assign the exact card number that receives it.</p>
       </div>
       <form class="bingo-prizes-form" novalidate>
-        <label><span>Prize title <b aria-hidden="true">*</b></span><input name="title" type="text" required maxlength="80" placeholder="Grand prize drawing"></label>
-        <label><span>Winner number</span><input name="winner" type="number" min="1" max="100" step="1" value="1" required></label>
-        <label><span>Winning card number</span><input name="cardNumber" type="number" min="1" max="999999" step="1" required></label>
-        <label><span>Prize credits</span><input name="amount" type="number" min="0" max="999999" step="1" value="100"></label>
+        <label><span>Prize Title <b aria-hidden="true">*</b></span><input name="title" type="text" required maxlength="80" placeholder="Grand prize drawing"></label>
+        <label><span>Winner Number</span><input name="winner" type="number" min="1" max="100" step="1" value="1" required></label>
+        <label><span>Winning Card Number</span><input name="cardNumber" type="number" min="1" max="999999" step="1" required></label>
+        <label><span>Prize Credits</span><input name="amount" type="number" min="0" max="999999" step="1" value="100"></label>
         <button type="submit">Add prize</button>
         <p class="bingo-prizes-error" role="alert" hidden></p>
       </form>
@@ -1955,7 +1955,7 @@
           <h2 id="bingo-schedule-title">Bingo Event Schedule</h2>
         </header>
         <div data-schedule-list></div>
-        <footer><button type="button" data-schedule-dealer>Dealer schedule settings</button><button type="button" data-schedule-close>Close</button></footer>
+        <footer><button type="button" data-schedule-dealer>Dealer Schedule Settings</button><button type="button" data-schedule-close>Close</button></footer>
       </section>`;
     overlay.addEventListener("click", (event) => {
       if (event.target.closest("[data-schedule-dealer]")) {
@@ -1987,7 +1987,7 @@
           <h2 id="bingo-prizes-title">Bingo Prize Schedule</h2>
         </header>
         <div data-prizes-list></div>
-        <footer><button type="button" data-prizes-dealer>Dealer prize settings</button><button type="button" data-prizes-close>Close</button></footer>
+        <footer><button type="button" data-prizes-dealer>Dealer Prize Settings</button><button type="button" data-prizes-close>Close</button></footer>
       </section>`;
     overlay.addEventListener("click", (event) => {
       if (event.target.closest("[data-prizes-dealer]")) {
@@ -2213,9 +2213,9 @@
           <div><strong data-color-panel-title>Solid Color</strong><span>Customize every type of daub</span></div>
           </div>
           <div class="solid-color-fields">
-            <label><input type="color" data-solid-color="pre"><span><strong>Player mark</strong><small>Before the number is called</small></span></label>
-            <label><input type="color" data-solid-color="actual"><span><strong>Called number</strong><small>After the number is called</small></span></label>
-            <label><input type="color" data-solid-color="free"><span><strong>Free space</strong><small>Every center free square</small></span></label>
+            <label><input type="color" data-solid-color="pre"><span><strong>Player Mark</strong><small>Before the number is called</small></span></label>
+            <label><input type="color" data-solid-color="actual"><span><strong>Called Number</strong><small>After the number is called</small></span></label>
+            <label><input type="color" data-solid-color="free"><span><strong>Free Space</strong><small>Every center free square</small></span></label>
           </div>
           <div class="solid-color-card-preview">
             <span style="--preview-color:var(--pre-daub)">PLAYER</span>

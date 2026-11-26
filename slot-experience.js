@@ -492,62 +492,62 @@
         settings.innerHTML = `
             <label class="checkbox-setting slot-withdrawal-setting">
                 <input id="withdrawalDemoToggle" type="checkbox">
-                <span><strong>Withdrawal demonstration</strong><small>Show the separate simulated withdrawal experience.</small></span>
+                <span><strong>Withdrawal Demonstration</strong><small>Show the separate simulated withdrawal experience.</small></span>
             </label>
             <label class="checkbox-setting slot-buy-bonus-setting">
                 <input id="buyBonusToggle" type="checkbox" checked>
-                <span><strong>Show Buy Bonus button</strong><small>Show or hide Buy Bonus on the game screen and casino cabinet controls.</small></span>
+                <span><strong>Show Buy Bonus Button</strong><small>Show or hide Buy Bonus on the game screen and casino cabinet controls.</small></span>
             </label>
             <label class="checkbox-setting slot-auto-lower-bet-setting">
                 <input id="autoLowerBetToggle" type="checkbox" checked>
-                <span><strong>Automatically lower bet</strong><small>Use the highest affordable lower bet step before offering a rescue. Keeps your denomination and paylines.</small></span>
+                <span><strong>Automatically Lower Bet</strong><small>Use the highest affordable lower bet step before offering a rescue. Keeps your denomination and paylines.</small></span>
             </label>
             <label class="checkbox-setting slot-wheel-setting">
                 <input id="luckyWheelToggle" type="checkbox" checked>
-                <span><strong>One rescue wheel when credits run out</strong><small>Available once per session after paid play leaves too few credits for the current wager.</small></span>
+                <span><strong>One Rescue Wheel When Credits Run Out</strong><small>Available once per session after paid play leaves too few credits for the current wager.</small></span>
             </label>
             <div class="select slot-pointer-odds-setting">
-                <strong>Wheel pointer match chances</strong>
+                <strong>Wheel Pointer Match Chances</strong>
                 <div class="wheel-pointer-odds-grid">
-                    ${state.pointerOdds.map((value, index) => `<label>${index + 1} pointer${index ? "s" : ""}<input type="number" min="0" max="100" step="1" inputmode="numeric" value="${value}" data-pointer-odds="${index}"><span>%</span></label>`).join("")}
+                    ${state.pointerOdds.map((value, index) => `<label>${index + 1} Pointer${index ? "s" : ""}<input type="number" min="0" max="100" step="1" inputmode="numeric" value="${value}" data-pointer-odds="${index}"><span>%</span></label>`).join("")}
                 </div>
                 <small id="wheelPointerOddsSummary">Relative chances are normalized automatically.</small>
             </div>
             <label class="checkbox-setting slot-result-bars-setting">
                 <input id="collapseEmptyResultsToggle" type="checkbox">
-                <span><strong>Hide empty result bars</strong><small>Moves controls upward while idle, but the layout will shift when a result or feature message appears. Off by default.</small></span>
+                <span><strong>Hide Empty Result Bars</strong><small>Moves controls upward while idle, but the layout will shift when a result or feature message appears. Off by default.</small></span>
             </label>
             <div class="select slot-wheel-odds-setting">
-                <strong>Lucky Wheel individual wedge sizes</strong>
+                <strong>Lucky Wheel Individual Wedge Sizes</strong>
                 <div class="wheel-percentage-grid">
-                    ${Array.from({ length: 12 }, (_, index) => `<label>${index % 2 === 0 ? `Win ${index / 2 + 1}` : `No award ${(index + 1) / 2}`}<input type="number" min="2" max="78" step="2" inputmode="numeric" value="${state.wheelSizes[index]}" data-wheel-size="${index}"><span>%</span></label>`).join("")}
+                    ${Array.from({ length: 12 }, (_, index) => `<label>${index % 2 === 0 ? `Win ${index / 2 + 1}` : `No Award ${(index + 1) / 2}`}<input type="number" min="2" max="78" step="2" inputmode="numeric" value="${state.wheelSizes[index]}" data-wheel-size="${index}"><span>%</span></label>`).join("")}
                 </div>
                 <small id="luckyWheelSizeSummary">Use even percentages across the 12 wedges. They always total exactly 100%.</small>
             </div>
             <div class="jackpot-config-setting slot-wheel-prizes-setting">
-                <strong>Lucky wheel winning wedges</strong>
+                <strong>Lucky Wheel Winning Wedges</strong>
                 <div class="wheel-prize-grid">
                     ${state.wheelPrizes.map(wheelPrizeEditor).join("")}
                 </div>
                 <small>Configure the six winning wedge awards here. The individual wedge-size controls above determine both each wedge's visible size and exact landing chance.</small>
             </div>
             <div class="jackpot-config-setting jackpot-schedule-setting">
-                <strong>Jackpot wager thresholds</strong>
-                <label class="jackpot-schedule-toggle"><input id="jackpotScheduleEnabled" type="checkbox"><span>Trigger reel jackpots by total paid wagers</span></label>
+                <strong>Jackpot Wager Thresholds</strong>
+                <label class="jackpot-schedule-toggle"><input id="jackpotScheduleEnabled" type="checkbox"><span>Trigger Reel Jackpots by Total Paid Wagers</span></label>
                 <p class="overlay-note">Off: normal random reel jackpots. On: guaranteed jackpots at the thresholds below, independent of wins or losses. Counts paid reel wagers only; deposits, free spins, and Buy Bonus costs do not count. Prizes still use Jackpot Amounts and Bet Scaling. Bonus-game jackpot prizes keep their own rules. A tier switched off here does not pay reel jackpots while threshold mode is on.</p>
                 <p class="overlay-note">Set five successive wager amounts for each tier: the first-hit amount, then additional wagers for hits 2, 3, 4, and 5. After hit 5, the fifth interval repeats. Example: $10 first, then $25,000, $50, $100, and $500 more; later hits repeat every additional $500. Enabling starts from the saved progress, without counting earlier wagers. Turning off pauses progress. Editing an amount restarts that tier’s progress; Reset Session clears all progress. Progress and settings are saved separately for each slot.</p>
                 <div class="jackpot-schedule-tiers">
                     ${Object.entries(jackpotScheduleDefaults).map(([name]) => `<fieldset class="jackpot-schedule-tier"><legend>${name[0].toUpperCase() + name.slice(1)}</legend>
-                        <label class="jackpot-schedule-toggle"><input type="checkbox" data-schedule-tier="${name}"><span>Schedule ${name} jackpot</span></label>
-                        <label>First hit after ($ wagered)<input type="number" min="0.01" max="1000000000" step="0.01" inputmode="decimal" data-schedule-first="${name}" aria-label="${name} first jackpot wager threshold"></label>
-                        ${[2, 3, 4].map((hit, index) => `<label>Hit ${hit}: additional wager ($)<input type="number" min="0.01" max="1000000000" step="0.01" inputmode="decimal" data-schedule-step="${name}-${index}" data-schedule-name="${name}" data-schedule-index="${index}" aria-label="${name} jackpot hit ${hit} additional wager"></label>`).join("")}
-                        <label>Hit 5 and later: additional wager ($)<input type="number" min="0.01" max="1000000000" step="0.01" inputmode="decimal" data-schedule-repeat="${name}" aria-label="${name} repeat jackpot wager interval"></label>
+                        <label class="jackpot-schedule-toggle"><input type="checkbox" data-schedule-tier="${name}"><span>Schedule ${name[0].toUpperCase() + name.slice(1)} Jackpot</span></label>
+                        <label>First Hit After ($ wagered)<input type="number" min="0.01" max="1000000000" step="0.01" inputmode="decimal" data-schedule-first="${name}" aria-label="${name} first jackpot wager threshold"></label>
+                        ${[2, 3, 4].map((hit, index) => `<label>Hit ${hit}: Additional Wager ($)<input type="number" min="0.01" max="1000000000" step="0.01" inputmode="decimal" data-schedule-step="${name}-${index}" data-schedule-name="${name}" data-schedule-index="${index}" aria-label="${name} jackpot hit ${hit} additional wager"></label>`).join("")}
+                        <label>Hit 5 and Later: Additional Wager ($)<input type="number" min="0.01" max="1000000000" step="0.01" inputmode="decimal" data-schedule-repeat="${name}" aria-label="${name} repeat jackpot wager interval"></label>
                         <p class="jackpot-schedule-progress" data-schedule-progress="${name}"></p>
                     </fieldset>`).join("")}
                 </div>
             </div>
             <div class="jackpot-config-setting jackpot-amounts-setting">
-                <strong>Jackpot amounts</strong>
+                <strong>Jackpot Amounts</strong>
                 <div class="jackpot-base-grid">
                     ${["Mini", "Minor", "Major", "Grand"].map((name) => `<label>${name}<input type="number" min="1" max="${MAX_JACKPOT_AMOUNT}" step="1" data-jackpot-base="${name.toLowerCase()}"></label>`).join("")}
                 </div>
@@ -555,42 +555,42 @@
             </div>
             <div class="jackpot-config-setting sticky-link-settings" hidden>
                 <strong>Sticky LINK Row</strong>
-                <label class="jackpot-schedule-toggle"><input id="stickyLinkEnabled" type="checkbox"><span>Enable sticky LINK row</span></label>
-                <label>Trigger chance per paid spin (%)<input id="stickyLinkChance" type="number" min="0" max="100" step="0.1" inputmode="decimal" aria-label="Sticky LINK trigger chance percent"></label>
-                <label>How many reel spins to hold<input id="stickyLinkSpins" type="number" min="1" max="100" step="1" inputmode="numeric" aria-label="Sticky LINK hold duration"></label>
+                <label class="jackpot-schedule-toggle"><input id="stickyLinkEnabled" type="checkbox"><span>Enable Sticky LINK Row</span></label>
+                <label>Trigger Chance per Paid Spin (%)<input id="stickyLinkChance" type="number" min="0" max="100" step="0.1" inputmode="decimal" aria-label="Sticky LINK trigger chance percent"></label>
+                <label>How Many Reel Spins to Hold<input id="stickyLinkSpins" type="number" min="1" max="100" step="1" inputmode="numeric" aria-label="Sticky LINK hold duration"></label>
                 <p class="overlay-note">A random paid spin can hold a first-reel LINK anchor in one row. It is a LINK, not a wild. The anchor stays in that row while fresh connected values roll and pay each turn, even if the regular symbols lose. Default: 3% trigger chance and 5 reel spins, including the trigger spin. Active holds also use a turn on regular free spins; bonus-game turns do not use a turn. Sticky LINK and held-Wild rows stay separate. Paid-spin value chips advance their matching pots; free-spin values do not. Duration edits apply to the next hold; turning off clears the current hold before the next spin. Reset Session clears active holds. These settings are saved per slot.</p>
             </div>
             <div class="jackpot-config-setting link-chip-settings" hidden>
-                <strong>Winning Link chip controls</strong>
+                <strong>Winning LINK Chip Controls</strong>
                 <div class="jackpot-scale-grid">
-                    <label>Minimum value (× bet)<input type="number" min="0.25" max="1000" step="0.25" data-link-setting="minMultiplier"></label>
-                    <label>Maximum value (× bet)<input type="number" min="0.25" max="1000" step="0.25" data-link-setting="maxMultiplier"></label>
-                    <label>Minimum chips<input type="number" min="1" max="4" step="1" data-link-setting="minCount"></label>
-                    <label>Maximum chips<input type="number" min="1" max="4" step="1" data-link-setting="maxCount"></label>
-                    <label>Winning Link chance %<input type="number" min="0" max="100" step="1" data-link-setting="winChance"></label>
-                    <label>Non-winning preview chance %<input type="number" min="0" max="100" step="1" data-link-setting="teaserChance"></label>
+                    <label>Minimum Value (× bet)<input type="number" min="0.25" max="1000" step="0.25" data-link-setting="minMultiplier"></label>
+                    <label>Maximum Value (× bet)<input type="number" min="0.25" max="1000" step="0.25" data-link-setting="maxMultiplier"></label>
+                    <label>Minimum Chips<input type="number" min="1" max="4" step="1" data-link-setting="minCount"></label>
+                    <label>Maximum Chips<input type="number" min="1" max="4" step="1" data-link-setting="maxCount"></label>
+                    <label>Winning LINK Chance %<input type="number" min="0" max="100" step="1" data-link-setting="winChance"></label>
+                    <label>Non-Winning Preview Chance %<input type="number" min="0" max="100" step="1" data-link-setting="teaserChance"></label>
                 </div>
                 <small>Values scale with the current total bet. Set how many value chips may appear and how often winning and preview Links can occur.</small>
             </div>
             <div class="jackpot-config-setting jackpot-scaling-setting">
-                <strong>Jackpot bet scaling</strong>
-                <label class="jackpot-scale-toggle"><input id="jackpotScalingEnabled" type="checkbox" checked><span>Adjust jackpots with total bet</span></label>
-                <label>Scaling method<select id="jackpotScalingMode"><option value="multiply">Multiply with bet</option><option value="increment">Add an amount per bet step</option></select></label>
+                <strong>Jackpot Bet Scaling</strong>
+                <label class="jackpot-scale-toggle"><input id="jackpotScalingEnabled" type="checkbox" checked><span>Adjust Jackpots with Total Bet</span></label>
+                <label>Scaling Method<select id="jackpotScalingMode"><option value="multiply">Multiply with Bet</option><option value="increment">Add an Amount per Bet Step</option></select></label>
                 <div class="jackpot-scale-grid">
-                    <label>Reference bet<input id="jackpotBaseWager" type="number" min="0.01" step="0.01"></label>
-                    <label>Bet step<input id="jackpotBetStep" type="number" min="0.01" step="0.01"></label>
-                    <label>Amount per step<input id="jackpotStepAmount" type="number" min="0" step="0.01"></label>
+                    <label>Reference Bet<input id="jackpotBaseWager" type="number" min="0.01" step="0.01"></label>
+                    <label>Bet Step<input id="jackpotBetStep" type="number" min="0.01" step="0.01"></label>
+                    <label>Amount per Step<input id="jackpotStepAmount" type="number" min="0" step="0.01"></label>
                 </div>
             </div>
             ${gameKey === "pretty-penny" ? `<div class="select penny-door-setting">
-                <label for="pennyRevealDoors">Pretty Penny reveal doors</label>
+                <label for="pennyRevealDoors">Pretty Penny Reveal Doors</label>
                 <select id="pennyRevealDoors">
                     <option value="off">Off</option>
-                    <option value="reels">Cover selected rows</option>
-                    <option value="symbols">Cover individual symbols in selected rows</option>
+                    <option value="reels">Cover Selected Rows</option>
+                    <option value="symbols">Cover Individual Symbols in Selected Rows</option>
                 </select>
                 <div class="penny-door-rows" role="group" aria-labelledby="pennyDoorRowsTitle">
-                    <strong id="pennyDoorRowsTitle">Rows concealed</strong>
+                    <strong id="pennyDoorRowsTitle">Rows Concealed</strong>
                     ${Array.from({ length: 5 }, (_, row) => `<label><input type="checkbox" data-penny-door-row="${row}"> Row ${row + 1}</label>`).join("")}
                 </div>
                 <small>Choose one, several, or all rows. Doors are off by default.</small>
@@ -1344,7 +1344,7 @@
         result.className = "slot-reveal-result";
         result.hidden = true;
         result.setAttribute("role", "status");
-        result.innerHTML = '<span>Reveal winnings</span><h3>Ready to reveal</h3><p>Press Spin to see your result.</p>';
+        result.innerHTML = '<span>Reveal Winnings</span><h3>Ready to reveal</h3><p>Press Spin to see your result.</p>';
         reels.after(result);
         const headline = result.querySelector("h3");
         const details = result.querySelector("p");

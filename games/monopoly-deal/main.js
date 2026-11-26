@@ -4,7 +4,7 @@ import {aiChoice,aiPlay} from './ai.mjs?build=20261106-banking-v154';
 import {modernBoard,modernFace,lastAction} from './modern-ui.mjs?build=deal-shared-card-art';
 import {modernViewerTools,modernViewerContent,browsePropertyStack} from './modern-viewer.mjs?build=deal-shared-card-art';
 import {attachHandSorting,consumeHandSortClick} from './hand-sort.mjs?build=20261111-smooth-hand';
-import {GUIDE_RULES,GUIDE_REFERENCE,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=readable-game-guide';
+import {GUIDE_RULES,GUIDE_REFERENCE,cardDesigns,RELEASE_NOTES,releaseNoteGroups} from './guide.mjs?build=settings-title-case';
 import {GROUPS,ACTIONS,createGame,draw,properties,complete,sets,rent,remove,normalize,buildingSets,canBank,canPassGo,hasPayableAssets,MULTICOLOR_WILD_VALUE} from './engine.mjs?build=20261115-wild-15m';
 let state,visible=false,busy=false,selectedCardId=null,previewFlipped=false,previewExpanded=false;
 const selectedCardIds=new Set();
@@ -38,7 +38,7 @@ try {
 } catch {}
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let detachHandSorting = () => {};
-const toastTypes={bank:'Banking',property:'Playing properties',action:'Action cards',payment:'Payments',transfer:'Property transfers',wild:'Moving wilds',discard:'Discards',turn:'Turn changes',draw:'Drawing cards',game:'Game start and wins',undo:'Undo and cancellation',sort:'Hand sorting',help:'Hints and unavailable actions'};
+const toastTypes={bank:'Banking',property:'Playing Properties',action:'Action Cards',payment:'Payments',transfer:'Property Transfers',wild:'Moving Wilds',discard:'Discards',turn:'Turn Changes',draw:'Drawing Cards',game:'Game Start and Wins',undo:'Undo and Cancellation',sort:'Hand Sorting',help:'Hints and Unavailable Actions'};
 const toastPreferenceKey='muha-deal-toasts-v1';
 let toastPreferences={all:false};
 try{const saved=JSON.parse(localStorage.getItem(toastPreferenceKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))toastPreferences={...toastPreferences,...saved};}catch{}
@@ -234,7 +234,7 @@ function updateUnavailableControls() {
    else if(button.id === 'move')reason = hiddenHand;
    else if(button.id === 'flip-card')reason = hiddenHand || (!selected ? 'Select a two-color wild property card to flip it.' : '') || (handFlipPlayCost()?noPlays:'') || (selected.type !== 'property' || selected.colors.length !== 2 ? 'Only two-color wild property cards can be flipped.' : '');
    else if(button.id === 'bank-card')reason = hiddenHand || (!selected ? 'Select money, an action card, or a property with a cash value to bank.' : '') || noPlays || (!canBank(selected) ? 'Bank money, actions, or properties with a cash value. Cards without a cash value cannot be banked.' : '');
-   else if(button.id === 'play-card')reason = hiddenHand || (!selected ? 'Select a property or action card to play.' : '') || noPlays || (selected.type === 'money' ? 'Money cards can only be banked, not played.' : selected.action==='pass'&&!canPassGo(me().hand,dealSettings.allowPassGoOverflow)?'Pass Go would put your hand over seven. Play another card first or change Game settings.':'');
+   else if(button.id === 'play-card')reason = hiddenHand || (!selected ? 'Select a property or action card to play.' : '') || noPlays || (selected.type === 'money' ? 'Money cards can only be banked, not played.' : selected.action==='pass'&&!canPassGo(me().hand,dealSettings.allowPassGoOverflow)?'Pass Go would put your hand over seven. Play another card first or change Game Settings.':'');
   }
   button.disabled = false;
   if(button.hasAttribute('data-card'))button.dataset.handSortable=String(visible&&!busy&&!state.winner);
@@ -537,7 +537,7 @@ function render(){
  document.body.classList.toggle('is-finished',Boolean(state?.winner));
  if(!state){
   document.body.classList.remove('is-playing');
-  $('#game').innerHTML='<section class="game-ready" aria-labelledby="ready-title"><h2 id="ready-title">Ready to deal?</h2><p>Play against computer opponents or with two to four people on this device.</p><div class="ready-actions"><button type="button" class="primary" id="ready-new">New game</button><button type="button" id="ready-settings" aria-haspopup="dialog">Game settings</button></div></section>';
+  $('#game').innerHTML='<section class="game-ready" aria-labelledby="ready-title"><h2 id="ready-title">Ready to deal?</h2><p>Play against computer opponents or with two to four people on this device.</p><div class="ready-actions"><button type="button" class="primary" id="ready-new">New game</button><button type="button" id="ready-settings" aria-haspopup="dialog">Game Settings</button></div></section>';
   $('#ready-new').onclick=setup;
   $('#ready-settings').onclick=openGameSettings;
   return;
@@ -768,7 +768,7 @@ const opponents=()=>state.players.filter(p=>p!==me());
 async function play(c,chosenMode=null,chosenColor=null){if(c&&!me().hand.some(card=>card.id===c.id)){if(!me().isAI)return showBlockedPlay('Only cards in your hand can be played. Banked cards are cash only and cannot return to your hand or be used for their action.');return;}if((!visible&&!me().isAI)||state.plays>=3||!c){if(!me().isAI)return showBlockedPlay(!visible?'Reveal your hand first.':state.plays>=3?'You have used all three plays. Pass to end your turn.':'Select a card to play.');return;}let mode=chosenMode||await choose(label(c),[['Cancel','cancel'],...(canBank(c)?[['Put in bank','bank']]:[]),...(c.type!=='money'?[['Play card','play']]:[])]);if(mode==='cancel')return;if(mode==='bank'){if(!canBank(c)){showBlockedPlay('Bank money, actions, or properties with a cash value. Cards without a cash value cannot be banked.');return;}remove(me().hand,c);me().bank.push(c);state.plays++;log(`${me().name} banked ${c.value}M.`);return}
  if(c.type==='property'){c.color=chosenColor||await colorFor(c,{smart:true});remove(me().hand,c);me().props.push(c);state.plays++;log(`${me().name} laid ${c.name}.`);return}
  const a=c.action,p=me();if(a==='no'||a==='double'){await choose('Keep this card for a response or rent combo',[['OK',true]],a==='no'?'Just Say No is offered when an action targets you.':'Select a Rent card to add one or two Double the Rent cards.');return}
- if(a==='pass'){if(!canPassGo(p.hand,dealSettings.allowPassGoOverflow)){showBlockedPlay('Pass Go would put your hand over seven cards. Play another card first, or enable Allow Pass Go over seven in Game settings.');return;}use(c);const count=Math.max(2,5-p.hand.length-pendingDrawCount(p));const automatic=dealCards(p,count);log(automatic?`${p.name} drew ${count} cards.`:`${p.name}: tap the deck to draw ${count} cards.`,'draw');return}
+ if(a==='pass'){if(!canPassGo(p.hand,dealSettings.allowPassGoOverflow)){showBlockedPlay('Pass Go would put your hand over seven cards. Play another card first, or enable Allow Pass Go over Seven Cards in Game Settings.');return;}use(c);const count=Math.max(2,5-p.hand.length-pendingDrawCount(p));const automatic=dealCards(p,count);log(automatic?`${p.name} drew ${count} cards.`:`${p.name}: tap the deck to draw ${count} cards.`,'draw');return}
  if(a==='house'||a==='hotel'){const eligible=buildingSets(p,a);if(!eligible.length)return choose('No eligible complete set',[['OK',true]],'Buildings need a complete street-color set. No railroads or utilities. Only one house and one hotel per set; the house must be placed first.');let color=await choose('Build on which set?',orderedColors(eligible).map(k=>[GROUPS[k].name,k]));use(c);remove(state.discard,c);c.color=color;p.buildings.push(c);log(`${p.name} built ${c.name} on ${GROUPS[color].name}.`,'property');return}
  if(a==='rent'){const tenants=opponents().filter(hasPayableAssets);if(!tenants.length){showBlockedPlay('No opponent has payable assets. Rent cannot be charged.');return;}const movable=color=>p.props.filter(card=>card.colors?.length>1&&card.colors.includes(color)&&card.color!==color);
  const rentFor=color=>{if(properties(p,color).length)return rent(p,color);const wild=movable(color)[0];return wild?rent({...p,props:[...p.props.filter(card=>card!==wild),{...wild,color}]},color):0;};
@@ -1305,7 +1305,7 @@ function upcomingGameSettings(){
  const section=document.createElement('section');
  section.className='upcoming-game-settings';
  section.setAttribute('aria-labelledby','upcoming-title');
- section.innerHTML=`<h3 id="upcoming-title">Coming soon</h3><p><strong>No Mercy difficulty: planned.</strong> Combine the Monopoly Deal No Mercy edition cards with our Hard rules, including property banking, discard costs, and wild-flip costs. Not playable yet; the complete card list and debt interactions are still being verified.</p><p>Coming soon: game sounds for interactions, card plays, and wild flips, plus more card and interaction animations. These features are planned and are not available yet.</p><p>Named games, saved games, backup, and restore are planned for the desktop app. These features are not available yet. The current deal recovers in this tab after a reload; your current hand visibility is preserved.</p><label for="planned-game-name">Game name <span>Coming soon</span></label><input id="planned-game-name" type="text" placeholder="Name your game" disabled aria-describedby="upcoming-title"><div class="upcoming-actions">${['Save game','Load game','Backup','Restore'].map(label=>`<button type="button" aria-disabled="true" data-unavailable-reason="${label} is coming soon for the desktop app.">${label}</button>`).join('')}</div>`;
+ section.innerHTML=`<h3 id="upcoming-title">Coming Soon</h3><p><strong>No Mercy difficulty: planned.</strong> Combine the Monopoly Deal No Mercy edition cards with our Hard rules, including property banking, discard costs, and wild-flip costs. Not playable yet; the complete card list and debt interactions are still being verified.</p><p>Coming soon: game sounds for interactions, card plays, and wild flips, plus more card and interaction animations. These features are planned and are not available yet.</p><p>Named games, saved games, backup, and restore are planned for the desktop app. These features are not available yet. The current deal recovers in this tab after a reload; your current hand visibility is preserved.</p><label for="planned-game-name">Game Name <span>Coming Soon</span></label><input id="planned-game-name" type="text" placeholder="Name your game" disabled aria-describedby="upcoming-title"><div class="upcoming-actions">${['Save Game','Load Game','Backup','Restore'].map(label=>`<button type="button" aria-disabled="true" data-unavailable-reason="${label} is coming soon for the desktop app.">${label}</button>`).join('')}</div>`;
  return section;
 }
 
@@ -1324,9 +1324,9 @@ function openGameSettings(){
  const appearance=document.createElement('dialog');
  appearance.id='appearance-dialog';
  appearance.setAttribute('aria-labelledby','appearance-title');
- appearance.innerHTML='<div class="wizard-heading"><h2 id="appearance-title">Game settings</h2><button type="button">Close</button></div><div class="settings-content"></div>';
+ appearance.innerHTML='<div class="wizard-heading"><h2 id="appearance-title">Game Settings</h2><button type="button">Close</button></div><div class="settings-content"></div>';
  const notifications=document.createElement('fieldset');
- notifications.className='toast-settings';notifications.innerHTML='<legend>Toast notifications</legend><p>Sly Deal, Forced Deal, and every played Just Say No always show an overlay until dismissed, even when toast notifications are off.</p><label><input type="checkbox" data-toast-type="all"> Enable toast notifications</label>'+Object.entries(toastTypes).map(([key,label])=>`<label><input type="checkbox" data-toast-type="${key}"> ${label}</label>`).join('');
+ notifications.className='toast-settings';notifications.innerHTML='<legend>Toast Notifications</legend><p>Sly Deal, Forced Deal, and every played Just Say No always show an overlay until dismissed, even when toast notifications are off.</p><label><input type="checkbox" data-toast-type="all"> Enable Toast Notifications</label>'+Object.entries(toastTypes).map(([key,label])=>`<label><input type="checkbox" data-toast-type="${key}"> ${label}</label>`).join('');
  for(const input of notifications.querySelectorAll('input')){
   input.checked=toastPreferences[input.dataset.toastType]!==false;
   input.disabled=input.dataset.toastType!=='all'&&toastPreferences.all===false;
@@ -1339,7 +1339,7 @@ function openGameSettings(){
  }
  const duration=document.createElement('label');
  duration.className='toast-duration-setting';duration.htmlFor='toast-duration';
- duration.innerHTML='Display duration (seconds)<input id="toast-duration" type="number" min="1" max="30" step="1" inputmode="numeric"><small>1–30 seconds. New routine messages still replace older ones.</small>';
+ duration.innerHTML='Display Duration (seconds)<input id="toast-duration" type="number" min="1" max="30" step="1" inputmode="numeric"><small>1–30 seconds. New routine messages still replace older ones.</small>';
  const durationInput=duration.querySelector('input');durationInput.value=toastDurationSeconds();
  durationInput.onchange=()=>{
   const seconds=Number(durationInput.value);
@@ -1348,12 +1348,12 @@ function openGameSettings(){
   try{localStorage.setItem(toastPreferenceKey,JSON.stringify(toastPreferences));}catch{}
  };
  const placement=document.createElement('label');placement.className='toast-placement-setting';placement.htmlFor='toast-placement';
- placement.innerHTML='Notification position<select id="toast-placement"><option value="table">Beside the deck (default)</option><option value="footer">Footer</option></select>';
+ placement.innerHTML='Notification Position<select id="toast-placement"><option value="table">Beside the Deck (default)</option><option value="footer">Footer</option></select>';
  const placementInput=placement.querySelector('select');placementInput.value=toastPreferences.placement==='footer'?'footer':'table';
  placementInput.onchange=()=>{toastPreferences.placement=placementInput.value;try{localStorage.setItem(toastPreferenceKey,JSON.stringify(toastPreferences));}catch{}syncToastViewport();};
  notifications.prepend(placement,duration);
  const dealing=document.createElement('fieldset');dealing.className='dealing-settings';
- dealing.innerHTML='<legend>Drawing cards</legend><label><input id="automatic-dealing" type="checkbox"> Automatic dealing</label><p>On by default. Turn off to tap the deck for each card you are owed. Each drawn card opens full screen with a Close button. Computer opponents always draw automatically.</p>';
+ dealing.innerHTML='<legend>Drawing Cards</legend><label><input id="automatic-dealing" type="checkbox"> Automatic Dealing</label><p>On by default. Turn off to tap the deck for each card you are owed. Each drawn card opens full screen with a Close button. Computer opponents always draw automatically.</p>';
  const automaticInput=dealing.querySelector('input');automaticInput.checked=dealSettings.automaticDealing;
  automaticInput.onchange=()=>{
   dealSettings.automaticDealing=automaticInput.checked;
@@ -1361,12 +1361,12 @@ function openGameSettings(){
   completeAutomaticDraws();if(state)render();
  };
  const overflow=document.createElement('label');
- overflow.innerHTML='<input id="pass-go-overflow" type="checkbox"> Allow Pass Go over seven cards';
+ overflow.innerHTML='<input id="pass-go-overflow" type="checkbox"> Allow Pass Go over Seven Cards';
  const overflowInput=overflow.querySelector('input');overflowInput.checked=dealSettings.allowPassGoOverflow;
  overflowInput.onchange=()=>{dealSettings.allowPassGoOverflow=overflowInput.checked;try{localStorage.setItem(dealSettingsKey,JSON.stringify(dealSettings));}catch{}if(state)render();};
  dealing.append(overflow);
  const display=document.createElement('fieldset');display.className='display-settings';
- display.innerHTML='<legend>Display</legend><label><input id="show-elapsed-time" type="checkbox"> Show elapsed game time</label><p>Help always remains available in the navigation bar. This preference is saved on this device. Hiding elapsed time does not reset the clock.</p>';
+ display.innerHTML='<legend>Display</legend><label><input id="show-elapsed-time" type="checkbox"> Show Elapsed Game Time</label><p>Help always remains available in the navigation bar. This preference is saved on this device. Hiding elapsed time does not reset the clock.</p>';
  for(const [id,key] of [['show-elapsed-time','showElapsedTime']]){
   const input=display.querySelector('#'+id);input.checked=dealSettings[key];
   input.onchange=()=>{dealSettings[key]=input.checked;try{localStorage.setItem(dealSettingsKey,JSON.stringify(dealSettings));}catch{}updateGameTimer();};
@@ -1377,7 +1377,7 @@ function openGameSettings(){
  close.onclick=()=>appearance.close();
  if(window.parent!==window){appearance.querySelector('.settings-content').append(document.querySelector('.table-settings'),upcomingGameSettings());}
  else{
-  const settings=document.querySelector('.appearance-settings');settings.querySelector('summary').textContent='Game settings';settings.append(upcomingGameSettings());
+  const settings=document.querySelector('.appearance-settings');settings.querySelector('summary').textContent='Game Settings';settings.append(upcomingGameSettings());
   appearance.addEventListener('close',()=>{settings.append(appearance.querySelector('.table-settings'),appearance.querySelector('.upcoming-game-settings'));});
  }
  document.body.append(appearance);

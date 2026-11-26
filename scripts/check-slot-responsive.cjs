@@ -312,7 +312,7 @@ for (const game of games) test(`${game}: rapid taps stop one spin and reveal res
 
   await page.locator('.slot-phone-open').click();
   await page.locator('#settingsButton').click();
-  await page.locator('.settings-page-jump').selectOption({label:'Reveal winnings'});
+  await page.locator('.settings-page-jump').selectOption({label:'Reveal Winnings'});
   await page.locator('#revealWinnings').check();
   await page.locator('.settings-close').click();
   const result = page.locator('.slot-reveal-result');
@@ -322,6 +322,11 @@ for (const game of games) test(`${game}: rapid taps stop one spin and reveal res
    page.locator('#reels').evaluate(el => el.getBoundingClientRect().toJSON()),
   ]);
   for (const metric of ['x','y','width','height']) assert.ok(Math.abs(covered[metric]-reels[metric])<=1,`${metric}: ${JSON.stringify({covered,reels})}`);
+  const revealLayout = () => result.evaluate(panel => [panel, ...panel.children].map(element => {
+   const {x, y, width, height} = element.getBoundingClientRect();
+   return {x, y, width, height};
+  }));
+  const readyLayout = await revealLayout();
   for (let completed=3; completed<6; completed++) {
    await tap();
    await page.waitForFunction(() => !document.querySelector('#spin').disabled, null, {timeout:350});
@@ -329,6 +334,14 @@ for (const game of games) test(`${game}: rapid taps stop one spin and reveal res
    assert.equal((await history()).length,completed+1);
    assert.match(await result.innerText(),/Bet .* · Net .* · Balance /);
   }
+  // Long regular messages and the extra free-spin text must leave the reveal layout in place.
+  await page.evaluate(async () => {
+   setMessage('WIN $987,654,321 — ' + Array(20).fill('Line 1: Wild × 5 → $100').join(' • '));
+   showRevealedWinnings({wagerUSD: 0, payoutUSD: 987654321, free: true, freeSpinsAwarded: 25});
+   await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  });
+  assert.match(await result.innerText(),/25 free spins awarded/);
+  assert.deepEqual(await revealLayout(), readyLayout);
   await page.evaluate(() => {
    const originalRate = getFeatureRate;
    getFeatureRate = (setting, fallback) => setting === bonusGameOddsEl ? 1 : originalRate(setting, fallback);

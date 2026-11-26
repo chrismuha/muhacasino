@@ -42,7 +42,7 @@ async function close(p){assert.deepEqual(p.errors,[]);await p.context().close()}
 for(const game of games){
  test(`${game}: default setting selects the highest affordable step and charges it once`,async()=>{
   const p=await open(game);try{
-   await p.locator('#settingsButton').evaluate(el=>el.click());await p.locator('.settings-page-jump').selectOption({label:'Automatically lower bet'});
+   await p.locator('#settingsButton').evaluate(el=>el.click());await p.locator('.settings-page-jump').selectOption({label:'Automatically Lower Bet'});
    assert.equal(await p.locator('#autoLowerBetToggle').isChecked(),true);
    await p.evaluate(()=>window.__betTest.prepare(3));await p.evaluate(()=>window.__betTest.manual());
    assert.deepEqual(await p.evaluate(()=>window.__betTest.snapshot()),{balance:1.5,bet:'15',denom:'0.01',lines:'10',free:0,total:1.5,auto:false});

@@ -2070,24 +2070,44 @@ body.slot-phone-play .reels-wrap > .reels { min-height: 200px !important; flex-s
 .slot-reveal-result {
     position: absolute;
     z-index: 5;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: clamp(12px, 3vw, 32px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: safe center;
+    gap: clamp(4px, 1vh, 8px);
+    box-sizing: border-box;
+    container-type: size;
+    padding: clamp(8px, min(2vw, 2vh), 20px);
     background: #101827;
     color: #f7f9ff;
     border: 2px solid #6ce9f5;
     border-radius: 12px;
     text-align: center;
     overflow: auto;
+    font-variant-numeric: tabular-nums;
 }
 .slot-reveal-result[hidden] { display: none; }
-.slot-reveal-result h3 { font-size: clamp(24px, 5vw, 52px); margin: 0; color: #88f1c4; }
-.slot-reveal-result p { margin: 0; line-height: 1.6; font-size: clamp(14px, 2vw, 18px); }
+.slot-reveal-result > span { font-size: 14px; line-height: 1.25; }
+.slot-reveal-result h3,
+.slot-reveal-result p {
+    margin: 0;
+    overflow-wrap: anywhere;
+    overflow: auto;
+}
+.slot-reveal-result h3 {
+    font-size: clamp(20px, min(6cqi, 18cqh), 44px);
+    line-height: 1.1;
+    block-size: min(2lh, 26cqh);
+    color: #88f1c4;
+}
+.slot-reveal-result p {
+    font-size: clamp(13px, min(2vw, 10cqh), 18px);
+    line-height: 1.35;
+    block-size: min(3lh, 46cqh);
+}
 .slot-reveal-result[data-outcome="loss"] h3 { color: #ffca9a; }
-.slot-reveal-mode .jackpot-board, .slot-reveal-mode .reel-result, .slot-reveal-mode #featureStatus { visibility: hidden; }
+.slot-reveal-mode .jackpot-board { visibility: hidden; }
+/* The regular messages would otherwise resize the phone's flexing reel area. */
+.slot-reveal-mode .reels-wrap > :is(.reel-result, .slot-feature-indicator) { display: none !important; }
 .slot-reveal-mode #reels { visibility: hidden; }
 
 .slot-latest-release {

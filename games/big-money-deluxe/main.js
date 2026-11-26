@@ -1153,7 +1153,7 @@ function getSettingsDefinitions() {
         { key: "playMode", title: "Credits or Money", element: document.getElementById("playModeSelect")?.closest(".select") },
         { key: "withdrawalDemo", title: "Withdrawal Demonstration", element: document.getElementById("withdrawalDemoToggle")?.closest(".checkbox-setting") },
         { key: "buyBonusButton", title: "Buy Bonus Button", element: document.getElementById("buyBonusToggle")?.closest(".checkbox-setting") },
-        { key: "autoLowerBet", title: "Automatically lower bet", element: document.getElementById("autoLowerBetToggle")?.closest(".checkbox-setting") },
+        { key: "autoLowerBet", title: "Automatically Lower Bet", element: document.getElementById("autoLowerBetToggle")?.closest(".checkbox-setting") },
         { key: "luckyWheel", title: "Lucky Wheel", element: document.getElementById("luckyWheelToggle")?.closest(".checkbox-setting") },
         { key: "pointerOdds", title: "Wheel Pointer Match Chances", element: document.querySelector(".slot-pointer-odds-setting") },
         { key: "resultBars", title: "Result Bar Layout", element: document.getElementById("collapseEmptyResultsToggle")?.closest(".checkbox-setting") },
@@ -1162,8 +1162,8 @@ function getSettingsDefinitions() {
         { key: "adjustMoney", title: "Adjust Money", element: creditStepEl?.closest(".credit-controls") },
         { key: "lines", title: "Lines", element: linesEl?.closest(".select") },
         { key: "maxBetCredits", title: "Max Bet Credits", element: maxBetUsesAvailableCreditsEl?.closest(".checkbox-setting") },
-        { key: "autoSpinCount", title: "Auto-spin count", element: document.getElementById("autoSpinSettings") },
-        { key: "revealWinnings", title: "Reveal winnings", element: revealWinningsEl.closest(".checkbox-setting") },
+        { key: "autoSpinCount", title: "Auto-Spin Count", element: document.getElementById("autoSpinSettings") },
+        { key: "revealWinnings", title: "Reveal Winnings", element: revealWinningsEl.closest(".checkbox-setting") },
         { key: "winDelay", title: "Winning Highlight Delay", element: skipWinAnimationDelayEl?.closest(".checkbox-setting") },
         { key: "sessionStats", title: "Session Stats Display", element: sessionStatDisplayEl?.closest(".select") },
         { key: "elapsedTime", title: "Time Elapsed", element: autoSpinElapsedEl },
@@ -1280,7 +1280,7 @@ function setupSettingsOverlay() {
             <div class="settings-stage"></div>
             <label class="settings-pin-row">
                 <input type="checkbox" class="settings-pin-toggle" />
-                <span>Show this setting on the home screen</span>
+                <span>Show This Setting on the Home Screen</span>
             </label>
             <div class="settings-stash" hidden></div>
         </div>`;

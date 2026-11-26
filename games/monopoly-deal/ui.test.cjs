@@ -3224,8 +3224,12 @@ test('color presets keep the heading and swatches inside one panel on phone and 
   if(viewport.width===420)await p.locator('#toolbarCollapseButton').click();
   const openSettings=viewport.width===420?p.locator('[data-deal-command=appearance]'):game.locator('#ready-settings');
   await openSettings.click();
-  const panel=game.getByRole('region',{name:'Comfortable table colors'});
+  const panel=game.getByRole('region',{name:'Comfortable Table Colors'});
   const settings=game.locator('#appearance-dialog');
+  const optionLabels=await settings.locator('label:has(input[type=checkbox])').allTextContents();
+  for(const name of ['Automatic Dealing','Allow Pass Go over Seven Cards','Show Elapsed Game Time','Game Start and Wins','Hints and Unavailable Actions']){
+   assert.ok(optionLabels.some(label=>label.trim()===name),name);
+  }
   const colors=async()=>[
    await settings.evaluate(el=>getComputedStyle(el).backgroundColor),
    await panel.evaluate(el=>getComputedStyle(el).backgroundColor)
