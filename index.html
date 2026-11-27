@@ -14,8 +14,8 @@
   <link rel="icon" href="icons/casino-mark-v5.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/casino-touch-v5.png" sizes="180x180">
   <link rel="manifest" href="manifest.webmanifest?v=20261104-deal-controls-v122">
-  <link rel="stylesheet" href="styles.css?build=20261114-stable-setup">
-  <link rel="stylesheet" href="safe-area.css?build=deal-setup-color">
+  <link rel="stylesheet" href="styles.css?build=centered-game-header">
+  <link rel="stylesheet" href="safe-area.css?build=centered-game-header">
   <link rel="stylesheet" href="featured-layout.css?build=20261105-dashboard-descriptions-v131">
 </head>
 <body>
@@ -254,20 +254,23 @@
     <div class="game-toolbar">
       <a id="backButton" class="back-button" href="./" aria-label="Return to game library"><span aria-hidden="true">←</span><b>GAME LIBRARY</b></a>
       <span class="game-identity"><strong id="currentGame" style="color:#fff !important;-webkit-text-fill-color:#fff !important"></strong><span id="currentGameVersion" class="game-version" aria-label="Game version"></span></span>
-      <button id="slotModeToolbar" class="slot-mode-toolbar" type="button" role="switch" aria-checked="false" aria-label="Fake money display; switch to real money" hidden><span class="slot-mode-state">Fake Money</span><i aria-hidden="true"></i></button>
-      <div id="bingoToolbarControls" class="toolbar-bingo-controls" hidden>
-        <label id="bingoThemeToolbar" class="toolbar-theme-picker">
-          <span>Theme</span>
-          <select id="bingoThemeSelect" aria-label="Bingo theme">
-            <option value="planet">Planet Hall 2</option>
-            <option value="classic">Planet Hall 1</option>
-            <option value="current">Classic</option>
-          </select>
-        </label>
-        <button id="bingoViewButton" class="toolbar-view-button" type="button" aria-label="Choose Bingo card view" title="Choose Bingo card view"><span class="view-layout-icon" aria-hidden="true"><i></i><i></i><i></i><i></i></span><b>VIEW</b></button>
-        <button id="bingoAppearanceButton" class="toolbar-appearance-button" type="button" aria-label="Use dark mode" title="Use dark mode"><span aria-hidden="true">☾</span><b>DARK</b></button>
+      <div class="game-toolbar-actions">
+        <div id="gameHelp"></div>
+        <button id="slotModeToolbar" class="slot-mode-toolbar" type="button" role="switch" aria-checked="false" aria-label="Fake money display; switch to real money" hidden><span class="slot-mode-state">Fake Money</span><i aria-hidden="true"></i></button>
+        <div id="bingoToolbarControls" class="toolbar-bingo-controls" hidden>
+          <label id="bingoThemeToolbar" class="toolbar-theme-picker">
+            <span>Theme</span>
+            <select id="bingoThemeSelect" aria-label="Bingo theme">
+              <option value="planet">Planet Hall 2</option>
+              <option value="classic">Planet Hall 1</option>
+              <option value="current">Classic</option>
+            </select>
+          </label>
+          <button id="bingoViewButton" class="toolbar-view-button" type="button" aria-label="Choose Bingo card view" title="Choose Bingo card view"><span class="view-layout-icon" aria-hidden="true"><i></i><i></i><i></i><i></i></span><b>VIEW</b></button>
+          <button id="bingoAppearanceButton" class="toolbar-appearance-button" type="button" aria-label="Use dark mode" title="Use dark mode"><span aria-hidden="true">☾</span><b>DARK</b></button>
+        </div>
+        <div id="dealToolbarControls" class="toolbar-deal-controls" hidden aria-label="Monopoly Deal controls"><button type="button" data-deal-command="new">New game</button><button type="button" data-deal-command="appearance">Game Settings</button><button type="button" data-deal-command="guide">Game guide</button></div>
       </div>
-      <div id="dealToolbarControls" class="toolbar-deal-controls" hidden aria-label="Monopoly Deal controls"><button type="button" data-deal-command="new">New game</button><button type="button" data-deal-command="appearance">Game Settings</button><button type="button" data-deal-command="guide">Game guide</button></div>
       <button id="toolbarCollapseButton" class="toolbar-collapse-button bar-collapse-chevron" type="button" aria-expanded="true" aria-label="Collapse game header" title="Collapse game header"><span aria-hidden="true"></span></button>
     </div>
     <iframe id="gameFrame" title="Selected slot game" width="100%" allow="fullscreen"></iframe>
@@ -288,6 +291,6 @@
   <script src="components/new-game-badge.js?build=20261106-badge-v152"></script>
   <script src="launcher.js?build=rapid-spins"></script>
   <script src="pwa.js?build=20261104-deal-controls-v122"></script>
-<script type="module" src="./shared-help/suite-help.js?build=stable-reveal-winnings"></script>
+<script type="module" src="./shared-help/suite-help.js?build=centered-game-header"></script>
 </body>
 </html>

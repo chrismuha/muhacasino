@@ -2564,21 +2564,49 @@ test('Deal navigation is the only Help access even with an obsolete saved prefer
  await p.locator('suite-help .suite-help-close').click();await close(p);
 });
 
-test('every other hosted game reserves header space for inline Help',async()=>{
- const p=await open();
- for(const width of [430,1280]){
-  await p.setViewportSize({width,height:900});
-  for(const id of ['big-money-deluxe','neon-slots','pretty-penny','treasurepots','bingo','sorry','yahtzee']){
-   await p.goto(origin+'/index.html#'+id);await p.locator('#gameFrame').waitFor();
-   const help=p.locator('suite-help .suite-help-trigger');
-   await p.waitForFunction(()=>document.querySelector('suite-help')?.shadowRoot.querySelector('button')?.dataset.placement==='inline');
-   if(await p.locator('#toolbarCollapseButton').getAttribute('aria-expanded')==='false')await p.locator('#toolbarCollapseButton').click();
-   await help.waitFor();
-   const box=await help.boundingBox(),frame=await p.locator('#gameFrame').boundingBox();
-   assert.ok(box.y+box.height<=frame.y+1,`${id} ${width}: Help stays above game content`);
-   assert.ok(box.x>=0&&box.x+box.width<=width,`${id}: Help fits the viewport`);
-   await help.click();await p.locator('suite-help dialog[open]').waitFor();await p.locator('suite-help .suite-help-close').click();
+test('hosted game headers center titles and leave room for inline Help', async () => {
+ const p = await open();
+ const gameIds = ['big-money-deluxe', 'neon-slots', 'pretty-penny', 'treasurepots', 'bingo', 'monopoly-deal', 'sorry', 'yahtzee'];
+ for (const id of gameIds) {
+  await p.goto(origin + '/index.html#' + id);
+  await p.locator('#gameView[data-hosted-game="' + id + '"]').waitFor();
+  if (id === 'monopoly-deal') await p.frameLocator('#gameFrame').locator('html.casino-hosted').waitFor();
+  const toggle = p.locator('#toolbarCollapseButton');
+  if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click();
+  const help = p.locator('#gameHelp .suite-help-trigger');
+  await help.waitFor();
+  for (const width of [320, 420, 844, 1280, 1281, 1401]) {
+   await p.setViewportSize({width, height: width === 844 ? 390 : 900});
+   await p.locator('html').evaluate((el, landscape) => {
+    el.style.setProperty('--safe-area-inset-left', landscape ? '47px' : '0px');
+   }, width === 844);
+   const title = await p.locator('#currentGame').boundingBox();
+   const version = await p.locator('#currentGameVersion').boundingBox();
+   const back = await p.locator('#backButton').boundingBox();
+   const collapse = await toggle.boundingBox();
+   const helpBox = await help.boundingBox();
+   const frame = await p.locator('#gameFrame').boundingBox();
+   const label = `${id} at ${width}px`;
+   for (const box of [title, version]) {
+    assert.ok(box && back && collapse, `${label}: title, version, and navigation are visible`);
+    assert.ok(Math.abs(box.x + box.width / 2 - width / 2) < 1, `${label}: centered title and version`);
+    assert.ok(back.x + back.width < box.x && box.x + box.width < collapse.x, `${label}: title clears navigation`);
+   }
+   assert.ok(helpBox.height >= 44 && helpBox.y + helpBox.height < frame.y, `${label}: Help fits above the game`);
+   if (width <= 1280) assert.ok(helpBox.y >= back.y + back.height + 8, `${label}: Help clears the title row`);
+   const actions = await p.locator('.game-toolbar-actions').evaluate(el => [...el.querySelectorAll('button, select')]
+    .filter(control => control.getClientRects().length)
+    .map(control => control.getBoundingClientRect().toJSON()));
+   for (const box of actions) {
+    assert.ok(box.left >= helpBox.x + helpBox.width && box.right <= width - 8, `${label}: game controls clear Help and the edge`);
+    if (width > 1280) assert.ok(box.right < collapse.x, `${label}: game controls clear Collapse`);
+   }
   }
+  await help.click();
+  await p.locator('suite-help dialog[open]').waitFor();
+  await p.keyboard.press('Escape');
+  await p.locator('suite-help dialog[open]').waitFor({state: 'hidden'});
+  await p.waitForFunction(() => document.querySelector('#gameHelp suite-help').shadowRoot.activeElement?.matches('.suite-help-trigger'));
  }
  await close(p);
 });

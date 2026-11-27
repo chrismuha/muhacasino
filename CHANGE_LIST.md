@@ -22,6 +22,7 @@
 ### Interface and accessibility
 
 - All card previews use the same artwork and proportions as the hand, including dotted rent rows and both halves of two-color wilds. This applies to enlarged hand cards, drawn cards, Bank, Properties, the discard pile, and the card catalog.
+- Centered game titles and version labels in the casino header and moved Help below the title on narrower screens.
 - Consolidated Monopoly Deal's completed changes under v1.6.0, the next version after v1.5.0, while preserving older release history.
 - Dark Blue is now the default table background. Choose the original, brighter Blue in the Settings controls.
 - Discard stays hidden when no hand card is selected. Selecting cards restores Discard and its selected-card count.

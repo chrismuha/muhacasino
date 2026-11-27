@@ -12,7 +12,7 @@ class SuiteHelp extends HTMLElement {
     const version = packageInfo.version;
     const reportUrl = 'mailto:muhachris297@gmail.com?subject='+encodeURIComponent(`${details.appName} ${version} issue report`)+'&body='+encodeURIComponent(`${details.appName} version: ${version}\nDevice and operating system:\nWorkspace or screen:\nSteps to reproduce:\n1. \nExpected result:\nActual result or exact error:\nHow often it happens:\n\nPlease remove customer, financial, and other private information from screenshots or attachments.`);
     root.innerHTML = `<style>${styles}</style>
-      <button type="button" class="suite-help-trigger" data-placement="inline" data-theme="${details.theme}" aria-haspopup="dialog"><span aria-hidden="true">?</span> Help</button>
+      <button type="button" class="suite-help-trigger" part="trigger" data-placement="inline" data-theme="${details.theme}" aria-haspopup="dialog"><span aria-hidden="true">?</span> Help</button>
       <dialog class="suite-help-panel" data-theme="${details.theme}" aria-labelledby="suite-help-title">
         <header><div><h1 id="suite-help-title">${escape(details.appName)} Help</h1><p>${version==='See game guide'?'See the game guide for version details.':`Version ${escape(version)}`}</p></div><button type="button" class="suite-help-close" autofocus aria-label="Close Help">Close</button></header>
         <nav aria-label="Help sections">${sections.map(([id,label])=>`<button type="button" data-page="${id}" ${id==='contact'?'aria-current="page"':''}>${label}</button>`).join('')}</nav>
@@ -39,7 +39,7 @@ class SuiteHelp extends HTMLElement {
           <section data-section="report" hidden><h2>Report an issue</h2><p>Tell us the screen, steps to reproduce, expected result, actual result, exact error, device, and operating system. Include whether the problem happens every time.</p><a class="suite-help-report" href="${escape(reportUrl)}">Prepare issue report email</a><p>This opens an email draft with the current version and a report template. Review it and send it from your email app. If the link does not open, email muhachris297@gmail.com with those details.</p><p>Remove customer, financial, and other private information from screenshots or attachments.</p></section>
           <section data-section="known" hidden><h2>Known issues</h2><p>Confirmed problems documented for this version appear here.</p>${articles(details.knownIssues)}${details.knownIssues.length?'':'<p>No confirmed issues are currently listed in this version’s Help. If you encounter a problem, use Report an issue.</p>'}<h2 class="suite-help-fixed-heading">Fixed</h2><p>Completed fixes and what they mean for you.</p>${details.fixedIssues?.length ? fixedArticles(details.fixedIssues) : '<p>No completed fixes are currently listed here. See Release Notes for the full change history.</p>'}<p>Use Bug Report to share a problem you encounter.</p></section>
           <section data-section="coming" hidden><h2>Coming soon</h2><p>Planned features are not available yet.</p>${articles(details.comingSoon || [])}${details.comingSoon?.length?'':'<p>No upcoming features are currently listed. See the user guide and release notes for available features.</p>'}</section>
-          <section data-section="tips" hidden><h2>Tips &amp; troubleshooting</h2><p><a href="game-guides.html" target="_blank" rel="noopener">Game user guides and release histories ↗</a></p>${articles(details.usageTips)}${details.troubleshooting.length?'<h3>Troubleshooting checklist</h3><ul>'+details.troubleshooting.map(tip=>`<li>${escape(tip)}</li>`).join('')+'</ul>':''}<p>If the problem continues, use Report an issue and include the exact error and steps.</p></section>
+          <section data-section="tips" hidden><h2>Tips &amp; troubleshooting</h2><p>On narrower screens, the casino header places Help in the controls row below the game title. If the header is collapsed, expand it first.</p><p><a href="game-guides.html" target="_blank" rel="noopener">Game user guides and release histories ↗</a></p>${articles(details.usageTips)}${details.troubleshooting.length?'<h3>Troubleshooting checklist</h3><ul>'+details.troubleshooting.map(tip=>`<li>${escape(tip)}</li>`).join('')+'</ul>':''}<p>If the problem continues, use Report an issue and include the exact error and steps.</p></section>
         </main>
         <footer class="suite-help-footer"><button type="button" class="suite-help-bug-report" data-page="report"><span aria-hidden="true">🐛</span> Bug Report</button></footer>
       </dialog>`;
@@ -64,18 +64,15 @@ const host=document.createElement("suite-help");
 host.style.cssText="display:inline-flex;position:static";
 document.body.append(host);
 
-function syncDealHelp(){
- const frame=document.querySelector('#gameFrame');
- let deal=location.pathname.includes('/games/monopoly-deal/');
- try{deal ||= document.body.classList.contains('game-open')&&frame?.contentWindow.location.pathname.includes('/games/monopoly-deal/');}catch{}
- host.style.display='inline-flex';host.style.position='static';
- const trigger=host.shadowRoot.querySelector('.suite-help-trigger');trigger.dataset.placement='inline';
- const toolbar=document.body.classList.contains('game-open')?document.querySelector('.game-toolbar'):null;
- let controls=toolbar?.querySelector('.back-help-controls');
- if(toolbar&&!controls){controls=document.createElement('div');controls.className='back-help-controls';const back=toolbar.querySelector('#backButton');back.before(controls);controls.append(back);}
- const destination=controls||(deal?document.querySelector('.game-topbar'):document.querySelector('#libraryHelp'))||document.body;if(host.parentElement!==destination)destination.append(host);
+function syncHelpPlacement() {
+  const destination = document.body.classList.contains('game-open')
+    ? document.querySelector('#gameHelp')
+    : document.querySelector('#libraryHelp, .game-topbar');
+  if (destination && host.parentElement !== destination) destination.append(host);
 }
-const frame=document.querySelector('#gameFrame');
-frame?.addEventListener('load',syncDealHelp);
-new MutationObserver(syncDealHelp).observe(document.body,{attributes:true,attributeFilter:['class']});
-syncDealHelp();
+
+new MutationObserver(syncHelpPlacement).observe(document.body, {
+  attributes: true,
+  attributeFilter: ['class'],
+});
+syncHelpPlacement();

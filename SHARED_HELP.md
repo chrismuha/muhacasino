@@ -1,6 +1,6 @@
 # Shared Help
 
-This app uses the suite Help standard: Contact us, Report an issue, Known issues, Coming soon, and Tips & troubleshooting. Open Help to browse these sections. Close or Escape returns to the app. Existing user guides and release notes remain available.
+This app uses the suite Help standard: Contact us, Report an issue, Known issues, Coming soon, and Tips & troubleshooting. Open Help to browse these sections. On narrower screens, the casino header places Help in the controls row below the game title. If the header is collapsed, expand it first. Close or Escape returns to the app. Existing user guides and release notes remain available.
 
 Coming soon contains planned features that are not available yet. Empty Known issues and Coming soon lists mean no entries are currently listed; they do not promise that the app has no bugs or that no further features will be added. Issue reporting opens an email draft for the user to review and send; it does not send a report automatically.
 

@@ -61,16 +61,13 @@ html.casino-standalone-slot body {
 }
 
 .toolbar-deal-controls[hidden]{display:none}
-.toolbar-deal-controls{display:flex;gap:8px;align-items:center;justify-content:flex-end;grid-column:3;grid-row:1;min-width:0}
+.toolbar-deal-controls{display:flex;gap:8px;align-items:center;justify-content:flex-end;min-width:0}
 .toolbar-deal-controls button{min-height:44px;padding:8px 12px;border:1px solid #7283a4;border-radius:8px;background:#17233b;color:#fff;font:700 14px/1.2 system-ui;white-space:nowrap;cursor:pointer}
 .toolbar-deal-controls button:hover{background:#263c60}
 .toolbar-deal-controls button:focus-visible{outline:2px solid #ffe297;outline-offset:2px}
-@media(max-width:900px){
- body.game-open #gameView:has(.toolbar-deal-controls:not([hidden])):not(.toolbar-collapsed){--casino-toolbar-height:116px}
- body.game-open #gameView:has(.toolbar-deal-controls:not([hidden])):not(.toolbar-collapsed) .game-toolbar{grid-template-rows:48px 48px;gap:4px 8px}
- #gameView .toolbar-deal-controls{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;gap:6px}
- #gameView .toolbar-deal-controls[hidden]{display:none}
- #gameView .toolbar-deal-controls button{padding:6px 4px;font-size:13px}
+@media(max-width:480px){
+ .toolbar-deal-controls{gap:6px}
+ .toolbar-deal-controls button{padding:6px 5px;font-size:13px;white-space:normal}
 }
 
 /* Browser chrome already ends the visual viewport above its bottom bar. */
@@ -111,8 +108,7 @@ body.game-open #gameView .game-load-state{inset-block-start:var(--casino-header-
 /* Landscape cutouts reserve content space without leaving an unpainted nav edge. */
 body.game-open #gameView:not([hidden]){left:0;right:0}
 body.game-open #gameView:not(.toolbar-collapsed) .game-toolbar{
- padding-left:calc(12px + var(--casino-safe-left));
- padding-right:calc(12px + var(--casino-safe-right));
+ padding-inline:calc(12px + max(var(--casino-safe-left),var(--casino-safe-right)));
 }
 body.game-open #gameView #gameFrame{
  width:calc(100% - var(--casino-safe-left) - var(--casino-safe-right));
@@ -125,5 +121,4 @@ body.game-open #gameView.toolbar-collapsed .toolbar-collapse-button{right:max(12
 @media(max-width:600px){
  body.game-open #gameView[data-hosted-game="monopoly-deal"].toolbar-collapsed{--casino-header-height:calc(var(--casino-safe-top) + 46px)}
  body.game-open #gameView[data-hosted-game="monopoly-deal"].toolbar-collapsed .toolbar-collapse-button{width:48px;height:44px;bottom:0}
- body.game-open #gameView[data-hosted-game="monopoly-deal"]:not(.toolbar-collapsed) .toolbar-collapse-button{position:absolute;width:44px;height:44px;top:calc(var(--casino-safe-top) + 6px);transform:none}
 }
